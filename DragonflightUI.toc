@@ -7,3 +7,5 @@
 ## SavedVariables: 
 
 Core.lua
+
+Minimap.xml
