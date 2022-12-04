@@ -29,7 +29,8 @@ HideDefaultStuff()
 function MoveDefaultStuff()
     --print(Minimap:GetPoint())
     --CENTER table: 000001F816E0E7B0 TOP 9 -92
-    Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', 9, -105)
+    Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
+    Minimap:SetScale(1.25)
 end
 MoveDefaultStuff()
 
@@ -62,6 +63,26 @@ function ChangeZoom()
 end
 ChangeZoom()
 
+function ChangeCalendar()
+    GameTimeFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', 0, 0)
+    --GameTimeFrame:SetParent(MinimapBackdrop)
+    GameTimeFrame:SetScale(0.75)
+    --GameTimeFrame:SetSize(32, 32)
+end
+ChangeCalendar()
+
+function ChangeClock()
+    if IsAddOnLoaded('Blizzard_TimeManager') then
+        local regions = {TimeManagerClockButton:GetRegions()}
+        regions[1]:Hide()
+        TimeManagerClockButton:ClearAllPoints()
+        TimeManagerClockButton:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -15, 5)
+    else
+        print('not')
+    end
+end
+ChangeClock()
+
 function DrawMinimapBorder()
     local texture = UIParent:CreateTexture()
     texture:SetDrawLayer('ARTWORK', 7)
@@ -69,7 +90,7 @@ function DrawMinimapBorder()
     texture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
     texture:SetPoint('CENTER', 'Minimap', 'CENTER', 0, 0)
     texture:SetSize(219, 230)
-    texture:SetScale(0.7)
+    texture:SetScale(0.88)
 
     frame.minimap = texture
 end
@@ -77,5 +98,16 @@ DrawMinimapBorder()
 
 function ReplaceTextures()
 end
+
+-- Events
+frame:RegisterEvent('ADDON_LOADED')
+
+function frame:OnEvent(event, arg1)
+    if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
+        --print('Blizzard_TimeManager')
+        ChangeClock()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
 
 print('Minimap.lua - END')
