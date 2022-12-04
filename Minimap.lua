@@ -76,12 +76,25 @@ function ChangeClock()
         local regions = {TimeManagerClockButton:GetRegions()}
         regions[1]:Hide()
         TimeManagerClockButton:ClearAllPoints()
-        TimeManagerClockButton:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -15, 5)
-    else
-        print('not')
+        TimeManagerClockButton:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -15, 2)
     end
 end
 ChangeClock()
+
+function ChangeZoneText()
+    MinimapZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -65, -8)
+end
+ChangeZoneText()
+
+function ChangeTracking()
+    MiniMapTracking:ClearAllPoints()
+    MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200, 0)
+    MiniMapTracking:SetScale(0.75)
+    --print(MiniMapTrackingBackground:GetTexture())
+    --MiniMapTrackingBackground:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    --MiniMapTrackingBackground:SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
+end
+ChangeTracking()
 
 function DrawMinimapBorder()
     local texture = UIParent:CreateTexture()
