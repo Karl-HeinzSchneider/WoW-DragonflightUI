@@ -4,8 +4,63 @@ local frame = CreateFrame('FRAME')
 
 function HideDefaultStuff()
     _G['MinimapBorder']:Hide()
+    _G['MinimapBorderTop']:Hide()
+
+    -- Hide WorldMapButton
+    MiniMapWorldMapButton:Hide()
+    hooksecurefunc(
+        MiniMapWorldMapButton,
+        'Show',
+        function()
+            MiniMapWorldMapButton:Hide()
+        end
+    )
+    -- Hide North Tag
+    hooksecurefunc(
+        MinimapNorthTag,
+        'Show',
+        function()
+            MinimapNorthTag:Hide()
+        end
+    )
 end
 HideDefaultStuff()
+
+function MoveDefaultStuff()
+    --print(Minimap:GetPoint())
+    --CENTER table: 000001F816E0E7B0 TOP 9 -92
+    Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', 9, -105)
+end
+MoveDefaultStuff()
+
+function ChangeZoom()
+    MinimapZoomIn:SetScale(0.75)
+    MinimapZoomIn:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 0, 0)
+    MinimapZoomIn:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomIn:GetNormalTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
+    --MinimapZoomIn:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap')
+    --MinimapZoomIn:GetPushedTexture():SetTexCoord(0.001953125, 0.068359375, 0.57421875, 0.607421875)
+    MinimapZoomIn:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomIn:GetPushedTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
+    MinimapZoomIn:SetDisabledTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomIn:GetDisabledTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
+    MinimapZoomIn:GetDisabledTexture():SetDesaturated(1)
+    MinimapZoomIn:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomIn:GetHighlightTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
+
+    MinimapZoomOut:SetScale(0.75)
+    MinimapZoomOut:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', -20, -20)
+    MinimapZoomOut:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomOut:GetNormalTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
+    MinimapZoomOut:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomOut:GetPushedTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
+    MinimapZoomOut:SetDisabledTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomOut:GetDisabledTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
+    MinimapZoomOut:GetDisabledTexture():SetDesaturated(1)
+    MinimapZoomOut:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapZoomOut:GetHighlightTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
+end
+ChangeZoom()
 
 function DrawMinimapBorder()
     local texture = UIParent:CreateTexture()
@@ -19,5 +74,8 @@ function DrawMinimapBorder()
     frame.minimap = texture
 end
 DrawMinimapBorder()
+
+function ReplaceTextures()
+end
 
 print('Minimap.lua - END')
