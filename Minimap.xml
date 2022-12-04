@@ -4,7 +4,7 @@
 	<Frame name="DragonflightUIMinimap" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				print('XML')
+				--print('XML')
 			</OnLoad>
 		</Scripts>
 	</Frame>
