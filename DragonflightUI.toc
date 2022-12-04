@@ -1,0 +1,9 @@
+## Interface: 20504
+## Title: DragonflightUI
+## Notes: 
+## Author: Karl-Heinz Schneider
+## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
+## Version: 0.0.2
+## SavedVariables: 
+
+Core.lua
