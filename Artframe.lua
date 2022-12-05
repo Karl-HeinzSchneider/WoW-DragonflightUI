@@ -337,19 +337,6 @@ function DrawGryphon()
     GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', 120, 5)
     GryphonRight:SetFrameStrata('HIGH')
     GryphonRight:SetFrameLevel(100)
-
-    --[[    gryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -120, 5)
-    gryphonLeft:SetScale(0.5)
-    gryphonLeft:SetFrameLevel(100)
-    frame.gryphonLeft = gryphonLeft
-    frame:SetAllPoints(frame.gryphonLeft) ]]
-
-    --[[  local gryphonRight = CreateTextureFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef)
-    gryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', 120, 5)
-    gryphonRight:SetScale(0.5)
-    gryphonRight:SetFrameLevel(100)
-    frame.gryphonRight = gryphonRight
-    frame:SetAllPoints(frame.gryphonRight) ]]
 end
 DrawGryphon()
 
