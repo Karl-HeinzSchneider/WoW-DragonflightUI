@@ -1,17 +1,11 @@
 print('Micromenu.lua')
 
-local frame = CreateFrame('FRAME')
-
-function ChangeGryphon()
-end
-ChangeGryphon()
-
 function SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
     local key = pre .. name
 
     local up = atlas[key .. '-Up']
     frame:SetSize(up[1], up[2])
-    frame:SetScale(1)
+    frame:SetScale(0.8)
     frame:SetHitRectInsets(0, 0, 0, 0)
 
     frame:SetNormalTexture(textureRef)
@@ -392,15 +386,17 @@ function ChangeMicroMenu()
 end
 ChangeMicroMenu()
 
--- Events
-frame:RegisterEvent('ADDON_LOADED')
+function ChangeBackpack()
+    --MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
+    local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbag'
+    local highlight = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbagHighlight'
 
-function frame:OnEvent(event, arg1)
-    if IsAddOnLoaded('Bartender4') then
-    --print('bar4 loaded')
-    --ChangeGryphon()
-    end
+    MainMenuBarBackpackButton:SetScale(1.5)
+
+    SetItemButtonTexture(MainMenuBarBackpackButton, texture)
+    MainMenuBarBackpackButton:SetHighlightTexture(highlight)
+    MainMenuBarBackpackButton:SetPushedTexture(highlight)
 end
-frame:SetScript('OnEvent', frame.OnEvent)
+ChangeBackpack()
 
 print('Micromenu.lua - END')
