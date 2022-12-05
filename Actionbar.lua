@@ -2,7 +2,7 @@ print('Actionbar.lua')
 
 function ChangeActionbar()
     ActionButton1:ClearAllPoints()
-    ActionButton1:SetPoint('CENTER', -230, 42)
+    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230, 42 + 25)
     ActionButton1.SetPoint = function()
     end
 
@@ -67,6 +67,46 @@ function ChangeExp()
     ExhaustionTick:SetSize(12 * scaling, 14 * scaling)
 end
 ChangeExp()
+
+function ChangeRep()
+    local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
+    local bottomDelta = 35
+    MainMenuBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, bottomDelta)
+    MainMenuBar:SetPoint('TOPLEFT', UIParent, 'BOTTOM', 0, bottomDelta)
+    MainMenuBar:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, bottomDelta)
+
+    local targetSize = 500
+    local scale = 10 / 7
+
+    --print(ReputationWatchBar.StatusBar:GetSize())
+    ReputationWatchBar.StatusBar:SetSize(targetSize / scale, 10)
+    --print(ReputationWatchBar.StatusBar:GetSize())
+    ReputationWatchBar.StatusBar:SetScale(scale)
+    ReputationWatchBar.OverlayFrame:SetSize(500, 10)
+
+    ReputationWatchBar.StatusBar.WatchBarTexture1:Hide()
+    ReputationWatchBar.StatusBar.WatchBarTexture2:Hide()
+    ReputationWatchBar.StatusBar.WatchBarTexture3:Hide()
+    ReputationWatchBar.StatusBar.WatchBarTexture1:SetTexture()
+    ReputationWatchBar.StatusBar.WatchBarTexture2:SetTexture()
+    ReputationWatchBar.StatusBar.WatchBarTexture3:SetTexture()
+
+    -- border
+    ReputationWatchBar.StatusBar.WatchBarTexture0:ClearAllPoints()
+    ReputationWatchBar.StatusBar.WatchBarTexture0:SetPoint('CENTER', ReputationWatchBar.StatusBar, 'CENTER', 2, -2.5)
+    ReputationWatchBar.StatusBar.WatchBarTexture0:SetSize(500 + 8, 20)
+    ReputationWatchBar.StatusBar.WatchBarTexture0:SetScale(0.7)
+    ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexture(expTexture)
+    ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
+
+    --ReputationWatchBar.OverlayFrame.Text
+    local Path, Size, Flags = MainMenuBarExpText:GetFont()
+    --print(Path, Size, Flags)
+    ReputationWatchBar.OverlayFrame.Text:SetFont(Path, 12, Flags)
+    ReputationWatchBar.OverlayFrame.Text:ClearAllPoints()
+    ReputationWatchBar.OverlayFrame.Text:SetPoint('CENTER', ReputationWatchBar.OverlayFrame, 0, 0)
+end
+ChangeRep()
 
 function ChangeGryphon()
     MainMenuBarLeftEndCap:Hide()
