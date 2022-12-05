@@ -108,4 +108,36 @@ function ChangeRep()
 end
 ChangeRep()
 
+function StyleButtons()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    local buttonTable = {'MultiBarBottomRightButton'}
+    for k, v in pairs(buttonTable) do
+        for i = 1, 12 do
+            --MultiBarBottomRightButton1NormalTexture
+            local name = v .. i
+
+            _G[name .. 'NormalTexture']:SetTexture(textureRef)
+            _G[name .. 'NormalTexture']:SetTexCoord(0.701171875, 0.900390625, 0.21533203125, 0.26513671875)
+            _G[name .. 'NormalTexture']:SetSize(37, 44)
+
+            -- Border
+            _G[name .. 'Border']:SetTexture()
+            _G[name .. 'Border']:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+            _G[name .. 'Border']:SetSize(45, 45)
+
+            -- Highlight
+            _G[name]:SetHighlightTexture(textureRef)
+            _G[name]:GetHighlightTexture():SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+            --_G[name]:GetHighlightTexture():SetSize(55, 25)
+
+            -- Background
+            _G[name .. 'FloatingBG']:SetTexture()
+            _G[name .. 'FloatingBG']:SetTexCoord(0, 0, 0, 0)
+            _G[name .. 'FloatingBG']:SetSize(45, 45)
+        end
+    end
+end
+StyleButtons()
+
 print('Actionbar.lua - End')
