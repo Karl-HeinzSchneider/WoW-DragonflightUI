@@ -322,6 +322,17 @@ function CreateFrameFromAtlas(atlas, name, textureRef, frameName)
     return f
 end
 
+function ChangeGryphon()
+    MainMenuBarLeftEndCap:Hide()
+    MainMenuBarRightEndCap:Hide()
+    --MainMenuBarArtFrame:Hide()
+    MainMenuBarTexture0:Hide()
+    MainMenuBarTexture1:Hide()
+    MainMenuBarTexture2:Hide()
+    MainMenuBarTexture3:Hide()
+end
+ChangeGryphon()
+
 function DrawGryphon()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 

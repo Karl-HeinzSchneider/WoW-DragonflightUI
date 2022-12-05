@@ -108,15 +108,4 @@ function ChangeRep()
 end
 ChangeRep()
 
-function ChangeGryphon()
-    MainMenuBarLeftEndCap:Hide()
-    MainMenuBarRightEndCap:Hide()
-    --MainMenuBarArtFrame:Hide()
-    MainMenuBarTexture0:Hide()
-    MainMenuBarTexture1:Hide()
-    MainMenuBarTexture2:Hide()
-    MainMenuBarTexture3:Hide()
-end
-ChangeGryphon()
-
 print('Actionbar.lua - End')
