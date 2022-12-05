@@ -11,3 +11,4 @@ Core.lua
 
 Minimap.lua
 Micromenu.lua
+Actionbar.lua
