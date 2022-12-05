@@ -5,7 +5,7 @@
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## Version: 0.0.2
 ## SavedVariables: 
-## OptionalDeps: Bartender4
+## OptionalDeps: 
 
 Core.lua
 
