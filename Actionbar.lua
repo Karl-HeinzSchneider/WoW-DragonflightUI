@@ -1,5 +1,7 @@
 print('Actionbar.lua')
 
+local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
+
 function ChangeActionbar()
     ActionButton1:ClearAllPoints()
     ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230, 42 + 25)
@@ -111,15 +113,19 @@ ChangeRep()
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
-    local buttonTable = {'MultiBarBottomRightButton'}
+    local iconMask = frame:CreateMaskTexture()
+    iconMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\iconmask', 'CLAMPTOWHITE', 'CLAMPTOWHITE')
+
+    local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
     for k, v in pairs(buttonTable) do
         for i = 1, 12 do
             --MultiBarBottomRightButton1NormalTexture
             local name = v .. i
 
             _G[name .. 'NormalTexture']:SetTexture(textureRef)
-            _G[name .. 'NormalTexture']:SetTexCoord(0.701171875, 0.900390625, 0.21533203125, 0.26513671875)
-            _G[name .. 'NormalTexture']:SetSize(37, 44)
+            _G[name .. 'NormalTexture']:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+            _G[name .. 'NormalTexture']:SetSize(38, 38)
+            _G[name .. 'NormalTexture']:SetPoint('CENTER', 0.5, -0.5)
 
             -- Border
             _G[name .. 'Border']:SetTexture()
@@ -131,10 +137,19 @@ function StyleButtons()
             _G[name]:GetHighlightTexture():SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
             --_G[name]:GetHighlightTexture():SetSize(55, 25)
 
+            -- Pressed
+            _G[name]:SetPushedTexture(textureRef)
+            _G[name]:GetPushedTexture():SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+
             -- Background
-            _G[name .. 'FloatingBG']:SetTexture()
-            _G[name .. 'FloatingBG']:SetTexCoord(0, 0, 0, 0)
-            _G[name .. 'FloatingBG']:SetSize(45, 45)
+            if _G[name .. 'FloatingBG'] then
+                _G[name .. 'FloatingBG']:SetTexture()
+                _G[name .. 'FloatingBG']:SetTexCoord(0, 0, 0, 0)
+                _G[name .. 'FloatingBG']:SetSize(45, 45)
+            end
+            -- Mask @TODO
+            -- iconMask:SetAllPoints(_G[name .. 'Icon'])
+            -- _G[name .. 'Icon']:AddMaskTexture(iconMask)
         end
     end
 end
