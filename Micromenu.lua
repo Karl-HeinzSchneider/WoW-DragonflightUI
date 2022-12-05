@@ -5,7 +5,7 @@ function SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
 
     local up = atlas[key .. '-Up']
     frame:SetSize(up[1], up[2])
-    frame:SetScale(0.8)
+    frame:SetScale(0.7)
     frame:SetHitRectInsets(0, 0, 0, 0)
 
     frame:SetNormalTexture(textureRef)
@@ -396,7 +396,30 @@ function ChangeBackpack()
     SetItemButtonTexture(MainMenuBarBackpackButton, texture)
     MainMenuBarBackpackButton:SetHighlightTexture(highlight)
     MainMenuBarBackpackButton:SetPushedTexture(highlight)
+
+    MainMenuBarBackpackButtonNormalTexture:Hide()
+    MainMenuBarBackpackButtonNormalTexture:SetTexture()
+    --MainMenuBarBackpackButton.IconBorder:Hide()
+
+    CharacterBag3SlotNormalTexture:Hide()
+    CharacterBag2SlotNormalTexture:Hide()
+    CharacterBag1SlotNormalTexture:Hide()
+    CharacterBag0SlotNormalTexture:Hide()
+
+    CharacterBag3SlotNormalTexture:SetTexture()
+    CharacterBag2SlotNormalTexture:SetTexture()
+    CharacterBag1SlotNormalTexture:SetTexture()
+    CharacterBag0SlotNormalTexture:SetTexture()
 end
 ChangeBackpack()
+
+function MoveBars()
+    MainMenuBarBackpackButton:ClearAllPoints()
+    MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
+
+    CharacterMicroButton:ClearAllPoints()
+    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300, 0)
+end
+MoveBars()
 
 print('Micromenu.lua - END')
