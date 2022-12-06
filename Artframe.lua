@@ -356,12 +356,39 @@ function DrawActionbarDeco()
     for i = 1, 12 do
         local deco =
             CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-IconFrame-Slot', textureRef, 'ActionbarDeco' .. i)
-        print(deco:GetSize())
+        --print(deco:GetSize())
         deco:SetScale(0.3)
         --deco:SetSize(35, 35)
         deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
         --deco:SetPoint('CENTER', ActionButton4, 'CENTER', 0, 0)
     end
+    --[[ 
+    local decoBar = CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-IconFrame', textureRef, 'ActionbarDecoBar')
+    decoBar:SetScale(1)
+    decoBar:SetSize(427, 35)
+    decoBar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0) ]]
+    --[[  local backdropInfo = {
+        bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+        edgeFile = 'Interface\\Addons\\DragonflightUI\\Textures\\Border',
+        tile = true,
+        tileEdge = true,
+        tileSize = 8,
+        edgeSize = 8,
+        insets = {left = 1, right = 1, top = 1, bottom = 1}
+    }
+
+    local bd = CreateFrame('Frame', nil, nil, 'BackdropTemplate')
+    bd:SetSize(330, 31)
+    bd:SetScale(1)
+    bd:SetBackdrop(backdropInfo)
+    bd:SetPoint('LEFT', ActionButton1, 'LEFT', -3, -1 + 200)
+
+    local texture = UIParent:CreateTexture()
+    texture:SetDrawLayer('ARTWORK', 7)
+    texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\border')
+    texture:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    texture:SetSize(330, 31)
+    texture:SetScale(1) ]]
 end
 DrawActionbarDeco()
 

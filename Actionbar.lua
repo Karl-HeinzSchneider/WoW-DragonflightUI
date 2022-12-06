@@ -4,22 +4,22 @@ local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 
 function ChangeActionbar()
     ActionButton1:ClearAllPoints()
-    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230, 42 + 25)
+    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 42 + 25)
     ActionButton1.SetPoint = function()
     end
 
     MultiBarBottomLeft:ClearAllPoints()
-    MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 45)
+    MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
     MultiBarBottomLeft.SetPoint = function()
     end
 
     MultiBarBottomRight:ClearAllPoints()
-    MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 45)
+    MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
     MultiBarBottomRight.SetPoint = function()
     end
 
     StanceButton1:ClearAllPoints()
-    StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 42)
+    StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
     StanceButton1.SetPoint = function()
     end
 
@@ -154,5 +154,16 @@ function StyleButtons()
     end
 end
 StyleButtons()
+
+function ChangeButtonSpacing()
+    local spacing = 3 -- default: 6
+    local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
+    for k, v in pairs(buttonTable) do
+        for i = 2, 12 do
+            _G[v .. i]:SetPoint('LEFT', _G[v .. (i - 1)], 'RIGHT', spacing, 0)
+        end
+    end
+end
+ChangeButtonSpacing()
 
 print('Actionbar.lua - End')
