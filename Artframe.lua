@@ -351,6 +351,20 @@ function DrawGryphon()
 end
 DrawGryphon()
 
+function DrawActionbarDeco()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    for i = 1, 12 do
+        local deco =
+            CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-IconFrame-Slot', textureRef, 'ActionbarDeco' .. i)
+        print(deco:GetSize())
+        deco:SetScale(0.3)
+        --deco:SetSize(35, 35)
+        deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
+        --deco:SetPoint('CENTER', ActionButton4, 'CENTER', 0, 0)
+    end
+end
+DrawActionbarDeco()
+
 for i = 1, 10 do
     --print(i)
 end
