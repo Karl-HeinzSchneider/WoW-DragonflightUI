@@ -406,15 +406,54 @@ function ChangeBackpack()
         local slot = 'Interface\\Addons\\DragonflightUI\\Textures\\bagborder2'
         local slothighlight = 'Interface\\Addons\\DragonflightUI\\Textures\\baghighlight2'
 
-        --  _G['CharacterBag' .. i .. 'SlotNormalTexture']:Hide()
-        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexture(slot)
-        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetSize(40, 40)
-        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexture(slothighlight)
-        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(55, 55)
+        local bagtexture = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexture(bagtexture)
+        --  _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625) -- empty
+        -- dx/dy => better center
+        local dy = 0.015
+        local dx = -0.001
+        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(
+            0.576171875 + dx,
+            0.6953125 + dx,
+            0.0078125 + dy,
+            0.484375 + dy
+        )
+        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetSize(35, 35)
 
-        --_G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(40, 40)
+        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexture(bagtexture)
+        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexCoord(
+            0.69921875,
+            0.818359375,
+            0.0078125,
+            0.484375
+        )
+        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(35, 35)
+
+        _G['CharacterBag' .. i .. 'Slot']:GetCheckedTexture():SetTexture()
+        _G['CharacterBag' .. i .. 'Slot']:GetPushedTexture():SetTexture()
 
         _G['CharacterBag' .. i .. 'SlotIconTexture']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\bagmask')
+
+        -- Note:
+        -- bagID = 4 3 2 1 0  , 0 = backpack
+        -- texture bag id = 3 2 1 0  , backpack seperate
+        local slothook = function(self, id)
+            local slots = GetContainerNumSlots(id)
+            local name = 'CharacterBag' .. (id - 1) .. 'Slot'
+            if slots == 0 then
+                _G[name]:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625)
+            else
+                _G[name]:GetNormalTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx, 0.0078125 + dy, 0.484375 + dy)
+            end
+        end
+
+        hooksecurefunc(
+            _G['CharacterBag' .. i .. 'SlotIconTexture'],
+            'SetTexture',
+            function(args)
+                slothook(args, i + 1)
+            end
+        )
     end
 end
 ChangeBackpack()
