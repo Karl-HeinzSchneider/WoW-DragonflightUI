@@ -4,7 +4,8 @@ local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 
 function ChangeActionbar()
     ActionButton1:ClearAllPoints()
-    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 42 + 25)
+    --ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 42 + 25)
+    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 25)
     ActionButton1.SetPoint = function()
     end
 
@@ -40,15 +41,15 @@ ChangeActionbar()
 
 function ChangeExp()
     local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
-
+    local size = 450 -- 500
     MainMenuExpBar:ClearAllPoints()
-    MainMenuExpBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 20)
-    MainMenuExpBar:SetSize(500, 10)
+    MainMenuExpBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 12)
+    MainMenuExpBar:SetSize(size, 10)
     MainMenuExpBar:SetScale(1)
 
     MainMenuXPBarTexture0:ClearAllPoints()
     MainMenuXPBarTexture0:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 2, -2.5)
-    MainMenuXPBarTexture0:SetSize(500 + 8, 20)
+    MainMenuXPBarTexture0:SetSize(size + 8, 20)
     MainMenuXPBarTexture0:SetTexture(expTexture)
     MainMenuXPBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
 
@@ -72,7 +73,7 @@ ChangeExp()
 
 function ChangeRep()
     local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
-    local bottomDelta = 35
+    local bottomDelta = 27
     MainMenuBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, bottomDelta)
     MainMenuBar:SetPoint('TOPLEFT', UIParent, 'BOTTOM', 0, bottomDelta)
     MainMenuBar:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, bottomDelta)
@@ -80,11 +81,13 @@ function ChangeRep()
     local targetSize = 500
     local scale = 10 / 7
 
+    local size = 450 -- 500
+
     --print(ReputationWatchBar.StatusBar:GetSize())
-    ReputationWatchBar.StatusBar:SetSize(targetSize / scale, 10)
+    ReputationWatchBar.StatusBar:SetSize(size / scale, 10)
     --print(ReputationWatchBar.StatusBar:GetSize())
     ReputationWatchBar.StatusBar:SetScale(scale)
-    ReputationWatchBar.OverlayFrame:SetSize(500, 10)
+    ReputationWatchBar.OverlayFrame:SetSize(size, 10)
 
     ReputationWatchBar.StatusBar.WatchBarTexture1:Hide()
     ReputationWatchBar.StatusBar.WatchBarTexture2:Hide()
@@ -96,7 +99,7 @@ function ChangeRep()
     -- border
     ReputationWatchBar.StatusBar.WatchBarTexture0:ClearAllPoints()
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetPoint('CENTER', ReputationWatchBar.StatusBar, 'CENTER', 2, -2.5)
-    ReputationWatchBar.StatusBar.WatchBarTexture0:SetSize(500 + 8, 20)
+    ReputationWatchBar.StatusBar.WatchBarTexture0:SetSize(size + 8, 20)
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetScale(0.7)
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexture(expTexture)
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
