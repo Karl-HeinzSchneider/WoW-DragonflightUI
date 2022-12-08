@@ -41,7 +41,7 @@ ChangeActionbar()
 
 function ChangeExp()
     local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
-    local size = 450 -- 500
+    local size = 460 -- 500
     MainMenuExpBar:ClearAllPoints()
     MainMenuExpBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 12)
     MainMenuExpBar:SetSize(size, 10)
@@ -81,7 +81,7 @@ function ChangeRep()
     local targetSize = 500
     local scale = 10 / 7
 
-    local size = 450 -- 500
+    local size = 460 -- 500
 
     --print(ReputationWatchBar.StatusBar:GetSize())
     ReputationWatchBar.StatusBar:SetSize(size / scale, 10)
