@@ -396,6 +396,7 @@ function ChangeBackpack()
     SetItemButtonTexture(MainMenuBarBackpackButton, texture)
     MainMenuBarBackpackButton:SetHighlightTexture(highlight)
     MainMenuBarBackpackButton:SetPushedTexture(highlight)
+    MainMenuBarBackpackButton:SetCheckedTexture(highlight)
 
     MainMenuBarBackpackButtonNormalTexture:Hide()
     MainMenuBarBackpackButtonNormalTexture:SetTexture()
