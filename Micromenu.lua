@@ -402,15 +402,10 @@ function ChangeBackpack()
     MainMenuBarBackpackButtonNormalTexture:SetTexture()
     --MainMenuBarBackpackButton.IconBorder:Hide()
 
-    CharacterBag3SlotNormalTexture:Hide()
-    CharacterBag2SlotNormalTexture:Hide()
-    CharacterBag1SlotNormalTexture:Hide()
-    CharacterBag0SlotNormalTexture:Hide()
-
-    CharacterBag3SlotNormalTexture:SetTexture()
-    CharacterBag2SlotNormalTexture:SetTexture()
-    CharacterBag1SlotNormalTexture:SetTexture()
-    CharacterBag0SlotNormalTexture:SetTexture()
+    for i = 0, 3 do
+        _G['CharacterBag' .. i .. 'SlotNormalTexture']:Hide()
+        _G['CharacterBag' .. i .. 'SlotNormalTexture']:SetTexture()
+    end
 end
 ChangeBackpack()
 
