@@ -116,9 +116,6 @@ ChangeRep()
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
-    local iconMask = frame:CreateMaskTexture()
-    iconMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\iconmask', 'CLAMPTOWHITE', 'CLAMPTOWHITE')
-
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
     for k, v in pairs(buttonTable) do
         for i = 1, 12 do
@@ -129,6 +126,7 @@ function StyleButtons()
             _G[name .. 'NormalTexture']:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
             _G[name .. 'NormalTexture']:SetSize(38, 38)
             _G[name .. 'NormalTexture']:SetPoint('CENTER', 0.5, -0.5)
+            _G[name .. 'NormalTexture']:SetAlpha(1)
 
             -- Border
             _G[name .. 'Border']:SetTexture()
@@ -150,9 +148,8 @@ function StyleButtons()
                 _G[name .. 'FloatingBG']:SetTexCoord(0, 0, 0, 0)
                 _G[name .. 'FloatingBG']:SetSize(45, 45)
             end
-            -- Mask @TODO
-            -- iconMask:SetAllPoints(_G[name .. 'Icon'])
-            -- _G[name .. 'Icon']:AddMaskTexture(iconMask)
+            -- Mask
+            _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
         end
     end
 end
