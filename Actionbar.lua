@@ -150,9 +150,6 @@ function StyleButtons()
             end
             -- Mask
             _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
-            if name == 'MultiBarBottomRightButton12' then
-                print('HERE')
-            end
         end
     end
 
