@@ -30,12 +30,12 @@ function ChangeActionbar()
     end
 
     ActionBarUpButton:ClearAllPoints()
-    ActionBarUpButton:SetPoint('LEFT', MultiBarBottomLeft, 'TOPLEFT', -40, -5)
+    ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -8)
     ActionBarDownButton:ClearAllPoints()
-    ActionBarDownButton:SetPoint('LEFT', MultiBarBottomLeft, 'BOTTOMLEFT', -40, 5)
+    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 5)
 
-    MainMenuBarPageNumber:ClearAllPoints()
-    MainMenuBarPageNumber:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', -50, 0)
+    --MainMenuBarPageNumber:ClearAllPoints()
+    --MainMenuBarPageNumber:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', -50, 0)
 end
 ChangeActionbar()
 
@@ -150,8 +150,49 @@ function StyleButtons()
             end
             -- Mask
             _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+            if name == 'MultiBarBottomRightButton12' then
+                print('HERE')
+            end
         end
     end
+
+    -- actionbar switch buttons
+    ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
+    ActionBarUpButton:GetNormalTexture():SetTexCoord(0.701171875, 0.767578125, 0.40673828125, 0.42041015625)
+    ActionBarUpButton:GetHighlightTexture():SetTexture(textureRef)
+    ActionBarUpButton:GetHighlightTexture():SetTexCoord(0.884765625, 0.951171875, 0.34619140625, 0.35986328125)
+    ActionBarUpButton:GetPushedTexture():SetTexture(textureRef)
+    ActionBarUpButton:GetPushedTexture():SetTexCoord(0.884765625, 0.951171875, 0.33154296875, 0.34521484375)
+
+    ActionBarDownButton:GetNormalTexture():SetTexture(textureRef)
+    ActionBarDownButton:GetNormalTexture():SetTexCoord(0.904296875, 0.970703125, 0.29541015625, 0.30908203125)
+    ActionBarDownButton:GetHighlightTexture():SetTexture(textureRef)
+    ActionBarDownButton:GetHighlightTexture():SetTexCoord(0.904296875, 0.970703125, 0.28076171875, 0.29443359375)
+    ActionBarDownButton:GetPushedTexture():SetTexture(textureRef)
+    ActionBarDownButton:GetPushedTexture():SetTexCoord(0.904296875, 0.970703125, 0.26611328125, 0.27978515625)
+
+    -- gryphon = 100
+    ActionBarUpButton:SetFrameStrata('HIGH')
+    ActionBarUpButton:SetFrameLevel(105)
+    ActionBarUpButton:SetScale(0.5)
+    ActionBarDownButton:SetFrameStrata('HIGH')
+    ActionBarDownButton:SetFrameLevel(105)
+    ActionBarDownButton:SetScale(0.5)
+    --MainMenuBarPageNumber:SetFrameStrata('HIGH')
+
+    -- MainMenuBarPageNumber:SetFrameLevel(105)
+    local frameName = 'DragonflightUIPageNumberFrame'
+    local f = CreateFrame('Frame', frameName, UIParent)
+    f:SetSize(25, 25)
+    f:SetPoint('CENTER', ActionButton1, 'CENTER')
+    f:SetFrameStrata('HIGH')
+    f:SetFrameLevel(105)
+
+    MainMenuBarPageNumber:ClearAllPoints()
+    MainMenuBarPageNumber:SetPoint('LEFT', _G[frameName], 'LEFT', -15.5, 0)
+    MainMenuBarPageNumber:SetParent(_G[frameName])
+    --MainMenuBarPageNumber:SetDrawLayer('OVERLAY')
+    MainMenuBarPageNumber:SetScale(1.5)
 end
 StyleButtons()
 
