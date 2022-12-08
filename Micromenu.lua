@@ -403,8 +403,18 @@ function ChangeBackpack()
     --MainMenuBarBackpackButton.IconBorder:Hide()
 
     for i = 0, 3 do
-        _G['CharacterBag' .. i .. 'SlotNormalTexture']:Hide()
-        _G['CharacterBag' .. i .. 'SlotNormalTexture']:SetTexture()
+        local slot = 'Interface\\Addons\\DragonflightUI\\Textures\\bagborder2'
+        local slothighlight = 'Interface\\Addons\\DragonflightUI\\Textures\\baghighlight2'
+
+        --  _G['CharacterBag' .. i .. 'SlotNormalTexture']:Hide()
+        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexture(slot)
+        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetSize(40, 40)
+        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexture(slothighlight)
+        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(55, 55)
+
+        --_G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(40, 40)
+
+        _G['CharacterBag' .. i .. 'SlotIconTexture']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\bagmask')
     end
 end
 ChangeBackpack()
