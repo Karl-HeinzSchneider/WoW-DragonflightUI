@@ -1,6 +1,7 @@
 print('Actionbar.lua')
 
 local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
+frame:SetFrameStrata('HIGH')
 
 function ChangeActionbar()
     ActionButton1:ClearAllPoints()
@@ -58,21 +59,6 @@ function ChangeExp()
     MainMenuBarExpText:ClearAllPoints()
     MainMenuBarExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
 
-    local expText = MainMenuExpBar:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
-    expText:SetFont(Path, 12, Flags)
-    expText:SetText('HALLLOOOOO')
-    expText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 500)
-
-    --[[  hooksecurefunc(
-        MainMenuBarExpText,
-        'SetText',
-        function(self)
-            local text = self:GetText()
-            expText:SetText(text)
-            MainMenuBarExpText:Hide()
-            --print(self:GetText())
-        end
-    ) ]]
     MainMenuXPBarTexture1:Hide()
     MainMenuXPBarTexture2:Hide()
     MainMenuXPBarTexture3:Hide()
@@ -85,6 +71,32 @@ function ChangeExp()
     ExhaustionTick:SetSize(12 * scaling, 14 * scaling)
 end
 ChangeExp()
+
+function NewExpText()
+    -- hide default
+    hooksecurefunc(
+        MainMenuBarExpText,
+        'SetText',
+        function(self)
+            MainMenuBarExpText:Hide()
+        end
+    )
+
+    local Path, Size, Flags = MainMenuBarExpText:GetFont()
+    frame.ExpText = frame:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
+    frame.ExpText:SetFont(Path, 12, Flags)
+    frame.ExpText:SetText('HALLLOOOOO')
+    frame.ExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
+
+    frame.UpdateExpText = function()
+        local XP = UnitXP('player')
+        local XPMax = UnitXPMax('player')
+        frame.ExpText:SetText('XP: ' .. XP .. '/' .. XPMax)
+    end
+    frame.UpdateExpText()
+    frame:RegisterEvent('PLAYER_XP_UPDATE')
+end
+NewExpText()
 
 function ChangeRep()
     local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
@@ -218,5 +230,12 @@ function ChangeButtonSpacing()
     end
 end
 ChangeButtonSpacing()
+
+function frame:OnEvent(event, arg1)
+    if event == 'PLAYER_XP_UPDATE' then
+        frame.UpdateExpText()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
 
 print('Actionbar.lua - End')
