@@ -112,6 +112,15 @@ DrawMinimapBorder()
 function ReplaceTextures()
 end
 
+function MoveBuffs()
+    BuffFrame:ClearAllPoints()
+    BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -45, -13)
+    BuffFrame.SetPoint = function()
+    end
+    -- BuffFrame.ClearAllPoints() = function()     end
+end
+MoveBuffs()
+
 -- Events
 frame:RegisterEvent('ADDON_LOADED')
 
