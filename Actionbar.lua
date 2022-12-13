@@ -58,17 +58,18 @@ function ChangeExp()
     MainMenuBarExpText:ClearAllPoints()
     MainMenuBarExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
 
-    --[[     local expText = MainMenuExpBar:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
+    local expText = MainMenuExpBar:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
     expText:SetFont(Path, 12, Flags)
     expText:SetText('HALLLOOOOO')
     expText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 500)
 
-    hooksecurefunc(
+    --[[  hooksecurefunc(
         MainMenuBarExpText,
         'SetText',
         function(self)
             local text = self:GetText()
             expText:SetText(text)
+            MainMenuBarExpText:Hide()
             --print(self:GetText())
         end
     ) ]]
