@@ -58,6 +58,20 @@ function ChangeExp()
     MainMenuBarExpText:ClearAllPoints()
     MainMenuBarExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
 
+    --[[     local expText = MainMenuExpBar:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
+    expText:SetFont(Path, 12, Flags)
+    expText:SetText('HALLLOOOOO')
+    expText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 500)
+
+    hooksecurefunc(
+        MainMenuBarExpText,
+        'SetText',
+        function(self)
+            local text = self:GetText()
+            expText:SetText(text)
+            --print(self:GetText())
+        end
+    ) ]]
     MainMenuXPBarTexture1:Hide()
     MainMenuXPBarTexture2:Hide()
     MainMenuXPBarTexture3:Hide()
