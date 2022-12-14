@@ -140,6 +140,35 @@ function ChangeRep()
 end
 ChangeRep()
 
+function NewRepText()
+    -- hide default
+    --[[    hooksecurefunc(
+        ReputationWatchBar.OverlayFrame.Text,
+        'SetText',
+        function(self)
+            ReputationWatchBar.OverlayFrame.Text:Hide()
+        end
+    )
+ ]]
+    local Path, Size, Flags = MainMenuBarExpText:GetFont()
+    frame.RepText = frame:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
+    frame.RepText:SetFont(Path, 12, Flags)
+    frame.RepText:SetText('HALLLOOOOO')
+    frame.RepText:SetPoint('CENTER', ReputationWatchBar, 'CENTER', 0, 0)
+
+    frame.UpdateRepText = function()
+        local name, standing, min, max, value = GetWatchedFactionInfo()
+        if name then
+            local statusMin, statusMax = ReputationWatchBar.StatusBar:GetMinMaxValues()
+            frame.RepText:SetText(name .. ' ' .. statusMin .. ' / ' .. statusMax)
+            ReputationWatchBar.OverlayFrame.Text:SetText('')
+        end
+    end
+    frame.UpdateRepText()
+    frame:RegisterEvent('UPDATE_FACTION')
+end
+--NewRepText()
+
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
@@ -234,6 +263,8 @@ ChangeButtonSpacing()
 function frame:OnEvent(event, arg1)
     if event == 'PLAYER_XP_UPDATE' then
         frame.UpdateExpText()
+    elseif event == 'UPDATE_FACTION' then
+        frame.UpdateRepText()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
