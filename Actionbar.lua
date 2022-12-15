@@ -21,7 +21,7 @@ function ChangeActionbar()
     end
 
     StanceButton1:ClearAllPoints()
-    StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
+    StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 77)
     StanceButton1.SetPoint = function()
     end
 
@@ -85,13 +85,18 @@ function NewExpText()
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
     frame.ExpText = frame:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
     frame.ExpText:SetFont(Path, 12, Flags)
-    frame.ExpText:SetText('HALLLOOOOO')
+    frame.ExpText:SetText('')
     frame.ExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
 
     frame.UpdateExpText = function()
-        local XP = UnitXP('player')
-        local XPMax = UnitXPMax('player')
-        frame.ExpText:SetText('XP: ' .. XP .. '/' .. XPMax)
+        local showXP = newLevel < GetMaxPlayerLevel() and not IsXPUserDisabled()
+        if showXp then
+            local XP = UnitXP('player')
+            local XPMax = UnitXPMax('player')
+            frame.ExpText:SetText('XP: ' .. XP .. '/' .. XPMax)
+        else
+            frame.ExpText:SetText('')
+        end
     end
     frame.UpdateExpText()
     frame:RegisterEvent('PLAYER_XP_UPDATE')
