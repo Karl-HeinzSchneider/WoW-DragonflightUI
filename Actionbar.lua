@@ -142,14 +142,14 @@ ChangeRep()
 
 function NewRepText()
     -- hide default
-    --[[    hooksecurefunc(
+    hooksecurefunc(
         ReputationWatchBar.OverlayFrame.Text,
         'SetText',
         function(self)
             ReputationWatchBar.OverlayFrame.Text:Hide()
         end
     )
- ]]
+
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
     frame.RepText = frame:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
     frame.RepText:SetFont(Path, 12, Flags)
@@ -159,15 +159,24 @@ function NewRepText()
     frame.UpdateRepText = function()
         local name, standing, min, max, value = GetWatchedFactionInfo()
         if name then
-            local statusMin, statusMax = ReputationWatchBar.StatusBar:GetMinMaxValues()
-            frame.RepText:SetText(name .. ' ' .. statusMin .. ' / ' .. statusMax)
             ReputationWatchBar.OverlayFrame.Text:SetText('')
+            frame.RepText:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
+        else
+            frame.RepText:SetText('')
         end
     end
     frame.UpdateRepText()
     frame:RegisterEvent('UPDATE_FACTION')
+
+    hooksecurefunc(
+        'SetWatchedFactionIndex',
+        function(index)
+            --print('SetWatchedFactionIndex', index)
+            frame.UpdateRepText()
+        end
+    )
 end
---NewRepText()
+NewRepText()
 
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
