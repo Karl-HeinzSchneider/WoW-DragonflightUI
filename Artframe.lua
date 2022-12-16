@@ -335,17 +335,18 @@ ChangeGryphon()
 
 function DrawGryphon()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-
+    local scale = 0.42
+    local dx, dy = 125, 5
     local GryphonLeft = CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef, 'GrpyhonLeft')
-    GryphonLeft:SetScale(0.5)
-    GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -120, 5)
+    GryphonLeft:SetScale(scale)
+    GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -dx, dy)
     GryphonLeft:SetFrameStrata('HIGH')
     GryphonLeft:SetFrameLevel(100)
 
     local GryphonRight =
         CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef, 'GryphonRight')
-    GryphonRight:SetScale(0.5)
-    GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', 120, 5)
+    GryphonRight:SetScale(scale)
+    GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', dx, dy)
     GryphonRight:SetFrameStrata('HIGH')
     GryphonRight:SetFrameLevel(100)
 end
@@ -362,33 +363,6 @@ function DrawActionbarDeco()
         deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
         --deco:SetPoint('CENTER', ActionButton4, 'CENTER', 0, 0)
     end
-    --[[ 
-    local decoBar = CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-IconFrame', textureRef, 'ActionbarDecoBar')
-    decoBar:SetScale(1)
-    decoBar:SetSize(427, 35)
-    decoBar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0) ]]
-    --[[  local backdropInfo = {
-        bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
-        edgeFile = 'Interface\\Addons\\DragonflightUI\\Textures\\Border',
-        tile = true,
-        tileEdge = true,
-        tileSize = 8,
-        edgeSize = 8,
-        insets = {left = 1, right = 1, top = 1, bottom = 1}
-    }
-
-    local bd = CreateFrame('Frame', nil, nil, 'BackdropTemplate')
-    bd:SetSize(330, 31)
-    bd:SetScale(1)
-    bd:SetBackdrop(backdropInfo)
-    bd:SetPoint('LEFT', ActionButton1, 'LEFT', -3, -1 + 200)
-
-    local texture = UIParent:CreateTexture()
-    texture:SetDrawLayer('ARTWORK', 7)
-    texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\border')
-    texture:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-    texture:SetSize(330, 31)
-    texture:SetScale(1) ]]
 end
 DrawActionbarDeco()
 

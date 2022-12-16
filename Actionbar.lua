@@ -33,9 +33,9 @@ function ChangeActionbar()
     end
 
     ActionBarUpButton:ClearAllPoints()
-    ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -8)
+    ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
     ActionBarDownButton:ClearAllPoints()
-    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 5)
+    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7)
 
     --MainMenuBarPageNumber:ClearAllPoints()
     --MainMenuBarPageNumber:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', -50, 0)
@@ -253,12 +253,13 @@ function StyleButtons()
     ActionBarDownButton:GetPushedTexture():SetTexCoord(0.904296875, 0.970703125, 0.26611328125, 0.27978515625)
 
     -- gryphon = 100
+    local buttonScale = 0.42
     ActionBarUpButton:SetFrameStrata('HIGH')
     ActionBarUpButton:SetFrameLevel(105)
-    ActionBarUpButton:SetScale(0.5)
+    ActionBarUpButton:SetScale(buttonScale)
     ActionBarDownButton:SetFrameStrata('HIGH')
     ActionBarDownButton:SetFrameLevel(105)
-    ActionBarDownButton:SetScale(0.5)
+    ActionBarDownButton:SetScale(buttonScale)
     --MainMenuBarPageNumber:SetFrameStrata('HIGH')
 
     -- MainMenuBarPageNumber:SetFrameLevel(105)
@@ -273,7 +274,7 @@ function StyleButtons()
     MainMenuBarPageNumber:SetPoint('LEFT', _G[frameName], 'LEFT', -15.5, 0)
     MainMenuBarPageNumber:SetParent(_G[frameName])
     --MainMenuBarPageNumber:SetDrawLayer('OVERLAY')
-    MainMenuBarPageNumber:SetScale(1.5)
+    MainMenuBarPageNumber:SetScale(1.25)
 end
 StyleButtons()
 
