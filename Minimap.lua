@@ -115,6 +115,13 @@ end
 function MoveBuffs()
     BuffFrame:ClearAllPoints()
     BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -45, -13)
+    hooksecurefunc(
+        'UIParent_UpdateTopFramePositions',
+        function()
+            BuffFrame:ClearAllPoints()
+            BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -45, -13)
+        end
+    )
     -- @TODO: Taint ingame
     --[[ BuffFrame.SetPoint = function()
     end ]]
