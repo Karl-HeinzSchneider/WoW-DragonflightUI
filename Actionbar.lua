@@ -37,7 +37,7 @@ function ChangeActionbar()
 
     --MainMenuBarPageNumber:ClearAllPoints()
     --MainMenuBarPageNumber:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', -50, 0)
-    --[[ MainMenuExpBar:Hide()
+    MainMenuExpBar:Hide()
     hooksecurefunc(
         MainMenuExpBar,
         'Show',
@@ -54,7 +54,7 @@ function ChangeActionbar()
             -- print('show')
             ReputationWatchBar:Hide()
         end
-    ) ]]
+    )
 end
 ChangeActionbar()
 
@@ -156,7 +156,7 @@ function CreateNewXPBar()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('UPDATE_EXHAUSTION')
 end
---CreateNewXPBar()
+CreateNewXPBar()
 
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
