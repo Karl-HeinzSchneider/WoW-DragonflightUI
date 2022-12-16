@@ -66,7 +66,8 @@ function ChangeActionbar()
 
     --@TODO: position is resetting
     CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, -25)
+    CastingBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 200)
 end
 ChangeActionbar()
 
