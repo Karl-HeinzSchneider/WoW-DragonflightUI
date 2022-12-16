@@ -155,13 +155,14 @@ function ReplaceTextures()
 end
 
 function MoveBuffs()
+    local dx = -45 - 10
     BuffFrame:ClearAllPoints()
-    BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -45, -13)
+    BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', dx, -13)
     hooksecurefunc(
         'UIParent_UpdateTopFramePositions',
         function()
             BuffFrame:ClearAllPoints()
-            BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -45, -13)
+            BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', dx, -13)
         end
     )
     -- @TODO: Taint ingame
