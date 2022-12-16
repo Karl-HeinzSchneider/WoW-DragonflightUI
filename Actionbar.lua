@@ -106,6 +106,8 @@ function CreateNewXPBar()
 
     frame.XPBar = f
 
+    frame.XPBar.valid = false
+
     frame.UpdateXPBar = function()
         local showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
         if showXP then
@@ -124,9 +126,11 @@ function CreateNewXPBar()
             frame.XPBar.Bar:SetValue(playerCurrXP)
 
             frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
-            frame.XPBar:Show()
+            --frame.XPBar:Show()
+            frame.XPBar.valid = true
         else
-            frame.XPBar:Hide()
+            --frame.XPBar:Hide()
+            frame.XPBar.valid = false
         end
     end
 
@@ -178,10 +182,13 @@ function CreateNewRepBar()
     frame.RepBar.Bar:SetMinMaxValues(0, 125)
     frame.RepBar.Bar:SetValue(69)
 
+    frame.RepBar.valid = false
+
     frame.UpdateRepBar = function()
         local name, standing, min, max, value = GetWatchedFactionInfo()
         if name then
-            frame.RepBar:Show()
+            --frame.RepBar:Show()
+            frame.RepBar.valid = true
             frame.RepBar.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
             frame.RepBar.Bar:SetMinMaxValues(0, max - min)
             frame.RepBar.Bar:SetValue(value - min)
@@ -189,11 +196,12 @@ function CreateNewRepBar()
             local color = FACTION_BAR_COLORS[standing]
             frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
         else
-            frame.RepBar:Hide()
+            --frame.RepBar:Hide()
+            frame.RepBar.valid = false
         end
     end
 
-    frame:RegisterEvent('UPDATE_FACTION')
+    --frame:RegisterEvent('UPDATE_FACTION')
 end
 CreateNewRepBar()
 
@@ -290,6 +298,8 @@ end
 ChangeButtonSpacing()
 
 function SetNumBars()
+    local dy = 20
+    local dRep, dButtons = 0, 0
     local i = 0
     if frame.RepBar:IsVisible() then
         i = i + 1
@@ -297,39 +307,58 @@ function SetNumBars()
     if frame.XPBar:IsVisible() then
         i = i + 1
     end
-    --print('SetNumBars', i)
+    print('SetNumBars', i)
 
-    if true then
-        return
-    end
-
-    local dy = 20
-    if i == 2 then
-        --ActionButton1:ClearAllPoints()
-        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
-    elseif i == 1 then
-        --ActionButton1:ClearAllPoints()
-        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - dy)
+    local inLockdown = InCombatLockdown()
+    if inLockdown then
+        --return
+        print('Lockdown -> changing after Combat ends..')
+        shouldCheck = true
     else
-        --ActionButton1:ClearAllPoints()
-        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - 2 * dy)
+        if i == 2 then
+            --ActionButton1:ClearAllPoints()
+            ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+            frame.XPBar:SetPoint('BOTTOM', 0, 5)
+            frame.RepBar:SetPoint('BOTTOM', 0, 5 + 20)
+        elseif i == 1 then
+            --ActionButton1:ClearAllPoints()
+            ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - dy)
+            if frame.RepBar:IsVisible() then
+                frame.RepBar:SetPoint('BOTTOM', 0, 5)
+            else
+                frame.XPBar:SetPoint('BOTTOM', 0, 5)
+            end
+        else
+            --ActionButton1:ClearAllPoints()
+            ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - 2 * dy)
+        end
     end
 end
+frame.UpdateXPBar()
+frame.UpdateRepBar()
+SetNumBars()
+
+frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 function frame:OnEvent(event, arg1)
-    --print('event', event)
+    print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        frame.UpdateXPBar()
-        frame.UpdateRepBar()
-        SetNumBars()
+        -- frame.UpdateXPBar()
+        --frame.UpdateRepBar()
+        --SetNumBars()
+        frame:RegisterEvent('UPDATE_FACTION')
     elseif event == 'UPDATE_FACTION' then
+        --SetNumBars()
         frame.UpdateRepBar()
-        SetNumBars()
     elseif event == 'PLAYER_XP_UPDATE' then
+        --SetNumBars()
         frame.UpdateXPBar()
-        SetNumBars()
     elseif event == 'UPDATE_EXHAUSTION' then
         frame.UpdateXPBar()
+    elseif event == 'PLAYER_REGEN_ENABLED' then
+        frame.UpdateXPBar()
+        frame.UpdateRepBar()
+        SetNumBars()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
