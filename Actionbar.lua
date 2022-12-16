@@ -3,13 +3,15 @@ print('Actionbar.lua')
 local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 frame:SetFrameStrata('HIGH')
 
+local SetPointActionButton1
+
 function ChangeActionbar()
     ActionButton1:ClearAllPoints()
     --ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 42 + 25)
-    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 25)
-    ActionButton1.SetPoint = function()
-    end
-
+    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+    --SetPointActionButton1 = ActionButton1.SetPoint()
+    --[[ ActionButton1.SetPoint = function()
+    end ]]
     MultiBarBottomLeft:ClearAllPoints()
     MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
     MultiBarBottomLeft.SetPoint = function()
@@ -42,7 +44,6 @@ function ChangeActionbar()
         MainMenuExpBar,
         'Show',
         function()
-            -- print('show')
             MainMenuExpBar:Hide()
         end
     )
@@ -51,8 +52,15 @@ function ChangeActionbar()
         ReputationWatchBar,
         'Show',
         function()
-            -- print('show')
             ReputationWatchBar:Hide()
+        end
+    )
+    MainMenuBarMaxLevelBar:Hide()
+    hooksecurefunc(
+        MainMenuBarMaxLevelBar,
+        'Show',
+        function()
+            MainMenuBarMaxLevelBar:Hide()
         end
     )
 end
@@ -62,7 +70,7 @@ function CreateNewXPBar()
     local size = 460
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
     f:SetSize(size, 14)
-    f:SetPoint('BOTTOM', 0, 10)
+    f:SetPoint('BOTTOM', 0, 5)
 
     local tex = f:CreateTexture('Background', 'ARTWORK')
     tex:SetAllPoints()
@@ -99,21 +107,27 @@ function CreateNewXPBar()
     frame.XPBar = f
 
     frame.UpdateXPBar = function()
-        -- exhaustion
-        local exhaustionStateID = GetRestState()
-        if (exhaustionStateID == 1) then
-            frame.XPBar.Bar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0)
-        elseif (exhaustionStateID == 2) then
-            frame.XPBar.Bar:SetStatusBarColor(0.58, 0.0, 0.55, 1.0) -- purple
+        local showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
+        if showXP then
+            -- exhaustion
+            local exhaustionStateID = GetRestState()
+            if (exhaustionStateID == 1) then
+                frame.XPBar.Bar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0)
+            elseif (exhaustionStateID == 2) then
+                frame.XPBar.Bar:SetStatusBarColor(0.58, 0.0, 0.55, 1.0) -- purple
+            end
+
+            -- value
+            local playerCurrXP = UnitXP('player')
+            local playerMaxXP = UnitXPMax('player')
+            frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
+            frame.XPBar.Bar:SetValue(playerCurrXP)
+
+            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
+            frame.XPBar:Show()
+        else
+            frame.XPBar:Hide()
         end
-
-        -- value
-        local playerCurrXP = UnitXP('player')
-        local playerMaxXP = UnitXPMax('player')
-        frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
-        frame.XPBar.Bar:SetValue(playerCurrXP)
-
-        frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
     end
 
     frame:RegisterEvent('PLAYER_XP_UPDATE')
@@ -126,7 +140,7 @@ function CreateNewRepBar()
     local size = 460
     local f = CreateFrame('Frame', 'DragonflightUIRepBar', UIParent)
     f:SetSize(size, 14)
-    f:SetPoint('BOTTOM', 0, 10 + 20)
+    f:SetPoint('BOTTOM', 0, 5 + 20)
 
     local tex = f:CreateTexture('Background', 'ARTWORK')
     tex:SetAllPoints()
@@ -171,6 +185,9 @@ function CreateNewRepBar()
             frame.RepBar.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
             frame.RepBar.Bar:SetMinMaxValues(0, max - min)
             frame.RepBar.Bar:SetValue(value - min)
+
+            local color = FACTION_BAR_COLORS[standing]
+            frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
         else
             frame.RepBar:Hide()
         end
@@ -271,15 +288,45 @@ function ChangeButtonSpacing()
 end
 ChangeButtonSpacing()
 
+function SetNumBars()
+    local i = 0
+    if frame.RepBar:IsVisible() then
+        i = i + 1
+    end
+    if frame.XPBar:IsVisible() then
+        i = i + 1
+    end
+    --print('SetNumBars', i)
+
+    if true then
+        return
+    end
+
+    local dy = 20
+    if i == 2 then
+        --ActionButton1:ClearAllPoints()
+        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+    elseif i == 1 then
+        --ActionButton1:ClearAllPoints()
+        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - dy)
+    else
+        --ActionButton1:ClearAllPoints()
+        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - 2 * dy)
+    end
+end
+
 function frame:OnEvent(event, arg1)
-    print('event', event)
+    --print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
         frame.UpdateXPBar()
         frame.UpdateRepBar()
+        SetNumBars()
     elseif event == 'UPDATE_FACTION' then
         frame.UpdateRepBar()
+        SetNumBars()
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
+        SetNumBars()
     elseif event == 'UPDATE_EXHAUSTION' then
         frame.UpdateXPBar()
     end
