@@ -63,6 +63,10 @@ function ChangeActionbar()
             MainMenuBarMaxLevelBar:Hide()
         end
     )
+
+    --@TODO: position is resetting
+    CastingBarFrame:ClearAllPoints()
+    CastingBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, -25)
 end
 ChangeActionbar()
 
@@ -298,40 +302,31 @@ end
 ChangeButtonSpacing()
 
 function SetNumBars()
-    local dy = 20
-    local dRep, dButtons = 0, 0
-    local i = 0
-    if frame.RepBar:IsVisible() then
-        i = i + 1
-    end
-    if frame.XPBar:IsVisible() then
-        i = i + 1
-    end
-    print('SetNumBars', i)
-
     local inLockdown = InCombatLockdown()
     if inLockdown then
         --return
-        print('Lockdown -> changing after Combat ends..')
-        shouldCheck = true
+        print('[DragonflightUI] changing Frames after combat ends..')
     else
-        if i == 2 then
-            --ActionButton1:ClearAllPoints()
-            ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
-            frame.XPBar:SetPoint('BOTTOM', 0, 5)
-            frame.RepBar:SetPoint('BOTTOM', 0, 5 + 20)
-        elseif i == 1 then
-            --ActionButton1:ClearAllPoints()
-            ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - dy)
-            if frame.RepBar:IsVisible() then
-                frame.RepBar:SetPoint('BOTTOM', 0, 5)
-            else
-                frame.XPBar:SetPoint('BOTTOM', 0, 5)
-            end
+        local dy = 20
+        local dRep, dButtons = 0, 0
+
+        if frame.XPBar.valid then
+            frame.XPBar:Show()
         else
-            --ActionButton1:ClearAllPoints()
-            ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - 2 * dy)
+            frame.XPBar:Hide()
+            dRep = dRep + dy
+            dButtons = dButtons + dy
         end
+        if frame.RepBar.valid then
+            frame.RepBar:Show()
+        else
+            frame.RepBar:Hide()
+            dButtons = dButtons + dy
+        end
+
+        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - dButtons)
+        frame.XPBar:SetPoint('BOTTOM', 0, 5)
+        frame.RepBar:SetPoint('BOTTOM', 0, 5 + 20 - dRep)
     end
 end
 frame.UpdateXPBar()
@@ -341,20 +336,21 @@ SetNumBars()
 frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 function frame:OnEvent(event, arg1)
-    print('event', event)
+    --print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        -- frame.UpdateXPBar()
-        --frame.UpdateRepBar()
-        --SetNumBars()
+        frame.UpdateXPBar()
+        frame.UpdateRepBar()
+        SetNumBars()
         frame:RegisterEvent('UPDATE_FACTION')
     elseif event == 'UPDATE_FACTION' then
-        --SetNumBars()
         frame.UpdateRepBar()
+        SetNumBars()
     elseif event == 'PLAYER_XP_UPDATE' then
-        --SetNumBars()
         frame.UpdateXPBar()
+        SetNumBars()
     elseif event == 'UPDATE_EXHAUSTION' then
         frame.UpdateXPBar()
+        SetNumBars()
     elseif event == 'PLAYER_REGEN_ENABLED' then
         frame.UpdateXPBar()
         frame.UpdateRepBar()
