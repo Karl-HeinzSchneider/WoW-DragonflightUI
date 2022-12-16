@@ -217,6 +217,7 @@ function StyleButtons()
         for i = 1, 12 do
             --MultiBarBottomRightButton1NormalTexture
             local name = v .. i
+            --print(name)
 
             _G[name .. 'NormalTexture']:SetTexture(textureRef)
             _G[name .. 'NormalTexture']:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
@@ -290,6 +291,21 @@ function StyleButtons()
 end
 StyleButtons()
 
+function ApplyMaskAgain()
+    local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
+    for k, v in pairs(buttonTable) do
+        for i = 1, 12 do
+            --MultiBarBottomRightButton1NormalTexture
+            local name = v .. i
+
+            -- Mask
+            if _G[name .. 'Icon'] then
+                _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+            end
+        end
+    end
+end
+
 function ChangeButtonSpacing()
     local spacing = 3 -- default: 6
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
@@ -338,6 +354,7 @@ frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 function frame:OnEvent(event, arg1)
     --print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
+        ApplyMaskAgain()
         frame.UpdateXPBar()
         frame.UpdateRepBar()
         SetNumBars()
