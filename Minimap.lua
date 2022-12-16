@@ -64,11 +64,45 @@ function ChangeZoom()
 end
 ChangeZoom()
 
+function CreateMinimapInfoFrame()
+    local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
+    f:SetSize(180, 22)
+    f:SetPoint('CENTER', Minimap, 'TOP', -5, 25)
+
+    local tex = f:CreateTexture('Background', 'ARTWORK')
+    tex:SetAllPoints()
+    tex:SetColorTexture(0, 0, 0)
+    tex:SetAlpha(0.5)
+    f.Background = tex
+
+    frame.MinimapInfo = f
+end
+CreateMinimapInfoFrame()
+
 function ChangeCalendar()
-    GameTimeFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', 0, 0)
+    GameTimeFrame:ClearAllPoints()
+    --GameTimeFrame:SetPoint('CENTER', MinimapCluster, 'TOPRIGHT', -16, -20)
+    GameTimeFrame:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 0, -2)
+
     --GameTimeFrame:SetParent(MinimapBackdrop)
     GameTimeFrame:SetScale(0.75)
-    --GameTimeFrame:SetSize(32, 32)
+
+    local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar32'
+    GameTimeFrame:SetSize(35, 35)
+    GameTimeFrame:GetNormalTexture():SetTexture(texture)
+    GameTimeFrame:GetNormalTexture():SetTexCoord(0.18359375, 0.265625, 0.00390625, 0.078125)
+    GameTimeFrame:GetPushedTexture():SetTexture(texture)
+    GameTimeFrame:GetPushedTexture():SetTexCoord(0.00390625, 0.0859375, 0.00390625, 0.078125)
+    GameTimeFrame:GetHighlightTexture():SetTexture(texture)
+    GameTimeFrame:GetHighlightTexture():SetTexCoord(0.09375, 0.17578125, 0.00390625, 0.078125)
+
+    --@TODO: change Font/size/center etc
+    --local fontstring = GameTimeFrame:GetFontString()
+    -- print(fontstring[1])
+    --GameTimeFrame:SetNormalFontObject(GameFontHighlightLarge)
+
+    --local obj = GameTimeFrame:GetNormalFontObject()
+    --obj:SetJustifyH('LEFT')
 end
 ChangeCalendar()
 
@@ -77,20 +111,27 @@ function ChangeClock()
         local regions = {TimeManagerClockButton:GetRegions()}
         regions[1]:Hide()
         TimeManagerClockButton:ClearAllPoints()
-        TimeManagerClockButton:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -15, 2)
+        TimeManagerClockButton:SetPoint('RIGHT', frame.MinimapInfo, 'RIGHT', 5, 0)
+        TimeManagerClockButton:SetParent(frame.MinimapInfo)
     end
 end
 ChangeClock()
 
 function ChangeZoneText()
-    MinimapZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -65, -8)
+    MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 0, 0)
+    MinimapZoneTextButton:SetParent(frame.MinimapInfo)
 end
 ChangeZoneText()
 
 function ChangeTracking()
     MiniMapTracking:ClearAllPoints()
-    MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200, 0)
+    --MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
+    MiniMapTracking:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
+
     MiniMapTracking:SetScale(0.75)
+
+    MiniMapTrackingButtonBorder:Hide()
+    MiniMapTrackingIcon:SetPoint('CENTER', MiniMapTrackingButton, -25, 0)
     --print(MiniMapTrackingBackground:GetTexture())
     --MiniMapTrackingBackground:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     --MiniMapTrackingBackground:SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
