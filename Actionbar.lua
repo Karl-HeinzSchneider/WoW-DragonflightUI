@@ -69,6 +69,19 @@ function ChangeExp()
     ExhaustionTick:GetHighlightTexture():SetTexCoord(0.55908203125, 0.57080078125, 0.78515625, 0.89453125)
     local scaling = 1.2
     ExhaustionTick:SetSize(12 * scaling, 14 * scaling)
+
+    MainMenuMaxLevelBar0:SetTexture('')
+    MainMenuMaxLevelBar1:SetTexture('')
+    MainMenuMaxLevelBar2:SetTexture('')
+    MainMenuMaxLevelBar3:SetTexture('')
+
+    hooksecurefunc(
+        MainMenuMaxLevelBar0,
+        'Show',
+        function(self)
+            print('show maxlvl')
+        end
+    )
 end
 ChangeExp()
 
@@ -89,8 +102,9 @@ function NewExpText()
     frame.ExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
 
     frame.UpdateExpText = function()
+        local newLevel = UnitLevel('player')
         local showXP = newLevel < GetMaxPlayerLevel() and not IsXPUserDisabled()
-        if showXp then
+        if showXP then
             local XP = UnitXP('player')
             local XPMax = UnitXPMax('player')
             frame.ExpText:SetText('XP: ' .. XP .. '/' .. XPMax)
@@ -135,6 +149,21 @@ function ChangeRep()
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetScale(0.7)
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexture(expTexture)
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
+
+    -- max level
+    --ReputationWatchBar.StatusBar.XPBarTexture0:Hide()
+    ReputationWatchBar.StatusBar.XPBarTexture1:Hide()
+    ReputationWatchBar.StatusBar.XPBarTexture2:Hide()
+    --ReputationWatchBar.StatusBar.XPBarTexture0:SetTexture()
+    ReputationWatchBar.StatusBar.XPBarTexture1:SetTexture()
+    ReputationWatchBar.StatusBar.XPBarTexture2:SetTexture()
+
+    ReputationWatchBar.StatusBar.XPBarTexture0:ClearAllPoints()
+    ReputationWatchBar.StatusBar.XPBarTexture0:SetPoint('CENTER', ReputationWatchBar.StatusBar, 'CENTER', 2, -2.5)
+    ReputationWatchBar.StatusBar.XPBarTexture0:SetSize(size + 8, 20)
+    ReputationWatchBar.StatusBar.XPBarTexture0:SetScale(0.7)
+    ReputationWatchBar.StatusBar.XPBarTexture0:SetTexture(expTexture)
+    ReputationWatchBar.StatusBar.XPBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
 
     --ReputationWatchBar.OverlayFrame.Text
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
