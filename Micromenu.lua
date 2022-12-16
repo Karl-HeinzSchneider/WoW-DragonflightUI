@@ -1,5 +1,7 @@
 print('Micromenu.lua')
 
+local frame = CreateFrame('FRAME', 'DragonflightUIMicromenuFrame', UIParent)
+
 function SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
     local key = pre .. name
 
@@ -470,8 +472,49 @@ MoveBars()
 
 function ChangeFramerate()
     FramerateLabel:ClearAllPoints()
-    FramerateLabel:SetPoint('BOTTOM', CharacterMicroButton, 'BOTTOM', -60, 6)
+    FramerateLabel:SetPoint('BOTTOM', CharacterMicroButton, 'BOTTOM', -80, 6)
+    local scale = 0.75
+    FramerateLabel:SetScale(scale)
+    FramerateText:SetScale(scale)
     UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
+
+    -- text
+
+    local f = CreateFrame('Frame', 'PingTextFrame', UIParent)
+    f:SetWidth(1)
+    f:SetHeight(1)
+    f:ClearAllPoints()
+    f:SetPoint('LEFT', FramerateLabel, 'LEFT', 0, 14)
+    local t = f:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+    t:SetPoint('LEFT', 0, 0)
+    t:SetText('')
+
+    local Path, Size, Flags = FramerateText:GetFont()
+    t:SetFont(Path, Size, Flags)
+
+    hooksecurefunc(
+        FramerateText,
+        'SetFormattedText',
+        function()
+            local down, up, lagHome, lagWorld = GetNetStats()
+            local str = 'MS: ' .. lagHome .. '/' .. lagWorld
+            t:SetText(str)
+        end
+    )
+    hooksecurefunc(
+        FramerateText,
+        'Show',
+        function()
+            f:Show()
+        end
+    )
+    hooksecurefunc(
+        FramerateText,
+        'Hide',
+        function()
+            f:Hide()
+        end
+    )
 end
 ChangeFramerate()
 
