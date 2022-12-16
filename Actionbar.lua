@@ -37,142 +37,26 @@ function ChangeActionbar()
 
     --MainMenuBarPageNumber:ClearAllPoints()
     --MainMenuBarPageNumber:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', -50, 0)
+    --[[ MainMenuExpBar:Hide()
+    hooksecurefunc(
+        MainMenuExpBar,
+        'Show',
+        function()
+            -- print('show')
+            MainMenuExpBar:Hide()
+        end
+    )
+    ReputationWatchBar:Hide()
+    hooksecurefunc(
+        ReputationWatchBar,
+        'Show',
+        function()
+            -- print('show')
+            ReputationWatchBar:Hide()
+        end
+    ) ]]
 end
 ChangeActionbar()
-
-function ChangeExp()
-    local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
-    local size = 460 -- 500
-    MainMenuExpBar:ClearAllPoints()
-    MainMenuExpBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 12)
-    MainMenuExpBar:SetSize(size, 10)
-    MainMenuExpBar:SetScale(1)
-
-    MainMenuXPBarTexture0:ClearAllPoints()
-    MainMenuXPBarTexture0:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 2, -2.5)
-    MainMenuXPBarTexture0:SetSize(size + 8, 20)
-    MainMenuXPBarTexture0:SetTexture(expTexture)
-    MainMenuXPBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
-
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    MainMenuBarExpText:SetFont(Path, 12, Flags)
-    MainMenuBarExpText:ClearAllPoints()
-    MainMenuBarExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
-
-    MainMenuXPBarTexture1:Hide()
-    MainMenuXPBarTexture2:Hide()
-    MainMenuXPBarTexture3:Hide()
-
-    ExhaustionTick:SetNormalTexture(expTexture)
-    ExhaustionTick:GetNormalTexture():SetTexCoord(0.57177734375, 0.58154296875, 0.78515625, 0.89453125)
-    ExhaustionTick:SetHighlightTexture(expTexture)
-    ExhaustionTick:GetHighlightTexture():SetTexCoord(0.55908203125, 0.57080078125, 0.78515625, 0.89453125)
-    local scaling = 1.2
-    ExhaustionTick:SetSize(12 * scaling, 14 * scaling)
-
-    MainMenuMaxLevelBar0:SetTexture('')
-    MainMenuMaxLevelBar1:SetTexture('')
-    MainMenuMaxLevelBar2:SetTexture('')
-    MainMenuMaxLevelBar3:SetTexture('')
-
-    hooksecurefunc(
-        MainMenuMaxLevelBar0,
-        'Show',
-        function(self)
-            print('show maxlvl')
-        end
-    )
-end
-ChangeExp()
-
-function NewExpText()
-    -- hide default
-    hooksecurefunc(
-        MainMenuBarExpText,
-        'SetText',
-        function(self)
-            MainMenuBarExpText:Hide()
-        end
-    )
-
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    frame.ExpText = frame:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
-    frame.ExpText:SetFont(Path, 12, Flags)
-    frame.ExpText:SetText('')
-    frame.ExpText:SetPoint('CENTER', MainMenuExpBar, 'CENTER', 0, 0)
-
-    frame.UpdateExpText = function()
-        local newLevel = UnitLevel('player')
-        local showXP = newLevel < GetMaxPlayerLevel() and not IsXPUserDisabled()
-        if showXP then
-            local XP = UnitXP('player')
-            local XPMax = UnitXPMax('player')
-            frame.ExpText:SetText('XP: ' .. XP .. '/' .. XPMax)
-        else
-            frame.ExpText:SetText('')
-        end
-    end
-    frame.UpdateExpText()
-    frame:RegisterEvent('PLAYER_XP_UPDATE')
-end
-NewExpText()
-
-function ChangeRep()
-    local expTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x'
-    local bottomDelta = 27
-    MainMenuBar:SetPoint('CENTER', UIParent, 'BOTTOM', 0, bottomDelta)
-    MainMenuBar:SetPoint('TOPLEFT', UIParent, 'BOTTOM', 0, bottomDelta)
-    MainMenuBar:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, bottomDelta)
-
-    local targetSize = 500
-    local scale = 10 / 7
-
-    local size = 460 -- 500
-
-    --print(ReputationWatchBar.StatusBar:GetSize())
-    ReputationWatchBar.StatusBar:SetSize(size / scale, 10)
-    --print(ReputationWatchBar.StatusBar:GetSize())
-    ReputationWatchBar.StatusBar:SetScale(scale)
-    ReputationWatchBar.OverlayFrame:SetSize(size, 10)
-
-    ReputationWatchBar.StatusBar.WatchBarTexture1:Hide()
-    ReputationWatchBar.StatusBar.WatchBarTexture2:Hide()
-    ReputationWatchBar.StatusBar.WatchBarTexture3:Hide()
-    ReputationWatchBar.StatusBar.WatchBarTexture1:SetTexture()
-    ReputationWatchBar.StatusBar.WatchBarTexture2:SetTexture()
-    ReputationWatchBar.StatusBar.WatchBarTexture3:SetTexture()
-
-    -- border
-    ReputationWatchBar.StatusBar.WatchBarTexture0:ClearAllPoints()
-    ReputationWatchBar.StatusBar.WatchBarTexture0:SetPoint('CENTER', ReputationWatchBar.StatusBar, 'CENTER', 2, -2.5)
-    ReputationWatchBar.StatusBar.WatchBarTexture0:SetSize(size + 8, 20)
-    ReputationWatchBar.StatusBar.WatchBarTexture0:SetScale(0.7)
-    ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexture(expTexture)
-    ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
-
-    --ReputationWatchBar.OverlayFrame.Text
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    --print(Path, Size, Flags)
-    ReputationWatchBar.OverlayFrame.Text:SetFont(Path, 12, Flags)
-    ReputationWatchBar.OverlayFrame.Text:ClearAllPoints()
-    ReputationWatchBar.OverlayFrame.Text:SetPoint('CENTER', ReputationWatchBar.OverlayFrame, 0, 0)
-
-    -- max level
-    --ReputationWatchBar.StatusBar.XPBarTexture0:Hide()
-    ReputationWatchBar.StatusBar.XPBarTexture1:Hide()
-    ReputationWatchBar.StatusBar.XPBarTexture2:Hide()
-    --ReputationWatchBar.StatusBar.XPBarTexture0:SetTexture()
-    ReputationWatchBar.StatusBar.XPBarTexture1:SetTexture()
-    ReputationWatchBar.StatusBar.XPBarTexture2:SetTexture()
-
-    ReputationWatchBar.StatusBar.XPBarTexture0:ClearAllPoints()
-    ReputationWatchBar.StatusBar.XPBarTexture0:SetPoint('CENTER', ReputationWatchBar.StatusBar, 'CENTER', 2, -2.5)
-    ReputationWatchBar.StatusBar.XPBarTexture0:SetSize(size + 8, 20)
-    ReputationWatchBar.StatusBar.XPBarTexture0:SetScale(0.7)
-    ReputationWatchBar.StatusBar.XPBarTexture0:SetTexture(expTexture)
-    ReputationWatchBar.StatusBar.XPBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
-end
-ChangeRep()
 
 function NewRepText()
     -- hide default
@@ -213,11 +97,12 @@ end
 --NewRepText()
 
 function CreateNewXPBar()
+    local size = 460
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
-    f:SetSize(460, 14)
+    f:SetSize(size, 14)
     f:SetPoint('CENTER')
 
-    local tex = f:CreateTexture('ARTWORK')
+    local tex = f:CreateTexture('Background', 'ARTWORK')
     tex:SetAllPoints()
     --tex:SetColorTexture(0, 0, 0)
     --tex:SetAlpha(0.5)
@@ -232,20 +117,20 @@ function CreateNewXPBar()
     f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
 
     --border
-    local border = f.Bar:CreateTexture('OVERLAY')
+    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
     border:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
     local dx, dy = 6, 5
-    border:SetSize(460 + dx, 20 + dy)
+    border:SetSize(size + dx, 20 + dy)
     border:SetPoint('CENTER', f.Bar, 'CENTER', 1, -2)
     f.Border = border
 
     -- text
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    f.Text = f.Bar:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
+    f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'TextStatusBarText')
     f.Text:SetFont(Path, 12, Flags)
     f.Text:SetText('')
-    f.Text:SetPoint('CENTER', f.bar, 'CENTER', 0, 0)
+    f.Text:SetPoint('CENTER', f.bar, 'CENTER', 0, 1)
 
     frame.XPBar = f
 
@@ -267,10 +152,11 @@ function CreateNewXPBar()
         frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
     end
 
+    frame:RegisterEvent('PLAYER_XP_UPDATE')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('UPDATE_EXHAUSTION')
 end
-CreateNewXPBar()
+--CreateNewXPBar()
 
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
