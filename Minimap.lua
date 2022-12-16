@@ -98,7 +98,7 @@ end
 ChangeTracking()
 
 function DrawMinimapBorder()
-    local texture = UIParent:CreateTexture()
+    local texture = MinimapCluster:CreateTexture()
     texture:SetDrawLayer('ARTWORK', 7)
     texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     texture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
