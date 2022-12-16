@@ -35,8 +35,9 @@ end
 MoveDefaultStuff()
 
 function ChangeZoom()
+    local dx, dy = 5, 65
     MinimapZoomIn:SetScale(0.75)
-    MinimapZoomIn:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 0, 0)
+    MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
     MinimapZoomIn:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomIn:GetNormalTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
     --MinimapZoomIn:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap')
@@ -50,7 +51,7 @@ function ChangeZoom()
     MinimapZoomIn:GetHighlightTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
 
     MinimapZoomOut:SetScale(0.75)
-    MinimapZoomOut:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', -20, -20)
+    MinimapZoomOut:SetPoint('CENTER', Minimap, 'BOTTOM', dy, dx)
     MinimapZoomOut:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomOut:GetNormalTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
     MinimapZoomOut:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
