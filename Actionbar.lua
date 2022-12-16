@@ -150,6 +150,13 @@ function ChangeRep()
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexture(expTexture)
     ReputationWatchBar.StatusBar.WatchBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
 
+    --ReputationWatchBar.OverlayFrame.Text
+    local Path, Size, Flags = MainMenuBarExpText:GetFont()
+    --print(Path, Size, Flags)
+    ReputationWatchBar.OverlayFrame.Text:SetFont(Path, 12, Flags)
+    ReputationWatchBar.OverlayFrame.Text:ClearAllPoints()
+    ReputationWatchBar.OverlayFrame.Text:SetPoint('CENTER', ReputationWatchBar.OverlayFrame, 0, 0)
+
     -- max level
     --ReputationWatchBar.StatusBar.XPBarTexture0:Hide()
     ReputationWatchBar.StatusBar.XPBarTexture1:Hide()
@@ -164,13 +171,6 @@ function ChangeRep()
     ReputationWatchBar.StatusBar.XPBarTexture0:SetScale(0.7)
     ReputationWatchBar.StatusBar.XPBarTexture0:SetTexture(expTexture)
     ReputationWatchBar.StatusBar.XPBarTexture0:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
-
-    --ReputationWatchBar.OverlayFrame.Text
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    --print(Path, Size, Flags)
-    ReputationWatchBar.OverlayFrame.Text:SetFont(Path, 12, Flags)
-    ReputationWatchBar.OverlayFrame.Text:ClearAllPoints()
-    ReputationWatchBar.OverlayFrame.Text:SetPoint('CENTER', ReputationWatchBar.OverlayFrame, 0, 0)
 end
 ChangeRep()
 
@@ -212,23 +212,65 @@ function NewRepText()
 end
 --NewRepText()
 
-function CreateNewStatusbars()
+function CreateNewXPBar()
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
-    --f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-    f:SetSize(460, 20)
+    f:SetSize(460, 14)
     f:SetPoint('CENTER')
 
-    -- actual status bar, child of parent above
-    f.bar = CreateFrame('StatusBar', nil, f)
-    f.bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
-    f.bar:SetStatusBarColor(0, 1, 0)
-    f.bar:SetPoint('TOPLEFT', 5, -5)
-    f.bar:SetPoint('BOTTOMRIGHT', -5, 5)
+    local tex = f:CreateTexture('ARTWORK')
+    tex:SetAllPoints()
+    --tex:SetColorTexture(0, 0, 0)
+    --tex:SetAlpha(0.5)
+    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
+    tex:SetTexCoord(.00048828125, 0.55029296875, 0.08203125, 0.15234375)
+    f.Background = tex
 
-    f.bar:SetMinMaxValues(0, 100)
-    f.bar:SetValue(69)
+    -- actual status bar, child of parent above
+    f.Bar = CreateFrame('StatusBar', nil, f)
+    f.Bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+    f.Bar:SetPoint('TOPLEFT', 0, 0)
+    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
+
+    --border
+    local border = f.Bar:CreateTexture('OVERLAY')
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
+    border:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
+    local dx, dy = 6, 5
+    border:SetSize(460 + dx, 20 + dy)
+    border:SetPoint('CENTER', f.Bar, 'CENTER', 1, -2)
+    f.Border = border
+
+    -- text
+    local Path, Size, Flags = MainMenuBarExpText:GetFont()
+    f.Text = f.Bar:CreateFontString(nil, 'ARTWORK', 'TextStatusBarText')
+    f.Text:SetFont(Path, 12, Flags)
+    f.Text:SetText('')
+    f.Text:SetPoint('CENTER', f.bar, 'CENTER', 0, 0)
+
+    frame.XPBar = f
+
+    frame.UpdateXPBar = function()
+        -- exhaustion
+        local exhaustionStateID = GetRestState()
+        if (exhaustionStateID == 1) then
+            frame.XPBar.Bar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0)
+        elseif (exhaustionStateID == 2) then
+            frame.XPBar.Bar:SetStatusBarColor(0.58, 0.0, 0.55, 1.0) -- purple
+        end
+
+        -- value
+        local playerCurrXP = UnitXP('player')
+        local playerMaxXP = UnitXPMax('player')
+        frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
+        frame.XPBar.Bar:SetValue(playerCurrXP)
+
+        frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
+    end
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('UPDATE_EXHAUSTION')
 end
---CreateNewStatusbars()
+CreateNewXPBar()
 
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -323,9 +365,11 @@ ChangeButtonSpacing()
 
 function frame:OnEvent(event, arg1)
     if event == 'PLAYER_XP_UPDATE' then
-        frame.UpdateExpText()
+        frame.UpdateXPBar()
     elseif event == 'UPDATE_FACTION' then
         frame.UpdateRepText()
+    elseif ((event == 'PLAYER_ENTERING_WORLD') or (event == 'UPDATE_EXHAUSTION')) then
+        frame.UpdateXPBar()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
