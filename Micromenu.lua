@@ -468,4 +468,11 @@ function MoveBars()
 end
 MoveBars()
 
+function ChangeFramerate()
+    FramerateLabel:ClearAllPoints()
+    FramerateLabel:SetPoint('BOTTOM', CharacterMicroButton, 'BOTTOM', -60, 6)
+    UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
+end
+ChangeFramerate()
+
 print('Micromenu.lua - END')
