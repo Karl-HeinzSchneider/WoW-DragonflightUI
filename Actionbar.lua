@@ -210,7 +210,25 @@ function NewRepText()
         end
     )
 end
-NewRepText()
+--NewRepText()
+
+function CreateNewStatusbars()
+    local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
+    --f:SetBackdropBorderColor(0.5, 0.5, 0.5)
+    f:SetSize(460, 20)
+    f:SetPoint('CENTER')
+
+    -- actual status bar, child of parent above
+    f.bar = CreateFrame('StatusBar', nil, f)
+    f.bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+    f.bar:SetStatusBarColor(0, 1, 0)
+    f.bar:SetPoint('TOPLEFT', 5, -5)
+    f.bar:SetPoint('BOTTOMRIGHT', -5, 5)
+
+    f.bar:SetMinMaxValues(0, 100)
+    f.bar:SetValue(69)
+end
+--CreateNewStatusbars()
 
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
