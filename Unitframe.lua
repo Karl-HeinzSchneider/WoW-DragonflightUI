@@ -743,8 +743,77 @@ function ChangePlayerframe()
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
     )
 end
-ChangePlayerframe()
+--ChangePlayerframe()
 frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+function ChangeTargetFrame()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    TargetFrameTextureFrameTexture:Hide()
+    TargetFrameBackground:Hide()
+
+    local texture = TargetFrame:CreateTexture('DragonflightUITargetFrame')
+    texture:SetDrawLayer('BACKGROUND', 2)
+    texture:SetTexture(base)
+    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn'))
+    --texture:SetPoint('LEFT', PlayerFrame, 'RIGHT', 0, 6)
+    texture:SetPoint('RIGHT', TargetFramePortrait, 'CENTER', 36, -1)
+    texture:SetSize(192, 67)
+    texture:SetScale(1)
+    frame.TargetFrameBorder = texture
+
+    TargetFramePortrait:SetDrawLayer('BACKGROUND', 1)
+    TargetFramePortrait:SetSize(56, 56)
+
+    TargetFrameNameBackground:ClearAllPoints()
+    TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', 0, 2)
+    TargetFrameNameBackground:SetSize(124, 10)
+    TargetFrameNameBackground:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
+    )
+    --[[ TargetFrameNameBackground:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Type'
+    ) ]]
+    --TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)
+
+    -- @TODO: change text spacing
+    TargetFrameTextureFrameName:ClearAllPoints()
+    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3)
+
+    TargetFrameTextureFrameLevelText:ClearAllPoints()
+    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3)
+
+    TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
+    TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
+
+    TargetFrameTextureFrame.ManaBarText:ClearAllPoints()
+    TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', 0, 0)
+
+    -- Health 119,12
+    TargetFrameHealthBar:ClearAllPoints()
+    TargetFrameHealthBar:SetSize(124, 20)
+    TargetFrameHealthBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, 0)
+    TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
+    )
+
+    --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
+
+    -- Mana 119,12
+    TargetFrameManaBar:ClearAllPoints()
+    TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, -18 + 1)
+    TargetFrameManaBar:SetSize(124, 8)
+    TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
+    )
+end
+function ReApplyTargetFrame()
+    TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana',
+        'BACKGROUND'
+    )
+end
+frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
 function HookFunctions()
     hooksecurefunc(
@@ -762,7 +831,13 @@ function frame:OnEvent(event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
         --print('Blizzard_TimeManager')
         ChangePlayerframe()
+        ChangeTargetFrame()
         print('PLAYER_ENTERING_WORLD')
+    elseif event == 'PLAYER_TARGET_CHANGED' then
+        ReApplyTargetFrame()
+        if TargetFrame and TargetFrameBuff1 then
+            TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 10, 35)
+        end
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
