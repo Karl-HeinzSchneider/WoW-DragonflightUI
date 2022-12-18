@@ -694,30 +694,54 @@ function GetCoords(key)
 end
 
 function ChangePlayerframe()
-    local UnitFrameTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PlayerFrameTexture:Hide()
+    PlayerFrameBackground:Hide()
+    --PlayerFrameTexture:SetTexture(base)
+    --PlayerFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
 
-    print(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana'))
+    local texture = PlayerFrame:CreateTexture('DragonflightUIPlayerFrame')
+    texture:SetDrawLayer('ARTWORK', 5)
+    texture:SetTexture(base)
+    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+    texture:SetPoint('RIGHT', PlayerFrameHealthBar, 'RIGHT', 5, 0)
+    texture:SetSize(198, 73)
+    texture:SetScale(1)
+    frame.PlayerFrameBorder = texture
+
+    local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
+    textureSmall:SetDrawLayer('ARTWORK', 5)
+    textureSmall:SetTexture(base)
+    textureSmall:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
+    local delta = 15
+    textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta)
+    textureSmall:SetSize(23, 23)
+    textureSmall:SetScale(1)
+    frame.PlayerFrameDeco = textureSmall
 
     -- @TODO: change text spacing
     PlayerName:ClearAllPoints()
-    PlayerName:SetPoint('BOTTOMLEFT', PlayerFrameHealthBar, 'TOPLEFT', 0, 0)
+    PlayerName:SetPoint('BOTTOMLEFT', PlayerFrameHealthBar, 'TOPLEFT', 0, 3)
 
     PlayerLevelText:ClearAllPoints()
-    PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', 0, 0)
+    PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 3)
 
     -- Health 119,12
     PlayerFrameHealthBar:SetSize(124, 20)
-    PlayerFrameHealthBar:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 106, -41 + 8)
+    PlayerFrameHealthBar:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 106 - 2, -41 + 8)
+    PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
+    )
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
     -- Mana 119,12
-    --PlayerFrameManaBar:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 106, -52 - 20)
+    PlayerFrameManaBar:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 106 - 2, -52 - 3)
     PlayerFrameManaBar:SetSize(124, 10)
-    PlayerFrameManaBar:GetStatusBarTexture():SetTexture(UnitFrameTexture)
-    PlayerFrameManaBar:GetStatusBarTexture():SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana'))
+    PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
+    )
 end
 ChangePlayerframe()
 frame:RegisterEvent('PLAYER_ENTERING_WORLD')
