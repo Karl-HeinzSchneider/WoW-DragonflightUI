@@ -742,6 +742,11 @@ function ChangePlayerframe()
     PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
     )
+
+    --UI-HUD-UnitFrame-Player-PortraitOn-Status
+    PlayerStatusTexture:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-InCombat'
+    )
 end
 --ChangePlayerframe()
 frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -806,12 +811,56 @@ function ChangeTargetFrame()
     TargetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
+
+    TargetFrameFlash:SetTexture('')
+
+    local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
+    flash:SetDrawLayer('BACKGROUND', 2)
+    flash:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
+    )
+    flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20, -20)
+    flash:SetSize(256, 128)
+    flash:SetScale(1)
+    flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+    flash:SetBlendMode('ADD')
+    frame.TargetFrameFlash = flash
+
+    hooksecurefunc(
+        TargetFrameFlash,
+        'Show',
+        function()
+            --print('show')
+            TargetFrameFlash:SetTexture('')
+            frame.TargetFrameFlash:Show()
+            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
+            else
+                local dt = 0.5
+                UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
+                print('go flash')
+            end
+        end
+    )
+
+    hooksecurefunc(
+        TargetFrameFlash,
+        'Hide',
+        function()
+            --print('hide')
+            TargetFrameFlash:SetTexture('')
+            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
+                UIFrameFlashStop(frame.TargetFrameFlash)
+            end
+            frame.TargetFrameFlash:Hide()
+        end
+    )
 end
 function ReApplyTargetFrame()
     TargetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana',
         'BACKGROUND'
     )
+    TargetFrameFlash:SetTexture('')
 end
 frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
