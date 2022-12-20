@@ -769,8 +769,9 @@ function ChangeTargetFrame()
 
     TargetFramePortrait:SetDrawLayer('BACKGROUND', 1)
     TargetFramePortrait:SetSize(56, 56)
-    local correction = 3
-    TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42, -12 - correction)
+    local CorrectionY = -3
+    local CorrectionX = -5
+    TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
 
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', 0, 2)
@@ -821,7 +822,7 @@ function ChangeTargetFrame()
     flash:SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
     )
-    flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20, -20 - correction)
+    flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
     flash:SetSize(256, 128)
     flash:SetScale(1)
     flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
@@ -884,6 +885,9 @@ function ChangeFocusFrame()
 
     FocusFramePortrait:SetDrawLayer('BACKGROUND', 1)
     FocusFramePortrait:SetSize(56, 56)
+    local CorrectionY = -3
+    local CorrectionX = -5
+    FocusFramePortrait:SetPoint('TOPRIGHT', FocusFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
 
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', 0, 2)
@@ -936,7 +940,7 @@ function ChangeFocusFrame()
     flash:SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
     )
-    flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20, -20)
+    flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
     flash:SetSize(256, 128)
     flash:SetScale(1)
     flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
@@ -1020,7 +1024,7 @@ function frame:OnEvent(event, arg1)
     elseif event == 'PLAYER_FOCUS_CHANGED' then
         UpdateFocusText()
         if FocusFrame and FocusFrameBuff1 then
-            FocusFrameBuff1:SetPoint('TOPLEFT', FocusFrame, 'BOTTOMLEFT', 10, 35)
+        --FocusFrameBuff1:SetPoint('TOPLEFT', FocusFrame, 'BOTTOMLEFT', 10, 35)
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         --print('PLAYER_ENTERING_WORLD')
@@ -1029,7 +1033,7 @@ function frame:OnEvent(event, arg1)
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
         if TargetFrame and TargetFrameBuff1 then
-            TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 10, 35)
+        --TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 10, 35)
         end
     end
 end
