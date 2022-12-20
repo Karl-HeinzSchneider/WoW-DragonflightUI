@@ -43,6 +43,12 @@ function SetupOptions()
     reloadBtn:SetPoint('TOPLEFT', last, 'BOTTOMLEFT', 0, -10)
     reloadBtn:SetSize(100, 30)
     reloadBtn:SetText('RELOAD')
+    reloadBtn:SetScript(
+        'OnClick',
+        function()
+            ReloadUI()
+        end
+    )
 end
 
 function CreateDefaultConfig()
