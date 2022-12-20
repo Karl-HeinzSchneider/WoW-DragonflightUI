@@ -988,7 +988,11 @@ function UpdateFocusText()
         local max_mana = UnitPowerMax('focus')
         local mana = UnitPower('focus')
 
-        frame.FocusFrameManaBarText:SetText(mana .. ' / ' .. max_mana)
+        if max_mana == 0 then
+            frame.FocusFrameManaBarText:SetText('')
+        else
+            frame.FocusFrameManaBarText:SetText(mana .. ' / ' .. max_mana)
+        end
     end
 end
 
