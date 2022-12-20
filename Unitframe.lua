@@ -835,9 +835,9 @@ function ChangeTargetFrame()
             frame.TargetFrameFlash:Show()
             if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
             else
+                --print('go flash')
                 local dt = 0.5
                 UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
-                print('go flash')
             end
         end
     )
@@ -864,6 +864,89 @@ function ReApplyTargetFrame()
 end
 frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
+function ChangeFocusFrame()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    FocusFrameTextureFrameTexture:Hide()
+    FocusFrameBackground:Hide()
+
+    local texture = FocusFrame:CreateTexture('DragonflightUIFocusFrame')
+    texture:SetDrawLayer('BACKGROUND', 2)
+    texture:SetTexture(base)
+    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn'))
+    --texture:SetPoint('LEFT', PlayerFrame, 'RIGHT', 0, 6)
+    texture:SetPoint('RIGHT', FocusFramePortrait, 'CENTER', 36, -1)
+    texture:SetSize(192, 67)
+    texture:SetScale(1)
+    frame.FocusFrameBorder = texture
+
+    FocusFramePortrait:SetDrawLayer('BACKGROUND', 1)
+    FocusFramePortrait:SetSize(56, 56)
+
+    FocusFrameNameBackground:ClearAllPoints()
+    FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', 0, 2)
+    FocusFrameNameBackground:SetSize(124, 10)
+    FocusFrameNameBackground:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
+    )
+
+    -- @TODO: change text spacing
+    FocusFrameTextureFrameName:ClearAllPoints()
+    FocusFrameTextureFrameName:SetPoint('BOTTOM', FocusFrameHealthBar, 'TOP', 10, 3)
+
+    FocusFrameTextureFrameLevelText:ClearAllPoints()
+    FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3)
+
+    -- HealthText
+    local t = FocusFrame:CreateFontString('FocusFrameHealthBarText', 'HIGHLIGHT', 'TextStatusBarText')
+    t:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
+    t:SetText('HP')
+    frame.FocusFrameHealthBarText = t
+
+    -- ManaText
+    local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
+    m:SetPoint('CENTER', FocusFrameManaBar, 0, 0)
+    m:SetText('MANA')
+    frame.FocusFrameManaBarText = m
+
+    -- Health 119,12
+    FocusFrameHealthBar:ClearAllPoints()
+    FocusFrameHealthBar:SetSize(124, 20)
+    FocusFrameHealthBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, 0)
+    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
+    )
+
+    --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
+
+    -- Mana 119,12
+    FocusFrameManaBar:ClearAllPoints()
+    FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, -18 + 1)
+    FocusFrameManaBar:SetSize(124, 8)
+    FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
+    )
+end
+ChangeFocusFrame()
+frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
+frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
+frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+function UpdateFocusText()
+    print('UpdateFocusText')
+    if UnitExists('focus') then
+        local max_health = UnitHealthMax('focus')
+        local health = UnitHealth('focus')
+
+        frame.FocusFrameHealthBarText:SetText(health .. ' / ' .. max_health)
+
+        local max_mana = UnitPowerMax('focus')
+        local mana = UnitPower('focus')
+
+        frame.FocusFrameManaBarText:SetText(mana .. ' / ' .. max_mana)
+    end
+end
+
 function HookFunctions()
     hooksecurefunc(
         PlayerFrameTexture,
@@ -877,7 +960,20 @@ end
 --HookFunctions()
 
 function frame:OnEvent(event, arg1)
-    if event == 'PLAYER_ENTERING_WORLD' then
+    if event == 'UNIT_POWER_UPDATE' then
+        if arg1 == 'focus' then
+            UpdateFocusText()
+        end
+    elseif event == 'UNIT_HEALTH' then
+        if arg1 == 'focus' then
+            UpdateFocusText()
+        end
+    elseif event == 'PLAYER_FOCUS_CHANGED' then
+        UpdateFocusText()
+        if FocusFrame then
+            FocusFrameBuff1:SetPoint('TOPLEFT', FocusFrame, 'BOTTOMLEFT', 10, 35)
+        end
+    elseif event == 'PLAYER_ENTERING_WORLD' then
         --print('Blizzard_TimeManager')
         ChangePlayerframe()
         ChangeTargetFrame()
