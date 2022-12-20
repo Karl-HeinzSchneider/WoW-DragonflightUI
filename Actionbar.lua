@@ -360,6 +360,16 @@ function ApplyMask()
                         btn.DragonflightUIMaskTexture:Hide()
                     end
                 )
+
+                hooksecurefunc(
+                    icon,
+                    'SetVertexColor',
+                    function(self)
+                        --print('vertex')
+                        local r, g, b = self:GetVertexColor()
+                        btn.DragonflightUIMaskTexture:SetVertexColor(r, g, b)
+                    end
+                )
             end
         end
     end
