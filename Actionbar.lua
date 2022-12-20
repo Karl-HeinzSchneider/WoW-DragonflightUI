@@ -1,5 +1,3 @@
-print('Actionbar.lua')
-
 local Addon, Core = ...
 local Module = 'Actionbar'
 
@@ -442,7 +440,7 @@ function ActionbarModule()
     Core.Sub.Micromenu()
 end
 
-Core.RegisterModule(Module, {}, {}, false, ActionbarModule)
+Core.RegisterModule(Module, {}, {}, true, ActionbarModule)
 
 function frame:OnEvent(event, arg1)
     --print('event', event)
@@ -467,5 +465,3 @@ function frame:OnEvent(event, arg1)
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
-
-print('Actionbar.lua - End')

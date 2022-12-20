@@ -28,12 +28,13 @@ function SetupOptions()
             'OnClick',
             function()
                 if checkbox:GetChecked() then
-                    print('Button is checked')
+                    --print('Button is checked')
                     ConfigTable[v.name].active = true
                 else
-                    print('Button is unchecked')
+                    --print('Button is unchecked')
                     ConfigTable[v.name].active = false
                 end
+                print("'/reload' ")
             end
         )
     end
@@ -42,8 +43,6 @@ function SetupOptions()
     reloadBtn:SetPoint('TOPLEFT', last, 'BOTTOMLEFT', 0, -10)
     reloadBtn:SetSize(100, 30)
     reloadBtn:SetText('RELOAD')
-
-    print('Options finished')
 end
 
 function CreateDefaultConfig()

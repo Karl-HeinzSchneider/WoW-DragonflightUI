@@ -1,5 +1,3 @@
-print('Artframe.lua')
-
 local Addon, Core = ...
 
 local frame = CreateFrame('FRAME', 'DragonflightUIArtframe', UIParent)
@@ -377,5 +375,3 @@ end
 for i = 1, 10 do
     --print(i)
 end
-
-print('Artframe.lua - End')

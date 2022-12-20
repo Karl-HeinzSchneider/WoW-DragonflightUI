@@ -1,5 +1,3 @@
-print('Micromenu.lua')
-
 local Addon, Core = ...
 
 local frame = CreateFrame('FRAME', 'DragonflightUIMicromenuFrame', UIParent)
@@ -526,5 +524,3 @@ Core.Sub.Micromenu = function()
     MoveBars()
     ChangeFramerate()
 end
-
-print('Micromenu.lua - END')

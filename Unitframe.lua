@@ -1,5 +1,3 @@
-print('Unitframe.lua')
-
 local Addon, Core = ...
 local Module = 'Unitframe'
 
@@ -1053,5 +1051,3 @@ function frame:OnEvent(event, arg1)
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
-
-print('Unitframe.lua - END')

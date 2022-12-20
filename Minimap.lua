@@ -1,5 +1,3 @@
-print('Minimap.lua')
-
 local Addon, Core = ...
 local Module = 'Minimap'
 
@@ -193,7 +191,7 @@ function MinimapModule()
     frame:RegisterEvent('ADDON_LOADED')
 end
 
-Core.RegisterModule(Module, {}, {}, false, MinimapModule)
+Core.RegisterModule(Module, {}, {}, true, MinimapModule)
 
 function frame:OnEvent(event, arg1)
     if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
@@ -202,5 +200,3 @@ function frame:OnEvent(event, arg1)
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
-
-print('Minimap.lua - END')
