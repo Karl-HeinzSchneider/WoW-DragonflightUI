@@ -769,6 +769,8 @@ function ChangeTargetFrame()
 
     TargetFramePortrait:SetDrawLayer('BACKGROUND', 1)
     TargetFramePortrait:SetSize(56, 56)
+    local correction = 3
+    TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42, -12 - correction)
 
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', 0, 2)
@@ -819,7 +821,7 @@ function ChangeTargetFrame()
     flash:SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
     )
-    flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20, -20)
+    flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20, -20 - correction)
     flash:SetSize(256, 128)
     flash:SetScale(1)
     flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
