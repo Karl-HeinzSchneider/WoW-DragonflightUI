@@ -1,5 +1,7 @@
 print('Micromenu.lua')
 
+local Addon, Core = ...
+
 local frame = CreateFrame('FRAME', 'DragonflightUIMicromenuFrame', UIParent)
 
 function SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
@@ -387,7 +389,7 @@ function ChangeMicroMenu()
     MainMenuBarPerformanceBar:Hide()
     SetButtonFromAtlas(HelpMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'GameMenu')
 end
-ChangeMicroMenu()
+--ChangeMicroMenu()
 
 function ChangeBackpack()
     --MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
@@ -459,7 +461,7 @@ function ChangeBackpack()
         )
     end
 end
-ChangeBackpack()
+--ChangeBackpack()
 
 function MoveBars()
     MainMenuBarBackpackButton:ClearAllPoints()
@@ -468,7 +470,7 @@ function MoveBars()
     CharacterMicroButton:ClearAllPoints()
     CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20, 0)
 end
-MoveBars()
+--MoveBars()
 
 function ChangeFramerate()
     FramerateLabel:ClearAllPoints()
@@ -516,6 +518,13 @@ function ChangeFramerate()
         end
     )
 end
-ChangeFramerate()
+--ChangeFramerate()
+
+Core.Sub.Micromenu = function()
+    ChangeMicroMenu()
+    ChangeBackpack()
+    MoveBars()
+    ChangeFramerate()
+end
 
 print('Micromenu.lua - END')

@@ -1,3 +1,5 @@
+local Addon, Core = ...
+
 -- Vars
 
 local colorTable = {
@@ -7,15 +9,17 @@ local colorTable = {
     ['red'] = '|c00ff0000'
 }
 
--- Frame
-
-local frame = CreateFrame('FRAME')
-frame:RegisterEvent('ADDON_LOADED')
-
-function frame:OnEvent(event, arg1)
-    if event == 'ADDON_LOADED' and arg1 == 'DragonflightUI' then
-        local version = GetAddOnMetadata('DragonflightUI', 'Version')
-        print('Dragonflight UI Loaded!')
-    end
+Core.Modules = {}
+Core.Sub = {}
+Core.RegisterModule = function(name, meta, options, default, func)
+    table.insert(
+        Core.Modules,
+        {
+            ['name'] = name,
+            ['meta'] = meta,
+            ['options'] = options,
+            ['default'] = default,
+            ['func'] = func
+        }
+    )
 end
-frame:SetScript('OnEvent', frame.OnEvent)

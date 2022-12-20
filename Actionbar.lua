@@ -1,5 +1,8 @@
 print('Actionbar.lua')
 
+local Addon, Core = ...
+local Module = 'Actionbar'
+
 local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 frame:SetFrameStrata('HIGH')
 
@@ -72,7 +75,7 @@ function ChangeActionbar()
     CastingBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
     CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 200)
 end
-ChangeActionbar()
+--ChangeActionbar()
 
 function CreateNewXPBar()
     local size = 460
@@ -146,7 +149,7 @@ function CreateNewXPBar()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('UPDATE_EXHAUSTION')
 end
-CreateNewXPBar()
+--CreateNewXPBar()
 
 function CreateNewRepBar()
     local size = 460
@@ -211,7 +214,7 @@ function CreateNewRepBar()
 
     --frame:RegisterEvent('UPDATE_FACTION')
 end
-CreateNewRepBar()
+--CreateNewRepBar()
 
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -257,7 +260,7 @@ function StyleButtons()
         end
     end
 end
-StyleButtons()
+--StyleButtons()
 
 function StylePageNumber()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -301,7 +304,7 @@ function StylePageNumber()
     --MainMenuBarPageNumber:SetDrawLayer('OVERLAY')
     MainMenuBarPageNumber:SetScale(1.25)
 end
-StylePageNumber()
+--StylePageNumber()
 
 function ApplyMask()
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
@@ -374,7 +377,7 @@ function ApplyMask()
         end
     end
 end
-ApplyMask()
+--ApplyMask()
 
 function ChangeButtonSpacing()
     local spacing = 3 -- default: 6
@@ -385,7 +388,7 @@ function ChangeButtonSpacing()
         end
     end
 end
-ChangeButtonSpacing()
+--ChangeButtonSpacing()
 
 function SetNumBars()
     local inLockdown = InCombatLockdown()
@@ -415,11 +418,31 @@ function SetNumBars()
         frame.RepBar:SetPoint('BOTTOM', 0, 5 + 20 - dRep)
     end
 end
-frame.UpdateXPBar()
-frame.UpdateRepBar()
-SetNumBars()
+-- frame.UpdateXPBar()
+-- frame.UpdateRepBar()
+-- SetNumBars()
 
-frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+--frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+
+function ActionbarModule()
+    ChangeActionbar()
+    CreateNewXPBar()
+    CreateNewRepBar()
+    StyleButtons()
+    StylePageNumber()
+    ApplyMask()
+    ChangeButtonSpacing()
+    frame.UpdateXPBar()
+    frame.UpdateRepBar()
+    SetNumBars()
+
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+
+    Core.Sub.Artframe()
+    Core.Sub.Micromenu()
+end
+
+Core.RegisterModule(Module, {}, {}, false, ActionbarModule)
 
 function frame:OnEvent(event, arg1)
     --print('event', event)

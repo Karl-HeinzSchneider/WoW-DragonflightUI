@@ -1,5 +1,7 @@
 print('Artframe.lua')
 
+local Addon, Core = ...
+
 local frame = CreateFrame('FRAME', 'DragonflightUIArtframe', UIParent)
 --frame:SetFrameStrata('MEDIUM')
 --frame:SetPoint('CENTER')
@@ -331,7 +333,7 @@ function ChangeGryphon()
     MainMenuBarTexture2:Hide()
     MainMenuBarTexture3:Hide()
 end
-ChangeGryphon()
+--ChangeGryphon()
 
 function DrawGryphon()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -350,7 +352,7 @@ function DrawGryphon()
     GryphonRight:SetFrameStrata('HIGH')
     GryphonRight:SetFrameLevel(100)
 end
-DrawGryphon()
+--DrawGryphon()
 
 function DrawActionbarDeco()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -364,7 +366,13 @@ function DrawActionbarDeco()
         --deco:SetPoint('CENTER', ActionButton4, 'CENTER', 0, 0)
     end
 end
-DrawActionbarDeco()
+--DrawActionbarDeco()
+
+Core.Sub.Artframe = function()
+    ChangeGryphon()
+    DrawGryphon()
+    DrawActionbarDeco()
+end
 
 for i = 1, 10 do
     --print(i)

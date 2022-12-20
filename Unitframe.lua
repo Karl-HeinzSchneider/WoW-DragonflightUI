@@ -1,5 +1,8 @@
 print('Unitframe.lua')
 
+local Addon, Core = ...
+local Module = 'Unitframe'
+
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
 
 function GetCoords(key)
@@ -749,7 +752,7 @@ function ChangePlayerframe()
     )
 end
 --ChangePlayerframe()
-frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+--frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 function ChangeTargetFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
@@ -865,7 +868,7 @@ function ReApplyTargetFrame()
     )
     TargetFrameFlash:SetTexture('')
 end
-frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+--frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
 function ChangeFocusFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
@@ -976,10 +979,10 @@ function ChangeFocusFrame()
         end
     )
 end
-ChangeFocusFrame()
-frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
-frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
-frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+--ChangeFocusFrame()
+-- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
+-- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
+-- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
 function UpdateFocusText()
     --print('UpdateFocusText')
@@ -1012,6 +1015,17 @@ function HookFunctions()
 end
 --HookFunctions()
 
+function UnitframeModule()
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+    frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+    frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
+    frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
+end
+
+Core.RegisterModule(Module, {}, {}, true, UnitframeModule)
+
 function frame:OnEvent(event, arg1)
     if event == 'UNIT_POWER_UPDATE' then
         if arg1 == 'focus' then
@@ -1030,6 +1044,7 @@ function frame:OnEvent(event, arg1)
         --print('PLAYER_ENTERING_WORLD')
         ChangePlayerframe()
         ChangeTargetFrame()
+        ChangeFocusFrame()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
         if TargetFrame and TargetFrameBuff1 then

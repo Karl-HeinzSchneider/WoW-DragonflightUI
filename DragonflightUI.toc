@@ -4,13 +4,15 @@
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## Version: 0.0.2
-## SavedVariables: 
+## SavedVariables: ConfigTable
 ## OptionalDeps: 
 
 Core.lua
 
-Minimap.lua
-Micromenu.lua
 Actionbar.lua
 Artframe.lua
+Micromenu.lua
+Minimap.lua
 Unitframe.lua
+
+Options.lua

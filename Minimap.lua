@@ -1,5 +1,8 @@
 print('Minimap.lua')
 
+local Addon, Core = ...
+local Module = 'Minimap'
+
 local frame = CreateFrame('FRAME')
 
 function HideDefaultStuff()
@@ -24,7 +27,7 @@ function HideDefaultStuff()
         end
     )
 end
-HideDefaultStuff()
+--HideDefaultStuff()
 
 function MoveDefaultStuff()
     --print(Minimap:GetPoint())
@@ -32,7 +35,7 @@ function MoveDefaultStuff()
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
     Minimap:SetScale(1.25)
 end
-MoveDefaultStuff()
+--MoveDefaultStuff()
 
 function ChangeZoom()
     local dx, dy = 5, 65
@@ -62,7 +65,7 @@ function ChangeZoom()
     MinimapZoomOut:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomOut:GetHighlightTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
 end
-ChangeZoom()
+--ChangeZoom()
 
 function CreateMinimapInfoFrame()
     local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
@@ -77,7 +80,7 @@ function CreateMinimapInfoFrame()
 
     frame.MinimapInfo = f
 end
-CreateMinimapInfoFrame()
+--CreateMinimapInfoFrame()
 
 function ChangeCalendar()
     GameTimeFrame:ClearAllPoints()
@@ -104,7 +107,7 @@ function ChangeCalendar()
     --local obj = GameTimeFrame:GetNormalFontObject()
     --obj:SetJustifyH('LEFT')
 end
-ChangeCalendar()
+--ChangeCalendar()
 
 function ChangeClock()
     if IsAddOnLoaded('Blizzard_TimeManager') then
@@ -115,13 +118,13 @@ function ChangeClock()
         TimeManagerClockButton:SetParent(frame.MinimapInfo)
     end
 end
-ChangeClock()
+--ChangeClock()
 
 function ChangeZoneText()
     MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 0, 0)
     MinimapZoneTextButton:SetParent(frame.MinimapInfo)
 end
-ChangeZoneText()
+--ChangeZoneText()
 
 function ChangeTracking()
     MiniMapTracking:ClearAllPoints()
@@ -136,7 +139,7 @@ function ChangeTracking()
     --MiniMapTrackingBackground:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     --MiniMapTrackingBackground:SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
 end
-ChangeTracking()
+--ChangeTracking()
 
 function DrawMinimapBorder()
     local texture = MinimapCluster:CreateTexture()
@@ -149,7 +152,7 @@ function DrawMinimapBorder()
 
     frame.minimap = texture
 end
-DrawMinimapBorder()
+--DrawMinimapBorder()
 
 function ReplaceTextures()
 end
@@ -170,10 +173,27 @@ function MoveBuffs()
     end ]]
     -- BuffFrame.ClearAllPoints() = function()     end
 end
-MoveBuffs()
+--MoveBuffs()
 
 -- Events
-frame:RegisterEvent('ADDON_LOADED')
+--frame:RegisterEvent('ADDON_LOADED')
+
+function MinimapModule()
+    HideDefaultStuff()
+    MoveDefaultStuff()
+    ChangeZoom()
+    CreateMinimapInfoFrame()
+    ChangeCalendar()
+    ChangeClock()
+    ChangeZoneText()
+    ChangeTracking()
+    DrawMinimapBorder()
+    MoveBuffs()
+
+    frame:RegisterEvent('ADDON_LOADED')
+end
+
+Core.RegisterModule(Module, {}, {}, false, MinimapModule)
 
 function frame:OnEvent(event, arg1)
     if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
