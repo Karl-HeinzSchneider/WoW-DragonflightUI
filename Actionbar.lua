@@ -252,11 +252,14 @@ function StyleButtons()
                 _G[name .. 'FloatingBG']:SetSize(45, 45)
             end
             -- Mask
-            _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+            if _G[name .. 'Icon'] then
+            -- _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+            end
+            --_G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
         end
     end
 end
---StyleButtons()
+StyleButtons()
 
 function StylePageNumber()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -302,20 +305,68 @@ function StylePageNumber()
 end
 StylePageNumber()
 
-function ApplyMaskAgain()
+function ApplyMask()
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
+    frame.ButtonMask = frame:CreateMaskTexture()
+    frame.ButtonMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\ui-chaticon-hots')
+    frame.ButtonMask:SetTexture('Interface/ChatFrame/UI-ChatIcon-HotS')
+
+    local f = CreateFrame('Frame', nil, UIParent)
+    f:SetPoint('CENTER')
+    f:SetSize(64, 64)
+
+    for i = 1, 0 do
+        local tex = f:CreateTexture()
+        tex:SetAllPoints(f)
+        tex:SetTexture('Interface/Icons/spell_shadow_antishadow')
+        --  f.tex:SetMask('Interface/ChatFrame/UI-ChatIcon-HotS')
+        tex:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+        tex:SetPoint('CENTER', f, 'CENTER', i, i)
+
+        f['tex' .. i] = tex
+    end
+
     for k, v in pairs(buttonTable) do
         for i = 1, 12 do
             --MultiBarBottomRightButton1NormalTexture
             local name = v .. i
 
             -- Mask
-            if _G[name .. 'Icon'] then
-                _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+            local btn = _G[name]
+            local icon = _G[name .. 'Icon']
+            if icon then
+                icon:SetAlpha(0.1)
+                local tex = btn:CreateTexture()
+                tex:SetPoint('CENTER', btn)
+                local size = 36
+                tex:SetSize(size, size)
+                tex:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
+                tex:SetDrawLayer('BACKGROUND')
+                btn.DragonflightUIMaskTexture = tex
+
+                hooksecurefunc(
+                    icon,
+                    'Show',
+                    function(self)
+                        local tex = self:GetTexture()
+                        if tex then
+                            btn.DragonflightUIMaskTexture:Show()
+                            btn.DragonflightUIMaskTexture:SetTexture(tex)
+                        end
+                    end
+                )
+                hooksecurefunc(
+                    icon,
+                    'Hide',
+                    function(self)
+                        btn.DragonflightUIMaskTexture:Hide()
+                    end
+                )
             end
         end
     end
 end
+ApplyMask()
 
 function ChangeButtonSpacing()
     local spacing = 3 -- default: 6
@@ -365,7 +416,6 @@ frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 function frame:OnEvent(event, arg1)
     --print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        --ApplyMaskAgain()
         frame.UpdateXPBar()
         frame.UpdateRepBar()
         SetNumBars()
