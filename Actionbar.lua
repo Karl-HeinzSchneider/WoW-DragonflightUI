@@ -44,6 +44,7 @@ function ChangeActionbar()
         MainMenuExpBar,
         'Show',
         function()
+            print('Show MainMenuExpBar')
             MainMenuExpBar:Hide()
         end
     )
@@ -52,6 +53,8 @@ function ChangeActionbar()
         ReputationWatchBar,
         'Show',
         function()
+            print('Show ReputationWatchBar')
+
             ReputationWatchBar:Hide()
         end
     )
@@ -60,6 +63,8 @@ function ChangeActionbar()
         MainMenuBarMaxLevelBar,
         'Show',
         function()
+            print('Show MainMenuBarMaxLevelBar')
+
             MainMenuBarMaxLevelBar:Hide()
         end
     )
@@ -250,6 +255,11 @@ function StyleButtons()
             _G[name .. 'Icon']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
         end
     end
+end
+--StyleButtons()
+
+function StylePageNumber()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
     -- actionbar switch buttons
     ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
@@ -290,7 +300,7 @@ function StyleButtons()
     --MainMenuBarPageNumber:SetDrawLayer('OVERLAY')
     MainMenuBarPageNumber:SetScale(1.25)
 end
-StyleButtons()
+StylePageNumber()
 
 function ApplyMaskAgain()
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
@@ -355,7 +365,7 @@ frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 function frame:OnEvent(event, arg1)
     --print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        ApplyMaskAgain()
+        --ApplyMaskAgain()
         frame.UpdateXPBar()
         frame.UpdateRepBar()
         SetNumBars()
