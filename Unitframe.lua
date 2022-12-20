@@ -928,6 +928,49 @@ function ChangeFocusFrame()
     FocusFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
+
+    FocusFrameFlash:SetTexture('')
+
+    local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
+    flash:SetDrawLayer('BACKGROUND', 2)
+    flash:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
+    )
+    flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20, -20)
+    flash:SetSize(256, 128)
+    flash:SetScale(1)
+    flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+    flash:SetBlendMode('ADD')
+    frame.FocusFrameFlash = flash
+
+    hooksecurefunc(
+        FocusFrameFlash,
+        'Show',
+        function()
+            --print('show')
+            FocusFrameFlash:SetTexture('')
+            frame.FocusFrameFlash:Show()
+            if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
+            else
+                --print('go flash')
+                local dt = 0.5
+                UIFrameFlash(frame.FocusFrameFlash, dt, dt, -1)
+            end
+        end
+    )
+
+    hooksecurefunc(
+        FocusFrameFlash,
+        'Hide',
+        function()
+            --print('hide')
+            FocusFrameFlash:SetTexture('')
+            if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
+                UIFrameFlashStop(frame.FocusFrameFlash)
+            end
+            frame.FocusFrameFlash:Hide()
+        end
+    )
 end
 ChangeFocusFrame()
 frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
@@ -935,7 +978,7 @@ frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
 function UpdateFocusText()
-    print('UpdateFocusText')
+    --print('UpdateFocusText')
     if UnitExists('focus') then
         local max_health = UnitHealthMax('focus')
         local health = UnitHealth('focus')
@@ -972,7 +1015,7 @@ function frame:OnEvent(event, arg1)
         end
     elseif event == 'PLAYER_FOCUS_CHANGED' then
         UpdateFocusText()
-        if FocusFrame then
+        if FocusFrame and FocusFrameBuff1 then
             FocusFrameBuff1:SetPoint('TOPLEFT', FocusFrame, 'BOTTOMLEFT', 10, 35)
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
