@@ -44,7 +44,7 @@ function ChangeActionbar()
         MainMenuExpBar,
         'Show',
         function()
-            print('Show MainMenuExpBar')
+            --print('Show MainMenuExpBar')
             MainMenuExpBar:Hide()
         end
     )
@@ -53,8 +53,7 @@ function ChangeActionbar()
         ReputationWatchBar,
         'Show',
         function()
-            print('Show ReputationWatchBar')
-
+            --print('Show ReputationWatchBar')
             ReputationWatchBar:Hide()
         end
     )
@@ -63,8 +62,7 @@ function ChangeActionbar()
         MainMenuBarMaxLevelBar,
         'Show',
         function()
-            print('Show MainMenuBarMaxLevelBar')
-
+            --print('Show MainMenuBarMaxLevelBar')
             MainMenuBarMaxLevelBar:Hide()
         end
     )

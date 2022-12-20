@@ -1023,10 +1023,9 @@ function frame:OnEvent(event, arg1)
             FocusFrameBuff1:SetPoint('TOPLEFT', FocusFrame, 'BOTTOMLEFT', 10, 35)
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
-        --print('Blizzard_TimeManager')
+        --print('PLAYER_ENTERING_WORLD')
         ChangePlayerframe()
         ChangeTargetFrame()
-        print('PLAYER_ENTERING_WORLD')
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
         if TargetFrame and TargetFrameBuff1 then
