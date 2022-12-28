@@ -173,6 +173,30 @@ function MoveBuffs()
 end
 --MoveBuffs()
 
+function MoveTracker()
+    local setting
+    hooksecurefunc(
+        WatchFrame,
+        'SetPoint',
+        function(self)
+            if not setting then
+                setting = true
+                self:ClearAllPoints()
+                if MultiBarRight:IsShown() and MultiBarLeft:IsShown() then
+                    self:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -100, -50)
+                elseif MultiBarRight:IsShown() then
+                    self:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -25, -50)
+                else
+                    self:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', 0, -50)
+                end
+                self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 100)
+                setting = nil
+            end
+        end
+    )
+end
+--MoveTracker()
+
 -- Events
 --frame:RegisterEvent('ADDON_LOADED')
 
@@ -187,6 +211,7 @@ function MinimapModule()
     ChangeTracking()
     DrawMinimapBorder()
     MoveBuffs()
+    MoveTracker()
 
     frame:RegisterEvent('ADDON_LOADED')
 end
