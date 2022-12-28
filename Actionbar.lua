@@ -392,7 +392,7 @@ function SetNumBars()
     local inLockdown = InCombatLockdown()
     if inLockdown then
         --return
-        print('[DragonflightUI] changing Frames after combat ends..')
+        --print('[DragonflightUI] changing Frames after combat ends..')
     else
         local dy = 20
         local dRep, dButtons = 0, 0
