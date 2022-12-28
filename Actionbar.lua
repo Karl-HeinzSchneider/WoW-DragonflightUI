@@ -212,7 +212,13 @@ end
 function StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
-    local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
+    local buttonTable = {
+        'MultiBarBottomRightButton',
+        'MultiBarBottomLeftButton',
+        'ActionButton',
+        'MultiBarLeftButton',
+        'MultiBarRightButton'
+    }
     for k, v in pairs(buttonTable) do
         for i = 1, 12 do
             --MultiBarBottomRightButton1NormalTexture
