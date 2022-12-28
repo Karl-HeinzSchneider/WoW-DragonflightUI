@@ -200,6 +200,13 @@ function MoveTracker()
 end
 --MoveTracker()
 
+function ChangeLFG()
+    MiniMapLFGFrame:ClearAllPoints()
+    MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+    --MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
+end
+--ChangeLFG()
+
 -- Events
 --frame:RegisterEvent('ADDON_LOADED')
 
@@ -215,6 +222,7 @@ function MinimapModule()
     DrawMinimapBorder()
     MoveBuffs()
     MoveTracker()
+    ChangeLFG()
 
     frame:RegisterEvent('ADDON_LOADED')
 end
