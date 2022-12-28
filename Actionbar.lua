@@ -28,11 +28,6 @@ function ChangeActionbar()
     StanceButton1.SetPoint = function()
     end
 
-    PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetPoint('CENTER', MultiBarBottomLeft, 'CENTER', 30, 90)
-    PetActionBarFrame.SetPoint = function()
-    end
-
     ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
     ActionBarDownButton:ClearAllPoints()
@@ -421,6 +416,11 @@ end
 -- SetNumBars()
 
 function HookPetBar()
+    PetActionBarFrame:ClearAllPoints()
+    PetActionBarFrame:SetPoint('CENTER', MultiBarBottomRight, 'CENTER', 0, 45)
+    PetActionBarFrame.SetPoint = function()
+    end
+
     frame:RegisterEvent('PET_BAR_UPDATE')
     --PetActionBarFrame:ClearAllPoints()
     --PetActionBarFrame:SetParent(UIParent)
