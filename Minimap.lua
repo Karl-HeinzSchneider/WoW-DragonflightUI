@@ -182,7 +182,10 @@ function MoveTracker()
             if not setting then
                 setting = true
                 self:ClearAllPoints()
-                if MultiBarRight:IsShown() and MultiBarLeft:IsShown() then
+                ConfigTable = ConfigTable or {}
+                if ConfigTable['ActionbarSide'].active then
+                    self:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', 0, -50)
+                elseif MultiBarRight:IsShown() and MultiBarLeft:IsShown() then
                     self:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -100, -50)
                 elseif MultiBarRight:IsShown() then
                     self:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -25, -50)

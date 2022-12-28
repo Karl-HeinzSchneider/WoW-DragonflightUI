@@ -452,6 +452,57 @@ end
 
 --frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
+function MoveSideBars()
+    -- left
+    local gap = 3
+    local dx = 220
+    _G['MultiBarLeftButton1']:ClearAllPoints()
+    _G['MultiBarLeftButton1']:SetPoint('LEFT', ActionButton1, 'LEFT', -dx, 80)
+
+    for i = 2, 4 do
+        _G['MultiBarLeftButton' .. i]:ClearAllPoints()
+        _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+    end
+
+    _G['MultiBarLeftButton5']:ClearAllPoints()
+    _G['MultiBarLeftButton5']:SetPoint('LEFT', ActionButton1, 'LEFT', -dx, 40)
+    for i = 6, 8 do
+        _G['MultiBarLeftButton' .. i]:ClearAllPoints()
+        _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+    end
+
+    _G['MultiBarLeftButton9']:ClearAllPoints()
+    _G['MultiBarLeftButton9']:SetPoint('LEFT', ActionButton1, 'LEFT', -dx, 0)
+    for i = 10, 12 do
+        _G['MultiBarLeftButton' .. i]:ClearAllPoints()
+        _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+    end
+
+    -- right
+    local dxRight = dx - 4 * 36 - 3 * gap
+    _G['MultiBarRightButton1']:ClearAllPoints()
+    _G['MultiBarRightButton1']:SetPoint('LEFT', ActionButton12, 'RIGHT', dxRight, 80)
+
+    for i = 2, 4 do
+        _G['MultiBarRightButton' .. i]:ClearAllPoints()
+        _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
+    end
+
+    _G['MultiBarRightButton5']:ClearAllPoints()
+    _G['MultiBarRightButton5']:SetPoint('LEFT', ActionButton12, 'RIGHT', dxRight, 40)
+    for i = 6, 8 do
+        _G['MultiBarRightButton' .. i]:ClearAllPoints()
+        _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
+    end
+
+    _G['MultiBarRightButton9']:ClearAllPoints()
+    _G['MultiBarRightButton9']:SetPoint('LEFT', ActionButton12, 'RIGHT', dxRight, 0)
+    for i = 10, 12 do
+        _G['MultiBarRightButton' .. i]:ClearAllPoints()
+        _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
+    end
+end
+
 function ActionbarModule()
     ChangeActionbar()
     CreateNewXPBar()
@@ -471,7 +522,12 @@ function ActionbarModule()
     Core.Sub.Micromenu()
 end
 
+function ActionbarSideModule()
+    MoveSideBars()
+end
+
 Core.RegisterModule(Module, {}, {}, true, ActionbarModule)
+Core.RegisterModule(Module .. 'Side', {}, {}, true, ActionbarSideModule)
 
 function frame:OnEvent(event, arg1)
     --print('event', event)
