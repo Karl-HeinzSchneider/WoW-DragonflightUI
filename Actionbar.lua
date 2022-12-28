@@ -550,7 +550,7 @@ function frame:OnEvent(event, arg1)
         frame.UpdateRepBar()
         SetNumBars()
     elseif event == 'PET_BAR_UPDATE' then
-        print('PET_BAR_UPDATE')
+        --print('PET_BAR_UPDATE')
         ChangePetBar()
     end
 end
