@@ -497,7 +497,8 @@ function ChangeFramerate()
         'SetFormattedText',
         function()
             local down, up, lagHome, lagWorld = GetNetStats()
-            local str = 'MS: ' .. lagHome .. '|' .. lagWorld
+            --local str = 'MS: ' .. lagHome .. '|' .. lagWorld
+            local str = 'MS: ' .. math.max(lagHome, lagWorld)
             t:SetText(str)
         end
     )
