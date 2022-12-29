@@ -342,6 +342,7 @@ function DrawGryphon()
     GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -dx, dy)
     GryphonLeft:SetFrameStrata('HIGH')
     GryphonLeft:SetFrameLevel(100)
+    frame.GryphonLeft = GryphonLeft
 
     local GryphonRight =
         CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef, 'GryphonRight')
@@ -349,6 +350,7 @@ function DrawGryphon()
     GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', dx, dy)
     GryphonRight:SetFrameStrata('HIGH')
     GryphonRight:SetFrameLevel(100)
+    frame.GryphonRight = GryphonRight
 end
 --DrawGryphon()
 
@@ -366,11 +368,37 @@ function DrawActionbarDeco()
 end
 --DrawActionbarDeco()
 
+function ChangeGryphonVisibility(visible)
+    --print('gryphon ' .. tostring(visible))
+    if visible then
+        frame.GryphonRight:Show()
+        frame.GryphonLeft:Show()
+        MainMenuBarPageNumber:Show()
+    else
+        frame.GryphonRight:Hide()
+        frame.GryphonLeft:Hide()
+        MainMenuBarPageNumber:Hide()
+    end
+end
+
 Core.Sub.Artframe = function()
     ChangeGryphon()
     DrawGryphon()
     DrawActionbarDeco()
+
+    frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 end
+
+function frame:OnEvent(event, arg1)
+    --print('art event', event)
+    if event == 'UNIT_ENTERED_VEHICLE' then
+        ChangeGryphonVisibility(false)
+    elseif event == 'UNIT_EXITED_VEHICLE' then
+        ChangeGryphonVisibility(true)
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
 
 for i = 1, 10 do
     --print(i)
