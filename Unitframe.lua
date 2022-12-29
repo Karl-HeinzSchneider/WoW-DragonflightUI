@@ -1061,6 +1061,37 @@ function HookFunctions()
 end
 --HookFunctions()
 
+function ChangePetFrame()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
+    PetFrameTexture:SetTexture('')
+    PetFrameTexture:Hide()
+
+    local texture = PetFrame:CreateTexture('DragonflightUIPetFrame')
+    texture:SetDrawLayer('ARTWORK', 5)
+    texture:SetTexture(base)
+    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
+    texture:SetPoint('LEFT', PetPortrait, 'CENTER', -25, 0)
+    texture:SetSize(120, 49)
+    texture:SetScale(1)
+    frame.PetFrameBorder = texture
+
+    PetFrameHealthBar:ClearAllPoints()
+    PetFrameHealthBar:SetSize(70, 9)
+    PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 0.5, 2)
+
+    PetFrameManaBar:ClearAllPoints()
+    PetFrameManaBar:SetSize(70.5, 5)
+    PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1, 2 - 10)
+
+    PetName:ClearAllPoints()
+    PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1, 14)
+
+    PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
+    PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', 0, 0)
+end
+
 function UnitframeModule()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
@@ -1095,6 +1126,7 @@ function frame:OnEvent(event, arg1)
         ChangePlayerframe()
         ChangeTargetFrame()
         ChangeFocusFrame()
+        ChangePetFrame()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
         if TargetFrame and TargetFrameBuff1 then
