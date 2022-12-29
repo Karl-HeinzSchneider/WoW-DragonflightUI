@@ -1,6 +1,9 @@
 local Addon, Core = ...
 local Module = 'Unitframe'
 
+local noop = function()
+end
+
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
 
 function GetCoords(key)
@@ -694,13 +697,8 @@ function GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
-function ChangePlayerframe()
+function CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    PlayerFrameTexture:Hide()
-    PlayerFrameBackground:Hide()
-    --PlayerFrameTexture:SetTexture(base)
-    --PlayerFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
 
     local texture = PlayerFrame:CreateTexture('DragonflightUIPlayerFrame')
     texture:SetDrawLayer('ARTWORK', 5)
@@ -720,6 +718,25 @@ function ChangePlayerframe()
     textureSmall:SetSize(23, 23)
     textureSmall:SetScale(1)
     frame.PlayerFrameDeco = textureSmall
+end
+
+function ChangePlayerframe()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    PlayerFrameTexture:Hide()
+    PlayerFrameBackground:Hide()
+    PlayerFrameVehicleTexture:Hide()
+    --PlayerFrameTexture:SetTexture(base)
+    --PlayerFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+
+    local vehicle = UnitInVehicle('player')
+
+    if vehicle then
+        --frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-Vehicle'))
+        frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+    else
+        frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+    end
 
     -- @TODO: change text spacing
     PlayerName:ClearAllPoints()
@@ -1049,6 +1066,9 @@ function UnitframeModule()
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
+    frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+
     frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 end
@@ -1071,6 +1091,7 @@ function frame:OnEvent(event, arg1)
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         --print('PLAYER_ENTERING_WORLD')
+        CreatePlayerFrameTextures()
         ChangePlayerframe()
         ChangeTargetFrame()
         ChangeFocusFrame()
@@ -1079,6 +1100,10 @@ function frame:OnEvent(event, arg1)
         if TargetFrame and TargetFrameBuff1 then
         --TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 10, 35)
         end
+    elseif event == 'UNIT_ENTERED_VEHICLE' then
+        ChangePlayerframe()
+    elseif event == 'UNIT_EXITED_VEHICLE' then
+        ChangePlayerframe()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
