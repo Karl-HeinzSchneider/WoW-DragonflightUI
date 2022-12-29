@@ -2,6 +2,9 @@ local Addon, Core = ...
 
 local frame = CreateFrame('FRAME', 'DragonflightUIMicromenuFrame', UIParent)
 
+local noop = function()
+end
+
 function SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
     local key = pre .. name
 
@@ -467,6 +470,12 @@ function MoveBars()
 
     CharacterMicroButton:ClearAllPoints()
     CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20, 0)
+
+    CharacterMicroButton.SetPoint = noop
+    CharacterMicroButton.ClearAllPoints = noop
+
+    PVPMicroButton.SetPoint = noop
+    PVPMicroButton.ClearAllPoints = noop
 end
 --MoveBars()
 
