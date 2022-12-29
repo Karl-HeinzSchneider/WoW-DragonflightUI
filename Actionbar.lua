@@ -306,7 +306,13 @@ end
 --StylePageNumber()
 
 function ApplyMask()
-    local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
+    local buttonTable = {
+        'MultiBarBottomRightButton',
+        'MultiBarBottomLeftButton',
+        'ActionButton',
+        'MultiBarLeftButton',
+        'MultiBarRightButton'
+    }
     frame.ButtonMask = frame:CreateMaskTexture()
     frame.ButtonMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\ui-chaticon-hots')
     frame.ButtonMask:SetTexture('Interface/ChatFrame/UI-ChatIcon-HotS')
