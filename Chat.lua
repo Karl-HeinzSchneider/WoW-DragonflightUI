@@ -11,7 +11,7 @@ end
 
 function ChangeSizeAndPosition()
     ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 42, 35)
-    ChatFrame1:SetSize(420, 200)
+    ChatFrame1:SetSize(420 + 40, 200 + 7)
 end
 
 Core.RegisterModule(Module, {}, {}, false, ChatModule)
