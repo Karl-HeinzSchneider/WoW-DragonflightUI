@@ -930,35 +930,37 @@ function ChangeFocusFrame()
     FocusFrameTextureFrameTexture:Hide()
     FocusFrameBackground:Hide()
 
-    local texture = FocusFrame:CreateTexture('DragonflightUIFocusFrame')
-    texture:SetDrawLayer('BACKGROUND', 2)
-    texture:SetTexture(base)
-    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn'))
-    --texture:SetPoint('LEFT', PlayerFrame, 'RIGHT', 0, 6)
-    texture:SetPoint('RIGHT', FocusFramePortrait, 'CENTER', 36, -1)
-    texture:SetSize(192, 67)
-    texture:SetScale(1)
-    frame.FocusFrameBorder = texture
+    local background = FocusFrame:CreateTexture('DragonflightUITargetFrameBackground')
+    background:SetDrawLayer('BACKGROUND', 2)
+    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
+    background:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
+    frame.FocusFrameBackground = background
 
-    FocusFramePortrait:SetDrawLayer('BACKGROUND', 1)
+    local border = FocusFrame:CreateTexture('DragonflightUITargetFrameBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+    border:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
+    frame.FocusFrameBorder = border
+
+    FocusFramePortrait:SetDrawLayer('ARTWORK', 1)
     FocusFramePortrait:SetSize(56, 56)
     local CorrectionY = -3
     local CorrectionX = -5
     FocusFramePortrait:SetPoint('TOPRIGHT', FocusFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
 
     FocusFrameNameBackground:ClearAllPoints()
-    FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', 0, 2)
-    FocusFrameNameBackground:SetSize(124, 10)
-    FocusFrameNameBackground:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
-    )
+    FocusFrameNameBackground:SetTexture(base)
+    FocusFrameNameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
+    FocusFrameNameBackground:SetSize(135, 18)
+    FocusFrameNameBackground:ClearAllPoints()
+    FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
 
     -- @TODO: change text spacing
     FocusFrameTextureFrameName:ClearAllPoints()
-    FocusFrameTextureFrameName:SetPoint('BOTTOM', FocusFrameHealthBar, 'TOP', 10, 3)
+    FocusFrameTextureFrameName:SetPoint('BOTTOM', FocusFrameHealthBar, 'TOP', 10, 3 - 2)
 
     FocusFrameTextureFrameLevelText:ClearAllPoints()
-    FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3)
+    FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
     -- HealthText
     local t = FocusFrame:CreateFontString('FocusFrameHealthBarText', 'HIGHLIGHT', 'TextStatusBarText')
@@ -968,13 +970,13 @@ function ChangeFocusFrame()
 
     -- ManaText
     local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
-    m:SetPoint('CENTER', FocusFrameManaBar, 0, 0)
+    m:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
     m:SetText('MANA')
     frame.FocusFrameManaBarText = m
 
     -- Health 119,12
     FocusFrameHealthBar:ClearAllPoints()
-    FocusFrameHealthBar:SetSize(124, 20)
+    FocusFrameHealthBar:SetSize(125, 20)
     FocusFrameHealthBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, 0)
     FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
@@ -984,8 +986,8 @@ function ChangeFocusFrame()
 
     -- Mana 119,12
     FocusFrameManaBar:ClearAllPoints()
-    FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, -18 + 1)
-    FocusFrameManaBar:SetSize(124, 8)
+    FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8, -18 + 1)
+    FocusFrameManaBar:SetSize(132, 8)
     FocusFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
