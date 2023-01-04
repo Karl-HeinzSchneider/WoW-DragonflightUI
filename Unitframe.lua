@@ -775,7 +775,7 @@ function ChangeTargetFrame()
     TargetFrameTextureFrameTexture:Hide()
     TargetFrameBackground:Hide()
 
-    local texture = TargetFrame:CreateTexture('DragonflightUITargetFrame')
+    --[[ local texture = TargetFrame:CreateTexture('DragonflightUITargetFrame')
     texture:SetDrawLayer('BACKGROUND', 2)
     texture:SetTexture(base)
     texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn'))
@@ -783,9 +783,20 @@ function ChangeTargetFrame()
     texture:SetPoint('RIGHT', TargetFramePortrait, 'CENTER', 36, -1)
     texture:SetSize(192, 67)
     texture:SetScale(1)
-    frame.TargetFrameBorder = texture
+    frame.TargetFrameBorder = texture ]]
+    local background = TargetFrameHealthBar:CreateTexture('DragonflightUITargetFrameBackground')
+    background:SetDrawLayer('BACKGROUND', 2)
+    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
+    background:SetPoint('LEFT', TargetFrameHealthBar, 'LEFT', -3, -32.5)
+    frame.TargetFrameBackground = background
 
-    TargetFramePortrait:SetDrawLayer('BACKGROUND', 1)
+    local border = TargetFrameHealthBar:CreateTexture('DragonflightUITargetFrameBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+    border:SetPoint('LEFT', TargetFrameHealthBar, 'LEFT', -3, -32.5 + 0)
+    frame.TargetFrameBorder = border
+
+    TargetFramePortrait:SetDrawLayer('ARTWORK', 1)
     TargetFramePortrait:SetSize(56, 56)
     local CorrectionY = -3
     local CorrectionX = -5
@@ -804,10 +815,10 @@ function ChangeTargetFrame()
 
     -- @TODO: change text spacing
     TargetFrameTextureFrameName:ClearAllPoints()
-    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3)
+    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3 - 1)
 
     TargetFrameTextureFrameLevelText:ClearAllPoints()
-    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3)
+    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 1)
 
     TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
     TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
@@ -817,7 +828,7 @@ function ChangeTargetFrame()
 
     -- Health 119,12
     TargetFrameHealthBar:ClearAllPoints()
-    TargetFrameHealthBar:SetSize(124, 20)
+    TargetFrameHealthBar:SetSize(125, 20)
     TargetFrameHealthBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, 0)
     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
@@ -827,11 +838,17 @@ function ChangeTargetFrame()
 
     -- Mana 119,12
     TargetFrameManaBar:ClearAllPoints()
-    TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, -18 + 1)
-    TargetFrameManaBar:SetSize(124, 8)
+    TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8, -18 + 1)
+    TargetFrameManaBar:SetSize(132, 8)
     TargetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
+
+    TargetFrameNameBackground:SetTexture(base)
+    TargetFrameNameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
+    TargetFrameNameBackground:SetSize(135, 18)
+    TargetFrameNameBackground:ClearAllPoints()
+    TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', 0, -4)
 
     TargetFrameFlash:SetTexture('')
 
