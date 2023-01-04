@@ -704,6 +704,11 @@ function CreatePlayerFrameTextures()
     background:SetDrawLayer('BACKGROUND', 2)
     background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND')
     background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+
+    background:SetTexture(base)
+    background:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+    background:SetSize(198, 71)
+    background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
     frame.PlayerFrameBackground = background
 
     local border = PlayerFrameHealthBar:CreateTexture('DragonflightUIPlayerFrameBorder')
@@ -712,7 +717,7 @@ function CreatePlayerFrameTextures()
     border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
     frame.PlayerFrameBorder = border
 
-    --[[  local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
+    local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
     textureSmall:SetDrawLayer('ARTWORK', 5)
     textureSmall:SetTexture(base)
     textureSmall:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
@@ -720,7 +725,7 @@ function CreatePlayerFrameTextures()
     textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
     textureSmall:SetSize(23, 23)
     textureSmall:SetScale(1)
-    frame.PlayerFrameDeco = textureSmall ]]
+    frame.PlayerFrameDeco = textureSmall
 end
 
 function ChangePlayerframe()
@@ -748,10 +753,10 @@ function ChangePlayerframe()
 
     -- @TODO: change text spacing
     PlayerName:ClearAllPoints()
-    PlayerName:SetPoint('BOTTOMLEFT', PlayerFrameHealthBar, 'TOPLEFT', 0, 3)
+    PlayerName:SetPoint('BOTTOMLEFT', PlayerFrameHealthBar, 'TOPLEFT', 0, 1)
 
     PlayerLevelText:ClearAllPoints()
-    PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 3)
+    PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 1)
 
     -- Health 119,12
     PlayerFrameHealthBar:SetSize(125, 20)
