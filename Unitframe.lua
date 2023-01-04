@@ -6,7 +6,7 @@ end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
 
-function GetCoords(key)
+local function GetCoords(key)
     local uiunitframe = {
         ['UI-HUD-UnitFrame-Player-Absorb-Edge'] = {8, 32, 0.984375, 0.9921875, 0.001953125, 0.064453125, false, false},
         ['UI-HUD-UnitFrame-Player-CombatIcon'] = {
