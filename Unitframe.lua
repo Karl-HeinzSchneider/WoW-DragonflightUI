@@ -1040,6 +1040,9 @@ end
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
+function ChangeFocusToT()
+end
+
 function UpdateFocusText()
     --print('UpdateFocusText')
     if UnitExists('focus') then
@@ -1117,19 +1120,12 @@ end
 Core.RegisterModule(Module, {}, {}, true, UnitframeModule)
 
 function frame:OnEvent(event, arg1)
-    if event == 'UNIT_POWER_UPDATE' then
-        if arg1 == 'focus' then
-            UpdateFocusText()
-        end
-    elseif event == 'UNIT_HEALTH' then
-        if arg1 == 'focus' then
-            UpdateFocusText()
-        end
+    if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
+        UpdateFocusText()
+    elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
+        UpdateFocusText()
     elseif event == 'PLAYER_FOCUS_CHANGED' then
         UpdateFocusText()
-        if FocusFrame and FocusFrameBuff1 then
-        --FocusFrameBuff1:SetPoint('TOPLEFT', FocusFrame, 'BOTTOMLEFT', 10, 35)
-        end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         --print('PLAYER_ENTERING_WORLD')
         CreatePlayerFrameTextures()
@@ -1137,12 +1133,10 @@ function frame:OnEvent(event, arg1)
         ChangeTargetFrame()
         ChangeToT()
         ChangeFocusFrame()
+        ChangeFocusToT()
         ChangePetFrame()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
-        if TargetFrame and TargetFrameBuff1 then
-        --TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 10, 35)
-        end
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         ChangePlayerframe()
     elseif event == 'UNIT_EXITED_VEHICLE' then
