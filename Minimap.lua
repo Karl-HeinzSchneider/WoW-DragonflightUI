@@ -169,13 +169,15 @@ end
 function CreateMinimapInfoFrame()
     local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
     f:SetSize(180, 22)
-    f:SetPoint('CENTER', Minimap, 'TOP', -5, 25)
+    f:SetPoint('CENTER', Minimap, 'TOP', -5 + 2, 25)
 
-    local tex = f:CreateTexture('Background', 'ARTWORK')
-    tex:SetAllPoints()
-    tex:SetColorTexture(0, 0, 0)
-    tex:SetAlpha(0.5)
-    f.Background = tex
+    local background = f:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
+    background:ClearAllPoints()
+    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
+    background:SetSize(180, 38)
+    background:SetPoint('LEFT', f, 'LEFT', 0, -8)
+
+    f.Background = background
 
     frame.MinimapInfo = f
 end
@@ -241,7 +243,7 @@ function HookCalendar()
     button:SetSize(size * 1.105, size)
 
     button:ClearAllPoints()
-    button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 0, -2)
+    button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
 
     local text = button:CreateFontString('DragonflightUICalendarButtonText', 'ARTWORK', 'GameFontBlack')
     text:SetText('12')
