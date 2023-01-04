@@ -700,24 +700,27 @@ end
 function CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    local texture = PlayerFrame:CreateTexture('DragonflightUIPlayerFrame')
-    texture:SetDrawLayer('ARTWORK', 5)
-    texture:SetTexture(base)
-    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
-    texture:SetPoint('RIGHT', PlayerFrameHealthBar, 'RIGHT', 5, 0)
-    texture:SetSize(198, 73)
-    texture:SetScale(1)
-    frame.PlayerFrameBorder = texture
+    local background = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameBackground')
+    background:SetDrawLayer('BACKGROUND', 2)
+    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND')
+    background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+    frame.PlayerFrameBackground = background
 
-    local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
+    local border = PlayerFrameHealthBar:CreateTexture('DragonflightUIPlayerFrameBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
+    border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+    frame.PlayerFrameBorder = border
+
+    --[[  local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
     textureSmall:SetDrawLayer('ARTWORK', 5)
     textureSmall:SetTexture(base)
     textureSmall:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
     local delta = 15
-    textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta)
+    textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
     textureSmall:SetSize(23, 23)
     textureSmall:SetScale(1)
-    frame.PlayerFrameDeco = textureSmall
+    frame.PlayerFrameDeco = textureSmall ]]
 end
 
 function ChangePlayerframe()
@@ -733,10 +736,15 @@ function ChangePlayerframe()
 
     if vehicle then
         --frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-Vehicle'))
-        frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+        --frame.PlayerFrameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
     else
-        frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+        --frame.PlayerFrameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
     end
+
+    PlayerPortrait:ClearAllPoints()
+    PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
+    PlayerPortrait:SetDrawLayer('ARTWORK', 5)
+    PlayerPortrait:SetSize(56, 56)
 
     -- @TODO: change text spacing
     PlayerName:ClearAllPoints()
@@ -746,8 +754,9 @@ function ChangePlayerframe()
     PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 3)
 
     -- Health 119,12
-    PlayerFrameHealthBar:SetSize(124, 20)
-    PlayerFrameHealthBar:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 106 - 2, -41 + 8)
+    PlayerFrameHealthBar:SetSize(125, 20)
+    PlayerFrameHealthBar:ClearAllPoints()
+    PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
     PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
     )
@@ -755,8 +764,9 @@ function ChangePlayerframe()
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
     -- Mana 119,12
-    PlayerFrameManaBar:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 106 - 2, -52 - 3)
-    PlayerFrameManaBar:SetSize(124, 10)
+    PlayerFrameManaBar:ClearAllPoints()
+    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17)
+    PlayerFrameManaBar:SetSize(125, 8)
     PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
     )
