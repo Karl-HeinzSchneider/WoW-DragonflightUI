@@ -287,9 +287,14 @@ end
 --ChangeClock()
 
 function ChangeZoneText()
-    MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 0, 0)
+    MinimapZoneTextButton:ClearAllPoints()
+    MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 1, 0)
     MinimapZoneTextButton:SetParent(frame.MinimapInfo)
     MinimapZoneTextButton:SetSize(130, 12)
+
+    MinimapZoneText:ClearAllPoints()
+    MinimapZoneText:SetSize(130, 12)
+    MinimapZoneText:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 1, 0)
 end
 --ChangeZoneText()
 
