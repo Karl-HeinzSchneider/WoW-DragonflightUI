@@ -168,13 +168,13 @@ end
 
 function CreateMinimapInfoFrame()
     local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
-    f:SetSize(180, 22)
-    f:SetPoint('CENTER', Minimap, 'TOP', -5 + 2, 25)
+    f:SetSize(170, 22)
+    f:SetPoint('CENTER', Minimap, 'TOP', 0, 25)
 
     local background = f:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
     background:ClearAllPoints()
     background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
-    background:SetSize(180, 38)
+    background:SetSize(170, 38)
     background:SetPoint('LEFT', f, 'LEFT', 0, -8)
 
     f.Background = background
@@ -289,18 +289,38 @@ end
 function ChangeZoneText()
     MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 0, 0)
     MinimapZoneTextButton:SetParent(frame.MinimapInfo)
+    MinimapZoneTextButton:SetSize(130, 12)
 end
 --ChangeZoneText()
 
 function ChangeTracking()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
+
     MiniMapTracking:ClearAllPoints()
     --MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
     MiniMapTracking:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
-
     MiniMapTracking:SetScale(0.75)
+    MiniMapTrackingIcon:Hide()
+
+    --MiniMapTrackingBackground:Hide()
+    MiniMapTrackingBackground:ClearAllPoints()
+    MiniMapTrackingBackground:SetPoint('CENTER', MiniMapTracking, 'CENTER')
+    MiniMapTrackingBackground:SetTexture(base)
+    MiniMapTrackingBackground:SetTexCoord(0.861328125, 0.9375, 0.392578125, 0.4296875)
 
     MiniMapTrackingButtonBorder:Hide()
-    MiniMapTrackingIcon:SetPoint('CENTER', MiniMapTrackingButton, -25, 0)
+
+    MiniMapTrackingButton:SetSize(19.5, 19)
+    MiniMapTrackingButton:ClearAllPoints()
+    MiniMapTrackingButton:SetPoint('CENTER', MiniMapTracking, 'CENTER')
+
+    MiniMapTrackingButton:SetNormalTexture(base)
+    MiniMapTrackingButton:GetNormalTexture():SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
+    MiniMapTrackingButton:SetHighlightTexture(base)
+    MiniMapTrackingButton:GetHighlightTexture():SetTexCoord(0.228515625, 0.287109375, 0.5078125, 0.53515625)
+    MiniMapTrackingButton:SetPushedTexture(base)
+    MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109375, 0.224609375, 0.5078125, 0.537109375)
+    --MiniMapTrackingIcon:SetPoint('CENTER', MiniMapTrackingButton, -25, 0)
     --print(MiniMapTrackingBackground:GetTexture())
     --MiniMapTrackingBackground:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     --MiniMapTrackingBackground:SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
@@ -384,7 +404,9 @@ end
 function ChangeMail()
     MiniMapMailBorder:Hide()
     MiniMapMailIcon:Hide()
-    MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
+    --MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
+    MiniMapMailFrame:SetSize(19.5, 15)
+    MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
 
@@ -394,7 +416,7 @@ function ChangeMail()
     mail:SetTexCoord(0.08203125, 0.158203125, 0.5078125, 0.537109375)
     mail:SetSize(19.5, 15)
     mail:SetPoint('CENTER', MiniMapMailFrame, 'CENTER', -3, 0)
-    mail:SetScale(1.25)
+    mail:SetScale(1)
 end
 
 -- Events
