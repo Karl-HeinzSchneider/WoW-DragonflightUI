@@ -734,17 +734,6 @@ function ChangePlayerframe()
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
-    --PlayerFrameTexture:SetTexture(base)
-    --PlayerFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
-
-    local vehicle = UnitInVehicle('player')
-
-    if vehicle then
-        --frame.PlayerFrameBorder:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-Vehicle'))
-        --frame.PlayerFrameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
-    else
-        --frame.PlayerFrameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
-    end
 
     PlayerPortrait:ClearAllPoints()
     PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
