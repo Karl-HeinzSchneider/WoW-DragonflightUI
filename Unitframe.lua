@@ -896,37 +896,6 @@ function ChangeTargetFrame()
             frame.TargetFrameFlash:Hide()
         end
     )
-
-    -- target of target
-    -- TargetFrameToTTextureFrame:Hide()
-    TargetFrameToT:ClearAllPoints()
-    TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35, -10 - 5)
-
-    TargetFrameToTTextureFrameTexture:SetTexture('')
-    --TargetFrameToTTextureFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
-
-    local textureTot = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToT')
-    textureTot:SetDrawLayer('BACKGROUND', 2)
-    textureTot:SetTexture(base)
-    textureTot:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
-    --texture:SetPoint('LEFT', PlayerFrame, 'RIGHT', 0, 6)
-    textureTot:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25, 0)
-    textureTot:SetSize(120, 49)
-    textureTot:SetScale(1)
-    frame.TargetFrameToTBorder = textureTot
-
-    TargetFrameToTHealthBar:ClearAllPoints()
-    TargetFrameToTHealthBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1, 2)
-    TargetFrameToTHealthBar:SetFrameLevel(10)
-    TargetFrameToTHealthBar:SetSize(70.5, 9)
-
-    TargetFrameToTManaBar:ClearAllPoints()
-    TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1, 2 - 10)
-    TargetFrameToTManaBar:SetFrameLevel(10)
-    TargetFrameToTManaBar:SetSize(70.5, 5)
-
-    TargetFrameToTTextureFrameName:ClearAllPoints()
-    TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1, 2 + 12)
 end
 function ReApplyTargetFrame()
     TargetFrameManaBar:GetStatusBarTexture():SetTexture(
@@ -936,6 +905,42 @@ function ReApplyTargetFrame()
     TargetFrameFlash:SetTexture('')
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+
+function ChangeToT()
+    --TargetFrameToTTextureFrame:Hide()
+    TargetFrameToT:ClearAllPoints()
+    TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35, -10 - 5)
+
+    TargetFrameToTTextureFrameTexture:SetTexture('')
+    --TargetFrameToTTextureFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
+
+    local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
+    background:SetDrawLayer('BACKGROUND', 1)
+    background:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
+    )
+    background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
+    frame.TargetFrameToTBackground = background
+
+    local border = TargetFrameToTHealthBar:CreateTexture('DragonflightUITargetFrameToTBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
+    frame.TargetFrameToTBorder = border
+
+    TargetFrameToTHealthBar:ClearAllPoints()
+    TargetFrameToTHealthBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 0)
+    TargetFrameToTHealthBar:SetFrameLevel(10)
+    TargetFrameToTHealthBar:SetSize(70.5, 10)
+
+    TargetFrameToTManaBar:ClearAllPoints()
+    TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
+    TargetFrameToTManaBar:SetFrameLevel(10)
+    TargetFrameToTManaBar:SetSize(74, 7.5)
+
+    TargetFrameToTTextureFrameName:ClearAllPoints()
+    TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+end
 
 function ChangeFocusFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
@@ -1146,6 +1151,7 @@ function frame:OnEvent(event, arg1)
         CreatePlayerFrameTextures()
         ChangePlayerframe()
         ChangeTargetFrame()
+        ChangeToT()
         ChangeFocusFrame()
         ChangePetFrame()
     elseif event == 'PLAYER_TARGET_CHANGED' then
