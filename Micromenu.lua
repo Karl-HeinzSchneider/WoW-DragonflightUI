@@ -408,16 +408,19 @@ function ChangeBackpack()
     MainMenuBarBackpackButtonNormalTexture:SetTexture()
     --MainMenuBarBackpackButton.IconBorder:Hide()
 
-    for i = 0, 3 do
-        local slot = 'Interface\\Addons\\DragonflightUI\\Textures\\bagborder2'
-        local slothighlight = 'Interface\\Addons\\DragonflightUI\\Textures\\baghighlight2'
+    local slot = 'Interface\\Addons\\DragonflightUI\\Textures\\bagborder2'
+    local slothighlight = 'Interface\\Addons\\DragonflightUI\\Textures\\baghighlight2'
 
-        local bagtexture = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+    local bagtexture = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+    local bagmask = 'Interface\\Addons\\DragonflightUI\\Textures\\bagmask'
+    -- dx/dy => better center
+    local dy = 0.015
+    local dx = -0.001
+
+    for i = 0, 3 do
         _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexture(bagtexture)
         --  _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625) -- empty
-        -- dx/dy => better center
-        local dy = 0.015
-        local dx = -0.001
+
         _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(
             0.576171875 + dx,
             0.6953125 + dx,
@@ -438,7 +441,7 @@ function ChangeBackpack()
         _G['CharacterBag' .. i .. 'Slot']:GetCheckedTexture():SetTexture()
         _G['CharacterBag' .. i .. 'Slot']:GetPushedTexture():SetTexture()
 
-        _G['CharacterBag' .. i .. 'SlotIconTexture']:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\bagmask')
+        _G['CharacterBag' .. i .. 'SlotIconTexture']:SetMask(bagmask)
 
         -- Note:
         -- bagID = 4 3 2 1 0  , 0 = backpack
@@ -461,6 +464,25 @@ function ChangeBackpack()
             end
         )
     end
+
+    --keyring
+    KeyRingButton:SetSize(34.5, 34.5)
+    KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2)
+
+    KeyRingButton:GetNormalTexture():SetTexture(bagtexture)
+    KeyRingButton:GetNormalTexture():SetSize(35, 35)
+    KeyRingButton:GetNormalTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx, 0.0078125 + dy, 0.484375 + dy)
+    KeyRingButton:GetNormalTexture():SetTexCoord(0.822265625, 0.94140625, 0.0078125, 0.484375)
+
+    KeyRingButton:GetHighlightTexture():SetTexture(bagtexture)
+    KeyRingButton:GetHighlightTexture():SetSize(35, 35)
+    KeyRingButton:GetHighlightTexture():SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
+
+    --KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
+    KeyRingButton:GetPushedTexture():SetSize(35, 35)
+    -- KeyRingButton:GetPushedTexture():SetTexture(0.69921875, 0.818359375, 0.0078125, 0.484375)
+
+    --KeyRingButton:GetCheckedTexture():SetTexture()
 end
 --ChangeBackpack()
 
