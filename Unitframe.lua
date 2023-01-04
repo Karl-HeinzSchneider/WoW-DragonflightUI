@@ -1041,6 +1041,37 @@ end
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
 function ChangeFocusToT()
+    FocusFrameToT:ClearAllPoints()
+    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35, -10 - 5)
+
+    FocusFrameToTTextureFrameTexture:SetTexture('')
+
+    local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
+    background:SetDrawLayer('BACKGROUND', 1)
+    background:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
+    )
+    background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
+    frame.FocusFrameToTBackground = background
+
+    local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
+    frame.FocusFrameToTBorder = border
+
+    FocusFrameToTHealthBar:ClearAllPoints()
+    FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
+    FocusFrameToTHealthBar:SetFrameLevel(10)
+    FocusFrameToTHealthBar:SetSize(70.5, 10)
+
+    FocusFrameToTManaBar:ClearAllPoints()
+    FocusFrameToTManaBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
+    FocusFrameToTManaBar:SetFrameLevel(10)
+    FocusFrameToTManaBar:SetSize(74, 7.5)
+
+    FocusFrameToTTextureFrameName:ClearAllPoints()
+    FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 end
 
 function UpdateFocusText()
