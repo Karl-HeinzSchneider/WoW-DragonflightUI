@@ -381,6 +381,22 @@ function MoveBagAnchor()
     end
 end
 
+function ChangeMail()
+    MiniMapMailBorder:Hide()
+    MiniMapMailIcon:Hide()
+    MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
+
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
+
+    local mail = MiniMapMailFrame:CreateTexture('DragonflightUIMinimapMailFrame', 'ARTWORK')
+    mail:ClearAllPoints()
+    mail:SetTexture(base)
+    mail:SetTexCoord(0.08203125, 0.158203125, 0.5078125, 0.537109375)
+    mail:SetSize(19.5, 15)
+    mail:SetPoint('CENTER', MiniMapMailFrame, 'CENTER', -3, 0)
+    mail:SetScale(1.25)
+end
+
 -- Events
 --frame:RegisterEvent('ADDON_LOADED')
 
@@ -398,6 +414,7 @@ function MinimapModule()
     MoveTracker()
     ChangeLFG()
     --MoveBagAnchor()
+    ChangeMail()
 
     frame:RegisterEvent('ADDON_LOADED')
 end
