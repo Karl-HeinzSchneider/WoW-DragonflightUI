@@ -208,37 +208,9 @@ end
 --ChangeLFG()
 
 function MoveBagAnchor()
-    hooksecurefunc(
-        ContainerFrame1,
-        'Show',
-        function(self)
-            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 132)
-            print('hooks')
-        end
-    )
-
-    hooksecurefunc(
-        'CloseBackpack',
-        function()
-            print('CloseBackpack hookedfunction fired')
-        end
-    )
-    hooksecurefunc(
-        'OpenBackpack',
-        function()
-            print('OpenBackpack hookedfunction fired')
-            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 132)
-        end
-    )
-    hooksecurefunc(
-        'ToggleBackpack',
-        function()
-            print('ToggleBackpack hookedfunction fired')
-            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 132)
-        end
-    )
-    --[[ ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 132)
-    ContainerFrame1.SetPoint = noop ]]
+    ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 132)
+    ContainerFrame1.SetPoint = function()
+    end
 end
 
 -- Events
@@ -257,7 +229,7 @@ function MinimapModule()
     MoveBuffs()
     MoveTracker()
     ChangeLFG()
-    --MoveBagAnchor()
+    MoveBagAnchor()
 
     frame:RegisterEvent('ADDON_LOADED')
 end
