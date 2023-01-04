@@ -815,10 +815,10 @@ function ChangeTargetFrame()
 
     -- @TODO: change text spacing
     TargetFrameTextureFrameName:ClearAllPoints()
-    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3 - 1)
+    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3 - 2)
 
     TargetFrameTextureFrameLevelText:ClearAllPoints()
-    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 1)
+    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
     TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
     TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
@@ -848,7 +848,7 @@ function ChangeTargetFrame()
     TargetFrameNameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
     TargetFrameNameBackground:SetSize(135, 18)
     TargetFrameNameBackground:ClearAllPoints()
-    TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', 0, -4)
+    TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', 0, -4 - 1)
 
     TargetFrameFlash:SetTexture('')
 
