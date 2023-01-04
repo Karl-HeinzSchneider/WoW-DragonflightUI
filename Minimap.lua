@@ -229,7 +229,7 @@ function MinimapModule()
     MoveBuffs()
     MoveTracker()
     ChangeLFG()
-    MoveBagAnchor()
+    --MoveBagAnchor()
 
     frame:RegisterEvent('ADDON_LOADED')
 end
