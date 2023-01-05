@@ -1112,25 +1112,32 @@ function ChangePetFrame()
     PetFrameTexture:SetTexture('')
     PetFrameTexture:Hide()
 
-    local texture = PetFrame:CreateTexture('DragonflightUIPetFrame')
-    texture:SetDrawLayer('ARTWORK', 5)
-    texture:SetTexture(base)
-    texture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
-    texture:SetPoint('LEFT', PetPortrait, 'CENTER', -25, 0)
-    texture:SetSize(120, 49)
-    texture:SetScale(1)
-    frame.PetFrameBorder = texture
+    local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
+    background:SetDrawLayer('BACKGROUND', 1)
+    background:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
+    )
+    background:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
+    frame.PetFrameBackground = background
+
+    local border = PetFrameHealthBar:CreateTexture('DragonflightUIPetFrameBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
+    frame.PetFrameBorder = border
 
     PetFrameHealthBar:ClearAllPoints()
-    PetFrameHealthBar:SetSize(70, 9)
-    PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 0.5, 2)
+    PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
+    -- PetFrameHealthBar:SetFrameLevel(10)
+    PetFrameHealthBar:SetSize(70.5, 10)
 
     PetFrameManaBar:ClearAllPoints()
-    PetFrameManaBar:SetSize(70.5, 5)
-    PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1, 2 - 10)
+    PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
+    --PetFrameManaBar:SetFrameLevel(10)
+    PetFrameManaBar:SetSize(74, 7.5)
 
     PetName:ClearAllPoints()
-    PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1, 14)
+    PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
     PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', 0, 0)
