@@ -824,8 +824,8 @@ function ChangeTargetFrame()
 
     -- Mana 119,12
     TargetFrameManaBar:ClearAllPoints()
-    TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8, -18 + 1)
-    TargetFrameManaBar:SetSize(132, 8)
+    TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
+    TargetFrameManaBar:SetSize(132, 9)
     TargetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
@@ -986,8 +986,8 @@ function ChangeFocusFrame()
 
     -- Mana 119,12
     FocusFrameManaBar:ClearAllPoints()
-    FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8, -18 + 1)
-    FocusFrameManaBar:SetSize(132, 8)
+    FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
+    FocusFrameManaBar:SetSize(132, 9)
     FocusFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
