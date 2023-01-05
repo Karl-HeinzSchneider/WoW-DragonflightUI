@@ -700,32 +700,40 @@ end
 function CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    local background = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameBackground')
-    background:SetDrawLayer('BACKGROUND', 2)
-    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND')
-    background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+    if not frame.PlayerFrameBackground then
+        local background = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameBackground')
+        background:SetDrawLayer('BACKGROUND', 2)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND'
+        )
+        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
 
-    background:SetTexture(base)
-    background:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
-    background:SetSize(198, 71)
-    background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
-    frame.PlayerFrameBackground = background
+        background:SetTexture(base)
+        background:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+        background:SetSize(198, 71)
+        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
+        frame.PlayerFrameBackground = background
+    end
 
-    local border = PlayerFrameHealthBar:CreateTexture('DragonflightUIPlayerFrameBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
-    border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
-    frame.PlayerFrameBorder = border
+    if not frame.PlayerFrameBorder then
+        local border = PlayerFrameHealthBar:CreateTexture('DragonflightUIPlayerFrameBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
+        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+        frame.PlayerFrameBorder = border
+    end
 
-    local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
-    textureSmall:SetDrawLayer('ARTWORK', 5)
-    textureSmall:SetTexture(base)
-    textureSmall:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
-    local delta = 15
-    textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
-    textureSmall:SetSize(23, 23)
-    textureSmall:SetScale(1)
-    frame.PlayerFrameDeco = textureSmall
+    if not frame.PlayerFrameDeco then
+        local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
+        textureSmall:SetDrawLayer('ARTWORK', 5)
+        textureSmall:SetTexture(base)
+        textureSmall:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
+        local delta = 15
+        textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
+        textureSmall:SetSize(23, 23)
+        textureSmall:SetScale(1)
+        frame.PlayerFrameDeco = textureSmall
+    end
 end
 
 function ChangePlayerframe()
@@ -779,17 +787,23 @@ function ChangeTargetFrame()
     TargetFrameTextureFrameTexture:Hide()
     TargetFrameBackground:Hide()
 
-    local background = TargetFrame:CreateTexture('DragonflightUITargetFrameBackground')
-    background:SetDrawLayer('BACKGROUND', 2)
-    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-    background:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
-    frame.TargetFrameBackground = background
+    if not frame.TargetFrameBackground then
+        local background = TargetFrame:CreateTexture('DragonflightUITargetFrameBackground')
+        background:SetDrawLayer('BACKGROUND', 2)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND'
+        )
+        background:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
+        frame.TargetFrameBackground = background
+    end
 
-    local border = TargetFrame:CreateTexture('DragonflightUITargetFrameBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-    border:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
-    frame.TargetFrameBorder = border
+    if not frame.TargetFrameBorder then
+        local border = TargetFrame:CreateTexture('DragonflightUITargetFrameBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+        border:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
+        frame.TargetFrameBorder = border
+    end
 
     TargetFramePortrait:SetDrawLayer('ARTWORK', 1)
     TargetFramePortrait:SetSize(56, 56)
@@ -896,19 +910,25 @@ function ChangeToT()
     TargetFrameToTTextureFrameTexture:SetTexture('')
     --TargetFrameToTTextureFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
 
-    local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
-    background:SetDrawLayer('BACKGROUND', 1)
-    background:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
-    )
-    background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
-    frame.TargetFrameToTBackground = background
+    if not frame.TargetFrameToTBackground then
+        local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
+        )
+        background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
+        frame.TargetFrameToTBackground = background
+    end
 
-    local border = TargetFrameToTHealthBar:CreateTexture('DragonflightUITargetFrameToTBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-    border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
-    frame.TargetFrameToTBorder = border
+    if not frame.TargetFrameToTBorder then
+        local border = TargetFrameToTHealthBar:CreateTexture('DragonflightUITargetFrameToTBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER'
+        )
+        border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
+        frame.TargetFrameToTBorder = border
+    end
 
     TargetFrameToTHealthBar:ClearAllPoints()
     TargetFrameToTHealthBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 0)
@@ -930,17 +950,23 @@ function ChangeFocusFrame()
     FocusFrameTextureFrameTexture:Hide()
     FocusFrameBackground:Hide()
 
-    local background = FocusFrame:CreateTexture('DragonflightUITargetFrameBackground')
-    background:SetDrawLayer('BACKGROUND', 2)
-    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-    background:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
-    frame.FocusFrameBackground = background
+    if not frame.FocusFrameBackground then
+        local background = FocusFrame:CreateTexture('DragonflightUITargetFrameBackground')
+        background:SetDrawLayer('BACKGROUND', 2)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND'
+        )
+        background:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
+        frame.FocusFrameBackground = background
+    end
 
-    local border = FocusFrame:CreateTexture('DragonflightUITargetFrameBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-    border:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
-    frame.FocusFrameBorder = border
+    if not frame.FocusFrameBorder then
+        local border = FocusFrame:CreateTexture('DragonflightUITargetFrameBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+        border:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
+        frame.FocusFrameBorder = border
+    end
 
     FocusFramePortrait:SetDrawLayer('ARTWORK', 1)
     FocusFramePortrait:SetSize(56, 56)
@@ -963,16 +989,20 @@ function ChangeFocusFrame()
     FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
     -- HealthText
-    local t = FocusFrame:CreateFontString('FocusFrameHealthBarText', 'HIGHLIGHT', 'TextStatusBarText')
-    t:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
-    t:SetText('HP')
-    frame.FocusFrameHealthBarText = t
+    if not frame.FocusFrameHealthBarText then
+        local t = FocusFrame:CreateFontString('FocusFrameHealthBarText', 'HIGHLIGHT', 'TextStatusBarText')
+        t:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
+        t:SetText('HP')
+        frame.FocusFrameHealthBarText = t
+    end
 
     -- ManaText
-    local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
-    m:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
-    m:SetText('MANA')
-    frame.FocusFrameManaBarText = m
+    if not frame.FocusFrameManaBarText then
+        local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
+        m:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
+        m:SetText('MANA')
+        frame.FocusFrameManaBarText = m
+    end
 
     -- Health 119,12
     FocusFrameHealthBar:ClearAllPoints()
@@ -994,17 +1024,19 @@ function ChangeFocusFrame()
 
     FocusFrameFlash:SetTexture('')
 
-    local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
-    flash:SetDrawLayer('BACKGROUND', 2)
-    flash:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
-    )
-    flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-    flash:SetSize(256, 128)
-    flash:SetScale(1)
-    flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-    flash:SetBlendMode('ADD')
-    frame.FocusFrameFlash = flash
+    if not frame.FocusFrameFlash then
+        local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
+        flash:SetDrawLayer('BACKGROUND', 2)
+        flash:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
+        )
+        flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
+        flash:SetSize(256, 128)
+        flash:SetScale(1)
+        flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+        flash:SetBlendMode('ADD')
+        frame.FocusFrameFlash = flash
+    end
 
     hooksecurefunc(
         FocusFrameFlash,
@@ -1046,19 +1078,25 @@ function ChangeFocusToT()
 
     FocusFrameToTTextureFrameTexture:SetTexture('')
 
-    local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
-    background:SetDrawLayer('BACKGROUND', 1)
-    background:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
-    )
-    background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
-    frame.FocusFrameToTBackground = background
+    if not frame.FocusFrameToTBackground then
+        local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
+        )
+        background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
+        frame.FocusFrameToTBackground = background
+    end
 
-    local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-    border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
-    frame.FocusFrameToTBorder = border
+    if not frame.FocusFrameToTBorder then
+        local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER'
+        )
+        border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
+        frame.FocusFrameToTBorder = border
+    end
 
     FocusFrameToTHealthBar:ClearAllPoints()
     FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
@@ -1112,19 +1150,25 @@ function ChangePetFrame()
     PetFrameTexture:SetTexture('')
     PetFrameTexture:Hide()
 
-    local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
-    background:SetDrawLayer('BACKGROUND', 1)
-    background:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
-    )
-    background:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
-    frame.PetFrameBackground = background
+    if not frame.PetFrameBackground then
+        local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
+        )
+        background:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
+        frame.PetFrameBackground = background
+    end
 
-    local border = PetFrameHealthBar:CreateTexture('DragonflightUIPetFrameBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-    border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
-    frame.PetFrameBorder = border
+    if not frame.PetFrameBorder then
+        local border = PetFrameHealthBar:CreateTexture('DragonflightUIPetFrameBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER'
+        )
+        border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
+        frame.PetFrameBorder = border
+    end
 
     PetFrameHealthBar:ClearAllPoints()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
