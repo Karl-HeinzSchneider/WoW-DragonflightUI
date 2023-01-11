@@ -392,6 +392,17 @@ function ChangeMicroMenu()
 end
 --ChangeMicroMenu()
 
+local function GetBagSlots(id)
+    local build, _, _, _ = GetBuildInfo()
+    if build == '3.4.1' then
+        local slots = C_Container.GetContainerNumSlots(id)
+        return slots
+    else
+        local slots = GetContainerNumSlots(id)
+        return slots
+    end
+end
+
 function ChangeBackpack()
     --MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
     local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbag'
@@ -447,7 +458,7 @@ function ChangeBackpack()
         -- bagID = 4 3 2 1 0  , 0 = backpack
         -- texture bag id = 3 2 1 0  , backpack seperate
         local slothook = function(self, id)
-            local slots = GetContainerNumSlots(id)
+            local slots = GetBagSlots(id)
             local name = 'CharacterBag' .. (id - 1) .. 'Slot'
             if slots == 0 then
                 _G[name]:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625)
