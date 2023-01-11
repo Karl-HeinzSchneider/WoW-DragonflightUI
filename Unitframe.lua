@@ -996,12 +996,22 @@ function ChangeFocusFrame()
         frame.FocusFrameHealthBarText = t
     end
 
+    if FocusFrameTextureFrame.HealthBarText then
+        FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
+        FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
+    end
+
     -- ManaText
     if not frame.FocusFrameManaBarText then
         local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
         m:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
         m:SetText('MANA')
         frame.FocusFrameManaBarText = m
+    end
+
+    if FocusFrameTextureFrame.ManaBarText then
+        FocusFrameTextureFrame.ManaBarText:ClearAllPoints()
+        FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
     end
 
     -- Health 119,12
@@ -1136,7 +1146,7 @@ function HookFunctions()
         PlayerFrameTexture,
         'Show',
         function()
-            print('PlayerFrameTexture - Show()')
+            --print('PlayerFrameTexture - Show()')
             ChangePlayerframe()
         end
     )
@@ -1197,11 +1207,16 @@ function UnitframeModule()
 
     frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
+
+    frame:RegisterEvent('ZONE_CHANGED')
+    frame:RegisterEvent('ZONE_CHANGED_INDOORS')
+    frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 end
 
 Core.RegisterModule(Module, {}, {}, true, UnitframeModule)
 
 function frame:OnEvent(event, arg1)
+    --print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         UpdateFocusText()
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
@@ -1219,9 +1234,12 @@ function frame:OnEvent(event, arg1)
         ChangePetFrame()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
+        ChangePlayerframe()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         ChangePlayerframe()
     elseif event == 'UNIT_EXITED_VEHICLE' then
+        ChangePlayerframe()
+    elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         ChangePlayerframe()
     end
 end
