@@ -697,6 +697,16 @@ local function GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
+local function GetStatusBarTexture(powerTypeString)
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+    if powerTypeString == 'MANA' then
+        return base .. 'UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
+    end
+
+    --return base .. 'UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
+end
+
 function CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
@@ -760,8 +770,9 @@ function ChangePlayerframe()
     PlayerFrameHealthBar:ClearAllPoints()
     PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
     PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health'
     )
+    PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
@@ -769,9 +780,28 @@ function ChangePlayerframe()
     PlayerFrameManaBar:ClearAllPoints()
     PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17)
     PlayerFrameManaBar:SetSize(125, 8)
-    PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
-    )
+
+    local powerType, powerTypeString = UnitPowerType('player')
+
+    if powerTypeString == 'MANA' then
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana'
+        )
+    elseif powerTypeString == 'RAGE' then
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage'
+        )
+    elseif powerTypeString == 'ENERGY' then
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy'
+        )
+    elseif powerTypeString == 'RUNIC_POWER' then
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower'
+        )
+    end
+
+    PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     --UI-HUD-UnitFrame-Player-PortraitOn-Status
     PlayerStatusTexture:SetTexture(
@@ -831,8 +861,9 @@ function ChangeTargetFrame()
     TargetFrameHealthBar:SetSize(125, 20)
     TargetFrameHealthBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, 0)
     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
+    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
 
     --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
@@ -840,9 +871,7 @@ function ChangeTargetFrame()
     TargetFrameManaBar:ClearAllPoints()
     TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
     TargetFrameManaBar:SetSize(132, 9)
-    TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
-    )
+    TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     TargetFrameNameBackground:SetTexture(base)
     TargetFrameNameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
@@ -894,10 +923,33 @@ function ChangeTargetFrame()
     )
 end
 function ReApplyTargetFrame()
-    TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana',
-        'BACKGROUND'
+    TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
+    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+
+    local powerType, powerTypeString = UnitPowerType('target')
+
+    if powerTypeString == 'MANA' then
+        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
+        )
+    elseif powerTypeString == 'RAGE' then
+        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'
+        )
+    elseif powerTypeString == 'ENERGY' then
+        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy'
+        )
+    elseif powerTypeString == 'RUNIC_POWER' then
+        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower'
+        )
+    end
+
+    TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
     TargetFrameFlash:SetTexture('')
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
