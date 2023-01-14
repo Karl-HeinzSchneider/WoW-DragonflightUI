@@ -1078,6 +1078,7 @@ function ReApplyToT()
         end
     else
         --print('ToT doesnt exist')
+        frame.ToTManaBar:Hide()
     end
 end
 
@@ -1354,17 +1355,93 @@ function ChangePetFrame()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
     -- PetFrameHealthBar:SetFrameLevel(10)
     PetFrameHealthBar:SetSize(70.5, 10)
+    PetFrameHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'
+    )
+    PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    PetFrameHealthBar.SetStatusBarColor = noop
 
     PetFrameManaBar:ClearAllPoints()
     PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
     --PetFrameManaBar:SetFrameLevel(10)
     PetFrameManaBar:SetSize(74, 7.5)
+    PetFrameManaBar:Hide()
+
+    if not frame.PetManaBar then
+        local f = CreateFrame('StatusBar', 'DragonflightUIPetManaBar', PetFrame)
+        f:SetSize(74, 7.5)
+        f:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
+        f:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+        )
+        f:SetStatusBarColor(1, 1, 1, 1)
+        f:EnableMouse(true)
+
+        local m = f:CreateFontString('PetManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
+        m:SetPoint('CENTER', f, 0, 0)
+        --m:SetFrameLevel(11)
+        m:SetText('MANA')
+        frame.PetManaBarText = m
+
+        frame.PetManaBar = f
+
+        frame.PetManaBar.UpdatePetManaBarValues = function()
+            local value = other:GetValue()
+            local statusMin, statusMax = other:GetMinMaxValues()
+
+            frame.PetManaBar:SetValue(value)
+            frame.PetManaBar:SetMinMaxValues(statusMin, statusMax)
+        end
+
+        PetFrameManaBar:HookScript(
+            'OnShow',
+            function(self)
+                self:Hide()
+            end
+        )
+    end
 
     PetName:ClearAllPoints()
     PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
     PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', 0, 0)
+end
+
+function UpdatePetMana()
+    --print('UpdatePetMana')
+    PetFrameManaBar:Hide()
+
+    local powerType, powerTypeString = UnitPowerType('pet')
+    local power = UnitPower('pet', powerType)
+    local maxpower = UnitPowerMax('pet', powerType)
+
+    frame.PetManaBar:SetValue(power)
+    frame.PetManaBar:SetMinMaxValues(0, maxpower)
+
+    if powerTypeString == 'MANA' then
+        frame.PetManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+        )
+    elseif powerTypeString == 'RAGE' then
+        frame.PetManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'
+        )
+    elseif powerTypeString == 'ENERGY' then
+        frame.PetManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'
+        )
+    elseif powerTypeString == 'RUNIC_POWER' then
+        frame.PetManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
+        )
+    end
+
+    if maxpower == 0 then
+        frame.PetManaBarText:SetText('')
+    else
+        frame.PetManaBarText:SetText(power .. ' / ' .. maxpower)
+    end
 end
 
 function UnitframeModule()
@@ -1375,7 +1452,10 @@ function UnitframeModule()
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 
-    frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
+    frame:RegisterEvent('UNIT_POWER_UPDATE')
+    --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
+
+    frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 
     frame:RegisterEvent('ZONE_CHANGED')
@@ -1389,6 +1469,10 @@ function frame:OnEvent(event, arg1)
     --print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         UpdateFocusText()
+    elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
+        UpdatePetMana()
+    elseif event == 'UNIT_POWER_UPDATE' then
+        --print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
         UpdateFocusText()
     elseif event == 'PLAYER_FOCUS_CHANGED' then
@@ -1403,6 +1487,7 @@ function frame:OnEvent(event, arg1)
         ChangeFocusFrame()
         ChangeFocusToT()
         ChangePetFrame()
+        UpdatePetMana()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
         ReApplyToT()
