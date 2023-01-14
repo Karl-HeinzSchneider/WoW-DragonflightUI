@@ -1158,6 +1158,7 @@ function ChangeFocusFrame()
     FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
     )
+    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
 
     --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
@@ -1168,6 +1169,7 @@ function ChangeFocusFrame()
     FocusFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
+    FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     FocusFrameFlash:SetTexture('')
 
@@ -1218,6 +1220,37 @@ end
 -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+function ReApplyFocusFrame()
+    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
+    )
+    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+
+    local powerType, powerTypeString = UnitPowerType('focus')
+
+    if powerTypeString == 'MANA' then
+        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
+        )
+    elseif powerTypeString == 'RAGE' then
+        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'
+        )
+    elseif powerTypeString == 'ENERGY' then
+        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy'
+        )
+    elseif powerTypeString == 'RUNIC_POWER' then
+        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower'
+        )
+    end
+
+    FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+    FocusFrameFlash:SetTexture('')
+end
 
 function ChangeFocusToT()
     FocusFrameToT:ClearAllPoints()
@@ -1359,6 +1392,7 @@ function frame:OnEvent(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
         UpdateFocusText()
     elseif event == 'PLAYER_FOCUS_CHANGED' then
+        ReApplyFocusFrame()
         UpdateFocusText()
     elseif event == 'PLAYER_ENTERING_WORLD' then
         --print('PLAYER_ENTERING_WORLD')
