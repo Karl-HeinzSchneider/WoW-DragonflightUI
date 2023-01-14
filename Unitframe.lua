@@ -1084,7 +1084,7 @@ function ReApplyToT()
         TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
 
         if UnitIsUnit('player', 'playertarget') then
-            frame.ToTManaBar:Hide()
+        --frame.ToTManaBar:Hide()
         end
     else
         --print('ToT doesnt exist')
