@@ -881,17 +881,19 @@ function ChangeTargetFrame()
 
     TargetFrameFlash:SetTexture('')
 
-    local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
-    flash:SetDrawLayer('BACKGROUND', 2)
-    flash:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
-    )
-    flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-    flash:SetSize(256, 128)
-    flash:SetScale(1)
-    flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-    flash:SetBlendMode('ADD')
-    frame.TargetFrameFlash = flash
+    if not frame.TargetFrameFlash then
+        local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
+        flash:SetDrawLayer('BACKGROUND', 2)
+        flash:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
+        )
+        flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
+        flash:SetSize(256, 128)
+        flash:SetScale(1)
+        flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+        flash:SetBlendMode('ADD')
+        frame.TargetFrameFlash = flash
+    end
 
     hooksecurefunc(
         TargetFrameFlash,
