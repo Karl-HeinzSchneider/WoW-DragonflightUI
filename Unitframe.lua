@@ -993,9 +993,92 @@ function ChangeToT()
     TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
     TargetFrameToTManaBar:SetFrameLevel(10)
     TargetFrameToTManaBar:SetSize(74, 7.5)
+    TargetFrameToTManaBar:Hide()
+
+    if not frame.ToTManaBar then
+        local f = CreateFrame('StatusBar', 'DragonflightUIToTManaBar', TargetFrame)
+        f:SetSize(74, 7.5)
+        f:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
+        f:SetFrameLevel(10)
+        f:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+        )
+        f:SetStatusBarColor(1, 1, 1, 1)
+
+        frame.ToTManaBar = f
+
+        local UpdateManaBarValues = function(other)
+            local value = other:GetValue()
+            local statusMin, statusMax = other:GetMinMaxValues()
+
+            frame.ToTManaBar:SetValue(value)
+            frame.ToTManaBar:SetMinMaxValues(statusMin, statusMax)
+        end
+
+        --[[   hooksecurefunc(
+            'TargetofTarget_Update',
+            function()
+                --print('TargetofTarget_Update')
+            end
+        ) ]]
+        TargetFrameToTManaBar:HookScript(
+            'OnValueChanged',
+            function(self)
+                TargetFrameToTManaBar:Hide()
+                UpdateManaBarValues(self)
+            end
+        )
+        TargetFrameToTManaBar:HookScript(
+            'OnMinMaxChanged',
+            function(self)
+                TargetFrameToTManaBar:Hide()
+                UpdateManaBarValues(self)
+
+                local powerType, powerTypeString = UnitPowerType('playertargettarget')
+
+                if powerTypeString == 'MANA' then
+                    frame.ToTManaBar:GetStatusBarTexture():SetTexture(
+                        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+                    )
+                elseif powerTypeString == 'RAGE' then
+                    frame.ToTManaBar:GetStatusBarTexture():SetTexture(
+                        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'
+                    )
+                elseif powerTypeString == 'ENERGY' then
+                    frame.ToTManaBar:GetStatusBarTexture():SetTexture(
+                        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'
+                    )
+                elseif powerTypeString == 'RUNIC_POWER' then
+                    frame.ToTManaBar:GetStatusBarTexture():SetTexture(
+                        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
+                    )
+                end
+
+                frame.ToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+            end
+        )
+    end
 
     TargetFrameToTTextureFrameName:ClearAllPoints()
     TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+end
+
+function ReApplyToT()
+    if UnitExists('playertargettarget') then
+        frame.ToTManaBar:Show()
+
+        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'
+        )
+
+        TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
+
+        if UnitIsUnit('player', 'playertarget') then
+            frame.ToTManaBar:Hide()
+        end
+    else
+        --print('ToT doesnt exist')
+    end
 end
 
 function ChangeFocusFrame()
@@ -1288,6 +1371,7 @@ function frame:OnEvent(event, arg1)
         ChangePetFrame()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         ReApplyTargetFrame()
+        ReApplyToT()
         ChangePlayerframe()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         ChangePlayerframe()
