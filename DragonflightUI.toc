@@ -3,7 +3,7 @@
 ## Notes: 
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
-## Version: 0.0.2
+## Version: 0.0.3
 ## SavedVariablesPerCharacter: ConfigTable
 ## OptionalDeps: 
 
