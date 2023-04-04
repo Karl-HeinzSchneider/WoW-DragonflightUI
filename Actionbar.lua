@@ -24,7 +24,7 @@ function ChangeActionbar()
     end
 
     StanceButton1:ClearAllPoints()
-    StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 77)
+    StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
     StanceButton1.SetPoint = function()
     end
 
