@@ -445,7 +445,19 @@ function HookPetBar()
             --PetActionBarFrame:SetPoint('TOPLEFT', PetActionBarFrame:GetParent(), 'BOTTOMLEFT', 0, 150)
         end
     ) ]]
-    PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0, 4)
+    for i = 1, 10 do
+        _G['PetActionButton' .. i]:SetSize(30, 30)
+        _G['PetActionButton' .. i .. 'NormalTexture2']:SetSize(50, 50)
+    end
+
+    local spacing = 7 -- default: 8
+    for i = 2, 10 do
+        _G['PetActionButton' .. i]:SetPoint('LEFT', _G['PetActionButton' .. (i - 1)], 'RIGHT', spacing, 0)
+    end
+
+    -- @TODO: different offset for each class (stance vs no stance)
+    local offset = 0 + 34
+    PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 --HookPetBar()
 function ChangePetBar()
