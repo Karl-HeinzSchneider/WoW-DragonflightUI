@@ -437,15 +437,14 @@ function HookPetBar()
     --PetActionBarFrame:ClearAllPoints()
     --PetActionBarFrame:SetParent(UIParent)
     -- PetActionBarFrame:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', 0, 45)#
-    hooksecurefunc(
+    --[[ hooksecurefunc(
         PetActionBarFrame,
         'Show',
         function()
             --print('Pet Show')
             --PetActionBarFrame:SetPoint('TOPLEFT', PetActionBarFrame:GetParent(), 'BOTTOMLEFT', 0, 150)
         end
-    )
-
+    ) ]]
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0, 4)
 end
 --HookPetBar()
