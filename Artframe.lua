@@ -337,7 +337,7 @@ function DrawGryphon()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     local scale = 0.42
     local dx, dy = 125, 5
-    local GryphonLeft = CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef, 'GrpyhonLeft')
+    local GryphonLeft = CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef, 'GryphonLeft')
     GryphonLeft:SetScale(scale)
     GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -dx, dy)
     GryphonLeft:SetFrameStrata('HIGH')
