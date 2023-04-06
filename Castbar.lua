@@ -144,7 +144,7 @@ function CastbarModule()
     frame:RegisterUnitEvent('UNIT_SPELLCAST_START', 'PLAYER')
     frame:RegisterUnitEvent('UNIT_SPELLCAST_STOP', 'PLAYER')
     frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'PLAYER')
-    print('CASTBAR MODULE')
+    --print('CASTBAR MODULE')
     ChangeCastbar()
     CreateNewCastbar()
 end
