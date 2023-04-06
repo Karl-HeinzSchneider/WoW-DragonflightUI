@@ -13,16 +13,6 @@ function ChangeCastbar()
     CastingBarFrame:SetSize(sizeX, sizeY)
 
     CastingBarFrame.Text:SetPoint('TOP', CastingBarFrame, 'BOTTOM', 1, 0)
-
-    local sparkRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
-    CastingBarFrame.Spark:SetTexture(sparkRef)
-    CastingBarFrame.Spark:SetPoint('CENTER', 0, -10)
-end
-
-function UpdateCastbarChanges()
-    CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 500)
-    --CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
 end
 
 function CreateNewCastbar()
@@ -102,6 +92,20 @@ function CreateNewCastbar()
     )
 end
 
+function UpdateCastbarChanges()
+    CastingBarFrame:ClearAllPoints()
+    CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 500)
+    --CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
+
+    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    frame.Castbar.Bar:SetStatusBarTexture(standardRef)
+end
+
+function Interrupted()
+    local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
+    frame.Castbar.Bar:SetStatusBarTexture(interruptedRef)
+end
+
 function CastbarModule()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
@@ -125,6 +129,8 @@ function frame:OnEvent(event, arg1)
     --print('event', event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
         UpdateCastbarChanges()
+    elseif event == 'UNIT_SPELLCAST_INTERRUPTED' or event == 'UNIT_SPELLCAST_STOP' then
+        Interrupted()
     else
         UpdateCastbarChanges()
     end
