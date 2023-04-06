@@ -21,20 +21,20 @@ end
 
 function CreateNewCastbar()
     local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    local borderRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
+    local backgroundRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
 
     local sizeX = 250
     local sizeY = 20
-    local f = CreateFrame('Frame', 'DragonflightUICastBar', UIParent)
+    local f = CreateFrame('Frame', 'DragonflightUICastBar', CastingBarFrame)
     f:SetSize(sizeX, sizeY)
     f:SetPoint('CENTER', CastingBarFrame, 'CENTER', 0, 50)
 
-    --[[   local tex = f:CreateTexture('Background', 'ARTWORK')
+    local tex = f:CreateTexture('Background', 'ARTWORK')
     tex:SetAllPoints()
-    --tex:SetColorTexture(0, 0, 0)
-    --tex:SetAlpha(0.5)
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    tex:SetTexCoord(.00048828125, 0.55029296875, 0.08203125, 0.15234375)
-    f.Background = tex ]]
+    tex:SetTexture(backgroundRef)
+    f.Background = tex
+
     -- actual status bar, child of parent above
     f.Bar = CreateFrame('StatusBar', nil, f)
     f.Bar:SetStatusBarTexture(standardRef)
@@ -57,46 +57,22 @@ function CreateNewCastbar()
     CastingBarFrame:HookScript(
         'OnValueChanged',
         function(self)
-            -- TargetFrameToTManaBar:Hide()
             UpdateCastBarValues(self)
-            -- print('OnValueChanged')
         end
     )
     CastingBarFrame:HookScript(
         'OnMinMaxChanged',
         function(self)
-            -- TargetFrameToTManaBar:Hide()
             UpdateCastBarValues(self)
-            -- UpdateManaBarTextures()
-            -- print('OnMinMaxChanged')
         end
     )
 
-    ------
-
-    --[[  frame.CastBarFrame = CreateFrame('Frame', 'DragonflightUICastBarFrame', UIParent)
-    frame.CastBarFrame:SetSize(250, 25)
-    frame.CastBarFrame:SetPoint('BOTTOM', 0, 300)
-
-    -- actual status bar, child of parent above
-    local Castbar = CreateFrame('StatusBar', nil, f)
-    Castbar:SetStatusBarTexture(standardRef)
-    Castbar:SetPoint('TOPLEFT', 0, 0)
-    Castbar:SetPoint('BOTTOMRIGHT', 0, 0)
-    Castbar:SetMinMaxValues(0, 100)
-    Castbar:SetValue(50)
-
-    local mask = Castbar:CreateMaskTexture()
-    mask:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarMask',
-        'CLAMPTOBLACKADDITIVE',
-        'CLAMPTOBLACKADDITIVE'
-    )
-    mask:SetPoint('TOPLEFT', Castbar, 'TOPLEFT', 0, 0)
-    mask:SetPoint('BOTTOMRIGHT', Castbar, 'BOTTOMRIGHT', 0, 0)
-
-    Castbar:GetStatusBarTexture():AddMaskTexture(mask)
-    frame.CastBarFrame.Castbar = Castbar ]]
+    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
+    border:SetTexture(borderRef)
+    local dx, dy = 2, 4
+    border:SetSize(sizeX + dx, sizeY + dy)
+    border:SetPoint('CENTER', f.Bar, 'CENTER', 0, 0)
+    f.Border = border
 end
 
 function CastbarModule()
