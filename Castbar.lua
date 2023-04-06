@@ -7,12 +7,10 @@ end
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
 
 function ChangeCastbar()
-    local sizeX = 250
-    local sizeY = 20
-
-    CastingBarFrame:SetSize(sizeX, sizeY)
-
-    CastingBarFrame.Text:SetPoint('TOP', CastingBarFrame, 'BOTTOM', 1, 0)
+    CastingBarFrame.Text:Hide()
+    CastingBarFrame:GetStatusBarTexture():SetVertexColor(0, 0, 0, 0)
+    CastingBarFrame:GetStatusBarTexture():SetAlpha(0)
+    -- CastingBarFrame.Spark:Hide()
 end
 
 function CreateNewCastbar()
@@ -25,7 +23,7 @@ function CreateNewCastbar()
     local sizeY = 20
     local f = CreateFrame('Frame', 'DragonflightUICastBar', CastingBarFrame)
     f:SetSize(sizeX, sizeY)
-    f:SetPoint('CENTER', CastingBarFrame, 'CENTER', 0, 50)
+    f:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 230)
 
     local tex = f:CreateTexture('Background', 'ARTWORK')
     tex:SetAllPoints()
@@ -90,11 +88,39 @@ function CreateNewCastbar()
             UpdateCastBarValues(self)
         end
     )
+
+    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackground', CastingBarFrame)
+    bg:SetSize(sizeX, sizeY)
+    bg:SetPoint('TOP', f, 'BOTTOM', 0, 0)
+
+    local bgTex = bg:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
+    bgTex:ClearAllPoints()
+    bgTex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
+    bgTex:SetSize(sizeX, 30)
+    bgTex:SetPoint('TOP', f, 'BOTTOM', 2, 2)
+
+    bg.tex = bgTex
+    f.Background = bg
+
+    local text = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
+    text:SetText('12')
+    text:SetPoint('TOP', f, 'BOTTOM', 0, -1)
+    text:SetText('SHADOW BOLT')
+
+    f.Text = text
+
+    hooksecurefunc(
+        CastingBarFrame.Text,
+        'SetText',
+        function(self)
+            text:SetText(self:GetText())
+        end
+    )
 end
 
 function UpdateCastbarChanges()
     CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 500)
+    CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -300)
     --CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
 
     local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
