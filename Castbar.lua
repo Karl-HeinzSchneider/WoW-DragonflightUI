@@ -7,22 +7,29 @@ end
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
 
 function ChangeCastbar()
-    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
-    local borderRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
-    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarMask'
+    local sizeX = 250
+    local sizeY = 20
 
-    --print('ChangeCastbar')
+    CastingBarFrame:SetSize(sizeX, sizeY)
+
+    CastingBarFrame.Text:SetPoint('TOP', CastingBarFrame, 'BOTTOM', 1, 0)
+
+    local sparkRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
+    CastingBarFrame.Spark:SetTexture(sparkRef)
+    CastingBarFrame.Spark:SetPoint('CENTER', 0, -10)
+end
+
+function UpdateCastbarChanges()
     CastingBarFrame:ClearAllPoints()
     CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 500)
     --CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
-
-    CastingBarFrame.Text:SetPoint('TOP', CastingBarFrame, 'BOTTOM', 1, 0)
 end
 
 function CreateNewCastbar()
     local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
     local borderRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
     local backgroundRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
+    local sparkRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
 
     local sizeX = 250
     local sizeY = 20
@@ -54,10 +61,37 @@ function CreateNewCastbar()
         frame.Castbar.Bar:SetMinMaxValues(statusMin, statusMax)
     end
 
+    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
+    border:SetTexture(borderRef)
+    local dx, dy = 2, 4
+    border:SetSize(sizeX + dx, sizeY + dy)
+    border:SetPoint('CENTER', f.Bar, 'CENTER', 0, 0)
+    f.Border = border
+
+    local spark = f.Bar:CreateTexture('Spark', 'OVERLAY')
+    spark:SetTexture(sparkRef)
+    spark:SetSize(20, 32)
+    spark:SetPoint('CENTER', f.Bar, 'CENTER', 0, 0)
+    spark:SetBlendMode('ADD')
+    f.Spark = spark
+
+    local UpdateSpark = function(other)
+        local value = other:GetValue()
+        local statusMin, statusMax = other:GetMinMaxValues()
+        local percent = value / statusMax
+        if percent == 1 then
+            f.Spark:Hide()
+        else
+            f.Spark:Show()
+            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', percent * sizeX, 0)
+        end
+    end
+
     CastingBarFrame:HookScript(
         'OnValueChanged',
         function(self)
             UpdateCastBarValues(self)
+            UpdateSpark(self)
         end
     )
     CastingBarFrame:HookScript(
@@ -66,13 +100,6 @@ function CreateNewCastbar()
             UpdateCastBarValues(self)
         end
     )
-
-    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture(borderRef)
-    local dx, dy = 2, 4
-    border:SetSize(sizeX + dx, sizeY + dy)
-    border:SetPoint('CENTER', f.Bar, 'CENTER', 0, 0)
-    f.Border = border
 end
 
 function CastbarModule()
@@ -97,13 +124,9 @@ Core.RegisterModule(Module, {}, {}, false, CastbarModule)
 function frame:OnEvent(event, arg1)
     --print('event', event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
-        ChangeCastbar()
-
-        if not frame.test then
-            print('if not')
-        end
+        UpdateCastbarChanges()
     else
-        ChangeCastbar()
+        UpdateCastbarChanges()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
