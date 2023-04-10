@@ -66,12 +66,17 @@ function CreateNewCastbar()
     local UpdateSpark = function(other)
         local value = other:GetValue()
         local statusMin, statusMax = other:GetMinMaxValues()
+        if statusMax == 0 then
+            return
+        end
+
         local percent = value / statusMax
         if percent == 1 then
             f.Spark:Hide()
         else
             f.Spark:Show()
-            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', percent * sizeX, 0)
+            local dx = 2
+            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', percent * sizeX - dx, 0)
         end
     end
 
@@ -152,7 +157,7 @@ end
 Core.RegisterModule(Module, {}, {}, false, CastbarModule)
 
 function frame:OnEvent(event, arg1)
-    print('event', event, arg1)
+    --print('event', event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
         UpdateCastbarChanges()
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
