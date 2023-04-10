@@ -135,15 +135,15 @@ end
 function CastbarModule()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
-    frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED')
-    frame:RegisterEvent('UNIT_SPELLCAST_DELAYED')
-    frame:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START')
-    frame:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE')
-    frame:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_INTERRUPTED', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_DELAYED', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_START', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_STOP', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_START', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_STOP', 'player')
+    frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'player')
 
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_START', 'PLAYER')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_STOP', 'PLAYER')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'PLAYER')
     --print('CASTBAR MODULE')
     ChangeCastbar()
     CreateNewCastbar()
@@ -152,13 +152,15 @@ end
 Core.RegisterModule(Module, {}, {}, false, CastbarModule)
 
 function frame:OnEvent(event, arg1)
-    --print('event', event, arg1)
+    print('event', event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
         UpdateCastbarChanges()
-    elseif event == 'UNIT_SPELLCAST_INTERRUPTED' or event == 'UNIT_SPELLCAST_STOP' then
+    elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
+        UpdateCastbarChanges()
+    elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
         Interrupted()
     else
-        UpdateCastbarChanges()
+        --UpdateCastbarChanges()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
