@@ -10,6 +10,7 @@ function ChangeCastbar()
     CastingBarFrame.Text:Hide()
     CastingBarFrame:GetStatusBarTexture():SetVertexColor(0, 0, 0, 0)
     CastingBarFrame:GetStatusBarTexture():SetAlpha(0)
+    CastingBarFrame.Border:Hide()
     -- CastingBarFrame.Spark:Hide()
 end
 
@@ -77,7 +78,7 @@ function CreateNewCastbar()
             --f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
             f.Spark:Show()
             local dx = 2
-            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * sizeX) / statusMax, 0 + 15)
+            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * sizeX) / statusMax, 0)
         end
     end
 
@@ -127,6 +128,21 @@ function CreateNewCastbar()
         end
     end
 
+    local ticks = {}
+    for i = 1, 15 do
+        local tick = f.Bar:CreateTexture('Tick' .. i, 'OVERLAY')
+        --tick:SetTexture('Interface\\CastingBar\\UI-CastingBar-Spark')
+        --tick:SetBlendMode('ADD')
+        -- tick:SetVertexColor(0, 0, 1)
+
+        tick:SetTexture('Interface\\ChatFrame\\ChatFrameBackground')
+        tick:SetVertexColor(0, 0, 0)
+        tick:SetAlpha(0.75)
+        tick:SetSize(2.5, sizeY - 2)
+        tick:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0)
+        ticks[i] = tick
+    end
+    f.Ticks = ticks
     --[[     hooksecurefunc(
         CastingBarFrame.Text,
         'SetText',
@@ -167,6 +183,38 @@ function SetBarNormal()
     frame.Castbar.Text:SetText(text:sub(1, 15))
 end
 
+local ChannelTicks = {
+    --wl
+    [GetSpellInfo(5740)] = 4, -- rain of fire
+    [GetSpellInfo(5138)] = 5, -- drain mana
+    [GetSpellInfo(689)] = 5, -- drain life
+    [GetSpellInfo(1120)] = 5, -- drain soul
+    [GetSpellInfo(755)] = 10, -- health funnel
+    [GetSpellInfo(1949)] = 15, -- hellfire
+    --priest
+    [GetSpellInfo(47540)] = 2, -- penance
+    [GetSpellInfo(15407)] = 3, -- mind flay
+    [GetSpellInfo(64843)] = 4, -- divine hymn
+    [GetSpellInfo(64901)] = 4, -- hymn of hope
+    [GetSpellInfo(48045)] = 5, -- mind sear
+    --hunter
+    [GetSpellInfo(1510)] = 6, -- volley
+    -- druid
+    [GetSpellInfo(740)] = 4, -- tranquility
+    [GetSpellInfo(16914)] = 10, -- hurricane
+    -- mage
+    [GetSpellInfo(5145)] = 5, -- arcane missiles
+    [GetSpellInfo(10)] = 8 -- blizzard
+}
+
+function HideAllTicks()
+    if frame.Castbar.Ticks then
+        for i = 1, 15 do
+            frame.Castbar.Ticks[i]:Hide()
+        end
+    end
+end
+
 function SetBarChannel()
     local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
     frame.Castbar.Bar:SetStatusBarTexture(channelRef)
@@ -175,6 +223,25 @@ function SetBarChannel()
     local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId =
         UnitChannelInfo('player')
     frame.Castbar.Text:SetText(name:sub(1, 15))
+
+    local tickCount = ChannelTicks[name]
+    if tickCount then
+        --print('ticks:', tickCount)
+        --print('size', frame.Castbar:GetSize())
+        local tickDelta = frame.Castbar:GetWidth() / tickCount
+        for i = 1, tickCount - 1 do
+            --print('tick', i)
+            frame.Castbar.Ticks[i]:Show()
+            frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT', i * tickDelta, 0)
+        end
+
+        for i = tickCount, 15 do
+            --print('notick', i)
+            frame.Castbar.Ticks[i]:Hide()
+        end
+    else
+        HideAllTicks()
+    end
 end
 
 function SetBarInterrupted()
@@ -209,6 +276,7 @@ function frame:OnEvent(event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
         SetBarNormal()
+        HideAllTicks()
     elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
         SetBarInterrupted()
     elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
