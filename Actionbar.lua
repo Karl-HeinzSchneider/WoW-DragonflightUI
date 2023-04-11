@@ -62,11 +62,6 @@ function ChangeActionbar()
             MainMenuBarMaxLevelBar:Hide()
         end
     )
-
-    --@TODO: position is resetting
-    CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-    CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 200)
 end
 --ChangeActionbar()
 
@@ -457,6 +452,7 @@ function HookPetBar()
 
     -- @TODO: different offset for each class (stance vs no stance)
     local offset = 0 + 34
+    offset = 0
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 --HookPetBar()

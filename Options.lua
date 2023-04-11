@@ -18,7 +18,8 @@ function SetupOptions()
         checkbox:SetPoint('TOPLEFT', title, 'BOTTOMLEFT', 0, -k * deltaY)
         local descr = checkbox:CreateFontString('ARTWORK', nil, 'GameFontNormal')
         descr:SetPoint('LEFT', checkbox, 'RIGHT', 5, 0)
-        descr:SetText(v.name .. ': ' .. k)
+        --descr:SetText(v.name .. ': ' .. k)
+        descr:SetText(v.name)
 
         local cfg = ConfigTable[v.name]
 

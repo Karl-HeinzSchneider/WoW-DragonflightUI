@@ -11,6 +11,7 @@ Core.lua
 
 Actionbar.lua
 Artframe.lua
+Castbar.lua
 Chat.lua
 Micromenu.lua
 Minimap.lua
