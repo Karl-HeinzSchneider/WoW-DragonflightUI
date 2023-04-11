@@ -180,7 +180,10 @@ function SetBarNormal()
     local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId =
         UnitCastingInfo('player')
 
-    frame.Castbar.Text:SetText(text:sub(1, 15))
+    frame.Castbar.Text:SetText(text:sub(1, 23))
+    frame.Castbar.Text:ClearAllPoints()
+    frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
+    frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
 end
 
 local ChannelTicks = {
@@ -222,7 +225,10 @@ function SetBarChannel()
     frame.Castbar.bChanneling = true
     local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId =
         UnitChannelInfo('player')
-    frame.Castbar.Text:SetText(name:sub(1, 15))
+    frame.Castbar.Text:SetText(name:sub(1, 23))
+    frame.Castbar.Text:ClearAllPoints()
+    frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
+    frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
 
     local tickCount = ChannelTicks[name]
     if tickCount then
@@ -248,7 +254,10 @@ function SetBarInterrupted()
     local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
     frame.Castbar.Bar:SetStatusBarTexture(interruptedRef)
 
-    frame.Castbar.Text:SetText(CastingBarFrame.Text:GetText())
+    --frame.Castbar.Text:SetText(CastingBarFrame.Text:GetText())
+    frame.Castbar.Text:SetText('Interrupted')
+    frame.Castbar.Text:ClearAllPoints()
+    frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
 end
 
 function CastbarModule()
