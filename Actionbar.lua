@@ -440,17 +440,7 @@ function HookPetBar()
     end
 
     frame:RegisterEvent('PET_BAR_UPDATE')
-    --PetActionBarFrame:ClearAllPoints()
-    --PetActionBarFrame:SetParent(UIParent)
-    -- PetActionBarFrame:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', 0, 45)#
-    --[[ hooksecurefunc(
-        PetActionBarFrame,
-        'Show',
-        function()
-            --print('Pet Show')
-            --PetActionBarFrame:SetPoint('TOPLEFT', PetActionBarFrame:GetParent(), 'BOTTOMLEFT', 0, 150)
-        end
-    ) ]]
+
     for i = 1, 10 do
         _G['PetActionButton' .. i]:SetSize(30, 30)
         _G['PetActionButton' .. i .. 'NormalTexture2']:SetSize(50, 50)
@@ -467,12 +457,6 @@ function HookPetBar()
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 --HookPetBar()
-function ChangePetBar()
-    --[[    PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetParent(UIParent)
-    PetActionBarFrame:SetPoint('LEFT', UIParent, 'CENTER', 0, 0) ]]
-end
---ChangePetBar()
 
 --frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
@@ -573,9 +557,6 @@ function frame:OnEvent(event, arg1)
         frame.UpdateXPBar()
         frame.UpdateRepBar()
         SetNumBars()
-    elseif event == 'PET_BAR_UPDATE' then
-        --print('PET_BAR_UPDATE')
-        ChangePetBar()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
