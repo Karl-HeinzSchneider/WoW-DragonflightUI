@@ -422,6 +422,17 @@ end
 -- frame.UpdateRepBar()
 -- SetNumBars()
 
+function GetPetbarOffset()
+    local localizedClass, englishClass, classIndex = UnitClass('player')
+
+    -- 1=warrior, 2=paladin, 5=priest, 6=DK, 11=druid
+    if (classIndex == 1 or classIndex == 2 or classIndex == 5 or classIndex == 6 or classIndex == 11) then
+        return 34
+    else
+        return 0
+    end
+end
+
 function HookPetBar()
     PetActionBarFrame:ClearAllPoints()
     PetActionBarFrame:SetPoint('CENTER', MultiBarBottomRight, 'CENTER', 0, 45)
@@ -450,9 +461,9 @@ function HookPetBar()
         _G['PetActionButton' .. i]:SetPoint('LEFT', _G['PetActionButton' .. (i - 1)], 'RIGHT', spacing, 0)
     end
 
-    -- @TODO: different offset for each class (stance vs no stance)
-    local offset = 0 + 34
-    offset = 0
+    -- different offset for each class (stance vs no stance)
+    --local offset = 0 + 34
+    local offset = GetPetbarOffset()
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 --HookPetBar()
