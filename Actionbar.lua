@@ -436,8 +436,6 @@ end
 function HookPetBar()
     PetActionBarFrame:ClearAllPoints()
     PetActionBarFrame:SetPoint('CENTER', MultiBarBottomRight, 'CENTER', 0, 45)
-    PetActionBarFrame.SetPoint = function()
-    end
 
     frame:RegisterEvent('PET_BAR_UPDATE')
 
