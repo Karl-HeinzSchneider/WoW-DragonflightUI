@@ -422,24 +422,23 @@ end
 -- frame.UpdateRepBar()
 -- SetNumBars()
 
+function GetPetbarOffset()
+    local localizedClass, englishClass, classIndex = UnitClass('player')
+
+    -- 1=warrior, 2=paladin, 5=priest, 6=DK, 11=druid
+    if (classIndex == 1 or classIndex == 2 or classIndex == 5 or classIndex == 6 or classIndex == 11) then
+        return 34
+    else
+        return 0
+    end
+end
+
 function HookPetBar()
     PetActionBarFrame:ClearAllPoints()
     PetActionBarFrame:SetPoint('CENTER', MultiBarBottomRight, 'CENTER', 0, 45)
-    PetActionBarFrame.SetPoint = function()
-    end
 
     frame:RegisterEvent('PET_BAR_UPDATE')
-    --PetActionBarFrame:ClearAllPoints()
-    --PetActionBarFrame:SetParent(UIParent)
-    -- PetActionBarFrame:SetPoint('LEFT', MultiBarBottomRight, 'LEFT', 0, 45)#
-    --[[ hooksecurefunc(
-        PetActionBarFrame,
-        'Show',
-        function()
-            --print('Pet Show')
-            --PetActionBarFrame:SetPoint('TOPLEFT', PetActionBarFrame:GetParent(), 'BOTTOMLEFT', 0, 150)
-        end
-    ) ]]
+
     for i = 1, 10 do
         _G['PetActionButton' .. i]:SetSize(30, 30)
         _G['PetActionButton' .. i .. 'NormalTexture2']:SetSize(50, 50)
@@ -450,18 +449,12 @@ function HookPetBar()
         _G['PetActionButton' .. i]:SetPoint('LEFT', _G['PetActionButton' .. (i - 1)], 'RIGHT', spacing, 0)
     end
 
-    -- @TODO: different offset for each class (stance vs no stance)
-    local offset = 0 + 34
-    offset = 0
+    -- different offset for each class (stance vs no stance)
+    --local offset = 0 + 34
+    local offset = GetPetbarOffset()
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 --HookPetBar()
-function ChangePetBar()
-    --[[    PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetParent(UIParent)
-    PetActionBarFrame:SetPoint('LEFT', UIParent, 'CENTER', 0, 0) ]]
-end
---ChangePetBar()
 
 --frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
@@ -562,9 +555,6 @@ function frame:OnEvent(event, arg1)
         frame.UpdateXPBar()
         frame.UpdateRepBar()
         SetNumBars()
-    elseif event == 'PET_BAR_UPDATE' then
-        --print('PET_BAR_UPDATE')
-        ChangePetBar()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
