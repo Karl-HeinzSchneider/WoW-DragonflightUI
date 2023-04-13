@@ -167,23 +167,26 @@ end
 --ChangeZoom()
 
 function HookMouseWheel()
-    Minimap:SetScript("OnMouseWheel", function(self, delta)
-        if (delta <= -1) then
-            if Minimap:GetZoom() <= 0 then
-                MinimapZoomOut:Disable()
+    Minimap:SetScript(
+        'OnMouseWheel',
+        function(self, delta)
+            if (delta == -1) then
                 MinimapZoomIn:Enable()
-            else 
-                Minimap:SetZoom(currentZoom - 1)
-            end
-        elseif (delta >= 1) then
-            if Minimap:GetZoom() >= maximumZoom then
+                --PlaySound(SOUNDKIT.IG_MINIMAP_ZOOM_OUT);
+                Minimap:SetZoom(math.max(Minimap:GetZoom() - 1, 0))
+                if (Minimap:GetZoom() == 0) then
+                    MinimapZoomOut:Disable()
+                end
+            elseif (delta == 1) then
                 MinimapZoomOut:Enable()
-                MinimapZoomIn:Disable()
-            else 
-                Minimap:SetZoom(currentZoom + 1)
+                --PlaySound(SOUNDKIT.IG_MINIMAP_ZOOM_IN);
+                Minimap:SetZoom(math.min(Minimap:GetZoom() + 1, Minimap:GetZoomLevels() - 1))
+                if (Minimap:GetZoom() == (Minimap:GetZoomLevels() - 1)) then
+                    MinimapZoomIn:Disable()
+                end
             end
         end
-    end)
+    )
 end
 
 function CreateMinimapInfoFrame()
