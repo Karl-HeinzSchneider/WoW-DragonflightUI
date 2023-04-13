@@ -166,6 +166,26 @@ function ChangeZoom()
 end
 --ChangeZoom()
 
+function HookMouseWheel()
+    Minimap:SetScript("OnMouseWheel", function(self, delta)
+        if (delta <= -1) then
+            if Minimap:GetZoom() <= 0 then
+                MinimapZoomOut:Disable()
+                MinimapZoomIn:Enable()
+            else 
+                Minimap:SetZoom(currentZoom - 1)
+            end
+        elseif (delta >= 1) then
+            if Minimap:GetZoom() >= maximumZoom then
+                MinimapZoomOut:Enable()
+                MinimapZoomIn:Disable()
+            else 
+                Minimap:SetZoom(currentZoom + 1)
+            end
+        end
+    end)
+end
+
 function CreateMinimapInfoFrame()
     local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
     f:SetSize(170, 22)
@@ -441,6 +461,7 @@ function MinimapModule()
     MoveTracker()
     ChangeLFG()
     --MoveBagAnchor()
+    HookMouseWheel()
     ChangeMail()
 
     frame:RegisterEvent('ADDON_LOADED')
