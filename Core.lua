@@ -9,6 +9,10 @@ local colorTable = {
     ['red'] = '|c00ff0000'
 }
 
+local InterfaceVersion = select(4, GetBuildInfo())
+Core.Wrath = InterfaceVersion >= 30400
+Core.Era = InterfaceVersion <= 20000
+
 Core.Modules = {}
 Core.Sub = {}
 Core.RegisterModule = function(name, meta, options, default, func)
