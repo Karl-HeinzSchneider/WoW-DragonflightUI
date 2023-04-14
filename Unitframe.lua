@@ -6,6 +6,8 @@ end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
 
+local famous = {['Norbert'] = true}
+
 local function GetCoords(key)
     local uiunitframe = {
         ['UI-HUD-UnitFrame-Player-Absorb-Edge'] = {8, 32, 0.984375, 0.9921875, 0.001953125, 0.064453125, false, false},
@@ -935,8 +937,6 @@ function ChangeTargetFrame()
         extra:SetDrawLayer('ARTWORK', 3)
         extra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
 
-        local famous = {['Norbert'] = true}
-
         extra.UpdateStyle = function()
             local class = UnitClassification('target')
             --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
@@ -1276,6 +1276,48 @@ function ChangeFocusFrame()
             frame.FocusFrameFlash:Hide()
         end
     )
+
+    if not frame.FocusExtra then
+        local extra = FocusFrame:CreateTexture('DragonflightUIFocusFramePortraitExtra')
+        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+        extra:SetSize(80, 79)
+        extra:SetDrawLayer('ARTWORK', 3)
+        extra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
+
+        extra.UpdateStyle = function()
+            local class = UnitClassification('focus')
+            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+            if class == 'worldboss' then
+                frame.FocusExtra:Show()
+                frame.FocusExtra:SetSize(99, 81)
+                frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 13, 1)
+            elseif class == 'rareelite' or class == 'rare' then
+                frame.FocusExtra:Show()
+                frame.FocusExtra:SetSize(80, 79)
+                frame.FocusExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
+            elseif class == 'elite' then
+                frame.FocusExtra:Show()
+                frame.FocusExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+                frame.FocusExtra:SetSize(80, 79)
+                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
+            else
+                local name, realm = UnitName('target')
+                if famous[name] then
+                    frame.FocusExtra:Show()
+                    frame.FocusExtra:SetSize(99, 81)
+                    frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                    frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 13, 1)
+                else
+                    frame.FocusExtra:Hide()
+                end
+            end
+        end
+
+        frame.FocusExtra = extra
+    end
 end
 --ChangeFocusFrame()
 -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
@@ -1311,6 +1353,8 @@ function ReApplyFocusFrame()
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     FocusFrameFlash:SetTexture('')
+
+    frame.FocusExtra:UpdateStyle()
 end
 
 function ChangeFocusToT()
