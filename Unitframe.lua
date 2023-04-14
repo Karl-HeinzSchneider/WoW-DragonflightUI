@@ -850,12 +850,13 @@ function ChangeTargetFrame()
     TargetFrameTextureFrameLevelText:ClearAllPoints()
     TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
-    TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
-    TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
+    if Core.Wrath then
+        TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
+        TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
 
-    TargetFrameTextureFrame.ManaBarText:ClearAllPoints()
-    TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', 0, 0)
-
+        TargetFrameTextureFrame.ManaBarText:ClearAllPoints()
+        TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', 0, 0)
+    end
     -- Health 119,12
     TargetFrameHealthBar:ClearAllPoints()
     TargetFrameHealthBar:SetSize(125, 20)
@@ -879,50 +880,52 @@ function ChangeTargetFrame()
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
 
-    TargetFrameFlash:SetTexture('')
+    if Core.Wrath then
+        TargetFrameFlash:SetTexture('')
 
-    if not frame.TargetFrameFlash then
-        local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
-        flash:SetDrawLayer('BACKGROUND', 2)
-        flash:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
+        if not frame.TargetFrameFlash then
+            local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
+            flash:SetDrawLayer('BACKGROUND', 2)
+            flash:SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
+            )
+            flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
+            flash:SetSize(256, 128)
+            flash:SetScale(1)
+            flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+            flash:SetBlendMode('ADD')
+            frame.TargetFrameFlash = flash
+        end
+
+        hooksecurefunc(
+            TargetFrameFlash,
+            'Show',
+            function()
+                --print('show')
+                TargetFrameFlash:SetTexture('')
+                frame.TargetFrameFlash:Show()
+                if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
+                else
+                    --print('go flash')
+                    local dt = 0.5
+                    UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
+                end
+            end
         )
-        flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-        flash:SetSize(256, 128)
-        flash:SetScale(1)
-        flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-        flash:SetBlendMode('ADD')
-        frame.TargetFrameFlash = flash
+
+        hooksecurefunc(
+            TargetFrameFlash,
+            'Hide',
+            function()
+                --print('hide')
+                TargetFrameFlash:SetTexture('')
+                if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
+                    UIFrameFlashStop(frame.TargetFrameFlash)
+                end
+                frame.TargetFrameFlash:Hide()
+            end
+        )
     end
-
-    hooksecurefunc(
-        TargetFrameFlash,
-        'Show',
-        function()
-            --print('show')
-            TargetFrameFlash:SetTexture('')
-            frame.TargetFrameFlash:Show()
-            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
-            else
-                --print('go flash')
-                local dt = 0.5
-                UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
-            end
-        end
-    )
-
-    hooksecurefunc(
-        TargetFrameFlash,
-        'Hide',
-        function()
-            --print('hide')
-            TargetFrameFlash:SetTexture('')
-            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
-                UIFrameFlashStop(frame.TargetFrameFlash)
-            end
-            frame.TargetFrameFlash:Hide()
-        end
-    )
 end
 function ReApplyTargetFrame()
     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
@@ -951,8 +954,9 @@ function ReApplyTargetFrame()
     end
 
     TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    TargetFrameFlash:SetTexture('')
+    if Core.Wrath then
+        TargetFrameFlash:SetTexture('')
+    end
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
@@ -1465,8 +1469,10 @@ function UnitframeModule()
     frame:RegisterEvent('UNIT_POWER_UPDATE')
     --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
-    frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
-    frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
+    if Core.Wrath then
+        frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
+        frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
+    end
 
     frame:RegisterEvent('ZONE_CHANGED')
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
@@ -1494,8 +1500,10 @@ function frame:OnEvent(event, arg1)
         ChangePlayerframe()
         ChangeTargetFrame()
         ChangeToT()
-        ChangeFocusFrame()
-        ChangeFocusToT()
+        if Core.Wrath then
+            ChangeFocusFrame()
+            ChangeFocusToT()
+        end
         ChangePetFrame()
         UpdatePetMana()
     elseif event == 'PLAYER_TARGET_CHANGED' then

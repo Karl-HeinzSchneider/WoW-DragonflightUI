@@ -15,6 +15,6 @@ Castbar.lua
 Chat.lua
 # Micromenu.lua
 Minimap.lua
-#Unitframe.lua
+Unitframe.lua
 
 Options.lua
