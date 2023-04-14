@@ -380,15 +380,21 @@ function ChangeMicroMenu()
     MicroButtonPortrait:Hide()
     SetButtonFromAtlas(SpellbookMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'SpellbookAbilities')
     SetButtonFromAtlas(TalentMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'SpecTalents')
-    SetButtonFromAtlas(AchievementMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Achievements')
     SetButtonFromAtlas(QuestLogMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Questlog')
     SetButtonFromAtlas(SocialsMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'GuildCommunities')
-    SetButtonFromAtlas(PVPMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'AdventureGuide')
-    PVPMicroButtonTexture:Hide()
-    SetButtonFromAtlas(LFGMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Groupfinder')
-    SetButtonFromAtlas(MainMenuMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Shop')
-    MainMenuBarPerformanceBar:Hide()
+
     SetButtonFromAtlas(HelpMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'GameMenu')
+
+    if Core.Wrath then
+        SetButtonFromAtlas(AchievementMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Achievements')
+        SetButtonFromAtlas(PVPMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'AdventureGuide')
+        PVPMicroButtonTexture:Hide()
+        SetButtonFromAtlas(LFGMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Groupfinder')
+        SetButtonFromAtlas(MainMenuMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Shop')
+        MainMenuBarPerformanceBar:Hide()
+    else
+        MainMenuBarPerformanceBarFrame:Hide()
+    end
 end
 --ChangeMicroMenu()
 
@@ -507,8 +513,10 @@ function MoveBars()
     CharacterMicroButton.SetPoint = noop
     CharacterMicroButton.ClearAllPoints = noop
 
-    PVPMicroButton.SetPoint = noop
-    PVPMicroButton.ClearAllPoints = noop
+    if Core.Wrath then
+        PVPMicroButton.SetPoint = noop
+        PVPMicroButton.ClearAllPoints = noop
+    end
 end
 --MoveBars()
 

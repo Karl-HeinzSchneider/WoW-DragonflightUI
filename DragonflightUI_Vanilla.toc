@@ -1,0 +1,20 @@
+## Interface: 30401
+## Title: DragonflightUI
+## Notes: 
+## Author: Karl-Heinz Schneider
+## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
+## Version: 0.0.3
+## SavedVariablesPerCharacter: ConfigTable
+## OptionalDeps: 
+
+Core.lua
+
+Actionbar.lua
+Artframe.lua
+Castbar.lua
+Chat.lua
+Micromenu.lua
+Minimap.lua
+Unitframe.lua
+
+Options.lua

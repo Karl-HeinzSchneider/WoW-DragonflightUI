@@ -108,7 +108,13 @@ function CreateNewXPBar()
     frame.XPBar.valid = false
 
     frame.UpdateXPBar = function()
-        local showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
+        local showXP = false
+        if Core.Wrath then
+            showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
+        else
+            showXP = UnitLevel('player') < GetMaxPlayerLevel()
+        end
+
         if showXP then
             -- exhaustion
             local exhaustionStateID = GetRestState()

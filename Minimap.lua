@@ -447,6 +447,11 @@ function ChangeMail()
     mail:SetScale(1)
 end
 
+function ChangeEra()
+    GameTimeFrame:Hide()
+    MinimapToggleButton:Hide()
+end
+
 -- Events
 --frame:RegisterEvent('ADDON_LOADED')
 
@@ -455,17 +460,28 @@ function MinimapModule()
     MoveDefaultStuff()
     ChangeZoom()
     CreateMinimapInfoFrame()
-    ChangeCalendar()
+    if Core.Wrath then
+        ChangeCalendar()
+    end
     ChangeClock()
     ChangeZoneText()
-    ChangeTracking()
+    if Core.Wrath then
+        ChangeTracking()
+    end
     DrawMinimapBorder()
     MoveBuffs()
-    MoveTracker()
-    ChangeLFG()
-    --MoveBagAnchor()
+    if Core.Wrath then
+        MoveTracker()
+        ChangeLFG()
+        MoveBagAnchor()
+    end
+
     HookMouseWheel()
     ChangeMail()
+
+    if Core.Era then
+        ChangeEra()
+    end
 
     frame:RegisterEvent('ADDON_LOADED')
 end
@@ -476,8 +492,10 @@ function frame:OnEvent(event, arg1)
     if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
         --print('Blizzard_TimeManager')
         ChangeClock()
-        HookCalendar()
-        UpdateCalendar()
+        if Core.Wrath then
+            HookCalendar()
+            UpdateCalendar()
+        end
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
