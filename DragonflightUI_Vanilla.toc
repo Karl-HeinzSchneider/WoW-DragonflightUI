@@ -9,11 +9,11 @@
 
 Core.lua
 
-#Actionbar.lua
-#Artframe.lua
+Actionbar.lua
+Artframe.lua
 Castbar.lua
 Chat.lua
-# Micromenu.lua
+Micromenu.lua
 Minimap.lua
 Unitframe.lua
 
