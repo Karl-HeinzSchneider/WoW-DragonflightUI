@@ -926,6 +926,50 @@ function ChangeTargetFrame()
             end
         )
     end
+
+    if not frame.PortraitExtra then
+        local extra = TargetFrame:CreateTexture('DragonflightUITargetFramePortraitExtra')
+        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+        extra:SetSize(80, 79)
+        extra:SetDrawLayer('ARTWORK', 3)
+        extra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
+
+        local famous = {['Norbert'] = true}
+
+        extra.UpdateStyle = function()
+            local class = UnitClassification('target')
+            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+            if class == 'worldboss' then
+                frame.PortraitExtra:Show()
+                frame.PortraitExtra:SetSize(99, 81)
+                frame.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                frame.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 13, 1)
+            elseif class == 'rareelite' or class == 'rare' then
+                frame.PortraitExtra:Show()
+                frame.PortraitExtra:SetSize(80, 79)
+                frame.PortraitExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+                frame.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
+            elseif class == 'elite' then
+                frame.PortraitExtra:Show()
+                frame.PortraitExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+                frame.PortraitExtra:SetSize(80, 79)
+                frame.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
+            else
+                local name, realm = UnitName('target')
+                if famous[name] then
+                    frame.PortraitExtra:Show()
+                    frame.PortraitExtra:SetSize(99, 81)
+                    frame.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                    frame.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 13, 1)
+                else
+                    frame.PortraitExtra:Hide()
+                end
+            end
+        end
+
+        frame.PortraitExtra = extra
+    end
 end
 function ReApplyTargetFrame()
     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
@@ -957,6 +1001,8 @@ function ReApplyTargetFrame()
     if Core.Wrath then
         TargetFrameFlash:SetTexture('')
     end
+
+    frame.PortraitExtra:UpdateStyle()
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
@@ -1500,6 +1546,8 @@ function frame:OnEvent(event, arg1)
         ChangePlayerframe()
         ChangeTargetFrame()
         ChangeToT()
+        ReApplyTargetFrame()
+        ReApplyToT()
         if Core.Wrath then
             ChangeFocusFrame()
             ChangeFocusToT()
