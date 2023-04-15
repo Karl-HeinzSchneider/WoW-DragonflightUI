@@ -1,7 +1,6 @@
 local Addon, Core = ...
 local Module = 'Micromenu'
 local frame = CreateFrame('FRAME', 'DragonflightUIMicromenuFrame', UIParent)
-local BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
 local noop = function()
 end
 
@@ -574,19 +573,20 @@ end
 function CreateBagExpandButton()
     local point, relativePoint = "RIGHT", "LEFT";
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+    
+    frame.BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
+    frame.BagBarExpandToggle:SetSize(16, 30)
+    frame.BagBarExpandToggle:SetScale(0.5)
+    frame.BagBarExpandToggle:ClearAllPoints()
+	frame.BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint);
 
-    BagBarExpandToggle:SetSize(16, 30)
-    BagBarExpandToggle:SetScale(0.5)
-    BagBarExpandToggle:ClearAllPoints()
-	BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint);
-
-    BagBarExpandToggle:SetNormalTexture(base)
-    BagBarExpandToggle:SetPushedTexture(base)
-    BagBarExpandToggle:SetHighlightTexture(base)
-    BagBarExpandToggle:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
-    BagBarExpandToggle:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
-    BagBarExpandToggle:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
-    BagBarExpandToggle:SetScript(
+    frame.BagBarExpandToggle:SetNormalTexture(base)
+    frame.BagBarExpandToggle:SetPushedTexture(base)
+    frame.BagBarExpandToggle:SetHighlightTexture(base)
+    frame.BagBarExpandToggle:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    frame.BagBarExpandToggle:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    frame.BagBarExpandToggle:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    frame.BagBarExpandToggle:SetScript(
         'OnClick',
         function()
             BagsExpanded = not BagsExpanded
@@ -596,7 +596,7 @@ function CreateBagExpandButton()
 end
 
 function BagBarExpandToggled(Expanded)
-    BagBarExpandToggle:UpdateOrientation()
+    UpdateBagBarToggleOrientation()
 
     for i = 0, 3 do
         if (Expanded) then
@@ -609,19 +609,19 @@ function BagBarExpandToggled(Expanded)
     end
 end
 
-function BagBarExpandToggle:GetRotation()
-    if (BagsExpanded) then
-        return math.pi
-    else
-        return 0;
-    end
-end
 
-function BagBarExpandToggle:UpdateOrientation()
-	local rotation = self:GetRotation();
-	self:GetNormalTexture():SetRotation(rotation);
-	self:GetPushedTexture():SetRotation(rotation);
-	self:GetHighlightTexture():SetRotation(rotation);
+function UpdateBagBarToggleOrientation()
+	local rotation;
+
+    if (BagsExpanded) then
+        rotation = math.pi
+    else
+        rotation = 0;
+    end
+
+	frame.BagBarExpandToggle:GetNormalTexture():SetRotation(rotation);
+	frame.BagBarExpandToggle:GetPushedTexture():SetRotation(rotation);
+	frame.BagBarExpandToggle:GetHighlightTexture():SetRotation(rotation);
 end
 
 Core.Sub.Micromenu = function()
