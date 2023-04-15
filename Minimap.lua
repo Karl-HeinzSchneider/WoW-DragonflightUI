@@ -438,7 +438,7 @@ function HookBags()
                 local point, relativeTo, relativePoint, xOfs, yOfs = bagRef:GetPoint(1)
 
                 if relativePoint == 'BOTTOMRIGHT' then
-                    bagRef:SetPoint(point, relativeTo, relativePoint, -CONTAINER_WIDTH, CONTAINER_BASE_HEIGHT)
+                    bagRef:SetPoint(point, relativeTo, relativePoint, -CONTAINER_WIDTH, CONTAINER_BASE_HEIGHT + 2)
                 end
             end
         end
