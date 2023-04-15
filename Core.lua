@@ -5,7 +5,8 @@ local db
 
 local defaults = {
     profile = {
-        modules = {['Actionbar'] = true}
+        modules = {['Actionbar'] = true},
+        bestnumber = 42
     }
 }
 
@@ -39,6 +40,7 @@ function DF:SetModuleEnabled(module, value)
         else
             self:DisableModule(module)
         end
+        self:Print('/reload')
     end
 end
 
