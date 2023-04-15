@@ -1,7 +1,7 @@
 local Addon, Core = ...
-
+local Module = 'Micromenu'
 local frame = CreateFrame('FRAME', 'DragonflightUIMicromenuFrame', UIParent)
-
+local BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
 local noop = function()
 end
 
@@ -482,9 +482,11 @@ function ChangeBackpack()
         )
     end
 
+    CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
+
     --keyring
     KeyRingButton:SetSize(34.5, 34.5)
-    KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2)
+    KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0)
 
     KeyRingButton:GetNormalTexture():SetTexture(bagtexture)
     KeyRingButton:GetNormalTexture():SetSize(35, 35)
@@ -495,8 +497,10 @@ function ChangeBackpack()
     KeyRingButton:GetHighlightTexture():SetSize(35, 35)
     KeyRingButton:GetHighlightTexture():SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
 
-    --KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
+    KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
     KeyRingButton:GetPushedTexture():SetSize(35, 35)
+    KeyRingButton:GetPushedTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx, 0.0078125 + dy, 0.484375 + dy)
+    KeyRingButton:GetPushedTexture():SetTexCoord(0.822265625, 0.94140625, 0.0078125, 0.484375)
     -- KeyRingButton:GetPushedTexture():SetTexture(0.69921875, 0.818359375, 0.0078125, 0.484375)
 
     --KeyRingButton:GetCheckedTexture():SetTexture()
@@ -569,9 +573,77 @@ function ChangeFramerate()
 end
 --ChangeFramerate()
 
+function CreateBagExpandButton()
+    local point, relativePoint = "RIGHT", "LEFT";
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+
+    BagBarExpandToggle:SetSize(16, 30)
+    BagBarExpandToggle:SetScale(0.5)
+    BagBarExpandToggle:ClearAllPoints()
+	BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint);
+
+    BagBarExpandToggle:SetNormalTexture(base)
+    BagBarExpandToggle:SetPushedTexture(base)
+    BagBarExpandToggle:SetHighlightTexture(base)
+    BagBarExpandToggle:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    BagBarExpandToggle:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    BagBarExpandToggle:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    BagBarExpandToggle:SetScript(
+        'OnClick',
+        function()
+            BagsExpanded = not BagsExpanded
+            BagBarExpandToggled(BagsExpanded)
+        end
+    )
+end
+
+function BagBarExpandToggled(Expanded)
+    BagBarExpandToggle:UpdateOrientation()
+
+    for i = 0, 3 do
+        if (Expanded) then
+            _G['CharacterBag' .. i .. 'Slot']:Show()
+            KeyRingButton:Show()
+        else
+            _G['CharacterBag' .. i .. 'Slot']:Hide()
+            KeyRingButton:Hide()
+        end
+    end
+end
+
+function BagBarExpandToggle:GetRotation()
+    if (BagsExpanded) then
+        return math.pi
+    else
+        return 0;
+    end
+end
+
+function BagBarExpandToggle:UpdateOrientation()
+	local rotation = self:GetRotation();
+	self:GetNormalTexture():SetRotation(rotation);
+	self:GetPushedTexture():SetRotation(rotation);
+	self:GetHighlightTexture():SetRotation(rotation);
+end
+
 Core.Sub.Micromenu = function()
     ChangeMicroMenu()
     ChangeBackpack()
     MoveBars()
+    CreateBagExpandButton()
     ChangeFramerate()
 end
+
+function UnitframeModule()
+    frame:RegisterEvent('BAG_UPDATE_DELAYED')
+end
+
+Core.RegisterModule(Module, {}, {}, true, UnitframeModule)
+
+function frame:OnEvent(event, arg1)
+    if event == "BAG_UPDATE_DELAYED" then
+        BagBarExpandToggled(BagsExpanded)
+    end
+end
+
+frame:SetScript('OnEvent', frame.OnEvent)
