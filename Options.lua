@@ -92,4 +92,4 @@ function frame:OnEvent(event, arg1)
         SetupOptions()
     end
 end
-frame:SetScript('OnEvent', frame.OnEvent)
+--frame:SetScript('OnEvent', frame.OnEvent)

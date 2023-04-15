@@ -3,10 +3,12 @@
 ## Notes: 
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
-## Version: 0.0.5
+## Version: 0.1.0
 ## SavedVariablesPerCharacter: ConfigTable
+## SavedVariables: DragonflightUIDB
 ## OptionalDeps: Ace3
 
+# Libs
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\AceAddon-3.0\AceAddon-3.0.xml
@@ -18,6 +20,12 @@ Libs\AceGUI-3.0\AceGUI-3.0.xml
 Libs\AceConfig-3.0\AceConfig-3.0.xml
 
 Core.lua
+Config.lua
+
+# Modules
+Modules\Actionbar.lua
+
+
 
 Actionbar.lua
 Artframe.lua
