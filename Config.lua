@@ -37,8 +37,7 @@ function DF:SetupOptions()
 end
 
 function DF:RegisterModuleOptions(name, options)
-    self:Print('RegisterModuleOptions()', name, options)
-
+    --self:Print('RegisterModuleOptions()', name, options)
     moduleOptions[name] = options
     -- function AceConfigDialog:AddToBlizOptions(appName, name, parent, ...)
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI_' .. name, options)
