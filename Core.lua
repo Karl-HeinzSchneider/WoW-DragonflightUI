@@ -48,6 +48,13 @@ function DF:SetModuleEnabled(module, value)
     end
 end
 
+local showDebug = false
+function DF:Debug(m, value)
+    if showDebug then
+        m:Print(value)
+    end
+end
+
 -- Vars
 
 local colorTable = {

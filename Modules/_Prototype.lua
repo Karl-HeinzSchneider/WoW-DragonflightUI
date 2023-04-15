@@ -42,7 +42,7 @@ local options = {
 }
 
 function Module:OnInitialize()
-    self:Print('Module ' .. mName .. ' OnInitialize()')
+    DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     db = self.db.profile
 
@@ -51,7 +51,7 @@ function Module:OnInitialize()
 end
 
 function Module:OnEnable()
-    self:Print('Module ' .. mName .. ' OnEnable()')
+    DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     if DF.Wrath then
         Module.Wrath()
     else

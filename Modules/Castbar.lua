@@ -19,7 +19,6 @@ local function getDefaultStr(key)
 end
 
 local function setDefaultValues()
-    Module:Print('setDefaultValues')
     for k, v in pairs(defaults.profile) do
         Module.db.profile[k] = v
     end
@@ -107,7 +106,7 @@ local options = {
 }
 
 function Module:OnInitialize()
-    self:Print('Module ' .. mName .. ' OnInitialize()')
+    DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     db = self.db.profile
 
@@ -116,7 +115,7 @@ function Module:OnInitialize()
 end
 
 function Module:OnEnable()
-    self:Print('Module ' .. mName .. ' OnEnable()')
+    DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     if DF.Wrath then
         Module.Wrath()
     else
@@ -129,7 +128,6 @@ function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    Module:Print('ApplySettings()')
     db = Module.db.profile
     Module.frame.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
 end
