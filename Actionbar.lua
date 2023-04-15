@@ -70,7 +70,7 @@ function CreateNewXPBar()
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
     f:SetSize(sizeX, sizeY)
     f:SetPoint('BOTTOM', 0, 5)
-    f:SetScale(0.5)
+    f:SetScale(0.4)
     local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
     tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
@@ -128,9 +128,9 @@ function CreateNewXPBar()
             elseif (exhaustionStateID == 2) then
                 f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
             end
-
+            print(GetXPExhaustion())
             -- value
-            local playerCurrXP = UnitXP('player')
+            local playerCurrXP = UnitXP('player') * 10
             local playerMaxXP = UnitXPMax('player')
             frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
             frame.XPBar.Bar:SetValue(playerCurrXP)
