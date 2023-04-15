@@ -66,20 +66,21 @@ end
 --ChangeActionbar()
 
 function CreateNewXPBar()
+    local sizeX, sizeY = 1137, 32
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
-    f:SetSize(1137, 32)
+    f:SetSize(sizeX, sizeY)
     f:SetPoint('BOTTOM', 0, 5)
     f:SetScale(0.5)
     local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
     tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
-    tex:SetTexCoord(0, 1137 / 2048, 0, 1)
+    tex:SetTexCoord(0, 0.55517578, 0, 1)
     f.Background = tex
 
     -- actual status bar, child of parent above
     f.Bar = CreateFrame('StatusBar', nil, f)
     f.Bar:SetPoint('CENTER')
-    f.Bar:SetSize(1137, 32)
+    f.Bar:SetSize(sizeX, sizeY)
 
     f.Bar.Texture = f.Bar:CreateTexture(nil, 'BORDER')
     f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
@@ -90,8 +91,8 @@ function CreateNewXPBar()
     --border
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
-    border:SetTexCoord(0, 1137 / 2048, 0, 1)
-    border:SetSize(1137, 32)
+    border:SetTexCoord(0, 0.55517578, 0, 1)
+    border:SetSize(sizeX, sizeY)
     border:SetPoint('CENTER')
     f.Border = border
 
