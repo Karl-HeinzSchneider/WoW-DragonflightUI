@@ -66,32 +66,33 @@ end
 --ChangeActionbar()
 
 function CreateNewXPBar()
-    local size = 460
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
-    f:SetSize(size, 14)
+    f:SetSize(1137, 32)
     f:SetPoint('BOTTOM', 0, 5)
-
-    local tex = f:CreateTexture('Background', 'ARTWORK')
+    f:SetScale(0.5)
+    local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
-    --tex:SetColorTexture(0, 0, 0)
-    --tex:SetAlpha(0.5)
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    tex:SetTexCoord(.00048828125, 0.55029296875, 0.08203125, 0.15234375)
+    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
+    tex:SetTexCoord(0, 1137 / 2048, 0, 1)
     f.Background = tex
 
     -- actual status bar, child of parent above
     f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
-    f.Bar:SetPoint('TOPLEFT', 0, 0)
-    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
+    f.Bar:SetPoint('CENTER')
+    f.Bar:SetSize(1137, 32)
+
+    f.Bar.Texture = f.Bar:CreateTexture(nil, 'BORDER')
+    f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
+    f.Bar.Texture:SetAllPoints()
+
+    f.Bar:SetStatusBarTexture(f.Bar.Texture)
 
     --border
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    border:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
-    local dx, dy = 6, 5
-    border:SetSize(size + dx, 20 + dy)
-    border:SetPoint('CENTER', f.Bar, 'CENTER', 1, -2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
+    border:SetTexCoord(0, 1137 / 2048, 0, 1)
+    border:SetSize(1137, 32)
+    border:SetPoint('CENTER')
     f.Border = border
 
     -- text
@@ -119,18 +120,18 @@ function CreateNewXPBar()
             -- exhaustion
             local exhaustionStateID = GetRestState()
             if (exhaustionStateID == 1) then
-                frame.XPBar.Bar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0)
+                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
             elseif (exhaustionStateID == 2) then
-                frame.XPBar.Bar:SetStatusBarColor(0.58, 0.0, 0.55, 1.0) -- purple
+                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
             end
 
             -- value
-            local playerCurrXP = UnitXP('player')
+            local playerCurrXP = UnitXP('player') * 10000
             local playerMaxXP = UnitXPMax('player')
             frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
             frame.XPBar.Bar:SetValue(playerCurrXP)
 
-            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
+            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. ' / ' .. playerMaxXP)
             --frame.XPBar:Show()
             frame.XPBar.valid = true
         else
