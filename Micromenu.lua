@@ -632,11 +632,11 @@ Core.Sub.Micromenu = function()
     ChangeFramerate()
 end
 
-function UnitframeModule()
+function MicromenuModule()
     frame:RegisterEvent('BAG_UPDATE_DELAYED')
 end
 
-Core.RegisterModule(Module, {}, {}, true, UnitframeModule)
+Core.RegisterModule(Module, {}, {}, true, MicromenuModule)
 
 function frame:OnEvent(event, arg1)
     if event == "BAG_UPDATE_DELAYED" then
