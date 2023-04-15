@@ -128,9 +128,9 @@ function CreateNewXPBar()
             elseif (exhaustionStateID == 2) then
                 f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
             end
-            print(GetXPExhaustion())
+
             -- value
-            local playerCurrXP = UnitXP('player') * 10
+            local playerCurrXP = UnitXP('player')
             local playerMaxXP = UnitXPMax('player')
             frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
             frame.XPBar.Bar:SetValue(playerCurrXP)
