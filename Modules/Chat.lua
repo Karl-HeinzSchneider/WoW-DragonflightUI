@@ -7,8 +7,10 @@ local db, getOptions
 local defaults = {
     profile = {
         scale = 1,
-        dX = 0,
-        dY = 0
+        dX = 42,
+        dY = 35,
+        sizeX = 460,
+        sizeY = 207
     }
 }
 
@@ -50,6 +52,11 @@ end
 
 function Module:OnEnable()
     self:Print('Module ' .. mName .. ' OnEnable()')
+    if DF.Wrath then
+        Module.Wrath()
+    else
+        Module.Era()
+    end
 end
 
 function Module:OnDisable()
@@ -57,4 +64,29 @@ end
 
 function Module:ApplySettings()
     db = self.db.profile
+end
+
+local frame = CreateFrame('FRAME', 'DragonflightUIChatFrame', UIParent)
+
+function Module.ChangeSizeAndPosition()
+    ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 42, 35)
+    ChatFrame1:SetSize(420 + 40, 200 + 7)
+end
+
+function frame:OnEvent(event, arg1)
+    --print('event', event)
+    if event == 'PLAYER_ENTERING_WORLD' then
+        Module.ChangeSizeAndPosition()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
+
+function Module.Wrath()
+    Module.ChangeSizeAndPosition()
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+end
+
+function Module.Era()
+    Module.Wrath()
 end
