@@ -430,13 +430,15 @@ function HookBags()
             -- from '\BlizzardInterfaceCode\Interface\FrameXML\ContainerFrame_Shared.lua'
             local CONTAINER_WIDTH = 192
 
-            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 95)
+            local CONTAINER_BASE_HEIGHT = 95
+
+            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, CONTAINER_BASE_HEIGHT)
             for i = 2, 5 do
                 local bagRef = _G['ContainerFrame' .. i]
                 local point, relativeTo, relativePoint, xOfs, yOfs = bagRef:GetPoint(1)
 
                 if relativePoint == 'BOTTOMRIGHT' then
-                    bagRef:SetPoint(point, relativeTo, relativePoint, -CONTAINER_WIDTH, yOfs)
+                    bagRef:SetPoint(point, relativeTo, relativePoint, -CONTAINER_WIDTH, CONTAINER_BASE_HEIGHT)
                 end
             end
         end
