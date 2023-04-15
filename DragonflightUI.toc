@@ -25,6 +25,7 @@ Config.lua
 # Modules
 Modules\Actionbar.lua
 Modules\Chat.lua
+Modules\Minimap.lua
 
 
 # Actionbar.lua

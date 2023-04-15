@@ -9,7 +9,7 @@ DF.Era = DF.InterfaceVersion <= 20000
 
 local defaults = {
     profile = {
-        modules = {['Actionbar'] = true},
+        modules = {['Actionbar'] = true, ['Castbar'] = true, ['Chat'] = true, ['Minimap'] = true, ['Unitframe'] = true},
         bestnumber = 42
     }
 }
