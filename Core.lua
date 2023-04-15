@@ -4,7 +4,9 @@ local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0')
 local db
 
 local defaults = {
-    profile = {}
+    profile = {
+        modules = {['Actionbar'] = true}
+    }
 }
 
 function DF:OnInitialize()
@@ -22,6 +24,22 @@ end
 
 function DF:OnDisable()
     -- Called when the addon is disabled
+end
+
+function DF:GetModuleEnabled(module)
+    return db.modules[module]
+end
+
+function DF:SetModuleEnabled(module, value)
+    local old = db.modules[module]
+    db.modules[module] = value
+    if old ~= value then
+        if value then
+            self:EnableModule(module)
+        else
+            self:DisableModule(module)
+        end
+    end
 end
 
 -- Vars

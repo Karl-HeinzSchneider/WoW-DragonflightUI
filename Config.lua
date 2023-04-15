@@ -1,23 +1,40 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
-local options, moduleOptions = nil, {}
-local function getOptions()
-    return {}
-end
-
+local moduleOptions = {}
+local options = {
+    type = 'group',
+    args = {
+        general = {
+            type = 'group',
+            inline = true,
+            name = 'General Options',
+            args = {
+                unlock = {
+                    type = 'execute',
+                    name = 'Do Nothing',
+                    desc = 'Does nothing',
+                    func = function()
+                        DF:Print('Dont press me, i do nothing!')
+                    end,
+                    order = 69
+                }
+            }
+        }
+    }
+}
 function DF:SetupOptions()
+    self:Print('SetupOptions()')
     self.optFrames = {}
-    LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI', getOptions)
-    self.optFrames.DragonflightUI =
+    LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI', options)
+    self.optFrames['DragonflightUI'] =
         LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI', 'DragonflightUI', nil, 'general')
-
-    local profileOptions = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
-
-    self:RegisterModuleOptions('Profiles', profileOptions, 'Profiles')
 end
 
-function DF:RegisterModuleOptions(name, optTable, displayName)
-    moduleOptions[name] = optTable
+function DF:RegisterModuleOptions(name, options)
+    self:Print('RegisterModuleOptions()', name, options)
+
+    moduleOptions[name] = options
+    -- function AceConfigDialog:AddToBlizOptions(appName, name, parent, ...)
     self.optFrames[name] =
-        LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI', displayName or name, 'DragonflightUI', name)
+        LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI', name, 'Dragonflight UI', name)
 end
