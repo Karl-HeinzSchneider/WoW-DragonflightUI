@@ -7,16 +7,41 @@ local db, getOptions
 local defaults = {
     profile = {
         scale = 1,
-        dX = 42,
-        dY = 35,
+        x = 0,
+        y = 230,
         sizeX = 460,
         sizeY = 207
     }
 }
 
+local function getDefaultStr(key)
+    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+end
+
+local function setDefaultValues()
+    Module:Print('setDefaultValues')
+    for k, v in pairs(defaults.profile) do
+        Module.db.profile[k] = v
+    end
+    Module.ApplySettings()
+end
+
+-- db[info[#info] = VALUE
+local function getOption(info)
+    return db[info[#info]]
+end
+
+local function setOption(info, value)
+    local key = info[1]
+    Module.db.profile[key] = value
+    Module.ApplySettings()
+end
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
     args = {
         toggle = {
             type = 'toggle',
@@ -36,7 +61,47 @@ local options = {
             func = function()
                 ReloadUI()
             end,
-            order = 69
+            order = 1.1
+        },
+        defaults = {
+            type = 'execute',
+            name = 'Defaults',
+            desc = 'Sets Config to default values',
+            func = setDefaultValues,
+            order = 1.1
+        },
+        config = {
+            type = 'header',
+            name = 'Config - Player',
+            order = 100
+        },
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 101,
+            disabled = true
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 102
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 102
         }
     }
 }
@@ -57,16 +122,20 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:ApplySettings()
 end
 
 function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = self.db.profile
+    Module:Print('ApplySettings()')
+    db = Module.db.profile
+    Module.frame.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
+Module.frame = frame
 
 function Module.ChangeCastbar()
     CastingBarFrame.Text:Hide()
