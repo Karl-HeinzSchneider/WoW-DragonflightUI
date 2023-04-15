@@ -4,7 +4,7 @@
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## Version: 0.0.5
-## SavedVariablesPerCharacter: ConfigTable
+## SavedVariablesPerCharacter: ConfigTable, BagsExpanded
 ## OptionalDeps: 
 
 Core.lua
