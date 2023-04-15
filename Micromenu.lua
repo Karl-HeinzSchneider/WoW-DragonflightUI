@@ -497,10 +497,8 @@ function ChangeBackpack()
     KeyRingButton:GetHighlightTexture():SetSize(35, 35)
     KeyRingButton:GetHighlightTexture():SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
 
-    KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
+    --KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
     KeyRingButton:GetPushedTexture():SetSize(35, 35)
-    KeyRingButton:GetPushedTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx, 0.0078125 + dy, 0.484375 + dy)
-    KeyRingButton:GetPushedTexture():SetTexCoord(0.822265625, 0.94140625, 0.0078125, 0.484375)
     -- KeyRingButton:GetPushedTexture():SetTexture(0.69921875, 0.818359375, 0.0078125, 0.484375)
 
     --KeyRingButton:GetCheckedTexture():SetTexture()
