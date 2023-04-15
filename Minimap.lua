@@ -423,10 +423,24 @@ function ChangeLFG()
 end
 --ChangeLFG()
 
-function MoveBagAnchor()
-    ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 132)
-    ContainerFrame1.SetPoint = function()
-    end
+function HookBags()
+    hooksecurefunc(
+        'UpdateContainerFrameAnchors',
+        function()
+            -- from '\BlizzardInterfaceCode\Interface\FrameXML\ContainerFrame_Shared.lua'
+            local CONTAINER_WIDTH = 192
+
+            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 95)
+            for i = 2, 5 do
+                local bagRef = _G['ContainerFrame' .. i]
+                local point, relativeTo, relativePoint, xOfs, yOfs = bagRef:GetPoint(1)
+
+                if relativePoint == 'BOTTOMRIGHT' then
+                    bagRef:SetPoint(point, relativeTo, relativePoint, -CONTAINER_WIDTH, yOfs)
+                end
+            end
+        end
+    )
 end
 
 function ChangeMail()
@@ -473,11 +487,11 @@ function MinimapModule()
     if Core.Wrath then
         MoveTracker()
         ChangeLFG()
-        MoveBagAnchor()
     end
 
     HookMouseWheel()
     ChangeMail()
+    HookBags()
 
     if Core.Era then
         ChangeEra()
