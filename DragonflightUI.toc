@@ -28,13 +28,3 @@ Modules\Castbar.lua
 Modules\Chat.lua
 Modules\Minimap.lua
 Modules\Unitframe.lua
-
-# Actionbar.lua
-# Artframe.lua
-# Castbar.lua
-# Chat.lua
-# Micromenu.lua
-# Minimap.lua
-# Unitframe.lua
-
-# Options.lua
