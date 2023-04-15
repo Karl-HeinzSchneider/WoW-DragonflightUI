@@ -340,9 +340,9 @@ function Module.HookCalendar()
     button:SetNormalTexture(base)
     button:SetPushedTexture(base)
     button:SetHighlightTexture(base)
-    button:GetNormalTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-1-Up'))
-    button:GetHighlightTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-1-Mouseover'))
-    button:GetPushedTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-1-Down'))
+    button:GetNormalTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Up'))
+    button:GetHighlightTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Mouseover'))
+    button:GetPushedTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Down'))
 
     frame.CalendarButton = button
     frame.CalendarButtonText = text
@@ -517,7 +517,13 @@ end
 
 function frame:OnEvent(event, arg1)
     --print('event', event)
-    if event == 'PLAYER_ENTERING_WORLD' then
+    if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
+        --print('Blizzard_TimeManager')
+        Module.ChangeClock()
+        if DF.Wrath then
+            Module.HookCalendar()
+            Module.UpdateCalendar()
+        end
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
@@ -540,7 +546,10 @@ function Module.Wrath()
     Module.ChangeMail()
     Module.HookBags()
 
-    frame:RegisterEvent('ADDON_LOADED')
+    Module.HookCalendar()
+    Module.UpdateCalendar()
+
+    --frame:RegisterEvent('ADDON_LOADED')
 end
 
 -- Era
@@ -558,5 +567,5 @@ function Module.Era()
     Module.HookBags()
     Module.ChangeEra()
 
-    frame:RegisterEvent('ADDON_LOADED')
+    --frame:RegisterEvent('ADDON_LOADED')
 end
