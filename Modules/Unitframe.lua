@@ -761,16 +761,6 @@ function Module.GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
-function Module.GetStatusBarTexture(powerTypeString)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    if powerTypeString == 'MANA' then
-        return base .. 'UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
-    end
-
-    --return base .. 'UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
-end
-
 function Module.CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
