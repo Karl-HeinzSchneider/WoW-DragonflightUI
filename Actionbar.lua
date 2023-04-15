@@ -97,12 +97,15 @@ function CreateNewXPBar()
 
     -- text
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'TextStatusBarText')
-    f.Text:SetFont(Path, 12, Flags)
+    f.Bar:EnableMouse(true);
+
+    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
+    f.Text:SetFont("Fonts\\FRIZQT__.TTF", 18, "THINOUTLINE")
+    f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
     f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 1)
+    f.Text:SetPoint('CENTER', 0, 4)
 
     frame.XPBar = f
 
@@ -126,12 +129,12 @@ function CreateNewXPBar()
             end
 
             -- value
-            local playerCurrXP = UnitXP('player') * 10000
+            local playerCurrXP = UnitXP('player')
             local playerMaxXP = UnitXPMax('player')
             frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
             frame.XPBar.Bar:SetValue(playerCurrXP)
 
-            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. ' / ' .. playerMaxXP)
+            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
             --frame.XPBar:Show()
             frame.XPBar.valid = true
         else
