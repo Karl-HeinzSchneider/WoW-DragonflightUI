@@ -48,7 +48,8 @@ function DF:SetModuleEnabled(module, value)
     end
 end
 
-local showDebug = true
+local name, realm = UnitName('player')
+local showDebug = name == 'Zimtdev'
 function DF:Debug(m, value)
     if showDebug then
         m:Print(value)
