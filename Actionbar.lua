@@ -71,6 +71,7 @@ function CreateNewXPBar()
     f:SetSize(sizeX, sizeY)
     f:SetPoint('BOTTOM', 0, 5)
     f:SetScale(0.4)
+
     local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
     tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
@@ -82,11 +83,32 @@ function CreateNewXPBar()
     f.Bar:SetPoint('CENTER')
     f.Bar:SetSize(sizeX, sizeY)
 
-    f.Bar.Texture = f.Bar:CreateTexture(nil, 'BORDER')
+    f.Bar.Texture = f.Bar:CreateTexture(nil, 'BORDER', nil)
     f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
     f.Bar.Texture:SetAllPoints()
 
     f.Bar:SetStatusBarTexture(f.Bar.Texture)
+
+    f.RestedBar = CreateFrame('StatusBar', nil, f)
+    f.RestedBar:SetPoint('CENTER')
+    f.RestedBar:SetSize(sizeX, sizeY)
+
+    f.RestedBar.Texture = f.RestedBar:CreateTexture(nil, 'BORDER', nil)
+    f.RestedBar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\RestedBackground')
+    f.RestedBar.Texture:SetAllPoints()
+    f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
+
+    local restedBarMarkSizeX, restedBarMarkSizeY = 22, 30
+    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 6
+
+    f.RestedBarMark = CreateFrame('Frame', nil, f)
+    f.RestedBarMark:SetPoint('CENTER', restedBarMarkOffsetX, restedBarMarkOffsetY)
+    f.RestedBarMark:SetSize(restedBarMarkSizeX, restedBarMarkSizeY)
+
+    f.RestedBarMark.Texture = f.RestedBarMark:CreateTexture(nil, 'OVERLAY')
+    f.RestedBarMark.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
+    f.RestedBarMark.Texture:SetTexCoord(1170 / 2048, 1192 / 2048, 201 / 256, 231 / 256)
+    f.RestedBarMark.Texture:SetAllPoints()
 
     --border
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
@@ -124,14 +146,34 @@ function CreateNewXPBar()
             -- exhaustion
             local exhaustionStateID = GetRestState()
             if (exhaustionStateID == 1) then
-                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-            elseif (exhaustionStateID == 2) then
                 f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
+            elseif (exhaustionStateID == 2) then
+                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
             end
-
+            
             -- value
             local playerCurrXP = UnitXP('player')
             local playerMaxXP = UnitXPMax('player')
+            local restedXP = GetXPExhaustion()
+
+            if (restedXP and restedXP > 0) then
+                if (playerCurrXP + restedXP > playerMaxXP) then
+                    frame.XPBar.RestedBar:Hide()
+
+                    frame.XPBar.RestedBarMark:Hide()
+                else
+                    frame.XPBar.RestedBar:Show()
+                    frame.XPBar.RestedBar:SetMinMaxValues(0, playerMaxXP)
+                    frame.XPBar.RestedBar:SetValue(playerCurrXP + restedXP)
+                    
+                    frame.XPBar.RestedBarMark:Show()
+                    frame.XPBar.RestedBarMark:SetPoint('LEFT', (playerCurrXP + restedXP) / playerMaxXP * sizeX + restedBarMarkOffsetX - restedBarMarkSizeX / 2, restedBarMarkOffsetY)
+                end
+            else
+                frame.XPBar.RestedBar:Hide()
+                frame.XPBar.RestedBarMark:Hide()
+            end
+
             frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
             frame.XPBar.Bar:SetValue(playerCurrXP)
 
