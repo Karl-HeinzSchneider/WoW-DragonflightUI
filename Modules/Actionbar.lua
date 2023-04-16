@@ -576,7 +576,6 @@ function Module.HookPetBar()
 end
 
 function Module.MoveSideBars(shouldMove)
-    DF:Debug(Module, 'MoveSideBars: ' .. tostring(shouldMove))
     local gap = 3
     local delta = 70
 
@@ -587,9 +586,9 @@ function Module.MoveSideBars(shouldMove)
         end
 
         -- first row 1 2 3 4
-        _G['MultiBarRightButton4']:SetPoint('RIGHT', MultiBarBottomRightButton1, 'LEFT', -delta, 0)
-        for i = 1, 3 do
-            _G['MultiBarRightButton' .. i]:SetPoint('RIGHT', _G['MultiBarRightButton' .. (i + 1)], 'LEFT', -gap, 0)
+        _G['MultiBarRightButton1']:SetPoint('LEFT', MultiBarBottomRightButton12, 'RIGHT', delta, 0)
+        for i = 2, 4 do
+            _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
         end
 
         -- second row 5 6 7 8
@@ -610,9 +609,9 @@ function Module.MoveSideBars(shouldMove)
         end
 
         -- first row 1 2 3 4
-        _G['MultiBarLeftButton1']:SetPoint('LEFT', MultiBarBottomRightButton12, 'RIGHT', delta, 0)
-        for i = 2, 4 do
-            _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+        _G['MultiBarLeftButton4']:SetPoint('RIGHT', MultiBarBottomRightButton1, 'LEFT', -delta, 0)
+        for i = 1, 3 do
+            _G['MultiBarLeftButton' .. i]:SetPoint('RIGHT', _G['MultiBarLeftButton' .. (i + 1)], 'LEFT', -gap, 0)
         end
 
         -- second row 5 6 7 8
