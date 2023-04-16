@@ -10,14 +10,40 @@ local db, getOptions
 local defaults = {
     profile = {
         scale = 1,
-        dX = 0,
-        dY = 0
+        x = 0,
+        y = 0,
+        showGryphon = true,
+        changeSides = true
     }
 }
+
+local function getDefaultStr(key)
+    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+end
+
+local function setDefaultValues()
+    for k, v in pairs(defaults.profile) do
+        Module.db.profile[k] = v
+    end
+    Module.ApplySettings()
+end
+
+-- db[info[#info] = VALUE
+local function getOption(info)
+    return db[info[#info]]
+end
+
+local function setOption(info, value)
+    local key = info[1]
+    Module.db.profile[key] = value
+    Module.ApplySettings()
+end
 
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
     args = {
         toggle = {
             type = 'toggle',
@@ -37,7 +63,61 @@ local options = {
             func = function()
                 ReloadUI()
             end,
-            order = 69
+            order = 1.1
+        },
+        defaults = {
+            type = 'execute',
+            name = 'Defaults',
+            desc = 'Sets Config to default values',
+            func = setDefaultValues,
+            order = 1.1
+        },
+        config = {
+            type = 'header',
+            name = 'Config - Actionbar',
+            order = 100
+        },
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 101,
+            disabled = true
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 102,
+            disabled = true
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 102,
+            disabled = true
+        },
+        showGryphon = {
+            type = 'toggle',
+            name = 'Show Gryphon Art',
+            desc = 'Shows/Hides Gryphon Art on the side' .. getDefaultStr('showGryphon'),
+            order = 105.1
+        },
+        changeSides = {
+            type = 'toggle',
+            name = 'Change Right Bar 1+2',
+            desc = 'Moves the Right Bar 1 + 2 to the side of the mainbar ' .. getDefaultStr('changeSides'),
+            order = 105.2
         }
     }
 }
@@ -58,13 +138,16 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:ApplySettings()
 end
 
 function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = self.db.profile
+    db = Module.db.profile
+    Module.ChangeGryphonVisibility(db.showGryphon)
+    Module.MoveSideBars(db.changeSides)
 end
 
 -- Actionbar
@@ -492,7 +575,80 @@ function Module.HookPetBar()
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 
-function Module.MoveSideBars()
+function Module.MoveSideBars(shouldMove)
+    DF:Debug(Module, 'MoveSideBars: ' .. tostring(shouldMove))
+    local gap = 3
+    local delta = 70
+
+    if shouldMove then
+        -- right
+        for i = 1, 12 do
+            _G['MultiBarRightButton' .. i]:ClearAllPoints()
+        end
+
+        -- first row 1 2 3 4
+        _G['MultiBarRightButton4']:SetPoint('RIGHT', MultiBarBottomRightButton1, 'LEFT', -delta, 0)
+        for i = 1, 3 do
+            _G['MultiBarRightButton' .. i]:SetPoint('RIGHT', _G['MultiBarRightButton' .. (i + 1)], 'LEFT', -gap, 0)
+        end
+
+        -- second row 5 6 7 8
+        _G['MultiBarRightButton5']:SetPoint('TOP', _G['MultiBarRightButton1'], 'BOTTOM', 0, -gap)
+        for i = 6, 8 do
+            _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
+        end
+
+        -- third row 9 10 11 12
+        _G['MultiBarRightButton9']:SetPoint('TOP', _G['MultiBarRightButton5'], 'BOTTOM', 0, -gap)
+        for i = 10, 12 do
+            _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
+        end
+
+        -- left
+        for i = 1, 12 do
+            _G['MultiBarLeftButton' .. i]:ClearAllPoints()
+        end
+
+        -- first row 1 2 3 4
+        _G['MultiBarLeftButton1']:SetPoint('LEFT', MultiBarBottomRightButton12, 'RIGHT', delta, 0)
+        for i = 2, 4 do
+            _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+        end
+
+        -- second row 5 6 7 8
+        _G['MultiBarLeftButton5']:SetPoint('TOP', _G['MultiBarLeftButton1'], 'BOTTOM', 0, -gap)
+        for i = 6, 8 do
+            _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+        end
+
+        -- third row 9 10 11 12
+        _G['MultiBarLeftButton9']:SetPoint('TOP', _G['MultiBarLeftButton5'], 'BOTTOM', 0, -gap)
+        for i = 10, 12 do
+            _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
+        end
+    else
+        -- Default
+        -- right
+        _G['MultiBarRightButton1']:ClearAllPoints()
+        _G['MultiBarRightButton1']:SetPoint('TOPRIGHT', MultiBarRight, 'TOPRIGHT', -2, -gap)
+
+        for i = 2, 12 do
+            _G['MultiBarRightButton' .. i]:ClearAllPoints()
+            _G['MultiBarRightButton' .. i]:SetPoint('TOP', _G['MultiBarRightButton' .. (i - 1)], 'BOTTOM', 0, -gap)
+        end
+
+        -- left
+        _G['MultiBarLeftButton1']:ClearAllPoints()
+        _G['MultiBarLeftButton1']:SetPoint('TOPRIGHT', MultiBarLeft, 'TOPRIGHT', -2, -gap)
+
+        for i = 2, 12 do
+            _G['MultiBarLeftButton' .. i]:ClearAllPoints()
+            _G['MultiBarLeftButton' .. i]:SetPoint('TOP', _G['MultiBarLeftButton' .. (i - 1)], 'BOTTOM', 0, -gap)
+        end
+    end
+end
+
+function Module.MoveSideBarsOLD()
     -- left
     local gap = 3
     local dx = 220
@@ -643,6 +799,16 @@ function Module.DrawGryphon()
     frameArt.GryphonRight = GryphonRight
 end
 
+function Module.ChangeGryphonStyle(ally)
+    if ally then
+        frameArt.GryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.26611328125, 0.42919921875)
+        frameArt.GryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.10205078125, 0.26513671875)
+    else
+        frameArt.GryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.59423828125, 0.75732421875)
+        frameArt.GryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.43017578125, 0.59326171875)
+    end
+end
+
 function Module.DrawActionbarDeco()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     for i = 1, 12 do
@@ -660,13 +826,13 @@ end
 
 function Module.ChangeGryphonVisibility(visible)
     if visible then
+        --MainMenuBarPageNumber:Show()
         frameArt.GryphonRight:Show()
         frameArt.GryphonLeft:Show()
-        MainMenuBarPageNumber:Show()
     else
+        --MainMenuBarPageNumber:Hide()
         frameArt.GryphonRight:Hide()
         frameArt.GryphonLeft:Hide()
-        MainMenuBarPageNumber:Hide()
     end
 end
 
@@ -676,6 +842,14 @@ function frameArt:OnEvent(event, arg1)
         Module.ChangeGryphonVisibility(false)
     elseif event == 'UNIT_EXITED_VEHICLE' then
         Module.ChangeGryphonVisibility(true)
+    elseif event == 'PLAYER_ENTERING_WORLD' then
+        local englishFaction, localizedFaction = UnitFactionGroup('player')
+
+        if englishFaction == 'Alliance' then
+            Module.ChangeGryphonStyle(true)
+        else
+            Module.ChangeGryphonStyle(false)
+        end
     end
 end
 frameArt:SetScript('OnEvent', frameArt.OnEvent)
@@ -1254,7 +1428,7 @@ function Module.Wrath()
     Module.SetNumBars()
     Module.HookPetBar()
 
-    Module.MoveSideBars()
+    --Module.MoveSideBars()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
@@ -1265,6 +1439,7 @@ function Module.Wrath()
 
     frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
 
     --Core.Sub.Micromenu()
     Module.ChangeMicroMenu()

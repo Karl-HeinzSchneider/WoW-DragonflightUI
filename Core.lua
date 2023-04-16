@@ -48,7 +48,7 @@ function DF:SetModuleEnabled(module, value)
     end
 end
 
-local showDebug = false
+local showDebug = true
 function DF:Debug(m, value)
     if showDebug then
         m:Print(value)
