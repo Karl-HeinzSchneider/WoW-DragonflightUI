@@ -1,9 +1,74 @@
-local Addon, Core = ...
-local Module = 'Minimap'
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local mName = 'Minimap'
+local Module = DF:NewModule(mName, 'AceConsole-3.0')
+
+local db, getOptions
+
+local defaults = {
+    profile = {
+        scale = 1,
+        dX = 42,
+        dY = 35,
+        sizeX = 460,
+        sizeY = 207
+    }
+}
+
+local options = {
+    type = 'group',
+    name = 'DragonflightUI - ' .. mName,
+    args = {
+        toggle = {
+            type = 'toggle',
+            name = 'Enable',
+            get = function()
+                return DF:GetModuleEnabled(mName)
+            end,
+            set = function(info, v)
+                DF:SetModuleEnabled(mName, v)
+            end,
+            order = 1
+        },
+        reload = {
+            type = 'execute',
+            name = '/reload',
+            desc = 'reloads UI',
+            func = function()
+                ReloadUI()
+            end,
+            order = 69
+        }
+    }
+}
+
+function Module:OnInitialize()
+    DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
+    self.db = DF.db:RegisterNamespace(mName, defaults)
+    db = self.db.profile
+
+    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    DF:RegisterModuleOptions(mName, options)
+end
+
+function Module:OnEnable()
+    DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    if DF.Wrath then
+        Module.Wrath()
+    else
+        Module.Era()
+    end
+end
+
+function Module:OnDisable()
+end
+
+function Module:ApplySettings()
+    db = self.db.profile
+end
 
 local frame = CreateFrame('FRAME')
 
-local function GetCoords(key)
+function Module.GetCoords(key)
     local uiunitframe = {
         ['UI-HUD-Calendar-1-Down'] = {21, 19, 0.00390625, 0.0859375, 0.00390625, 0.078125, false, false},
         ['UI-HUD-Calendar-1-Mouseover'] = {21, 19, 0.09375, 0.17578125, 0.00390625, 0.078125, false, false},
@@ -104,7 +169,7 @@ local function GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
-function HideDefaultStuff()
+function Module.HideDefaultStuff()
     _G['MinimapBorder']:Hide()
     _G['MinimapBorderTop']:Hide()
 
@@ -126,17 +191,14 @@ function HideDefaultStuff()
         end
     )
 end
---HideDefaultStuff()
 
-function MoveDefaultStuff()
-    --print(Minimap:GetPoint())
+function Module.MoveDefaultStuff()
     --CENTER table: 000001F816E0E7B0 TOP 9 -92
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
     Minimap:SetScale(1.25)
 end
---MoveDefaultStuff()
 
-function ChangeZoom()
+function Module.ChangeZoom()
     local dx, dy = 5, 65
     MinimapZoomIn:SetScale(0.75)
     MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
@@ -164,9 +226,8 @@ function ChangeZoom()
     MinimapZoomOut:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomOut:GetHighlightTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
 end
---ChangeZoom()
 
-function HookMouseWheel()
+function Module.HookMouseWheel()
     Minimap:SetScript(
         'OnMouseWheel',
         function(self, delta)
@@ -189,7 +250,7 @@ function HookMouseWheel()
     )
 end
 
-function CreateMinimapInfoFrame()
+function Module.CreateMinimapInfoFrame()
     local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
     f:SetSize(170, 22)
     f:SetPoint('CENTER', Minimap, 'TOP', 0, 25)
@@ -204,9 +265,8 @@ function CreateMinimapInfoFrame()
 
     frame.MinimapInfo = f
 end
---CreateMinimapInfoFrame()
 
-function ChangeCalendar()
+function Module.ChangeCalendar()
     GameTimeFrame:ClearAllPoints()
     --GameTimeFrame:SetPoint('CENTER', MinimapCluster, 'TOPRIGHT', -16, -20)
     GameTimeFrame:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 0, -2)
@@ -232,9 +292,8 @@ function ChangeCalendar()
     --local obj = GameTimeFrame:GetNormalFontObject()
     --obj:SetJustifyH('LEFT')
 end
---ChangeCalendar()
 
-function UpdateCalendar()
+function Module.UpdateCalendar()
     local button = frame.CalendarButton
 
     if button then
@@ -256,8 +315,7 @@ function UpdateCalendar()
     end
 end
 
-function HookCalendar()
-    --local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar'
+function Module.HookCalendar()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar32'
 
     local button = CreateFrame('Button', 'DragonflightUICalendarButton', UIParent)
@@ -282,9 +340,9 @@ function HookCalendar()
     button:SetNormalTexture(base)
     button:SetPushedTexture(base)
     button:SetHighlightTexture(base)
-    button:GetNormalTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-1-Up'))
-    button:GetHighlightTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-1-Mouseover'))
-    button:GetPushedTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-1-Down'))
+    button:GetNormalTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Up'))
+    button:GetHighlightTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Mouseover'))
+    button:GetPushedTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Down'))
 
     frame.CalendarButton = button
     frame.CalendarButtonText = text
@@ -293,12 +351,12 @@ function HookCalendar()
         TimeManagerClockTicker,
         'SetText',
         function()
-            UpdateCalendar()
+            Module.UpdateCalendar()
         end
     )
 end
 
-function ChangeClock()
+function Module.ChangeClock()
     if IsAddOnLoaded('Blizzard_TimeManager') then
         local regions = {TimeManagerClockButton:GetRegions()}
         regions[1]:Hide()
@@ -307,9 +365,8 @@ function ChangeClock()
         TimeManagerClockButton:SetParent(frame.MinimapInfo)
     end
 end
---ChangeClock()
 
-function ChangeZoneText()
+function Module.ChangeZoneText()
     MinimapZoneTextButton:ClearAllPoints()
     MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 1, 0)
     MinimapZoneTextButton:SetParent(frame.MinimapInfo)
@@ -319,9 +376,8 @@ function ChangeZoneText()
     MinimapZoneText:SetSize(130, 12)
     MinimapZoneText:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 1, 0)
 end
---ChangeZoneText()
 
-function ChangeTracking()
+function Module.ChangeTracking()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
 
     MiniMapTracking:ClearAllPoints()
@@ -348,14 +404,9 @@ function ChangeTracking()
     MiniMapTrackingButton:GetHighlightTexture():SetTexCoord(0.228515625, 0.287109375, 0.5078125, 0.53515625)
     MiniMapTrackingButton:SetPushedTexture(base)
     MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109375, 0.224609375, 0.5078125, 0.537109375)
-    --MiniMapTrackingIcon:SetPoint('CENTER', MiniMapTrackingButton, -25, 0)
-    --print(MiniMapTrackingBackground:GetTexture())
-    --MiniMapTrackingBackground:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    --MiniMapTrackingBackground:SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
 end
---ChangeTracking()
 
-function DrawMinimapBorder()
+function Module.DrawMinimapBorder()
     local texture = MinimapCluster:CreateTexture()
     texture:SetDrawLayer('ARTWORK', 7)
     texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
@@ -366,12 +417,11 @@ function DrawMinimapBorder()
 
     frame.minimap = texture
 end
---DrawMinimapBorder()
 
-function ReplaceTextures()
+function Module.ReplaceTextures()
 end
 
-function MoveBuffs()
+function Module.MoveBuffs()
     local dx = -45 - 10
     BuffFrame:ClearAllPoints()
     BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', dx, -13)
@@ -387,9 +437,8 @@ function MoveBuffs()
     end ]]
     -- BuffFrame.ClearAllPoints() = function()     end
 end
---MoveBuffs()
 
-function MoveTracker()
+function Module.MoveTracker()
     local setting
     hooksecurefunc(
         WatchFrame,
@@ -414,16 +463,14 @@ function MoveTracker()
         end
     )
 end
---MoveTracker()
 
-function ChangeLFG()
+function Module.ChangeLFG()
     MiniMapLFGFrame:ClearAllPoints()
     MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
     --MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
 end
---ChangeLFG()
 
-function HookBags()
+function Module.HookBags()
     hooksecurefunc(
         'UpdateContainerFrameAnchors',
         function()
@@ -445,7 +492,7 @@ function HookBags()
     )
 end
 
-function ChangeMail()
+function Module.ChangeMail()
     MiniMapMailBorder:Hide()
     MiniMapMailIcon:Hide()
     --MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
@@ -463,55 +510,62 @@ function ChangeMail()
     mail:SetScale(1)
 end
 
-function ChangeEra()
+function Module.ChangeEra()
     GameTimeFrame:Hide()
     MinimapToggleButton:Hide()
 end
 
--- Events
---frame:RegisterEvent('ADDON_LOADED')
-
-function MinimapModule()
-    HideDefaultStuff()
-    MoveDefaultStuff()
-    ChangeZoom()
-    CreateMinimapInfoFrame()
-    if Core.Wrath then
-        ChangeCalendar()
-    end
-    ChangeClock()
-    ChangeZoneText()
-    if Core.Wrath then
-        ChangeTracking()
-    end
-    DrawMinimapBorder()
-    MoveBuffs()
-    if Core.Wrath then
-        MoveTracker()
-        ChangeLFG()
-    end
-
-    HookMouseWheel()
-    ChangeMail()
-    HookBags()
-
-    if Core.Era then
-        ChangeEra()
-    end
-
-    frame:RegisterEvent('ADDON_LOADED')
-end
-
-Core.RegisterModule(Module, {}, {}, true, MinimapModule)
-
 function frame:OnEvent(event, arg1)
+    --print('event', event)
     if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
         --print('Blizzard_TimeManager')
-        ChangeClock()
-        if Core.Wrath then
-            HookCalendar()
-            UpdateCalendar()
+        Module.ChangeClock()
+        if DF.Wrath then
+            Module.HookCalendar()
+            Module.UpdateCalendar()
         end
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
+
+-- Wrath
+function Module.Wrath()
+    Module.HideDefaultStuff()
+    Module.MoveDefaultStuff()
+    Module.ChangeZoom()
+    Module.CreateMinimapInfoFrame()
+    Module.ChangeCalendar()
+    Module.ChangeClock()
+    Module.ChangeZoneText()
+    Module.ChangeTracking()
+    Module.DrawMinimapBorder()
+    Module.MoveBuffs()
+    Module.MoveTracker()
+    Module.ChangeLFG()
+    Module.HookMouseWheel()
+    Module.ChangeMail()
+    Module.HookBags()
+
+    Module.HookCalendar()
+    Module.UpdateCalendar()
+
+    --frame:RegisterEvent('ADDON_LOADED')
+end
+
+-- Era
+function Module.Era()
+    Module.HideDefaultStuff()
+    Module.MoveDefaultStuff()
+    Module.ChangeZoom()
+    Module.CreateMinimapInfoFrame()
+    Module.ChangeClock()
+    Module.ChangeZoneText()
+    Module.DrawMinimapBorder()
+    Module.MoveBuffs()
+    Module.HookMouseWheel()
+    Module.ChangeMail()
+    Module.HookBags()
+    Module.ChangeEra()
+
+    --frame:RegisterEvent('ADDON_LOADED')
+end
