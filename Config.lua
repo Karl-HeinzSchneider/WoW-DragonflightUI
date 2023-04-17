@@ -24,7 +24,6 @@ local options = {
 }
 
 function DF:SetupOptions()
-    self:Print('SetupOptions()')
     self.optFrames = {}
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI', options)
     self.optFrames['DragonflightUI'] =
