@@ -1,5 +1,3 @@
-local Addon, Core = ...
-
 local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0')
 local db
 
