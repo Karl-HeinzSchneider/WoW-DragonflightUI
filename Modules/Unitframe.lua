@@ -256,7 +256,7 @@ local options = {
         },
         focusConfig = {
             type = 'header',
-            name = 'Config - focusframe',
+            name = 'Config - Focusframe',
             order = 300
         },
         focusOverride = {
