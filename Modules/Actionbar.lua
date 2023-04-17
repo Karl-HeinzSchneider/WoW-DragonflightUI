@@ -710,7 +710,7 @@ function frame:OnEvent(event, arg1)
         frame.UpdateRepBar()
         Module.SetNumBars()
     elseif event == 'BAG_UPDATE_DELAYED' then
-        Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+        Module.RefreshBagBarToggle()
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
         Module.SetNumBars()
@@ -1421,6 +1421,10 @@ function Module.BagBarExpandToggled(Expanded)
     end
 end
 
+function Module.RefreshBagBarToggle()
+    Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+end
+
 function Module.ChangeFramerate()
     FramerateLabel:ClearAllPoints()
     FramerateLabel:SetPoint('BOTTOM', CharacterMicroButton, 'BOTTOM', -80, 6)
@@ -1502,7 +1506,7 @@ function Module.Wrath()
     Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
-    Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+    Module.RefreshBagBarToggle()
 end
 
 -- ERA
