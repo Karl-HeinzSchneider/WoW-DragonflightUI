@@ -259,10 +259,10 @@ function Module.CreateNewXPBar()
 
     -- text
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    f.Bar:EnableMouse(true);
+    f.Bar:EnableMouse(true)
 
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    f.Text:SetFont("Fonts\\FRIZQT__.TTF", 18, "THINOUTLINE")
+    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 18, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
@@ -289,7 +289,7 @@ function Module.CreateNewXPBar()
             elseif (exhaustionStateID == 2) then
                 f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
             end
-            
+
             -- value
             local playerCurrXP = UnitXP('player')
             local playerMaxXP = UnitXPMax('player')
@@ -304,9 +304,13 @@ function Module.CreateNewXPBar()
                     frame.XPBar.RestedBar:Show()
                     frame.XPBar.RestedBar:SetMinMaxValues(0, playerMaxXP)
                     frame.XPBar.RestedBar:SetValue(playerCurrXP + restedXP)
-                    
+
                     frame.XPBar.RestedBarMark:Show()
-                    frame.XPBar.RestedBarMark:SetPoint('LEFT', (playerCurrXP + restedXP) / playerMaxXP * sizeX + restedBarMarkOffsetX - restedBarMarkSizeX / 2, restedBarMarkOffsetY)
+                    frame.XPBar.RestedBarMark:SetPoint(
+                        'LEFT',
+                        (playerCurrXP + restedXP) / playerMaxXP * sizeX + restedBarMarkOffsetX - restedBarMarkSizeX / 2,
+                        restedBarMarkOffsetY
+                    )
                 end
             else
                 frame.XPBar.RestedBar:Hide()
