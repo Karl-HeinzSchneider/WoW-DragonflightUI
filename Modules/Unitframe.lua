@@ -79,6 +79,29 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
+        presetPlayerTargetInfo = {
+            type = 'header',
+            name = 'Preset Player and Target frame',
+            order = 50
+        },
+        presetPlayerTargetDefault = {
+            type = 'execute',
+            name = 'Default',
+            desc = 'Default(TOPLEFT)',
+            func = function()
+                Module.MovePlayerTargetPreset('DEFAULT')
+            end,
+            order = 51
+        },
+        presetPlayerTargetCentered = {
+            type = 'execute',
+            name = 'Centered',
+            desc = '',
+            func = function()
+                Module.MovePlayerTargetPreset('CENTER')
+            end,
+            order = 52
+        },
         playerConfig = {
             type = 'header',
             name = 'Config - Playerframe',
@@ -109,8 +132,8 @@ local options = {
         },
         playerAnchorParent = {
             type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('playerAnchorParent'),
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('playerAnchorParent'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -122,7 +145,7 @@ local options = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 105.1
         },
         playerScale = {
             type = 'range',
@@ -182,8 +205,8 @@ local options = {
         },
         targetAnchorParent = {
             type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('targetAnchorParent'),
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('targetAnchorParent'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -195,7 +218,7 @@ local options = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 205
+            order = 205.1
         },
         targetScale = {
             type = 'range',
@@ -239,8 +262,7 @@ end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
-    local point, relativeTo, relativePoint, offsetX, offsetY = PlayerFrame:GetPoint()
-    Module:Print(point, relativePoint, offsetX, offsetY)
+
     if DF.Wrath then
         Module.Wrath()
     else
@@ -267,6 +289,47 @@ function Module:ApplySettings()
         Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
     else
         Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+    end
+end
+
+function Module.MovePlayerTargetPreset(name)
+    db = Module.db.profile
+
+    if name == 'DEFAULT' then
+        local orig = defaults.profile
+
+        db.playerOverride = false
+        db.playerAnchor = orig.playerAnchor
+        db.playerAnchorParent = orig.playerAnchorParent
+        db.playerX = orig.playerX
+        db.playerY = orig.playerY
+
+        db.targetOverride = false
+        db.targetAnchor = orig.targetAnchor
+        db.targetAnchorParent = orig.targetAnchorParent
+        db.targetX = orig.targetX
+        db.targetY = orig.targetY
+
+        Module.ApplySettings()
+    elseif name == 'CENTER' then
+        local deltaX = 50
+        local deltaY = 180
+
+        db.playerOverride = true
+        db.playerAnchor = 'CENTER'
+        db.playerAnchorParent = 'CENTER'
+        -- player and target frame center is not perfect/identical
+        db.playerX = -107.5 - deltaX
+        db.playerY = -deltaY
+
+        db.targetOverride = true
+        db.targetAnchor = 'CENTER'
+        db.targetAnchorParent = 'CENTER'
+        -- see above
+        db.targetX = 112 + deltaX
+        db.targetY = -deltaY
+
+        Module.ApplySettings()
     end
 end
 
