@@ -44,3 +44,14 @@ function DF:RegisterModuleOptions(name, options)
     self.optFrames[name] =
         LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_' .. name, name, 'DragonflightUI')
 end
+
+function DF:RegisterSlashCommands()
+    self:RegisterChatCommand('df', 'SlashCommand')
+    self:RegisterChatCommand('dragonflight', 'SlashCommand')
+end
+
+function DF:SlashCommand(msg)
+    --self:Print('Slash: ' .. msg)
+    InterfaceOptionsFrame_OpenToCategory('DragonflightUI')
+    InterfaceOptionsFrame_OpenToCategory('DragonflightUI')
+end

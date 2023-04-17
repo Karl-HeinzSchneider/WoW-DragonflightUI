@@ -14,15 +14,16 @@ local defaults = {
 
 function DF:OnInitialize()
     -- Called when the addon is loaded
-    self:Print('Hello World!')
     self.db = LibStub('AceDB-3.0'):New('DragonflightUIDB', defaults, true)
     db = self.db.profile
     self:SetupOptions()
+    self:RegisterSlashCommands()
 end
 
 function DF:OnEnable()
     -- Called when the addon is enabled
-    self:Print('DragonflightUI enabled!')
+    --self:Print('DragonflightUI enabled!')
+    self:ShowStartMessage()
 end
 
 function DF:OnDisable()
@@ -52,4 +53,9 @@ function DF:Debug(m, value)
     if showDebug then
         m:Print(value)
     end
+end
+
+function DF:ShowStartMessage()
+    local version = GetAddOnMetadata('DragonflightUI', 'Version')
+    self:Print('v' .. version .. " loaded! Type '/dragonflight'or '/df' to open the options menu.")
 end
