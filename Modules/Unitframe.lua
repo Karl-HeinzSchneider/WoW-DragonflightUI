@@ -9,16 +9,42 @@ Module.famous = {['Norbert'] = true}
 local defaults = {
     profile = {
         scale = 1,
-        dX = 42,
-        dY = 35,
-        sizeX = 460,
-        sizeY = 207
+        playerOverride = false,
+        playerScale = 1,
+        playerAnchor = 'TOPLEFT',
+        playerAnchorParent = 'TOPLEFT',
+        playerX = -19,
+        playerY = -4
     }
 }
+
+local function getDefaultStr(key)
+    return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+end
+
+local function setDefaultValues()
+    for k, v in pairs(defaults.profile) do
+        Module.db.profile[k] = v
+    end
+    Module.ApplySettings()
+end
+
+-- db[info[#info] = VALUE
+local function getOption(info)
+    return db[info[#info]]
+end
+
+local function setOption(info, value)
+    local key = info[1]
+    Module.db.profile[key] = value
+    Module.ApplySettings()
+end
 
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
     args = {
         toggle = {
             type = 'toggle',
@@ -38,7 +64,87 @@ local options = {
             func = function()
                 ReloadUI()
             end,
-            order = 69
+            order = 1.1
+        },
+        defaults = {
+            type = 'execute',
+            name = 'Defaults',
+            desc = 'Sets Config to default values',
+            func = setDefaultValues,
+            order = 1.1
+        },
+        config = {
+            type = 'header',
+            name = 'Config - Playerframe',
+            order = 100
+        },
+        playerOverride = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 101
+        },
+        playerAnchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('playerAnchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        playerAnchorParent = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('playerAnchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        playerScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('playerScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 106,
+            disabled = true
+        },
+        playerX = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('playerX'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        playerY = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('playerY'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
         }
     }
 }
@@ -54,18 +160,31 @@ end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    local point, relativeTo, relativePoint, offsetX, offsetY = PlayerFrame:GetPoint()
+    Module:Print(point, relativePoint, offsetX, offsetY)
     if DF.Wrath then
         Module.Wrath()
     else
         Module.Era()
     end
+    Module:ApplySettings()
 end
 
 function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = self.db.profile
+    db = Module.db.profile
+
+    local orig = defaults.profile
+
+    if db.playerOverride then
+        Module.MovePlayerFrame(db.playerAnchor, db.playerAnchor, db.playerX, db.playerY)
+    else
+        Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
+    end
+    local point, relativeTo, relativePoint, offsetX, offsetY = PlayerFrame:GetPoint()
+    Module:Print(point, relativePoint, offsetX, offsetY)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
@@ -865,6 +984,11 @@ end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
+function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
+    PlayerFrame:ClearAllPoints()
+    PlayerFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
+
 function Module.ChangeTargetFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
@@ -1625,10 +1749,14 @@ function frame:OnEvent(event, arg1)
         end
         Module.ChangePetFrame()
         Module.UpdatePetMana()
+
+        Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
         Module.ChangePlayerframe()
+
+        Module.ApplySettings()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangePlayerframe()
     elseif event == 'UNIT_EXITED_VEHICLE' then
