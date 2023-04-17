@@ -20,7 +20,13 @@ local defaults = {
         targetAnchor = 'TOPLEFT',
         targetAnchorParent = 'TOPLEFT',
         targetX = 250,
-        targetY = -4
+        targetY = -4,
+        focusOverride = false,
+        focusScale = 1,
+        focusAnchor = 'TOPLEFT',
+        focusAnchorParent = 'TOPLEFT',
+        focusX = 250,
+        focusY = -120
     }
 }
 
@@ -247,6 +253,79 @@ local options = {
             max = 2500,
             bigStep = 0.50,
             order = 208
+        },
+        focusConfig = {
+            type = 'header',
+            name = 'Config - focusframe',
+            order = 300
+        },
+        focusOverride = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 301
+        },
+        focusAnchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr(' focusAnchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 305
+        },
+        focusAnchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('focusAnchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 305.1
+        },
+        focusScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr(' focusScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 306,
+            disabled = true
+        },
+        focusX = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('focusX'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 307
+        },
+        focusY = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('focusY'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 308
         }
     }
 }
@@ -289,6 +368,12 @@ function Module:ApplySettings()
         Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
     else
         Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+    end
+
+    if db.focusOverride then
+        Module.MoveFocusFrame(db.focusAnchor, db.focusAnchorParent, db.focusX, db.focusY)
+    else
+        Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
     end
 end
 
@@ -1650,6 +1735,11 @@ end
 -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
+    FocusFrame:ClearAllPoints()
+    FocusFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
 
 function Module.ReApplyFocusFrame()
     FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
