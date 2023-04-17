@@ -14,7 +14,13 @@ local defaults = {
         playerAnchor = 'TOPLEFT',
         playerAnchorParent = 'TOPLEFT',
         playerX = -19,
-        playerY = -4
+        playerY = -4,
+        targetOverride = false,
+        targetScale = 1,
+        targetAnchor = 'TOPLEFT',
+        targetAnchorParent = 'TOPLEFT',
+        targetX = 250,
+        targetY = -4
     }
 }
 
@@ -73,7 +79,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {
+        playerConfig = {
             type = 'header',
             name = 'Config - Playerframe',
             order = 100
@@ -145,6 +151,79 @@ local options = {
             max = 2500,
             bigStep = 0.50,
             order = 108
+        },
+        targetConfig = {
+            type = 'header',
+            name = 'Config - Targetframe',
+            order = 200
+        },
+        targetOverride = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 201
+        },
+        targetAnchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr(' targetAnchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 205
+        },
+        targetAnchorParent = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('targetAnchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 205
+        },
+        targetScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr(' targetScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 206,
+            disabled = true
+        },
+        targetX = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('targetX'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 207
+        },
+        targetY = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('targetY'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 208
         }
     }
 }
@@ -179,12 +258,16 @@ function Module:ApplySettings()
     local orig = defaults.profile
 
     if db.playerOverride then
-        Module.MovePlayerFrame(db.playerAnchor, db.playerAnchor, db.playerX, db.playerY)
+        Module.MovePlayerFrame(db.playerAnchor, db.playerAnchorParent, db.playerX, db.playerY)
     else
         Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
     end
-    local point, relativeTo, relativePoint, offsetX, offsetY = PlayerFrame:GetPoint()
-    Module:Print(point, relativePoint, offsetX, offsetY)
+
+    if db.targetOverride then
+        Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
+    else
+        Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+    end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
@@ -1181,6 +1264,11 @@ function Module.ReApplyTargetFrame()
     frame.PortraitExtra:UpdateStyle()
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+
+function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
+    TargetFrame:ClearAllPoints()
+    TargetFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
 
 function Module.ChangeToT()
     --TargetFrameToTTextureFrame:Hide()
