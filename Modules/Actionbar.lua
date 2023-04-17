@@ -13,7 +13,8 @@ local defaults = {
         x = 0,
         y = 0,
         showGryphon = true,
-        changeSides = true
+        changeSides = true,
+        bagsExpanded = true
     }
 }
 
@@ -1330,6 +1331,8 @@ function Module.ChangeBackpack()
         )
     end
 
+    CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
+
     --keyring
     KeyRingButton:SetSize(34.5, 34.5)
     KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2)
@@ -1362,6 +1365,55 @@ function Module.MoveBars()
     if DF.Wrath then
         PVPMicroButton.SetPoint = noop
         PVPMicroButton.ClearAllPoints = noop
+    end
+end
+
+function Module.CreateBagExpandButton()
+    local point, relativePoint = "RIGHT", "LEFT";
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+    
+    frame.BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
+    frame.BagBarExpandToggle:SetSize(16, 30)
+    frame.BagBarExpandToggle:SetScale(0.5)
+    frame.BagBarExpandToggle:ClearAllPoints()
+	frame.BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint);
+
+    frame.BagBarExpandToggle:SetNormalTexture(base)
+    frame.BagBarExpandToggle:SetPushedTexture(base)
+    frame.BagBarExpandToggle:SetHighlightTexture(base)
+    frame.BagBarExpandToggle:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    frame.BagBarExpandToggle:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    frame.BagBarExpandToggle:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    frame.BagBarExpandToggle:SetScript(
+        'OnClick',
+        function()
+            setOption({'bagsExpanded'}, not Module.db.profile.bagsExpanded)
+            Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+        end
+    )
+end
+
+function Module.BagBarExpandToggled(Expanded)
+    local rotation;
+
+    if (Expanded) then
+        rotation = math.pi
+    else
+        rotation = 0;
+    end
+
+	frame.BagBarExpandToggle:GetNormalTexture():SetRotation(rotation);
+	frame.BagBarExpandToggle:GetPushedTexture():SetRotation(rotation);
+	frame.BagBarExpandToggle:GetHighlightTexture():SetRotation(rotation);
+
+    for i = 0, 3 do
+        if (Expanded) then
+            _G['CharacterBag' .. i .. 'Slot']:Show()
+            KeyRingButton:Show()
+        else
+            _G['CharacterBag' .. i .. 'Slot']:Hide()
+            KeyRingButton:Hide()
+        end
     end
 end
 
@@ -1445,6 +1497,8 @@ function Module.Wrath()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()
+    Module.CreateBagExpandButton()
+    Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
 end
 
 -- ERA
