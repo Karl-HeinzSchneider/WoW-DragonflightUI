@@ -709,6 +709,8 @@ function frame:OnEvent(event, arg1)
     elseif event == 'UPDATE_FACTION' then
         frame.UpdateRepBar()
         Module.SetNumBars()
+    elseif event == 'BAG_UPDATE_DELAYED' then
+        Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
         Module.SetNumBars()
@@ -1369,14 +1371,16 @@ function Module.MoveBars()
 end
 
 function Module.CreateBagExpandButton()
-    local point, relativePoint = "RIGHT", "LEFT";
+    local point, relativePoint = 'RIGHT', 'LEFT'
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
-    
+
     frame.BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
     frame.BagBarExpandToggle:SetSize(16, 30)
     frame.BagBarExpandToggle:SetScale(0.5)
     frame.BagBarExpandToggle:ClearAllPoints()
-	frame.BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint);
+    frame.BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint)
+
+    frame:RegisterEvent('BAG_UPDATE_DELAYED')
 
     frame.BagBarExpandToggle:SetNormalTexture(base)
     frame.BagBarExpandToggle:SetPushedTexture(base)
@@ -1394,17 +1398,17 @@ function Module.CreateBagExpandButton()
 end
 
 function Module.BagBarExpandToggled(Expanded)
-    local rotation;
+    local rotation
 
     if (Expanded) then
         rotation = math.pi
     else
-        rotation = 0;
+        rotation = 0
     end
 
-	frame.BagBarExpandToggle:GetNormalTexture():SetRotation(rotation);
-	frame.BagBarExpandToggle:GetPushedTexture():SetRotation(rotation);
-	frame.BagBarExpandToggle:GetHighlightTexture():SetRotation(rotation);
+    frame.BagBarExpandToggle:GetNormalTexture():SetRotation(rotation)
+    frame.BagBarExpandToggle:GetPushedTexture():SetRotation(rotation)
+    frame.BagBarExpandToggle:GetHighlightTexture():SetRotation(rotation)
 
     for i = 0, 3 do
         if (Expanded) then
