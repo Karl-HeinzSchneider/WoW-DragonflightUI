@@ -1,14 +1,426 @@
-local Addon, Core = ...
-local Module = 'Unitframe'
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local mName = 'Unitframe'
+local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local noop = function()
+local db, getOptions
+
+Module.famous = {['Norbert'] = true}
+
+local defaults = {
+    profile = {
+        scale = 1,
+        playerOverride = false,
+        playerScale = 1,
+        playerAnchor = 'TOPLEFT',
+        playerAnchorParent = 'TOPLEFT',
+        playerX = -19,
+        playerY = -4,
+        targetOverride = false,
+        targetScale = 1,
+        targetAnchor = 'TOPLEFT',
+        targetAnchorParent = 'TOPLEFT',
+        targetX = 250,
+        targetY = -4,
+        focusOverride = false,
+        focusScale = 1,
+        focusAnchor = 'TOPLEFT',
+        focusAnchorParent = 'TOPLEFT',
+        focusX = 250,
+        focusY = -120
+    }
+}
+
+local function getDefaultStr(key)
+    return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+end
+
+local function setDefaultValues()
+    for k, v in pairs(defaults.profile) do
+        Module.db.profile[k] = v
+    end
+    Module.ApplySettings()
+end
+
+-- db[info[#info] = VALUE
+local function getOption(info)
+    return db[info[#info]]
+end
+
+local function setOption(info, value)
+    local key = info[1]
+    Module.db.profile[key] = value
+    Module.ApplySettings()
+end
+
+local options = {
+    type = 'group',
+    name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
+    args = {
+        toggle = {
+            type = 'toggle',
+            name = 'Enable',
+            get = function()
+                return DF:GetModuleEnabled(mName)
+            end,
+            set = function(info, v)
+                DF:SetModuleEnabled(mName, v)
+            end,
+            order = 1
+        },
+        reload = {
+            type = 'execute',
+            name = '/reload',
+            desc = 'reloads UI',
+            func = function()
+                ReloadUI()
+            end,
+            order = 1.1
+        },
+        defaults = {
+            type = 'execute',
+            name = 'Defaults',
+            desc = 'Sets Config to default values',
+            func = setDefaultValues,
+            order = 1.1
+        },
+        presetPlayerTargetInfo = {
+            type = 'header',
+            name = 'Preset Player and Target frame',
+            order = 50
+        },
+        presetPlayerTargetDefault = {
+            type = 'execute',
+            name = 'Default',
+            desc = 'Default(TOPLEFT)',
+            func = function()
+                Module.MovePlayerTargetPreset('DEFAULT')
+            end,
+            order = 51
+        },
+        presetPlayerTargetCentered = {
+            type = 'execute',
+            name = 'Centered',
+            desc = '',
+            func = function()
+                Module.MovePlayerTargetPreset('CENTER')
+            end,
+            order = 52
+        },
+        playerConfig = {
+            type = 'header',
+            name = 'Config - Playerframe',
+            order = 100
+        },
+        playerOverride = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 101
+        },
+        playerAnchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('playerAnchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        playerAnchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('playerAnchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105.1
+        },
+        playerScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('playerScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 106,
+            disabled = true
+        },
+        playerX = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('playerX'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        playerY = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('playerY'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
+        },
+        targetConfig = {
+            type = 'header',
+            name = 'Config - Targetframe',
+            order = 200
+        },
+        targetOverride = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 201
+        },
+        targetAnchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr(' targetAnchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 205
+        },
+        targetAnchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('targetAnchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 205.1
+        },
+        targetScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr(' targetScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 206,
+            disabled = true
+        },
+        targetX = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('targetX'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 207
+        },
+        targetY = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('targetY'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 208
+        },
+        focusConfig = {
+            type = 'header',
+            name = 'Config - Focusframe',
+            order = 300
+        },
+        focusOverride = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 301
+        },
+        focusAnchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr(' focusAnchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 305
+        },
+        focusAnchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('focusAnchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 305.1
+        },
+        focusScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr(' focusScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 306,
+            disabled = true
+        },
+        focusX = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('focusX'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 307
+        },
+        focusY = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('focusY'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 308
+        }
+    }
+}
+
+function Module:OnInitialize()
+    DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
+    self.db = DF.db:RegisterNamespace(mName, defaults)
+    db = self.db.profile
+
+    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    DF:RegisterModuleOptions(mName, options)
+end
+
+function Module:OnEnable()
+    DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+
+    if DF.Wrath then
+        Module.Wrath()
+    else
+        Module.Era()
+    end
+    Module:ApplySettings()
+end
+
+function Module:OnDisable()
+end
+
+function Module:ApplySettings()
+    db = Module.db.profile
+
+    local orig = defaults.profile
+
+    if db.playerOverride then
+        Module.MovePlayerFrame(db.playerAnchor, db.playerAnchorParent, db.playerX, db.playerY)
+    else
+        Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
+    end
+
+    if db.targetOverride then
+        Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
+    else
+        Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+    end
+
+    if db.focusOverride then
+        Module.MoveFocusFrame(db.focusAnchor, db.focusAnchorParent, db.focusX, db.focusY)
+    else
+        Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
+    end
+end
+
+function Module.MovePlayerTargetPreset(name)
+    db = Module.db.profile
+
+    if name == 'DEFAULT' then
+        local orig = defaults.profile
+
+        db.playerOverride = false
+        db.playerAnchor = orig.playerAnchor
+        db.playerAnchorParent = orig.playerAnchorParent
+        db.playerX = orig.playerX
+        db.playerY = orig.playerY
+
+        db.targetOverride = false
+        db.targetAnchor = orig.targetAnchor
+        db.targetAnchorParent = orig.targetAnchorParent
+        db.targetX = orig.targetX
+        db.targetY = orig.targetY
+
+        Module.ApplySettings()
+    elseif name == 'CENTER' then
+        local deltaX = 50
+        local deltaY = 180
+
+        db.playerOverride = true
+        db.playerAnchor = 'CENTER'
+        db.playerAnchorParent = 'CENTER'
+        -- player and target frame center is not perfect/identical
+        db.playerX = -107.5 - deltaX
+        db.playerY = -deltaY
+
+        db.targetOverride = true
+        db.targetAnchor = 'CENTER'
+        db.targetAnchorParent = 'CENTER'
+        -- see above
+        db.targetX = 112 + deltaX
+        db.targetY = -deltaY
+
+        Module.ApplySettings()
+    end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
 
-local famous = {['Norbert'] = true}
-
-local function GetCoords(key)
+function Module.GetCoords(key)
     local uiunitframe = {
         ['UI-HUD-UnitFrame-Player-Absorb-Edge'] = {8, 32, 0.984375, 0.9921875, 0.001953125, 0.064453125, false, false},
         ['UI-HUD-UnitFrame-Player-CombatIcon'] = {
@@ -699,17 +1111,7 @@ local function GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
-local function GetStatusBarTexture(powerTypeString)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    if powerTypeString == 'MANA' then
-        return base .. 'UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'
-    end
-
-    --return base .. 'UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
-end
-
-function CreatePlayerFrameTextures()
+function Module.CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     if not frame.PlayerFrameBackground then
@@ -721,7 +1123,7 @@ function CreatePlayerFrameTextures()
         background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
 
         background:SetTexture(base)
-        background:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+        background:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
         background:SetSize(198, 71)
         background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
         frame.PlayerFrameBackground = background
@@ -739,7 +1141,7 @@ function CreatePlayerFrameTextures()
         local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
         textureSmall:SetDrawLayer('ARTWORK', 5)
         textureSmall:SetTexture(base)
-        textureSmall:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
+        textureSmall:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
         local delta = 15
         textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
         textureSmall:SetSize(23, 23)
@@ -748,7 +1150,7 @@ function CreatePlayerFrameTextures()
     end
 end
 
-function ChangePlayerframe()
+function Module.ChangePlayerframe()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PlayerFrameTexture:Hide()
@@ -813,7 +1215,12 @@ end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
-function ChangeTargetFrame()
+function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
+    PlayerFrame:ClearAllPoints()
+    PlayerFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
+
+function Module.ChangeTargetFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     TargetFrameTextureFrameTexture:Hide()
@@ -852,7 +1259,7 @@ function ChangeTargetFrame()
     TargetFrameTextureFrameLevelText:ClearAllPoints()
     TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
-    if Core.Wrath then
+    if DF.Wrath then
         TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
         TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
 
@@ -877,12 +1284,12 @@ function ChangeTargetFrame()
     TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     TargetFrameNameBackground:SetTexture(base)
-    TargetFrameNameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
+    TargetFrameNameBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
     TargetFrameNameBackground:SetSize(135, 18)
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
 
-    if Core.Wrath then
+    if DF.Wrath then
         TargetFrameFlash:SetTexture('')
 
         if not frame.TargetFrameFlash then
@@ -957,7 +1364,7 @@ function ChangeTargetFrame()
                 frame.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
             else
                 local name, realm = UnitName('target')
-                if famous[name] then
+                if Module.famous[name] then
                     frame.PortraitExtra:Show()
                     frame.PortraitExtra:SetSize(99, 81)
                     frame.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
@@ -971,7 +1378,7 @@ function ChangeTargetFrame()
         frame.PortraitExtra = extra
     end
 end
-function ReApplyTargetFrame()
+function Module.ReApplyTargetFrame()
     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
@@ -998,7 +1405,7 @@ function ReApplyTargetFrame()
     end
 
     TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-    if Core.Wrath then
+    if DF.Wrath then
         TargetFrameFlash:SetTexture('')
     end
 
@@ -1006,13 +1413,18 @@ function ReApplyTargetFrame()
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
-function ChangeToT()
+function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
+    TargetFrame:ClearAllPoints()
+    TargetFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
+
+function Module.ChangeToT()
     --TargetFrameToTTextureFrame:Hide()
     TargetFrameToT:ClearAllPoints()
     TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35, -10 - 5)
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
-    --TargetFrameToTTextureFrameTexture:SetTexCoord(GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
+    --TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
 
     if not frame.TargetFrameToTBackground then
         local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
@@ -1123,7 +1535,7 @@ function ChangeToT()
     TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 end
 
-function ReApplyToT()
+function Module.ReApplyToT()
     if UnitExists('playertargettarget') then
         --frame.ToTManaBar:Show()
 
@@ -1142,7 +1554,7 @@ function ReApplyToT()
     end
 end
 
-function ChangeFocusFrame()
+function Module.ChangeFocusFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     FocusFrameTextureFrameTexture:Hide()
@@ -1174,7 +1586,7 @@ function ChangeFocusFrame()
 
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetTexture(base)
-    FocusFrameNameBackground:SetTexCoord(GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
+    FocusFrameNameBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
     FocusFrameNameBackground:SetSize(135, 18)
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
@@ -1305,7 +1717,7 @@ function ChangeFocusFrame()
                 frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
             else
                 local name, realm = UnitName('target')
-                if famous[name] then
+                if Module.famous[name] then
                     frame.FocusExtra:Show()
                     frame.FocusExtra:SetSize(99, 81)
                     frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
@@ -1324,7 +1736,12 @@ end
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
-function ReApplyFocusFrame()
+function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
+    FocusFrame:ClearAllPoints()
+    FocusFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
+
+function Module.ReApplyFocusFrame()
     FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
@@ -1357,7 +1774,7 @@ function ReApplyFocusFrame()
     frame.FocusExtra:UpdateStyle()
 end
 
-function ChangeFocusToT()
+function Module.ChangeFocusToT()
     FocusFrameToT:ClearAllPoints()
     FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35, -10 - 5)
 
@@ -1397,7 +1814,7 @@ function ChangeFocusToT()
     FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 end
 
-function UpdateFocusText()
+function Module.UpdateFocusText()
     --print('UpdateFocusText')
     if UnitExists('focus') then
         local max_health = UnitHealthMax('focus')
@@ -1416,19 +1833,18 @@ function UpdateFocusText()
     end
 end
 
-function HookFunctions()
+function Module.HookFunctions()
     hooksecurefunc(
         PlayerFrameTexture,
         'Show',
         function()
             --print('PlayerFrameTexture - Show()')
-            ChangePlayerframe()
+            Module.ChangePlayerframe()
         end
     )
 end
---HookFunctions()
 
-function ChangePetFrame()
+function Module.ChangePetFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
@@ -1512,8 +1928,7 @@ function ChangePetFrame()
     PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', 0, 0)
 end
 
-function UpdatePetMana()
-    --print('UpdatePetMana')
+function Module.UpdatePetMana()
     PetFrameManaBar:Hide()
 
     local powerType, powerTypeString = UnitPowerType('pet')
@@ -1548,7 +1963,52 @@ function UpdatePetMana()
     end
 end
 
-function UnitframeModule()
+function frame:OnEvent(event, arg1)
+    --print(event, arg1)
+    if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
+        Module.UpdateFocusText()
+    elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
+        Module.UpdatePetMana()
+    elseif event == 'UNIT_POWER_UPDATE' then
+        --print(event, arg1)
+    elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
+        Module.UpdateFocusText()
+    elseif event == 'PLAYER_FOCUS_CHANGED' then
+        Module.ReApplyFocusFrame()
+        Module.UpdateFocusText()
+    elseif event == 'PLAYER_ENTERING_WORLD' then
+        --print('PLAYER_ENTERING_WORLD')
+        Module.CreatePlayerFrameTextures()
+        Module.ChangePlayerframe()
+        Module.ChangeTargetFrame()
+        Module.ChangeToT()
+        Module.ReApplyTargetFrame()
+        Module.ReApplyToT()
+        if DF.Wrath then
+            Module.ChangeFocusFrame()
+            Module.ChangeFocusToT()
+        end
+        Module.ChangePetFrame()
+        Module.UpdatePetMana()
+
+        Module.ApplySettings()
+    elseif event == 'PLAYER_TARGET_CHANGED' then
+        Module.ReApplyTargetFrame()
+        Module.ReApplyToT()
+        Module.ChangePlayerframe()
+
+        Module.ApplySettings()
+    elseif event == 'UNIT_ENTERED_VEHICLE' then
+        Module.ChangePlayerframe()
+    elseif event == 'UNIT_EXITED_VEHICLE' then
+        Module.ChangePlayerframe()
+    elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
+        Module.ChangePlayerframe()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
+
+function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
@@ -1559,55 +2019,26 @@ function UnitframeModule()
     frame:RegisterEvent('UNIT_POWER_UPDATE')
     --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
-    if Core.Wrath then
-        frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
-        frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
-    end
+    frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
+    frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 
     frame:RegisterEvent('ZONE_CHANGED')
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 end
 
-Core.RegisterModule(Module, {}, {}, true, UnitframeModule)
+function Module.Era()
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+    frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
-function frame:OnEvent(event, arg1)
-    --print(event, arg1)
-    if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
-        UpdateFocusText()
-    elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
-        UpdatePetMana()
-    elseif event == 'UNIT_POWER_UPDATE' then
-        --print(event, arg1)
-    elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
-        UpdateFocusText()
-    elseif event == 'PLAYER_FOCUS_CHANGED' then
-        ReApplyFocusFrame()
-        UpdateFocusText()
-    elseif event == 'PLAYER_ENTERING_WORLD' then
-        --print('PLAYER_ENTERING_WORLD')
-        CreatePlayerFrameTextures()
-        ChangePlayerframe()
-        ChangeTargetFrame()
-        ChangeToT()
-        ReApplyTargetFrame()
-        ReApplyToT()
-        if Core.Wrath then
-            ChangeFocusFrame()
-            ChangeFocusToT()
-        end
-        ChangePetFrame()
-        UpdatePetMana()
-    elseif event == 'PLAYER_TARGET_CHANGED' then
-        ReApplyTargetFrame()
-        ReApplyToT()
-        ChangePlayerframe()
-    elseif event == 'UNIT_ENTERED_VEHICLE' then
-        ChangePlayerframe()
-    elseif event == 'UNIT_EXITED_VEHICLE' then
-        ChangePlayerframe()
-    elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
-        ChangePlayerframe()
-    end
+    frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+
+    frame:RegisterEvent('UNIT_POWER_UPDATE')
+    --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
+
+    frame:RegisterEvent('ZONE_CHANGED')
+    frame:RegisterEvent('ZONE_CHANGED_INDOORS')
+    frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 end
-frame:SetScript('OnEvent', frame.OnEvent)

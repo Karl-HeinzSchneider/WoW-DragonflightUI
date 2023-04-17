@@ -1,12 +1,141 @@
-local Addon, Core = ...
-local Module = 'Castbar'
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local mName = 'Castbar'
+local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local noop = function()
+local db, getOptions
+
+local defaults = {
+    profile = {
+        scale = 1,
+        x = 0,
+        y = 230,
+        sizeX = 460,
+        sizeY = 207
+    }
+}
+
+local function getDefaultStr(key)
+    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+end
+
+local function setDefaultValues()
+    for k, v in pairs(defaults.profile) do
+        Module.db.profile[k] = v
+    end
+    Module.ApplySettings()
+end
+
+-- db[info[#info] = VALUE
+local function getOption(info)
+    return db[info[#info]]
+end
+
+local function setOption(info, value)
+    local key = info[1]
+    Module.db.profile[key] = value
+    Module.ApplySettings()
+end
+
+local options = {
+    type = 'group',
+    name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
+    args = {
+        toggle = {
+            type = 'toggle',
+            name = 'Enable',
+            get = function()
+                return DF:GetModuleEnabled(mName)
+            end,
+            set = function(info, v)
+                DF:SetModuleEnabled(mName, v)
+            end,
+            order = 1
+        },
+        reload = {
+            type = 'execute',
+            name = '/reload',
+            desc = 'reloads UI',
+            func = function()
+                ReloadUI()
+            end,
+            order = 1.1
+        },
+        defaults = {
+            type = 'execute',
+            name = 'Defaults',
+            desc = 'Sets Config to default values',
+            func = setDefaultValues,
+            order = 1.1
+        },
+        config = {
+            type = 'header',
+            name = 'Config - Player',
+            order = 100
+        },
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 101,
+            disabled = true
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 102
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 102
+        }
+    }
+}
+
+function Module:OnInitialize()
+    DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
+    self.db = DF.db:RegisterNamespace(mName, defaults)
+    db = self.db.profile
+
+    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    DF:RegisterModuleOptions(mName, options)
+end
+
+function Module:OnEnable()
+    DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    if DF.Wrath then
+        Module.Wrath()
+    else
+        Module.Era()
+    end
+    Module:ApplySettings()
+end
+
+function Module:OnDisable()
+end
+
+function Module:ApplySettings()
+    db = Module.db.profile
+    Module.frame.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
+Module.frame = frame
 
-function ChangeCastbar()
+function Module.ChangeCastbar()
     CastingBarFrame.Text:Hide()
     CastingBarFrame:GetStatusBarTexture():SetVertexColor(0, 0, 0, 0)
     CastingBarFrame:GetStatusBarTexture():SetAlpha(0)
@@ -14,7 +143,7 @@ function ChangeCastbar()
     -- CastingBarFrame.Spark:Hide()
 end
 
-function CreateNewCastbar()
+function Module.CreateNewCastbar()
     local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
     local borderRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
     local backgroundRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
@@ -166,13 +295,13 @@ function CreateNewCastbar()
     )
 end
 
-function UpdateCastbarChanges()
+function Module.UpdateCastbarChanges()
     CastingBarFrame:ClearAllPoints()
     CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -300)
     --CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
 end
 
-function SetBarNormal()
+function Module.SetBarNormal()
     local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
     frame.Castbar.Bar:SetStatusBarTexture(standardRef)
 
@@ -186,8 +315,8 @@ function SetBarNormal()
     frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
 end
 
-local ChannelTicks =
-    Core.Wrath and
+Module.ChannelTicks =
+    DF.Wrath and
     {
         --wl
         [GetSpellInfo(5740)] = 4, -- rain of fire
@@ -211,9 +340,9 @@ local ChannelTicks =
         [GetSpellInfo(5145)] = 5, -- arcane missiles
         [GetSpellInfo(10)] = 8 -- blizzard
     } or
-    Core.Era and {}
+    DF.Era and {}
 
-function HideAllTicks()
+function Module.HideAllTicks()
     if frame.Castbar.Ticks then
         for i = 1, 15 do
             frame.Castbar.Ticks[i]:Hide()
@@ -221,7 +350,7 @@ function HideAllTicks()
     end
 end
 
-function SetBarChannel()
+function Module.SetBarChannel()
     local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
     frame.Castbar.Bar:SetStatusBarTexture(channelRef)
 
@@ -233,7 +362,7 @@ function SetBarChannel()
     frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
     frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
 
-    local tickCount = ChannelTicks[name]
+    local tickCount = Module.ChannelTicks[name]
     if tickCount then
         --print('ticks:', tickCount)
         --print('size', frame.Castbar:GetSize())
@@ -249,11 +378,11 @@ function SetBarChannel()
             frame.Castbar.Ticks[i]:Hide()
         end
     else
-        HideAllTicks()
+        Module.HideAllTicks()
     end
 end
 
-function SetBarInterrupted()
+function Module.SetBarInterrupted()
     local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
     frame.Castbar.Bar:SetStatusBarTexture(interruptedRef)
 
@@ -263,9 +392,24 @@ function SetBarInterrupted()
     frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
 end
 
-function CastbarModule()
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+function frame:OnEvent(event, arg1)
+    --print('event', event, arg1)
+    Module.UpdateCastbarChanges()
+    if event == 'PLAYER_ENTERING_WORLD' then
+    elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
+        Module.SetBarNormal()
+        Module.HideAllTicks()
+    elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
+        Module.SetBarInterrupted()
+    elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
+        Module.SetBarChannel()
+    else
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
 
+-- Wrath
+function Module.Wrath()
     frame:RegisterUnitEvent('UNIT_SPELLCAST_INTERRUPTED', 'player')
     frame:RegisterUnitEvent('UNIT_SPELLCAST_DELAYED', 'player')
     frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_START', 'player')
@@ -275,25 +419,11 @@ function CastbarModule()
     frame:RegisterUnitEvent('UNIT_SPELLCAST_STOP', 'player')
     frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'player')
 
-    --print('CASTBAR MODULE')
-    ChangeCastbar()
-    CreateNewCastbar()
+    Module.ChangeCastbar()
+    Module.CreateNewCastbar()
 end
 
-Core.RegisterModule(Module, {}, {}, false, CastbarModule)
-
-function frame:OnEvent(event, arg1)
-    --print('event', event, arg1)
-    UpdateCastbarChanges()
-    if event == 'PLAYER_ENTERING_WORLD' then
-    elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
-        SetBarNormal()
-        HideAllTicks()
-    elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
-        SetBarInterrupted()
-    elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
-        SetBarChannel()
-    else
-    end
+-- Era
+function Module.Era()
+    Module.Wrath()
 end
-frame:SetScript('OnEvent', frame.OnEvent)
