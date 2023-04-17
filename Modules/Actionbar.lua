@@ -711,6 +711,7 @@ function frame:OnEvent(event, arg1)
         Module.SetNumBars()
     elseif event == 'BAG_UPDATE_DELAYED' then
         Module.RefreshBagBarToggle()
+        frame:UnregisterEvent('BAG_UPDATE_DELAYED')
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
         Module.SetNumBars()
