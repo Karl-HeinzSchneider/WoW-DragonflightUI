@@ -299,6 +299,24 @@ function Module.CreateNewXPBar()
 
     frame.XPBar.valid = false
 
+    frame.XPBar.Bar:SetScript(
+        'OnEnter',
+        function(self)
+            local label = XPBAR_LABEL
+            GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
+            GameTooltip.canAddRestStateLine = 1
+            ExhaustionToolTipText()
+        end
+    )
+
+    frame.XPBar.Bar:SetScript(
+        'OnLeave',
+        function(self)
+            local label = XPBAR_LABEL
+            GameTooltip:Hide()
+        end
+    )
+
     frame.UpdateXPBar = function()
         local showXP = false
         if DF.Wrath then
