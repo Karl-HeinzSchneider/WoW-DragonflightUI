@@ -1993,11 +1993,10 @@ function frame:OnEvent(event, arg1)
 
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
+        --Module.ApplySettings()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
         Module.ChangePlayerframe()
-
-        Module.ApplySettings()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangePlayerframe()
     elseif event == 'UNIT_EXITED_VEHICLE' then
