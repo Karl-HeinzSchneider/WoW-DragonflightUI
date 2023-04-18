@@ -171,6 +171,11 @@ function Module:ApplySettings()
     Module.ChangeGryphonVisibility(db.showGryphon)
     Module.MoveSideBars(db.changeSides)
     Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
+
+    local MinimapModule = DF:GetModule('Minimap')
+    if MinimapModule and MinimapModule:IsEnabled() then
+        MinimapModule.MoveTrackerFunc()
+    end
 end
 
 -- Actionbar

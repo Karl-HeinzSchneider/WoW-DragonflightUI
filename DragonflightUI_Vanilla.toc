@@ -4,7 +4,6 @@
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## Version: 0.1.0
-## SavedVariablesPerCharacter: ConfigTable
 ## SavedVariables: DragonflightUIDB
 ## OptionalDeps: Ace3
 
