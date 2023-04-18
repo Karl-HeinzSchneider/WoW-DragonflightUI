@@ -14,7 +14,9 @@ local defaults = {
         y = 0,
         showGryphon = true,
         changeSides = true,
-        bagsExpanded = true
+        bagsExpanded = true,
+        alwaysShowXP = false,
+        alwaysShowRep = false
     }
 }
 
@@ -119,6 +121,25 @@ local options = {
             name = 'Change Right Bar 1+2',
             desc = 'Moves the Right Bar 1 + 2 to the side of the mainbar ' .. getDefaultStr('changeSides'),
             order = 105.2
+        },
+        config = {
+            type = 'header',
+            name = 'Config - XP/Reputation Bar',
+            order = 200
+        },
+        alwaysShowXP = {
+            type = 'toggle',
+            name = 'Always show XP Text',
+            desc = 'Set to always show text on XP bar' .. getDefaultStr('alwaysShowXP'),
+            order = 201,
+            width = '2'
+        },
+        alwaysShowRep = {
+            type = 'toggle',
+            name = 'Always show Reputation Text',
+            desc = 'Set to always show text on Reputation bar' .. getDefaultStr('alwaysShowRep'),
+            order = 201,
+            width = '4'
         }
     }
 }
@@ -149,6 +170,7 @@ function Module:ApplySettings()
     db = Module.db.profile
     Module.ChangeGryphonVisibility(db.showGryphon)
     Module.MoveSideBars(db.changeSides)
+    Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
 end
 
 -- Actionbar
@@ -206,11 +228,11 @@ function Module.ChangeActionbar()
 end
 
 function Module.CreateNewXPBar()
-    local sizeX, sizeY = 1137, 32
+    local sizeX, sizeY = 466, 20
+
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
     f:SetSize(sizeX, sizeY)
     f:SetPoint('BOTTOM', 0, 5)
-    f:SetScale(0.4)
 
     local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
@@ -220,14 +242,9 @@ function Module.CreateNewXPBar()
 
     -- actual status bar, child of parent above
     f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetPoint('CENTER')
-    f.Bar:SetSize(sizeX, sizeY)
-
-    f.Bar.Texture = f.Bar:CreateTexture(nil, 'BORDER', nil)
-    f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-    f.Bar.Texture:SetAllPoints()
-
-    f.Bar:SetStatusBarTexture(f.Bar.Texture)
+    f.Bar:SetPoint('TOPLEFT', 0, 0)
+    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
+    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
 
     f.RestedBar = CreateFrame('StatusBar', nil, f)
     f.RestedBar:SetPoint('CENTER')
@@ -263,12 +280,14 @@ function Module.CreateNewXPBar()
     f.Bar:EnableMouse(true)
 
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 18, 'THINOUTLINE')
+    --f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+
+    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
     f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 4)
+    f.Text:SetPoint('CENTER', 0, 1.5)
 
     frame.XPBar = f
 
@@ -286,9 +305,9 @@ function Module.CreateNewXPBar()
             -- exhaustion
             local exhaustionStateID = GetRestState()
             if (exhaustionStateID == 1) then
-                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
+                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
             elseif (exhaustionStateID == 2) then
-                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
+                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
             end
 
             -- value
@@ -390,6 +409,14 @@ function Module.CreateNewRepBar()
         else
             frame.RepBar.valid = false
         end
+    end
+end
+
+function Module.SetAlwaysShowXPRepText(xp, rep)
+    if xp then
+        frame.XPBar.Text:SetDrawLayer('OVERLAY')
+    else
+        frame.XPBar.Text:SetDrawLayer('HIGHLIGHT')
     end
 end
 
