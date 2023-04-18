@@ -8,7 +8,7 @@ local defaults = {
     profile = {
         scale = 1,
         x = 0,
-        y = 230,
+        y = 245,
         sizeX = 460,
         sizeY = 207
     }
