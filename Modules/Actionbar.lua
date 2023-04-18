@@ -260,8 +260,9 @@ function Module.CreateNewXPBar()
     f.RestedBar.Texture:SetAllPoints()
     f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
 
-    local restedBarMarkSizeX, restedBarMarkSizeY = 22, 30
-    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 6
+    -- @TODO: needs more visibility
+    local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
+    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
 
     f.RestedBarMark = CreateFrame('Frame', nil, f)
     f.RestedBarMark:SetPoint('CENTER', restedBarMarkOffsetX, restedBarMarkOffsetY)
