@@ -14,7 +14,9 @@ local defaults = {
         y = 0,
         showGryphon = true,
         changeSides = true,
-        bagsExpanded = true
+        bagsExpanded = true,
+        alwaysShowXP = false,
+        alwaysShowRep = false
     }
 }
 
@@ -119,6 +121,25 @@ local options = {
             name = 'Change Right Bar 1+2',
             desc = 'Moves the Right Bar 1 + 2 to the side of the mainbar ' .. getDefaultStr('changeSides'),
             order = 105.2
+        },
+        config = {
+            type = 'header',
+            name = 'Config - XP/Reputation Bar',
+            order = 200
+        },
+        alwaysShowXP = {
+            type = 'toggle',
+            name = 'Always show XP Text',
+            desc = 'Set to always show text on XP bar' .. getDefaultStr('alwaysShowXP'),
+            order = 201,
+            width = '2'
+        },
+        alwaysShowRep = {
+            type = 'toggle',
+            name = 'Always show Reputation Text',
+            desc = 'Set to always show text on Reputation bar' .. getDefaultStr('alwaysShowRep'),
+            order = 201,
+            width = '4'
         }
     }
 }
@@ -149,6 +170,12 @@ function Module:ApplySettings()
     db = Module.db.profile
     Module.ChangeGryphonVisibility(db.showGryphon)
     Module.MoveSideBars(db.changeSides)
+    Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
+
+    local MinimapModule = DF:GetModule('Minimap')
+    if MinimapModule and MinimapModule:IsEnabled() then
+        MinimapModule.MoveTrackerFunc()
+    end
 end
 
 -- Actionbar
@@ -206,11 +233,11 @@ function Module.ChangeActionbar()
 end
 
 function Module.CreateNewXPBar()
-    local sizeX, sizeY = 1137, 32
+    local sizeX, sizeY = 466, 20
+
     local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
     f:SetSize(sizeX, sizeY)
     f:SetPoint('BOTTOM', 0, 5)
-    f:SetScale(0.4)
 
     local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
@@ -220,14 +247,9 @@ function Module.CreateNewXPBar()
 
     -- actual status bar, child of parent above
     f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetPoint('CENTER')
-    f.Bar:SetSize(sizeX, sizeY)
-
-    f.Bar.Texture = f.Bar:CreateTexture(nil, 'BORDER', nil)
-    f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-    f.Bar.Texture:SetAllPoints()
-
-    f.Bar:SetStatusBarTexture(f.Bar.Texture)
+    f.Bar:SetPoint('TOPLEFT', 0, 0)
+    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
+    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
 
     f.RestedBar = CreateFrame('StatusBar', nil, f)
     f.RestedBar:SetPoint('CENTER')
@@ -238,8 +260,9 @@ function Module.CreateNewXPBar()
     f.RestedBar.Texture:SetAllPoints()
     f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
 
-    local restedBarMarkSizeX, restedBarMarkSizeY = 22, 30
-    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 6
+    -- @TODO: needs more visibility
+    local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
+    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
 
     f.RestedBarMark = CreateFrame('Frame', nil, f)
     f.RestedBarMark:SetPoint('CENTER', restedBarMarkOffsetX, restedBarMarkOffsetY)
@@ -263,16 +286,36 @@ function Module.CreateNewXPBar()
     f.Bar:EnableMouse(true)
 
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 18, 'THINOUTLINE')
+    --f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+
+    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
     f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 4)
+    f.Text:SetPoint('CENTER', 0, 1.5)
 
     frame.XPBar = f
 
     frame.XPBar.valid = false
+
+    frame.XPBar.Bar:SetScript(
+        'OnEnter',
+        function(self)
+            local label = XPBAR_LABEL
+            GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
+            GameTooltip.canAddRestStateLine = 1
+            ExhaustionToolTipText()
+        end
+    )
+
+    frame.XPBar.Bar:SetScript(
+        'OnLeave',
+        function(self)
+            local label = XPBAR_LABEL
+            GameTooltip:Hide()
+        end
+    )
 
     frame.UpdateXPBar = function()
         local showXP = false
@@ -286,9 +329,9 @@ function Module.CreateNewXPBar()
             -- exhaustion
             local exhaustionStateID = GetRestState()
             if (exhaustionStateID == 1) then
-                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
+                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
             elseif (exhaustionStateID == 2) then
-                f.Bar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
+                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
             end
 
             -- value
@@ -336,38 +379,41 @@ function Module.CreateNewXPBar()
 end
 
 function Module.CreateNewRepBar()
-    local size = 460
+    local sizeX, sizeY = 466, 20
+
     local f = CreateFrame('Frame', 'DragonflightUIRepBar', UIParent)
-    f:SetSize(size, 14)
+    f:SetSize(sizeX, sizeY)
     f:SetPoint('BOTTOM', 0, 5 + 20)
 
-    local tex = f:CreateTexture('Background', 'ARTWORK')
+    local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    tex:SetTexCoord(.00048828125, 0.55029296875, 0.08203125, 0.15234375)
+    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
+    tex:SetTexCoord(0, 0.55517578, 0, 1)
     f.Background = tex
 
     -- actual status bar, child of parent above
     f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
     f.Bar:SetPoint('TOPLEFT', 0, 0)
     f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
-    f.Bar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0)
+    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\Rep')
 
     --border
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    border:SetTexCoord(0.00048828125, 0.55810546875, 0.78515625, 0.91796875)
-    local dx, dy = 6, 5
-    border:SetSize(size + dx, 20 + dy)
-    border:SetPoint('CENTER', f.Bar, 'CENTER', 1, -2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
+    border:SetTexCoord(0, 0.55517578, 0, 1)
+    border:SetSize(sizeX, sizeY)
+    border:SetPoint('CENTER')
     f.Border = border
 
     -- text
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'TextStatusBarText')
-    f.Text:SetFont(Path, 12, Flags)
+    f.Bar:EnableMouse(true)
+    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
+    --f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
+    f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
+    f.Text:ClearAllPoints()
+    f.Text:SetParent(f.Bar)
     f.Text:SetPoint('CENTER', 0, 1)
 
     frame.RepBar = f
@@ -377,19 +423,64 @@ function Module.CreateNewRepBar()
 
     frame.RepBar.valid = false
 
+    frame.RepBar.Bar:SetScript(
+        'OnMouseDown',
+        function(self, button)
+            if button == 'LeftButton' then
+                ToggleCharacter('ReputationFrame')
+            end
+        end
+    )
+
     frame.UpdateRepBar = function()
         local name, standing, min, max, value = GetWatchedFactionInfo()
         if name then
+            --frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
             frame.RepBar.valid = true
             frame.RepBar.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
             frame.RepBar.Bar:SetMinMaxValues(0, max - min)
             frame.RepBar.Bar:SetValue(value - min)
 
-            local color = FACTION_BAR_COLORS[standing]
-            frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
+            if standing == 1 or standing == 2 then
+                -- hated, hostile
+                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepRed')
+            elseif standing == 3 then
+                -- unfriendly
+                frame.RepBar.Bar:SetStatusBarTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepOrange'
+                )
+            elseif standing == 4 then
+                -- neutral
+                frame.RepBar.Bar:SetStatusBarTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepYellow'
+                )
+            elseif standing == 5 or standing == 6 or standing == 7 or standing == 8 then
+                -- friendly, honored, revered, exalted
+                frame.RepBar.Bar:SetStatusBarTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen'
+                )
+            else
+                frame.RepBar.Bar:SetStatusBarTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen'
+                )
+            end
         else
             frame.RepBar.valid = false
         end
+    end
+end
+
+function Module.SetAlwaysShowXPRepText(xp, rep)
+    if xp then
+        frame.XPBar.Text:SetDrawLayer('OVERLAY')
+    else
+        frame.XPBar.Text:SetDrawLayer('HIGHLIGHT')
+    end
+
+    if rep then
+        frame.RepBar.Text:SetDrawLayer('OVERLAY')
+    else
+        frame.RepBar.Text:SetDrawLayer('HIGHLIGHT')
     end
 end
 
