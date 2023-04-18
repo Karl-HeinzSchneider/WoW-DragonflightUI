@@ -10,7 +10,9 @@ local defaults = {
         x = 0,
         y = 245,
         sizeX = 460,
-        sizeY = 207
+        sizeY = 207,
+        preci = 1,
+        preciMax = 2
     }
 }
 
@@ -101,6 +103,24 @@ local options = {
             max = 2500,
             bigStep = 0.50,
             order = 102
+        },
+        preci = {
+            type = 'range',
+            name = 'Precision (time left)',
+            desc = '...' .. getDefaultStr('preci'),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            order = 103
+        },
+        preciMax = {
+            type = 'range',
+            name = 'Precision (time max)',
+            desc = '...' .. getDefaultStr('preciMax'),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            order = 103
         }
     }
 }
@@ -245,15 +265,18 @@ function Module.CreateNewCastbar()
         local value = other:GetValue()
         local statusMin, statusMax = other:GetMinMaxValues()
 
+        local preci = Module.db.profile.preci
+        local preciMax = Module.db.profile.preciMax
+
         if value == statusMax then
             frame.Castbar.TextValue:SetText('')
             frame.Castbar.TextValueMax:SetText('')
         elseif frame.Castbar.bChanneling then
-            f.TextValue:SetText(string.format('%.1f', value))
-            f.TextValueMax:SetText(' / ' .. string.format('%.2f', statusMax))
+            f.TextValue:SetText(string.format('%.' .. preci .. 'f', value))
+            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
         else
-            f.TextValue:SetText(string.format('%.1f', statusMax - value))
-            f.TextValueMax:SetText(' / ' .. string.format('%.2f', statusMax))
+            f.TextValue:SetText(string.format('%.' .. preci .. 'f', statusMax - value))
+            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
         end
     end
 
