@@ -9,6 +9,9 @@ Module.famous = {['Norbert'] = true}
 local defaults = {
     profile = {
         scale = 1,
+        colorPlayer = false,
+        colorTarget = false,
+        colorFocus = false,
         playerOverride = false,
         playerScale = 1,
         playerAnchor = 'TOPLEFT',
@@ -107,6 +110,29 @@ local options = {
                 Module.MovePlayerTargetPreset('CENTER')
             end,
             order = 52
+        },
+        colorConfig = {
+            type = 'header',
+            name = 'Classcolor healthbar',
+            order = 70
+        },
+        colorPlayer = {
+            type = 'toggle',
+            name = 'Player',
+            desc = 'Enable classcolors for the player healthbar',
+            order = 71.1
+        },
+        colorTarget = {
+            type = 'toggle',
+            name = 'Target',
+            desc = 'Enable classcolors for the target healthbar',
+            order = 71.2
+        },
+        colorFocus = {
+            type = 'toggle',
+            name = 'Focus',
+            desc = 'Enable classcolors for the focus healthbar',
+            order = 71.3
         },
         playerConfig = {
             type = 'header',
@@ -363,19 +389,22 @@ function Module:ApplySettings()
     else
         Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
     end
+    Module.ChangePlayerframe()
 
     if db.targetOverride then
         Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
     else
         Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
     end
+    Module.ReApplyTargetFrame()
 
-    if Module.Wrath() then
+    if DF.Wrath then
         if db.focusOverride then
             Module.MoveFocusFrame(db.focusAnchor, db.focusAnchorParent, db.focusX, db.focusY)
         else
             Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
         end
+        Module.ReApplyFocusFrame()
     end
 end
 
@@ -1175,10 +1204,20 @@ function Module.ChangePlayerframe()
     PlayerFrameHealthBar:SetSize(125, 20)
     PlayerFrameHealthBar:ClearAllPoints()
     PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
-    PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health'
-    )
-    PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+
+    if Module.db.profile.colorPlayer then
+        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
+        )
+
+        local localizedClass, englishClass, classIndex = UnitClass('player')
+        PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health'
+        )
+        PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    end
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
@@ -1394,10 +1433,18 @@ function Module.ChangeTargetFrame()
     end
 end
 function Module.ReApplyTargetFrame()
-    TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-    )
-    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    if Module.db.profile.colorTarget and UnitIsPlayer('target') then
+        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
+        )
+        local localizedClass, englishClass, classIndex = UnitClass('target')
+        TargetFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
+        )
+        TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    end
 
     local powerType, powerTypeString = UnitPowerType('target')
 
@@ -1424,7 +1471,9 @@ function Module.ReApplyTargetFrame()
         TargetFrameFlash:SetTexture('')
     end
 
-    frame.PortraitExtra:UpdateStyle()
+    if frame.PortraitExtra then
+        frame.PortraitExtra:UpdateStyle()
+    end
 end
 --frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
@@ -1824,10 +1873,18 @@ function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
 end
 
 function Module.ReApplyFocusFrame()
-    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-    )
-    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    if Module.db.profile.colorFocus and UnitIsPlayer('focus') then
+        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
+        )
+        local localizedClass, englishClass, classIndex = UnitClass('focus')
+        FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
+        )
+        FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    end
 
     local powerType, powerTypeString = UnitPowerType('focus')
 
@@ -1853,7 +1910,9 @@ function Module.ReApplyFocusFrame()
 
     FocusFrameFlash:SetTexture('')
 
-    frame.FocusExtra:UpdateStyle()
+    if frame.FocusExtra then
+        frame.FocusExtra:UpdateStyle()
+    end
 end
 
 function Module.ChangeFocusToT()
