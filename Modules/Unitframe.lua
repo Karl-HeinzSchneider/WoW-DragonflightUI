@@ -1312,11 +1312,10 @@ function Module.ChangeTargetFrame()
     TargetFrameHealthBar:ClearAllPoints()
     TargetFrameHealthBar:SetSize(125, 20)
     TargetFrameHealthBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, 0)
-    TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+    --[[     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
-    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-
+    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
     -- Mana 119,12
     TargetFrameManaBar:ClearAllPoints()
     TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
@@ -1432,6 +1431,7 @@ function Module.ChangeTargetFrame()
         frame.PortraitExtra = extra
     end
 end
+
 function Module.ReApplyTargetFrame()
     if Module.db.profile.colorTarget and UnitIsPlayer('target') then
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
@@ -1680,11 +1680,10 @@ function Module.ChangeFocusFrame()
     FocusFrameHealthBar:ClearAllPoints()
     FocusFrameHealthBar:SetSize(125, 20)
     FocusFrameHealthBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, 0)
-    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+    --[[    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
     )
-    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-
+    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
     -- Mana 119,12
     FocusFrameManaBar:ClearAllPoints()
     FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
