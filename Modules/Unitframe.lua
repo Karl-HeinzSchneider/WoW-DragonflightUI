@@ -1269,13 +1269,6 @@ function Module.ChangeTargetFrame()
     TargetFrameTextureFrameLevelText:ClearAllPoints()
     TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
-    if DF.Wrath then
-        TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
-        TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
-
-        TargetFrameTextureFrame.ManaBarText:ClearAllPoints()
-        TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', 0, 0)
-    end
     -- Health 119,12
     TargetFrameHealthBar:ClearAllPoints()
     TargetFrameHealthBar:SetSize(125, 20)
@@ -1284,8 +1277,6 @@ function Module.ChangeTargetFrame()
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
     TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-
-    --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
     -- Mana 119,12
     TargetFrameManaBar:ClearAllPoints()
@@ -1298,6 +1289,20 @@ function Module.ChangeTargetFrame()
     TargetFrameNameBackground:SetSize(135, 18)
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
+
+    if DF.Wrath then
+        local dx = 5
+        -- health vs mana bar
+        local deltaSize = 132 - 125
+
+        TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
+        TargetFrameTextureFrame.HealthBarTextLeft:SetPoint('LEFT', TargetFrameHealthBar, 'LEFT', dx, 0)
+        TargetFrameTextureFrame.HealthBarTextRight:SetPoint('RIGHT', TargetFrameHealthBar, 'RIGHT', -dx, 0)
+
+        TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', -deltaSize / 2, 0)
+        TargetFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', TargetFrameManaBar, 'LEFT', dx, 0)
+        TargetFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', TargetFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
+    end
 
     if DF.Wrath then
         TargetFrameFlash:SetTexture('')
