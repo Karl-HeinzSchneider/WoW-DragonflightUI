@@ -1670,7 +1670,7 @@ function Module.ChangeFocusFrame()
             'OnEnter',
             function(self)
                 if
-                    FocusFrameTextureFrame.HealthBarTextLeft:IsVisible() or
+                    FocusFrameTextureFrame.HealthBarTextRight:IsVisible() or
                         FocusFrameTextureFrame.HealthBarText:IsVisible()
                  then
                 else
@@ -1711,7 +1711,7 @@ function Module.ChangeFocusFrame()
         FocusFrameManaBarDummy:HookScript(
             'OnEnter',
             function(self)
-                if FocusFrameTextureFrame.ManaBarTextLeft:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
+                if FocusFrameTextureFrame.ManaBarTextRight:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
                 else
                     Module.UpdateFocusText()
                     frame.FocusFrameManaBarText:Show()
@@ -2006,7 +2006,7 @@ function Module.ChangePetFrame()
         frame.PetManaBar:HookScript(
             'OnEnter',
             function(self)
-                if PetFrameManaBarTextLeft:IsVisible() or PetFrameManaBarText:IsVisible() then
+                if PetFrameManaBarTextRight:IsVisible() or PetFrameManaBarText:IsVisible() then
                     frame.PetManaBarText:SetText('')
                 end
             end
