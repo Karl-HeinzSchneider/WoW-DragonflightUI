@@ -1888,7 +1888,6 @@ function Module.ChangePetFrame()
 
     PetFrameHealthBar:ClearAllPoints()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
-    -- PetFrameHealthBar:SetFrameLevel(10)
     PetFrameHealthBar:SetSize(70.5, 10)
     PetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'
@@ -1896,11 +1895,21 @@ function Module.ChangePetFrame()
     PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     PetFrameHealthBar.SetStatusBarColor = noop
 
+    PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
+
     PetFrameManaBar:ClearAllPoints()
     PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
-    --PetFrameManaBar:SetFrameLevel(10)
     PetFrameManaBar:SetSize(74, 7.5)
+    PetFrameManaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+    )
     PetFrameManaBar:Hide()
+
+    local dx = 2
+    -- health vs mana bar
+    local deltaSize = 74 - 70.5
+
+    local newPetTextScale = 0.8
 
     if not frame.PetManaBar then
         local f = CreateFrame('StatusBar', 'DragonflightUIPetManaBar', PetFrame)
@@ -1920,18 +1929,25 @@ function Module.ChangePetFrame()
 
         frame.PetManaBar = f
 
-        frame.PetManaBar.UpdatePetManaBarValues = function()
-            local value = other:GetValue()
-            local statusMin, statusMax = other:GetMinMaxValues()
-
-            frame.PetManaBar:SetValue(value)
-            frame.PetManaBar:SetMinMaxValues(statusMin, statusMax)
-        end
-
         PetFrameManaBar:HookScript(
             'OnShow',
             function(self)
                 self:Hide()
+            end
+        )
+
+        frame.PetManaBar:HookScript(
+            'OnEnter',
+            function(self)
+                if PetFrameManaBarTextLeft:IsVisible() or PetFrameManaBarText:IsVisible() then
+                    frame.PetManaBarText:SetText('')
+                end
+            end
+        )
+        frame.PetManaBar:HookScript(
+            'OnLeave',
+            function(self)
+                Module.UpdatePetMana()
             end
         )
     end
@@ -1940,7 +1956,23 @@ function Module.ChangePetFrame()
     PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
-    PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', 0, 0)
+    PetFrameHealthBarTextLeft:SetPoint('LEFT', PetFrameHealthBar, 'LEFT', dx, 0)
+    PetFrameHealthBarTextRight:SetPoint('RIGHT', PetFrameHealthBar, 'RIGHT', -dx, 0)
+
+    PetFrameHealthBarText:SetScale(newPetTextScale)
+    PetFrameHealthBarTextLeft:SetScale(newPetTextScale)
+    PetFrameHealthBarTextRight:SetScale(newPetTextScale)
+
+    PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', deltaSize / 2, 0)
+    frame.PetManaBarText:SetPoint('CENTER', frame.PetManaBar, 'CENTER', deltaSize / 2, 0)
+    PetFrameManaBarTextLeft:ClearAllPoints()
+    PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
+    PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
+
+    PetFrameManaBarText:SetScale(newPetTextScale)
+    frame.PetManaBarText:SetScale(newPetTextScale)
+    PetFrameManaBarTextLeft:SetScale(newPetTextScale)
+    PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
 
 function Module.UpdatePetMana()
