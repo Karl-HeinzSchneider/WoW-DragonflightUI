@@ -524,19 +524,21 @@ function Module.MoveTracker()
 end
 
 function Module.MoveTrackerFunc()
-    WatchFrame:ClearAllPoints()
-    local ActionbarModule = DF:GetModule('Actionbar')
+    if WatchFrame then
+        WatchFrame:ClearAllPoints()
+        local ActionbarModule = DF:GetModule('Actionbar')
 
-    if ActionbarModule and ActionbarModule:IsEnabled() and ActionbarModule.db.profile.changeSides then
-        WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', 0, -50)
-    elseif MultiBarRight:IsShown() and MultiBarLeft:IsShown() then
-        WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -100, -50)
-    elseif MultiBarRight:IsShown() then
-        WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -25, -50)
-    else
-        WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', 0, -50)
+        if ActionbarModule and ActionbarModule:IsEnabled() and ActionbarModule.db.profile.changeSides then
+            WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', 0, -50)
+        elseif MultiBarRight:IsShown() and MultiBarLeft:IsShown() then
+            WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -100, -50)
+        elseif MultiBarRight:IsShown() then
+            WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', -25, -50)
+        else
+            WatchFrame:SetPoint('TOPRIGHT', MinimapCluster, 'BOTTOMRIGHT', 0, -50)
+        end
+        WatchFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 100)
     end
-    WatchFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 100)
 end
 
 function Module.ChangeLFG()
