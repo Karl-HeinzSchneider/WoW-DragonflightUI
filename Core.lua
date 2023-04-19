@@ -59,3 +59,12 @@ function DF:ShowStartMessage()
     local version = GetAddOnMetadata('DragonflightUI', 'Version')
     self:Print('v' .. version .. " loaded! Type '/dragonflight'or '/df' to open the options menu.")
 end
+
+function DF:GetClassColor(class, alpha)
+    local r, g, b, hex = GetClassColor(class)
+    if alpha then
+        return r, g, b, alpha
+    else
+        return r, g, b, 1
+    end
+end
