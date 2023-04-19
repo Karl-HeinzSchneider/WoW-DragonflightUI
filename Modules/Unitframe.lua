@@ -1182,10 +1182,18 @@ function Module.ChangePlayerframe()
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
+    local dx = 5
+    PlayerFrameHealthBarTextLeft:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', dx, 0)
+    PlayerFrameHealthBarTextRight:SetPoint('RIGHT', PlayerFrameHealthBar, 'RIGHT', -dx, 0)
+
     -- Mana 119,12
     PlayerFrameManaBar:ClearAllPoints()
     PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17)
     PlayerFrameManaBar:SetSize(125, 8)
+
+    PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, 0)
+    PlayerFrameManaBarTextLeft:SetPoint('LEFT', PlayerFrameManaBar, 'LEFT', dx, 0)
+    PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, 0)
 
     local powerType, powerTypeString = UnitPowerType('player')
 
@@ -1261,13 +1269,6 @@ function Module.ChangeTargetFrame()
     TargetFrameTextureFrameLevelText:ClearAllPoints()
     TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
-    if DF.Wrath then
-        TargetFrameTextureFrame.HealthBarText:ClearAllPoints()
-        TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
-
-        TargetFrameTextureFrame.ManaBarText:ClearAllPoints()
-        TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', 0, 0)
-    end
     -- Health 119,12
     TargetFrameHealthBar:ClearAllPoints()
     TargetFrameHealthBar:SetSize(125, 20)
@@ -1276,8 +1277,6 @@ function Module.ChangeTargetFrame()
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
     )
     TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-
-    --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
     -- Mana 119,12
     TargetFrameManaBar:ClearAllPoints()
@@ -1290,6 +1289,20 @@ function Module.ChangeTargetFrame()
     TargetFrameNameBackground:SetSize(135, 18)
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
+
+    if DF.Wrath then
+        local dx = 5
+        -- health vs mana bar
+        local deltaSize = 132 - 125
+
+        TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
+        TargetFrameTextureFrame.HealthBarTextLeft:SetPoint('LEFT', TargetFrameHealthBar, 'LEFT', dx, 0)
+        TargetFrameTextureFrame.HealthBarTextRight:SetPoint('RIGHT', TargetFrameHealthBar, 'RIGHT', -dx, 0)
+
+        TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', -deltaSize / 2, 0)
+        TargetFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', TargetFrameManaBar, 'LEFT', dx, 0)
+        TargetFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', TargetFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
+    end
 
     if DF.Wrath then
         TargetFrameFlash:SetTexture('')
@@ -1600,31 +1613,19 @@ function Module.ChangeFocusFrame()
     FocusFrameTextureFrameLevelText:ClearAllPoints()
     FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
-    -- HealthText
-    if not frame.FocusFrameHealthBarText then
-        local t = FocusFrame:CreateFontString('FocusFrameHealthBarText', 'HIGHLIGHT', 'TextStatusBarText')
-        t:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
-        t:SetText('HP')
-        frame.FocusFrameHealthBarText = t
-    end
+    local dx = 5
+    -- health vs mana bar
+    local deltaSize = 132 - 125
 
-    if FocusFrameTextureFrame.HealthBarText then
-        FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
-        FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
-    end
+    FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
+    FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
+    FocusFrameTextureFrame.HealthBarTextLeft:SetPoint('LEFT', FocusFrameHealthBar, 'LEFT', dx, 0)
+    FocusFrameTextureFrame.HealthBarTextRight:SetPoint('RIGHT', FocusFrameHealthBar, 'RIGHT', -dx, 0)
 
-    -- ManaText
-    if not frame.FocusFrameManaBarText then
-        local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
-        m:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
-        m:SetText('MANA')
-        frame.FocusFrameManaBarText = m
-    end
-
-    if FocusFrameTextureFrame.ManaBarText then
-        FocusFrameTextureFrame.ManaBarText:ClearAllPoints()
-        FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
-    end
+    FocusFrameTextureFrame.ManaBarText:ClearAllPoints()
+    FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -deltaSize / 2, 0)
+    FocusFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', dx, 0)
+    FocusFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
 
     -- Health 119,12
     FocusFrameHealthBar:ClearAllPoints()
@@ -1635,8 +1636,6 @@ function Module.ChangeFocusFrame()
     )
     FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
 
-    --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
-
     -- Mana 119,12
     FocusFrameManaBar:ClearAllPoints()
     FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
@@ -1645,6 +1644,87 @@ function Module.ChangeFocusFrame()
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+    -- CUSTOM HealthText
+    if not frame.FocusFrameHealthBarText then
+        local FocusFrameHealthBarDummy = CreateFrame('FRAME', 'FocusFrameHealthBarDummy')
+        FocusFrameHealthBarDummy:SetPoint('LEFT', FocusFrameHealthBar, 'LEFT', 0, 0)
+        FocusFrameHealthBarDummy:SetPoint('TOP', FocusFrameHealthBar, 'TOP', 0, 0)
+        FocusFrameHealthBarDummy:SetPoint('RIGHT', FocusFrameHealthBar, 'RIGHT', 0, 0)
+        FocusFrameHealthBarDummy:SetPoint('BOTTOM', FocusFrameHealthBar, 'BOTTOM', 0, 0)
+        FocusFrameHealthBarDummy:SetParent(FocusFrame)
+        FocusFrameHealthBarDummy:SetFrameStrata('LOW')
+        FocusFrameHealthBarDummy:SetFrameLevel(3)
+        FocusFrameHealthBarDummy:EnableMouse(true)
+
+        frame.FocusFrameHealthBarDummy = FocusFrameHealthBarDummy
+
+        local t = FocusFrameHealthBarDummy:CreateFontString('FocusFrameHealthBarText', 'OVERLAY', 'TextStatusBarText')
+
+        t:SetPoint('CENTER', FocusFrameHealthBarDummy, 0, 0)
+        t:SetText('HP')
+        t:Hide()
+        frame.FocusFrameHealthBarText = t
+
+        FocusFrameHealthBarDummy:HookScript(
+            'OnEnter',
+            function(self)
+                if
+                    FocusFrameTextureFrame.HealthBarTextRight:IsVisible() or
+                        FocusFrameTextureFrame.HealthBarText:IsVisible()
+                 then
+                else
+                    Module.UpdateFocusText()
+                    frame.FocusFrameHealthBarText:Show()
+                end
+            end
+        )
+        FocusFrameHealthBarDummy:HookScript(
+            'OnLeave',
+            function(self)
+                frame.FocusFrameHealthBarText:Hide()
+            end
+        )
+    end
+
+    -- CUSTOM ManaText
+    if not frame.FocusFrameManaBarText then
+        local FocusFrameManaBarDummy = CreateFrame('FRAME', 'FocusFrameManaBarDummy')
+        FocusFrameManaBarDummy:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', 0, 0)
+        FocusFrameManaBarDummy:SetPoint('TOP', FocusFrameManaBar, 'TOP', 0, 0)
+        FocusFrameManaBarDummy:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', 0, 0)
+        FocusFrameManaBarDummy:SetPoint('BOTTOM', FocusFrameManaBar, 'BOTTOM', 0, 0)
+        FocusFrameManaBarDummy:SetParent(FocusFrame)
+        FocusFrameManaBarDummy:SetFrameStrata('LOW')
+        FocusFrameManaBarDummy:SetFrameLevel(3)
+        FocusFrameManaBarDummy:EnableMouse(true)
+
+        frame.FocusFrameManaBarDummy = FocusFrameManaBarDummy
+
+        local t = FocusFrameManaBarDummy:CreateFontString('FocusFrameManaBarText', 'OVERLAY', 'TextStatusBarText')
+
+        t:SetPoint('CENTER', FocusFrameManaBarDummy, -dx, 0)
+        t:SetText('MANA')
+        t:Hide()
+        frame.FocusFrameManaBarText = t
+
+        FocusFrameManaBarDummy:HookScript(
+            'OnEnter',
+            function(self)
+                if FocusFrameTextureFrame.ManaBarTextRight:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
+                else
+                    Module.UpdateFocusText()
+                    frame.FocusFrameManaBarText:Show()
+                end
+            end
+        )
+        FocusFrameManaBarDummy:HookScript(
+            'OnLeave',
+            function(self)
+                frame.FocusFrameManaBarText:Hide()
+            end
+        )
+    end
 
     FocusFrameFlash:SetTexture('')
 
@@ -1875,7 +1955,6 @@ function Module.ChangePetFrame()
 
     PetFrameHealthBar:ClearAllPoints()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
-    -- PetFrameHealthBar:SetFrameLevel(10)
     PetFrameHealthBar:SetSize(70.5, 10)
     PetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'
@@ -1883,11 +1962,21 @@ function Module.ChangePetFrame()
     PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     PetFrameHealthBar.SetStatusBarColor = noop
 
+    PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
+
     PetFrameManaBar:ClearAllPoints()
     PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
-    --PetFrameManaBar:SetFrameLevel(10)
     PetFrameManaBar:SetSize(74, 7.5)
+    PetFrameManaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+    )
     PetFrameManaBar:Hide()
+
+    local dx = 2
+    -- health vs mana bar
+    local deltaSize = 74 - 70.5
+
+    local newPetTextScale = 0.8
 
     if not frame.PetManaBar then
         local f = CreateFrame('StatusBar', 'DragonflightUIPetManaBar', PetFrame)
@@ -1907,18 +1996,25 @@ function Module.ChangePetFrame()
 
         frame.PetManaBar = f
 
-        frame.PetManaBar.UpdatePetManaBarValues = function()
-            local value = other:GetValue()
-            local statusMin, statusMax = other:GetMinMaxValues()
-
-            frame.PetManaBar:SetValue(value)
-            frame.PetManaBar:SetMinMaxValues(statusMin, statusMax)
-        end
-
         PetFrameManaBar:HookScript(
             'OnShow',
             function(self)
                 self:Hide()
+            end
+        )
+
+        frame.PetManaBar:HookScript(
+            'OnEnter',
+            function(self)
+                if PetFrameManaBarTextRight:IsVisible() or PetFrameManaBarText:IsVisible() then
+                    frame.PetManaBarText:SetText('')
+                end
+            end
+        )
+        frame.PetManaBar:HookScript(
+            'OnLeave',
+            function(self)
+                Module.UpdatePetMana()
             end
         )
     end
@@ -1927,7 +2023,23 @@ function Module.ChangePetFrame()
     PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
-    PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', 0, 0)
+    PetFrameHealthBarTextLeft:SetPoint('LEFT', PetFrameHealthBar, 'LEFT', dx, 0)
+    PetFrameHealthBarTextRight:SetPoint('RIGHT', PetFrameHealthBar, 'RIGHT', -dx, 0)
+
+    PetFrameHealthBarText:SetScale(newPetTextScale)
+    PetFrameHealthBarTextLeft:SetScale(newPetTextScale)
+    PetFrameHealthBarTextRight:SetScale(newPetTextScale)
+
+    PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', deltaSize / 2, 0)
+    frame.PetManaBarText:SetPoint('CENTER', frame.PetManaBar, 'CENTER', deltaSize / 2, 0)
+    PetFrameManaBarTextLeft:ClearAllPoints()
+    PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
+    PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
+
+    PetFrameManaBarText:SetScale(newPetTextScale)
+    frame.PetManaBarText:SetScale(newPetTextScale)
+    PetFrameManaBarTextLeft:SetScale(newPetTextScale)
+    PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
 
 function Module.UpdatePetMana()
