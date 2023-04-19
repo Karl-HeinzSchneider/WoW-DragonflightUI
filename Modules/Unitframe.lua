@@ -110,7 +110,7 @@ local options = {
         },
         playerConfig = {
             type = 'header',
-            name = 'Config - Playerframe',
+            name = 'Position - Playerframe',
             order = 100
         },
         playerOverride = {
@@ -183,7 +183,7 @@ local options = {
         },
         targetConfig = {
             type = 'header',
-            name = 'Config - Targetframe',
+            name = 'Position - Targetframe',
             order = 200
         },
         targetOverride = {
@@ -256,7 +256,7 @@ local options = {
         },
         focusConfig = {
             type = 'header',
-            name = 'Config - Focusframe',
+            name = 'Position - Focusframe',
             order = 300
         },
         focusOverride = {
