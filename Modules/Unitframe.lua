@@ -1613,31 +1613,19 @@ function Module.ChangeFocusFrame()
     FocusFrameTextureFrameLevelText:ClearAllPoints()
     FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
-    -- HealthText
-    if not frame.FocusFrameHealthBarText then
-        local t = FocusFrame:CreateFontString('FocusFrameHealthBarText', 'HIGHLIGHT', 'TextStatusBarText')
-        t:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
-        t:SetText('HP')
-        frame.FocusFrameHealthBarText = t
-    end
+    local dx = 5
+    -- health vs mana bar
+    local deltaSize = 132 - 125
 
-    if FocusFrameTextureFrame.HealthBarText then
-        FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
-        FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
-    end
+    FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
+    FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
+    FocusFrameTextureFrame.HealthBarTextLeft:SetPoint('LEFT', FocusFrameHealthBar, 'LEFT', dx, 0)
+    FocusFrameTextureFrame.HealthBarTextRight:SetPoint('RIGHT', FocusFrameHealthBar, 'RIGHT', -dx, 0)
 
-    -- ManaText
-    if not frame.FocusFrameManaBarText then
-        local m = FocusFrame:CreateFontString('FocusFrameManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
-        m:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
-        m:SetText('MANA')
-        frame.FocusFrameManaBarText = m
-    end
-
-    if FocusFrameTextureFrame.ManaBarText then
-        FocusFrameTextureFrame.ManaBarText:ClearAllPoints()
-        FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -3.5, 0)
-    end
+    FocusFrameTextureFrame.ManaBarText:ClearAllPoints()
+    FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -deltaSize / 2, 0)
+    FocusFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', dx, 0)
+    FocusFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
 
     -- Health 119,12
     FocusFrameHealthBar:ClearAllPoints()
@@ -1648,8 +1636,6 @@ function Module.ChangeFocusFrame()
     )
     FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
 
-    --PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
-
     -- Mana 119,12
     FocusFrameManaBar:ClearAllPoints()
     FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
@@ -1658,6 +1644,87 @@ function Module.ChangeFocusFrame()
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
     )
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+    -- CUSTOM HealthText
+    if not frame.FocusFrameHealthBarText then
+        local FocusFrameHealthBarDummy = CreateFrame('FRAME', 'FocusFrameHealthBarDummy')
+        FocusFrameHealthBarDummy:SetPoint('LEFT', FocusFrameHealthBar, 'LEFT', 0, 0)
+        FocusFrameHealthBarDummy:SetPoint('TOP', FocusFrameHealthBar, 'TOP', 0, 0)
+        FocusFrameHealthBarDummy:SetPoint('RIGHT', FocusFrameHealthBar, 'RIGHT', 0, 0)
+        FocusFrameHealthBarDummy:SetPoint('BOTTOM', FocusFrameHealthBar, 'BOTTOM', 0, 0)
+        FocusFrameHealthBarDummy:SetParent(FocusFrame)
+        FocusFrameHealthBarDummy:SetFrameStrata('LOW')
+        FocusFrameHealthBarDummy:SetFrameLevel(3)
+        FocusFrameHealthBarDummy:EnableMouse(true)
+
+        frame.FocusFrameHealthBarDummy = FocusFrameHealthBarDummy
+
+        local t = FocusFrameHealthBarDummy:CreateFontString('FocusFrameHealthBarText', 'OVERLAY', 'TextStatusBarText')
+
+        t:SetPoint('CENTER', FocusFrameHealthBarDummy, 0, 0)
+        t:SetText('HP')
+        t:Hide()
+        frame.FocusFrameHealthBarText = t
+
+        FocusFrameHealthBarDummy:HookScript(
+            'OnEnter',
+            function(self)
+                if
+                    FocusFrameTextureFrame.HealthBarTextLeft:IsVisible() or
+                        FocusFrameTextureFrame.HealthBarText:IsVisible()
+                 then
+                else
+                    Module.UpdateFocusText()
+                    frame.FocusFrameHealthBarText:Show()
+                end
+            end
+        )
+        FocusFrameHealthBarDummy:HookScript(
+            'OnLeave',
+            function(self)
+                frame.FocusFrameHealthBarText:Hide()
+            end
+        )
+    end
+
+    -- CUSTOM ManaText
+    if not frame.FocusFrameManaBarText then
+        local FocusFrameManaBarDummy = CreateFrame('FRAME', 'FocusFrameManaBarDummy')
+        FocusFrameManaBarDummy:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', 0, 0)
+        FocusFrameManaBarDummy:SetPoint('TOP', FocusFrameManaBar, 'TOP', 0, 0)
+        FocusFrameManaBarDummy:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', 0, 0)
+        FocusFrameManaBarDummy:SetPoint('BOTTOM', FocusFrameManaBar, 'BOTTOM', 0, 0)
+        FocusFrameManaBarDummy:SetParent(FocusFrame)
+        FocusFrameManaBarDummy:SetFrameStrata('LOW')
+        FocusFrameManaBarDummy:SetFrameLevel(3)
+        FocusFrameManaBarDummy:EnableMouse(true)
+
+        frame.FocusFrameManaBarDummy = FocusFrameManaBarDummy
+
+        local t = FocusFrameManaBarDummy:CreateFontString('FocusFrameManaBarText', 'OVERLAY', 'TextStatusBarText')
+
+        t:SetPoint('CENTER', FocusFrameManaBarDummy, -dx, 0)
+        t:SetText('MANA')
+        t:Hide()
+        frame.FocusFrameManaBarText = t
+
+        FocusFrameManaBarDummy:HookScript(
+            'OnEnter',
+            function(self)
+                if FocusFrameTextureFrame.ManaBarTextLeft:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
+                else
+                    Module.UpdateFocusText()
+                    frame.FocusFrameManaBarText:Show()
+                end
+            end
+        )
+        FocusFrameManaBarDummy:HookScript(
+            'OnLeave',
+            function(self)
+                frame.FocusFrameManaBarText:Hide()
+            end
+        )
+    end
 
     FocusFrameFlash:SetTexture('')
 
