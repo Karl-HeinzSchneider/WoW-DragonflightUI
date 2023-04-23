@@ -29,7 +29,7 @@ local defaults = {
         focusAnchor = 'TOPLEFT',
         focusAnchorParent = 'TOPLEFT',
         focusX = 250,
-        focusY = -120
+        focusY = -170
     }
 }
 
