@@ -1303,6 +1303,10 @@ function Module.ChangePlayerframe()
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage'
         )
+    elseif powerTypeString == 'FOCUS' then
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus'
+        )
     elseif powerTypeString == 'ENERGY' then
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy'
@@ -1511,6 +1515,10 @@ function Module.ReApplyTargetFrame()
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
         )
+    elseif powerTypeString == 'FOCUS' then
+        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus'
+        )
     elseif powerTypeString == 'RAGE' then
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'
@@ -1606,6 +1614,10 @@ function Module.ChangeToT()
             if powerTypeString == 'MANA' then
                 frame.ToTManaBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+                )
+            elseif powerTypeString == 'FOCUS' then
+                frame.ToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'
                 )
             elseif powerTypeString == 'RAGE' then
                 frame.ToTManaBar:GetStatusBarTexture():SetTexture(
@@ -1950,6 +1962,10 @@ function Module.ReApplyFocusFrame()
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
         )
+    elseif powerTypeString == 'FOCUS' then
+        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus'
+        )
     elseif powerTypeString == 'RAGE' then
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'
@@ -2172,6 +2188,10 @@ function Module.UpdatePetMana()
     if powerTypeString == 'MANA' then
         frame.PetManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+        )
+    elseif powerTypeString == 'FOCUS' then
+        frame.PetManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'
         )
     elseif powerTypeString == 'RAGE' then
         frame.PetManaBar:GetStatusBarTexture():SetTexture(
