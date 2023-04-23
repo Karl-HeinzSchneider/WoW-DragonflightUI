@@ -155,12 +155,25 @@ end
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
 Module.frame = frame
 
-function Module.ChangeCastbar()
-    CastingBarFrame.Text:Hide()
+function Module.ChangeDefaultCastbar()
+    CastingBarFrame:ClearAllPoints()
+    CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
+
     CastingBarFrame:GetStatusBarTexture():SetVertexColor(0, 0, 0, 0)
     CastingBarFrame:GetStatusBarTexture():SetAlpha(0)
-    CastingBarFrame.Border:Hide()
+
+    -- CastingBarFrame.Border:Hide()
+    -- CastingBarFrame.BorderShield:Hide()
+    -- CastingBarFrame.Text:Hide()
+    -- CastingBarFrame.Icon:Hide()
     -- CastingBarFrame.Spark:Hide()
+    -- CastingBarFrame.Flash:Hide()
+
+    local children = {CastingBarFrame:GetRegions()}
+    for i, child in pairs(children) do
+        --print('child', child:GetName())
+        child:Hide()
+    end
 end
 
 function Module.CreateNewCastbar()
@@ -231,11 +244,11 @@ function Module.CreateNewCastbar()
         end
     end
 
-    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackground', CastingBarFrame)
+    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackgroundFrame', CastingBarFrame)
     bg:SetSize(sizeX, sizeY)
     bg:SetPoint('TOP', f, 'BOTTOM', 0, 0)
 
-    local bgTex = bg:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
+    local bgTex = bg:CreateTexture('DragonflightUICastbarNameBackground', 'ARTWORK')
     bgTex:ClearAllPoints()
     bgTex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
     bgTex:SetSize(sizeX, 30)
@@ -283,10 +296,6 @@ function Module.CreateNewCastbar()
     local ticks = {}
     for i = 1, 15 do
         local tick = f.Bar:CreateTexture('Tick' .. i, 'OVERLAY')
-        --tick:SetTexture('Interface\\CastingBar\\UI-CastingBar-Spark')
-        --tick:SetBlendMode('ADD')
-        -- tick:SetVertexColor(0, 0, 1)
-
         tick:SetTexture('Interface\\ChatFrame\\ChatFrameBackground')
         tick:SetVertexColor(0, 0, 0)
         tick:SetAlpha(0.75)
@@ -295,33 +304,15 @@ function Module.CreateNewCastbar()
         ticks[i] = tick
     end
     f.Ticks = ticks
-    --[[     hooksecurefunc(
-        CastingBarFrame.Text,
-        'SetText',
-        function(self)
-            --text:SetText(self:GetText())
-        end
-    ) ]]
+
     CastingBarFrame:HookScript(
-        'OnValueChanged',
+        'OnUpdate',
         function(self)
             UpdateCastBarValues(self)
             UpdateSpark(self)
             UpdateExtratext(self)
         end
     )
-    CastingBarFrame:HookScript(
-        'OnMinMaxChanged',
-        function(self)
-            UpdateCastBarValues(self)
-        end
-    )
-end
-
-function Module.UpdateCastbarChanges()
-    CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -300)
-    --CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
 end
 
 function Module.SetBarNormal()
@@ -387,17 +378,13 @@ function Module.SetBarChannel()
 
     local tickCount = Module.ChannelTicks[name]
     if tickCount then
-        --print('ticks:', tickCount)
-        --print('size', frame.Castbar:GetSize())
         local tickDelta = frame.Castbar:GetWidth() / tickCount
         for i = 1, tickCount - 1 do
-            --print('tick', i)
             frame.Castbar.Ticks[i]:Show()
             frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT', i * tickDelta, 0)
         end
 
         for i = tickCount, 15 do
-            --print('notick', i)
             frame.Castbar.Ticks[i]:Hide()
         end
     else
@@ -409,7 +396,6 @@ function Module.SetBarInterrupted()
     local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
     frame.Castbar.Bar:SetStatusBarTexture(interruptedRef)
 
-    --frame.Castbar.Text:SetText(CastingBarFrame.Text:GetText())
     frame.Castbar.Text:SetText('Interrupted')
     frame.Castbar.Text:ClearAllPoints()
     frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
@@ -417,7 +403,7 @@ end
 
 function frame:OnEvent(event, arg1)
     --print('event', event, arg1)
-    Module.UpdateCastbarChanges()
+    Module.ChangeDefaultCastbar()
     if event == 'PLAYER_ENTERING_WORLD' then
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
         Module.SetBarNormal()
@@ -442,7 +428,7 @@ function Module.Wrath()
     frame:RegisterUnitEvent('UNIT_SPELLCAST_STOP', 'player')
     frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'player')
 
-    Module.ChangeCastbar()
+    Module.ChangeDefaultCastbar()
     Module.CreateNewCastbar()
 end
 
