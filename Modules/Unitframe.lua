@@ -2121,33 +2121,12 @@ function Module.ChangePetFrame()
         f:SetStatusBarColor(1, 1, 1, 1)
         f:EnableMouse(true)
 
-        local m = f:CreateFontString('PetManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
-        m:SetPoint('CENTER', f, 0, 0)
-        --m:SetFrameLevel(11)
-        m:SetText('MANA')
-        frame.PetManaBarText = m
-
         frame.PetManaBar = f
 
         PetFrameManaBar:HookScript(
             'OnShow',
             function(self)
                 self:Hide()
-            end
-        )
-
-        frame.PetManaBar:HookScript(
-            'OnEnter',
-            function(self)
-                if PetFrameManaBarTextRight:IsVisible() or PetFrameManaBarText:IsVisible() then
-                    frame.PetManaBarText:SetText('')
-                end
-            end
-        )
-        frame.PetManaBar:HookScript(
-            'OnLeave',
-            function(self)
-                Module.UpdatePetMana()
             end
         )
     end
@@ -2164,13 +2143,11 @@ function Module.ChangePetFrame()
     PetFrameHealthBarTextRight:SetScale(newPetTextScale)
 
     PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', deltaSize / 2, 0)
-    frame.PetManaBarText:SetPoint('CENTER', frame.PetManaBar, 'CENTER', deltaSize / 2, 0)
     PetFrameManaBarTextLeft:ClearAllPoints()
     PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
     PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
 
     PetFrameManaBarText:SetScale(newPetTextScale)
-    frame.PetManaBarText:SetScale(newPetTextScale)
     PetFrameManaBarTextLeft:SetScale(newPetTextScale)
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
@@ -2206,11 +2183,14 @@ function Module.UpdatePetMana()
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
         )
     end
+    PetFrameManaBarTextRight:SetText(power)
 
-    if maxpower == 0 then
-        frame.PetManaBarText:SetText('')
-    else
-        frame.PetManaBarText:SetText(power .. ' / ' .. maxpower)
+    local displayOption = GetCVar("statusTextDisplay");
+
+    if (displayOption == 'PERCENT') then
+        PetFrameManaBarText:SetText(power / maxpower * 100 .. '%')
+    elseif displayOption == 'NUMERIC' then
+        PetFrameManaBarText:SetText(power .. ' / ' .. maxpower)
     end
 end
 
@@ -2220,6 +2200,8 @@ function frame:OnEvent(event, arg1)
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
         Module.UpdatePetMana()
+    elseif event == 'UNIT_POWER_FREQUENT' and arg1 == 'pet' then
+        Module.UpdatePetMana()
     elseif event == 'UNIT_POWER_UPDATE' then
         --print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
@@ -2227,6 +2209,8 @@ function frame:OnEvent(event, arg1)
     elseif event == 'PLAYER_FOCUS_CHANGED' then
         Module.ReApplyFocusFrame()
         Module.UpdateFocusText()
+    elseif event == 'CVAR_UPDATE' and arg1 == 'STATUS_TEXT_DISPLAY' then
+        Module.UpdatePetMana()
     elseif event == 'PLAYER_ENTERING_WORLD' then
         --print('PLAYER_ENTERING_WORLD')
         Module.CreatePlayerFrameTextures()
@@ -2267,9 +2251,10 @@ function Module.Wrath()
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 
     frame:RegisterEvent('UNIT_POWER_UPDATE')
+    frame:RegisterEvent('UNIT_POWER_FREQUENT')
+    frame:RegisterEvent('CVAR_UPDATE')
     --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
-    frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 
     frame:RegisterEvent('ZONE_CHANGED')
@@ -2288,6 +2273,8 @@ function Module.Era()
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 
     frame:RegisterEvent('UNIT_POWER_UPDATE')
+    frame:RegisterEvent('UNIT_POWER_FREQUENT')
+    frame:RegisterEvent('CVAR_UPDATE')
     --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
     frame:RegisterEvent('ZONE_CHANGED')
