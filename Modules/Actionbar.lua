@@ -856,7 +856,6 @@ function frame:OnEvent(event, arg1)
         Module.SetNumBars()
     elseif event == 'BAG_UPDATE_DELAYED' then
         Module.RefreshBagBarToggle()
-        frame:UnregisterEvent('BAG_UPDATE_DELAYED')
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
         Module.SetNumBars()
@@ -873,6 +872,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 -- Artframe
 local frameArt = CreateFrame('FRAME', 'DragonflightUIArtframe', UIParent)
+local BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
 --frame:SetFrameStrata('MEDIUM')
 --frame:SetPoint('CENTER')
 
@@ -1520,7 +1520,7 @@ function Module.CreateBagExpandButton()
     local point, relativePoint = 'RIGHT', 'LEFT'
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
 
-    frame.BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
+    frame.BagBarExpandToggle = BagBarExpandToggle
     frame.BagBarExpandToggle:SetSize(16, 30)
     frame.BagBarExpandToggle:SetScale(0.5)
     frame.BagBarExpandToggle:ClearAllPoints()
@@ -1541,6 +1541,18 @@ function Module.CreateBagExpandButton()
             Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
         end
     )
+
+    frame.BagBarExpandToggle:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frame.BagBarExpandToggle:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+    frame.BagBarExpandToggle:SetScript('OnEvent', BagBarExpandToggle.OnEvent)
+end
+
+function BagBarExpandToggle:OnEvent(event, arg1)
+    if event == 'UNIT_ENTERED_VEHICLE' then
+        Module.BagBarExpandToggle:Hide()
+    elseif event == 'UNIT_EXITED_VEHICLE' then
+        Module.BagBarExpandToggle:Show()
+    end
 end
 
 function Module.BagBarExpandToggled(Expanded)
