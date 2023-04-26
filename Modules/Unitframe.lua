@@ -2103,54 +2103,48 @@ function Module.ChangePetFrame()
     PetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
     )
-    PetFrameManaBar:Hide()
+    PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+
+    frame.UpdatePetManaBarTexture = function()
+        local powerType, powerTypeString = UnitPowerType('pet')
+
+        if powerTypeString == 'MANA' then
+            PetFrameManaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
+            )
+        elseif powerTypeString == 'FOCUS' then
+            PetFrameManaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'
+            )
+        elseif powerTypeString == 'RAGE' then
+            PetFrameManaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'
+            )
+        elseif powerTypeString == 'ENERGY' then
+            PetFrameManaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'
+            )
+        elseif powerTypeString == 'RUNIC_POWER' then
+            PetFrameManaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
+            )
+        end
+
+        PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+    end
+
+    hooksecurefunc(
+        'PetFrame_Update',
+        function(self)
+            frame.UpdatePetManaBarTexture()
+        end
+    )
 
     local dx = 2
     -- health vs mana bar
     local deltaSize = 74 - 70.5
 
     local newPetTextScale = 0.8
-
-    if not frame.PetManaBar then
-        local f = CreateFrame('StatusBar', 'DragonflightUIPetManaBar', PetFrame)
-        f:SetSize(74, 7.5)
-        f:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
-        f:SetStatusBarTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
-        )
-        f:SetStatusBarColor(1, 1, 1, 1)
-        f:EnableMouse(true)
-
-        local m = f:CreateFontString('PetManaBarText', 'HIGHLIGHT', 'TextStatusBarText')
-        m:SetPoint('CENTER', f, 0, 0)
-        --m:SetFrameLevel(11)
-        m:SetText('MANA')
-        frame.PetManaBarText = m
-
-        frame.PetManaBar = f
-
-        PetFrameManaBar:HookScript(
-            'OnShow',
-            function(self)
-                self:Hide()
-            end
-        )
-
-        frame.PetManaBar:HookScript(
-            'OnEnter',
-            function(self)
-                if PetFrameManaBarTextRight:IsVisible() or PetFrameManaBarText:IsVisible() then
-                    frame.PetManaBarText:SetText('')
-                end
-            end
-        )
-        frame.PetManaBar:HookScript(
-            'OnLeave',
-            function(self)
-                Module.UpdatePetMana()
-            end
-        )
-    end
 
     PetName:ClearAllPoints()
     PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
@@ -2164,54 +2158,13 @@ function Module.ChangePetFrame()
     PetFrameHealthBarTextRight:SetScale(newPetTextScale)
 
     PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', deltaSize / 2, 0)
-    frame.PetManaBarText:SetPoint('CENTER', frame.PetManaBar, 'CENTER', deltaSize / 2, 0)
     PetFrameManaBarTextLeft:ClearAllPoints()
     PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
     PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
 
     PetFrameManaBarText:SetScale(newPetTextScale)
-    frame.PetManaBarText:SetScale(newPetTextScale)
     PetFrameManaBarTextLeft:SetScale(newPetTextScale)
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
-end
-
-function Module.UpdatePetMana()
-    PetFrameManaBar:Hide()
-
-    local powerType, powerTypeString = UnitPowerType('pet')
-    local power = UnitPower('pet', powerType)
-    local maxpower = UnitPowerMax('pet', powerType)
-
-    frame.PetManaBar:SetValue(power)
-    frame.PetManaBar:SetMinMaxValues(0, maxpower)
-
-    if powerTypeString == 'MANA' then
-        frame.PetManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
-        )
-    elseif powerTypeString == 'FOCUS' then
-        frame.PetManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'
-        )
-    elseif powerTypeString == 'RAGE' then
-        frame.PetManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'
-        )
-    elseif powerTypeString == 'ENERGY' then
-        frame.PetManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'
-        )
-    elseif powerTypeString == 'RUNIC_POWER' then
-        frame.PetManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
-        )
-    end
-
-    if maxpower == 0 then
-        frame.PetManaBarText:SetText('')
-    else
-        frame.PetManaBarText:SetText(power .. ' / ' .. maxpower)
-    end
 end
 
 function frame:OnEvent(event, arg1)
@@ -2219,7 +2172,6 @@ function frame:OnEvent(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
-        Module.UpdatePetMana()
     elseif event == 'UNIT_POWER_UPDATE' then
         --print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
@@ -2240,7 +2192,6 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusToT()
         end
         Module.ChangePetFrame()
-        Module.UpdatePetMana()
 
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
