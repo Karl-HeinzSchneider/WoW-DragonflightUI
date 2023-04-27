@@ -181,6 +181,7 @@ end
 -- Actionbar
 local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 frame:SetFrameStrata('HIGH')
+Module.Frame = frame
 
 function Module.ChangeActionbar()
     ActionButton1:ClearAllPoints()
@@ -854,8 +855,6 @@ function frame:OnEvent(event, arg1)
     elseif event == 'UPDATE_FACTION' then
         frame.UpdateRepBar()
         Module.SetNumBars()
-    elseif event == 'BAG_UPDATE_DELAYED' then
-        Module.RefreshBagBarToggle()
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
         Module.SetNumBars()
@@ -872,9 +871,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 -- Artframe
 local frameArt = CreateFrame('FRAME', 'DragonflightUIArtframe', UIParent)
-local BagBarExpandToggle = CreateFrame('Button', 'DragonflightUIMicromenuFrameBagExpand', UIParent)
---frame:SetFrameStrata('MEDIUM')
---frame:SetPoint('CENTER')
+Module.FrameArt = frameArt
 
 local atlasActionbar = {
     ['UI-HUD-ActionBar-Gryphon-Left'] = {200, 188, 0.001953125, 0.697265625, 0.10205078125, 0.26513671875, false, false},
@@ -1516,44 +1513,48 @@ function Module.MoveBars()
     end
 end
 
+local frameBagToggle = CreateFrame('Button', 'DragonflightUIBagToggleFrame', UIParent)
+Module.FrameBagToggle = frameBagToggle
+
 function Module.CreateBagExpandButton()
     local point, relativePoint = 'RIGHT', 'LEFT'
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
 
-    frame.BagBarExpandToggle = BagBarExpandToggle
-    frame.BagBarExpandToggle:SetSize(16, 30)
-    frame.BagBarExpandToggle:SetScale(0.5)
-    frame.BagBarExpandToggle:ClearAllPoints()
-    frame.BagBarExpandToggle:SetPoint(point, MainMenuBarBackpackButton, relativePoint)
+    local f = Module.FrameBagToggle
+    f:SetSize(16, 30)
+    f:SetScale(0.5)
+    f:ClearAllPoints()
+    f:SetPoint(point, MainMenuBarBackpackButton, relativePoint)
 
-    frame:RegisterEvent('BAG_UPDATE_DELAYED')
+    f:SetNormalTexture(base)
+    f:SetPushedTexture(base)
+    f:SetHighlightTexture(base)
+    f:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    f:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    f:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
 
-    frame.BagBarExpandToggle:SetNormalTexture(base)
-    frame.BagBarExpandToggle:SetPushedTexture(base)
-    frame.BagBarExpandToggle:SetHighlightTexture(base)
-    frame.BagBarExpandToggle:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
-    frame.BagBarExpandToggle:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
-    frame.BagBarExpandToggle:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
-    frame.BagBarExpandToggle:SetScript(
+    f:SetScript(
         'OnClick',
         function()
             setOption({'bagsExpanded'}, not Module.db.profile.bagsExpanded)
             Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
         end
     )
-
-    frame.BagBarExpandToggle:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
-    frame.BagBarExpandToggle:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
-    frame.BagBarExpandToggle:SetScript('OnEvent', BagBarExpandToggle.OnEvent)
+    f:RegisterEvent('BAG_UPDATE_DELAYED')
+    f:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    f:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 end
 
-function BagBarExpandToggle:OnEvent(event, arg1)
-    if event == 'UNIT_ENTERED_VEHICLE' then
-        Module.BagBarExpandToggle:Hide()
+function frameBagToggle:OnEvent(event, arg1)
+    if event == 'BAG_UPDATE_DELAYED' then
+        Module.RefreshBagBarToggle()
+    elseif event == 'UNIT_ENTERED_VEHICLE' then
+        frameBagToggle:Hide()
     elseif event == 'UNIT_EXITED_VEHICLE' then
-        Module.BagBarExpandToggle:Show()
+        frameBagToggle:Show()
     end
 end
+frameBagToggle:SetScript('OnEvent', frameBagToggle.OnEvent)
 
 function Module.BagBarExpandToggled(Expanded)
     local rotation
@@ -1564,9 +1565,11 @@ function Module.BagBarExpandToggled(Expanded)
         rotation = 0
     end
 
-    frame.BagBarExpandToggle:GetNormalTexture():SetRotation(rotation)
-    frame.BagBarExpandToggle:GetPushedTexture():SetRotation(rotation)
-    frame.BagBarExpandToggle:GetHighlightTexture():SetRotation(rotation)
+    local f = Module.FrameBagToggle
+
+    f:GetNormalTexture():SetRotation(rotation)
+    f:GetPushedTexture():SetRotation(rotation)
+    f:GetHighlightTexture():SetRotation(rotation)
 
     for i = 0, 3 do
         if (Expanded) then
