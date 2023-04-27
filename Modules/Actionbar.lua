@@ -201,6 +201,19 @@ function Module.ChangeActionbar()
     StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
     StanceButton1.SetPoint = function()
     end
+    StanceBarLeft:Hide()
+    StanceBarMiddle:Hide()
+    StanceBarRight:Hide()
+
+    hooksecurefunc(
+        StanceBarRight,
+        'Show',
+        function()
+            StanceBarLeft:Hide()
+            StanceBarMiddle:Hide()
+            StanceBarRight:Hide()
+        end
+    )
 
     ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
