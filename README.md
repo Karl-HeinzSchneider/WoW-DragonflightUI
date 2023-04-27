@@ -1,6 +1,6 @@
 # DragonflightUI
  
-World of Warcraft (classic) Addon to bring the new Retail WoW to WoW Classic!
+World of Warcraft (classic) Addon to bring the new Retail UI to WoW Classic!
 
 View on Curseforge: https://www.curseforge.com/wow/addons/dragonflight-ui-classic
 
@@ -8,28 +8,28 @@ View on Curseforge: https://www.curseforge.com/wow/addons/dragonflight-ui-classi
 ## Known Issues
 
 ## General
-* ALPHA
-* ... but without gamebreaking bugs, and battle-tested inside Naxx and Ulduar
-* some Issues with Pet- and Stancebar/LUA Errors
 
 
-### Unitframes
-* not pixelperfect
-* some features missing/not replaced
 
 ## Actionbar
-* 
-* 
+![](<Screenshots/v2/Actionbar.png>)
+
+## Castbar
+![](<Screenshots/v2/Castbar.png>)
 
 ## Minimap
-* 
-* 
+![](<Screenshots/v2/Minimap.png>)
 
-## Example
-![](<Screenshots/playertargetframe.png>)
-![](<Screenshots/minimap.png>)
-![](<Screenshots/actionbar.png>)
-![](<Screenshots/micromenu.png>)
+## Micromenu/Bags
+![](<Screenshots/v2/MicroMenu-Bag.png>)
+
+## Unitframe
+![](<Screenshots/v2/Unitframe.png>)
+
+
+## Complete UI
+![](<Screenshots/v2/CompleteUI.png>)
+
 
 
 ## Compatibility
