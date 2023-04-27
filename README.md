@@ -26,11 +26,8 @@ View on Curseforge: https://www.curseforge.com/wow/addons/dragonflight-ui-classi
 ## Unitframe
 ![](<Screenshots/v2/Unitframe.png>)
 
-
 ## Complete UI
 ![](<Screenshots/v2/CompleteUI.png>)
-
-
 
 ## Compatibility
 Developed for default Blizzard UI, but should work on any UI.
