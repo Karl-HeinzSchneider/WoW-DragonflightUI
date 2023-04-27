@@ -1520,7 +1520,7 @@ function Module.ChangeBackpack()
 
     --keyring
     KeyRingButton:SetSize(34.5, 34.5)
-    KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2)
+    KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2 + 2)
 
     KeyRingButton:GetNormalTexture():SetTexture(bagtexture)
     KeyRingButton:GetNormalTexture():SetSize(35, 35)
