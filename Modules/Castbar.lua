@@ -157,7 +157,7 @@ Module.frame = frame
 
 function Module.ChangeDefaultCastbar()
     CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 500)
+    CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, -100)
 
     CastingBarFrame:GetStatusBarTexture():SetVertexColor(0, 0, 0, 0)
     CastingBarFrame:GetStatusBarTexture():SetAlpha(0)
