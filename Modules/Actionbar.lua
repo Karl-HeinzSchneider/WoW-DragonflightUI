@@ -985,8 +985,10 @@ function frameArt:OnEvent(event, arg1)
     --print('art event', event)
     if event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangeGryphonVisibility(false)
+        MainMenuBarPageNumber:Hide()
     elseif event == 'UNIT_EXITED_VEHICLE' then
         Module.ChangeGryphonVisibility(true)
+        MainMenuBarPageNumber:Show()
     elseif event == 'PLAYER_ENTERING_WORLD' then
         local englishFaction, localizedFaction = UnitFactionGroup('player')
 
