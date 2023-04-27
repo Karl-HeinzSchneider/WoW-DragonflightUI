@@ -1386,7 +1386,18 @@ function Module.ChangeMicroMenu()
         PVPMicroButtonTexture:Hide()
         Module.SetButtonFromAtlas(LFGMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Groupfinder')
         Module.SetButtonFromAtlas(MainMenuMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Shop')
-        MainMenuBarPerformanceBar:Hide()
+
+        local deltaX, deltaY = 6, 18
+        MainMenuBarPerformanceBar:ClearAllPoints()
+        MainMenuBarPerformanceBar:SetPoint('LEFT', MainMenuMicroButton, 'LEFT', deltaX, -deltaY)
+        MainMenuBarPerformanceBar:SetPoint('RIGHT', MainMenuMicroButton, 'RIGHT', -deltaX, -deltaY)
+        MainMenuBarPerformanceBar:SetPoint(
+            'RIGHT',
+            MainMenuMicroButton,
+            'RIGHT',
+            MainMenuBarPerformanceBar:GetWidth() / 2 - deltaX,
+            -15
+        )
     else
         MainMenuBarPerformanceBarFrame:Hide()
     end
