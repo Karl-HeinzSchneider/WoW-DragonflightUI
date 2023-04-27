@@ -307,6 +307,33 @@ function Module.CreateNewXPBar()
             GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
             GameTooltip.canAddRestStateLine = 1
             ExhaustionToolTipText()
+
+            local playerCurrXP = UnitXP('player')
+            local playerMaxXP = UnitXPMax('player')
+            local playerPercent = 100 * playerCurrXP / playerMaxXP
+
+            local restedXP = GetXPExhaustion() or 0
+            local restedMax = playerMaxXP * 1.5
+            local restedPercent = 100 * restedXP / restedMax
+
+            GameTooltip:AddDoubleLine(' ')
+            GameTooltip:AddDoubleLine(
+                'XP: ',
+                '|cFFFFFFFF' ..
+                    FormatLargeNumber(playerCurrXP) ..
+                        '/' .. FormatLargeNumber(playerMaxXP) .. ' (' .. string.format('%.2f', playerPercent) .. '%)'
+            )
+            GameTooltip:AddDoubleLine(
+                'Rested: ',
+                '|cFFFFFFFF' .. FormatLargeNumber(restedXP) .. ' (' .. string.format('%.2f', restedPercent) .. '%)'
+            )
+
+            if restedPercent < 100 then
+                local restedTime = (100 * (restedMax - restedXP) / restedMax) / 10 * 3 * 8 * 60 * 60
+                GameTooltip:AddDoubleLine('Time to max rested:', '|cFFFFFFFF' .. SecondsToTime(restedTime))
+            end
+
+            GameTooltip:Show()
         end
     )
 
