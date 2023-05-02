@@ -1200,6 +1200,32 @@ function Module.MoveAttackIcon()
     PlayerAttackBackground:SetSize(32, 32)
 end
 
+function Module.CreateRestFlipbook()
+    local rest = CreateFrame('FRAME', 'DragonflightUIRestFlipbook')
+    rest:SetSize(20, 20)
+    rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
+    rest:SetFrameLevel(5)
+
+    local extra = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
+    extra:SetAllPoints()
+    extra:SetColorTexture(1, 1, 1, 1)
+    extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+
+    local animationGroup = extra:CreateAnimationGroup()
+    local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
+    
+    animationGroup:SetLooping('REPEAT')
+    animation:SetFlipBookFrameWidth(64)
+    animation:SetFlipBookFrameHeight(64)
+    animation:SetFlipBookRows(1)
+    animation:SetFlipBookColumns(8)
+    animation:SetFlipBookFrames(8)
+    animation:SetDuration(2)
+
+    frame.RestIcon = rest
+    frame.RestIconAnimation = animationGroup
+end
+
 function Module.HookVertexColor()
     PlayerFrameHealthBar:HookScript(
         'OnValueChanged',
@@ -2215,6 +2241,7 @@ function frame:OnEvent(event, arg1)
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
+        Module.CreateRestFlipbook()
         Module.PlayerFrame_UpdateStatus()
         Module.MoveAttackIcon()
         if DF.Wrath then
@@ -2236,6 +2263,8 @@ function frame:OnEvent(event, arg1)
     elseif event == "PLAYER_REGEN_DISABLED" then
         Module.onHateList = 1;
         Module.PlayerFrame_UpdateStatus();
+    elseif event == "PLAYER_UPDATE_RESTING" then
+		Module.PlayerFrame_UpdateStatus();
     elseif event == "PLAYER_REGEN_ENABLED" then
         Module.onHateList = nil;
         Module.PlayerFrame_UpdateStatus();
@@ -2254,28 +2283,46 @@ function frame:OnEvent(event, arg1)
 end
 
 function Module.PlayerFrame_UpdateStatus()
-    PlayerStatusGlow:Hide();
+    PlayerStatusGlow:Hide()
+    PlayerRestIcon:Hide()
 
     if IsResting() then
         frame.PlayerFrameDeco:Show()
+
+        frame.RestIcon:Show()
+        frame.RestIconAnimation:Play()
+
         frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0);
         PlayerStatusTexture:Show();
         PlayerStatusTexture:SetAlpha(1.0)
     elseif PlayerFrame.inCombat then
         frame.PlayerFrameDeco:Hide()
+
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
+
         frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
         PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
         PlayerStatusTexture:Show()
         PlayerStatusTexture:SetAlpha(1.0)
     elseif PlayerFrame.onHateList then
         frame.PlayerFrameDeco:Hide()
+
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
+
         PlayerStatusTexture:Show()
+        
         PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
         frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
         frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
     else
         frame.PlayerFrameDeco:Show()
+        
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
+
         frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
     end
@@ -2292,6 +2339,7 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
     frame:RegisterEvent('PLAYER_REGEN_DISABLED')
+    frame:RegisterEvent('PLAYER_UPDATE_RESTING')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2318,6 +2366,7 @@ function Module.Era()
     frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
     frame:RegisterEvent('PLAYER_REGEN_DISABLED')
+    frame:RegisterEvent('PLAYER_UPDATE_RESTING')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
