@@ -2244,6 +2244,7 @@ function frame:OnEvent(event, arg1)
         Module.CreateRestFlipbook()
         Module.PlayerFrame_UpdateStatus()
         Module.MoveAttackIcon()
+        Module.ApplyPortraitMask()
 
         if DF.Wrath then
             Module.ChangeFocusFrame()
@@ -2280,7 +2281,16 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         Module.ChangePlayerframe()
+    elseif event == 'UNIT_PORTRAIT_UPDATE' then
+        SetPortraitTexture(PlayerPortrait, "player", true)
     end
+end
+
+function Module.ApplyPortraitMask()
+    local mask = frame:CreateMaskTexture()
+    mask:SetAllPoints(PlayerPortrait)
+    mask:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    PlayerPortrait:AddMaskTexture(mask)
 end
 
 function Module.PlayerFrame_UpdateStatus()
@@ -2336,6 +2346,7 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
 
     frame:RegisterEvent('PLAYER_ENTER_COMBAT')
     frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
