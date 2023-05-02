@@ -2244,6 +2244,7 @@ function frame:OnEvent(event, arg1)
         Module.CreateRestFlipbook()
         Module.PlayerFrame_UpdateStatus()
         Module.MoveAttackIcon()
+
         if DF.Wrath then
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
@@ -2285,6 +2286,7 @@ end
 function Module.PlayerFrame_UpdateStatus()
     PlayerStatusGlow:Hide()
     PlayerRestIcon:Hide()
+    PlayerRestGlow:Hide()
 
     if IsResting() then
         frame.PlayerFrameDeco:Show()
