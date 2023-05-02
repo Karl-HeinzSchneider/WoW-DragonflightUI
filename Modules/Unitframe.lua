@@ -1170,7 +1170,7 @@ function Module.CreatePlayerFrameTextures()
 
     if not frame.PlayerFrameDeco then
         local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
-        textureSmall:SetDrawLayer('ARTWORK', 5)
+        textureSmall:SetDrawLayer('OVERLAY', 5)
         textureSmall:SetTexture(base)
         textureSmall:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
         local delta = 15
@@ -1181,6 +1181,25 @@ function Module.CreatePlayerFrameTextures()
     end
 end
 
+function Module.MoveAttackIcon()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    PlayerAttackIcon:SetTexture(base)
+    PlayerAttackBackground:SetTexture(base)
+
+    PlayerAttackIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon'))
+    PlayerAttackBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon-Glow'))
+
+    PlayerAttackIcon:ClearAllPoints()
+    PlayerAttackBackground:ClearAllPoints()
+
+    PlayerAttackIcon:SetPoint('BOTTOMRIGHT', PlayerPortrait, 'BOTTOMRIGHT', -3, 0)
+    PlayerAttackBackground:SetPoint('CENTER', PlayerAttackIcon, 'CENTER')
+
+    PlayerAttackIcon:SetSize(16, 16)
+    PlayerAttackBackground:SetSize(32, 32)
+end
+
 function Module.HookVertexColor()
     PlayerFrameHealthBar:HookScript(
         'OnValueChanged',
@@ -1189,7 +1208,7 @@ function Module.HookVertexColor()
                 PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
                 )
-
+                
                 local localizedClass, englishClass, classIndex = UnitClass('player')
                 PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
             else
@@ -1320,9 +1339,18 @@ function Module.ChangePlayerframe()
     PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     --UI-HUD-UnitFrame-Player-PortraitOn-Status
-    PlayerStatusTexture:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-InCombat'
-    )
+    PlayerStatusTexture:SetTexture(base)
+    PlayerStatusTexture:SetSize(192, 71)
+    PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
+
+    PlayerStatusTexture:ClearAllPoints()
+    PlayerStatusTexture:SetPoint("TOPLEFT", frame.PlayerFrameBorder, "TOPLEFT", 1, 1);
+
+    PlayerFrame:HookScript('OnUpdate', function(self)
+        if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
+            PlayerStatusTexture:SetAlpha(1.0)
+        end
+    end)
 end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -2187,6 +2215,8 @@ function frame:OnEvent(event, arg1)
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
+        Module.PlayerFrame_UpdateStatus()
+        Module.MoveAttackIcon()
         if DF.Wrath then
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
@@ -2194,6 +2224,21 @@ function frame:OnEvent(event, arg1)
         Module.ChangePetFrame()
 
         Module.ApplySettings()
+
+        Module.inCombat = nil;
+		Module.onHateList = nil;
+    elseif event == "PLAYER_ENTER_COMBAT" then
+        Module.inCombat = 1;
+        Module.PlayerFrame_UpdateStatus();
+    elseif event == "PLAYER_LEAVE_COMBAT" then
+        Module.inCombat = nil;
+        Module.PlayerFrame_UpdateStatus();
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        Module.onHateList = 1;
+        Module.PlayerFrame_UpdateStatus();
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        Module.onHateList = nil;
+        Module.PlayerFrame_UpdateStatus();
     elseif event == 'PLAYER_TARGET_CHANGED' then
         --Module.ApplySettings()
         Module.ReApplyTargetFrame()
@@ -2207,12 +2252,52 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     end
 end
+
+function Module.PlayerFrame_UpdateStatus()
+    local delta = 15
+    PlayerStatusGlow:Hide();
+
+    -- PlayerRestIcon:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
+    -- PlayerRestGlow:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
+    -- PlayerRestGlow:SetSize(23, 23)
+    -- PlayerRestIcon:SetSize(23, 23)
+
+    if IsResting() then
+        frame.PlayerFrameDeco:Show()
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0);
+        PlayerStatusTexture:Show();
+        PlayerStatusTexture:SetAlpha(1.0)
+    elseif PlayerFrame.inCombat then
+        frame.PlayerFrameDeco:Hide()
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+        PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+        PlayerStatusTexture:Show()
+        PlayerStatusTexture:SetAlpha(1.0)
+    elseif PlayerFrame.onHateList then
+        frame.PlayerFrameDeco:Hide()
+        PlayerStatusTexture:Show()
+        PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+    else
+        frame.PlayerFrameDeco:Show()
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+    end
+end
+
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+    frame:RegisterEvent('PLAYER_ENTER_COMBAT')
+    frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+    frame:RegisterEvent('PLAYER_REGEN_DISABLED')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
