@@ -51,21 +51,27 @@ local defaultsPROTO = {
 
 local localSettings = {
     scale = 1,
-    playerScale = 1,
-    playerAnchor = 'TOPLEFT',
-    playerAnchorParent = 'TOPLEFT',
-    playerX = -19,
-    playerY = -4,
-    targetScale = 1,
-    targetAnchor = 'TOPLEFT',
-    targetAnchorParent = 'TOPLEFT',
-    targetX = 250,
-    targetY = -4,
-    focusScale = 1,
-    focusAnchor = 'TOPLEFT',
-    focusAnchorParent = 'TOPLEFT',
-    focusX = 250,
-    focusY = -170
+    focus = {
+        scale = 1.0,
+        anchor = 'TOPLEFT',
+        anchorParent = 'TOPLEFT',
+        x = 250,
+        y = -170
+    },
+    player = {
+        scale = 1.0,
+        anchor = 'TOPLEFT',
+        anchorParent = 'TOPLEFT',
+        x = -19,
+        y = -4
+    },
+    target = {
+        scale = 1.0,
+        anchor = 'TOPLEFT',
+        anchorParent = 'TOPLEFT',
+        x = 250,
+        y = -4
+    }
 }
 
 local function getDefaultStr(key, sub)
@@ -84,41 +90,15 @@ end
 local function setDefaultValues()
     for k, v in pairs(defaults.profile) do
         if type(v) == 'table' then
-            --print('table', k)
+            local obj = Module.db.profile[k]
             for kSub, vSub in pairs(v) do
-                --print('---', kSub, vSub)
-                --print('----', k .. '.' .. kSub)
-                Module.db.profile[k .. '.' .. kSub] = vSub
+                obj[kSub] = vSub
             end
         else
             Module.db.profile[k] = v
         end
     end
     Module.ApplySettings()
-end
-
-local function setMissingDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        if type(v) == 'table' then
-            --print('table', k)
-            if not Module.db.profile[k] ~= nil then
-                Module.db.profile[k] = {}
-            end
-
-            for kSub, vSub in pairs(v) do
-                --print('---', kSub, vSub)
-                --print('----', k .. '.' .. kSub)
-                local key = k .. '.' .. kSub
-                if not Module.db.profile[key] ~= nil then
-                    Module.db.profile[key] = vSub
-                end
-            end
-        else
-            if not Module.db.profile[k] ~= nil then
-                Module.db.profile[k] = v
-            end
-        end
-    end
 end
 
 -- db[info[#info] = VALUE
@@ -129,7 +109,9 @@ local function getOption(info)
     --print('db', db[key])
 
     if sub then
-        return db[key .. '.' .. sub]
+        --return db[key .. '.' .. sub]
+        local t = Module.db.profile[key]
+        return t[sub]
     else
         --return db[info[#info]]
         return db[key]
@@ -142,7 +124,9 @@ local function setOption(info, value)
     --print('setOption', key, sub)
 
     if sub then
-        Module.db.profile[key .. '.' .. sub] = value
+        local t = Module.db.profile[key]
+        t[sub] = value
+        --Module.db.profile[key .. '.' .. sub] = value
         Module.ApplySettings()
     else
         Module.db.profile[key] = value
@@ -490,7 +474,6 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     db = self.db.profile
-    setMissingDefaultValues()
 
     self:SetEnabledState(DF:GetModuleEnabled(mName))
     DF:RegisterModuleOptions(mName, options)
@@ -512,42 +495,92 @@ function Module:OnDisable()
 end
 
 function Module:SaveLocalSettings()
+    -- playerframe
     do
+        local scale = PlayerFrame:GetScale()
         local point, relativeTo, relativePoint, xOfs, yOfs = PlayerFrame:GetPoint(1)
         print('PlayerFrame', point, relativePoint, xOfs, yOfs)
-        localSettings.playerAnchor = point
-        localSettings.playerAnchorParent = relativePoint
-        localSettings.playerX = xOfs
-        localSettings.playerY = yOfs
+
+        local obj = localSettings.player
+        obj.scale = scale
+        obj.anchor = point
+        obj.anchorParent = relativePoint
+        obj.x = xOfs
+        obj.y = yOfs
     end
+    -- targetframe
+    do
+        local scale = TargetFrame:GetScale()
+        local point, relativeTo, relativePoint, xOfs, yOfs = TargetFrame:GetPoint(1)
+        print('TargetFrame', point, relativePoint, xOfs, yOfs)
+
+        local obj = localSettings.target
+        obj.scale = scale
+        obj.anchor = point
+        obj.anchorParent = relativePoint
+        obj.x = xOfs
+        obj.y = yOfs
+    end
+    -- focusframe
+    do
+        local scale = FocusFrame:GetScale()
+        local point, relativeTo, relativePoint, xOfs, yOfs = FocusFrame:GetPoint(1)
+        print('FocusFrame', point, relativePoint, xOfs, yOfs)
+
+        local obj = localSettings.focus
+        obj.scale = scale
+        obj.anchor = point
+        obj.anchorParent = relativePoint
+        obj.x = xOfs
+        obj.y = yOfs
+    end
+
+    --DevTools_Dump({localSettings})
 end
 
 function Module:ApplySettings()
     db = Module.db.profile
-
     local orig = defaults.profile
 
-    if db.playerOverride then
-        Module.MovePlayerFrame(db.playerAnchor, db.playerAnchorParent, db.playerX, db.playerY)
-    else
-        --Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
+    -- playerframe
+    do
+        local obj = db.player
+        local objLocal = localSettings.player
+        if obj.override then
+            Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
+            PlayerFrame:SetUserPlaced(true)
+        else
+            Module.MovePlayerFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
+        end
+        Module.ChangePlayerframe()
     end
-    Module.ChangePlayerframe()
 
-    if db.targetOverride then
-        Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
-    else
-        --Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+    -- target
+    do
+        local obj = db.target
+        local objLocal = localSettings.target
+        if obj.override then
+            Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
+            Targetframe:SetUserPlaced(true)
+        else
+            Module.MoveTargetFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
+        end
+        Module.ReApplyTargetFrame()
     end
-    Module.ReApplyTargetFrame()
 
     if DF.Wrath then
-        if db.focusOverride then
-            Module.MoveFocusFrame(db.focusAnchor, db.focusAnchorParent, db.focusX, db.focusY)
-        else
-            --Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
+        -- focus
+        do
+            local obj = db.focus
+            local objLocal = localSettings.focus
+            if obj.override then
+                Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
+                FocusFrame:SetUserPlaced(true)
+            else
+                Module.MoveFocusFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
+            end
+            Module.ReApplyFocusFrame()
         end
-        Module.ReApplyFocusFrame()
     end
 end
 
