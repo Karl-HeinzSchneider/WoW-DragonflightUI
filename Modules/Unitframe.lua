@@ -1201,17 +1201,17 @@ function Module.MoveAttackIcon()
 end
 
 function Module.CreateRestFlipbook()
-    local rest = CreateFrame('FRAME', 'DragonflightUIRestFlipbook')
+    local rest = CreateFrame('FRAME', 'DragonflightUIRestFlipbook', UIParent)
     rest:SetSize(20, 20)
     rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
     rest:SetFrameLevel(5)
 
-    local extra = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
-    extra:SetAllPoints()
-    extra:SetColorTexture(1, 1, 1, 1)
-    extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+    local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
+    restTexture:SetAllPoints()
+    restTexture:SetColorTexture(1, 1, 1, 1)
+    restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
 
-    local animationGroup = extra:CreateAnimationGroup()
+    local animationGroup = restTexture:CreateAnimationGroup()
     local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
     
     animationGroup:SetLooping('REPEAT')
