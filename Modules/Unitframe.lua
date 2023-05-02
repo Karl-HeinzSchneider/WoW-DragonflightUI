@@ -33,6 +33,25 @@ local defaults = {
     }
 }
 
+local localSettings = {
+    scale = 1,
+    playerScale = 1,
+    playerAnchor = 'TOPLEFT',
+    playerAnchorParent = 'TOPLEFT',
+    playerX = -19,
+    playerY = -4,
+    targetScale = 1,
+    targetAnchor = 'TOPLEFT',
+    targetAnchorParent = 'TOPLEFT',
+    targetX = 250,
+    targetY = -4,
+    focusScale = 1,
+    focusAnchor = 'TOPLEFT',
+    focusAnchorParent = 'TOPLEFT',
+    focusX = 250,
+    focusY = -170
+}
+
 local function getDefaultStr(key)
     return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
 end
@@ -46,104 +65,76 @@ end
 
 -- db[info[#info] = VALUE
 local function getOption(info)
-    return db[info[#info]]
+    local key = info[1]
+    local sub = info[2]
+    --print('getOption', key, sub)
+    --print('db', db[key])
+
+    if sub then
+        return db[key .. '.' .. sub]
+    else
+        --return db[info[#info]]
+        return db[key]
+    end
 end
 
 local function setOption(info, value)
     local key = info[1]
-    Module.db.profile[key] = value
-    Module.ApplySettings()
+    local sub = info[2]
+    --print('setOption', key, sub)
+
+    if sub then
+        Module.db.profile[key .. '.' .. sub] = value
+        Module.ApplySettings()
+    else
+        Module.db.profile[key] = value
+        Module.ApplySettings()
+    end
 end
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
+local optionsPlayer = {
+    name = 'Player',
+    desc = 'PlayerframeDesc',
     get = getOption,
     set = setOption,
+    type = 'group',
     args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        presetPlayerTargetInfo = {
+        playerConfigGeneral = {
             type = 'header',
-            name = 'Preset Player and Target frame',
+            name = 'General',
+            order = 10
+        },
+        playerColor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the player healthbar',
+            order = 10.1
+        },
+        playerConfigSize = {
+            type = 'header',
+            name = 'Size',
             order = 50
         },
-        presetPlayerTargetDefault = {
-            type = 'execute',
-            name = 'Default',
-            desc = 'Default(TOPLEFT)',
-            func = function()
-                Module.MovePlayerTargetPreset('DEFAULT')
-            end,
-            order = 51
+        playerScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('playerScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 50.1
         },
-        presetPlayerTargetCentered = {
-            type = 'execute',
-            name = 'Centered',
-            desc = '',
-            func = function()
-                Module.MovePlayerTargetPreset('CENTER')
-            end,
-            order = 52
-        },
-        colorConfig = {
+        playerConfigPos = {
             type = 'header',
-            name = 'Classcolor healthbar',
-            order = 70
-        },
-        colorPlayer = {
-            type = 'toggle',
-            name = 'Player',
-            desc = 'Enable classcolors for the player healthbar',
-            order = 71.1
-        },
-        colorTarget = {
-            type = 'toggle',
-            name = 'Target',
-            desc = 'Enable classcolors for the target healthbar',
-            order = 71.2
-        },
-        colorFocus = {
-            type = 'toggle',
-            name = 'Focus',
-            desc = 'Enable classcolors for the focus healthbar',
-            order = 71.3
-        },
-        playerConfig = {
-            type = 'header',
-            name = 'Position - Playerframe',
+            name = 'Position',
             order = 100
         },
         playerOverride = {
             type = 'toggle',
             name = 'Override',
             desc = 'Override positions',
-            order = 101
+            order = 101,
+            width = 'full'
         },
         playerAnchor = {
             type = 'select',
@@ -179,16 +170,6 @@ local options = {
             },
             order = 105.1
         },
-        playerScale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('playerScale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 106,
-            disabled = true
-        },
         playerX = {
             type = 'range',
             name = 'X',
@@ -206,22 +187,58 @@ local options = {
             max = 2500,
             bigStep = 0.50,
             order = 108
+        }
+    }
+}
+
+local optionsTarget = {
+    name = 'Target',
+    desc = 'TargetFrameDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        targetConfigGeneral = {
+            type = 'header',
+            name = 'General',
+            order = 10
+        },
+        targetColor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the target healthbar',
+            order = 10.1
+        },
+        targetConfigSize = {
+            type = 'header',
+            name = 'Size',
+            order = 50
+        },
+        targetScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('targetScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 50.1
         },
         targetConfig = {
             type = 'header',
-            name = 'Position - Targetframe',
+            name = 'Position',
             order = 200
         },
         targetOverride = {
             type = 'toggle',
             name = 'Override',
             desc = 'Override positions',
-            order = 201
+            order = 201,
+            width = 'full'
         },
         targetAnchor = {
             type = 'select',
             name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr(' targetAnchor'),
+            desc = 'Anchor' .. getDefaultStr('targetAnchor'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -252,16 +269,6 @@ local options = {
             },
             order = 205.1
         },
-        targetScale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr(' targetScale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 206,
-            disabled = true
-        },
         targetX = {
             type = 'range',
             name = 'X',
@@ -279,22 +286,58 @@ local options = {
             max = 2500,
             bigStep = 0.50,
             order = 208
-        },
-        focusConfig = {
+        }
+    }
+}
+
+local optionsFocus = {
+    name = 'Focus',
+    desc = 'FocusFrameDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        focusConfigGeneral = {
             type = 'header',
-            name = 'Position - Focusframe',
+            name = 'General',
+            order = 10
+        },
+        focusColor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the focus healthbar',
+            order = 10.1
+        },
+        focusConfigSize = {
+            type = 'header',
+            name = 'Size',
+            order = 50
+        },
+        focusScale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('focusScale'),
+            min = 0.2,
+            max = 1.5,
+            bigStep = 0.025,
+            order = 50.1
+        },
+        focusConfigPos = {
+            type = 'header',
+            name = 'Position',
             order = 300
         },
         focusOverride = {
             type = 'toggle',
             name = 'Override',
             desc = 'Override positions',
-            order = 301
+            order = 301,
+            width = 'full'
         },
         focusAnchor = {
             type = 'select',
             name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr(' focusAnchor'),
+            desc = 'Anchor' .. getDefaultStr('focusAnchor'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -325,16 +368,6 @@ local options = {
             },
             order = 305.1
         },
-        focusScale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr(' focusScale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 306,
-            disabled = true
-        },
         focusX = {
             type = 'range',
             name = 'X',
@@ -356,6 +389,45 @@ local options = {
     }
 }
 
+local options = {
+    type = 'group',
+    name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
+    args = {
+        toggle = {
+            type = 'toggle',
+            name = 'Enable',
+            get = function()
+                return DF:GetModuleEnabled(mName)
+            end,
+            set = function(info, v)
+                DF:SetModuleEnabled(mName, v)
+            end,
+            order = 1
+        },
+        reload = {
+            type = 'execute',
+            name = '/reload',
+            desc = 'reloads UI',
+            func = function()
+                ReloadUI()
+            end,
+            order = 1.1
+        },
+        defaults = {
+            type = 'execute',
+            name = 'Defaults',
+            desc = 'Sets Config to default values',
+            func = setDefaultValues,
+            order = 1.1
+        },
+        optionsPlayer = optionsPlayer,
+        optionsTarget = optionsTarget,
+        optionsFocus = optionsFocus
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -373,10 +445,22 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:SaveLocalSettings()
     Module:ApplySettings()
 end
 
 function Module:OnDisable()
+end
+
+function Module:SaveLocalSettings()
+    do
+        local point, relativeTo, relativePoint, xOfs, yOfs = PlayerFrame:GetPoint(1)
+        print('PlayerFrame', point, relativePoint, xOfs, yOfs)
+        localSettings.playerAnchor = point
+        localSettings.playerAnchorParent = relativePoint
+        localSettings.playerX = xOfs
+        localSettings.playerY = yOfs
+    end
 end
 
 function Module:ApplySettings()
@@ -387,14 +471,14 @@ function Module:ApplySettings()
     if db.playerOverride then
         Module.MovePlayerFrame(db.playerAnchor, db.playerAnchorParent, db.playerX, db.playerY)
     else
-        Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
+        --Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
     end
     Module.ChangePlayerframe()
 
     if db.targetOverride then
         Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
     else
-        Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+        --Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
     end
     Module.ReApplyTargetFrame()
 
@@ -402,7 +486,7 @@ function Module:ApplySettings()
         if db.focusOverride then
             Module.MoveFocusFrame(db.focusAnchor, db.focusAnchorParent, db.focusX, db.focusY)
         else
-            Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
+            --Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
         end
         Module.ReApplyFocusFrame()
     end
