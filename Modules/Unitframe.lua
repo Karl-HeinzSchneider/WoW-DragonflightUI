@@ -1208,7 +1208,7 @@ function Module.HookVertexColor()
                 PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
                 )
-                
+
                 local localizedClass, englishClass, classIndex = UnitClass('player')
                 PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
             else
@@ -2254,13 +2254,7 @@ function frame:OnEvent(event, arg1)
 end
 
 function Module.PlayerFrame_UpdateStatus()
-    local delta = 15
     PlayerStatusGlow:Hide();
-
-    -- PlayerRestIcon:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
-    -- PlayerRestGlow:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
-    -- PlayerRestGlow:SetSize(23, 23)
-    -- PlayerRestIcon:SetSize(23, 23)
 
     if IsResting() then
         frame.PlayerFrameDeco:Show()
@@ -2319,6 +2313,11 @@ function Module.Era()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+    frame:RegisterEvent('PLAYER_ENTER_COMBAT')
+    frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+    frame:RegisterEvent('PLAYER_REGEN_DISABLED')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
