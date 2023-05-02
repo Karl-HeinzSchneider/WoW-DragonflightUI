@@ -1361,7 +1361,7 @@ function Module.HookVertexColor()
     PlayerFrameHealthBar:HookScript(
         'OnValueChanged',
         function(self)
-            if Module.db.profile.colorPlayer then
+            if Module.db.profile.player.classcolor then
                 PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
                 )
@@ -1380,7 +1380,7 @@ function Module.HookVertexColor()
     TargetFrameHealthBar:HookScript(
         'OnValueChanged',
         function(self)
-            if Module.db.profile.colorTarget and UnitIsPlayer('target') then
+            if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
                 TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
                 )
@@ -1399,7 +1399,7 @@ function Module.HookVertexColor()
         FocusFrameHealthBar:HookScript(
             'OnValueChanged',
             function(self)
-                if Module.db.profile.colorFocus and UnitIsPlayer('focus') then
+                if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
                     FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
                         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
                     )
@@ -1440,7 +1440,7 @@ function Module.ChangePlayerframe()
     PlayerFrameHealthBar:ClearAllPoints()
     PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
 
-    if Module.db.profile.colorPlayer then
+    if Module.db.profile.player.classcolor then
         PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
         )
@@ -1672,7 +1672,7 @@ function Module.ChangeTargetFrame()
 end
 
 function Module.ReApplyTargetFrame()
-    if Module.db.profile.colorTarget and UnitIsPlayer('target') then
+    if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
         )
@@ -2119,7 +2119,7 @@ function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
 end
 
 function Module.ReApplyFocusFrame()
-    if Module.db.profile.colorFocus and UnitIsPlayer('focus') then
+    if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
         FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
         )
