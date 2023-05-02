@@ -9,28 +9,44 @@ Module.famous = {['Norbert'] = true}
 local defaults = {
     profile = {
         scale = 1,
-        colorPlayer = false,
-        colorTarget = false,
-        colorFocus = false,
-        playerOverride = false,
-        playerScale = 1,
-        playerAnchor = 'TOPLEFT',
-        playerAnchorParent = 'TOPLEFT',
-        playerX = -19,
-        playerY = -4,
-        targetOverride = false,
-        targetScale = 1,
-        targetAnchor = 'TOPLEFT',
-        targetAnchorParent = 'TOPLEFT',
-        targetX = 250,
-        targetY = -4,
-        focusOverride = false,
-        focusScale = 1,
-        focusAnchor = 'TOPLEFT',
-        focusAnchorParent = 'TOPLEFT',
-        focusX = 250,
-        focusY = -170
+        focus = {
+            classcolor = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = 250,
+            y = -170
+        },
+        player = {
+            classcolor = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = -19,
+            y = -4
+        },
+        target = {
+            classcolor = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = 250,
+            y = -4
+        }
     }
+}
+
+local defaultsPROTO = {
+    classcolor = false,
+    scale = 1.0,
+    override = false,
+    anchor = 'TOPLEFT',
+    anchorParent = 'TOPLEFT',
+    x = -19,
+    y = -4
 }
 
 local localSettings = {
@@ -52,15 +68,57 @@ local localSettings = {
     focusY = -170
 }
 
-local function getDefaultStr(key)
-    return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+local function getDefaultStr(key, sub)
+    --print('default str', sub, key)
+    if sub then
+        local obj = defaults.profile[sub]
+        local value = obj[key]
+        return '\n' .. '(Default: ' .. tostring(value) .. ')'
+    else
+        local obj = defaults.profile
+        local value = obj[key]
+        return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+    end
 end
 
 local function setDefaultValues()
     for k, v in pairs(defaults.profile) do
-        Module.db.profile[k] = v
+        if type(v) == 'table' then
+            --print('table', k)
+            for kSub, vSub in pairs(v) do
+                --print('---', kSub, vSub)
+                --print('----', k .. '.' .. kSub)
+                Module.db.profile[k .. '.' .. kSub] = vSub
+            end
+        else
+            Module.db.profile[k] = v
+        end
     end
     Module.ApplySettings()
+end
+
+local function setMissingDefaultValues()
+    for k, v in pairs(defaults.profile) do
+        if type(v) == 'table' then
+            --print('table', k)
+            if not Module.db.profile[k] ~= nil then
+                Module.db.profile[k] = {}
+            end
+
+            for kSub, vSub in pairs(v) do
+                --print('---', kSub, vSub)
+                --print('----', k .. '.' .. kSub)
+                local key = k .. '.' .. kSub
+                if not Module.db.profile[key] ~= nil then
+                    Module.db.profile[key] = vSub
+                end
+            end
+        else
+            if not Module.db.profile[k] ~= nil then
+                Module.db.profile[k] = v
+            end
+        end
+    end
 end
 
 -- db[info[#info] = VALUE
@@ -99,47 +157,47 @@ local optionsPlayer = {
     set = setOption,
     type = 'group',
     args = {
-        playerConfigGeneral = {
+        configGeneral = {
             type = 'header',
             name = 'General',
             order = 10
         },
-        playerColor = {
+        classcolor = {
             type = 'toggle',
             name = 'class color',
-            desc = 'Enable classcolors for the player healthbar',
+            desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
-        playerConfigSize = {
+        configSize = {
             type = 'header',
             name = 'Size',
             order = 50
         },
-        playerScale = {
+        scale = {
             type = 'range',
             name = 'Scale',
-            desc = '' .. getDefaultStr('playerScale'),
+            desc = '' .. getDefaultStr('scale', 'player'),
             min = 0.2,
             max = 1.5,
             bigStep = 0.025,
             order = 50.1
         },
-        playerConfigPos = {
+        configPos = {
             type = 'header',
             name = 'Position',
             order = 100
         },
-        playerOverride = {
+        override = {
             type = 'toggle',
             name = 'Override',
             desc = 'Override positions',
             order = 101,
             width = 'full'
         },
-        playerAnchor = {
+        anchor = {
             type = 'select',
             name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('playerAnchor'),
+            desc = 'Anchor' .. getDefaultStr('anchor', 'player'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -153,10 +211,10 @@ local optionsPlayer = {
             },
             order = 105
         },
-        playerAnchorParent = {
+        anchorParent = {
             type = 'select',
             name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('playerAnchorParent'),
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'player'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -170,19 +228,19 @@ local optionsPlayer = {
             },
             order = 105.1
         },
-        playerX = {
+        x = {
             type = 'range',
             name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('playerX'),
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'player'),
             min = -2500,
             max = 2500,
             bigStep = 0.50,
             order = 107
         },
-        playerY = {
+        y = {
             type = 'range',
             name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('playerY'),
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'player'),
             min = -2500,
             max = 2500,
             bigStep = 0.50,
@@ -198,47 +256,47 @@ local optionsTarget = {
     set = setOption,
     type = 'group',
     args = {
-        targetConfigGeneral = {
+        configGeneral = {
             type = 'header',
             name = 'General',
             order = 10
         },
-        targetColor = {
+        classcolor = {
             type = 'toggle',
             name = 'class color',
-            desc = 'Enable classcolors for the target healthbar',
+            desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
-        targetConfigSize = {
+        configSize = {
             type = 'header',
             name = 'Size',
             order = 50
         },
-        targetScale = {
+        scale = {
             type = 'range',
             name = 'Scale',
-            desc = '' .. getDefaultStr('targetScale'),
+            desc = '' .. getDefaultStr('scale', 'target'),
             min = 0.2,
             max = 1.5,
             bigStep = 0.025,
             order = 50.1
         },
-        targetConfig = {
+        configPos = {
             type = 'header',
             name = 'Position',
-            order = 200
+            order = 100
         },
-        targetOverride = {
+        override = {
             type = 'toggle',
             name = 'Override',
             desc = 'Override positions',
-            order = 201,
+            order = 101,
             width = 'full'
         },
-        targetAnchor = {
+        anchor = {
             type = 'select',
             name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('targetAnchor'),
+            desc = 'Anchor' .. getDefaultStr('anchor', 'target'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -250,12 +308,12 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 205
+            order = 105
         },
-        targetAnchorParent = {
+        anchorParent = {
             type = 'select',
             name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('targetAnchorParent'),
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'target'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -267,25 +325,25 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 205.1
+            order = 105.1
         },
-        targetX = {
+        x = {
             type = 'range',
             name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('targetX'),
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'target'),
             min = -2500,
             max = 2500,
             bigStep = 0.50,
-            order = 207
+            order = 107
         },
-        targetY = {
+        y = {
             type = 'range',
             name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('targetY'),
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'target'),
             min = -2500,
             max = 2500,
             bigStep = 0.50,
-            order = 208
+            order = 108
         }
     }
 }
@@ -297,47 +355,47 @@ local optionsFocus = {
     set = setOption,
     type = 'group',
     args = {
-        focusConfigGeneral = {
+        configGeneral = {
             type = 'header',
             name = 'General',
             order = 10
         },
-        focusColor = {
+        classcolor = {
             type = 'toggle',
             name = 'class color',
-            desc = 'Enable classcolors for the focus healthbar',
+            desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
-        focusConfigSize = {
+        configSize = {
             type = 'header',
             name = 'Size',
             order = 50
         },
-        focusScale = {
+        scale = {
             type = 'range',
             name = 'Scale',
-            desc = '' .. getDefaultStr('focusScale'),
+            desc = '' .. getDefaultStr('scale', 'focus'),
             min = 0.2,
             max = 1.5,
             bigStep = 0.025,
             order = 50.1
         },
-        focusConfigPos = {
+        configPos = {
             type = 'header',
             name = 'Position',
-            order = 300
+            order = 100
         },
-        focusOverride = {
+        override = {
             type = 'toggle',
             name = 'Override',
             desc = 'Override positions',
-            order = 301,
+            order = 101,
             width = 'full'
         },
-        focusAnchor = {
+        anchor = {
             type = 'select',
             name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('focusAnchor'),
+            desc = 'Anchor' .. getDefaultStr('anchor', 'focus'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -349,12 +407,12 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 305
+            order = 105
         },
-        focusAnchorParent = {
+        anchorParent = {
             type = 'select',
             name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('focusAnchorParent'),
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'focus'),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -366,25 +424,25 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 305.1
+            order = 105.1
         },
-        focusX = {
+        x = {
             type = 'range',
             name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('focusX'),
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'focus'),
             min = -2500,
             max = 2500,
             bigStep = 0.50,
-            order = 307
+            order = 107
         },
-        focusY = {
+        y = {
             type = 'range',
             name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('focusY'),
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'focus'),
             min = -2500,
             max = 2500,
             bigStep = 0.50,
-            order = 308
+            order = 108
         }
     }
 }
@@ -422,9 +480,9 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        optionsPlayer = optionsPlayer,
-        optionsTarget = optionsTarget,
-        optionsFocus = optionsFocus
+        focus = optionsFocus,
+        player = optionsPlayer,
+        target = optionsTarget
     }
 }
 
@@ -432,6 +490,7 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     db = self.db.profile
+    setMissingDefaultValues()
 
     self:SetEnabledState(DF:GetModuleEnabled(mName))
     DF:RegisterModuleOptions(mName, options)
