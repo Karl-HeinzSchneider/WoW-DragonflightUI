@@ -1201,29 +1201,31 @@ function Module.MoveAttackIcon()
 end
 
 function Module.CreateRestFlipbook()
-    local rest = CreateFrame('FRAME', 'DragonflightUIRestFlipbook', UIParent)
-    rest:SetSize(20, 20)
-    rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
-    rest:SetFrameLevel(5)
+    if not frame.RestIcon then
+        local rest = CreateFrame('FRAME', 'DragonflightUIRestFlipbook', UIParent)
+        rest:SetSize(20, 20)
+        rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
+        rest:SetFrameLevel(5)
 
-    local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
-    restTexture:SetAllPoints()
-    restTexture:SetColorTexture(1, 1, 1, 1)
-    restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+        local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
+        restTexture:SetAllPoints()
+        restTexture:SetColorTexture(1, 1, 1, 1)
+        restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
 
-    local animationGroup = restTexture:CreateAnimationGroup()
-    local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
+        local animationGroup = restTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
 
-    animationGroup:SetLooping('REPEAT')
-    animation:SetFlipBookFrameWidth(64)
-    animation:SetFlipBookFrameHeight(64)
-    animation:SetFlipBookRows(1)
-    animation:SetFlipBookColumns(8)
-    animation:SetFlipBookFrames(8)
-    animation:SetDuration(2)
+        animationGroup:SetLooping('REPEAT')
+        animation:SetFlipBookFrameWidth(64)
+        animation:SetFlipBookFrameHeight(64)
+        animation:SetFlipBookRows(1)
+        animation:SetFlipBookColumns(8)
+        animation:SetFlipBookFrames(8)
+        animation:SetDuration(2)
 
-    frame.RestIcon = rest
-    frame.RestIconAnimation = animationGroup
+        frame.RestIcon = rest
+        frame.RestIconAnimation = animationGroup
+    end
 end
 
 function Module.HookVertexColor()
