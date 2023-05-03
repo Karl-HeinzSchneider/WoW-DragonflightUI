@@ -1370,6 +1370,7 @@ function Module.HookDrag()
         Module.db.profile.player.override = false
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
+    hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
 end
 
 function Module.HookVertexColor()
