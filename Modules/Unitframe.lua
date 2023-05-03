@@ -1213,7 +1213,7 @@ function Module.CreateRestFlipbook()
 
     local animationGroup = restTexture:CreateAnimationGroup()
     local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
-    
+
     animationGroup:SetLooping('REPEAT')
     animation:SetFlipBookFrameWidth(64)
     animation:SetFlipBookFrameHeight(64)
@@ -2284,10 +2284,6 @@ function frame:OnEvent(event, arg1)
 end
 
 function Module.PlayerFrame_UpdateStatus()
-    PlayerStatusGlow:Hide()
-    PlayerRestIcon:Hide()
-    PlayerRestGlow:Hide()
-
     if IsResting() then
         frame.PlayerFrameDeco:Show()
 
@@ -2330,9 +2326,25 @@ function Module.PlayerFrame_UpdateStatus()
     end
 end
 
+function Module.HookRestFunctions()
+    hooksecurefunc(PlayerStatusGlow, 'Show', function()
+        PlayerStatusGlow:Hide()
+    end)
+
+    hooksecurefunc(PlayerRestIcon, 'Show', function()
+        PlayerRestIcon:Hide()
+    end)
+
+    hooksecurefunc(PlayerRestGlow, 'Show', function()
+        PlayerRestGlow:Hide()
+    end)
+end
+
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
+    Module:HookRestFunctions()
+
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
@@ -2360,6 +2372,8 @@ function Module.Wrath()
 end
 
 function Module.Era()
+    Module:HookRestFunctions()
+
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
