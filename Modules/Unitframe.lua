@@ -499,7 +499,7 @@ function Module:SaveLocalSettings()
     do
         local scale = PlayerFrame:GetScale()
         local point, relativeTo, relativePoint, xOfs, yOfs = PlayerFrame:GetPoint(1)
-        print('PlayerFrame', point, relativePoint, xOfs, yOfs)
+        --print('PlayerFrame', point, relativePoint, xOfs, yOfs)
 
         local obj = localSettings.player
         obj.scale = scale
@@ -512,7 +512,7 @@ function Module:SaveLocalSettings()
     do
         local scale = TargetFrame:GetScale()
         local point, relativeTo, relativePoint, xOfs, yOfs = TargetFrame:GetPoint(1)
-        print('TargetFrame', point, relativePoint, xOfs, yOfs)
+        --print('TargetFrame', point, relativePoint, xOfs, yOfs)
 
         local obj = localSettings.target
         obj.scale = scale
@@ -525,7 +525,7 @@ function Module:SaveLocalSettings()
     do
         local scale = FocusFrame:GetScale()
         local point, relativeTo, relativePoint, xOfs, yOfs = FocusFrame:GetPoint(1)
-        print('FocusFrame', point, relativePoint, xOfs, yOfs)
+        --print('FocusFrame', point, relativePoint, xOfs, yOfs)
 
         local obj = localSettings.focus
         obj.scale = scale
@@ -1358,6 +1358,18 @@ function Module.CreatePlayerFrameTextures()
         textureSmall:SetScale(1)
         frame.PlayerFrameDeco = textureSmall
     end
+end
+
+function Module.HookDrag()
+    local DragStopPlayerFrame = function(self)
+        Module.SaveLocalSettings()
+
+        for k, v in pairs(localSettings.player) do
+            Module.db.profile.player[k] = v
+        end
+        Module.db.profile.player.override = false
+    end
+    PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
 end
 
 function Module.HookVertexColor()
@@ -2407,6 +2419,7 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
+    Module.HookDrag()
 end
 
 function Module.Era()
@@ -2425,4 +2438,5 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
+    Module.HookDrag()
 end
