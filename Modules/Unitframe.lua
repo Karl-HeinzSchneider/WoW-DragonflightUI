@@ -161,8 +161,8 @@ local optionsPlayer = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'player'),
-            min = 0.2,
-            max = 1.5,
+            min = 0.1,
+            max = 3,
             bigStep = 0.025,
             order = 50.1
         },
@@ -260,8 +260,8 @@ local optionsTarget = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'target'),
-            min = 0.2,
-            max = 1.5,
+            min = 0.1,
+            max = 3,
             bigStep = 0.025,
             order = 50.1
         },
@@ -359,8 +359,8 @@ local optionsFocus = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'focus'),
-            min = 0.2,
-            max = 1.5,
+            min = 0.1,
+            max = 3,
             bigStep = 0.025,
             order = 50.1
         },
@@ -552,6 +552,7 @@ function Module:ApplySettings()
         else
             Module.MovePlayerFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
         end
+        PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
     end
 
@@ -561,10 +562,11 @@ function Module:ApplySettings()
         local objLocal = localSettings.target
         if obj.override then
             Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-            Targetframe:SetUserPlaced(true)
+            TargetFrame:SetUserPlaced(true)
         else
             Module.MoveTargetFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
         end
+        TargetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
     end
 
@@ -579,6 +581,7 @@ function Module:ApplySettings()
             else
                 Module.MoveFocusFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
             end
+            FocusFrame:SetScale(obj.scale)
             Module.ReApplyFocusFrame()
         end
     end
