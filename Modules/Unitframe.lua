@@ -2291,6 +2291,21 @@ function Module.ApplyPortraitMask()
     mask:SetAllPoints(PlayerPortrait)
     mask:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     PlayerPortrait:AddMaskTexture(mask)
+
+    local maskFocus = frame:CreateMaskTexture()
+    maskFocus:SetAllPoints(FocusFramePortrait)
+    maskFocus:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    FocusFramePortrait:AddMaskTexture(maskFocus)
+
+    local maskTarget = frame:CreateMaskTexture()
+    maskTarget:SetAllPoints(TargetFramePortrait)
+    maskTarget:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    TargetFramePortrait:AddMaskTexture(maskTarget)
+
+    local maskToT = frame:CreateMaskTexture()
+    maskToT:SetAllPoints(TargetFrameToTPortrait)
+    maskToT:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    TargetFrameToTPortrait:AddMaskTexture(maskToT)
 end
 
 function Module.PlayerFrame_UpdateStatus()
