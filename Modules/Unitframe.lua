@@ -1379,6 +1379,7 @@ function Module.MoveAttackIcon()
 
     PlayerAttackIcon:SetSize(16, 16)
     PlayerAttackBackground:SetSize(32, 32)
+end
 
 function Module.HookDrag()
     local DragStopPlayerFrame = function(self)
@@ -1561,13 +1562,16 @@ function Module.ChangePlayerframe()
     PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
 
     PlayerStatusTexture:ClearAllPoints()
-    PlayerStatusTexture:SetPoint("TOPLEFT", frame.PlayerFrameBorder, "TOPLEFT", 1, 1);
+    PlayerStatusTexture:SetPoint('TOPLEFT', frame.PlayerFrameBorder, 'TOPLEFT', 1, 1)
 
-    PlayerFrame:HookScript('OnUpdate', function(self)
-        if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
-            PlayerStatusTexture:SetAlpha(1.0)
+    PlayerFrame:HookScript(
+        'OnUpdate',
+        function(self)
+            if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
+                PlayerStatusTexture:SetAlpha(1.0)
+            end
         end
-    end)
+    )
 end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -2442,20 +2446,20 @@ function frame:OnEvent(event, arg1)
 
         Module.ApplySettings()
 
-        Module.inCombat = nil;
-		Module.onHateList = nil;
-    elseif event == "PLAYER_ENTER_COMBAT" then
-        Module.inCombat = 1;
-        Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_LEAVE_COMBAT" then
-        Module.inCombat = nil;
-        Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_REGEN_DISABLED" then
-        Module.onHateList = 1;
-        Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        Module.onHateList = nil;
-        Module.PlayerFrame_UpdateStatus();
+        Module.inCombat = nil
+        Module.onHateList = nil
+    elseif event == 'PLAYER_ENTER_COMBAT' then
+        Module.inCombat = 1
+        Module.PlayerFrame_UpdateStatus()
+    elseif event == 'PLAYER_LEAVE_COMBAT' then
+        Module.inCombat = nil
+        Module.PlayerFrame_UpdateStatus()
+    elseif event == 'PLAYER_REGEN_DISABLED' then
+        Module.onHateList = 1
+        Module.PlayerFrame_UpdateStatus()
+    elseif event == 'PLAYER_REGEN_ENABLED' then
+        Module.onHateList = nil
+        Module.PlayerFrame_UpdateStatus()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         --Module.ApplySettings()
         Module.ReApplyTargetFrame()
@@ -2471,13 +2475,13 @@ function frame:OnEvent(event, arg1)
 end
 
 function Module.PlayerFrame_UpdateStatus()
-    PlayerStatusGlow:Hide();
+    PlayerStatusGlow:Hide()
 
     if IsResting() then
         frame.PlayerFrameDeco:Show()
         frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0);
-        PlayerStatusTexture:Show();
+        PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+        PlayerStatusTexture:Show()
         PlayerStatusTexture:SetAlpha(1.0)
     elseif PlayerFrame.inCombat then
         frame.PlayerFrameDeco:Hide()
