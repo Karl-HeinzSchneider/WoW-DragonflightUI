@@ -1447,7 +1447,7 @@ end
 
 function Module.GetBagSlots(id)
     local build, _, _, _ = GetBuildInfo()
-    if build == '3.4.1' then
+    if not GetContainerNumSlots then
         local slots = C_Container.GetContainerNumSlots(id)
         return slots
     else
