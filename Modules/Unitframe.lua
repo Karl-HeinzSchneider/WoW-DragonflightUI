@@ -1591,6 +1591,9 @@ function Module.HookPlayerStatus()
             frame.PlayerFrameDeco:Show()
             frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
 
+            frame.RestIcon:Show()
+            frame.RestIconAnimation:Play()
+
             --PlayerStatusTexture:Show()
             --PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
             PlayerStatusTexture:SetAlpha(1.0)
@@ -1598,10 +1601,18 @@ function Module.HookPlayerStatus()
             --PlayerStatusTexture:Show()
             --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
             frame.PlayerFrameDeco:Hide()
+            
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+
             frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
             frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
         elseif PlayerFrame.inCombat then
             frame.PlayerFrameDeco:Hide()
+
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+
             frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
 
             --PlayerStatusTexture:Show()
@@ -1609,6 +1620,10 @@ function Module.HookPlayerStatus()
             PlayerStatusTexture:SetAlpha(1.0)
         else
             frame.PlayerFrameDeco:Show()
+
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+
             frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
             frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         end
@@ -2457,6 +2472,49 @@ function Module.ChangePetFrame()
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
 
+function Module.CreateRestFlipbook()
+    if not frame.RestIcon then
+        local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
+        rest:SetSize(20, 20)
+        rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
+
+        local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
+        restTexture:SetAllPoints()
+        restTexture:SetColorTexture(1, 1, 1, 1)
+        restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+
+        local animationGroup = restTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
+
+        animationGroup:SetLooping('REPEAT')
+        animation:SetFlipBookFrameWidth(64)
+        animation:SetFlipBookFrameHeight(64)
+        animation:SetFlipBookRows(1)
+        animation:SetFlipBookColumns(8)
+        animation:SetFlipBookFrames(8)
+        animation:SetDuration(2)
+
+        frame.RestIcon = rest
+        frame.RestIconAnimation = animationGroup
+
+        PlayerFrame_UpdateStatus()
+    end
+end
+
+function Module.HookRestFunctions()
+    hooksecurefunc(PlayerStatusGlow, 'Show', function()
+        PlayerStatusGlow:Hide()
+    end)
+
+    hooksecurefunc(PlayerRestIcon, 'Show', function()
+        PlayerRestIcon:Hide()
+    end)
+
+    hooksecurefunc(PlayerRestGlow, 'Show', function()
+        PlayerRestGlow:Hide()
+    end)
+end
+
 function frame:OnEvent(event, arg1)
     --print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
@@ -2478,6 +2536,7 @@ function frame:OnEvent(event, arg1)
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
         Module.MoveAttackIcon()
+        Module.CreateRestFlipbook()
         if DF.Wrath then
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
@@ -2518,6 +2577,7 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    Module.HookRestFunctions()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
     Module.HookDrag()
@@ -2538,6 +2598,7 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    Module.HookRestFunctions()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
     Module.HookDrag()
