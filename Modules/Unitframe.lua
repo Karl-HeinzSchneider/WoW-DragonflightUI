@@ -1523,7 +1523,7 @@ function Module.ChangePlayerframe()
 
     -- Mana 119,12
     PlayerFrameManaBar:ClearAllPoints()
-    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17)
+    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17 + 0.5)
     PlayerFrameManaBar:SetSize(125, 8)
 
     PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, 0)
