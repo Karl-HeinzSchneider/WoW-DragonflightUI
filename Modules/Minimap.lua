@@ -266,6 +266,9 @@ end
 
 function Module.MoveMinimap(x, y)
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', x, y)
+    --MinimapCluster:ClearAllPoints()
+    --MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
+    --MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', x, y)
 end
 
 function Module.ChangeZoom()
