@@ -522,17 +522,19 @@ function Module:SaveLocalSettings()
         obj.y = yOfs
     end
     -- focusframe
-    do
-        local scale = FocusFrame:GetScale()
-        local point, relativeTo, relativePoint, xOfs, yOfs = FocusFrame:GetPoint(1)
-        --print('FocusFrame', point, relativePoint, xOfs, yOfs)
+    if DF.Wrath then
+        do
+            local scale = FocusFrame:GetScale()
+            local point, relativeTo, relativePoint, xOfs, yOfs = FocusFrame:GetPoint(1)
+            --print('FocusFrame', point, relativePoint, xOfs, yOfs)
 
-        local obj = localSettings.focus
-        obj.scale = scale
-        obj.anchor = point
-        obj.anchorParent = relativePoint
-        obj.x = xOfs
-        obj.y = yOfs
+            local obj = localSettings.focus
+            obj.scale = scale
+            obj.anchor = point
+            obj.anchorParent = relativePoint
+            obj.x = xOfs
+            obj.y = yOfs
+        end
     end
 
     --DevTools_Dump({localSettings})
