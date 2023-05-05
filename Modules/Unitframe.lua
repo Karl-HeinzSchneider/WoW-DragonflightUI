@@ -1351,7 +1351,7 @@ function Module.CreatePlayerFrameTextures()
 
     if not frame.PlayerFrameDeco then
         local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
-        textureSmall:SetDrawLayer('ARTWORK', 5)
+        textureSmall:SetDrawLayer('OVERLAY', 5)
         textureSmall:SetTexture(base)
         textureSmall:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'))
         local delta = 15
@@ -1360,6 +1360,25 @@ function Module.CreatePlayerFrameTextures()
         textureSmall:SetScale(1)
         frame.PlayerFrameDeco = textureSmall
     end
+end
+
+function Module.MoveAttackIcon()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    PlayerAttackIcon:SetTexture(base)
+    PlayerAttackBackground:SetTexture(base)
+
+    PlayerAttackIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon'))
+    PlayerAttackBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon-Glow'))
+
+    PlayerAttackIcon:ClearAllPoints()
+    PlayerAttackBackground:ClearAllPoints()
+
+    PlayerAttackIcon:SetPoint('BOTTOMRIGHT', PlayerPortrait, 'BOTTOMRIGHT', -3, 0)
+    PlayerAttackBackground:SetPoint('CENTER', PlayerAttackIcon, 'CENTER')
+
+    PlayerAttackIcon:SetSize(16, 16)
+    PlayerAttackBackground:SetSize(32, 32)
 end
 
 function Module.HookDrag()
@@ -1538,12 +1557,65 @@ function Module.ChangePlayerframe()
     PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     --UI-HUD-UnitFrame-Player-PortraitOn-Status
-    PlayerStatusTexture:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-InCombat'
-    )
+    PlayerStatusTexture:SetTexture(base)
+    PlayerStatusTexture:SetSize(192, 71)
+    PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
+
+    PlayerStatusTexture:ClearAllPoints()
+    PlayerStatusTexture:SetPoint('TOPLEFT', frame.PlayerFrameBorder, 'TOPLEFT', 1, 1)
 end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+function Module.HookPlayerStatus()
+    --[[ PlayerFrame:HookScript(
+        'OnUpdate',
+        function(self)
+            if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
+                PlayerStatusTexture:SetAlpha(1.0)
+            end
+        end
+    ) ]]
+    local UpdateStatus = function()
+        if not frame.PlayerFrameDeco then
+            return
+        end
+
+        -- TODO: fix statusglow
+        PlayerStatusGlow:Hide()
+
+        if (UnitHasVehiclePlayerFrameUI('player')) then
+            -- TODO: vehicle stuff
+            --frame.PlayerFrameDeco:Show()
+        elseif IsResting() then
+            frame.PlayerFrameDeco:Show()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+            PlayerStatusTexture:SetAlpha(1.0)
+        elseif PlayerFrame.onHateList then
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            frame.PlayerFrameDeco:Hide()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+        elseif PlayerFrame.inCombat then
+            frame.PlayerFrameDeco:Hide()
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            PlayerStatusTexture:SetAlpha(1.0)
+        else
+            frame.PlayerFrameDeco:Show()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        end
+    end
+
+    hooksecurefunc('PlayerFrame_UpdateStatus', UpdateStatus)
+end
 
 function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
     PlayerFrame:ClearAllPoints()
@@ -2405,6 +2477,7 @@ function frame:OnEvent(event, arg1)
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
+        Module.MoveAttackIcon()
         if DF.Wrath then
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
@@ -2446,6 +2519,7 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
+    Module.HookPlayerStatus()
     Module.HookDrag()
 end
 
@@ -2465,5 +2539,6 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
+    Module.HookPlayerStatus()
     Module.HookDrag()
 end
