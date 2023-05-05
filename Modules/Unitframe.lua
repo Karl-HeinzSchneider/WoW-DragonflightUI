@@ -1371,6 +1371,17 @@ function Module.HookDrag()
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
     hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
+
+    local DragStopTargetFrame = function(self)
+        Module.SaveLocalSettings()
+
+        for k, v in pairs(localSettings.target) do
+            Module.db.profile.target[k] = v
+        end
+        Module.db.profile.target.override = false
+    end
+    TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
+    hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
 end
 
 function Module.HookVertexColor()
