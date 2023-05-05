@@ -1382,6 +1382,19 @@ function Module.HookDrag()
     end
     TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
     hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
+
+    if DF.Wrath then
+        local DragStopFocusFrame = function(self)
+            Module.SaveLocalSettings()
+
+            for k, v in pairs(localSettings.focus) do
+                Module.db.profile.focus[k] = v
+            end
+            Module.db.profile.focus.override = false
+        end
+        FocusFrame:HookScript('OnDragStop', DragStopFocusFrame)
+    --hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)
+    end
 end
 
 function Module.HookVertexColor()
