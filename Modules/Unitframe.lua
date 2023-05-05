@@ -1567,7 +1567,7 @@ end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
-function Module.HookStatus()
+function Module.HookPlayerStatus()
     --[[ PlayerFrame:HookScript(
         'OnUpdate',
         function(self)
@@ -2519,7 +2519,7 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
-    Module.HookStatus()
+    Module.HookPlayerStatus()
     Module.HookDrag()
 end
 
@@ -2539,6 +2539,6 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
-    Module.HookStatus()
+    Module.HookPlayerStatus()
     Module.HookDrag()
 end
