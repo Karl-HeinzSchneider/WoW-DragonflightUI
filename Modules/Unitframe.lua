@@ -1563,18 +1563,59 @@ function Module.ChangePlayerframe()
 
     PlayerStatusTexture:ClearAllPoints()
     PlayerStatusTexture:SetPoint('TOPLEFT', frame.PlayerFrameBorder, 'TOPLEFT', 1, 1)
+end
+--ChangePlayerframe()
+--frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
-    PlayerFrame:HookScript(
+function Module.HookStatus()
+    --[[ PlayerFrame:HookScript(
         'OnUpdate',
         function(self)
             if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
                 PlayerStatusTexture:SetAlpha(1.0)
             end
         end
-    )
+    ) ]]
+    local UpdateStatus = function()
+        if not frame.PlayerFrameDeco then
+            return
+        end
+
+        -- TODO: fix statusglow
+        PlayerStatusGlow:Hide()
+
+        if (UnitHasVehiclePlayerFrameUI('player')) then
+            -- TODO: vehicle stuff
+            --frame.PlayerFrameDeco:Show()
+        elseif IsResting() then
+            frame.PlayerFrameDeco:Show()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+            PlayerStatusTexture:SetAlpha(1.0)
+        elseif PlayerFrame.onHateList then
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            frame.PlayerFrameDeco:Hide()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+        elseif PlayerFrame.inCombat then
+            frame.PlayerFrameDeco:Hide()
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            PlayerStatusTexture:SetAlpha(1.0)
+        else
+            frame.PlayerFrameDeco:Show()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        end
+    end
+
+    hooksecurefunc('PlayerFrame_UpdateStatus', UpdateStatus)
 end
---ChangePlayerframe()
---frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
     PlayerFrame:ClearAllPoints()
@@ -2436,7 +2477,6 @@ function frame:OnEvent(event, arg1)
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
-        Module.PlayerFrame_UpdateStatus()
         Module.MoveAttackIcon()
         if DF.Wrath then
             Module.ChangeFocusFrame()
@@ -2448,18 +2488,6 @@ function frame:OnEvent(event, arg1)
 
         Module.inCombat = nil
         Module.onHateList = nil
-    elseif event == 'PLAYER_ENTER_COMBAT' then
-        Module.inCombat = 1
-        Module.PlayerFrame_UpdateStatus()
-    elseif event == 'PLAYER_LEAVE_COMBAT' then
-        Module.inCombat = nil
-        Module.PlayerFrame_UpdateStatus()
-    elseif event == 'PLAYER_REGEN_DISABLED' then
-        Module.onHateList = 1
-        Module.PlayerFrame_UpdateStatus()
-    elseif event == 'PLAYER_REGEN_ENABLED' then
-        Module.onHateList = nil
-        Module.PlayerFrame_UpdateStatus()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         --Module.ApplySettings()
         Module.ReApplyTargetFrame()
@@ -2473,46 +2501,12 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     end
 end
-
-function Module.PlayerFrame_UpdateStatus()
-    PlayerStatusGlow:Hide()
-
-    if IsResting() then
-        frame.PlayerFrameDeco:Show()
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
-        PlayerStatusTexture:Show()
-        PlayerStatusTexture:SetAlpha(1.0)
-    elseif PlayerFrame.inCombat then
-        frame.PlayerFrameDeco:Hide()
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-        PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-        PlayerStatusTexture:Show()
-        PlayerStatusTexture:SetAlpha(1.0)
-    elseif PlayerFrame.onHateList then
-        frame.PlayerFrameDeco:Hide()
-        PlayerStatusTexture:Show()
-        PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-    else
-        frame.PlayerFrameDeco:Show()
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-    end
-end
-
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-
-    frame:RegisterEvent('PLAYER_ENTER_COMBAT')
-    frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
-    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
-    frame:RegisterEvent('PLAYER_REGEN_DISABLED')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2528,6 +2522,7 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
+    Module.HookStatus()
     Module.HookDrag()
 end
 
@@ -2535,11 +2530,6 @@ function Module.Era()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-
-    frame:RegisterEvent('PLAYER_ENTER_COMBAT')
-    frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
-    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
-    frame:RegisterEvent('PLAYER_REGEN_DISABLED')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2552,5 +2542,6 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     Module.HookVertexColor()
+    Module.HookStatus()
     Module.HookDrag()
 end
