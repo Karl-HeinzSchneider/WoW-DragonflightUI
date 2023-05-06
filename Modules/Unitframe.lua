@@ -1479,11 +1479,9 @@ end
 
 function Module.ChangePlayerframe()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-    if UnitInVehicle("player") then
-        SetPortraitTexture(PlayerPortrait, "vehicle", true)
-    else
-        SetPortraitTexture(PlayerPortrait, "player", true)
-    end
+
+    Module.RefreshPortrait()
+
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
@@ -1587,10 +1585,12 @@ function Module.HookPlayerStatus()
 
         -- TODO: fix statusglow
         PlayerStatusGlow:Hide()
-
+        
         if (UnitHasVehiclePlayerFrameUI('player')) then
             -- TODO: vehicle stuff
             --frame.PlayerFrameDeco:Show()
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
         elseif IsResting() then
             frame.PlayerFrameDeco:Show()
             frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
@@ -2544,7 +2544,7 @@ function Module.HookRestFunctions()
 end
 
 function frame:OnEvent(event, arg1)
-    --print(event, arg1)
+    print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
@@ -2583,15 +2583,30 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         Module.ChangePlayerframe()
-    elseif event == 'UNIT_PORTRAIT_UPDATE' and arg1 == 'pet' then
-        SetPortraitTexture(PetPortrait, "pet", true)
-    elseif event == 'UNIT_PORTRAIT_UPDATE' and arg1 == 'player' then
+    elseif event == 'UNIT_PORTRAIT_UPDATE' then
+        print('UNIT_PORTRAIT_UPDATE')
+        Module.RefreshPortrait()
+    elseif event == 'PORTRAITS_UPDATED' then
+        Module.RefreshPortrait()
+    end
+
+end
+
+function Module.RefreshPortrait()
+    if UnitHasVehiclePlayerFrameUI("player") then
+        SetPortraitTexture(PlayerPortrait, "vehicle", true)
+    else
         SetPortraitTexture(PlayerPortrait, "player", true)
     end
 end
 
 function Module.ApplyPortraitMask()
-   
+    if UnitInVehicle("player") then
+        SetPortraitTexture(PlayerPortrait, "vehicle", true)
+    else
+        SetPortraitTexture(PlayerPortrait, "player", true)
+    end
+
     local mask = frame:CreateMaskTexture()
     mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
     mask:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
@@ -2639,6 +2654,8 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    frame:RegisterEvent('PORTRAITS_UPDATED')
+
     Module.HookRestFunctions()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
@@ -2661,6 +2678,8 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED')
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+
+    frame:RegisterEvent('PORTRAITS_UPDATED')
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
