@@ -2525,6 +2525,18 @@ function Module.HookRestFunctions()
             PlayerRestGlow:Hide()
         end
     )
+
+    hooksecurefunc(
+        'SetUIVisibility',
+        function(visible)
+            if visible then
+                PlayerFrame_UpdateStatus()
+            else
+                frame.RestIcon:Hide()
+                frame.RestIconAnimation:Stop()
+            end
+        end
+    )
 end
 
 function frame:OnEvent(event, arg1)
