@@ -2569,23 +2569,6 @@ function frame:OnEvent(event, arg1)
         Module.ChangePetFrame()
 
         Module.ApplySettings()
-
-        Module.inCombat = nil;
-		Module.onHateList = nil;
-    elseif event == "PLAYER_ENTER_COMBAT" then
-        Module.inCombat = 1;
-        Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_LEAVE_COMBAT" then
-        Module.inCombat = nil;
-        Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_REGEN_DISABLED" then
-        Module.onHateList = 1;
-        Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_UPDATE_RESTING" then
-		Module.PlayerFrame_UpdateStatus();
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        Module.onHateList = nil;
-        Module.PlayerFrame_UpdateStatus();
     elseif event == 'PLAYER_TARGET_CHANGED' then
         --Module.ApplySettings()
         Module.ReApplyTargetFrame()
