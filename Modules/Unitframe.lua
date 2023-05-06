@@ -1479,7 +1479,11 @@ end
 
 function Module.ChangePlayerframe()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
+    if UnitInVehicle("player") then
+        SetPortraitTexture(PlayerPortrait, "vehicle", true)
+    else
+        SetPortraitTexture(PlayerPortrait, "player", true)
+    end
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
@@ -2561,7 +2565,6 @@ function frame:OnEvent(event, arg1)
         Module.ReApplyToT()
         Module.MoveAttackIcon()
         Module.CreateRestFlipbook()
-        Module.ApplyPortraitMask()
         if DF.Wrath then
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
@@ -2580,12 +2583,15 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         Module.ChangePlayerframe()
+    elseif event == 'UNIT_PORTRAIT_UPDATE' and arg1 == 'pet' then
+        SetPortraitTexture(PetPortrait, "pet", true)
     elseif event == 'UNIT_PORTRAIT_UPDATE' and arg1 == 'player' then
         SetPortraitTexture(PlayerPortrait, "player", true)
     end
 end
 
 function Module.ApplyPortraitMask()
+   
     local mask = frame:CreateMaskTexture()
     mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
     mask:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
@@ -2605,6 +2611,11 @@ function Module.ApplyPortraitMask()
     maskToT:SetAllPoints(TargetFrameToTPortrait)
     maskToT:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     TargetFrameToTPortrait:AddMaskTexture(maskToT)
+
+    local maskPet = frame:CreateMaskTexture()
+    maskPet:SetAllPoints(PetPortrait)
+    maskPet:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    PetPortrait:AddMaskTexture(maskPet)
 end
 
 frame:SetScript('OnEvent', frame.OnEvent)
@@ -2632,6 +2643,8 @@ function Module.Wrath()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
     Module.HookDrag()
+
+    Module.ApplyPortraitMask()
 end
 
 function Module.Era()
