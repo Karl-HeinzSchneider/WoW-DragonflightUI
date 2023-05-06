@@ -2604,7 +2604,7 @@ end
 
 function Module.ApplyPortraitMask()
     local mask = frame:CreateMaskTexture()
-    mask:SetAllPoints(PlayerPortrait)
+    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
     mask:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     PlayerPortrait:AddMaskTexture(mask)
 
@@ -2624,53 +2624,6 @@ function Module.ApplyPortraitMask()
     TargetFrameToTPortrait:AddMaskTexture(maskToT)
 end
 
-function Module.PlayerFrame_UpdateStatus()
-    PlayerStatusGlow:Hide()
-    PlayerRestIcon:Hide()
-    PlayerRestGlow:Hide()
-
-    if IsResting() then
-        frame.PlayerFrameDeco:Show()
-
-        frame.RestIcon:Show()
-        frame.RestIconAnimation:Play()
-
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0);
-        PlayerStatusTexture:Show();
-        PlayerStatusTexture:SetAlpha(1.0)
-    elseif PlayerFrame.inCombat then
-        frame.PlayerFrameDeco:Hide()
-
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-        PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-        PlayerStatusTexture:Show()
-        PlayerStatusTexture:SetAlpha(1.0)
-    elseif PlayerFrame.onHateList then
-        frame.PlayerFrameDeco:Hide()
-
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-
-        PlayerStatusTexture:Show()
-        
-        PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-    else
-        frame.PlayerFrameDeco:Show()
-        
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-    end
-end
-
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
@@ -2678,12 +2631,6 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
     frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
-
-    frame:RegisterEvent('PLAYER_ENTER_COMBAT')
-    frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
-    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
-    frame:RegisterEvent('PLAYER_REGEN_DISABLED')
-    frame:RegisterEvent('PLAYER_UPDATE_RESTING')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2708,12 +2655,6 @@ function Module.Era()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-
-    frame:RegisterEvent('PLAYER_ENTER_COMBAT')
-    frame:RegisterEvent('PLAYER_LEAVE_COMBAT')
-    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
-    frame:RegisterEvent('PLAYER_REGEN_DISABLED')
-    frame:RegisterEvent('PLAYER_UPDATE_RESTING')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
