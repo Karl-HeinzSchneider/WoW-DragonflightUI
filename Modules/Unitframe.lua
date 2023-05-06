@@ -1601,7 +1601,7 @@ function Module.HookPlayerStatus()
             --PlayerStatusTexture:Show()
             --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
             frame.PlayerFrameDeco:Hide()
-            
+
             frame.RestIcon:Hide()
             frame.RestIconAnimation:Stop()
 
@@ -2502,17 +2502,29 @@ function Module.CreateRestFlipbook()
 end
 
 function Module.HookRestFunctions()
-    hooksecurefunc(PlayerStatusGlow, 'Show', function()
-        PlayerStatusGlow:Hide()
-    end)
+    hooksecurefunc(
+        PlayerStatusGlow,
+        'Show',
+        function()
+            PlayerStatusGlow:Hide()
+        end
+    )
 
-    hooksecurefunc(PlayerRestIcon, 'Show', function()
-        PlayerRestIcon:Hide()
-    end)
+    hooksecurefunc(
+        PlayerRestIcon,
+        'Show',
+        function()
+            PlayerRestIcon:Hide()
+        end
+    )
 
-    hooksecurefunc(PlayerRestGlow, 'Show', function()
-        PlayerRestGlow:Hide()
-    end)
+    hooksecurefunc(
+        PlayerRestGlow,
+        'Show',
+        function()
+            PlayerRestGlow:Hide()
+        end
+    )
 end
 
 function frame:OnEvent(event, arg1)
