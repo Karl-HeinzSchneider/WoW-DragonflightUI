@@ -9,51 +9,427 @@ Module.famous = {['Norbert'] = true}
 local defaults = {
     profile = {
         scale = 1,
-        colorPlayer = false,
-        colorTarget = false,
-        colorFocus = false,
-        playerOverride = false,
-        playerScale = 1,
-        playerAnchor = 'TOPLEFT',
-        playerAnchorParent = 'TOPLEFT',
-        playerX = -19,
-        playerY = -4,
-        targetOverride = false,
-        targetScale = 1,
-        targetAnchor = 'TOPLEFT',
-        targetAnchorParent = 'TOPLEFT',
-        targetX = 250,
-        targetY = -4,
-        focusOverride = false,
-        focusScale = 1,
-        focusAnchor = 'TOPLEFT',
-        focusAnchorParent = 'TOPLEFT',
-        focusX = 250,
-        focusY = -170
+        focus = {
+            classcolor = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = 250,
+            y = -170
+        },
+        player = {
+            classcolor = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = -19,
+            y = -4
+        },
+        target = {
+            classcolor = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = 250,
+            y = -4
+        }
     }
 }
 
-local function getDefaultStr(key)
-    return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+local defaultsPROTO = {
+    classcolor = false,
+    scale = 1.0,
+    override = false,
+    anchor = 'TOPLEFT',
+    anchorParent = 'TOPLEFT',
+    x = -19,
+    y = -4
+}
+
+local localSettings = {
+    scale = 1,
+    focus = {
+        scale = 1.0,
+        anchor = 'TOPLEFT',
+        anchorParent = 'TOPLEFT',
+        x = 250,
+        y = -170
+    },
+    player = {
+        scale = 1.0,
+        anchor = 'TOPLEFT',
+        anchorParent = 'TOPLEFT',
+        x = -19,
+        y = -4
+    },
+    target = {
+        scale = 1.0,
+        anchor = 'TOPLEFT',
+        anchorParent = 'TOPLEFT',
+        x = 250,
+        y = -4
+    }
+}
+
+local function getDefaultStr(key, sub)
+    --print('default str', sub, key)
+    if sub then
+        local obj = defaults.profile[sub]
+        local value = obj[key]
+        return '\n' .. '(Default: ' .. tostring(value) .. ')'
+    else
+        local obj = defaults.profile
+        local value = obj[key]
+        return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+    end
 end
 
 local function setDefaultValues()
     for k, v in pairs(defaults.profile) do
-        Module.db.profile[k] = v
+        if type(v) == 'table' then
+            local obj = Module.db.profile[k]
+            for kSub, vSub in pairs(v) do
+                obj[kSub] = vSub
+            end
+        else
+            Module.db.profile[k] = v
+        end
     end
     Module.ApplySettings()
 end
 
 -- db[info[#info] = VALUE
 local function getOption(info)
-    return db[info[#info]]
+    local key = info[1]
+    local sub = info[2]
+    --print('getOption', key, sub)
+    --print('db', db[key])
+
+    if sub then
+        --return db[key .. '.' .. sub]
+        local t = Module.db.profile[key]
+        return t[sub]
+    else
+        --return db[info[#info]]
+        return db[key]
+    end
 end
 
 local function setOption(info, value)
     local key = info[1]
-    Module.db.profile[key] = value
-    Module.ApplySettings()
+    local sub = info[2]
+    --print('setOption', key, sub)
+
+    if sub then
+        local t = Module.db.profile[key]
+        t[sub] = value
+        --Module.db.profile[key .. '.' .. sub] = value
+        Module.ApplySettings()
+    else
+        Module.db.profile[key] = value
+        Module.ApplySettings()
+    end
 end
+
+local optionsPlayer = {
+    name = 'Player',
+    desc = 'PlayerframeDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        configGeneral = {
+            type = 'header',
+            name = 'General',
+            order = 10
+        },
+        classcolor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 10.1
+        },
+        configSize = {
+            type = 'header',
+            name = 'Size',
+            order = 50
+        },
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'player'),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.025,
+            order = 50.1
+        },
+        configPos = {
+            type = 'header',
+            name = 'Position',
+            order = 100
+        },
+        override = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 101,
+            width = 'full'
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'player'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'player'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105.1
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'player'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'player'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
+        }
+    }
+}
+
+local optionsTarget = {
+    name = 'Target',
+    desc = 'TargetFrameDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        configGeneral = {
+            type = 'header',
+            name = 'General',
+            order = 10
+        },
+        classcolor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 10.1
+        },
+        configSize = {
+            type = 'header',
+            name = 'Size',
+            order = 50
+        },
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'target'),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.025,
+            order = 50.1
+        },
+        configPos = {
+            type = 'header',
+            name = 'Position',
+            order = 100
+        },
+        override = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 101,
+            width = 'full'
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'target'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'target'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105.1
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'target'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'target'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
+        }
+    }
+}
+
+local optionsFocus = {
+    name = 'Focus',
+    desc = 'FocusFrameDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        configGeneral = {
+            type = 'header',
+            name = 'General',
+            order = 10
+        },
+        classcolor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 10.1
+        },
+        configSize = {
+            type = 'header',
+            name = 'Size',
+            order = 50
+        },
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'focus'),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.025,
+            order = 50.1
+        },
+        configPos = {
+            type = 'header',
+            name = 'Position',
+            order = 100
+        },
+        override = {
+            type = 'toggle',
+            name = 'Override',
+            desc = 'Override positions',
+            order = 101,
+            width = 'full'
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'focus'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'focus'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105.1
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'focus'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'focus'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
+        }
+    }
+}
 
 local options = {
     type = 'group',
@@ -88,271 +464,9 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        presetPlayerTargetInfo = {
-            type = 'header',
-            name = 'Preset Player and Target frame',
-            order = 50
-        },
-        presetPlayerTargetDefault = {
-            type = 'execute',
-            name = 'Default',
-            desc = 'Default(TOPLEFT)',
-            func = function()
-                Module.MovePlayerTargetPreset('DEFAULT')
-            end,
-            order = 51
-        },
-        presetPlayerTargetCentered = {
-            type = 'execute',
-            name = 'Centered',
-            desc = '',
-            func = function()
-                Module.MovePlayerTargetPreset('CENTER')
-            end,
-            order = 52
-        },
-        colorConfig = {
-            type = 'header',
-            name = 'Classcolor healthbar',
-            order = 70
-        },
-        colorPlayer = {
-            type = 'toggle',
-            name = 'Player',
-            desc = 'Enable classcolors for the player healthbar',
-            order = 71.1
-        },
-        colorTarget = {
-            type = 'toggle',
-            name = 'Target',
-            desc = 'Enable classcolors for the target healthbar',
-            order = 71.2
-        },
-        colorFocus = {
-            type = 'toggle',
-            name = 'Focus',
-            desc = 'Enable classcolors for the focus healthbar',
-            order = 71.3
-        },
-        playerConfig = {
-            type = 'header',
-            name = 'Position - Playerframe',
-            order = 100
-        },
-        playerOverride = {
-            type = 'toggle',
-            name = 'Override',
-            desc = 'Override positions',
-            order = 101
-        },
-        playerAnchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('playerAnchor'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 105
-        },
-        playerAnchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('playerAnchorParent'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 105.1
-        },
-        playerScale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('playerScale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 106,
-            disabled = true
-        },
-        playerX = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('playerX'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 107
-        },
-        playerY = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('playerY'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 108
-        },
-        targetConfig = {
-            type = 'header',
-            name = 'Position - Targetframe',
-            order = 200
-        },
-        targetOverride = {
-            type = 'toggle',
-            name = 'Override',
-            desc = 'Override positions',
-            order = 201
-        },
-        targetAnchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr(' targetAnchor'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 205
-        },
-        targetAnchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('targetAnchorParent'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 205.1
-        },
-        targetScale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr(' targetScale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 206,
-            disabled = true
-        },
-        targetX = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('targetX'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 207
-        },
-        targetY = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('targetY'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 208
-        },
-        focusConfig = {
-            type = 'header',
-            name = 'Position - Focusframe',
-            order = 300
-        },
-        focusOverride = {
-            type = 'toggle',
-            name = 'Override',
-            desc = 'Override positions',
-            order = 301
-        },
-        focusAnchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr(' focusAnchor'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 305
-        },
-        focusAnchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('focusAnchorParent'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 305.1
-        },
-        focusScale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr(' focusScale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 306,
-            disabled = true
-        },
-        focusX = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('focusX'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 307
-        },
-        focusY = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('focusY'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 308
-        }
+        focus = optionsFocus,
+        player = optionsPlayer,
+        target = optionsTarget
     }
 }
 
@@ -373,38 +487,105 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:SaveLocalSettings()
     Module:ApplySettings()
 end
 
 function Module:OnDisable()
 end
 
+function Module:SaveLocalSettings()
+    -- playerframe
+    do
+        local scale = PlayerFrame:GetScale()
+        local point, relativeTo, relativePoint, xOfs, yOfs = PlayerFrame:GetPoint(1)
+        --print('PlayerFrame', point, relativePoint, xOfs, yOfs)
+
+        local obj = localSettings.player
+        obj.scale = scale
+        obj.anchor = point
+        obj.anchorParent = relativePoint
+        obj.x = xOfs
+        obj.y = yOfs
+    end
+    -- targetframe
+    do
+        local scale = TargetFrame:GetScale()
+        local point, relativeTo, relativePoint, xOfs, yOfs = TargetFrame:GetPoint(1)
+        --print('TargetFrame', point, relativePoint, xOfs, yOfs)
+
+        local obj = localSettings.target
+        obj.scale = scale
+        obj.anchor = point
+        obj.anchorParent = relativePoint
+        obj.x = xOfs
+        obj.y = yOfs
+    end
+    -- focusframe
+    if DF.Wrath then
+        do
+            local scale = FocusFrame:GetScale()
+            local point, relativeTo, relativePoint, xOfs, yOfs = FocusFrame:GetPoint(1)
+            --print('FocusFrame', point, relativePoint, xOfs, yOfs)
+
+            local obj = localSettings.focus
+            obj.scale = scale
+            obj.anchor = point
+            obj.anchorParent = relativePoint
+            obj.x = xOfs
+            obj.y = yOfs
+        end
+    end
+
+    --DevTools_Dump({localSettings})
+end
+
 function Module:ApplySettings()
     db = Module.db.profile
-
     local orig = defaults.profile
 
-    if db.playerOverride then
-        Module.MovePlayerFrame(db.playerAnchor, db.playerAnchorParent, db.playerX, db.playerY)
-    else
-        Module.MovePlayerFrame(orig.playerAnchor, orig.playerAnchorParent, orig.playerX, orig.playerY)
+    -- playerframe
+    do
+        local obj = db.player
+        local objLocal = localSettings.player
+        if obj.override then
+            Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
+            PlayerFrame:SetUserPlaced(true)
+        else
+            Module.MovePlayerFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
+        end
+        PlayerFrame:SetScale(obj.scale)
+        Module.ChangePlayerframe()
     end
-    Module.ChangePlayerframe()
 
-    if db.targetOverride then
-        Module.MoveTargetFrame(db.targetAnchor, db.targetAnchorParent, db.targetX, db.targetY)
-    else
-        Module.MoveTargetFrame(orig.targetAnchor, orig.targetAnchorParent, orig.targetX, orig.targetY)
+    -- target
+    do
+        local obj = db.target
+        local objLocal = localSettings.target
+        if obj.override then
+            Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
+            TargetFrame:SetUserPlaced(true)
+        else
+            Module.MoveTargetFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
+        end
+        TargetFrame:SetScale(obj.scale)
+        Module.ReApplyTargetFrame()
     end
-    Module.ReApplyTargetFrame()
 
     if DF.Wrath then
-        if db.focusOverride then
-            Module.MoveFocusFrame(db.focusAnchor, db.focusAnchorParent, db.focusX, db.focusY)
-        else
-            Module.MoveFocusFrame(orig.focusAnchor, orig.focusAnchorParent, orig.focusX, orig.focusY)
+        -- focus
+        do
+            local obj = db.focus
+            local objLocal = localSettings.focus
+            if obj.override then
+                Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
+                FocusFrame:SetUserPlaced(true)
+            else
+                Module.MoveFocusFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
+            end
+            FocusFrame:SetScale(obj.scale)
+            Module.ReApplyFocusFrame()
         end
-        Module.ReApplyFocusFrame()
     end
 end
 
@@ -1200,37 +1381,48 @@ function Module.MoveAttackIcon()
     PlayerAttackBackground:SetSize(32, 32)
 end
 
-function Module.CreateRestFlipbook()
-    local rest = CreateFrame('FRAME', 'DragonflightUIRestFlipbook')
-    rest:SetSize(20, 20)
-    rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
-    rest:SetFrameLevel(5)
+function Module.HookDrag()
+    local DragStopPlayerFrame = function(self)
+        Module.SaveLocalSettings()
 
-    local extra = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
-    extra:SetAllPoints()
-    extra:SetColorTexture(1, 1, 1, 1)
-    extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+        for k, v in pairs(localSettings.player) do
+            Module.db.profile.player[k] = v
+        end
+        Module.db.profile.player.override = false
+    end
+    PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
+    hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
 
-    local animationGroup = extra:CreateAnimationGroup()
-    local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
-    
-    animationGroup:SetLooping('REPEAT')
-    animation:SetFlipBookFrameWidth(64)
-    animation:SetFlipBookFrameHeight(64)
-    animation:SetFlipBookRows(1)
-    animation:SetFlipBookColumns(8)
-    animation:SetFlipBookFrames(8)
-    animation:SetDuration(2)
+    local DragStopTargetFrame = function(self)
+        Module.SaveLocalSettings()
 
-    frame.RestIcon = rest
-    frame.RestIconAnimation = animationGroup
+        for k, v in pairs(localSettings.target) do
+            Module.db.profile.target[k] = v
+        end
+        Module.db.profile.target.override = false
+    end
+    TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
+    hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
+
+    if DF.Wrath then
+        local DragStopFocusFrame = function(self)
+            Module.SaveLocalSettings()
+
+            for k, v in pairs(localSettings.focus) do
+                Module.db.profile.focus[k] = v
+            end
+            Module.db.profile.focus.override = false
+        end
+        FocusFrame:HookScript('OnDragStop', DragStopFocusFrame)
+    --hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)
+    end
 end
 
 function Module.HookVertexColor()
     PlayerFrameHealthBar:HookScript(
         'OnValueChanged',
         function(self)
-            if Module.db.profile.colorPlayer then
+            if Module.db.profile.player.classcolor then
                 PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
                 )
@@ -1249,7 +1441,7 @@ function Module.HookVertexColor()
     TargetFrameHealthBar:HookScript(
         'OnValueChanged',
         function(self)
-            if Module.db.profile.colorTarget and UnitIsPlayer('target') then
+            if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
                 TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
                 )
@@ -1268,7 +1460,7 @@ function Module.HookVertexColor()
         FocusFrameHealthBar:HookScript(
             'OnValueChanged',
             function(self)
-                if Module.db.profile.colorFocus and UnitIsPlayer('focus') then
+                if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
                     FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
                         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
                     )
@@ -1309,7 +1501,7 @@ function Module.ChangePlayerframe()
     PlayerFrameHealthBar:ClearAllPoints()
     PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
 
-    if Module.db.profile.colorPlayer then
+    if Module.db.profile.player.classcolor then
         PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
         )
@@ -1331,7 +1523,7 @@ function Module.ChangePlayerframe()
 
     -- Mana 119,12
     PlayerFrameManaBar:ClearAllPoints()
-    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17)
+    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17 + 0.5)
     PlayerFrameManaBar:SetSize(125, 8)
 
     PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, 0)
@@ -1370,16 +1562,75 @@ function Module.ChangePlayerframe()
     PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
 
     PlayerStatusTexture:ClearAllPoints()
-    PlayerStatusTexture:SetPoint("TOPLEFT", frame.PlayerFrameBorder, "TOPLEFT", 1, 1);
-
-    PlayerFrame:HookScript('OnUpdate', function(self)
-        if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
-            PlayerStatusTexture:SetAlpha(1.0)
-        end
-    end)
+    PlayerStatusTexture:SetPoint('TOPLEFT', frame.PlayerFrameBorder, 'TOPLEFT', 1, 1)
 end
 --ChangePlayerframe()
 --frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+function Module.HookPlayerStatus()
+    --[[ PlayerFrame:HookScript(
+        'OnUpdate',
+        function(self)
+            if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
+                PlayerStatusTexture:SetAlpha(1.0)
+            end
+        end
+    ) ]]
+    local UpdateStatus = function()
+        if not frame.PlayerFrameDeco then
+            return
+        end
+
+        -- TODO: fix statusglow
+        PlayerStatusGlow:Hide()
+
+        if (UnitHasVehiclePlayerFrameUI('player')) then
+            -- TODO: vehicle stuff
+            --frame.PlayerFrameDeco:Show()
+        elseif IsResting() then
+            frame.PlayerFrameDeco:Show()
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+
+            frame.RestIcon:Show()
+            frame.RestIconAnimation:Play()
+
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+            PlayerStatusTexture:SetAlpha(1.0)
+        elseif PlayerFrame.onHateList then
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            frame.PlayerFrameDeco:Hide()
+
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+        elseif PlayerFrame.inCombat then
+            frame.PlayerFrameDeco:Hide()
+
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+
+            --PlayerStatusTexture:Show()
+            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            PlayerStatusTexture:SetAlpha(1.0)
+        else
+            frame.PlayerFrameDeco:Show()
+
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        end
+    end
+
+    hooksecurefunc('PlayerFrame_UpdateStatus', UpdateStatus)
+end
 
 function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
     PlayerFrame:ClearAllPoints()
@@ -1550,7 +1801,7 @@ function Module.ChangeTargetFrame()
 end
 
 function Module.ReApplyTargetFrame()
-    if Module.db.profile.colorTarget and UnitIsPlayer('target') then
+    if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
         )
@@ -1997,7 +2248,7 @@ function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
 end
 
 function Module.ReApplyFocusFrame()
-    if Module.db.profile.colorFocus and UnitIsPlayer('focus') then
+    if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
         FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
         )
@@ -2221,6 +2472,73 @@ function Module.ChangePetFrame()
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
 
+function Module.CreateRestFlipbook()
+    if not frame.RestIcon then
+        local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
+        rest:SetSize(20, 20)
+        rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
+
+        local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
+        restTexture:SetAllPoints()
+        restTexture:SetColorTexture(1, 1, 1, 1)
+        restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+
+        local animationGroup = restTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
+
+        animationGroup:SetLooping('REPEAT')
+        animation:SetFlipBookFrameWidth(64)
+        animation:SetFlipBookFrameHeight(64)
+        animation:SetFlipBookRows(1)
+        animation:SetFlipBookColumns(8)
+        animation:SetFlipBookFrames(8)
+        animation:SetDuration(2)
+
+        frame.RestIcon = rest
+        frame.RestIconAnimation = animationGroup
+
+        PlayerFrame_UpdateStatus()
+    end
+end
+
+function Module.HookRestFunctions()
+    hooksecurefunc(
+        PlayerStatusGlow,
+        'Show',
+        function()
+            PlayerStatusGlow:Hide()
+        end
+    )
+
+    hooksecurefunc(
+        PlayerRestIcon,
+        'Show',
+        function()
+            PlayerRestIcon:Hide()
+        end
+    )
+
+    hooksecurefunc(
+        PlayerRestGlow,
+        'Show',
+        function()
+            PlayerRestGlow:Hide()
+        end
+    )
+
+    hooksecurefunc(
+        'SetUIVisibility',
+        function(visible)
+            if visible then
+                PlayerFrame_UpdateStatus()
+            else
+                frame.RestIcon:Hide()
+                frame.RestIconAnimation:Stop()
+            end
+        end
+    )
+end
+
 function frame:OnEvent(event, arg1)
     --print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
@@ -2241,11 +2559,9 @@ function frame:OnEvent(event, arg1)
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
-        Module.CreateRestFlipbook()
-        Module.PlayerFrame_UpdateStatus()
         Module.MoveAttackIcon()
+        Module.CreateRestFlipbook()
         Module.ApplyPortraitMask()
-
         if DF.Wrath then
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
@@ -2382,7 +2698,10 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    Module.HookRestFunctions()
     Module.HookVertexColor()
+    Module.HookPlayerStatus()
+    Module.HookDrag()
 end
 
 function Module.Era()
@@ -2406,5 +2725,8 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    Module.HookRestFunctions()
     Module.HookVertexColor()
+    Module.HookPlayerStatus()
+    Module.HookDrag()
 end

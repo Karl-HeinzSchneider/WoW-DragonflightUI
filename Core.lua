@@ -56,7 +56,14 @@ function DF:Debug(m, value)
 end
 
 function DF:ShowStartMessage()
-    local version = GetAddOnMetadata('DragonflightUI', 'Version')
+    local version = ''
+
+    if not GetAddOnMetadata then
+        version = C_AddOns.GetAddOnMetadata('DragonflightUI', 'Version')
+    else
+        version = GetAddOnMetadata('DragonflightUI', 'Version')
+    end
+
     self:Print(version .. " loaded! Type '/dragonflight'or '/df' to open the options menu.")
 end
 
