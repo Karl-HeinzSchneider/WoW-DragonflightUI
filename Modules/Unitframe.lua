@@ -1585,6 +1585,7 @@ function Module.HookPlayerStatus()
 
         -- TODO: fix statusglow
         PlayerStatusGlow:Hide()
+
         if (UnitHasVehiclePlayerFrameUI('player')) then
             -- TODO: vehicle stuff
             --frame.PlayerFrameDeco:Show()
