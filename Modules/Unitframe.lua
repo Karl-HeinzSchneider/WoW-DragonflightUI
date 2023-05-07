@@ -1585,7 +1585,6 @@ function Module.HookPlayerStatus()
 
         -- TODO: fix statusglow
         PlayerStatusGlow:Hide()
-        
         if (UnitHasVehiclePlayerFrameUI('player')) then
             -- TODO: vehicle stuff
             --frame.PlayerFrameDeco:Show()
@@ -2544,7 +2543,7 @@ function Module.HookRestFunctions()
 end
 
 function frame:OnEvent(event, arg1)
-    print(event, arg1)
+    --print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
@@ -2653,7 +2652,6 @@ function Module.Wrath()
     Module.HookPlayerStatus()
     Module.HookDrag()
 
-    Module.RefreshPortrait()
     Module.ApplyPortraitMask()
 end
 
@@ -2661,6 +2659,7 @@ function Module.Era()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2678,4 +2677,6 @@ function Module.Era()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
     Module.HookDrag()
+
+    Module.ApplyPortraitMask()
 end
