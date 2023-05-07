@@ -2590,37 +2590,40 @@ function frame:OnEvent(event, arg1)
 end
 
 function Module.RefreshPortrait()
-    if UnitHasVehiclePlayerFrameUI("player") then
-        SetPortraitTexture(PlayerPortrait, "vehicle", true)
+    if UnitHasVehiclePlayerFrameUI('player') then
+        SetPortraitTexture(PlayerPortrait, 'vehicle', true)
     else
-        SetPortraitTexture(PlayerPortrait, "player", true)
+        SetPortraitTexture(PlayerPortrait, 'player', true)
     end
 end
 
 function Module.ApplyPortraitMask()
+    local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
+    local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+
     local mask = frame:CreateMaskTexture()
     mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
-    mask:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     PlayerPortrait:AddMaskTexture(mask)
 
     local maskFocus = frame:CreateMaskTexture()
     maskFocus:SetAllPoints(FocusFramePortrait)
-    maskFocus:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     FocusFramePortrait:AddMaskTexture(maskFocus)
 
     local maskTarget = frame:CreateMaskTexture()
     maskTarget:SetAllPoints(TargetFramePortrait)
-    maskTarget:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     TargetFramePortrait:AddMaskTexture(maskTarget)
 
     local maskToT = frame:CreateMaskTexture()
     maskToT:SetAllPoints(TargetFrameToTPortrait)
-    maskToT:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     TargetFrameToTPortrait:AddMaskTexture(maskToT)
 
     local maskPet = frame:CreateMaskTexture()
     maskPet:SetAllPoints(PetPortrait)
-    maskPet:SetTexture("Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     PetPortrait:AddMaskTexture(maskPet)
 end
 
