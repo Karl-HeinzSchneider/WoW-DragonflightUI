@@ -1362,23 +1362,36 @@ function Module.CreatePlayerFrameTextures()
     end
 end
 
-function Module.MoveAttackIcon()
+function Module.ChangeStatusIcons()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PlayerAttackIcon:SetTexture(base)
-    PlayerAttackBackground:SetTexture(base)
-
     PlayerAttackIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon'))
-    PlayerAttackBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon-Glow'))
-
     PlayerAttackIcon:ClearAllPoints()
-    PlayerAttackBackground:ClearAllPoints()
-
     PlayerAttackIcon:SetPoint('BOTTOMRIGHT', PlayerPortrait, 'BOTTOMRIGHT', -3, 0)
-    PlayerAttackBackground:SetPoint('CENTER', PlayerAttackIcon, 'CENTER')
-
     PlayerAttackIcon:SetSize(16, 16)
+
+    PlayerAttackBackground:SetTexture(base)
+    PlayerAttackBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-CombatIcon-Glow'))
+    PlayerAttackBackground:ClearAllPoints()
+    PlayerAttackBackground:SetPoint('CENTER', PlayerAttackIcon, 'CENTER')
     PlayerAttackBackground:SetSize(32, 32)
+
+    PlayerFrameGroupIndicator:ClearAllPoints()
+    --PlayerFrameGroupIndicator:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', 4, 13)
+    PlayerFrameGroupIndicator:SetPoint('BOTTOM', PlayerName, 'TOP', 0, 0)
+
+    PlayerLeaderIcon:SetTexture(base)
+    PlayerLeaderIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-Group-LeaderIcon'))
+    --PlayerLeaderIcon:ClearAllPoints()
+    --PlayerLeaderIcon:SetPoint('BOTTOM', PlayerName, 'TOP', 0, 0)
+    PlayerLeaderIcon:ClearAllPoints()
+    PlayerLeaderIcon:SetPoint('BOTTOMRIGHT', PlayerPortrait, 'TOPLEFT', 10, -10)
+
+    TargetFrameTextureFrameLeaderIcon:SetTexture(base)
+    TargetFrameTextureFrameLeaderIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-Group-LeaderIcon'))
+    TargetFrameTextureFrameLeaderIcon:ClearAllPoints()
+    TargetFrameTextureFrameLeaderIcon:SetPoint('BOTTOMLEFT', TargetFramePortrait, 'TOPRIGHT', -10 - 3, -10)
 end
 
 function Module.HookDrag()
@@ -2581,7 +2594,7 @@ function frame:OnEvent(event, arg1)
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ReApplyToT()
-        Module.MoveAttackIcon()
+        Module.ChangeStatusIcons()
         Module.CreateRestFlipbook()
         if DF.Wrath then
             Module.ChangeFocusFrame()
