@@ -324,6 +324,8 @@ function Module.CreateNewXPBar()
             local playerCurrXP = UnitXP('player')
             local playerMaxXP = UnitXPMax('player')
             local playerPercent = 100 * playerCurrXP / playerMaxXP
+            local playerXPLeft = playerMaxXP - playerCurrXP
+            local playerXPLeftPercent = 100 - playerPercent
 
             local restedXP = GetXPExhaustion() or 0
             local restedMax = playerMaxXP * 1.5
@@ -335,6 +337,11 @@ function Module.CreateNewXPBar()
                 '|cFFFFFFFF' ..
                     FormatLargeNumber(playerCurrXP) ..
                         '/' .. FormatLargeNumber(playerMaxXP) .. ' (' .. string.format('%.2f', playerPercent) .. '%)'
+            )
+            GameTooltip:AddDoubleLine(
+                'XP left:',
+                '|cFFFFFFFF' ..
+                    FormatLargeNumber(playerXPLeft) .. ' (' .. string.format('%.2f', playerXPLeftPercent) .. '%)'
             )
             GameTooltip:AddDoubleLine(
                 'Rested: ',
