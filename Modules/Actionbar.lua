@@ -1557,6 +1557,28 @@ function Module.ChangeBackpack()
     --KeyRingButton:GetCheckedTexture():SetTexture()
 end
 
+function Module.HookBags()
+    hooksecurefunc(
+        'UpdateContainerFrameAnchors',
+        function()
+            -- from '\BlizzardInterfaceCode\Interface\FrameXML\ContainerFrame_Shared.lua'
+            local CONTAINER_WIDTH = 192
+
+            local CONTAINER_BASE_HEIGHT = 95
+
+            ContainerFrame1:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, CONTAINER_BASE_HEIGHT)
+            for i = 2, 5 do
+                local bagRef = _G['ContainerFrame' .. i]
+                local point, relativeTo, relativePoint, xOfs, yOfs = bagRef:GetPoint(1)
+
+                if relativePoint == 'BOTTOMRIGHT' then
+                    bagRef:SetPoint(point, relativeTo, relativePoint, -CONTAINER_WIDTH, CONTAINER_BASE_HEIGHT + 2)
+                end
+            end
+        end
+    )
+end
+
 function Module.MoveBars()
     MainMenuBarBackpackButton:ClearAllPoints()
     MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
@@ -1728,6 +1750,7 @@ function Module.Wrath()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()
+    Module.HookBags()
 end
 
 -- ERA
