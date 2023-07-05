@@ -1493,8 +1493,6 @@ end
 function Module.ChangePlayerframe()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    Module.RefreshPortrait()
-
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
@@ -1602,8 +1600,6 @@ function Module.HookPlayerStatus()
         if UnitHasVehiclePlayerFrameUI and UnitHasVehiclePlayerFrameUI('player') then
             -- TODO: vehicle stuff
             --frame.PlayerFrameDeco:Show()
-            frame.RestIcon:Hide()
-            frame.RestIconAnimation:Stop()
         elseif IsResting() then
             frame.PlayerFrameDeco:Show()
             frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
@@ -2618,58 +2614,14 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         Module.ChangePlayerframe()
-    elseif event == 'UNIT_PORTRAIT_UPDATE' then
-        Module.RefreshPortrait()
-    elseif event == 'PORTRAITS_UPDATED' then
-        Module.RefreshPortrait()
     end
 end
-
-function Module.RefreshPortrait()
-    if UnitHasVehiclePlayerFrameUI('player') then
-        SetPortraitTexture(PlayerPortrait, 'vehicle', true)
-    else
-        SetPortraitTexture(PlayerPortrait, 'player', true)
-    end
-end
-
-function Module.ApplyPortraitMask()
-    local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
-    local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
-
-    local mask = frame:CreateMaskTexture()
-    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
-    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerPortrait:AddMaskTexture(mask)
-
-    local maskFocus = frame:CreateMaskTexture()
-    maskFocus:SetAllPoints(FocusFramePortrait)
-    maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    FocusFramePortrait:AddMaskTexture(maskFocus)
-
-    local maskTarget = frame:CreateMaskTexture()
-    maskTarget:SetAllPoints(TargetFramePortrait)
-    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFramePortrait:AddMaskTexture(maskTarget)
-
-    local maskToT = frame:CreateMaskTexture()
-    maskToT:SetAllPoints(TargetFrameToTPortrait)
-    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFrameToTPortrait:AddMaskTexture(maskToT)
-
-    local maskPet = frame:CreateMaskTexture()
-    maskPet:SetAllPoints(PetPortrait)
-    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PetPortrait:AddMaskTexture(maskPet)
-end
-
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2684,21 +2636,16 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
-    frame:RegisterEvent('PORTRAITS_UPDATED')
-
     Module.HookRestFunctions()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
     Module.HookDrag()
-
-    Module.ApplyPortraitMask()
 end
 
 function Module.Era()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -2710,12 +2657,8 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
-    frame:RegisterEvent('PORTRAITS_UPDATED')
-
     Module.HookRestFunctions()
     Module.HookVertexColor()
     Module.HookPlayerStatus()
     Module.HookDrag()
-
-    Module.ApplyPortraitMask()
 end
