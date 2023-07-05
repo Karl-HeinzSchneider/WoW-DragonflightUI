@@ -9,8 +9,8 @@ local defaults = {
         scale = 1,
         x = 0,
         y = 245,
-        sizeX = 460,
-        sizeY = 207,
+        sizeX = 320,
+        sizeY = 20,
         preci = 1,
         preciMax = 2
     }
@@ -104,6 +104,29 @@ local options = {
             bigStep = 0.50,
             order = 102
         },
+        sizeX = {
+            type = 'range',
+            name = 'Width',
+            desc = getDefaultStr('sizeX'),
+            min = 80,
+            max = 512,
+            bigStep = 1,
+            order = 103
+        },
+        sizeY = {
+            type = 'range',
+            name = 'Height',
+            desc = getDefaultStr('sizeY'),
+            min = 5,
+            max = 32,
+            bigStep = 1,
+            order = 103
+        },
+        castTimeEnabled = {
+            type = 'toggle',
+            name = 'Show cast time text',
+            order = 104
+        },
         preci = {
             type = 'range',
             name = 'Precision (time left)',
@@ -111,7 +134,7 @@ local options = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 103
+            order = 104
         },
         preciMax = {
             type = 'range',
@@ -120,7 +143,7 @@ local options = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 103
+            order = 104
         }
     }
 }
@@ -150,6 +173,11 @@ end
 function Module:ApplySettings()
     db = Module.db.profile
     Module.frame.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
+    Module.frame.Castbar:SetSize(db.sizeX, db.sizeY)
+    Module.frame.Castbar.Background:SetAllPoints()
+    Module.frame.Castbar.Border:SetAllPoints()
+    Module.frame.Castbar.Spark:SetSize(20, db.sizeY + 12)
+    Module.frame.Castbar.Background.tex:SetSize(db.sizeX, 30)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -240,7 +268,7 @@ function Module.CreateNewCastbar()
             --f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
             f.Spark:Show()
             local dx = 2
-            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * sizeX) / statusMax, 0)
+            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * frame.Castbar:GetWidth()) / statusMax, 0)
         end
     end
 
@@ -281,7 +309,7 @@ function Module.CreateNewCastbar()
         local preci = Module.db.profile.preci
         local preciMax = Module.db.profile.preciMax
 
-        if value == statusMax then
+        if value == statusMax or not Module.db.profile.castTimeEnabled then
             frame.Castbar.TextValue:SetText('')
             frame.Castbar.TextValueMax:SetText('')
         elseif frame.Castbar.bChanneling then
@@ -325,8 +353,12 @@ function Module.SetBarNormal()
 
     frame.Castbar.Text:SetText(text:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
-    frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
-    frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
+
+    if Module.db.profile.castTimeEnabled then
+        frame.Castbar.Text:SetPoint('TOPLEFT', frame.Castbar, 'BOTTOMLEFT', 10, -1)
+    else
+        frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
+    end
 end
 
 Module.ChannelTicks =
@@ -373,8 +405,12 @@ function Module.SetBarChannel()
         UnitChannelInfo('player')
     frame.Castbar.Text:SetText(name:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
-    frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
-    frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
+
+    if Module.db.profile.castTimeEnabled then
+        frame.Castbar.Text:SetPoint('TOPLEFT', frame.Castbar, 'BOTTOMLEFT', 10, -1)
+    else
+        frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
+    end
 
     local tickCount = Module.ChannelTicks[name]
     if tickCount then
