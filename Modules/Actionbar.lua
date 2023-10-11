@@ -1436,6 +1436,9 @@ function Module.ChangeMicroMenu()
         Module.SetButtonFromAtlas(LFGMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Groupfinder')
         Module.SetButtonFromAtlas(MainMenuMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Shop')
 
+        Module.SetButtonFromAtlas(CollectionsMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Collections')
+        MainMenuBarTextureExtender:Hide()
+
         local deltaX, deltaY = 6, 18
         MainMenuBarPerformanceBar:ClearAllPoints()
         MainMenuBarPerformanceBar:SetPoint('LEFT', MainMenuMicroButton, 'LEFT', deltaX, -deltaY)
@@ -1643,7 +1646,7 @@ function Module.MoveBars()
     MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
 
     CharacterMicroButton:ClearAllPoints()
-    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20, 0)
+    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20 -35, 0)
 
     CharacterMicroButton.SetPoint = noop
     CharacterMicroButton.ClearAllPoints = noop
