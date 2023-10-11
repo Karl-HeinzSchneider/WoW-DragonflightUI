@@ -5,29 +5,19 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 local db, getOptions
 
 local defaults = {
-    profile = {
-        scale = 1,
-        x = 42,
-        y = 35,
-        sizeX = 460,
-        sizeY = 207
-    }
+    profile = {scale = 1, x = 42, y = 35, sizeX = 460, sizeY = 207}
 }
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        Module.db.profile[k] = v
-    end
+    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
     Module.ApplySettings()
 end
 
 -- db[info[#info] = VALUE
-local function getOption(info)
-    return db[info[#info]]
-end
+local function getOption(info) return db[info[#info]] end
 
 local function setOption(info, value)
     local key = info[1]
@@ -44,21 +34,15 @@ local options = {
         toggle = {
             type = 'toggle',
             name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
+            get = function() return DF:GetModuleEnabled(mName) end,
+            set = function(info, v) DF:SetModuleEnabled(mName, v) end,
             order = 1
         },
         reload = {
             type = 'execute',
             name = '/reload',
             desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
+            func = function() ReloadUI() end,
             order = 1.1
         },
         defaults = {
@@ -68,11 +52,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {
-            type = 'header',
-            name = 'Config - Chat',
-            order = 100
-        },
+        config = {type = 'header', name = 'Config - Chat', order = 100},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -141,8 +121,7 @@ function Module:OnEnable()
     Module:ApplySettings()
 end
 
-function Module:OnDisable()
-end
+function Module:OnDisable() end
 
 function Module:ApplySettings()
     db = Module.db.profile
@@ -159,9 +138,9 @@ function Module.ChangeSizeAndPosition()
 end
 
 function frame:OnEvent(event, arg1)
-    --print('event', event)
+    -- print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        --Module.ChangeSizeAndPosition()
+        -- Module.ChangeSizeAndPosition()
         Module:ApplySettings()
     end
 end
@@ -173,6 +152,4 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function Module.Era()
-    Module.Wrath()
-end
+function Module.Era() Module.Wrath() end

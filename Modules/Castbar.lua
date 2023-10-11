@@ -21,16 +21,12 @@ local function getDefaultStr(key)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        Module.db.profile[k] = v
-    end
+    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
     Module.ApplySettings()
 end
 
 -- db[info[#info] = VALUE
-local function getOption(info)
-    return db[info[#info]]
-end
+local function getOption(info) return db[info[#info]] end
 
 local function setOption(info, value)
     local key = info[1]
@@ -47,21 +43,15 @@ local options = {
         toggle = {
             type = 'toggle',
             name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
+            get = function() return DF:GetModuleEnabled(mName) end,
+            set = function(info, v) DF:SetModuleEnabled(mName, v) end,
             order = 1
         },
         reload = {
             type = 'execute',
             name = '/reload',
             desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
+            func = function() ReloadUI() end,
             order = 1.1
         },
         defaults = {
@@ -71,11 +61,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {
-            type = 'header',
-            name = 'Config - Player',
-            order = 100
-        },
+        config = {type = 'header', name = 'Config - Player', order = 100},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -144,8 +130,7 @@ function Module:OnEnable()
     Module:ApplySettings()
 end
 
-function Module:OnDisable()
-end
+function Module:OnDisable() end
 
 function Module:ApplySettings()
     db = Module.db.profile
@@ -171,16 +156,20 @@ function Module.ChangeDefaultCastbar()
 
     local children = {CastingBarFrame:GetRegions()}
     for i, child in pairs(children) do
-        --print('child', child:GetName())
+        -- print('child', child:GetName())
         child:Hide()
     end
 end
 
 function Module.CreateNewCastbar()
-    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
-    local borderRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
-    local backgroundRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
-    local sparkRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
+    local standardRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    local borderRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
+    local backgroundRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
+    local sparkRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
 
     local sizeX = 250
     local sizeY = 20
@@ -229,47 +218,52 @@ function Module.CreateNewCastbar()
     local UpdateSpark = function(other)
         local value = other:GetValue()
         local statusMin, statusMax = other:GetMinMaxValues()
-        if statusMax == 0 then
-            return
-        end
+        if statusMax == 0 then return end
 
         local percent = value / statusMax
         if percent == 1 then
             f.Spark:Hide()
         else
-            --f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
+            -- f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
             f.Spark:Show()
             local dx = 2
-            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * sizeX) / statusMax, 0)
+            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT',
+                             (value * sizeX) / statusMax, 0)
         end
     end
 
-    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackgroundFrame', CastingBarFrame)
+    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackgroundFrame',
+                           CastingBarFrame)
     bg:SetSize(sizeX, sizeY)
     bg:SetPoint('TOP', f, 'BOTTOM', 0, 0)
 
-    local bgTex = bg:CreateTexture('DragonflightUICastbarNameBackground', 'ARTWORK')
+    local bgTex = bg:CreateTexture('DragonflightUICastbarNameBackground',
+                                   'ARTWORK')
     bgTex:ClearAllPoints()
-    bgTex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
+    bgTex:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
     bgTex:SetSize(sizeX, 30)
     bgTex:SetPoint('TOP', f, 'BOTTOM', 2, 2)
 
     bg.tex = bgTex
     f.Background = bg
 
-    local text = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
+    local text = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY',
+                                     'GameFontHighlight')
     text:SetText('12')
     text:SetPoint('TOP', f, 'BOTTOM', 0, -1)
     text:SetText('SHADOW BOLT DEBUG')
     f.Text = text
 
-    local textValueMax = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
+    local textValueMax = bg:CreateFontString('DragonflightUICastbarText',
+                                             'OVERLAY', 'GameFontHighlight')
     textValueMax:SetPoint('TOP', f, 'BOTTOM', 0, -1)
     textValueMax:SetPoint('RIGHT', f.Background, 'RIGHT', -10, 0)
     textValueMax:SetText('/ 4.2')
     f.TextValueMax = textValueMax
 
-    local textValue = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
+    local textValue = bg:CreateFontString('DragonflightUICastbarText',
+                                          'OVERLAY', 'GameFontHighlight')
     textValue:SetPoint('RIGHT', f.TextValueMax, 'LEFT', 0, 0)
     textValue:SetText('0.69')
     f.TextValue = textValue
@@ -286,10 +280,15 @@ function Module.CreateNewCastbar()
             frame.Castbar.TextValueMax:SetText('')
         elseif frame.Castbar.bChanneling then
             f.TextValue:SetText(string.format('%.' .. preci .. 'f', value))
-            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
+            f.TextValueMax:SetText(' / ' ..
+                                       string.format('%.' .. preciMax .. 'f',
+                                                     statusMax))
         else
-            f.TextValue:SetText(string.format('%.' .. preci .. 'f', statusMax - value))
-            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
+            f.TextValue:SetText(string.format('%.' .. preci .. 'f',
+                                              statusMax - value))
+            f.TextValueMax:SetText(' / ' ..
+                                       string.format('%.' .. preciMax .. 'f',
+                                                     statusMax))
         end
     end
 
@@ -305,23 +304,21 @@ function Module.CreateNewCastbar()
     end
     f.Ticks = ticks
 
-    CastingBarFrame:HookScript(
-        'OnUpdate',
-        function(self)
-            UpdateCastBarValues(self)
-            UpdateSpark(self)
-            UpdateExtratext(self)
-        end
-    )
+    CastingBarFrame:HookScript('OnUpdate', function(self)
+        UpdateCastBarValues(self)
+        UpdateSpark(self)
+        UpdateExtratext(self)
+    end)
 end
 
 function Module.SetBarNormal()
-    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    local standardRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
     frame.Castbar.Bar:SetStatusBarTexture(standardRef)
 
     frame.Castbar.bChanneling = false
-    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId =
-        UnitCastingInfo('player')
+    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID,
+          notInterruptible, spellId = UnitCastingInfo('player')
 
     frame.Castbar.Text:SetText(text:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
@@ -329,48 +326,44 @@ function Module.SetBarNormal()
     frame.Castbar.Text:SetPoint('LEFT', frame.Castbar.Background, 'LEFT', 10, 0)
 end
 
-Module.ChannelTicks =
-    DF.Wrath and
-    {
-        --wl
-        [GetSpellInfo(5740)] = 4, -- rain of fire
-        [GetSpellInfo(5138)] = 5, -- drain mana
-        [GetSpellInfo(689)] = 5, -- drain life
-        [GetSpellInfo(1120)] = 5, -- drain soul
-        [GetSpellInfo(755)] = 10, -- health funnel
-        [GetSpellInfo(1949)] = 15, -- hellfire
-        --priest
-        [GetSpellInfo(47540)] = 2, -- penance
-        [GetSpellInfo(15407)] = 3, -- mind flay
-        [GetSpellInfo(64843)] = 4, -- divine hymn
-        [GetSpellInfo(64901)] = 4, -- hymn of hope
-        [GetSpellInfo(48045)] = 5, -- mind sear
-        --hunter
-        [GetSpellInfo(1510)] = 6, -- volley
-        -- druid
-        [GetSpellInfo(740)] = 4, -- tranquility
-        [GetSpellInfo(16914)] = 10, -- hurricane
-        -- mage
-        [GetSpellInfo(5145)] = 5, -- arcane missiles
-        [GetSpellInfo(10)] = 8 -- blizzard
-    } or
-    DF.Era and {}
+Module.ChannelTicks = DF.Wrath and {
+    -- wl
+    [GetSpellInfo(5740)] = 4, -- rain of fire
+    [GetSpellInfo(5138)] = 5, -- drain mana
+    [GetSpellInfo(689)] = 5, -- drain life
+    [GetSpellInfo(1120)] = 5, -- drain soul
+    [GetSpellInfo(755)] = 10, -- health funnel
+    [GetSpellInfo(1949)] = 15, -- hellfire
+    -- priest
+    [GetSpellInfo(47540)] = 2, -- penance
+    [GetSpellInfo(15407)] = 3, -- mind flay
+    [GetSpellInfo(64843)] = 4, -- divine hymn
+    [GetSpellInfo(64901)] = 4, -- hymn of hope
+    [GetSpellInfo(48045)] = 5, -- mind sear
+    -- hunter
+    [GetSpellInfo(1510)] = 6, -- volley
+    -- druid
+    [GetSpellInfo(740)] = 4, -- tranquility
+    [GetSpellInfo(16914)] = 10, -- hurricane
+    -- mage
+    [GetSpellInfo(5145)] = 5, -- arcane missiles
+    [GetSpellInfo(10)] = 8 -- blizzard
+} or DF.Era and {}
 
 function Module.HideAllTicks()
     if frame.Castbar.Ticks then
-        for i = 1, 15 do
-            frame.Castbar.Ticks[i]:Hide()
-        end
+        for i = 1, 15 do frame.Castbar.Ticks[i]:Hide() end
     end
 end
 
 function Module.SetBarChannel()
-    local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
+    local channelRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
     frame.Castbar.Bar:SetStatusBarTexture(channelRef)
 
     frame.Castbar.bChanneling = true
-    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId =
-        UnitChannelInfo('player')
+    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill,
+          notInterruptible, spellId = UnitChannelInfo('player')
     frame.Castbar.Text:SetText(name:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
     frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
@@ -381,19 +374,19 @@ function Module.SetBarChannel()
         local tickDelta = frame.Castbar:GetWidth() / tickCount
         for i = 1, tickCount - 1 do
             frame.Castbar.Ticks[i]:Show()
-            frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT', i * tickDelta, 0)
+            frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT',
+                                            i * tickDelta, 0)
         end
 
-        for i = tickCount, 15 do
-            frame.Castbar.Ticks[i]:Hide()
-        end
+        for i = tickCount, 15 do frame.Castbar.Ticks[i]:Hide() end
     else
         Module.HideAllTicks()
     end
 end
 
 function Module.SetBarInterrupted()
-    local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
+    local interruptedRef =
+        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
     frame.Castbar.Bar:SetStatusBarTexture(interruptedRef)
 
     frame.Castbar.Text:SetText('Interrupted')
@@ -402,7 +395,7 @@ function Module.SetBarInterrupted()
 end
 
 function frame:OnEvent(event, arg1)
-    --print('event', event, arg1)
+    -- print('event', event, arg1)
     Module.ChangeDefaultCastbar()
     if event == 'PLAYER_ENTERING_WORLD' then
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
@@ -433,6 +426,4 @@ function Module.Wrath()
 end
 
 -- Era
-function Module.Era()
-    Module.Wrath()
-end
+function Module.Era() Module.Wrath() end

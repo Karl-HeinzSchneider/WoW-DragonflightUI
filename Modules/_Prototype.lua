@@ -5,13 +5,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 local db, getOptions
 
 local defaults = {
-    profile = {
-        scale = 1,
-        dX = 42,
-        dY = 35,
-        sizeX = 460,
-        sizeY = 207
-    }
+    profile = {scale = 1, dX = 42, dY = 35, sizeX = 460, sizeY = 207}
 }
 
 local options = {
@@ -21,21 +15,15 @@ local options = {
         toggle = {
             type = 'toggle',
             name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
+            get = function() return DF:GetModuleEnabled(mName) end,
+            set = function(info, v) DF:SetModuleEnabled(mName, v) end,
             order = 1
         },
         reload = {
             type = 'execute',
             name = '/reload',
             desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
+            func = function() ReloadUI() end,
             order = 69
         }
     }
@@ -59,26 +47,18 @@ function Module:OnEnable()
     end
 end
 
-function Module:OnDisable()
-end
+function Module:OnDisable() end
 
-function Module:ApplySettings()
-    db = self.db.profile
-end
+function Module:ApplySettings() db = self.db.profile end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIPrototypeFrame', UIParent)
 
 function frame:OnEvent(event, arg1)
-    --print('event', event)
-    if event == 'PLAYER_ENTERING_WORLD' then
-    end
+    -- print('event', event)
+    if event == 'PLAYER_ENTERING_WORLD' then end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
-function Module.Wrath()
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-end
+function Module.Wrath() frame:RegisterEvent('PLAYER_ENTERING_WORLD') end
 
-function Module.Era()
-    Module.Wrath()
-end
+function Module.Era() Module.Wrath() end
