@@ -1,5 +1,5 @@
-## Interface: 30402
-## Interface-Wrath: 30402
+## Interface: 30403
+## Interface-Wrath: 30403
 ## Interface-Classic: 11403
 ## Title: DragonflightUI
 ## Notes: 
