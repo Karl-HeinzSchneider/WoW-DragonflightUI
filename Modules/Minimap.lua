@@ -262,6 +262,14 @@ function Module.MoveDefaultStuff()
     --CENTER table: 000001F816E0E7B0 TOP 9 -92
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
     Minimap:SetScale(1.25)
+
+    DurabilityFrame:ClearAllPoints()
+    --DurabilityFrame:SetPoint('CENTER',Minimap,'CENTER',0,-100)
+    --DurabilityFrame:SetPoint('TOPRIGHT',MinimapCluster,'BOTTOMRIGHT',-84,-100)
+    DurabilityFrame:SetPoint('CENTER',Minimap,'CENTER',0,-142)
+
+    DurabilityFrame.SetPoint = function() end
+
 end
 
 function Module.MoveMinimap(x, y)
