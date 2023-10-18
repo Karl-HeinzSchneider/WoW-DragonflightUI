@@ -737,7 +737,14 @@ function Module.ChangeMail()
     MiniMapMailIcon:Hide()
     -- MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
     MiniMapMailFrame:SetSize(19.5, 15)
-    MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
+
+    if MiniMapTracking then
+        MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2,
+                                  -1)
+    else
+        MiniMapMailFrame:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'],
+                                  'BOTTOMLEFT', 2, -1)
+    end
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
 
