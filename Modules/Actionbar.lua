@@ -144,6 +144,7 @@ end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    Module.Temp = {}
     if DF.Wrath then
         Module.Wrath()
     else
@@ -715,9 +716,9 @@ end
 function Module.GetPetbarOffset()
     local localizedClass, englishClass, classIndex = UnitClass('player')
 
-    -- 1=warrior, 2=paladin, 5=priest, 6=DK, 11=druid
+    -- 1=warrior, 2=paladin, 5=priest, 6=DK, 7=Shaman, 11=druid
     if (classIndex == 1 or classIndex == 2 or classIndex == 5 or classIndex == 6 or
-        classIndex == 11) then
+        classIndex == 7 or classIndex == 11) then
         return 34
     else
         return 0
@@ -910,6 +911,21 @@ function Module.MoveSideBarsOLD()
                                                 _G['MultiBarRightButton' ..
                                                     (i - 1)], 'RIGHT', gap, 0)
     end
+end
+
+function Module.MoveTotem()
+    Module.Temp.TotemFixing = nil
+    hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
+        if Module.Temp.TotemFixing or InCombatLockdown() then return end
+
+        Module.Temp.TotemFixing = true
+        MultiCastActionBarFrame:ClearAllPoints()
+        -- MultiCastActionBarFrame:SetPoint('BOTTOM', -348, 147)
+        MultiCastActionBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight,
+                                         'TOPLEFT', 0.5, 4)
+        -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5,4 + offset)
+        Module.Temp.TotemFixing = nil
+    end)
 end
 
 function frame:OnEvent(event, arg1)
@@ -1681,7 +1697,7 @@ function Module.Wrath()
     frame.UpdateRepBar()
     Module.SetNumBars()
     Module.HookPetBar()
-
+    Module.MoveTotem()
     -- Module.MoveSideBars()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
