@@ -1885,7 +1885,8 @@ end
 
 function Module.CreateRestFlipbook()
     if not frame.RestIcon then
-        if DF.Wrath then
+        -- Era seems to support Flipbookanimations now, use anmiated resting icon for all versions; delete old code later @CLEANUP
+        if true then
             local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
             rest:SetSize(20, 20)
             rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
