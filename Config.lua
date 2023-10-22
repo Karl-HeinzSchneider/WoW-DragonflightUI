@@ -48,10 +48,17 @@ end
 function DF:RegisterSlashCommands()
     self:RegisterChatCommand('df', 'SlashCommand')
     self:RegisterChatCommand('dragonflight', 'SlashCommand')
+
+    -- "default" quick reload command
+    self:RegisterChatCommand('rl', 'ReloadCommand')
 end
 
 function DF:SlashCommand(msg)
     -- self:Print('Slash: ' .. msg)
     InterfaceOptionsFrame_OpenToCategory('DragonflightUI')
     InterfaceOptionsFrame_OpenToCategory('DragonflightUI')
+end
+
+function DF:ReloadCommand()
+    ReloadUI()
 end
