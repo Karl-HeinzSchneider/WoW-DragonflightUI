@@ -1,6 +1,6 @@
 ## Interface: 30403
 ## Interface-Wrath: 30403
-## Interface-Classic: 11403
+## Interface-Classic: 11404
 ## Title: DragonflightUI
 ## Notes: 
 ## Author: Karl-Heinz Schneider
