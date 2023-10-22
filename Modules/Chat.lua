@@ -4,9 +4,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
 local db, getOptions
 
-local defaults = {
-    profile = {scale = 1, x = 42, y = 35, sizeX = 460, sizeY = 207}
-}
+local defaults = {profile = {scale = 1, x = 42, y = 35, sizeX = 460, sizeY = 207}}
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
 end
@@ -17,7 +15,9 @@ local function setDefaultValues()
 end
 
 -- db[info[#info] = VALUE
-local function getOption(info) return db[info[#info]] end
+local function getOption(info)
+    return db[info[#info]]
+end
 
 local function setOption(info, value)
     local key = info[1]
@@ -34,15 +34,21 @@ local options = {
         toggle = {
             type = 'toggle',
             name = 'Enable',
-            get = function() return DF:GetModuleEnabled(mName) end,
-            set = function(info, v) DF:SetModuleEnabled(mName, v) end,
+            get = function()
+                return DF:GetModuleEnabled(mName)
+            end,
+            set = function(info, v)
+                DF:SetModuleEnabled(mName, v)
+            end,
             order = 1
         },
         reload = {
             type = 'execute',
             name = '/reload',
             desc = 'reloads UI',
-            func = function() ReloadUI() end,
+            func = function()
+                ReloadUI()
+            end,
             order = 1.1
         },
         defaults = {
@@ -121,7 +127,8 @@ function Module:OnEnable()
     Module:ApplySettings()
 end
 
-function Module:OnDisable() end
+function Module:OnDisable()
+end
 
 function Module:ApplySettings()
     db = Module.db.profile
@@ -152,4 +159,6 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function Module.Era() Module.Wrath() end
+function Module.Era()
+    Module.Wrath()
+end

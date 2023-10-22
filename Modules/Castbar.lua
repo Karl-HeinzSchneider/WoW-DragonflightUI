@@ -4,17 +4,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
 local db, getOptions
 
-local defaults = {
-    profile = {
-        scale = 1,
-        x = 0,
-        y = 245,
-        sizeX = 460,
-        sizeY = 207,
-        preci = 1,
-        preciMax = 2
-    }
-}
+local defaults = {profile = {scale = 1, x = 0, y = 245, sizeX = 460, sizeY = 207, preci = 1, preciMax = 2}}
 
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
@@ -26,7 +16,9 @@ local function setDefaultValues()
 end
 
 -- db[info[#info] = VALUE
-local function getOption(info) return db[info[#info]] end
+local function getOption(info)
+    return db[info[#info]]
+end
 
 local function setOption(info, value)
     local key = info[1]
@@ -43,15 +35,21 @@ local options = {
         toggle = {
             type = 'toggle',
             name = 'Enable',
-            get = function() return DF:GetModuleEnabled(mName) end,
-            set = function(info, v) DF:SetModuleEnabled(mName, v) end,
+            get = function()
+                return DF:GetModuleEnabled(mName)
+            end,
+            set = function(info, v)
+                DF:SetModuleEnabled(mName, v)
+            end,
             order = 1
         },
         reload = {
             type = 'execute',
             name = '/reload',
             desc = 'reloads UI',
-            func = function() ReloadUI() end,
+            func = function()
+                ReloadUI()
+            end,
             order = 1.1
         },
         defaults = {
@@ -130,7 +128,8 @@ function Module:OnEnable()
     Module:ApplySettings()
 end
 
-function Module:OnDisable() end
+function Module:OnDisable()
+end
 
 function Module:ApplySettings()
     db = Module.db.profile
@@ -162,14 +161,10 @@ function Module.ChangeDefaultCastbar()
 end
 
 function Module.CreateNewCastbar()
-    local standardRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
-    local borderRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
-    local backgroundRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
-    local sparkRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
+    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    local borderRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarFrame2'
+    local backgroundRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarBackground2'
+    local sparkRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarSpark'
 
     local sizeX = 250
     local sizeY = 20
@@ -227,43 +222,36 @@ function Module.CreateNewCastbar()
             -- f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
             f.Spark:Show()
             local dx = 2
-            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT',
-                             (value * sizeX) / statusMax, 0)
+            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * sizeX) / statusMax, 0)
         end
     end
 
-    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackgroundFrame',
-                           CastingBarFrame)
+    local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackgroundFrame', CastingBarFrame)
     bg:SetSize(sizeX, sizeY)
     bg:SetPoint('TOP', f, 'BOTTOM', 0, 0)
 
-    local bgTex = bg:CreateTexture('DragonflightUICastbarNameBackground',
-                                   'ARTWORK')
+    local bgTex = bg:CreateTexture('DragonflightUICastbarNameBackground', 'ARTWORK')
     bgTex:ClearAllPoints()
-    bgTex:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
+    bgTex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
     bgTex:SetSize(sizeX, 30)
     bgTex:SetPoint('TOP', f, 'BOTTOM', 2, 2)
 
     bg.tex = bgTex
     f.Background = bg
 
-    local text = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY',
-                                     'GameFontHighlight')
+    local text = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
     text:SetText('12')
     text:SetPoint('TOP', f, 'BOTTOM', 0, -1)
     text:SetText('SHADOW BOLT DEBUG')
     f.Text = text
 
-    local textValueMax = bg:CreateFontString('DragonflightUICastbarText',
-                                             'OVERLAY', 'GameFontHighlight')
+    local textValueMax = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
     textValueMax:SetPoint('TOP', f, 'BOTTOM', 0, -1)
     textValueMax:SetPoint('RIGHT', f.Background, 'RIGHT', -10, 0)
     textValueMax:SetText('/ 4.2')
     f.TextValueMax = textValueMax
 
-    local textValue = bg:CreateFontString('DragonflightUICastbarText',
-                                          'OVERLAY', 'GameFontHighlight')
+    local textValue = bg:CreateFontString('DragonflightUICastbarText', 'OVERLAY', 'GameFontHighlight')
     textValue:SetPoint('RIGHT', f.TextValueMax, 'LEFT', 0, 0)
     textValue:SetText('0.69')
     f.TextValue = textValue
@@ -280,15 +268,10 @@ function Module.CreateNewCastbar()
             frame.Castbar.TextValueMax:SetText('')
         elseif frame.Castbar.bChanneling then
             f.TextValue:SetText(string.format('%.' .. preci .. 'f', value))
-            f.TextValueMax:SetText(' / ' ..
-                                       string.format('%.' .. preciMax .. 'f',
-                                                     statusMax))
+            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
         else
-            f.TextValue:SetText(string.format('%.' .. preci .. 'f',
-                                              statusMax - value))
-            f.TextValueMax:SetText(' / ' ..
-                                       string.format('%.' .. preciMax .. 'f',
-                                                     statusMax))
+            f.TextValue:SetText(string.format('%.' .. preci .. 'f', statusMax - value))
+            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
         end
     end
 
@@ -312,13 +295,12 @@ function Module.CreateNewCastbar()
 end
 
 function Module.SetBarNormal()
-    local standardRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
     frame.Castbar.Bar:SetStatusBarTexture(standardRef)
 
     frame.Castbar.bChanneling = false
-    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID,
-          notInterruptible, spellId = UnitCastingInfo('player')
+    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId =
+        UnitCastingInfo('player')
 
     frame.Castbar.Text:SetText(text:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
@@ -351,19 +333,16 @@ Module.ChannelTicks = DF.Wrath and {
 } or DF.Era and {}
 
 function Module.HideAllTicks()
-    if frame.Castbar.Ticks then
-        for i = 1, 15 do frame.Castbar.Ticks[i]:Hide() end
-    end
+    if frame.Castbar.Ticks then for i = 1, 15 do frame.Castbar.Ticks[i]:Hide() end end
 end
 
 function Module.SetBarChannel()
-    local channelRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
+    local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
     frame.Castbar.Bar:SetStatusBarTexture(channelRef)
 
     frame.Castbar.bChanneling = true
-    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill,
-          notInterruptible, spellId = UnitChannelInfo('player')
+    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(
+                                                                                                     'player')
     frame.Castbar.Text:SetText(name:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
     frame.Castbar.Text:SetPoint('TOP', frame.Castbar, 'BOTTOM', 0, -1)
@@ -374,8 +353,7 @@ function Module.SetBarChannel()
         local tickDelta = frame.Castbar:GetWidth() / tickCount
         for i = 1, tickCount - 1 do
             frame.Castbar.Ticks[i]:Show()
-            frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT',
-                                            i * tickDelta, 0)
+            frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT', i * tickDelta, 0)
         end
 
         for i = tickCount, 15 do frame.Castbar.Ticks[i]:Hide() end
@@ -385,8 +363,7 @@ function Module.SetBarChannel()
 end
 
 function Module.SetBarInterrupted()
-    local interruptedRef =
-        'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
+    local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
     frame.Castbar.Bar:SetStatusBarTexture(interruptedRef)
 
     frame.Castbar.Text:SetText('Interrupted')
@@ -426,4 +403,6 @@ function Module.Wrath()
 end
 
 -- Era
-function Module.Era() Module.Wrath() end
+function Module.Era()
+    Module.Wrath()
+end
