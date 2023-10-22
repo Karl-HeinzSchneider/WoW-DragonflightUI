@@ -178,18 +178,16 @@ function Module.ChangeActionbar()
 
     MultiBarBottomLeft:ClearAllPoints()
     MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
-    MultiBarBottomLeft.SetPoint = function()
-    end
+    MultiBarBottomLeft.ignoreFramePositionManager = true
 
     MultiBarBottomRight:ClearAllPoints()
     MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
-    MultiBarBottomRight.SetPoint = function()
-    end
+    MultiBarBottomRight.ignoreFramePositionManager = true
 
     StanceButton1:ClearAllPoints()
     StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
-    StanceButton1.SetPoint = function()
-    end
+    StanceButton1.ignoreFramePositionManager = true
+
     StanceBarLeft:Hide()
     StanceBarMiddle:Hide()
     StanceBarRight:Hide()
