@@ -928,6 +928,15 @@ function Module.MoveTotem()
     end)
 end
 
+function Module.ChangePossessBar()
+    PossessBarFrame.ignoreFramePositionManager = true
+
+    PossessBarFrame:ClearAllPoints()
+    PossessBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5,
+                             4)
+
+end
+
 function frame:OnEvent(event, arg1)
     -- print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
@@ -1698,6 +1707,7 @@ function Module.Wrath()
     Module.SetNumBars()
     Module.HookPetBar()
     Module.MoveTotem()
+    Module.ChangePossessBar()
     -- Module.MoveSideBars()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
@@ -1722,4 +1732,37 @@ function Module.Wrath()
 end
 
 -- ERA
-function Module.Era() Module.Wrath() end
+function Module.Era()
+    Module.ChangeActionbar()
+    Module.CreateNewXPBar()
+    Module.CreateNewRepBar()
+    Module.StyleButtons()
+    Module.StylePageNumber()
+    Module.ApplyMask()
+    Module.ChangeButtonSpacing()
+    frame.UpdateXPBar()
+    frame.UpdateRepBar()
+    Module.SetNumBars()
+    Module.HookPetBar()
+    -- Module.MoveSideBars()
+
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+
+    -- Core.Sub.Artframe()
+    Module.ChangeGryphon()
+    Module.DrawGryphon()
+    Module.DrawActionbarDeco()
+
+    frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    -- Core.Sub.Micromenu()
+    Module.ChangeMicroMenu()
+    Module.ChangeBackpack()
+    Module.MoveBars()
+    Module.ChangeFramerate()
+    Module.CreateBagExpandButton()
+    Module.RefreshBagBarToggle()
+    Module.HookBags()
+end
