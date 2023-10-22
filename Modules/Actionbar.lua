@@ -814,6 +814,7 @@ function Module.MoveSideBarsOLD()
 end
 
 function Module.MoveTotem()
+    MultiCastActionBarFrame.ignoreFramePositionManager = true
     Module.Temp.TotemFixing = nil
     hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
         if Module.Temp.TotemFixing or InCombatLockdown() then return end
