@@ -942,7 +942,7 @@ function Module.DrawActionbarDeco()
 end
 
 function Module.ChangeGryphonVisibility(visible)
-    if visible then
+    if visible and Module.db.profile.showGryphon then
         -- MainMenuBarPageNumber:Show()
         frameArt.GryphonRight:Show()
         frameArt.GryphonLeft:Show()
