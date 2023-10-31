@@ -482,6 +482,7 @@ function Module:ApplySettings()
         end
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
+        Module.ScaleRestFlipbook()
     end
 
     -- target
@@ -1934,6 +1935,15 @@ function Module.CreateRestFlipbook()
 
             PlayerFrame_UpdateStatus()
         end
+    end
+end
+
+function Module.ScaleRestFlipbook()
+    if frame.RestIcon then
+        local scale = PlayerFrame:GetScale()
+        frame.RestIcon:SetScale(scale)
+    else
+        -- print('no rest')
     end
 end
 
