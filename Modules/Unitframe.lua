@@ -1440,6 +1440,8 @@ function Module.ChangeToT()
 
     TargetFrameToTTextureFrameName:ClearAllPoints()
     TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+
+    TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 25, -20)
 end
 
 function Module.ReApplyToT()
