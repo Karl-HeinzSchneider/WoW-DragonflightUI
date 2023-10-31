@@ -990,6 +990,31 @@ function Module.HookEnergyBar()
             FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
             FocusFrameFlash:SetTexture('')
+        elseif name == 'FocusFrameToTManaBar' then
+            local powerType, powerTypeString = UnitPowerType('focusTarget')
+
+            if powerTypeString == 'MANA' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+            end
+
+            FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+            FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+        else
+            print('HookEnergyBar', manaBar:GetName())
         end
     end)
 end
@@ -1761,6 +1786,10 @@ function Module.ChangeFocusToT()
     FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
     FocusFrameToTHealthBar:SetFrameLevel(10)
     FocusFrameToTHealthBar:SetSize(70.5, 10)
+
+    FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     FocusFrameToTManaBar:ClearAllPoints()
     FocusFrameToTManaBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
