@@ -4,15 +4,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
 local db, getOptions
 
-local defaults = {
-    profile = {
-        scale = 1,
-        dX = 42,
-        dY = 35,
-        sizeX = 460,
-        sizeY = 207
-    }
-}
+local defaults = {profile = {scale = 1, dX = 42, dY = 35, sizeX = 460, sizeY = 207}}
 
 local options = {
     type = 'group',
@@ -69,9 +61,8 @@ end
 local frame = CreateFrame('FRAME', 'DragonflightUIPrototypeFrame', UIParent)
 
 function frame:OnEvent(event, arg1)
-    --print('event', event)
-    if event == 'PLAYER_ENTERING_WORLD' then
-    end
+    -- print('event', event)
+    if event == 'PLAYER_ENTERING_WORLD' then end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 

@@ -26,8 +26,8 @@ local options = {
 function DF:SetupOptions()
     self.optFrames = {}
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI', options)
-    self.optFrames['DragonflightUI'] =
-        LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI', 'DragonflightUI')
+    self.optFrames['DragonflightUI'] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI',
+                                                                                       'DragonflightUI')
 
     local profiles = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     profiles.order = 666
@@ -36,22 +36,29 @@ function DF:SetupOptions()
 end
 
 function DF:RegisterModuleOptions(name, options)
-    --self:Print('RegisterModuleOptions()', name, options)
+    -- self:Print('RegisterModuleOptions()', name, options)
     moduleOptions[name] = options
     -- function AceConfigDialog:AddToBlizOptions(appName, name, parent, ...)
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI_' .. name, options)
 
-    self.optFrames[name] =
-        LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_' .. name, name, 'DragonflightUI')
+    self.optFrames[name] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_' .. name, name,
+                                                                           'DragonflightUI')
 end
 
 function DF:RegisterSlashCommands()
     self:RegisterChatCommand('df', 'SlashCommand')
     self:RegisterChatCommand('dragonflight', 'SlashCommand')
+
+    -- "default" quick reload command
+    self:RegisterChatCommand('rl', 'ReloadCommand')
 end
 
 function DF:SlashCommand(msg)
-    --self:Print('Slash: ' .. msg)
+    -- self:Print('Slash: ' .. msg)
     InterfaceOptionsFrame_OpenToCategory('DragonflightUI')
     InterfaceOptionsFrame_OpenToCategory('DragonflightUI')
+end
+
+function DF:ReloadCommand()
+    ReloadUI()
 end

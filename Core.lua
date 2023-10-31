@@ -22,7 +22,7 @@ end
 
 function DF:OnEnable()
     -- Called when the addon is enabled
-    --self:Print('DragonflightUI enabled!')
+    -- self:Print('DragonflightUI enabled!')
     self:ShowStartMessage()
 end
 
@@ -50,9 +50,7 @@ end
 local name, realm = UnitName('player')
 local showDebug = name == 'Zimtdev'
 function DF:Debug(m, value)
-    if showDebug then
-        m:Print(value)
-    end
+    if showDebug then m:Print(value) end
 end
 
 function DF:ShowStartMessage()
