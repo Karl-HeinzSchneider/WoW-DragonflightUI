@@ -1609,6 +1609,8 @@ function Module.ChangeFocusFrame()
 
     FocusFrameFlash:SetTexture('')
 
+    FocusFrameToTDebuff1:SetPoint('TOPLEFT', FocusFrameToT, 'TOPRIGHT', 25, -20)
+
     if not frame.FocusFrameFlash then
         local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
         flash:SetDrawLayer('BACKGROUND', 2)
