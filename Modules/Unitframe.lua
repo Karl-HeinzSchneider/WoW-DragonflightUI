@@ -1096,7 +1096,7 @@ function Module.HookPlayerStatus()
 
         if UnitHasVehiclePlayerFrameUI and UnitHasVehiclePlayerFrameUI('player') then
             -- TODO: vehicle stuff
-            --frame.PlayerFrameDeco:Show()
+            -- frame.PlayerFrameDeco:Show()
             frame.RestIcon:Hide()
             frame.RestIconAnimation:Stop()
             -- frame.PlayerFrameDeco:Show()
@@ -2034,27 +2034,36 @@ function Module.ApplyPortraitMask()
     local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
     local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
 
-    local mask = frame:CreateMaskTexture()
+    local mask = PlayerFrame:CreateMaskTexture()
     mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
     mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     PlayerPortrait:AddMaskTexture(mask)
 
-    local maskFocus = frame:CreateMaskTexture()
-    maskFocus:SetAllPoints(FocusFramePortrait)
-    maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    FocusFramePortrait:AddMaskTexture(maskFocus)
+    -- mask:SetScale(2)
 
-    local maskTarget = frame:CreateMaskTexture()
+    if DF.Wrath then
+        local maskFocus = FocusFrame:CreateMaskTexture()
+        maskFocus:SetAllPoints(FocusFramePortrait)
+        maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        FocusFramePortrait:AddMaskTexture(maskFocus)
+
+        local maskFocusToT = FocusFrameToT:CreateMaskTexture()
+        maskFocusToT:SetAllPoints(FocusFrameToTPortrait)
+        maskFocusToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
+    end
+
+    local maskTarget = TargetFrame:CreateMaskTexture()
     maskTarget:SetAllPoints(TargetFramePortrait)
     maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     TargetFramePortrait:AddMaskTexture(maskTarget)
 
-    local maskToT = frame:CreateMaskTexture()
+    local maskToT = TargetFrameToT:CreateMaskTexture()
     maskToT:SetAllPoints(TargetFrameToTPortrait)
     maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     TargetFrameToTPortrait:AddMaskTexture(maskToT)
 
-    local maskPet = frame:CreateMaskTexture()
+    local maskPet = PetFrame:CreateMaskTexture()
     maskPet:SetAllPoints(PetPortrait)
     maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     PetPortrait:AddMaskTexture(maskPet)
