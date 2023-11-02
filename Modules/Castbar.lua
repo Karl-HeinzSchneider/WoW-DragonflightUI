@@ -153,11 +153,7 @@ end
 function Module:ApplySettings()
     db = Module.db.profile
     Module.frame.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
-    Module.frame.Castbar:SetSize(db.sizeX, db.sizeY)
-    Module.frame.Castbar.Background:SetAllPoints()
-    Module.frame.Castbar.Border:SetAllPoints()
-    Module.frame.Castbar.Spark:SetSize(20, db.sizeY + 12)
-    Module.frame.Castbar.Background.tex:SetSize(db.sizeX, 30)
+    Module.UpdateCastbarSize()
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -267,11 +263,19 @@ function Module.CreateNewCastbar()
         ticks[i] = tick
     end
     f.Ticks = ticks
+end
 
+function Module.UpdateCastbarSize()
+    db = Module.db.profile
+
+    Module.frame.Castbar:SetSize(db.sizeX, db.sizeY)
+    Module.frame.Castbar.Background:SetAllPoints()
+    Module.frame.Castbar.Border:SetAllPoints()
+    Module.frame.Castbar.Spark:SetSize(20, db.sizeY + 12)
+    Module.frame.Castbar.Background.tex:SetSize(db.sizeX, 30)
 end
 
 function Module.HookCastbar()
-
     local UpdateCastBarValues = function(other)
         local value = other:GetValue()
         local statusMin, statusMax = other:GetMinMaxValues()
@@ -321,7 +325,6 @@ function Module.HookCastbar()
         UpdateSpark(self)
         UpdateExtratext(self)
     end)
-
 end
 
 function Module.SetBarNormal()
