@@ -25,9 +25,7 @@ local function getDefaultStr(key)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        Module.db.profile[k] = v
-    end
+    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
     Module.ApplySettings()
 end
 
@@ -75,11 +73,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {
-            type = 'header',
-            name = 'Config - Actionbar',
-            order = 100
-        },
+        config = {type = 'header', name = 'Config - Actionbar', order = 100},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -122,11 +116,7 @@ local options = {
             desc = 'Moves the Right Bar 1 + 2 to the side of the mainbar ' .. getDefaultStr('changeSides'),
             order = 105.2
         },
-        config = {
-            type = 'header',
-            name = 'Config - XP/Reputation Bar',
-            order = 200
-        },
+        config = {type = 'header', name = 'Config - XP/Reputation Bar', order = 200},
         alwaysShowXP = {
             type = 'toggle',
             name = 'Always show XP Text',
@@ -155,6 +145,7 @@ end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    Module.Temp = {}
     if DF.Wrath then
         Module.Wrath()
     else
@@ -173,9 +164,7 @@ function Module:ApplySettings()
     Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
 
     local MinimapModule = DF:GetModule('Minimap')
-    if MinimapModule and MinimapModule:IsEnabled() then
-        MinimapModule.MoveTrackerFunc()
-    end
+    if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
 end
 
 -- Actionbar
@@ -189,31 +178,25 @@ function Module.ChangeActionbar()
 
     MultiBarBottomLeft:ClearAllPoints()
     MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
-    MultiBarBottomLeft.SetPoint = function()
-    end
+    MultiBarBottomLeft.ignoreFramePositionManager = true
 
     MultiBarBottomRight:ClearAllPoints()
     MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
-    MultiBarBottomRight.SetPoint = function()
-    end
+    MultiBarBottomRight.ignoreFramePositionManager = true
 
     StanceButton1:ClearAllPoints()
     StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
-    StanceButton1.SetPoint = function()
-    end
+    StanceButton1.ignoreFramePositionManager = true
+
     StanceBarLeft:Hide()
     StanceBarMiddle:Hide()
     StanceBarRight:Hide()
 
-    hooksecurefunc(
-        StanceBarRight,
-        'Show',
-        function()
-            StanceBarLeft:Hide()
-            StanceBarMiddle:Hide()
-            StanceBarRight:Hide()
-        end
-    )
+    hooksecurefunc(StanceBarRight, 'Show', function()
+        StanceBarLeft:Hide()
+        StanceBarMiddle:Hide()
+        StanceBarRight:Hide()
+    end)
 
     ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
@@ -221,29 +204,17 @@ function Module.ChangeActionbar()
     ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7)
 
     MainMenuExpBar:Hide()
-    hooksecurefunc(
-        MainMenuExpBar,
-        'Show',
-        function()
-            MainMenuExpBar:Hide()
-        end
-    )
+    hooksecurefunc(MainMenuExpBar, 'Show', function()
+        MainMenuExpBar:Hide()
+    end)
     ReputationWatchBar:Hide()
-    hooksecurefunc(
-        ReputationWatchBar,
-        'Show',
-        function()
-            ReputationWatchBar:Hide()
-        end
-    )
+    hooksecurefunc(ReputationWatchBar, 'Show', function()
+        ReputationWatchBar:Hide()
+    end)
     MainMenuBarMaxLevelBar:Hide()
-    hooksecurefunc(
-        MainMenuBarMaxLevelBar,
-        'Show',
-        function()
-            MainMenuBarMaxLevelBar:Hide()
-        end
-    )
+    hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+        MainMenuBarMaxLevelBar:Hide()
+    end)
 end
 
 function Module.CreateNewXPBar()
@@ -287,7 +258,7 @@ function Module.CreateNewXPBar()
     f.RestedBarMark.Texture:SetTexCoord(1170 / 2048, 1192 / 2048, 201 / 256, 231 / 256)
     f.RestedBarMark.Texture:SetAllPoints()
 
-    --border
+    -- border
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
     border:SetTexCoord(0, 0.55517578, 0, 1)
@@ -300,7 +271,7 @@ function Module.CreateNewXPBar()
     f.Bar:EnableMouse(true)
 
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    --f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
 
     f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
@@ -313,57 +284,44 @@ function Module.CreateNewXPBar()
 
     frame.XPBar.valid = false
 
-    frame.XPBar.Bar:SetScript(
-        'OnEnter',
-        function(self)
-            local label = XPBAR_LABEL
-            GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
-            GameTooltip.canAddRestStateLine = 1
-            ExhaustionToolTipText()
+    frame.XPBar.Bar:SetScript('OnEnter', function(self)
+        local label = XPBAR_LABEL
+        GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
+        GameTooltip.canAddRestStateLine = 1
+        ExhaustionToolTipText()
 
-            local playerCurrXP = UnitXP('player')
-            local playerMaxXP = UnitXPMax('player')
-            local playerPercent = 100 * playerCurrXP / playerMaxXP
-            local playerXPLeft = playerMaxXP - playerCurrXP
-            local playerXPLeftPercent = 100 - playerPercent
+        local playerCurrXP = UnitXP('player')
+        local playerMaxXP = UnitXPMax('player')
+        local playerPercent = 100 * playerCurrXP / playerMaxXP
+        local playerXPLeft = playerMaxXP - playerCurrXP
+        local playerXPLeftPercent = 100 - playerPercent
 
-            local restedXP = GetXPExhaustion() or 0
-            local restedMax = playerMaxXP * 1.5
-            local restedPercent = 100 * restedXP / restedMax
+        local restedXP = GetXPExhaustion() or 0
+        local restedMax = playerMaxXP * 1.5
+        local restedPercent = 100 * restedXP / restedMax
 
-            GameTooltip:AddDoubleLine(' ')
-            GameTooltip:AddDoubleLine(
-                'XP: ',
-                '|cFFFFFFFF' ..
-                    FormatLargeNumber(playerCurrXP) ..
-                        '/' .. FormatLargeNumber(playerMaxXP) .. ' (' .. string.format('%.2f', playerPercent) .. '%)'
-            )
-            GameTooltip:AddDoubleLine(
-                'XP left:',
-                '|cFFFFFFFF' ..
-                    FormatLargeNumber(playerXPLeft) .. ' (' .. string.format('%.2f', playerXPLeftPercent) .. '%)'
-            )
-            GameTooltip:AddDoubleLine(
-                'Rested: ',
-                '|cFFFFFFFF' .. FormatLargeNumber(restedXP) .. ' (' .. string.format('%.2f', restedPercent) .. '%)'
-            )
+        GameTooltip:AddDoubleLine(' ')
+        GameTooltip:AddDoubleLine('XP: ',
+                                  '|cFFFFFFFF' .. FormatLargeNumber(playerCurrXP) .. '/' ..
+                                      FormatLargeNumber(playerMaxXP) .. ' (' .. string.format('%.2f', playerPercent) ..
+                                      '%)')
+        GameTooltip:AddDoubleLine('XP left:', '|cFFFFFFFF' .. FormatLargeNumber(playerXPLeft) .. ' (' ..
+                                      string.format('%.2f', playerXPLeftPercent) .. '%)')
+        GameTooltip:AddDoubleLine('Rested: ', '|cFFFFFFFF' .. FormatLargeNumber(restedXP) .. ' (' ..
+                                      string.format('%.2f', restedPercent) .. '%)')
 
-            if restedPercent < 100 then
-                local restedTime = (100 * (restedMax - restedXP) / restedMax) / 10 * 3 * 8 * 60 * 60
-                GameTooltip:AddDoubleLine('Time to max rested:', '|cFFFFFFFF' .. SecondsToTime(restedTime))
-            end
-
-            GameTooltip:Show()
+        if restedPercent < 100 then
+            local restedTime = (100 * (restedMax - restedXP) / restedMax) / 10 * 3 * 8 * 60 * 60
+            GameTooltip:AddDoubleLine('Time to max rested:', '|cFFFFFFFF' .. SecondsToTime(restedTime))
         end
-    )
 
-    frame.XPBar.Bar:SetScript(
-        'OnLeave',
-        function(self)
-            local label = XPBAR_LABEL
-            GameTooltip:Hide()
-        end
-    )
+        GameTooltip:Show()
+    end)
+
+    frame.XPBar.Bar:SetScript('OnLeave', function(self)
+        local label = XPBAR_LABEL
+        GameTooltip:Hide()
+    end)
 
     frame.UpdateXPBar = function()
         local showXP = false
@@ -398,11 +356,9 @@ function Module.CreateNewXPBar()
                     frame.XPBar.RestedBar:SetValue(playerCurrXP + restedXP)
 
                     frame.XPBar.RestedBarMark:Show()
-                    frame.XPBar.RestedBarMark:SetPoint(
-                        'LEFT',
-                        (playerCurrXP + restedXP) / playerMaxXP * sizeX + restedBarMarkOffsetX - restedBarMarkSizeX / 2,
-                        restedBarMarkOffsetY
-                    )
+                    frame.XPBar.RestedBarMark:SetPoint('LEFT', (playerCurrXP + restedXP) / playerMaxXP * sizeX +
+                                                           restedBarMarkOffsetX - restedBarMarkSizeX / 2,
+                                                       restedBarMarkOffsetY)
                 end
             else
                 frame.XPBar.RestedBar:Hide()
@@ -413,10 +369,10 @@ function Module.CreateNewXPBar()
             frame.XPBar.Bar:SetValue(playerCurrXP)
 
             frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
-            --frame.XPBar:Show()
+            -- frame.XPBar:Show()
             frame.XPBar.valid = true
         else
-            --frame.XPBar:Hide()
+            -- frame.XPBar:Hide()
             frame.XPBar.valid = false
         end
     end
@@ -445,7 +401,7 @@ function Module.CreateNewRepBar()
     f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
     f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\Rep')
 
-    --border
+    -- border
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
     border:SetTexCoord(0, 0.55517578, 0, 1)
@@ -456,7 +412,7 @@ function Module.CreateNewRepBar()
     -- text
     f.Bar:EnableMouse(true)
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    --f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
     f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
@@ -471,19 +427,14 @@ function Module.CreateNewRepBar()
 
     frame.RepBar.valid = false
 
-    frame.RepBar.Bar:SetScript(
-        'OnMouseDown',
-        function(self, button)
-            if button == 'LeftButton' then
-                ToggleCharacter('ReputationFrame')
-            end
-        end
-    )
+    frame.RepBar.Bar:SetScript('OnMouseDown', function(self, button)
+        if button == 'LeftButton' then ToggleCharacter('ReputationFrame') end
+    end)
 
     frame.UpdateRepBar = function()
         local name, standing, min, max, value = GetWatchedFactionInfo()
         if name then
-            --frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
+            -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
             frame.RepBar.valid = true
             frame.RepBar.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
             frame.RepBar.Bar:SetMinMaxValues(0, max - min)
@@ -495,22 +446,16 @@ function Module.CreateNewRepBar()
             elseif standing == 3 then
                 -- unfriendly
                 frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepOrange'
-                )
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepOrange')
             elseif standing == 4 then
                 -- neutral
                 frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepYellow'
-                )
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepYellow')
             elseif standing == 5 or standing == 6 or standing == 7 or standing == 8 then
                 -- friendly, honored, revered, exalted
-                frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen'
-                )
+                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
             else
-                frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen'
-                )
+                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
             end
         else
             frame.RepBar.valid = false
@@ -536,15 +481,12 @@ function Module.StyleButtons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
     local buttonTable = {
-        'MultiBarBottomRightButton',
-        'MultiBarBottomLeftButton',
-        'ActionButton',
-        'MultiBarLeftButton',
+        'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton', 'MultiBarLeftButton',
         'MultiBarRightButton'
     }
     for k, v in pairs(buttonTable) do
         for i = 1, 12 do
-            --MultiBarBottomRightButton1NormalTexture
+            -- MultiBarBottomRightButton1NormalTexture
             local name = v .. i
 
             _G[name .. 'NormalTexture']:SetTexture(textureRef)
@@ -561,7 +503,7 @@ function Module.StyleButtons()
             -- Highlight
             _G[name]:SetHighlightTexture(textureRef)
             _G[name]:GetHighlightTexture():SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
-            --_G[name]:GetHighlightTexture():SetSize(55, 25)
+            -- _G[name]:GetHighlightTexture():SetSize(55, 25)
 
             -- Pressed
             _G[name]:SetPushedTexture(textureRef)
@@ -603,7 +545,7 @@ function Module.StylePageNumber()
     ActionBarDownButton:SetFrameStrata('HIGH')
     ActionBarDownButton:SetFrameLevel(105)
     ActionBarDownButton:SetScale(buttonScale)
-    --MainMenuBarPageNumber:SetFrameStrata('HIGH')
+    -- MainMenuBarPageNumber:SetFrameStrata('HIGH')
 
     -- MainMenuBarPageNumber:SetFrameLevel(105)
     local frameName = 'DragonflightUIPageNumberFrame'
@@ -621,10 +563,7 @@ end
 
 function Module.ApplyMask()
     local buttonTable = {
-        'MultiBarBottomRightButton',
-        'MultiBarBottomLeftButton',
-        'ActionButton',
-        'MultiBarLeftButton',
+        'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton', 'MultiBarLeftButton',
         'MultiBarRightButton'
     }
     frame.ButtonMask = frame:CreateMaskTexture()
@@ -647,7 +586,7 @@ function Module.ApplyMask()
 
     for k, v in pairs(buttonTable) do
         for i = 1, 12 do
-            --MultiBarBottomRightButton1NormalTexture
+            -- MultiBarBottomRightButton1NormalTexture
             local name = v .. i
 
             -- Mask
@@ -663,34 +602,22 @@ function Module.ApplyMask()
                 tex:SetDrawLayer('BACKGROUND')
                 btn.DragonflightUIMaskTexture = tex
 
-                hooksecurefunc(
-                    icon,
-                    'Show',
-                    function(self)
-                        local tex = self:GetTexture()
-                        if tex then
-                            btn.DragonflightUIMaskTexture:Show()
-                            btn.DragonflightUIMaskTexture:SetTexture(tex)
-                        end
+                hooksecurefunc(icon, 'Show', function(self)
+                    local tex = self:GetTexture()
+                    if tex then
+                        btn.DragonflightUIMaskTexture:Show()
+                        btn.DragonflightUIMaskTexture:SetTexture(tex)
                     end
-                )
-                hooksecurefunc(
-                    icon,
-                    'Hide',
-                    function(self)
-                        btn.DragonflightUIMaskTexture:Hide()
-                    end
-                )
+                end)
+                hooksecurefunc(icon, 'Hide', function(self)
+                    btn.DragonflightUIMaskTexture:Hide()
+                end)
 
-                hooksecurefunc(
-                    icon,
-                    'SetVertexColor',
-                    function(self)
-                        --print('vertex')
-                        local r, g, b = self:GetVertexColor()
-                        btn.DragonflightUIMaskTexture:SetVertexColor(r, g, b)
-                    end
-                )
+                hooksecurefunc(icon, 'SetVertexColor', function(self)
+                    -- print('vertex')
+                    local r, g, b = self:GetVertexColor()
+                    btn.DragonflightUIMaskTexture:SetVertexColor(r, g, b)
+                end)
             end
         end
     end
@@ -700,9 +627,7 @@ function Module.ChangeButtonSpacing()
     local spacing = 3 -- default: 6
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
     for k, v in pairs(buttonTable) do
-        for i = 2, 12 do
-            _G[v .. i]:SetPoint('LEFT', _G[v .. (i - 1)], 'RIGHT', spacing, 0)
-        end
+        for i = 2, 12 do _G[v .. i]:SetPoint('LEFT', _G[v .. (i - 1)], 'RIGHT', spacing, 0) end
     end
 end
 
@@ -710,8 +635,8 @@ end
 function Module.SetNumBars()
     local inLockdown = InCombatLockdown()
     if inLockdown then
-        --return
-        --print('[DragonflightUI] changing Frames after combat ends..')
+        -- return
+        -- print('[DragonflightUI] changing Frames after combat ends..')
     else
         local dy = 20
         local dRep, dButtons = 0, 0
@@ -739,8 +664,8 @@ end
 function Module.GetPetbarOffset()
     local localizedClass, englishClass, classIndex = UnitClass('player')
 
-    -- 1=warrior, 2=paladin, 5=priest, 6=DK, 11=druid
-    if (classIndex == 1 or classIndex == 2 or classIndex == 5 or classIndex == 6 or classIndex == 11) then
+    -- 1=warrior, 2=paladin, 5=priest, 6=DK, 7=Shaman, 11=druid
+    if (classIndex == 1 or classIndex == 2 or classIndex == 5 or classIndex == 6 or classIndex == 7 or classIndex == 11) then
         return 34
     else
         return 0
@@ -764,7 +689,7 @@ function Module.HookPetBar()
     end
 
     -- different offset for each class (stance vs no stance)
-    --local offset = 0 + 34
+    -- local offset = 0 + 34
     local offset = Module.GetPetbarOffset()
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
@@ -775,9 +700,7 @@ function Module.MoveSideBars(shouldMove)
 
     if shouldMove then
         -- right
-        for i = 1, 12 do
-            _G['MultiBarRightButton' .. i]:ClearAllPoints()
-        end
+        for i = 1, 12 do _G['MultiBarRightButton' .. i]:ClearAllPoints() end
 
         -- first row 1 2 3 4
         _G['MultiBarRightButton1']:SetPoint('LEFT', MultiBarBottomRightButton12, 'RIGHT', delta, 0)
@@ -798,9 +721,7 @@ function Module.MoveSideBars(shouldMove)
         end
 
         -- left
-        for i = 1, 12 do
-            _G['MultiBarLeftButton' .. i]:ClearAllPoints()
-        end
+        for i = 1, 12 do _G['MultiBarLeftButton' .. i]:ClearAllPoints() end
 
         -- first row 1 2 3 4
         _G['MultiBarLeftButton4']:SetPoint('RIGHT', MultiBarBottomRightButton1, 'LEFT', -delta, 0)
@@ -892,8 +813,31 @@ function Module.MoveSideBarsOLD()
     end
 end
 
+function Module.MoveTotem()
+    MultiCastActionBarFrame.ignoreFramePositionManager = true
+    Module.Temp.TotemFixing = nil
+    hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
+        if Module.Temp.TotemFixing or InCombatLockdown() then return end
+
+        Module.Temp.TotemFixing = true
+        MultiCastActionBarFrame:ClearAllPoints()
+        -- MultiCastActionBarFrame:SetPoint('BOTTOM', -348, 147)
+        MultiCastActionBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
+        -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5,4 + offset)
+        Module.Temp.TotemFixing = nil
+    end)
+end
+
+function Module.ChangePossessBar()
+    PossessBarFrame.ignoreFramePositionManager = true
+
+    PossessBarFrame:ClearAllPoints()
+    PossessBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
+
+end
+
 function frame:OnEvent(event, arg1)
-    --print('event', event)
+    -- print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
         frame.UpdateXPBar()
         frame.UpdateRepBar()
@@ -923,24 +867,10 @@ Module.FrameArt = frameArt
 local atlasActionbar = {
     ['UI-HUD-ActionBar-Gryphon-Left'] = {200, 188, 0.001953125, 0.697265625, 0.10205078125, 0.26513671875, false, false},
     ['UI-HUD-ActionBar-Gryphon-Right'] = {
-        200,
-        188,
-        0.001953125,
-        0.697265625,
-        0.26611328125,
-        0.42919921875,
-        false,
-        false
+        200, 188, 0.001953125, 0.697265625, 0.26611328125, 0.42919921875, false, false
     },
     ['UI-HUD-ActionBar-IconFrame-Slot'] = {
-        128,
-        124,
-        0.701171875,
-        0.951171875,
-        0.10205078125,
-        0.16259765625,
-        false,
-        false
+        128, 124, 0.701171875, 0.951171875, 0.10205078125, 0.16259765625, false, false
     },
     ['UI-HUD-ActionBar-Wyvern-Left'] = {200, 188, 0.001953125, 0.697265625, 0.43017578125, 0.59326171875, false, false},
     ['UI-HUD-ActionBar-Wyvern-Right'] = {200, 188, 0.001953125, 0.697265625, 0.59423828125, 0.75732421875, false, false}
@@ -974,16 +904,16 @@ function Module.DrawGryphon()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     local scale = 0.42
     local dx, dy = 125, 5
-    local GryphonLeft =
-        Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef, 'GryphonLeft')
+    local GryphonLeft = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef,
+                                                    'GryphonLeft')
     GryphonLeft:SetScale(scale)
     GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -dx, dy)
     GryphonLeft:SetFrameStrata('HIGH')
     GryphonLeft:SetFrameLevel(100)
     frameArt.GryphonLeft = GryphonLeft
 
-    local GryphonRight =
-        Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef, 'GryphonRight')
+    local GryphonRight = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef,
+                                                     'GryphonRight')
     GryphonRight:SetScale(scale)
     GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', dx, dy)
     GryphonRight:SetFrameStrata('HIGH')
@@ -1004,32 +934,27 @@ end
 function Module.DrawActionbarDeco()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     for i = 1, 12 do
-        local deco =
-            Module.CreateFrameFromAtlas(
-            atlasActionbar,
-            'UI-HUD-ActionBar-IconFrame-Slot',
-            textureRef,
-            'ActionbarDeco' .. i
-        )
+        local deco = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-IconFrame-Slot', textureRef,
+                                                 'ActionbarDeco' .. i)
         deco:SetScale(0.3)
         deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
     end
 end
 
 function Module.ChangeGryphonVisibility(visible)
-    if visible then
-        --MainMenuBarPageNumber:Show()
+    if visible and Module.db.profile.showGryphon then
+        -- MainMenuBarPageNumber:Show()
         frameArt.GryphonRight:Show()
         frameArt.GryphonLeft:Show()
     else
-        --MainMenuBarPageNumber:Hide()
+        -- MainMenuBarPageNumber:Hide()
         frameArt.GryphonRight:Hide()
         frameArt.GryphonLeft:Hide()
     end
 end
 
 function frameArt:OnEvent(event, arg1)
-    --print('art event', event)
+    -- print('art event', event)
     if event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangeGryphonVisibility(false)
         MainMenuBarPageNumber:Hide()
@@ -1079,244 +1004,83 @@ function Module.ChangeMicroMenu()
     -- from https://www.townlong-yak.com/framexml/live/Helix/AtlasInfo.lua
     local Atlas = {
         ['UI-HUD-MicroMenu-Achievements-Disabled'] = {
-            38,
-            52,
-            0.78515625,
-            0.93359375,
-            0.212890625,
-            0.314453125,
-            false,
-            false
+            38, 52, 0.78515625, 0.93359375, 0.212890625, 0.314453125, false, false
         },
         ['UI-HUD-MicroMenu-Achievements-Down'] = {
-            38,
-            52,
-            0.62890625,
-            0.77734375,
-            0.107421875,
-            0.208984375,
-            false,
-            false
+            38, 52, 0.62890625, 0.77734375, 0.107421875, 0.208984375, false, false
         },
         ['UI-HUD-MicroMenu-Achievements-Mouseover'] = {
-            38,
-            52,
-            0.78515625,
-            0.93359375,
-            0.107421875,
-            0.208984375,
-            false,
-            false
+            38, 52, 0.78515625, 0.93359375, 0.107421875, 0.208984375, false, false
         },
         ['UI-HUD-MicroMenu-Achievements-Up'] = {38, 52, 0.62890625, 0.77734375, 0.212890625, 0.314453125, false, false},
         ['UI-HUD-MicroMenu-AdventureGuide-Disabled'] = {
-            38,
-            52,
-            0.31640625,
-            0.46484375,
-            0.318359375,
-            0.419921875,
-            false,
-            false
+            38, 52, 0.31640625, 0.46484375, 0.318359375, 0.419921875, false, false
         },
         ['UI-HUD-MicroMenu-AdventureGuide-Down'] = {
-            38,
-            52,
-            0.78515625,
-            0.93359375,
-            0.318359375,
-            0.419921875,
-            false,
-            false
+            38, 52, 0.78515625, 0.93359375, 0.318359375, 0.419921875, false, false
         },
         ['UI-HUD-MicroMenu-AdventureGuide-Mouseover'] = {
-            38,
-            52,
-            0.62890625,
-            0.77734375,
-            0.318359375,
-            0.419921875,
-            false,
-            false
+            38, 52, 0.62890625, 0.77734375, 0.318359375, 0.419921875, false, false
         },
         ['UI-HUD-MicroMenu-AdventureGuide-Up'] = {
-            38,
-            52,
-            0.00390625,
-            0.15234375,
-            0.529296875,
-            0.630859375,
-            false,
-            false
+            38, 52, 0.00390625, 0.15234375, 0.529296875, 0.630859375, false, false
         },
         ['UI-HUD-MicroMenu-CharacterInfo-Disabled'] = {
-            38,
-            52,
-            0.00390625,
-            0.15234375,
-            0.423828125,
-            0.525390625,
-            false,
-            false
+            38, 52, 0.00390625, 0.15234375, 0.423828125, 0.525390625, false, false
         },
         ['UI-HUD-MicroMenu-CharacterInfo-Down'] = {
-            38,
-            52,
-            0.47265625,
-            0.62109375,
-            0.318359375,
-            0.419921875,
-            false,
-            false
+            38, 52, 0.47265625, 0.62109375, 0.318359375, 0.419921875, false, false
         },
         ['UI-HUD-MicroMenu-CharacterInfo-Mouseover'] = {
-            38,
-            52,
-            0.31640625,
-            0.46484375,
-            0.423828125,
-            0.525390625,
-            false,
-            false
+            38, 52, 0.31640625, 0.46484375, 0.423828125, 0.525390625, false, false
         },
         ['UI-HUD-MicroMenu-CharacterInfo-Up'] = {38, 52, 0.00390625, 0.15234375, 0.634765625, 0.736328125, false, false},
         ['UI-HUD-MicroMenu-Collections-Disabled'] = {
-            38,
-            52,
-            0.47265625,
-            0.62109375,
-            0.001953125,
-            0.103515625,
-            false,
-            false
+            38, 52, 0.47265625, 0.62109375, 0.001953125, 0.103515625, false, false
         },
         ['UI-HUD-MicroMenu-Collections-Down'] = {38, 52, 0.00390625, 0.15234375, 0.740234375, 0.841796875, false, false},
         ['UI-HUD-MicroMenu-Collections-Mouseover'] = {
-            38,
-            52,
-            0.00390625,
-            0.15234375,
-            0.845703125,
-            0.947265625,
-            false,
-            false
+            38, 52, 0.00390625, 0.15234375, 0.845703125, 0.947265625, false, false
         },
         ['UI-HUD-MicroMenu-Collections-Up'] = {38, 52, 0.16015625, 0.30859375, 0.318359375, 0.419921875, false, false},
         ['UI-HUD-MicroMenu-Communities-Icon-Notification'] = {
-            20,
-            22,
-            0.00390625,
-            0.08203125,
-            0.951171875,
-            0.994140625,
-            false,
-            false
+            20, 22, 0.00390625, 0.08203125, 0.951171875, 0.994140625, false, false
         },
         ['UI-HUD-MicroMenu-GameMenu-Disabled'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.423828125,
-            0.525390625,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.423828125, 0.525390625, false, false
         },
         ['UI-HUD-MicroMenu-GameMenu-Down'] = {38, 52, 0.47265625, 0.62109375, 0.423828125, 0.525390625, false, false},
         ['UI-HUD-MicroMenu-GameMenu-Mouseover'] = {
-            38,
-            52,
-            0.62890625,
-            0.77734375,
-            0.423828125,
-            0.525390625,
-            false,
-            false
+            38, 52, 0.62890625, 0.77734375, 0.423828125, 0.525390625, false, false
         },
         ['UI-HUD-MicroMenu-GameMenu-Up'] = {38, 52, 0.78515625, 0.93359375, 0.423828125, 0.525390625, false, false},
         ['UI-HUD-MicroMenu-Groupfinder-Disabled'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.529296875,
-            0.630859375,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.529296875, 0.630859375, false, false
         },
         ['UI-HUD-MicroMenu-Groupfinder-Down'] = {38, 52, 0.31640625, 0.46484375, 0.212890625, 0.314453125, false, false},
         ['UI-HUD-MicroMenu-Groupfinder-Mouseover'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.212890625,
-            0.314453125,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.212890625, 0.314453125, false, false
         },
         ['UI-HUD-MicroMenu-Groupfinder-Up'] = {38, 52, 0.00390625, 0.15234375, 0.318359375, 0.419921875, false, false},
         ['UI-HUD-MicroMenu-GuildCommunities-Disabled'] = {
-            38,
-            52,
-            0.78515625,
-            0.93359375,
-            0.001953125,
-            0.103515625,
-            false,
-            false
+            38, 52, 0.78515625, 0.93359375, 0.001953125, 0.103515625, false, false
         },
         ['UI-HUD-MicroMenu-GuildCommunities-Down'] = {
-            38,
-            52,
-            0.00390625,
-            0.15234375,
-            0.001953125,
-            0.103515625,
-            false,
-            false
+            38, 52, 0.00390625, 0.15234375, 0.001953125, 0.103515625, false, false
         },
         ['UI-HUD-MicroMenu-GuildCommunities-Mouseover'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.001953125,
-            0.103515625,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.001953125, 0.103515625, false, false
         },
         ['UI-HUD-MicroMenu-GuildCommunities-Up'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.107421875,
-            0.208984375,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.107421875, 0.208984375, false, false
         },
         ['UI-HUD-MicroMenu-Highlightalert'] = {66, 80, 0.47265625, 0.73046875, 0.740234375, 0.896484375, false, false},
         ['UI-HUD-MicroMenu-Questlog-Disabled'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.740234375,
-            0.841796875,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.740234375, 0.841796875, false, false
         },
         ['UI-HUD-MicroMenu-Questlog-Down'] = {38, 52, 0.47265625, 0.62109375, 0.529296875, 0.630859375, false, false},
         ['UI-HUD-MicroMenu-Questlog-Mouseover'] = {
-            38,
-            52,
-            0.16015625,
-            0.30859375,
-            0.845703125,
-            0.947265625,
-            false,
-            false
+            38, 52, 0.16015625, 0.30859375, 0.845703125, 0.947265625, false, false
         },
         ['UI-HUD-MicroMenu-Questlog-Up'] = {38, 52, 0.78515625, 0.93359375, 0.529296875, 0.630859375, false, false},
         ['UI-HUD-MicroMenu-Shop-Disabled'] = {38, 52, 0.16015625, 0.30859375, 0.634765625, 0.736328125, false, false},
@@ -1324,99 +1088,36 @@ function Module.ChangeMicroMenu()
         ['UI-HUD-MicroMenu-Shop-Mouseover'] = {38, 52, 0.47265625, 0.62109375, 0.634765625, 0.736328125, false, false},
         ['UI-HUD-MicroMenu-Shop-Up'] = {38, 52, 0.00390625, 0.15234375, 0.212890625, 0.314453125, false, false},
         ['UI-HUD-MicroMenu-SpecTalents-Disabled'] = {
-            38,
-            52,
-            0.31640625,
-            0.46484375,
-            0.107421875,
-            0.208984375,
-            false,
-            false
+            38, 52, 0.31640625, 0.46484375, 0.107421875, 0.208984375, false, false
         },
         ['UI-HUD-MicroMenu-SpecTalents-Down'] = {38, 52, 0.31640625, 0.46484375, 0.529296875, 0.630859375, false, false},
         ['UI-HUD-MicroMenu-SpecTalents-Mouseover'] = {
-            38,
-            52,
-            0.31640625,
-            0.46484375,
-            0.001953125,
-            0.103515625,
-            false,
-            false
+            38, 52, 0.31640625, 0.46484375, 0.001953125, 0.103515625, false, false
         },
         ['UI-HUD-MicroMenu-SpecTalents-Up'] = {38, 52, 0.62890625, 0.77734375, 0.001953125, 0.103515625, false, false},
         ['UI-HUD-MicroMenu-SpellbookAbilities-Disabled'] = {
-            38,
-            52,
-            0.00390625,
-            0.15234375,
-            0.107421875,
-            0.208984375,
-            false,
-            false
+            38, 52, 0.00390625, 0.15234375, 0.107421875, 0.208984375, false, false
         },
         ['UI-HUD-MicroMenu-SpellbookAbilities-Down'] = {
-            38,
-            52,
-            0.31640625,
-            0.46484375,
-            0.845703125,
-            0.947265625,
-            false,
-            false
+            38, 52, 0.31640625, 0.46484375, 0.845703125, 0.947265625, false, false
         },
         ['UI-HUD-MicroMenu-SpellbookAbilities-Mouseover'] = {
-            38,
-            52,
-            0.73828125,
-            0.88671875,
-            0.845703125,
-            0.947265625,
-            false,
-            false
+            38, 52, 0.73828125, 0.88671875, 0.845703125, 0.947265625, false, false
         },
         ['UI-HUD-MicroMenu-SpellbookAbilities-Up'] = {
-            38,
-            52,
-            0.47265625,
-            0.62109375,
-            0.107421875,
-            0.208984375,
-            false,
-            false
+            38, 52, 0.47265625, 0.62109375, 0.107421875, 0.208984375, false, false
         },
         ['UI-HUD-MicroMenu-StreamDLGreen-Down'] = {
-            38,
-            52,
-            0.31640625,
-            0.46484375,
-            0.634765625,
-            0.736328125,
-            false,
-            false
+            38, 52, 0.31640625, 0.46484375, 0.634765625, 0.736328125, false, false
         },
         ['UI-HUD-MicroMenu-StreamDLGreen-Up'] = {38, 52, 0.47265625, 0.62109375, 0.212890625, 0.314453125, false, false},
         ['UI-HUD-MicroMenu-StreamDLRed-Down'] = {38, 52, 0.31640625, 0.46484375, 0.740234375, 0.841796875, false, false},
         ['UI-HUD-MicroMenu-StreamDLRed-Up'] = {38, 52, 0.62890625, 0.77734375, 0.634765625, 0.736328125, false, false},
         ['UI-HUD-MicroMenu-StreamDLYellow-Down'] = {
-            38,
-            52,
-            0.73828125,
-            0.88671875,
-            0.740234375,
-            0.841796875,
-            false,
-            false
+            38, 52, 0.73828125, 0.88671875, 0.740234375, 0.841796875, false, false
         },
         ['UI-HUD-MicroMenu-StreamDLYellow-Up'] = {
-            38,
-            52,
-            0.78515625,
-            0.93359375,
-            0.634765625,
-            0.736328125,
-            false,
-            false
+            38, 52, 0.78515625, 0.93359375, 0.634765625, 0.736328125, false, false
         }
     }
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uimicromenu2x'
@@ -1436,17 +1137,15 @@ function Module.ChangeMicroMenu()
         Module.SetButtonFromAtlas(LFGMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Groupfinder')
         Module.SetButtonFromAtlas(MainMenuMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Shop')
 
+        Module.SetButtonFromAtlas(CollectionsMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Collections')
+        MainMenuBarTextureExtender:Hide()
+
         local deltaX, deltaY = 6, 18
         MainMenuBarPerformanceBar:ClearAllPoints()
         MainMenuBarPerformanceBar:SetPoint('LEFT', MainMenuMicroButton, 'LEFT', deltaX, -deltaY)
         MainMenuBarPerformanceBar:SetPoint('RIGHT', MainMenuMicroButton, 'RIGHT', -deltaX, -deltaY)
-        MainMenuBarPerformanceBar:SetPoint(
-            'RIGHT',
-            MainMenuMicroButton,
-            'RIGHT',
-            MainMenuBarPerformanceBar:GetWidth() / 2 - deltaX,
-            -15
-        )
+        MainMenuBarPerformanceBar:SetPoint('RIGHT', MainMenuMicroButton, 'RIGHT',
+                                           MainMenuBarPerformanceBar:GetWidth() / 2 - deltaX, -15)
     else
         MainMenuBarPerformanceBarFrame:Hide()
     end
@@ -1464,7 +1163,7 @@ function Module.GetBagSlots(id)
 end
 
 function Module.ChangeBackpack()
-    --MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
+    -- MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
     local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbag'
     local highlight = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbagHighlight'
 
@@ -1477,7 +1176,7 @@ function Module.ChangeBackpack()
 
     MainMenuBarBackpackButtonNormalTexture:Hide()
     MainMenuBarBackpackButtonNormalTexture:SetTexture()
-    --MainMenuBarBackpackButton.IconBorder:Hide()
+    -- MainMenuBarBackpackButton.IconBorder:Hide()
 
     local slot = 'Interface\\Addons\\DragonflightUI\\Textures\\bagborder2'
     local slothighlight = 'Interface\\Addons\\DragonflightUI\\Textures\\baghighlight2'
@@ -1492,21 +1191,13 @@ function Module.ChangeBackpack()
         _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexture(bagtexture)
         --  _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625) -- empty
 
-        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(
-            0.576171875 + dx,
-            0.6953125 + dx,
-            0.0078125 + dy,
-            0.484375 + dy
-        )
+        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx,
+                                                                         0.0078125 + dy, 0.484375 + dy)
         _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetSize(35, 35)
 
         _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexture(bagtexture)
-        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexCoord(
-            0.69921875,
-            0.818359375,
-            0.0078125,
-            0.484375
-        )
+        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture()
+            :SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
         _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(35, 35)
 
         _G['CharacterBag' .. i .. 'Slot']:GetCheckedTexture():SetTexture()
@@ -1527,18 +1218,14 @@ function Module.ChangeBackpack()
             end
         end
 
-        hooksecurefunc(
-            _G['CharacterBag' .. i .. 'SlotIconTexture'],
-            'SetTexture',
-            function(args)
-                slothook(args, i + 1)
-            end
-        )
+        hooksecurefunc(_G['CharacterBag' .. i .. 'SlotIconTexture'], 'SetTexture', function(args)
+            slothook(args, i + 1)
+        end)
     end
 
     CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
 
-    --keyring
+    -- keyring
     KeyRingButton:SetSize(34.5, 34.5)
     KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2 + 2)
 
@@ -1551,16 +1238,16 @@ function Module.ChangeBackpack()
     KeyRingButton:GetHighlightTexture():SetSize(35, 35)
     KeyRingButton:GetHighlightTexture():SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
 
-    --KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
+    -- KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
     KeyRingButton:GetPushedTexture():SetSize(35, 35)
     -- KeyRingButton:GetPushedTexture():SetTexture(0.69921875, 0.818359375, 0.0078125, 0.484375)
-    --KeyRingButton:GetCheckedTexture():SetTexture()
+    -- KeyRingButton:GetCheckedTexture():SetTexture()
 end
 
 function Module.HookBags()
     -- from '\BlizzardInterfaceCode\Interface\FrameXML\ContainerFrame_Shared.lua'
     local UpdateContainerFrameAnchorsModified = function()
-        --CHANGE
+        -- CHANGE
         local CONTAINER_OFFSET_X = 0
         local CONTAINER_OFFSET_Y = 92
 
@@ -1568,9 +1255,7 @@ function Module.HookBags()
         local screenWidth = GetScreenWidth()
         local containerScale = 1
         local leftLimit = 0
-        if (BankFrame:IsShown()) then
-            leftLimit = BankFrame:GetRight() - 25
-        end
+        if (BankFrame:IsShown()) then leftLimit = BankFrame:GetRight() - 25 end
 
         while (containerScale > CONTAINER_SCALE) do
             screenHeight = GetScreenHeight() / containerScale
@@ -1599,9 +1284,7 @@ function Module.HookBags()
             end
         end
 
-        if (containerScale < CONTAINER_SCALE) then
-            containerScale = CONTAINER_SCALE
-        end
+        if (containerScale < CONTAINER_SCALE) then containerScale = CONTAINER_SCALE end
 
         screenHeight = GetScreenHeight() / containerScale
         -- Adjust the start anchor for bags depending on the multibars
@@ -1620,13 +1303,8 @@ function Module.HookBags()
                 -- Start a new column
                 column = column + 1
                 freeScreenHeight = screenHeight - yOffset
-                frame:SetPoint(
-                    'BOTTOMRIGHT',
-                    frame:GetParent(),
-                    'BOTTOMRIGHT',
-                    -(column * CONTAINER_WIDTH) - xOffset,
-                    yOffset
-                )
+                frame:SetPoint('BOTTOMRIGHT', frame:GetParent(), 'BOTTOMRIGHT', -(column * CONTAINER_WIDTH) - xOffset,
+                               yOffset)
             else
                 -- Anchor to the previous bag
                 frame:SetPoint('BOTTOMRIGHT', ContainerFrame1.bags[index - 1], 'TOPRIGHT', 0, CONTAINER_SPACING)
@@ -1643,7 +1321,7 @@ function Module.MoveBars()
     MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
 
     CharacterMicroButton:ClearAllPoints()
-    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20, 0)
+    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20 - 35, 0)
 
     CharacterMicroButton.SetPoint = noop
     CharacterMicroButton.ClearAllPoints = noop
@@ -1674,13 +1352,10 @@ function Module.CreateBagExpandButton()
     f:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
     f:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
 
-    f:SetScript(
-        'OnClick',
-        function()
-            setOption({'bagsExpanded'}, not Module.db.profile.bagsExpanded)
-            Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
-        end
-    )
+    f:SetScript('OnClick', function()
+        setOption({'bagsExpanded'}, not Module.db.profile.bagsExpanded)
+        Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+    end)
     f:RegisterEvent('BAG_UPDATE_DELAYED')
     f:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     f:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
@@ -1749,30 +1424,18 @@ function Module.ChangeFramerate()
     local Path, Size, Flags = FramerateText:GetFont()
     t:SetFont(Path, Size, Flags)
 
-    hooksecurefunc(
-        FramerateText,
-        'SetFormattedText',
-        function()
-            local down, up, lagHome, lagWorld = GetNetStats()
-            --local str = 'MS: ' .. lagHome .. '|' .. lagWorld
-            local str = 'MS: ' .. math.max(lagHome, lagWorld)
-            t:SetText(str)
-        end
-    )
-    hooksecurefunc(
-        FramerateText,
-        'Show',
-        function()
-            f:Show()
-        end
-    )
-    hooksecurefunc(
-        FramerateText,
-        'Hide',
-        function()
-            f:Hide()
-        end
-    )
+    hooksecurefunc(FramerateText, 'SetFormattedText', function()
+        local down, up, lagHome, lagWorld = GetNetStats()
+        -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
+        local str = 'MS: ' .. math.max(lagHome, lagWorld)
+        t:SetText(str)
+    end)
+    hooksecurefunc(FramerateText, 'Show', function()
+        f:Show()
+    end)
+    hooksecurefunc(FramerateText, 'Hide', function()
+        f:Hide()
+    end)
 end
 
 -- WRATH
@@ -1788,12 +1451,13 @@ function Module.Wrath()
     frame.UpdateRepBar()
     Module.SetNumBars()
     Module.HookPetBar()
-
-    --Module.MoveSideBars()
+    Module.MoveTotem()
+    Module.ChangePossessBar()
+    -- Module.MoveSideBars()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
-    --Core.Sub.Artframe()
+    -- Core.Sub.Artframe()
     Module.ChangeGryphon()
     Module.DrawGryphon()
     Module.DrawActionbarDeco()
@@ -1802,7 +1466,7 @@ function Module.Wrath()
     frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
     frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
 
-    --Core.Sub.Micromenu()
+    -- Core.Sub.Micromenu()
     Module.ChangeMicroMenu()
     Module.ChangeBackpack()
     Module.MoveBars()
@@ -1814,5 +1478,36 @@ end
 
 -- ERA
 function Module.Era()
-    Module.Wrath()
+    Module.ChangeActionbar()
+    Module.CreateNewXPBar()
+    Module.CreateNewRepBar()
+    Module.StyleButtons()
+    Module.StylePageNumber()
+    Module.ApplyMask()
+    Module.ChangeButtonSpacing()
+    frame.UpdateXPBar()
+    frame.UpdateRepBar()
+    Module.SetNumBars()
+    Module.HookPetBar()
+    -- Module.MoveSideBars()
+
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+
+    -- Core.Sub.Artframe()
+    Module.ChangeGryphon()
+    Module.DrawGryphon()
+    Module.DrawActionbarDeco()
+
+    frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    -- Core.Sub.Micromenu()
+    Module.ChangeMicroMenu()
+    Module.ChangeBackpack()
+    Module.MoveBars()
+    Module.ChangeFramerate()
+    Module.CreateBagExpandButton()
+    Module.RefreshBagBarToggle()
+    Module.HookBags()
 end

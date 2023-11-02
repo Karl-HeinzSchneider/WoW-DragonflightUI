@@ -21,9 +21,7 @@ local function getDefaultStr(key)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        Module.db.profile[k] = v
-    end
+    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
     Module.ApplySettings()
 end
 
@@ -71,11 +69,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {
-            type = 'header',
-            name = 'Config - Player',
-            order = 100
-        },
+        config = {type = 'header', name = 'Config - Player', order = 100},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -199,7 +193,7 @@ function Module.ChangeDefaultCastbar()
 
     local children = {CastingBarFrame:GetRegions()}
     for i, child in pairs(children) do
-        --print('child', child:GetName())
+        -- print('child', child:GetName())
         child:Hide()
     end
 end
@@ -257,15 +251,13 @@ function Module.CreateNewCastbar()
     local UpdateSpark = function(other)
         local value = other:GetValue()
         local statusMin, statusMax = other:GetMinMaxValues()
-        if statusMax == 0 then
-            return
-        end
+        if statusMax == 0 then return end
 
         local percent = value / statusMax
         if percent == 1 then
             f.Spark:Hide()
         else
-            --f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
+            -- f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
             f.Spark:Show()
             local dx = 2
             f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * frame.Castbar:GetWidth()) / statusMax, 0)
@@ -333,14 +325,11 @@ function Module.CreateNewCastbar()
     end
     f.Ticks = ticks
 
-    CastingBarFrame:HookScript(
-        'OnUpdate',
-        function(self)
-            UpdateCastBarValues(self)
-            UpdateSpark(self)
-            UpdateExtratext(self)
-        end
-    )
+    CastingBarFrame:HookScript('OnUpdate', function(self)
+        UpdateCastBarValues(self)
+        UpdateSpark(self)
+        UpdateExtratext(self)
+    end)
 end
 
 function Module.SetBarNormal()
@@ -361,39 +350,32 @@ function Module.SetBarNormal()
     end
 end
 
-Module.ChannelTicks =
-    DF.Wrath and
-    {
-        --wl
-        [GetSpellInfo(5740)] = 4, -- rain of fire
-        [GetSpellInfo(5138)] = 5, -- drain mana
-        [GetSpellInfo(689)] = 5, -- drain life
-        [GetSpellInfo(1120)] = 5, -- drain soul
-        [GetSpellInfo(755)] = 10, -- health funnel
-        [GetSpellInfo(1949)] = 15, -- hellfire
-        --priest
-        [GetSpellInfo(47540)] = 2, -- penance
-        [GetSpellInfo(15407)] = 3, -- mind flay
-        [GetSpellInfo(64843)] = 4, -- divine hymn
-        [GetSpellInfo(64901)] = 4, -- hymn of hope
-        [GetSpellInfo(48045)] = 5, -- mind sear
-        --hunter
-        [GetSpellInfo(1510)] = 6, -- volley
-        -- druid
-        [GetSpellInfo(740)] = 4, -- tranquility
-        [GetSpellInfo(16914)] = 10, -- hurricane
-        -- mage
-        [GetSpellInfo(5145)] = 5, -- arcane missiles
-        [GetSpellInfo(10)] = 8 -- blizzard
-    } or
-    DF.Era and {}
+Module.ChannelTicks = DF.Wrath and {
+    -- wl
+    [GetSpellInfo(5740)] = 4, -- rain of fire
+    [GetSpellInfo(5138)] = 5, -- drain mana
+    [GetSpellInfo(689)] = 5, -- drain life
+    [GetSpellInfo(1120)] = 5, -- drain soul
+    [GetSpellInfo(755)] = 10, -- health funnel
+    [GetSpellInfo(1949)] = 15, -- hellfire
+    -- priest
+    [GetSpellInfo(47540)] = 2, -- penance
+    [GetSpellInfo(15407)] = 3, -- mind flay
+    [GetSpellInfo(64843)] = 4, -- divine hymn
+    [GetSpellInfo(64901)] = 4, -- hymn of hope
+    [GetSpellInfo(48045)] = 5, -- mind sear
+    -- hunter
+    [GetSpellInfo(1510)] = 6, -- volley
+    -- druid
+    [GetSpellInfo(740)] = 4, -- tranquility
+    [GetSpellInfo(16914)] = 10, -- hurricane
+    -- mage
+    [GetSpellInfo(5145)] = 5, -- arcane missiles
+    [GetSpellInfo(10)] = 8 -- blizzard
+} or DF.Era and {}
 
 function Module.HideAllTicks()
-    if frame.Castbar.Ticks then
-        for i = 1, 15 do
-            frame.Castbar.Ticks[i]:Hide()
-        end
-    end
+    if frame.Castbar.Ticks then for i = 1, 15 do frame.Castbar.Ticks[i]:Hide() end end
 end
 
 function Module.SetBarChannel()
@@ -401,8 +383,8 @@ function Module.SetBarChannel()
     frame.Castbar.Bar:SetStatusBarTexture(channelRef)
 
     frame.Castbar.bChanneling = true
-    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId =
-        UnitChannelInfo('player')
+    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(
+                                                                                                     'player')
     frame.Castbar.Text:SetText(name:sub(1, 23))
     frame.Castbar.Text:ClearAllPoints()
 
@@ -420,9 +402,7 @@ function Module.SetBarChannel()
             frame.Castbar.Ticks[i]:SetPoint('CENTER', frame.Castbar, 'LEFT', i * tickDelta, 0)
         end
 
-        for i = tickCount, 15 do
-            frame.Castbar.Ticks[i]:Hide()
-        end
+        for i = tickCount, 15 do frame.Castbar.Ticks[i]:Hide() end
     else
         Module.HideAllTicks()
     end
@@ -438,7 +418,7 @@ function Module.SetBarInterrupted()
 end
 
 function frame:OnEvent(event, arg1)
-    --print('event', event, arg1)
+    -- print('event', event, arg1)
     Module.ChangeDefaultCastbar()
     if event == 'PLAYER_ENTERING_WORLD' then
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then

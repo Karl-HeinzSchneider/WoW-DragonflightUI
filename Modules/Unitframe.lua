@@ -51,31 +51,13 @@ local defaultsPROTO = {
 
 local localSettings = {
     scale = 1,
-    focus = {
-        scale = 1.0,
-        anchor = 'TOPLEFT',
-        anchorParent = 'TOPLEFT',
-        x = 250,
-        y = -170
-    },
-    player = {
-        scale = 1.0,
-        anchor = 'TOPLEFT',
-        anchorParent = 'TOPLEFT',
-        x = -19,
-        y = -4
-    },
-    target = {
-        scale = 1.0,
-        anchor = 'TOPLEFT',
-        anchorParent = 'TOPLEFT',
-        x = 250,
-        y = -4
-    }
+    focus = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 250, y = -170},
+    player = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4},
+    target = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 250, y = -4}
 }
 
 local function getDefaultStr(key, sub)
-    --print('default str', sub, key)
+    -- print('default str', sub, key)
     if sub then
         local obj = defaults.profile[sub]
         local value = obj[key]
@@ -91,9 +73,7 @@ local function setDefaultValues()
     for k, v in pairs(defaults.profile) do
         if type(v) == 'table' then
             local obj = Module.db.profile[k]
-            for kSub, vSub in pairs(v) do
-                obj[kSub] = vSub
-            end
+            for kSub, vSub in pairs(v) do obj[kSub] = vSub end
         else
             Module.db.profile[k] = v
         end
@@ -105,15 +85,15 @@ end
 local function getOption(info)
     local key = info[1]
     local sub = info[2]
-    --print('getOption', key, sub)
-    --print('db', db[key])
+    -- print('getOption', key, sub)
+    -- print('db', db[key])
 
     if sub then
-        --return db[key .. '.' .. sub]
+        -- return db[key .. '.' .. sub]
         local t = Module.db.profile[key]
         return t[sub]
     else
-        --return db[info[#info]]
+        -- return db[info[#info]]
         return db[key]
     end
 end
@@ -121,12 +101,12 @@ end
 local function setOption(info, value)
     local key = info[1]
     local sub = info[2]
-    --print('setOption', key, sub)
+    -- print('setOption', key, sub)
 
     if sub then
         local t = Module.db.profile[key]
         t[sub] = value
-        --Module.db.profile[key .. '.' .. sub] = value
+        -- Module.db.profile[key .. '.' .. sub] = value
         Module.ApplySettings()
     else
         Module.db.profile[key] = value
@@ -141,22 +121,14 @@ local optionsPlayer = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {
-            type = 'header',
-            name = 'General',
-            order = 10
-        },
+        configGeneral = {type = 'header', name = 'General', order = 10},
         classcolor = {
             type = 'toggle',
             name = 'class color',
             desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
-        configSize = {
-            type = 'header',
-            name = 'Size',
-            order = 50
-        },
+        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -166,18 +138,8 @@ local optionsPlayer = {
             bigStep = 0.025,
             order = 50.1
         },
-        configPos = {
-            type = 'header',
-            name = 'Position',
-            order = 100
-        },
-        override = {
-            type = 'toggle',
-            name = 'Override',
-            desc = 'Override positions',
-            order = 101,
-            width = 'full'
-        },
+        configPos = {type = 'header', name = 'Position', order = 100},
+        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -240,22 +202,14 @@ local optionsTarget = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {
-            type = 'header',
-            name = 'General',
-            order = 10
-        },
+        configGeneral = {type = 'header', name = 'General', order = 10},
         classcolor = {
             type = 'toggle',
             name = 'class color',
             desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
-        configSize = {
-            type = 'header',
-            name = 'Size',
-            order = 50
-        },
+        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -265,18 +219,8 @@ local optionsTarget = {
             bigStep = 0.025,
             order = 50.1
         },
-        configPos = {
-            type = 'header',
-            name = 'Position',
-            order = 100
-        },
-        override = {
-            type = 'toggle',
-            name = 'Override',
-            desc = 'Override positions',
-            order = 101,
-            width = 'full'
-        },
+        configPos = {type = 'header', name = 'Position', order = 100},
+        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -339,22 +283,14 @@ local optionsFocus = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {
-            type = 'header',
-            name = 'General',
-            order = 10
-        },
+        configGeneral = {type = 'header', name = 'General', order = 10},
         classcolor = {
             type = 'toggle',
             name = 'class color',
             desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
-        configSize = {
-            type = 'header',
-            name = 'Size',
-            order = 50
-        },
+        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -364,18 +300,8 @@ local optionsFocus = {
             bigStep = 0.025,
             order = 50.1
         },
-        configPos = {
-            type = 'header',
-            name = 'Position',
-            order = 100
-        },
-        override = {
-            type = 'toggle',
-            name = 'Override',
-            desc = 'Override positions',
-            order = 101,
-            width = 'full'
-        },
+        configPos = {type = 'header', name = 'Position', order = 100},
+        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -499,7 +425,7 @@ function Module:SaveLocalSettings()
     do
         local scale = PlayerFrame:GetScale()
         local point, relativeTo, relativePoint, xOfs, yOfs = PlayerFrame:GetPoint(1)
-        --print('PlayerFrame', point, relativePoint, xOfs, yOfs)
+        -- print('PlayerFrame', point, relativePoint, xOfs, yOfs)
 
         local obj = localSettings.player
         obj.scale = scale
@@ -512,7 +438,7 @@ function Module:SaveLocalSettings()
     do
         local scale = TargetFrame:GetScale()
         local point, relativeTo, relativePoint, xOfs, yOfs = TargetFrame:GetPoint(1)
-        --print('TargetFrame', point, relativePoint, xOfs, yOfs)
+        -- print('TargetFrame', point, relativePoint, xOfs, yOfs)
 
         local obj = localSettings.target
         obj.scale = scale
@@ -526,7 +452,7 @@ function Module:SaveLocalSettings()
         do
             local scale = FocusFrame:GetScale()
             local point, relativeTo, relativePoint, xOfs, yOfs = FocusFrame:GetPoint(1)
-            --print('FocusFrame', point, relativePoint, xOfs, yOfs)
+            -- print('FocusFrame', point, relativePoint, xOfs, yOfs)
 
             local obj = localSettings.focus
             obj.scale = scale
@@ -537,7 +463,7 @@ function Module:SaveLocalSettings()
         end
     end
 
-    --DevTools_Dump({localSettings})
+    -- DevTools_Dump({localSettings})
 end
 
 function Module:ApplySettings()
@@ -556,6 +482,7 @@ function Module:ApplySettings()
         end
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
+        Module.ScaleRestFlipbook()
     end
 
     -- target
@@ -636,686 +563,210 @@ function Module.GetCoords(key)
     local uiunitframe = {
         ['UI-HUD-UnitFrame-Player-Absorb-Edge'] = {8, 32, 0.984375, 0.9921875, 0.001953125, 0.064453125, false, false},
         ['UI-HUD-UnitFrame-Player-CombatIcon'] = {
-            16,
-            16,
-            0.9775390625,
-            0.9931640625,
-            0.259765625,
-            0.291015625,
-            false,
-            false
+            16, 16, 0.9775390625, 0.9931640625, 0.259765625, 0.291015625, false, false
         },
         ['UI-HUD-UnitFrame-Player-CombatIcon-Glow'] = {
-            32,
-            32,
-            0.1494140625,
-            0.1806640625,
-            0.8203125,
-            0.8828125,
-            false,
-            false
+            32, 32, 0.1494140625, 0.1806640625, 0.8203125, 0.8828125, false, false
         },
         ['UI-HUD-UnitFrame-Player-Group-FriendOnlineIcon'] = {
-            16,
-            16,
-            0.162109375,
-            0.177734375,
-            0.716796875,
-            0.748046875,
-            false,
-            false
+            16, 16, 0.162109375, 0.177734375, 0.716796875, 0.748046875, false, false
         },
         ['UI-HUD-UnitFrame-Player-Group-GuideIcon'] = {
-            16,
-            16,
-            0.162109375,
-            0.177734375,
-            0.751953125,
-            0.783203125,
-            false,
-            false
+            16, 16, 0.162109375, 0.177734375, 0.751953125, 0.783203125, false, false
         },
         ['UI-HUD-UnitFrame-Player-Group-LeaderIcon'] = {
-            16,
-            16,
-            0.1259765625,
-            0.1416015625,
-            0.919921875,
-            0.951171875,
-            false,
-            false
+            16, 16, 0.1259765625, 0.1416015625, 0.919921875, 0.951171875, false, false
         },
         ['UI-HUD-UnitFrame-Player-GroupIndicator'] = {
-            71,
-            13,
-            0.927734375,
-            0.9970703125,
-            0.3125,
-            0.337890625,
-            false,
-            false
+            71, 13, 0.927734375, 0.9970703125, 0.3125, 0.337890625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PlayTimeTired'] = {29, 29, 0.1904296875, 0.21875, 0.505859375, 0.5625, false, false},
         ['UI-HUD-UnitFrame-Player-PlayTimeUnhealthy'] = {
-            29,
-            29,
-            0.1904296875,
-            0.21875,
-            0.56640625,
-            0.623046875,
-            false,
-            false
+            29, 29, 0.1904296875, 0.21875, 0.56640625, 0.623046875, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff'] = {
-            133,
-            51,
-            0.0009765625,
-            0.130859375,
-            0.716796875,
-            0.81640625,
-            false,
-            false
+            133, 51, 0.0009765625, 0.130859375, 0.716796875, 0.81640625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-Energy'] = {
-            124,
-            10,
-            0.6708984375,
-            0.7919921875,
-            0.35546875,
-            0.375,
-            false,
-            false
+            124, 10, 0.6708984375, 0.7919921875, 0.35546875, 0.375, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-Focus'] = {
-            124,
-            10,
-            0.6708984375,
-            0.7919921875,
-            0.37890625,
-            0.3984375,
-            false,
-            false
+            124, 10, 0.6708984375, 0.7919921875, 0.37890625, 0.3984375, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'] = {
-            126,
-            23,
-            0.0009765625,
-            0.1240234375,
-            0.919921875,
-            0.96484375,
-            false,
-            false
+            126, 23, 0.0009765625, 0.1240234375, 0.919921875, 0.96484375, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status'] = {
-            124,
-            20,
-            0.5478515625,
-            0.6689453125,
-            0.3125,
-            0.3515625,
-            false,
-            false
+            124, 20, 0.5478515625, 0.6689453125, 0.3125, 0.3515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-Mana'] = {
-            126,
-            12,
-            0.0009765625,
-            0.1240234375,
-            0.96875,
-            0.9921875,
-            false,
-            false
+            126, 12, 0.0009765625, 0.1240234375, 0.96875, 0.9921875, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-Rage'] = {
-            124,
-            10,
-            0.8203125,
-            0.94140625,
-            0.435546875,
-            0.455078125,
-            false,
-            false
+            124, 10, 0.8203125, 0.94140625, 0.435546875, 0.455078125, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOff-Bar-RunicPower'] = {
-            124,
-            10,
-            0.1904296875,
-            0.3115234375,
-            0.458984375,
-            0.478515625,
-            false,
-            false
+            124, 10, 0.1904296875, 0.3115234375, 0.458984375, 0.478515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn'] = {198, 71, 0.7890625, 0.982421875, 0.001953125, 0.140625, false, false},
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy'] = {
-            124,
-            10,
-            0.3134765625,
-            0.4345703125,
-            0.458984375,
-            0.478515625,
-            false,
-            false
+            124, 10, 0.3134765625, 0.4345703125, 0.458984375, 0.478515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus'] = {
-            124,
-            10,
-            0.4365234375,
-            0.5576171875,
-            0.458984375,
-            0.478515625,
-            false,
-            false
+            124, 10, 0.4365234375, 0.5576171875, 0.458984375, 0.478515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health'] = {
-            124,
-            20,
-            0.5478515625,
-            0.6689453125,
-            0.35546875,
-            0.39453125,
-            false,
-            false
+            124, 20, 0.5478515625, 0.6689453125, 0.35546875, 0.39453125, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'] = {
-            124,
-            20,
-            0.6708984375,
-            0.7919921875,
-            0.3125,
-            0.3515625,
-            false,
-            false
+            124, 20, 0.6708984375, 0.7919921875, 0.3125, 0.3515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana'] = {
-            124,
-            10,
-            0.5595703125,
-            0.6806640625,
-            0.458984375,
-            0.478515625,
-            false,
-            false
+            124, 10, 0.5595703125, 0.6806640625, 0.458984375, 0.478515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Status'] = {
-            124,
-            10,
-            0.6826171875,
-            0.8037109375,
-            0.458984375,
-            0.478515625,
-            false,
-            false
+            124, 10, 0.6826171875, 0.8037109375, 0.458984375, 0.478515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage'] = {
-            124,
-            10,
-            0.8056640625,
-            0.9267578125,
-            0.458984375,
-            0.478515625,
-            false,
-            false
+            124, 10, 0.8056640625, 0.9267578125, 0.458984375, 0.478515625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower'] = {
-            124,
-            10,
-            0.1904296875,
-            0.3115234375,
-            0.482421875,
-            0.501953125,
-            false,
-            false
+            124, 10, 0.1904296875, 0.3115234375, 0.482421875, 0.501953125, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-CornerEmbellishment'] = {
-            23,
-            23,
-            0.953125,
-            0.9755859375,
-            0.259765625,
-            0.3046875,
-            false,
-            false
+            23, 23, 0.953125, 0.9755859375, 0.259765625, 0.3046875, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-InCombat'] = {
-            192,
-            71,
-            0.1943359375,
-            0.3818359375,
-            0.169921875,
-            0.30859375,
-            false,
-            false
+            192, 71, 0.1943359375, 0.3818359375, 0.169921875, 0.30859375, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Status'] = {
-            196,
-            71,
-            0.0009765625,
-            0.1923828125,
-            0.169921875,
-            0.30859375,
-            false,
-            false
+            196, 71, 0.0009765625, 0.1923828125, 0.169921875, 0.30859375, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Vehicle'] = {
-            202,
-            84,
-            0.0009765625,
-            0.1982421875,
-            0.001953125,
-            0.166015625,
-            false,
-            false
+            202, 84, 0.0009765625, 0.1982421875, 0.001953125, 0.166015625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-InCombat'] = {
-            198,
-            84,
-            0.3984375,
-            0.591796875,
-            0.001953125,
-            0.166015625,
-            false,
-            false
+            198, 84, 0.3984375, 0.591796875, 0.001953125, 0.166015625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-Status'] = {
-            201,
-            84,
-            0.2001953125,
-            0.396484375,
-            0.001953125,
-            0.166015625,
-            false,
-            false
+            201, 84, 0.2001953125, 0.396484375, 0.001953125, 0.166015625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PVP-AllianceIcon'] = {
-            28,
-            41,
-            0.1201171875,
-            0.1474609375,
-            0.8203125,
-            0.900390625,
-            false,
-            false
+            28, 41, 0.1201171875, 0.1474609375, 0.8203125, 0.900390625, false, false
         },
         ['UI-HUD-UnitFrame-Player-PVP-FFAIcon'] = {
-            28,
-            44,
-            0.1328125,
-            0.16015625,
-            0.716796875,
-            0.802734375,
-            false,
-            false
+            28, 44, 0.1328125, 0.16015625, 0.716796875, 0.802734375, false, false
         },
         ['UI-HUD-UnitFrame-Player-PVP-HordeIcon'] = {
-            44,
-            44,
-            0.953125,
-            0.99609375,
-            0.169921875,
-            0.255859375,
-            false,
-            false
+            44, 44, 0.953125, 0.99609375, 0.169921875, 0.255859375, false, false
         },
         ['UI-HUD-UnitFrame-Target-HighLevelTarget_Icon'] = {
-            11,
-            14,
-            0.984375,
-            0.9951171875,
-            0.068359375,
-            0.095703125,
-            false,
-            false
+            11, 14, 0.984375, 0.9951171875, 0.068359375, 0.095703125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn'] = {
-            192,
-            67,
-            0.57421875,
-            0.76171875,
-            0.169921875,
-            0.30078125,
-            false,
-            false
+            192, 67, 0.57421875, 0.76171875, 0.169921875, 0.30078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Energy'] = {
-            127,
-            10,
-            0.8544921875,
-            0.978515625,
-            0.412109375,
-            0.431640625,
-            false,
-            false
+            127, 10, 0.8544921875, 0.978515625, 0.412109375, 0.431640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Focus'] = {
-            127,
-            10,
-            0.1904296875,
-            0.314453125,
-            0.435546875,
-            0.455078125,
-            false,
-            false
+            127, 10, 0.1904296875, 0.314453125, 0.435546875, 0.455078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Health'] = {
-            125,
-            12,
-            0.7939453125,
-            0.916015625,
-            0.3515625,
-            0.375,
-            false,
-            false
+            125, 12, 0.7939453125, 0.916015625, 0.3515625, 0.375, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Health-Status'] = {
-            125,
-            12,
-            0.7939453125,
-            0.916015625,
-            0.37890625,
-            0.40234375,
-            false,
-            false
+            125, 12, 0.7939453125, 0.916015625, 0.37890625, 0.40234375, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Mana'] = {
-            127,
-            10,
-            0.31640625,
-            0.4404296875,
-            0.435546875,
-            0.455078125,
-            false,
-            false
+            127, 10, 0.31640625, 0.4404296875, 0.435546875, 0.455078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Mana-Status'] = {
-            127,
-            10,
-            0.4423828125,
-            0.56640625,
-            0.435546875,
-            0.455078125,
-            false,
-            false
+            127, 10, 0.4423828125, 0.56640625, 0.435546875, 0.455078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Rage'] = {
-            127,
-            10,
-            0.568359375,
-            0.6923828125,
-            0.435546875,
-            0.455078125,
-            false,
-            false
+            127, 10, 0.568359375, 0.6923828125, 0.435546875, 0.455078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-RunicPower'] = {
-            127,
-            10,
-            0.6943359375,
-            0.818359375,
-            0.435546875,
-            0.455078125,
-            false,
-            false
+            127, 10, 0.6943359375, 0.818359375, 0.435546875, 0.455078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-InCombat'] = {
-            188,
-            67,
-            0.0009765625,
-            0.1845703125,
-            0.447265625,
-            0.578125,
-            false,
-            false
+            188, 67, 0.0009765625, 0.1845703125, 0.447265625, 0.578125, false, false
         },
         ['UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Status'] = {
-            193,
-            69,
-            0.3837890625,
-            0.572265625,
-            0.169921875,
-            0.3046875,
-            false,
-            false
+            193, 69, 0.3837890625, 0.572265625, 0.169921875, 0.3046875, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn'] = {
-            192,
-            67,
-            0.763671875,
-            0.951171875,
-            0.169921875,
-            0.30078125,
-            false,
-            false
+            192, 67, 0.763671875, 0.951171875, 0.169921875, 0.30078125, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy'] = {
-            134,
-            10,
-            0.7890625,
-            0.919921875,
-            0.14453125,
-            0.1640625,
-            false,
-            false
+            134, 10, 0.7890625, 0.919921875, 0.14453125, 0.1640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus'] = {
-            134,
-            10,
-            0.1904296875,
-            0.3212890625,
-            0.412109375,
-            0.431640625,
-            false,
-            false
+            134, 10, 0.1904296875, 0.3212890625, 0.412109375, 0.431640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'] = {
-            126,
-            20,
-            0.4228515625,
-            0.5458984375,
-            0.3125,
-            0.3515625,
-            false,
-            false
+            126, 20, 0.4228515625, 0.5458984375, 0.3125, 0.3515625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'] = {
-            126,
-            20,
-            0.4228515625,
-            0.5458984375,
-            0.35546875,
-            0.39453125,
-            false,
-            false
+            126, 20, 0.4228515625, 0.5458984375, 0.35546875, 0.39453125, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'] = {
-            134,
-            10,
-            0.3232421875,
-            0.4541015625,
-            0.412109375,
-            0.431640625,
-            false,
-            false
+            134, 10, 0.3232421875, 0.4541015625, 0.412109375, 0.431640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana-Status'] = {
-            134,
-            10,
-            0.4560546875,
-            0.5869140625,
-            0.412109375,
-            0.431640625,
-            false,
-            false
+            134, 10, 0.4560546875, 0.5869140625, 0.412109375, 0.431640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'] = {
-            134,
-            10,
-            0.5888671875,
-            0.7197265625,
-            0.412109375,
-            0.431640625,
-            false,
-            false
+            134, 10, 0.5888671875, 0.7197265625, 0.412109375, 0.431640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower'] = {
-            134,
-            10,
-            0.7216796875,
-            0.8525390625,
-            0.412109375,
-            0.431640625,
-            false,
-            false
+            134, 10, 0.7216796875, 0.8525390625, 0.412109375, 0.431640625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-InCombat'] = {
-            188,
-            67,
-            0.0009765625,
-            0.1845703125,
-            0.58203125,
-            0.712890625,
-            false,
-            false
+            188, 67, 0.0009765625, 0.1845703125, 0.58203125, 0.712890625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Type'] = {
-            135,
-            18,
-            0.7939453125,
-            0.92578125,
-            0.3125,
-            0.34765625,
-            false,
-            false
+            135, 18, 0.7939453125, 0.92578125, 0.3125, 0.34765625, false, false
         },
         ['UI-HUD-UnitFrame-Target-PortraitOn-Vehicle'] = {
-            198,
-            81,
-            0.59375,
-            0.787109375,
-            0.001953125,
-            0.16015625,
-            false,
-            false
+            198, 81, 0.59375, 0.787109375, 0.001953125, 0.16015625, false, false
         },
         ['UI-HUD-UnitFrame-Target-Rare-PortraitOn'] = {
-            192,
-            67,
-            0.0009765625,
-            0.1884765625,
-            0.3125,
-            0.443359375,
-            false,
-            false
+            192, 67, 0.0009765625, 0.1884765625, 0.3125, 0.443359375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn'] = {
-            120,
-            49,
-            0.0009765625,
-            0.1181640625,
-            0.8203125,
-            0.916015625,
-            false,
-            false
+            120, 49, 0.0009765625, 0.1181640625, 0.8203125, 0.916015625, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'] = {
-            74,
-            7,
-            0.91796875,
-            0.990234375,
-            0.37890625,
-            0.392578125,
-            false,
-            false
+            74, 7, 0.91796875, 0.990234375, 0.37890625, 0.392578125, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'] = {
-            74,
-            7,
-            0.3134765625,
-            0.3857421875,
-            0.482421875,
-            0.49609375,
-            false,
-            false
+            74, 7, 0.3134765625, 0.3857421875, 0.482421875, 0.49609375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'] = {
-            70,
-            10,
-            0.921875,
-            0.990234375,
-            0.14453125,
-            0.1640625,
-            false,
-            false
+            70, 10, 0.921875, 0.990234375, 0.14453125, 0.1640625, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status'] = {
-            70,
-            10,
-            0.91796875,
-            0.986328125,
-            0.3515625,
-            0.37109375,
-            false,
-            false
+            70, 10, 0.91796875, 0.986328125, 0.3515625, 0.37109375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'] = {
-            74,
-            7,
-            0.3876953125,
-            0.4599609375,
-            0.482421875,
-            0.49609375,
-            false,
-            false
+            74, 7, 0.3876953125, 0.4599609375, 0.482421875, 0.49609375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana-Status'] = {
-            74,
-            7,
-            0.4619140625,
-            0.5341796875,
-            0.482421875,
-            0.49609375,
-            false,
-            false
+            74, 7, 0.4619140625, 0.5341796875, 0.482421875, 0.49609375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'] = {
-            74,
-            7,
-            0.5361328125,
-            0.6083984375,
-            0.482421875,
-            0.49609375,
-            false,
-            false
+            74, 7, 0.5361328125, 0.6083984375, 0.482421875, 0.49609375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'] = {
-            74,
-            7,
-            0.6103515625,
-            0.6826171875,
-            0.482421875,
-            0.49609375,
-            false,
-            false
+            74, 7, 0.6103515625, 0.6826171875, 0.482421875, 0.49609375, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-InCombat'] = {
-            114,
-            47,
-            0.3095703125,
-            0.4208984375,
-            0.3125,
-            0.404296875,
-            false,
-            false
+            114, 47, 0.3095703125, 0.4208984375, 0.3125, 0.404296875, false, false
         },
         ['UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status'] = {
-            120,
-            49,
-            0.1904296875,
-            0.3076171875,
-            0.3125,
-            0.408203125,
-            false,
-            false
+            120, 49, 0.1904296875, 0.3076171875, 0.3125, 0.408203125, false, false
         }
     }
 
@@ -1330,8 +781,7 @@ function Module.CreatePlayerFrameTextures()
         local background = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameBackground')
         background:SetDrawLayer('BACKGROUND', 2)
         background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND')
         background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
 
         background:SetTexture(base)
@@ -1378,13 +828,13 @@ function Module.ChangeStatusIcons()
     PlayerAttackBackground:SetSize(32, 32)
 
     PlayerFrameGroupIndicator:ClearAllPoints()
-    --PlayerFrameGroupIndicator:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', 4, 13)
+    -- PlayerFrameGroupIndicator:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', 4, 13)
     PlayerFrameGroupIndicator:SetPoint('BOTTOM', PlayerName, 'TOP', 0, 0)
 
     PlayerLeaderIcon:SetTexture(base)
     PlayerLeaderIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-Group-LeaderIcon'))
-    --PlayerLeaderIcon:ClearAllPoints()
-    --PlayerLeaderIcon:SetPoint('BOTTOM', PlayerName, 'TOP', 0, 0)
+    -- PlayerLeaderIcon:ClearAllPoints()
+    -- PlayerLeaderIcon:SetPoint('BOTTOM', PlayerName, 'TOP', 0, 0)
     PlayerLeaderIcon:ClearAllPoints()
     PlayerLeaderIcon:SetPoint('BOTTOMRIGHT', PlayerPortrait, 'TOPLEFT', 10, -10)
 
@@ -1398,9 +848,7 @@ function Module.HookDrag()
     local DragStopPlayerFrame = function(self)
         Module.SaveLocalSettings()
 
-        for k, v in pairs(localSettings.player) do
-            Module.db.profile.player[k] = v
-        end
+        for k, v in pairs(localSettings.player) do Module.db.profile.player[k] = v end
         Module.db.profile.player.override = false
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
@@ -1409,9 +857,7 @@ function Module.HookDrag()
     local DragStopTargetFrame = function(self)
         Module.SaveLocalSettings()
 
-        for k, v in pairs(localSettings.target) do
-            Module.db.profile.target[k] = v
-        end
+        for k, v in pairs(localSettings.target) do Module.db.profile.target[k] = v end
         Module.db.profile.target.override = false
     end
     TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
@@ -1421,77 +867,187 @@ function Module.HookDrag()
         local DragStopFocusFrame = function(self)
             Module.SaveLocalSettings()
 
-            for k, v in pairs(localSettings.focus) do
-                Module.db.profile.focus[k] = v
-            end
+            for k, v in pairs(localSettings.focus) do Module.db.profile.focus[k] = v end
             Module.db.profile.focus.override = false
         end
         FocusFrame:HookScript('OnDragStop', DragStopFocusFrame)
-    --hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)
+        -- hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)
     end
 end
 
 function Module.HookVertexColor()
-    PlayerFrameHealthBar:HookScript(
-        'OnValueChanged',
-        function(self)
-            if Module.db.profile.player.classcolor then
-                PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
-                )
+    PlayerFrameHealthBar:HookScript('OnValueChanged', function(self)
+        if Module.db.profile.player.classcolor then
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
 
-                local localizedClass, englishClass, classIndex = UnitClass('player')
-                PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-            else
-                PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health'
-                )
-                PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-            end
+            local localizedClass, englishClass, classIndex = UnitClass('player')
+            PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        else
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
+            PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
         end
-    )
+    end)
 
-    TargetFrameHealthBar:HookScript(
-        'OnValueChanged',
-        function(self)
-            if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
-                TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
-                )
-                local localizedClass, englishClass, classIndex = UnitClass('target')
-                TargetFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-            else
-                TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-                )
-                TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-            end
+    TargetFrameHealthBar:HookScript('OnValueChanged', function(self)
+        if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
+            TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
+            local localizedClass, englishClass, classIndex = UnitClass('target')
+            TargetFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        else
+            TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+            TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
         end
-    )
+    end)
 
     if DF.Wrath then
-        FocusFrameHealthBar:HookScript(
-            'OnValueChanged',
-            function(self)
-                if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
-                    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-                        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
-                    )
-                    local localizedClass, englishClass, classIndex = UnitClass('focus')
-                    FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-                else
-                    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-                        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-                    )
-                    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-                end
+        FocusFrameHealthBar:HookScript('OnValueChanged', function(self)
+            if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
+                FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
+                local localizedClass, englishClass, classIndex = UnitClass('focus')
+                FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+            else
+                FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+                FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
             end
-        )
+        end)
     end
+end
+
+function Module.HookEnergyBar()
+    hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
+        -- print('UnitFrameManaBar_UpdateType', manaBar:GetName())
+        local name = manaBar:GetName()
+
+        if name == 'PlayerFrameManaBar' then
+            local powerType, powerTypeString = UnitPowerType('player')
+
+            if powerTypeString == 'MANA' then
+                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'RAGE' then
+                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'FOCUS' then
+                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'ENERGY' then
+                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
+            end
+
+            PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+        elseif name == 'TargetFrameManaBar' then
+            local powerType, powerTypeString = UnitPowerType('target')
+
+            if powerTypeString == 'MANA' then
+                TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' then
+                TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                TargetFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
+            end
+
+            TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+        elseif name == 'TargetFrameToTManaBar' then
+            local powerType, powerTypeString = UnitPowerType('targettarget')
+
+            if powerTypeString == 'MANA' then
+                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' then
+                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+            end
+
+            TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+            TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
+
+            TargetFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+        elseif name == 'FocusFrameManaBar' then
+            local powerType, powerTypeString = UnitPowerType('focus')
+
+            if powerTypeString == 'MANA' then
+                FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' then
+                FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                FocusFrameManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
+            end
+
+            FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+            FocusFrameFlash:SetTexture('')
+        elseif name == 'FocusFrameToTManaBar' then
+            local powerType, powerTypeString = UnitPowerType('focusTarget')
+
+            if powerTypeString == 'MANA' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+            end
+
+            FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+            FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+        else
+            -- print('HookEnergyBar', manaBar:GetName())
+        end
+    end)
 end
 
 function Module.ChangePlayerframe()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    Module.RefreshPortrait()
 
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
@@ -1516,15 +1072,13 @@ function Module.ChangePlayerframe()
 
     if Module.db.profile.player.classcolor then
         PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
 
         local localizedClass, englishClass, classIndex = UnitClass('player')
         PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
     else
         PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
         PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     end
 
@@ -1547,29 +1101,24 @@ function Module.ChangePlayerframe()
 
     if powerTypeString == 'MANA' then
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
     elseif powerTypeString == 'RAGE' then
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
     elseif powerTypeString == 'FOCUS' then
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
     elseif powerTypeString == 'ENERGY' then
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
     elseif powerTypeString == 'RUNIC_POWER' then
         PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
     end
 
     PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
-    --UI-HUD-UnitFrame-Player-PortraitOn-Status
+    -- UI-HUD-UnitFrame-Player-PortraitOn-Status
     PlayerStatusTexture:SetTexture(base)
     PlayerStatusTexture:SetSize(192, 71)
     PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
@@ -1577,8 +1126,8 @@ function Module.ChangePlayerframe()
     PlayerStatusTexture:ClearAllPoints()
     PlayerStatusTexture:SetPoint('TOPLEFT', frame.PlayerFrameBorder, 'TOPLEFT', 1, 1)
 end
---ChangePlayerframe()
---frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+-- ChangePlayerframe()
+-- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 function Module.HookPlayerStatus()
     --[[ PlayerFrame:HookScript(
@@ -1590,16 +1139,17 @@ function Module.HookPlayerStatus()
         end
     ) ]]
     local UpdateStatus = function()
-        if not frame.PlayerFrameDeco then
-            return
-        end
+        if not frame.PlayerFrameDeco then return end
 
         -- TODO: fix statusglow
         PlayerStatusGlow:Hide()
 
         if UnitHasVehiclePlayerFrameUI and UnitHasVehiclePlayerFrameUI('player') then
             -- TODO: vehicle stuff
-            --frame.PlayerFrameDeco:Show()
+            -- frame.PlayerFrameDeco:Show()
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
+            -- frame.PlayerFrameDeco:Show()
         elseif IsResting() then
             frame.PlayerFrameDeco:Show()
             frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
@@ -1607,12 +1157,12 @@ function Module.HookPlayerStatus()
             frame.RestIcon:Show()
             frame.RestIconAnimation:Play()
 
-            --PlayerStatusTexture:Show()
-            --PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+            -- PlayerStatusTexture:Show()
+            -- PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
             PlayerStatusTexture:SetAlpha(1.0)
         elseif PlayerFrame.onHateList then
-            --PlayerStatusTexture:Show()
-            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            -- PlayerStatusTexture:Show()
+            -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
             frame.PlayerFrameDeco:Hide()
 
             frame.RestIcon:Hide()
@@ -1628,8 +1178,8 @@ function Module.HookPlayerStatus()
 
             frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
 
-            --PlayerStatusTexture:Show()
-            --PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+            -- PlayerStatusTexture:Show()
+            -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
             PlayerStatusTexture:SetAlpha(1.0)
         else
             frame.PlayerFrameDeco:Show()
@@ -1660,8 +1210,7 @@ function Module.ChangeTargetFrame()
         local background = TargetFrame:CreateTexture('DragonflightUITargetFrameBackground')
         background:SetDrawLayer('BACKGROUND', 2)
         background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
         background:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
         frame.TargetFrameBackground = background
     end
@@ -1680,7 +1229,7 @@ function Module.ChangeTargetFrame()
     local CorrectionX = -5
     TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
 
-    --TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)
+    -- TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)
 
     -- @TODO: change text spacing
     TargetFrameTextureFrameName:ClearAllPoints()
@@ -1730,8 +1279,7 @@ function Module.ChangeTargetFrame()
             local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
             flash:SetDrawLayer('BACKGROUND', 2)
             flash:SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
-            )
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat')
             flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
             flash:SetSize(256, 128)
             flash:SetScale(1)
@@ -1740,34 +1288,24 @@ function Module.ChangeTargetFrame()
             frame.TargetFrameFlash = flash
         end
 
-        hooksecurefunc(
-            TargetFrameFlash,
-            'Show',
-            function()
-                --print('show')
-                TargetFrameFlash:SetTexture('')
-                frame.TargetFrameFlash:Show()
-                if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
-                else
-                    --print('go flash')
-                    local dt = 0.5
-                    UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
-                end
+        hooksecurefunc(TargetFrameFlash, 'Show', function()
+            -- print('show')
+            TargetFrameFlash:SetTexture('')
+            frame.TargetFrameFlash:Show()
+            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
+            else
+                -- print('go flash')
+                local dt = 0.5
+                UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
             end
-        )
+        end)
 
-        hooksecurefunc(
-            TargetFrameFlash,
-            'Hide',
-            function()
-                --print('hide')
-                TargetFrameFlash:SetTexture('')
-                if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
-                    UIFrameFlashStop(frame.TargetFrameFlash)
-                end
-                frame.TargetFrameFlash:Hide()
-            end
-        )
+        hooksecurefunc(TargetFrameFlash, 'Hide', function()
+            -- print('hide')
+            TargetFrameFlash:SetTexture('')
+            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then UIFrameFlashStop(frame.TargetFrameFlash) end
+            frame.TargetFrameFlash:Hide()
+        end)
     end
 
     if not frame.PortraitExtra then
@@ -1816,14 +1354,12 @@ end
 function Module.ReApplyTargetFrame()
     if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('target')
         TargetFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
     else
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
         TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     end
 
@@ -1831,36 +1367,27 @@ function Module.ReApplyTargetFrame()
 
     if powerTypeString == 'MANA' then
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
     elseif powerTypeString == 'FOCUS' then
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
     elseif powerTypeString == 'RAGE' then
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
     elseif powerTypeString == 'ENERGY' then
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
     elseif powerTypeString == 'RUNIC_POWER' then
         TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
     end
 
     TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-    if DF.Wrath then
-        TargetFrameFlash:SetTexture('')
-    end
+    if DF.Wrath then TargetFrameFlash:SetTexture('') end
 
-    if frame.PortraitExtra then
-        frame.PortraitExtra:UpdateStyle()
-    end
+    if frame.PortraitExtra then frame.PortraitExtra:UpdateStyle() end
 end
---frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+-- frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
 function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
     TargetFrame:ClearAllPoints()
@@ -1868,19 +1395,18 @@ function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
 end
 
 function Module.ChangeToT()
-    --TargetFrameToTTextureFrame:Hide()
+    -- TargetFrameToTTextureFrame:Hide()
     TargetFrameToT:ClearAllPoints()
     TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35, -10 - 5)
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
-    --TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
+    -- TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
 
     if not frame.TargetFrameToTBackground then
         local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
         background:SetDrawLayer('BACKGROUND', 1)
         background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
         background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
         frame.TargetFrameToTBackground = background
     end
@@ -1889,8 +1415,7 @@ function Module.ChangeToT()
         local border = TargetFrameToTHealthBar:CreateTexture('DragonflightUITargetFrameToTBorder')
         border:SetDrawLayer('ARTWORK', 2)
         border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
         border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
         frame.TargetFrameToTBorder = border
     end
@@ -1904,107 +1429,11 @@ function Module.ChangeToT()
     TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
     TargetFrameToTManaBar:SetFrameLevel(10)
     TargetFrameToTManaBar:SetSize(74, 7.5)
-    TargetFrameToTManaBar:Hide()
-
-    if not frame.ToTManaBar then
-        local f = CreateFrame('StatusBar', 'DragonflightUIToTManaBar', TargetFrameToT)
-        f:SetSize(74, 7.5)
-        f:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
-        f:SetFrameLevel(10)
-        f:SetStatusBarTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
-        )
-        f:SetStatusBarColor(1, 1, 1, 1)
-
-        frame.ToTManaBar = f
-
-        local UpdateManaBarValues = function(other)
-            local value = other:GetValue()
-            local statusMin, statusMax = other:GetMinMaxValues()
-
-            frame.ToTManaBar:SetValue(value)
-            frame.ToTManaBar:SetMinMaxValues(statusMin, statusMax)
-        end
-
-        local UpdateManaBarTextures = function()
-            local powerType, powerTypeString = UnitPowerType('playertargettarget')
-
-            if powerTypeString == 'MANA' then
-                frame.ToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
-                )
-            elseif powerTypeString == 'FOCUS' then
-                frame.ToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'
-                )
-            elseif powerTypeString == 'RAGE' then
-                frame.ToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'
-                )
-            elseif powerTypeString == 'ENERGY' then
-                frame.ToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'
-                )
-            elseif powerTypeString == 'RUNIC_POWER' then
-                frame.ToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
-                )
-            end
-
-            frame.ToTManaBar:SetStatusBarColor(1, 1, 1, 1)
-        end
-
-        --[[   hooksecurefunc(
-            'TargetofTarget_Update',
-            function()
-                --print('TargetofTarget_Update')
-            end
-        ) ]]
-        TargetFrame:HookScript(
-            'OnShow',
-            function(self)
-                UpdateManaBarTextures()
-            end
-        )
-
-        TargetFrameToTManaBar:HookScript(
-            'OnValueChanged',
-            function(self)
-                TargetFrameToTManaBar:Hide()
-                UpdateManaBarValues(self)
-            end
-        )
-        TargetFrameToTManaBar:HookScript(
-            'OnMinMaxChanged',
-            function(self)
-                TargetFrameToTManaBar:Hide()
-                UpdateManaBarValues(self)
-                UpdateManaBarTextures()
-            end
-        )
-    end
 
     TargetFrameToTTextureFrameName:ClearAllPoints()
     TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
-end
 
-function Module.ReApplyToT()
-    if UnitExists('playertargettarget') then
-        --frame.ToTManaBar:Show()
-
-        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'
-        )
-
-        TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
-
-        if UnitIsUnit('player', 'playertarget') then
-        --frame.ToTManaBar:Hide()
-        end
-    else
-        --print('ToT doesnt exist')
-        --frame.ToTManaBar:Hide()
-    end
+    TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 25, -20)
 end
 
 function Module.ChangeFocusFrame()
@@ -2017,8 +1446,7 @@ function Module.ChangeFocusFrame()
         local background = FocusFrame:CreateTexture('DragonflightUITargetFrameBackground')
         background:SetDrawLayer('BACKGROUND', 2)
         background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
         background:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
         frame.FocusFrameBackground = background
     end
@@ -2078,8 +1506,7 @@ function Module.ChangeFocusFrame()
     FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
     FocusFrameManaBar:SetSize(132, 9)
     FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
-    )
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     -- CUSTOM HealthText
@@ -2103,25 +1530,16 @@ function Module.ChangeFocusFrame()
         t:Hide()
         frame.FocusFrameHealthBarText = t
 
-        FocusFrameHealthBarDummy:HookScript(
-            'OnEnter',
-            function(self)
-                if
-                    FocusFrameTextureFrame.HealthBarTextRight:IsVisible() or
-                        FocusFrameTextureFrame.HealthBarText:IsVisible()
-                 then
-                else
-                    Module.UpdateFocusText()
-                    frame.FocusFrameHealthBarText:Show()
-                end
+        FocusFrameHealthBarDummy:HookScript('OnEnter', function(self)
+            if FocusFrameTextureFrame.HealthBarTextRight:IsVisible() or FocusFrameTextureFrame.HealthBarText:IsVisible() then
+            else
+                Module.UpdateFocusText()
+                frame.FocusFrameHealthBarText:Show()
             end
-        )
-        FocusFrameHealthBarDummy:HookScript(
-            'OnLeave',
-            function(self)
-                frame.FocusFrameHealthBarText:Hide()
-            end
-        )
+        end)
+        FocusFrameHealthBarDummy:HookScript('OnLeave', function(self)
+            frame.FocusFrameHealthBarText:Hide()
+        end)
     end
 
     -- CUSTOM ManaText
@@ -2145,32 +1563,27 @@ function Module.ChangeFocusFrame()
         t:Hide()
         frame.FocusFrameManaBarText = t
 
-        FocusFrameManaBarDummy:HookScript(
-            'OnEnter',
-            function(self)
-                if FocusFrameTextureFrame.ManaBarTextRight:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
-                else
-                    Module.UpdateFocusText()
-                    frame.FocusFrameManaBarText:Show()
-                end
+        FocusFrameManaBarDummy:HookScript('OnEnter', function(self)
+            if FocusFrameTextureFrame.ManaBarTextRight:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
+            else
+                Module.UpdateFocusText()
+                frame.FocusFrameManaBarText:Show()
             end
-        )
-        FocusFrameManaBarDummy:HookScript(
-            'OnLeave',
-            function(self)
-                frame.FocusFrameManaBarText:Hide()
-            end
-        )
+        end)
+        FocusFrameManaBarDummy:HookScript('OnLeave', function(self)
+            frame.FocusFrameManaBarText:Hide()
+        end)
     end
 
     FocusFrameFlash:SetTexture('')
+
+    FocusFrameToTDebuff1:SetPoint('TOPLEFT', FocusFrameToT, 'TOPRIGHT', 25, -20)
 
     if not frame.FocusFrameFlash then
         local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
         flash:SetDrawLayer('BACKGROUND', 2)
         flash:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat')
         flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
         flash:SetSize(256, 128)
         flash:SetScale(1)
@@ -2179,34 +1592,24 @@ function Module.ChangeFocusFrame()
         frame.FocusFrameFlash = flash
     end
 
-    hooksecurefunc(
-        FocusFrameFlash,
-        'Show',
-        function()
-            --print('show')
-            FocusFrameFlash:SetTexture('')
-            frame.FocusFrameFlash:Show()
-            if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
-            else
-                --print('go flash')
-                local dt = 0.5
-                UIFrameFlash(frame.FocusFrameFlash, dt, dt, -1)
-            end
+    hooksecurefunc(FocusFrameFlash, 'Show', function()
+        -- print('show')
+        FocusFrameFlash:SetTexture('')
+        frame.FocusFrameFlash:Show()
+        if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
+        else
+            -- print('go flash')
+            local dt = 0.5
+            UIFrameFlash(frame.FocusFrameFlash, dt, dt, -1)
         end
-    )
+    end)
 
-    hooksecurefunc(
-        FocusFrameFlash,
-        'Hide',
-        function()
-            --print('hide')
-            FocusFrameFlash:SetTexture('')
-            if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
-                UIFrameFlashStop(frame.FocusFrameFlash)
-            end
-            frame.FocusFrameFlash:Hide()
-        end
-    )
+    hooksecurefunc(FocusFrameFlash, 'Hide', function()
+        -- print('hide')
+        FocusFrameFlash:SetTexture('')
+        if (UIFrameIsFlashing(frame.FocusFrameFlash)) then UIFrameFlashStop(frame.FocusFrameFlash) end
+        frame.FocusFrameFlash:Hide()
+    end)
 
     if not frame.FocusExtra then
         local extra = FocusFrame:CreateTexture('DragonflightUIFocusFramePortraitExtra')
@@ -2250,7 +1653,7 @@ function Module.ChangeFocusFrame()
         frame.FocusExtra = extra
     end
 end
---ChangeFocusFrame()
+-- ChangeFocusFrame()
 -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
@@ -2263,14 +1666,12 @@ end
 function Module.ReApplyFocusFrame()
     if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
         FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('focus')
         FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
     else
         FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
         FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     end
 
@@ -2278,33 +1679,26 @@ function Module.ReApplyFocusFrame()
 
     if powerTypeString == 'MANA' then
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
     elseif powerTypeString == 'FOCUS' then
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
     elseif powerTypeString == 'RAGE' then
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
     elseif powerTypeString == 'ENERGY' then
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
     elseif powerTypeString == 'RUNIC_POWER' then
         FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
     end
 
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     FocusFrameFlash:SetTexture('')
 
-    if frame.FocusExtra then
-        frame.FocusExtra:UpdateStyle()
-    end
+    if frame.FocusExtra then frame.FocusExtra:UpdateStyle() end
 end
 
 function Module.ChangeFocusToT()
@@ -2317,8 +1711,7 @@ function Module.ChangeFocusToT()
         local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
         background:SetDrawLayer('BACKGROUND', 1)
         background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
         background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
         frame.FocusFrameToTBackground = background
     end
@@ -2327,8 +1720,7 @@ function Module.ChangeFocusToT()
         local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
         border:SetDrawLayer('ARTWORK', 2)
         border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
         border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
         frame.FocusFrameToTBorder = border
     end
@@ -2337,6 +1729,10 @@ function Module.ChangeFocusToT()
     FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
     FocusFrameToTHealthBar:SetFrameLevel(10)
     FocusFrameToTHealthBar:SetSize(70.5, 10)
+
+    FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
 
     FocusFrameToTManaBar:ClearAllPoints()
     FocusFrameToTManaBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
@@ -2348,7 +1744,7 @@ function Module.ChangeFocusToT()
 end
 
 function Module.UpdateFocusText()
-    --print('UpdateFocusText')
+    -- print('UpdateFocusText')
     if UnitExists('focus') then
         local max_health = UnitHealthMax('focus')
         local health = UnitHealth('focus')
@@ -2367,14 +1763,10 @@ function Module.UpdateFocusText()
 end
 
 function Module.HookFunctions()
-    hooksecurefunc(
-        PlayerFrameTexture,
-        'Show',
-        function()
-            --print('PlayerFrameTexture - Show()')
-            Module.ChangePlayerframe()
-        end
-    )
+    hooksecurefunc(PlayerFrameTexture, 'Show', function()
+        -- print('PlayerFrameTexture - Show()')
+        Module.ChangePlayerframe()
+    end)
 end
 
 function Module.ChangePetFrame()
@@ -2388,8 +1780,7 @@ function Module.ChangePetFrame()
         local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
         background:SetDrawLayer('BACKGROUND', 1)
         background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
         background:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
         frame.PetFrameBackground = background
     end
@@ -2398,8 +1789,7 @@ function Module.ChangePetFrame()
         local border = PetFrameHealthBar:CreateTexture('DragonflightUIPetFrameBorder')
         border:SetDrawLayer('ARTWORK', 2)
         border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER'
-        )
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
         border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
         frame.PetFrameBorder = border
     end
@@ -2408,8 +1798,7 @@ function Module.ChangePetFrame()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
     PetFrameHealthBar:SetSize(70.5, 10)
     PetFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health'
-    )
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
     PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     PetFrameHealthBar.SetStatusBarColor = noop
 
@@ -2419,8 +1808,7 @@ function Module.ChangePetFrame()
     PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
     PetFrameManaBar:SetSize(74, 7.5)
     PetFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
-    )
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
     PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
 
     frame.UpdatePetManaBarTexture = function()
@@ -2428,35 +1816,27 @@ function Module.ChangePetFrame()
 
         if powerTypeString == 'MANA' then
             PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana'
-            )
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
         elseif powerTypeString == 'FOCUS' then
             PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus'
-            )
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
         elseif powerTypeString == 'RAGE' then
             PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage'
-            )
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
         elseif powerTypeString == 'ENERGY' then
             PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy'
-            )
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
         elseif powerTypeString == 'RUNIC_POWER' then
             PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower'
-            )
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
         end
 
         PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
     end
 
-    hooksecurefunc(
-        'PetFrame_Update',
-        function(self)
-            frame.UpdatePetManaBarTexture()
-        end
-    )
+    hooksecurefunc('PetFrame_Update', function(self)
+        frame.UpdatePetManaBarTexture()
+    end)
 
     local dx = 2
     -- health vs mana bar
@@ -2487,7 +1867,8 @@ end
 
 function Module.CreateRestFlipbook()
     if not frame.RestIcon then
-        if DF.Wrath then
+        -- Era seems to support Flipbookanimations now, use anmiated resting icon for all versions; delete old code later @CLEANUP
+        if true then
             local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
             rest:SetSize(20, 20)
             rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
@@ -2536,64 +1917,57 @@ function Module.CreateRestFlipbook()
     end
 end
 
+function Module.ScaleRestFlipbook()
+    if frame.RestIcon then
+        local scale = PlayerFrame:GetScale()
+        frame.RestIcon:SetScale(scale)
+    else
+        -- print('no rest')
+    end
+end
+
 function Module.HookRestFunctions()
-    hooksecurefunc(
-        PlayerStatusGlow,
-        'Show',
-        function()
-            PlayerStatusGlow:Hide()
-        end
-    )
+    hooksecurefunc(PlayerStatusGlow, 'Show', function()
+        PlayerStatusGlow:Hide()
+    end)
 
-    hooksecurefunc(
-        PlayerRestIcon,
-        'Show',
-        function()
-            PlayerRestIcon:Hide()
-        end
-    )
+    hooksecurefunc(PlayerRestIcon, 'Show', function()
+        PlayerRestIcon:Hide()
+    end)
 
-    hooksecurefunc(
-        PlayerRestGlow,
-        'Show',
-        function()
-            PlayerRestGlow:Hide()
-        end
-    )
+    hooksecurefunc(PlayerRestGlow, 'Show', function()
+        PlayerRestGlow:Hide()
+    end)
 
-    hooksecurefunc(
-        'SetUIVisibility',
-        function(visible)
-            if visible then
-                PlayerFrame_UpdateStatus()
-            else
-                frame.RestIcon:Hide()
-                frame.RestIconAnimation:Stop()
-            end
+    hooksecurefunc('SetUIVisibility', function(visible)
+        if visible then
+            PlayerFrame_UpdateStatus()
+        else
+            frame.RestIcon:Hide()
+            frame.RestIconAnimation:Stop()
         end
-    )
+    end)
 end
 
 function frame:OnEvent(event, arg1)
-    --print(event, arg1)
+    -- print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
     elseif event == 'UNIT_POWER_UPDATE' then
-        --print(event, arg1)
+        -- print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
         Module.UpdateFocusText()
     elseif event == 'PLAYER_FOCUS_CHANGED' then
         Module.ReApplyFocusFrame()
         Module.UpdateFocusText()
     elseif event == 'PLAYER_ENTERING_WORLD' then
-        --print('PLAYER_ENTERING_WORLD')
+        -- print('PLAYER_ENTERING_WORLD')
         Module.CreatePlayerFrameTextures()
         Module.ChangePlayerframe()
         Module.ChangeTargetFrame()
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
-        Module.ReApplyToT()
         Module.ChangeStatusIcons()
         Module.CreateRestFlipbook()
         if DF.Wrath then
@@ -2604,9 +1978,8 @@ function frame:OnEvent(event, arg1)
 
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
-        --Module.ApplySettings()
+        -- Module.ApplySettings()
         Module.ReApplyTargetFrame()
-        Module.ReApplyToT()
         Module.ChangePlayerframe()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangePlayerframe()
@@ -2614,20 +1987,73 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         Module.ChangePlayerframe()
+    elseif event == 'UNIT_PORTRAIT_UPDATE' then
+        Module.RefreshPortrait()
+    elseif event == 'PORTRAITS_UPDATED' then
+        Module.RefreshPortrait()
     end
 end
+
+function Module.RefreshPortrait()
+    if UnitHasVehiclePlayerFrameUI('player') then
+        SetPortraitTexture(PlayerPortrait, 'vehicle', true)
+    else
+        SetPortraitTexture(PlayerPortrait, 'player', true)
+    end
+end
+
+function Module.ApplyPortraitMask()
+    local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
+    local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+
+    local mask = PlayerFrame:CreateMaskTexture()
+    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
+    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    PlayerPortrait:AddMaskTexture(mask)
+
+    -- mask:SetScale(2)
+
+    if DF.Wrath then
+        local maskFocus = FocusFrame:CreateMaskTexture()
+        maskFocus:SetAllPoints(FocusFramePortrait)
+        maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        FocusFramePortrait:AddMaskTexture(maskFocus)
+
+        local maskFocusToT = FocusFrameToT:CreateMaskTexture()
+        maskFocusToT:SetAllPoints(FocusFrameToTPortrait)
+        maskFocusToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
+    end
+
+    local maskTarget = TargetFrame:CreateMaskTexture()
+    maskTarget:SetAllPoints(TargetFramePortrait)
+    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    TargetFramePortrait:AddMaskTexture(maskTarget)
+
+    local maskToT = TargetFrameToT:CreateMaskTexture()
+    maskToT:SetAllPoints(TargetFrameToTPortrait)
+    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    TargetFrameToTPortrait:AddMaskTexture(maskToT)
+
+    local maskPet = PetFrame:CreateMaskTexture()
+    maskPet:SetAllPoints(PetPortrait)
+    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    PetPortrait:AddMaskTexture(maskPet)
+end
+
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 
     frame:RegisterEvent('UNIT_POWER_UPDATE')
-    --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
+    -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
     frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
@@ -2636,29 +2062,40 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    frame:RegisterEvent('PORTRAITS_UPDATED')
+
     Module.HookRestFunctions()
     Module.HookVertexColor()
+    Module.HookEnergyBar()
     Module.HookPlayerStatus()
     Module.HookDrag()
+
+    Module.ApplyPortraitMask()
 end
 
 function Module.Era()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 
     frame:RegisterEvent('UNIT_POWER_UPDATE')
-    --frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
+    -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
     frame:RegisterEvent('ZONE_CHANGED')
     frame:RegisterEvent('ZONE_CHANGED_INDOORS')
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+    frame:RegisterEvent('PORTRAITS_UPDATED')
+
     Module.HookRestFunctions()
     Module.HookVertexColor()
+    Module.HookEnergyBar()
     Module.HookPlayerStatus()
     Module.HookDrag()
+
+    Module.ApplyPortraitMask()
 end
