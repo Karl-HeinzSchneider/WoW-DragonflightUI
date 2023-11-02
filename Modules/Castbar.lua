@@ -4,17 +4,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
 local db, getOptions
 
-local defaults = {
-    profile = {
-        scale = 1,
-        x = 0,
-        y = 245,
-        sizeX = 320,
-        sizeY = 20,
-        preci = 1,
-        preciMax = 2
-    }
-}
+local defaults = {profile = {scale = 1, x = 0, y = 245, sizeX = 320, sizeY = 20, preci = 1, preciMax = 2}}
 
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
@@ -111,16 +101,12 @@ local options = {
             type = 'range',
             name = 'Height',
             desc = getDefaultStr('sizeY'),
-            min = 5,
-            max = 32,
+            min = 10,
+            max = 64,
             bigStep = 1,
             order = 103
         },
-        castTimeEnabled = {
-            type = 'toggle',
-            name = 'Show cast time text',
-            order = 104
-        },
+        castTimeEnabled = {type = 'toggle', name = 'Show cast time text', order = 104},
         preci = {
             type = 'range',
             name = 'Precision (time left)',
@@ -206,7 +192,7 @@ function Module.CreateNewCastbar()
 
     local sizeX = 250
     local sizeY = 20
-    local f = CreateFrame('Frame', 'DragonflightUICastBar', CastingBarFrame)
+    local f = CreateFrame('Frame', 'DragonflightUICastBarFrame', CastingBarFrame)
     f:SetSize(sizeX, sizeY)
     f:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 230)
 
@@ -226,14 +212,6 @@ function Module.CreateNewCastbar()
 
     frame.Castbar = f
 
-    local UpdateCastBarValues = function(other)
-        local value = other:GetValue()
-        local statusMin, statusMax = other:GetMinMaxValues()
-
-        frame.Castbar.Bar:SetValue(value)
-        frame.Castbar.Bar:SetMinMaxValues(statusMin, statusMax)
-    end
-
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture(borderRef)
     local dx, dy = 2, 4
@@ -247,22 +225,6 @@ function Module.CreateNewCastbar()
     spark:SetPoint('CENTER', f.Bar, 'CENTER', 0, 0)
     spark:SetBlendMode('ADD')
     f.Spark = spark
-
-    local UpdateSpark = function(other)
-        local value = other:GetValue()
-        local statusMin, statusMax = other:GetMinMaxValues()
-        if statusMax == 0 then return end
-
-        local percent = value / statusMax
-        if percent == 1 then
-            f.Spark:Hide()
-        else
-            -- f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
-            f.Spark:Show()
-            local dx = 2
-            f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', (value * frame.Castbar:GetWidth()) / statusMax, 0)
-        end
-    end
 
     local bg = CreateFrame('Frame', 'DragonflightUICastbarNameBackgroundFrame', CastingBarFrame)
     bg:SetSize(sizeX, sizeY)
@@ -294,25 +256,6 @@ function Module.CreateNewCastbar()
     textValue:SetText('0.69')
     f.TextValue = textValue
 
-    local UpdateExtratext = function(other)
-        local value = other:GetValue()
-        local statusMin, statusMax = other:GetMinMaxValues()
-
-        local preci = Module.db.profile.preci
-        local preciMax = Module.db.profile.preciMax
-
-        if value == statusMax or not Module.db.profile.castTimeEnabled then
-            frame.Castbar.TextValue:SetText('')
-            frame.Castbar.TextValueMax:SetText('')
-        elseif frame.Castbar.bChanneling then
-            f.TextValue:SetText(string.format('%.' .. preci .. 'f', value))
-            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
-        else
-            f.TextValue:SetText(string.format('%.' .. preci .. 'f', statusMax - value))
-            f.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
-        end
-    end
-
     local ticks = {}
     for i = 1, 15 do
         local tick = f.Bar:CreateTexture('Tick' .. i, 'OVERLAY')
@@ -325,11 +268,60 @@ function Module.CreateNewCastbar()
     end
     f.Ticks = ticks
 
+end
+
+function Module.HookCastbar()
+
+    local UpdateCastBarValues = function(other)
+        local value = other:GetValue()
+        local statusMin, statusMax = other:GetMinMaxValues()
+
+        frame.Castbar.Bar:SetValue(value)
+        frame.Castbar.Bar:SetMinMaxValues(statusMin, statusMax)
+    end
+
+    local UpdateSpark = function(other)
+        local value = other:GetValue()
+        local statusMin, statusMax = other:GetMinMaxValues()
+        if statusMax == 0 then return end
+
+        local percent = value / statusMax
+        if percent == 1 then
+            frame.Castbar.Spark:Hide()
+        else
+            -- f.Spark:SetPoint('CENTER', f.Bar, 'LEFT', sizeX / 2, 0 + 15)
+            frame.Castbar.Spark:Show()
+            local dx = 2
+            frame.Castbar.Spark:SetPoint('CENTER', frame.Castbar.Bar, 'LEFT',
+                                         (value * frame.Castbar:GetWidth()) / statusMax, 0)
+        end
+    end
+
+    local UpdateExtratext = function(other)
+        local value = other:GetValue()
+        local statusMin, statusMax = other:GetMinMaxValues()
+
+        local preci = Module.db.profile.preci
+        local preciMax = Module.db.profile.preciMax
+
+        if value == statusMax or not Module.db.profile.castTimeEnabled then
+            frame.Castbar.TextValue:SetText('')
+            frame.Castbar.TextValueMax:SetText('')
+        elseif frame.Castbar.bChanneling then
+            frame.Castbar.TextValue:SetText(string.format('%.' .. preci .. 'f', value))
+            frame.Castbar.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
+        else
+            frame.Castbar.TextValue:SetText(string.format('%.' .. preci .. 'f', statusMax - value))
+            frame.Castbar.TextValueMax:SetText(' / ' .. string.format('%.' .. preciMax .. 'f', statusMax))
+        end
+    end
+
     CastingBarFrame:HookScript('OnUpdate', function(self)
         UpdateCastBarValues(self)
         UpdateSpark(self)
         UpdateExtratext(self)
     end)
+
 end
 
 function Module.SetBarNormal()
@@ -446,6 +438,7 @@ function Module.Wrath()
 
     Module.ChangeDefaultCastbar()
     Module.CreateNewCastbar()
+    Module.HookCastbar()
 end
 
 -- Era
