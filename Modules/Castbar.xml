@@ -1,12 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
-	<StatusBar name="DragonflightUIPlayerCastbarTemplate" virtual="true">
+	<Frame name="DragonflightUIPlayerCastbarFrameTemplate" virtual="true">
 		<Size x="418" y="22" />
 		<Anchors>
 			<Anchor point="CENTER" x="0" y="0" />
 		</Anchors>
-		<BarTexture file="Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2" />
-		<BarColor r="0" g="0" b="1.0" />
 		<Layers>
 			<Layer level="BACKGROUND" textureSubLevel="0">
 				<Texture parentKey="DropShadow" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar" hidden="true">
@@ -25,7 +23,7 @@ UI_shared.xsd">
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="2">
-				<Texture parentKey="Background" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">
+				<Texture parentKey="Background" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" hidden="true">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="-1" y="1" />
 						<Anchor point="BOTTOMRIGHT" x="1" y="-1" />
@@ -80,18 +78,5 @@ UI_shared.xsd">
 				</FontString>
 			</Layer>
 		</Layers>
-		<Scripts>
-			<OnShow>
-				if true then return end
-				DragonflightUIPlayerCastbar:SetMinMaxValues(0,1)
-				DragonflightUIPlayerCastbar:SetValue(0.5)
-				DragonflightUIPlayerCastbar.Text:SetText('SHADOW BOLT')
-				DragonflightUIPlayerCastbar.CastTimeText:SetText('1.69 s')
-				
-				DragonflightUIPlayerCastbar:SetScale(0.75)
-				
-				DragonflightUIPlayerCastbar:SetSize(144,18)
-			</OnShow>
-		</Scripts>
-	</StatusBar>
+	</Frame>
 </Ui>

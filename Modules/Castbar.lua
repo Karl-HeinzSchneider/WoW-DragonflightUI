@@ -181,9 +181,57 @@ function Module.ChangeDefaultCastbar()
 end
 
 function Module.AddNewCastbar()
-    local castbar = CreateFrame('Frame', 'DragonflightUIPlayerCastbar', UIParent, 'DragonflightUIPlayerCastbarTemplate')
+    local castbar = CreateFrame('Frame', 'DragonflightUIPlayerCastbar', CastingBarFrame,
+                                'DragonflightUIPlayerCastbarFrameTemplate')
     Module.Castbar = castbar
 
+    bar = CreateFrame('StatusBar', nil, castbar)
+    bar:SetStatusBarTexture("Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2")
+    bar:SetStatusBarColor(1, 1, 1, 1)
+    bar:SetPoint("TOPLEFT", 0, 0)
+    bar:SetPoint("BOTTOMRIGHT", 0, 0)
+    bar:SetParentKey('Bar')
+    bar:SetFrameLevel(castbar:GetFrameLevel())
+
+    bar:SetMinMaxValues(0, 100)
+    bar:SetValue(59)
+
+    DevTools_Dump(bar)
+end
+
+function Module.HookCastbar()
+
+    local f = Module.Castbar
+
+    local updateValuesFromOther = function(other)
+        local value = other:GetValue()
+        local statusMin, statusMax = other:GetMinMaxValues()
+
+        f.Bar:SetMinMaxValues(statusMin, statusMax)
+        f.Bar:SetValue(value)
+    end
+
+    CastingBarFrame:HookScript('OnUpdate', function(self)
+        updateValuesFromOther(self)
+    end)
+end
+
+function Module.SetCastbarNormal()
+    local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+    Module.Castbar.Bar:SetStatusBarTexture(standardRef)
+
+    Module.Castbar.bChanneling = false
+    local name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId =
+        UnitCastingInfo('player')
+
+    Module.Castbar.Text:SetText(text:sub(1, 23))
+end
+
+function Module.SetCastbarInterrupted()
+    local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
+    Module.Castbar.Bar:SetStatusBarTexture(interruptedRef)
+
+    Module.Castbar.Text:SetText('Interrupted')
 end
 
 function Module.CreateNewCastbar()
@@ -404,8 +452,10 @@ function frame:OnEvent(event, arg1)
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
         -- Module.SetBarNormal()
         -- Module.HideAllTicks()
+        Module.SetCastbarNormal()
     elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
         -- Module.SetBarInterrupted()
+        Module.SetCastbarInterrupted()
     elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
         -- Module.SetBarChannel()
     else
@@ -427,6 +477,7 @@ function Module.Wrath()
     Module.ChangeDefaultCastbar()
     -- Module.CreateNewCastbar()
     Module.AddNewCastbar()
+    Module.HookCastbar()
 end
 
 -- Era
