@@ -10,6 +10,7 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     self:SetUnit(unit)
 
     self.showCastbar = true;
+    self:SetCastTimeTextShown(true)
 
     self:CreateStatusbar()
 end
@@ -22,6 +23,8 @@ function DragonFlightUICastbarMixin:CreateStatusbar()
     bar:SetPoint("BOTTOMRIGHT", 0, 0)
     bar:SetParentKey('Bar')
     bar:SetFrameLevel(self:GetFrameLevel())
+
+    self.Spark:SetParent(bar)
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -294,8 +297,8 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
 
     if (self.casting or self.reverseChanneling or self.channeling) then
         if (self.Spark) then
-            local sparkPosition = (self.value / self.maxValue) * self:GetWidth();
-            self.Spark:SetPoint("CENTER", self, "LEFT", sparkPosition, self.Spark.offsetY or 0);
+            local sparkPosition = (self.value / self.maxValue) * self.Bar:GetWidth();
+            self.Spark:SetPoint("CENTER", self.Bar, "LEFT", sparkPosition, 0);
         end
     end
 end
@@ -425,7 +428,7 @@ function DragonFlightUICastbarMixin:UpdateCastTimeText()
 
     -- local text = string.format(CAST_BAR_CAST_TIME, seconds);
     -- @TODO
-    local text = string.format('%.' .. 1 .. 'f', seconds)
+    local text = string.format('%.' .. 1 .. 'f', seconds) .. ' s'
     self.CastTimeText:SetText(text);
 end
 

@@ -1,104 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
 	<Script file="Mixin/Castbar.mixin.lua" />
-	<StatusBar name="DragonflightUIPlayerCastbarTemplate" mixin="DragonFlightUICastbarMixin" virtual="true" drawLayer="BORDER">
-		<Size x="418" y="22" />
-		<Anchors>
-			<Anchor point="CENTER" x="0" y="0" />
-		</Anchors>
-		<BarTexture file="Interface/Addons/DragonflightUI/Textures/Castbar/CastingBarStandard2" />
-		<BarColor r="1.0" g="1.0" b="1.0" />
-		<Layers>
-			<Layer level="BACKGROUND" textureSubLevel="0">
-				<Texture parentKey="DropShadow" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar" hidden="true">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="0" y="0" />
-						<Anchor point="BOTTOMRIGHT" x="3" y="-3" />
-					</Anchors>
-					<TexCoords left="" />
-				</Texture>
-				<Texture parentKey="TextBorder" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="0" y="0" />
-						<Anchor point="BOTTOMRIGHT" x="0" y="-14" />
-					</Anchors>
-					<TexCoords left="0.001953125" right="0.412109375" top="0.00390625" bottom="0.11328125" />
-				</Texture>
-			</Layer>
-			<Layer level="BACKGROUND" textureSubLevel="2">
-				<Texture parentKey="Background" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" hidden="true">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="-1" y="1" />
-						<Anchor point="BOTTOMRIGHT" x="1" y="-1" />
-					</Anchors>
-					<TexCoords left="0.0009765625" right="0.4130859375" top="0.3671875" bottom="0.41796875" />
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK" textureSubLevel="4">
-				<!--
-				<Texture parentKey="BorderShield" atlas="ui-castingbar-shield" hidden="true">
-				<Size x="29" y="33" />
-				<Anchors>
-				<Anchor point="TOPLEFT" x="-27" y="4" />
-				</Anchors>
-				</Texture>
-				-->
-				<Texture parentKey="Icon">
-					<Size x="16" y="16" />
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT" x="-5" y="0" />
-					</Anchors>
-				</Texture>
-				<Texture parentKey="Border" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="-2" y="2" />
-						<Anchor point="BOTTOMRIGHT" x="2" y="-2" />
-					</Anchors>
-					<TexCoords left="0.412109375" right="0.828125" top="0.001953125" bottom="0.060546875" />
-				</Texture>
-			</Layer>
-			<Layer level="OVERLAY" textureSubLevel="1">
-				<Texture parentKey="Flash" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" alphaMode="ADD" hidden="true">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="-1" y="1" />
-						<Anchor point="BOTTOMRIGHT" x="1" y="-1" />
-					</Anchors>
-					<TexCoords left="0.0009765625" right="0.4169921875" top="0.2421875" bottom="0.30078125" />
-				</Texture>
-				<Texture parentKey="ChargeFlash" alpha="0" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" alphaMode="ADD" setAllPoints="true">
-					<TexCoords left="0.0009765625" right="0.4169921875" top="0.2421875" bottom="0.30078125" />
-				</Texture>
-				<FontString parentKey="Text" inherits="GameFontHighlightSmall">
-					<Size x="185" y="16" />
-					<Anchors>
-						<Anchor point="BOTTOM" x="0" y="-15" />
-					</Anchors>
-				</FontString>
-				<FontString parentKey="CastTimeText" inherits="GameFontHighlightLarge">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="RIGHT" x="10" y="0" />
-					</Anchors>
-				</FontString>
-			</Layer>
-			<Layer level="OVERLAY" textureSubLevel="2">
-				<Texture parentKey="Spark" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">
-					<Size x="8" y="20" />
-					<Anchors>
-						<Anchor point="CENTER" x="0" y="0" />
-					</Anchors>
-					<TexCoords left="0.076171875" right="0.0859375" top="0.796875" bottom="0.9140625" />
-				</Texture>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnLoad>
-				self:OnLoad('player');
-			</OnLoad>
-			<OnEvent method="OnEvent" />
-			<OnUpdate method="OnUpdate" />
-			<OnShow method="OnShow" />
-		</Scripts>
-	</StatusBar>
 	<Frame name="DragonflightUIPlayerCastbarFrameTemplate" mixin="DragonFlightUICastbarMixin" virtual="true">
 		<Size x="418" y="22" />
 		<Anchors>
@@ -177,7 +79,7 @@ UI_shared.xsd">
 				</FontString>
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="2">
-				<Texture parentKey="Spark" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">
+				<Texture parentKey="Spark" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" alphaMode="ADD">
 					<Size x="8" y="20" />
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="0" />
