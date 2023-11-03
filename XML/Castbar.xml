@@ -188,7 +188,7 @@ UI_shared.xsd">
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				self:OnLoad(nil);
+				self:OnLoad('player');
 			</OnLoad>
 			<OnEvent method="OnEvent" />
 			<OnUpdate method="OnUpdate" />

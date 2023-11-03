@@ -184,7 +184,7 @@ end
 
 function Module.AddNewCastbar()
     local castbar = CreateFrame('Frame', 'DragonflightUIPlayerCastbar', CastingBarFrame,
-                                'DragonflightUIPlayerCastbarTemplate')
+                                'DragonflightUIPlayerCastbarFrameTemplate')
 
     Module.Castbar = castbar
 end
