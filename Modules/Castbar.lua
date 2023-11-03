@@ -4,7 +4,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
 local db, getOptions
 
-local defaults = {profile = {scale = 1, x = 0, y = 245, sizeX = 460, sizeY = 207, preci = 1, preciMax = 2}}
+local defaults = {profile = {scale = 1, x = 0, y = 245, sizeX = 320, sizeY = 20, preci = 1, preciMax = 2}}
 
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
@@ -88,6 +88,25 @@ local options = {
             bigStep = 0.50,
             order = 102
         },
+        sizeX = {
+            type = 'range',
+            name = 'Width',
+            desc = getDefaultStr('sizeX'),
+            min = 80,
+            max = 512,
+            bigStep = 1,
+            order = 103
+        },
+        sizeY = {
+            type = 'range',
+            name = 'Height',
+            desc = getDefaultStr('sizeY'),
+            min = 10,
+            max = 64,
+            bigStep = 1,
+            order = 103
+        },
+        castTimeEnabled = {type = 'toggle', name = 'Show cast time text', order = 104},
         preci = {
             type = 'range',
             name = 'Precision (time left)',
@@ -95,7 +114,7 @@ local options = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 103
+            order = 104
         },
         preciMax = {
             type = 'range',
@@ -104,7 +123,7 @@ local options = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 103
+            order = 104
         }
     }
 }
@@ -133,7 +152,8 @@ end
 
 function Module:ApplySettings()
     db = Module.db.profile
-    Module.frame.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
+    Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
+    Module.Castbar:SetSize(db.sizeX, db.sizeY)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -158,6 +178,12 @@ function Module.ChangeDefaultCastbar()
         -- print('child', child:GetName())
         child:Hide()
     end
+end
+
+function Module.AddNewCastbar()
+    local castbar = CreateFrame('Frame', 'DragonflightUIPlayerCastbar', UIParent, 'DragonflightUIPlayerCastbarTemplate')
+    Module.Castbar = castbar
+
 end
 
 function Module.CreateNewCastbar()
@@ -376,12 +402,12 @@ function frame:OnEvent(event, arg1)
     Module.ChangeDefaultCastbar()
     if event == 'PLAYER_ENTERING_WORLD' then
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
-        Module.SetBarNormal()
-        Module.HideAllTicks()
+        -- Module.SetBarNormal()
+        -- Module.HideAllTicks()
     elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
-        Module.SetBarInterrupted()
+        -- Module.SetBarInterrupted()
     elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
-        Module.SetBarChannel()
+        -- Module.SetBarChannel()
     else
     end
 end
@@ -399,7 +425,8 @@ function Module.Wrath()
     frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'player')
 
     Module.ChangeDefaultCastbar()
-    Module.CreateNewCastbar()
+    -- Module.CreateNewCastbar()
+    Module.AddNewCastbar()
 end
 
 -- Era
