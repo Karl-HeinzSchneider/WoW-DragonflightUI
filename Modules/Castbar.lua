@@ -154,6 +154,8 @@ function Module:ApplySettings()
     db = Module.db.profile
     Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
     Module.Castbar:SetSize(db.sizeX, db.sizeY)
+    Module.Castbar.Spark:SetSize(6, db.sizeY + 8)
+    Module.Castbar.Spark:SetPoint('CENTER')
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -182,37 +184,44 @@ end
 
 function Module.AddNewCastbar()
     local castbar = CreateFrame('Frame', 'DragonflightUIPlayerCastbar', CastingBarFrame,
-                                'DragonflightUIPlayerCastbarFrameTemplate')
+                                'DragonflightUIPlayerCastbarTemplate')
+
     Module.Castbar = castbar
-
-    bar = CreateFrame('StatusBar', nil, castbar)
-    bar:SetStatusBarTexture("Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2")
-    bar:SetStatusBarColor(1, 1, 1, 1)
-    bar:SetPoint("TOPLEFT", 0, 0)
-    bar:SetPoint("BOTTOMRIGHT", 0, 0)
-    bar:SetParentKey('Bar')
-    bar:SetFrameLevel(castbar:GetFrameLevel())
-
-    bar:SetMinMaxValues(0, 100)
-    bar:SetValue(59)
-
-    DevTools_Dump(bar)
 end
 
 function Module.HookCastbar()
-
-    local f = Module.Castbar
+    local bar = Module.Castbar.Bar
+    local spark = Module.Castbar.Spark
 
     local updateValuesFromOther = function(other)
         local value = other:GetValue()
         local statusMin, statusMax = other:GetMinMaxValues()
 
-        f.Bar:SetMinMaxValues(statusMin, statusMax)
-        f.Bar:SetValue(value)
+        bar:SetMinMaxValues(statusMin, statusMax)
+        bar:SetValue(value)
+
+        -- text
+
+        -- spark
+
+        if spark then
+            local sparkPosition = (value / statusMax) * bar:GetWidth()
+            spark:SetPoint('CENTER', bar, 'LEFT', sparkPosition, 0)
+        end
+
     end
 
     CastingBarFrame:HookScript('OnUpdate', function(self)
         updateValuesFromOther(self)
+    end)
+
+    CastingBarFrame:HookScript('OnShow', function(self)
+        Module.Castbar:Show()
+        Module.Castbar.Spark:SetPoint('CENTER')
+    end)
+
+    CastingBarFrame:HookScript('OnHide', function(self)
+        Module.Castbar:Hide()
     end)
 end
 
@@ -225,6 +234,8 @@ function Module.SetCastbarNormal()
         UnitCastingInfo('player')
 
     Module.Castbar.Text:SetText(text:sub(1, 23))
+
+    Module.Castbar.Spark:Show()
 end
 
 function Module.SetCastbarInterrupted()
@@ -232,6 +243,7 @@ function Module.SetCastbarInterrupted()
     Module.Castbar.Bar:SetStatusBarTexture(interruptedRef)
 
     Module.Castbar.Text:SetText('Interrupted')
+    Module.Castbar.Spark:Hide()
 end
 
 function Module.CreateNewCastbar()
@@ -452,10 +464,10 @@ function frame:OnEvent(event, arg1)
     elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
         -- Module.SetBarNormal()
         -- Module.HideAllTicks()
-        Module.SetCastbarNormal()
+        -- Module.SetCastbarNormal()
     elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
         -- Module.SetBarInterrupted()
-        Module.SetCastbarInterrupted()
+        -- Module.SetCastbarInterrupted()
     elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
         -- Module.SetBarChannel()
     else
@@ -477,7 +489,7 @@ function Module.Wrath()
     Module.ChangeDefaultCastbar()
     -- Module.CreateNewCastbar()
     Module.AddNewCastbar()
-    Module.HookCastbar()
+    -- Module.HookCastbar()
 end
 
 -- Era
