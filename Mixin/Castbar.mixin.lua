@@ -11,20 +11,6 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
 
     self.showCastbar = true;
     self:SetCastTimeTextShown(true)
-
-    self:CreateStatusbar()
-end
-
-function DragonFlightUICastbarMixin:CreateStatusbar()
-    local bar = CreateFrame('StatusBar', nil, self)
-    bar:SetStatusBarTexture(standardRef)
-    bar:SetStatusBarColor(1, 1, 1, 1)
-    bar:SetPoint("TOPLEFT", 0, 0)
-    bar:SetPoint("BOTTOMRIGHT", 0, 0)
-    bar:SetParentKey('Bar')
-    bar:SetFrameLevel(self:GetFrameLevel())
-
-    self.Spark:SetParent(bar)
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -71,7 +57,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
 
         -- self.barType = self:GetEffectiveType(false, notInterruptible, isTradeSkill, false);
         -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
-        self.Bar:SetStatusBarTexture(standardRef)
+        self:SetStatusBarTexture(standardRef)
 
         self:ShowSpark();
 
@@ -297,33 +283,9 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
 
     if (self.casting or self.reverseChanneling or self.channeling) then
         if (self.Spark) then
-            local sparkPosition = (self.value / self.maxValue) * self.Bar:GetWidth();
-            self.Spark:SetPoint("CENTER", self.Bar, "LEFT", sparkPosition, 0);
+            local sparkPosition = (self.value / self.maxValue) * self:GetWidth();
+            self.Spark:SetPoint("CENTER", self, "LEFT", sparkPosition, 0);
         end
-    end
-end
-
-function DragonFlightUICastbarMixin:SetMinMaxValues(min, max)
-    if self.Bar then self.Bar:SetMinMaxValues(min, max) end
-end
-
-function DragonFlightUICastbarMixin:GetMinMaxValues()
-    if self.Bar then
-        return self.Bar:GetMinMaxValues()
-    else
-        return 0, 1
-    end
-end
-
-function DragonFlightUICastbarMixin:SetValue(value)
-    if self.Bar then self.Bar:SetValue(value) end
-end
-
-function DragonFlightUICastbarMixin:GetValue()
-    if self.Bar then
-        return self.Bar:GetValue()
-    else
-        return 0
     end
 end
 
@@ -378,7 +340,7 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
 
         -- We don't want to show the full state for the empowered texture since it produces a gradient.
         -- self:SetStatusBarTexture(empoweredInterrupt and nil or self:GetTypeInfo(self.barType).full);
-        self.Bar:SetStatusBarTexture(interruptedRef)
+        self:SetStatusBarTexture(interruptedRef)
 
         self:ShowSpark();
 
@@ -428,7 +390,7 @@ function DragonFlightUICastbarMixin:UpdateCastTimeText()
 
     -- local text = string.format(CAST_BAR_CAST_TIME, seconds);
     -- @TODO
-    local text = string.format('%.' .. 1 .. 'f', seconds) .. ' s'
+    local text = string.format('%.' .. 1 .. 'f', seconds) .. 's'
     self.CastTimeText:SetText(text);
 end
 

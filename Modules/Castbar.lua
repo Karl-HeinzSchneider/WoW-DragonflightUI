@@ -155,7 +155,7 @@ function Module:ApplySettings()
     Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
     Module.Castbar:SetSize(db.sizeX, db.sizeY)
     Module.Castbar.Spark:SetSize(6, db.sizeY + 8)
-    Module.Castbar.Spark:SetPoint('CENTER')
+    -- Module.Castbar.Spark:SetPoint('CENTER')
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -183,8 +183,8 @@ function Module.ChangeDefaultCastbar()
 end
 
 function Module.AddNewCastbar()
-    local castbar = CreateFrame('Frame', 'DragonflightUIPlayerCastbar', CastingBarFrame,
-                                'DragonflightUIPlayerCastbarFrameTemplate')
+    local castbar = CreateFrame('StatusBar', 'DragonflightUIPlayerCastbar', CastingBarFrame,
+                                'DragonflightUIPlayerCastbarTemplate')
 
     Module.Castbar = castbar
 end
