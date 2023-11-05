@@ -4,7 +4,20 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
 local db, getOptions
 
-local defaults = {profile = {scale = 1, x = 0, y = 245, sizeX = 320, sizeY = 20, preci = 1, preciMax = 2}}
+local defaults = {
+    profile = {
+        scale = 1,
+        x = 0,
+        y = 245,
+        sizeX = 256,
+        sizeY = 16,
+        preci = 1,
+        preciMax = 2,
+        castTimeEnabled = true,
+        castTimeMaxEnabled = true,
+        compactLayout = true
+    }
+}
 
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
@@ -95,7 +108,7 @@ local options = {
             min = 80,
             max = 512,
             bigStep = 1,
-            order = 103
+            order = 103.1
         },
         sizeY = {
             type = 'range',
@@ -104,9 +117,9 @@ local options = {
             min = 10,
             max = 64,
             bigStep = 1,
-            order = 103
+            order = 103.2
         },
-        castTimeEnabled = {type = 'toggle', name = 'Show cast time text', order = 104},
+        sizeSpacer = {type = 'description', name = '', order = 103.3},
         preci = {
             type = 'range',
             name = 'Precision (time left)',
@@ -114,7 +127,7 @@ local options = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 104
+            order = 104.1
         },
         preciMax = {
             type = 'range',
@@ -123,8 +136,12 @@ local options = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 104
-        }
+            order = 104.2
+        },
+        preciSpacer = {type = 'description', name = '', order = 104.3},
+        castTimeEnabled = {type = 'toggle', name = 'Show cast time text', order = 105.1},
+        castTimeMaxEnabled = {type = 'toggle', name = 'Show cast time max text', order = 105.2},
+        compactLayout = {type = 'toggle', name = 'Compact Layout', order = 105.3}
     }
 }
 
@@ -154,8 +171,10 @@ function Module:ApplySettings()
     db = Module.db.profile
     Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
     Module.Castbar:SetSize(db.sizeX, db.sizeY)
-    Module.Castbar.Spark:SetSize(6, db.sizeY + 8)
-    -- Module.Castbar.Spark:SetPoint('CENTER')
+    Module.Castbar:SetPrecision(db.preci, db.preciMax)
+    Module.Castbar:SetCastTimeTextShown(db.castTimeEnabled)
+    Module.Castbar:SetCastTimeTextMaxShown(db.castTimeMaxEnabled)
+    Module.Castbar:SetCompactLayout(db.compactLayout)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)

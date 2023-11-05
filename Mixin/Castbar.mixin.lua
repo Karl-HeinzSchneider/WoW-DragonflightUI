@@ -13,6 +13,8 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     -- print('OnLoad')
     self:SetUnit(unit)
     self:AddTicks(15)
+    self:SetPrecision(1, 2)
+    self:SetCompactLayout(true)
 
     self.showCastbar = true;
     self:SetCastTimeTextShown(true)
@@ -72,7 +74,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetMinMaxValues(0, self.maxValue);
         self:SetValue(self.value);
         -- self:UpdateCastTimeText();
-        if (self.Text) then self.Text:SetText(text); end
+        if (self.Text) then
+            self.Text:SetText(text);
+            self.TextCompact:SetText(text)
+        end
         if (self.Icon) then
             -- @TODO
             -- self.Icon:SetTexture(texture);
@@ -143,7 +148,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetMinMaxValues(0, self.maxValue);
         self:SetValue(self.value);
         self:UpdateCastTimeText();
-        if (self.Text) then self.Text:SetText(text); end
+        if (self.Text) then
+            self.Text:SetText(text);
+            self.TextCompact:SetText(text)
+        end
         if (self.Icon) then self.Icon:SetTexture(texture); end
 
         self.reverseChanneling = nil;
@@ -346,8 +354,10 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
         if (self.Text) then
             if (event == "UNIT_SPELLCAST_FAILED") then
                 self.Text:SetText(FAILED);
+                self.TextCompact:SetText(FAILED)
             else
                 self.Text:SetText(INTERRUPTED);
+                self.TextCompact:SetText(INTERRUPTED)
             end
         end
 
@@ -365,7 +375,10 @@ function DragonFlightUICastbarMixin:StopAnims()
 end
 
 function DragonFlightUICastbarMixin:ShowSpark()
-    if (self.Spark) then self.Spark:Show(); end
+    if (self.Spark) then
+        self.Spark:Show()
+        self.Spark:SetSize(6, self:GetHeight() + 8)
+    end
 end
 
 function DragonFlightUICastbarMixin:HideSpark()
@@ -376,8 +389,10 @@ function DragonFlightUICastbarMixin:UpdateCastTimeText()
     if not self.CastTimeText then return; end
 
     local seconds = 0;
+    local secondsMax = 0
     if self.casting or self.channeling then
         local min, max = self:GetMinMaxValues();
+        secondsMax = max
         if self.casting then
             seconds = math.max(min, max - self:GetValue());
         else
@@ -389,8 +404,34 @@ function DragonFlightUICastbarMixin:UpdateCastTimeText()
 
     -- local text = string.format(CAST_BAR_CAST_TIME, seconds);
     -- @TODO
-    local text = string.format('%.' .. 1 .. 'f', seconds) .. 's'
-    self.CastTimeText:SetText(text);
+    local text = string.format('%.' .. self.preci .. 'f', seconds)
+
+    if self.showCastTimeMaxSetting then
+        local textMax = string.format('%.' .. self.preciMax .. 'f', secondsMax)
+        self.CastTimeText:SetText(text .. ' / ' .. textMax)
+        self.CastTimeTextCompact:SetText(text .. ' / ' .. textMax)
+    else
+        self.CastTimeText:SetText(text .. 's')
+        self.CastTimeTextCompact:SetText(text .. 's')
+    end
+end
+
+function DragonFlightUICastbarMixin:SetPrecision(preci, preciMax)
+    self.preci = preci
+    self.preciMax = preciMax
+    self:UpdateCastTimeTextShown()
+end
+
+function DragonFlightUICastbarMixin:SetCompactLayout(bCompact)
+    self.compactLayout = bCompact
+    if self.compactLayout then
+        self.Text:SetShown(false)
+        self.TextCompact:SetShown(true)
+    else
+        self.Text:SetShown(true)
+        self.TextCompact:SetShown(false)
+    end
+    self:UpdateCastTimeTextShown()
 end
 
 function DragonFlightUICastbarMixin:UpdateShownState(desiredShow)
@@ -426,11 +467,23 @@ function DragonFlightUICastbarMixin:SetCastTimeTextShown(showCastTime)
     self:UpdateCastTimeTextShown();
 end
 
+function DragonFlightUICastbarMixin:SetCastTimeTextMaxShown(showCastTimeMax)
+    self.showCastTimeMaxSetting = showCastTimeMax;
+    self:UpdateCastTimeTextShown();
+end
+
 function DragonFlightUICastbarMixin:UpdateCastTimeTextShown()
     if not self.CastTimeText then return; end
 
-    local showCastTime = self.showCastTimeSetting and (self.casting or self.channeling or self.isInEditMode);
-    self.CastTimeText:SetShown(showCastTime);
+    local showCastTime = self.showCastTimeSetting and (self.casting or self.channeling or self.isInEditMode)
+    if self.compactLayout then
+        self.CastTimeText:SetShown(false)
+        self.CastTimeTextCompact:SetShown(showCastTime)
+    else
+        self.CastTimeText:SetShown(showCastTime)
+        self.CastTimeTextCompact:SetShown(false)
+    end
+
     if showCastTime and self.isInEditMode and not self.CastTimeText.text then self:UpdateCastTimeText(); end
 end
 
