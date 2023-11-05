@@ -15,7 +15,8 @@ local defaults = {
         preciMax = 2,
         castTimeEnabled = true,
         castTimeMaxEnabled = true,
-        compactLayout = true
+        compactLayout = true,
+        showIcon = false
     }
 }
 
@@ -141,7 +142,9 @@ local options = {
         preciSpacer = {type = 'description', name = '', order = 104.3},
         castTimeEnabled = {type = 'toggle', name = 'Show cast time text', order = 105.1},
         castTimeMaxEnabled = {type = 'toggle', name = 'Show cast time max text', order = 105.2},
-        compactLayout = {type = 'toggle', name = 'Compact Layout', order = 105.3}
+        castTimeSpacer = {type = 'description', name = '', order = 105.3},
+        compactLayout = {type = 'toggle', name = 'Compact Layout', order = 106.1},
+        showIcon = {type = 'toggle', name = 'Show Icon', order = 106.2}
     }
 }
 
@@ -175,6 +178,8 @@ function Module:ApplySettings()
     Module.Castbar:SetCastTimeTextShown(db.castTimeEnabled)
     Module.Castbar:SetCastTimeTextMaxShown(db.castTimeMaxEnabled)
     Module.Castbar:SetCompactLayout(db.compactLayout)
+    Module.Castbar:SetIconShown(db.showIcon)
+    Module.Castbar.Icon:SetSize(db.sizeY, db.sizeY)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)

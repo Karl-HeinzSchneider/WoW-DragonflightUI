@@ -80,8 +80,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
         if (self.Icon) then
             -- @TODO
-            -- self.Icon:SetTexture(texture);
-            if (self.iconWhenNoninterruptible) then self.Icon:SetShown(not notInterruptible); end
+            self.Icon:SetTexture(texture);
+            -- if (self.iconWhenNoninterruptible) then self.Icon:SetShown(not notInterruptible); end
         end
         self.casting = true;
         self.castID = castID;
@@ -470,6 +470,11 @@ end
 function DragonFlightUICastbarMixin:SetCastTimeTextMaxShown(showCastTimeMax)
     self.showCastTimeMaxSetting = showCastTimeMax;
     self:UpdateCastTimeTextShown();
+end
+
+function DragonFlightUICastbarMixin:SetIconShown(bShown)
+    self.showIcon = bShown
+    self.Icon:SetShown(self.showIcon)
 end
 
 function DragonFlightUICastbarMixin:UpdateCastTimeTextShown()
