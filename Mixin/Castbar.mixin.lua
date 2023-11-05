@@ -3,10 +3,6 @@ local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Casti
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
 local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
 
-InterfaceVersion = select(4, GetBuildInfo())
-Wrath = InterfaceVersion >= 30400
-Era = InterfaceVersion <= 20000
-
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
