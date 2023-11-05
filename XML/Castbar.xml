@@ -43,7 +43,7 @@ UI_shared.xsd">
 				</Anchors>
 				</Texture>
 				-->
-				<Texture parentKey="Icon">
+				<Texture parentKey="Icon" hidden="true">
 					<Size x="16" y="16" />
 					<Anchors>
 						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT" x="-5" y="0" />
@@ -82,7 +82,7 @@ UI_shared.xsd">
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="2">
 				<Texture parentKey="Spark" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">
-					<Size x="8" y="20" />
+					<Size x="6" y="20" />
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="0" />
 					</Anchors>
@@ -195,4 +195,8 @@ UI_shared.xsd">
 			<OnShow method="OnShow" />
 		</Scripts>
 	</Frame>
+	<Texture name="DragonflightUICastbarTickTemplate" virtual="true" drawLayer="OVERLAY" hidden="true" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">
+		<TexCoords left="0.076171875" right="0.0859375" top="0.796875" bottom="0.9140625" />
+		<Color r="0" g="0" b="0" a="0.69" />
+	</Texture>
 </Ui>
