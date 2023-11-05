@@ -2,6 +2,7 @@ print('MIXIN!')
 
 local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
+local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
 
 DragonFlightUICastbarMixin = {}
 
@@ -26,7 +27,7 @@ function DragonFlightUICastbarMixin:OnShow()
 end
 
 function DragonFlightUICastbarMixin:OnEvent(event, ...)
-    print('event:', event)
+    -- print('event:', event)
     -- if true then return end
     local arg1 = ...;
 
@@ -41,7 +42,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             event = "UNIT_SPELLCAST_START";
             arg1 = unit;
         else
-            -- self:FinishSpell();
+            self:FinishSpell();
         end
     end
 
@@ -86,13 +87,13 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
     elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
         self:HandleInterruptOrSpellFailed(false, event, ...);
     elseif (event == "UNIT_SPELLCAST_DELAYED") then
-        --[[   if (self:IsShown()) then
+        if (self:IsShown()) then
             local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible =
                 UnitCastingInfo(unit);
             if (not name or (not self.showTradeSkills and isTradeSkill)) then
                 -- if there is no name, there is no bar
                 local desiredShowFalse = false;
-                -- self:UpdateShownState(desiredShowFalse);
+                self:UpdateShownState(desiredShowFalse);
                 return;
             end
             self.value = (GetTime() - (startTime / 1000));
@@ -113,55 +114,36 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
 
                 -- self:StopAnims();
             end
-        end ]]
+        end
     elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
-        --[[    local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, _, numStages =
-            UnitChannelInfo(unit);
+        local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit);
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
             -- if there is no name, there is no bar
-            -- local desiredShowFalse = false;
-            -- self:UpdateShownState(desiredShowFalse);
+            local desiredShowFalse = false;
+            self:UpdateShownState(desiredShowFalse);
             return;
         end
-
-        local isChargeSpell = numStages > 0;
-
-        -- if isChargeSpell then endTime = endTime + GetUnitEmpowerHoldAtMaxTime(self.unit); end
 
         self.maxValue = (endTime - startTime) / 1000;
 
         -- self.barType = self:GetEffectiveType(not isChargeSpell, notInterruptible, isTradeSkill, isChargeSpell);
 
-        if isChargeSpell then
-            -- self:SetColorFill(0, 0, 0, 0);
-        else
-            -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
-        end
+        -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
+        self:SetStatusBarTexture(channelRef)
 
-        -- self:ClearStages();
+        self.value = (endTime / 1000) - GetTime();
 
-        if (isChargeSpell) then
-            self.value = GetTime() - (startTime / 1000);
-        else
-            self.value = (endTime / 1000) - GetTime();
-        end
-
-        -- self:ShowSpark();
+        self:ShowSpark();
 
         self:SetMinMaxValues(0, self.maxValue);
         self:SetValue(self.value);
         self:UpdateCastTimeText();
         if (self.Text) then self.Text:SetText(text); end
         if (self.Icon) then self.Icon:SetTexture(texture); end
-        if (isChargeSpell) then
-            self.reverseChanneling = true;
-            self.casting = true;
-            self.channeling = false;
-        else
-            self.reverseChanneling = nil;
-            self.casting = nil;
-            self.channeling = true;
-        end
+
+        self.reverseChanneling = nil;
+        self.casting = nil;
+        self.channeling = true;
 
         -- self:StopAnims();
         -- self:ApplyAlpha(1.0);
@@ -177,11 +159,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
 
         self:UpdateShownState(self.showCastbar);
-
-        -- AddStages after Show so that the layout is valid
-        if (isChargeSpell) then self:AddStages(numStages); end ]]
     elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE" or event == "UNIT_SPELLCAST_EMPOWER_UPDATE") then
-        --[[  if (self:IsShown()) then
+        if (self:IsShown()) then
             local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit);
             if (not name or (not self.showTradeSkills and isTradeSkill)) then
                 -- if there is no name, there is no bar
@@ -194,7 +173,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             self:SetMinMaxValues(0, self.maxValue);
             self:SetValue(self.value);
             self:UpdateCastTimeText();
-        end ]]
+        end
     elseif (event == "UNIT_SPELLCAST_INTERRUPTIBLE" or event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE") then
         -- self:UpdateInterruptibleState(event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE");
     end
@@ -252,18 +231,18 @@ end
 function DragonFlightUICastbarMixin:OnUpdate(elapsed)
     if (self.casting or self.reverseChanneling) then
         self.value = self.value + elapsed;
-        -- if (self.reverseChanneling and self.NumStages > 0) then self:UpdateStage(); end
+
         if (self.value >= self.maxValue) then
             self:SetValue(self.maxValue);
             self:UpdateCastTimeText();
-            --[[ if (not self.reverseChanneling) then
+            if (not self.reverseChanneling) then
                 self:FinishSpell();
             else
                 if self.FlashLoopingAnim and not self.FlashLoopingAnim:IsPlaying() then
-                    self.FlashLoopingAnim:Play();
-                    self.Flash:Show();
+                    -- self.FlashLoopingAnim:Play();
+                    -- self.Flash:Show();
                 end
-            end ]]
+            end
             self:HideSpark();
             return;
         end
@@ -433,4 +412,28 @@ function DragonFlightUICastbarMixin:UpdateCastTimeTextShown()
     local showCastTime = self.showCastTimeSetting and (self.casting or self.channeling or self.isInEditMode);
     self.CastTimeText:SetShown(showCastTime);
     if showCastTime and self.isInEditMode and not self.CastTimeText.text then self:UpdateCastTimeText(); end
+end
+
+function DragonFlightUICastbarMixin:FinishSpell()
+    if self.maxValue and not self.reverseChanneling and not self.channeling then
+        self:SetValue(self.maxValue);
+        self:UpdateCastTimeText();
+    end
+    -- local barTypeInfo = self:GetTypeInfo(self.barType);
+    -- self:SetStatusBarTexture(barTypeInfo.full);
+
+    self:HideSpark();
+
+    if (self.Flash) then
+        -- self.Flash:SetAtlas(barTypeInfo.glow);
+        -- self.Flash:SetAlpha(0.0);
+        -- self.Flash:Show();
+    end
+
+    -- self:PlayFadeAnim();
+    -- self:PlayFinishAnim();
+
+    self.casting = nil;
+    self.channeling = nil;
+    self.reverseChanneling = nil;
 end
