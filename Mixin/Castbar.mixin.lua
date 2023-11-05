@@ -1,5 +1,4 @@
-print('MIXIN!')
-
+-- print('MIXIN!')
 local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
 local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
@@ -11,7 +10,7 @@ Era = InterfaceVersion <= 20000
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
-    print('OnLoad')
+    -- print('OnLoad')
     self:SetUnit(unit)
     self:AddTicks(15)
 
@@ -171,6 +170,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             for i = 1, tickCount - 1 do
                 self.ticks[i]:Show()
                 self.ticks[i]:SetPoint('CENTER', self, 'LEFT', i * tickDelta, 0)
+                self.ticks[i]:SetHeight(self:GetHeight() + 8)
             end
 
             for i = tickCount, 15 do self.ticks[i]:Hide() end
