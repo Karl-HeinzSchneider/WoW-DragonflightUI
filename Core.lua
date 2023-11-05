@@ -53,6 +53,10 @@ function DF:Debug(m, value)
     if showDebug then m:Print(value) end
 end
 
+function DF:Dump(value)
+    if showDebug then DevTools_Dump(value) end
+end
+
 function DF:ShowStartMessage()
     local version = ''
 
