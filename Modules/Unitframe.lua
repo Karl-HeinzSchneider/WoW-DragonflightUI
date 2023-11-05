@@ -1258,7 +1258,30 @@ function Module.ChangeTargetFrame()
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
 
-    if DF.Wrath then
+    if DF.Era then
+        local parent = TargetFrameTextureFrame
+        -- health
+        parent.HealthBarText = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        TargetFrameHealthBar.TextString = parent.HealthBarText
+
+        parent.HealthBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        TargetFrameHealthBar.LeftText = parent.HealthBarTextLeft
+
+        parent.HealthBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        TargetFrameHealthBar.RightText = parent.HealthBarTextRight
+
+        -- mana
+        parent.ManaBarText = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        TargetFrameManaBar.TextString = parent.ManaBarText
+
+        parent.ManaBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        TargetFrameManaBar.LeftText = parent.ManaBarTextLeft
+
+        parent.ManaBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        TargetFrameManaBar.RightText = parent.ManaBarTextRight
+    end
+
+    if DF.Wrath or DF.Era then
         local dx = 5
         -- health vs mana bar
         local deltaSize = 132 - 125
@@ -1392,6 +1415,43 @@ end
 function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
     TargetFrame:ClearAllPoints()
     TargetFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+end
+
+function Module.ShouldKnowHealth(unit)
+    local guid = UnitGUID(unit)
+    local matched = guid and guid:match("^(.-)%-")
+
+    return UnitIsUnit(unit, 'Player') or UnitIsUnit(unit, 'Pet') or UnitPlayerOrPetInRaid(unit) or
+               UnitPlayerOrPetInParty(unit) or (matched == 'Creature')
+end
+
+function Module.AddMobhealth()
+    hooksecurefunc('UnitFrameHealthBar_Update', function(statusbar, unit)
+        -- print(statusbar:GetName(), 'should know?', Module.ShouldKnowHealth(unit))
+        local shouldKnow = Module.ShouldKnowHealth(unit)
+
+        if shouldKnow then
+            -- print('should know: ', statusbar:GetName(), unit)
+            statusbar.showPercentage = false;
+            TextStatusBar_UpdateTextString(statusbar)
+        end
+    end)
+
+    --[[    hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",
+                   function(statusFrame, textString, value, valueMin, valueMax)
+        -- print(statusFrame, textString, value, valueMin, valueMax)
+    end); ]]
+
+    hooksecurefunc("TextStatusBar_UpdateTextString", function(textStatusBar)
+        local textString = textStatusBar.TextString;
+        if textString then
+            local value = textStatusBar:GetValue();
+            local valueMin, valueMax = textStatusBar:GetMinMaxValues();
+
+            -- print('TextStatusBar_UpdateTextString', textStatusBar:GetName(), value, valueMin, valueMax)
+        end
+    end)
+
 end
 
 function Module.ChangeToT()
@@ -2098,4 +2158,5 @@ function Module.Era()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
+    Module.AddMobhealth()
 end
