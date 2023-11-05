@@ -26,7 +26,7 @@ UI_shared.xsd">
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="2">
-				<Texture parentKey="Background" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" hidden="true">
+				<Texture parentKey="Background" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" hidden="false">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="-1" y="1" />
 						<Anchor point="BOTTOMRIGHT" x="1" y="-1" />
