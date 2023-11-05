@@ -1238,6 +1238,9 @@ function Module.ChangeTargetFrame()
     TargetFrameTextureFrameLevelText:ClearAllPoints()
     TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
+    TargetFrameTextureFrameDeadText:ClearAllPoints()
+    TargetFrameTextureFrameDeadText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
+
     -- Health 119,12
     TargetFrameHealthBar:ClearAllPoints()
     TargetFrameHealthBar:SetSize(125, 20)
@@ -1470,6 +1473,7 @@ function Module.ChangeToT()
         background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
         frame.TargetFrameToTBackground = background
     end
+    TargetFrameToTBackground:Hide()
 
     if not frame.TargetFrameToTBorder then
         local border = TargetFrameToTHealthBar:CreateTexture('DragonflightUITargetFrameToTBorder')
@@ -1492,6 +1496,9 @@ function Module.ChangeToT()
 
     TargetFrameToTTextureFrameName:ClearAllPoints()
     TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+
+    TargetFrameToTTextureFrameDeadText:ClearAllPoints()
+    TargetFrameToTTextureFrameDeadText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
 
     TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 25, -20)
 end
