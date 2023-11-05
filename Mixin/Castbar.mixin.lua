@@ -4,11 +4,16 @@ local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Casti
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
 local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
 
+InterfaceVersion = select(4, GetBuildInfo())
+Wrath = InterfaceVersion >= 30400
+Era = InterfaceVersion <= 20000
+
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
     print('OnLoad')
     self:SetUnit(unit)
+    self:AddTicks(15)
 
     self.showCastbar = true;
     self:SetCastTimeTextShown(true)
@@ -61,6 +66,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetStatusBarTexture(standardRef)
 
         self:ShowSpark();
+        self:HideAllTicks()
 
         self.value = (GetTime() - (startTime / 1000));
         self.maxValue = (endTime - startTime) / 1000;
@@ -156,6 +162,20 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
                 self.BorderShield:Hide();
                 if (self.BarBorder) then self.BarBorder:Show(); end
             end
+        end
+
+        local tickCount = self.tickTable[name]
+        if tickCount then
+            local tickDelta = self:GetWidth() / tickCount
+
+            for i = 1, tickCount - 1 do
+                self.ticks[i]:Show()
+                self.ticks[i]:SetPoint('CENTER', self, 'LEFT', i * tickDelta, 0)
+            end
+
+            for i = tickCount, 15 do self.ticks[i]:Hide() end
+        else
+            self:HideAllTicks()
         end
 
         self:UpdateShownState(self.showCastbar);
@@ -436,4 +456,32 @@ function DragonFlightUICastbarMixin:FinishSpell()
     self.casting = nil;
     self.channeling = nil;
     self.reverseChanneling = nil;
+end
+
+function DragonFlightUICastbarMixin:AddTicks(count)
+    if not self.ticks then
+        local ticks = {}
+        for i = 1, count do
+            local tick = self:CreateTexture('Tick' .. i, 'OVERLAY', 'DragonflightUICastbarTickTemplate')
+            -- tick:SetVertexColor(0, 0, 0, 0.69)
+            tick:ClearAllPoints()
+            tick:SetSize(6, 20 + 8)
+            tick:SetPoint('CENTER', self, 'LEFT', 320 / 2, 0)
+            ticks[i] = tick
+        end
+
+        self.ticks = ticks
+    end
+end
+
+function DragonFlightUICastbarMixin:HideAllTicks()
+    if self.ticks then for k, v in pairs(self.ticks) do v:Hide() end end
+end
+
+function DragonFlightUICastbarMixin:AddTickTable(data)
+    if data then
+        self.tickTable = data
+    else
+        self.tickTable = {}
+    end
 end
