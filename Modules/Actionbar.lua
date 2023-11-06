@@ -1113,6 +1113,7 @@ function Module.ChangeMicroMenuButton(frame, name)
     frame:GetHighlightTexture():SetSize(sizeX, sizeY)
 
     -- add missing background
+    local dx, dy = -1, 1
     local offX, offY = frame:GetPushedTextOffset()
 
     -- ["UI-HUD-MicroMenu-ButtonBG-Down"]={32, 41, 0.0654297, 0.12793, 0.330078, 0.490234, false, false, "1x"},
@@ -1120,7 +1121,7 @@ function Module.ChangeMicroMenuButton(frame, name)
     bg:SetTexture(microTexture)
     bg:SetSize(sizeX, sizeY + 1)
     bg:SetTexCoord(0.0654297, 0.12793, 0.330078, 0.490234)
-    bg:SetPoint('CENTER', -1, 1)
+    bg:SetPoint('CENTER', dx, dy)
     frame.Background = bg
 
     --	["UI-HUD-MicroMenu-ButtonBG-Up"]={32, 41, 0.0654297, 0.12793, 0.494141, 0.654297, false, false, "1x"},
@@ -1128,7 +1129,7 @@ function Module.ChangeMicroMenuButton(frame, name)
     bgPushed:SetTexture(microTexture)
     bgPushed:SetSize(sizeX, sizeY + 1)
     bgPushed:SetTexCoord(0.0654297, 0.12793, 0.494141, 0.654297)
-    bgPushed:SetPoint('CENTER', 1, -1)
+    bgPushed:SetPoint('CENTER', dx + offX, dy + offY)
     bgPushed:Hide()
     frame.BackgroundPushed = bgPushed
 
@@ -1140,14 +1141,14 @@ function Module.ChangeMicroMenuButton(frame, name)
     frame.dfState.highlight = false
 
     frame.HandleState = function()
-        DF:Dump(frame.dfState)
+        -- DF:Dump(frame.dfState)
         local state = frame.dfState
 
         if state.pushed then
             frame.Background:Hide()
             frame.BackgroundPushed:Show()
             frame:GetHighlightTexture():ClearAllPoints()
-            frame:GetHighlightTexture():SetPoint('CENTER', offX, -offY)
+            frame:GetHighlightTexture():SetPoint('CENTER', offX, offY)
         else
             frame.Background:Show()
             frame.BackgroundPushed:Hide()
@@ -1194,27 +1195,58 @@ function Module.ChangeMicroMenuButton(frame, name)
         frame.HandleState()
     end)
 
-    DF:Dump(SpellbookMicroButton[0])
-    print(frame:GetPushedTextOffset())
-
-    SpellbookMicroButton:HookScript('OnAttributeChanged', function(self)
-        print('change')
-    end)
-
+    -- flash
+    local flash = _G[frame:GetName() .. 'Flash']
+    if flash then
+        -- print(flash:GetName())
+        flash:SetSize(sizeX, sizeY)
+        flash:SetTexture(microTexture)
+        flash:SetTexCoord(0.323242, 0.385742, 0.00195312, 0.162109)
+        flash:ClearAllPoints()
+        flash:SetPoint('CENTER', 0, 0)
+    end
 end
 
 function Module.ChangeMicroMenuNew()
-    -- TODO char
-    -- Module.ChangeMicroMenuButton(CharacterMicroButton,'UI-HUD-MicroMenu-',)
-    Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
-    --[[  Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
-    Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-    Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
-    Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
+    if DF.Wrath then
+        -- TODO char
+        -- Module.ChangeMicroMenuButton(CharacterMicroButton,'UI-HUD-MicroMenu-',)
+        Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
+        Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
+        Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
+        Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
+        Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
+        PVPMicroButtonTexture:Hide()
+        Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
+        Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
+        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
 
-    Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
- ]]
-    -- Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        MainMenuBarTextureExtender:Hide()
+
+        -- MainMenuBarPerformanceBar:ClearAllPoints()
+        MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
+        MainMenuBarPerformanceBar:SetSize(19, 39)
+
+    elseif DF.Era then
+        -- TODO char
+        -- Module.ChangeMicroMenuButton(CharacterMicroButton,'UI-HUD-MicroMenu-',)
+        Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
+        Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
+        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
+        Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
+        PVPMicroButtonTexture:Hide()
+
+        Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
+        Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
+
+        -- Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
+        -- Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
+
+    end
 
 end
 
