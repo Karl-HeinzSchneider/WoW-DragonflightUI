@@ -1207,10 +1207,192 @@ function Module.ChangeMicroMenuButton(frame, name)
     end
 end
 
+function Module.ChangeCharacterMicroButton()
+    local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
+
+    --[[   local name = 'CharacterInfo'
+    local pre = 'UI-HUD-MicroMenu-'
+    local key = pre .. name
+    local up = Module.MicromenuAtlas[key .. '-Up']
+    ]]
+
+    local frame = CharacterMicroButton
+    local sizeX, sizeY = 32, 40
+    local offX, offY = frame:GetPushedTextOffset()
+
+    frame:SetSize(sizeX, sizeY)
+    frame:SetHitRectInsets(0, 0, 0, 0)
+
+    frame:GetNormalTexture():SetAlpha(0)
+    frame:GetPushedTexture():SetAlpha(0)
+    frame:GetHighlightTexture():SetAlpha(0)
+
+    MicroButtonPortrait:ClearAllPoints()
+    MicroButtonPortrait:Hide()
+
+    local dfPortrait = frame:CreateTexture('NewPortrait', 'ARTWORK')
+    dfPortrait:SetAllPoints()
+    -- newPortrait:SetSize(sizeX - 2 * inside, sizeY - 2 * inside)
+    -- newPortrait:SetPoint('CENTER', 0.5, 0)
+    dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
+    dfPortrait:SetPoint('BOTTOMRIGHT', -7 + 1, 7 - 1)
+    dfPortrait:SetTexCoord(0.2, 0.8, 0.0666, 0.9)
+    frame.dfPortrait = dfPortrait
+
+    local microPortraitMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenuportraitmask2x'
+
+    local dfPortraitMask = frame:CreateMaskTexture()
+    dfPortraitMask:SetTexture(microPortraitMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    dfPortraitMask:SetPoint('CENTER')
+    dfPortraitMask:SetSize(35, 65)
+    dfPortrait:AddMaskTexture(dfPortraitMask)
+    frame.dfPortraitMask = dfPortraitMask
+
+    SetPortraitTexture(frame.dfPortrait, 'player')
+
+    -- CharacterMicroButton_OnEvent
+    CharacterMicroButton:HookScript('OnEvent', function(self)
+        -- print('on event')
+        SetPortraitTexture(frame.dfPortrait, 'player')
+    end)
+
+    frame.dfSetState = function(pushed)
+        --[[   if pushed then
+            frame.dfPortraitMask:ClearAllPoints()
+            frame.dfPortraitMask:SetPoint('CENTER', 2, -2)
+
+            frame.dfPortrait:ClearAllPoints()
+            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
+            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6 + 1, 5 - 1)
+        else
+            frame.dfPortraitMask:ClearAllPoints()
+            frame.dfPortraitMask:SetPoint('CENTER', 0, 0)
+
+            frame.dfPortrait:ClearAllPoints()
+            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
+            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -7 + 1, 7 - 1)
+        end ]]
+        --[[    if pushed then
+            frame.dfPortraitMask:ClearAllPoints()
+            frame.dfPortraitMask:SetPoint('CENTER', offX, offY)
+
+            frame.dfPortrait:ClearAllPoints()
+            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1 + offX / 2, -7 - 1 + offY / 2)
+            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6 + 1 - offX / 2, 5 - 1 - offY / 2)
+        else
+            frame.dfPortraitMask:ClearAllPoints()
+            frame.dfPortraitMask:SetPoint('CENTER', 0, 0)
+
+            frame.dfPortrait:ClearAllPoints()
+            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
+            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -7 + 1, 7 - 1)
+        end ]]
+    end
+
+    do
+        -- add missing background
+        local dx, dy = -1, 1
+
+        -- ["UI-HUD-MicroMenu-ButtonBG-Down"]={32, 41, 0.0654297, 0.12793, 0.330078, 0.490234, false, false, "1x"},
+        local bg = frame:CreateTexture('Background', 'BACKGROUND')
+        bg:SetTexture(microTexture)
+        bg:SetSize(sizeX, sizeY + 1)
+        bg:SetTexCoord(0.0654297, 0.12793, 0.330078, 0.490234)
+        bg:SetPoint('CENTER', dx, dy)
+        frame.Background = bg
+
+        --	["UI-HUD-MicroMenu-ButtonBG-Up"]={32, 41, 0.0654297, 0.12793, 0.494141, 0.654297, false, false, "1x"},
+        local bgPushed = frame:CreateTexture('Background', 'BACKGROUND')
+        bgPushed:SetTexture(microTexture)
+        bgPushed:SetSize(sizeX, sizeY + 1)
+        bgPushed:SetTexCoord(0.0654297, 0.12793, 0.494141, 0.654297)
+        bgPushed:SetPoint('CENTER', dx + offX, dy + offY)
+        bgPushed:Hide()
+        frame.BackgroundPushed = bgPushed
+
+        -- frame:GetHighlightTexture():SetPoint('CENTER', 0, 0)
+        -- frame:GetHighlightTexture():SetPoint('CENTER', 2, -2)
+
+        frame.dfState = {}
+        frame.dfState.pushed = false
+        frame.dfState.highlight = false
+
+        frame.HandleState = function()
+            -- DF:Dump(frame.dfState)
+            local state = frame.dfState
+
+            if state.pushed then
+                frame.Background:Hide()
+                frame.BackgroundPushed:Show()
+                frame:GetHighlightTexture():ClearAllPoints()
+                frame:GetHighlightTexture():SetPoint('CENTER', offX, offY)
+            else
+                frame.Background:Show()
+                frame.BackgroundPushed:Hide()
+                frame:GetHighlightTexture():ClearAllPoints()
+
+                frame:GetHighlightTexture():SetPoint('CENTER', 0, 0)
+            end
+            frame.dfSetState(state.pushed)
+        end
+        frame.HandleState()
+
+        frame:GetNormalTexture():HookScript('OnShow', function(self)
+            -- frame.Background:Show()
+            frame.dfState.pushed = false
+            frame.HandleState()
+        end)
+
+        --[[   frame:GetNormalTexture():HookScript('OnHide', function(self)
+        frame.Background:Hide()
+        frame.dfState.pushed = true
+        frame.HandleState()
+        end)    ]]
+
+        frame:GetPushedTexture():HookScript('OnShow', function(self)
+            -- frame.BackgroundPushed:Show()
+            frame.dfState.pushed = true
+            frame.HandleState()
+        end)
+
+        --[[   frame:GetPushedTexture():HookScript('OnHide', function(self)
+        frame.BackgroundPushed:Hide()
+        frame.dfState.pushed = false
+        frame.HandleState()
+         end)  ]]
+
+        frame:HookScript('OnEnter', function(self)
+            -- frame.Background:Show()
+            frame.dfState.highlight = true
+            frame.HandleState()
+        end)
+
+        frame:HookScript('OnLeave', function(self)
+            -- frame.Background:Show()
+            frame.dfState.highlight = false
+            frame.HandleState()
+        end)
+
+        -- flash
+        local flash = _G[frame:GetName() .. 'Flash']
+        if flash then
+            -- print(flash:GetName())
+            flash:SetSize(sizeX, sizeY)
+            flash:SetTexture(microTexture)
+            flash:SetTexCoord(0.323242, 0.385742, 0.00195312, 0.162109)
+            flash:ClearAllPoints()
+            flash:SetPoint('CENTER', 0, 0)
+        end
+    end
+end
+
 function Module.ChangeMicroMenuNew()
     if DF.Wrath then
         -- TODO char
-        -- Module.ChangeMicroMenuButton(CharacterMicroButton,'UI-HUD-MicroMenu-',)
+        -- Module.ChangeMicroMenuButton(CharacterMicroButton, 'CharacterInfo')
+        Module.ChangeCharacterMicroButton()
+        -- MicroButtonPortrait:Hide()
+
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
