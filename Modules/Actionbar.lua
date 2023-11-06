@@ -1230,23 +1230,34 @@ function Module.ChangeCharacterMicroButton()
     MicroButtonPortrait:ClearAllPoints()
     MicroButtonPortrait:Hide()
 
+    -- new portrait
     local dfPortrait = frame:CreateTexture('NewPortrait', 'ARTWORK')
     dfPortrait:SetAllPoints()
     -- newPortrait:SetSize(sizeX - 2 * inside, sizeY - 2 * inside)
     -- newPortrait:SetPoint('CENTER', 0.5, 0)
-    dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
-    dfPortrait:SetPoint('BOTTOMRIGHT', -7 + 1, 7 - 1)
+    dfPortrait:SetPoint('TOPLEFT', 8, -7)
+    dfPortrait:SetPoint('BOTTOMRIGHT', -6, 7)
     dfPortrait:SetTexCoord(0.2, 0.8, 0.0666, 0.9)
     frame.dfPortrait = dfPortrait
 
     local microPortraitMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenuportraitmask2x'
 
+    -- portraitMask
     local dfPortraitMask = frame:CreateMaskTexture()
     dfPortraitMask:SetTexture(microPortraitMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     dfPortraitMask:SetPoint('CENTER')
     dfPortraitMask:SetSize(35, 65)
     dfPortrait:AddMaskTexture(dfPortraitMask)
     frame.dfPortraitMask = dfPortraitMask
+
+    -- portraitShadow (pushed)
+    local dfPortraitShadow = frame:CreateTexture('NewPortraitShadow', 'OVERLAY')
+    dfPortraitShadow:SetTexture(microTexture)
+    dfPortraitShadow:SetTexCoord(0.323242, 0.385742, 0.166016, 0.326172)
+    dfPortraitShadow:SetSize(32, 41)
+    dfPortraitShadow:SetPoint('CENTER', 1, -4)
+    dfPortraitShadow:Hide()
+    frame.dfPortraitShadow = dfPortraitShadow
 
     SetPortraitTexture(frame.dfPortrait, 'player')
 
@@ -1257,36 +1268,26 @@ function Module.ChangeCharacterMicroButton()
     end)
 
     frame.dfSetState = function(pushed)
-        --[[   if pushed then
+        if pushed then
+            local delta = offX / 2
             frame.dfPortraitMask:ClearAllPoints()
-            frame.dfPortraitMask:SetPoint('CENTER', 2, -2)
+            frame.dfPortraitMask:SetPoint('CENTER', delta, -delta)
 
             frame.dfPortrait:ClearAllPoints()
-            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
-            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6 + 1, 5 - 1)
+            frame.dfPortrait:SetPoint('TOPLEFT', 8 + delta, -7 - delta)
+            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6 + delta, 7 - delta)
+
+            dfPortraitShadow:Show()
         else
             frame.dfPortraitMask:ClearAllPoints()
             frame.dfPortraitMask:SetPoint('CENTER', 0, 0)
 
             frame.dfPortrait:ClearAllPoints()
-            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
-            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -7 + 1, 7 - 1)
-        end ]]
-        --[[    if pushed then
-            frame.dfPortraitMask:ClearAllPoints()
-            frame.dfPortraitMask:SetPoint('CENTER', offX, offY)
+            frame.dfPortrait:SetPoint('TOPLEFT', 8, -7)
+            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6, 7)
 
-            frame.dfPortrait:ClearAllPoints()
-            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1 + offX / 2, -7 - 1 + offY / 2)
-            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6 + 1 - offX / 2, 5 - 1 - offY / 2)
-        else
-            frame.dfPortraitMask:ClearAllPoints()
-            frame.dfPortraitMask:SetPoint('CENTER', 0, 0)
-
-            frame.dfPortrait:ClearAllPoints()
-            frame.dfPortrait:SetPoint('TOPLEFT', 7 + 1, -7 - 1)
-            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -7 + 1, 7 - 1)
-        end ]]
+            dfPortraitShadow:Hide()
+        end
     end
 
     do
