@@ -2106,6 +2106,17 @@ function Module.ApplyPortraitMask()
     maskPet:SetAllPoints(PetPortrait)
     maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     PetPortrait:AddMaskTexture(maskPet)
+
+    -- fix portraits
+    local maskCharacterFrame = CharacterFrame:CreateMaskTexture()
+    maskCharacterFrame:SetAllPoints(CharacterFramePortrait)
+    maskCharacterFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    CharacterFramePortrait:AddMaskTexture(maskCharacterFrame)
+
+    local maskTalentFrame = PlayerTalentFrame:CreateMaskTexture()
+    maskTalentFrame:SetAllPoints(PlayerTalentFramePortrait)
+    maskTalentFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
 end
 
 frame:SetScript('OnEvent', frame.OnEvent)
