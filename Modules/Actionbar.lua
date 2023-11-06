@@ -1205,6 +1205,13 @@ function Module.ChangeMicroMenuButton(frame, name)
         flash:ClearAllPoints()
         flash:SetPoint('CENTER', 0, 0)
     end
+
+    -- gap
+    --[[     local gap = 0
+    local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint(1)
+    print(point, relativeTo, relativePoint, xOfs, yOfs)
+    frame:SetPoint(point, relativeTo, relativePoint, gap, yOfs)
+    ]]
 end
 
 function Module.ChangeCharacterMicroButton()
@@ -1754,7 +1761,7 @@ function Module.MoveBars()
     MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
 
     CharacterMicroButton:ClearAllPoints()
-    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 - 20 - 35, 0)
+    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
 
     CharacterMicroButton.SetPoint = noop
     CharacterMicroButton.ClearAllPoints = noop
