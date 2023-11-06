@@ -8,7 +8,7 @@
 ## X-Curse-Project-ID: 819757
 ## Version: @project-version@
 ## SavedVariables: DragonflightUIDB
-## OptionalDeps: Ace3
+## OptionalDeps: Ace3, Blizzard_TalentUI
 
 # Libs
 Libs\LibStub\LibStub.lua
