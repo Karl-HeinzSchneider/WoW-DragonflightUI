@@ -1112,6 +1112,16 @@ function Module.ChangeMicroMenuButton(frame, name)
     frame:GetHighlightTexture():SetTexCoord(mouseover[3], mouseover[4], mouseover[5], mouseover[6])
     frame:GetHighlightTexture():SetSize(sizeX, sizeY)
 
+    -- Fix: on Era textures get overwritten inside OnUpdate :x
+    if DF.Era and frame == MainMenuMicroButton then
+        MainMenuMicroButton:HookScript('OnUpdate', function(self)
+            frame:SetNormalTexture(microTexture)
+            frame:SetDisabledTexture(microTexture)
+            frame:SetPushedTexture(microTexture)
+            frame:SetHighlightTexture(microTexture)
+        end)
+    end
+
     -- add missing background
     local dx, dy = -1, 1
     local offX, offY = frame:GetPushedTextOffset()
@@ -1396,11 +1406,7 @@ end
 
 function Module.ChangeMicroMenuNew()
     if DF.Wrath then
-        -- TODO char
-        -- Module.ChangeMicroMenuButton(CharacterMicroButton, 'CharacterInfo')
         Module.ChangeCharacterMicroButton()
-        -- MicroButtonPortrait:Hide()
-
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
@@ -1420,22 +1426,17 @@ function Module.ChangeMicroMenuNew()
         MainMenuBarPerformanceBar:SetSize(19, 39)
 
     elseif DF.Era then
-        -- TODO char
-        -- Module.ChangeMicroMenuButton(CharacterMicroButton,'UI-HUD-MicroMenu-',)
+        Module.ChangeCharacterMicroButton()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
         Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
-        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-        Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
-        PVPMicroButtonTexture:Hide()
-
+        -- WorldMapMicroButton    
         Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
         Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
+        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
 
-        -- Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
-        -- Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
-
+        MainMenuBarPerformanceBarFrame:Hide()
     end
 
 end
