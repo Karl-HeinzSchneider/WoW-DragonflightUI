@@ -38,6 +38,15 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = 250,
             y = -4
+        },
+        boss = {
+            breakUpLargeNumbers = false,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPRIGHT',
+            anchorParent = 'TOPRIGHT',
+            x = 55,
+            y = -236
         }
     }
 }
