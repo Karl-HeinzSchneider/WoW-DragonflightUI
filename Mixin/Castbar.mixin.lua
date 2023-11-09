@@ -14,6 +14,7 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
 
     self.showCastbar = true;
     self:SetCastTimeTextShown(true)
+    self.showTradeSkills = true
 end
 
 function DragonFlightUICastbarMixin:OnShow()
