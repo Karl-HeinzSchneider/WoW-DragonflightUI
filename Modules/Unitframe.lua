@@ -11,6 +11,7 @@ local defaults = {
         scale = 1,
         focus = {
             classcolor = false,
+            breakUpLargeNumbers = false,
             scale = 1.0,
             override = false,
             anchor = 'TOPLEFT',
@@ -20,6 +21,7 @@ local defaults = {
         },
         player = {
             classcolor = false,
+            breakUpLargeNumbers = false,
             scale = 1.0,
             override = false,
             anchor = 'TOPLEFT',
@@ -29,6 +31,7 @@ local defaults = {
         },
         target = {
             classcolor = false,
+            breakUpLargeNumbers = false,
             scale = 1.0,
             override = false,
             anchor = 'TOPLEFT',
@@ -128,6 +131,12 @@ local optionsPlayer = {
             desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 10.2
+        },
         configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
@@ -209,6 +218,12 @@ local optionsTarget = {
             desc = 'Enable classcolors for the healthbar',
             order = 10.1
         },
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 10.2
+        },
         configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
@@ -289,6 +304,12 @@ local optionsFocus = {
             name = 'class color',
             desc = 'Enable classcolors for the healthbar',
             order = 10.1
+        },
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 10.2
         },
         configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
@@ -483,6 +504,8 @@ function Module:ApplySettings()
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
         Module.ScaleRestFlipbook()
+        PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
+        TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     end
 
     -- target
@@ -497,6 +520,8 @@ function Module:ApplySettings()
         end
         TargetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
+        TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
+        TextStatusBar_UpdateTextString(TargetFrameHealthBar)
     end
 
     if DF.Wrath then
@@ -512,6 +537,8 @@ function Module:ApplySettings()
             end
             FocusFrame:SetScale(obj.scale)
             Module.ReApplyFocusFrame()
+            FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
+            TextStatusBar_UpdateTextString(FocusFrameHealthBar)
         end
     end
 end
