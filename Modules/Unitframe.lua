@@ -32,6 +32,8 @@ local defaults = {
         target = {
             classcolor = false,
             breakUpLargeNumbers = false,
+            enableNumericThreat = true,
+            enableThreatGlow = true,
             scale = 1.0,
             override = false,
             anchor = 'TOPLEFT',
@@ -232,6 +234,20 @@ local optionsTarget = {
             name = 'break up large numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 10.2
+        },
+        enableNumericThreat = {
+            type = 'toggle',
+            name = 'numeric threat',
+            desc = 'Enable numeric threat',
+            order = 10.3,
+            disabled = not DF.Era
+        },
+        enableThreatGlow = {
+            type = 'toggle',
+            name = 'threat glow',
+            desc = 'Enable threat glow',
+            order = 10.4,
+            disabled = true
         },
         configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
@@ -2155,6 +2171,78 @@ function Module.ApplyPortraitMask()
     PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
 end
 
+function Module.CreatThreatIndicator()
+    local sizeX, sizeY = 42, 16
+
+    local indi = CreateFrame('Frame', 'DragonflightUIThreatIndicator', TargetFrame)
+    indi:SetSize(sizeX, sizeY)
+    indi:SetPoint('BOTTOM', TargetFrameTextureFrameName, 'TOP', 0, 2)
+
+    local bg = indi:CreateTexture(nil, 'BACKGROUND')
+    bg:SetTexture("Interface\\TargetingFrame\\UI-StatusBar");
+    bg:SetTexture(
+        "Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health");
+    bg:SetPoint('CENTER', 0, 0)
+    bg:SetSize(sizeX, sizeY)
+
+    -- TargetFrameHealthBar:GetStatusBarTexture():SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+    -- TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+
+    local text = indi:CreateFontString(nil, 'BACKGROUND', 'GameFontHighlight')
+    text:SetPoint('CENTER', 0, 0)
+    text:SetText('999%')
+
+    indi.Background = bg
+    indi.Text = text
+    Module.ThreatIndicator = indi
+
+    local function UpdateIndicator()
+        local db = Module.db.profile
+        local enableNumeric = db.target.enableNumericThreat
+        local enableGlow = db.target.enableThreatGlow
+
+        if UnitExists('TARGET') and (enableNumeric or enableGlow) then
+            local isTanking, status, percentage, rawPercentage = UnitDetailedThreatSituation('PLAYER', 'TARGET')
+            local display = rawPercentage;
+
+            if enableNumeric then
+                if isTanking then
+                    display = UnitThreatPercentageOfLead('PLAYER', 'TARGET')
+                    -- print('IsTanking')
+                end
+
+                if display and display ~= 0 then
+                    -- print('t:', display)
+                    display = min(display, MAX_DISPLAYED_THREAT_PERCENT);
+                    text:SetText(format("%1.0f", display) .. "%")
+                    bg:SetVertexColor(GetThreatStatusColor(status))
+                    indi:Show()
+                else
+                    indi:Hide()
+                end
+            else
+                indi:Hide()
+            end
+
+            if enableGlow then
+                -- show
+            else
+                -- hide
+            end
+
+        else
+            indi:Hide()
+            -- disable glow
+        end
+    end
+
+    indi:RegisterEvent('PLAYER_TARGET_CHANGED')
+    indi:RegisterUnitEvent('UNIT_THREAT_LIST_UPDATE', 'TARGET')
+
+    indi:SetScript('OnEvent', UpdateIndicator)
+    UpdateIndicator()
+end
+
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
@@ -2213,4 +2301,5 @@ function Module.Era()
 
     Module.ApplyPortraitMask()
     Module.AddMobhealth()
+    Module.CreatThreatIndicator()
 end
