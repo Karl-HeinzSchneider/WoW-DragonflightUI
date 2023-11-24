@@ -2068,6 +2068,43 @@ function Module.HookRestFunctions()
     end)
 end
 
+function Module.ChangeFonts()
+    local newFont = 'Fonts\\FRIZQT__.ttf'
+
+    local changeFont = function(f, newsize)
+        local path, size, flags = f:GetFont()
+        f:SetFont(newFont, newsize, flags)
+    end
+
+    local std = 11
+
+    changeFont(PlayerFrameHealthBarText, std)
+    changeFont(PlayerFrameHealthBarTextLeft, std)
+    changeFont(PlayerFrameHealthBarTextRight, std)
+
+    changeFont(PlayerFrameManaBarText, std)
+    changeFont(PlayerFrameManaBarTextLeft, std)
+    changeFont(PlayerFrameManaBarTextRight, std)
+
+    changeFont(TargetFrameTextureFrame.HealthBarText, std)
+    changeFont(TargetFrameTextureFrame.HealthBarTextLeft, std)
+    changeFont(TargetFrameTextureFrame.HealthBarTextRight, std)
+
+    changeFont(TargetFrameTextureFrame.ManaBarText, std)
+    changeFont(TargetFrameTextureFrame.ManaBarTextLeft, std)
+    changeFont(TargetFrameTextureFrame.ManaBarTextRight, std)
+
+    if DF.Wrath then
+        changeFont(FocusFrameTextureFrame.HealthBarText, std)
+        changeFont(FocusFrameTextureFrame.HealthBarTextLeft, std)
+        changeFont(FocusFrameTextureFrame.HealthBarTextRight, std)
+
+        changeFont(FocusFrameTextureFrame.ManaBarText, std)
+        changeFont(FocusFrameTextureFrame.ManaBarTextLeft, std)
+        changeFont(FocusFrameTextureFrame.ManaBarTextRight, std)
+    end
+end
+
 function frame:OnEvent(event, arg1)
     -- print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
@@ -2273,6 +2310,7 @@ function Module.Wrath()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
+    Module.ChangeFonts()
 end
 
 function Module.Era()
@@ -2302,4 +2340,5 @@ function Module.Era()
     Module.ApplyPortraitMask()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
+    Module.ChangeFonts()
 end
