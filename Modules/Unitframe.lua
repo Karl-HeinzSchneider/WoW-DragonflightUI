@@ -2130,6 +2130,7 @@ function frame:OnEvent(event, arg1)
         Module.CreatePlayerFrameTextures()
         Module.ChangePlayerframe()
         Module.ChangeTargetFrame()
+        Module.ChangeFonts()
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ChangeStatusIcons()
@@ -2318,7 +2319,6 @@ function Module.Wrath()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
-    Module.ChangeFonts()
 end
 
 function Module.Era()
@@ -2348,5 +2348,4 @@ function Module.Era()
     Module.ApplyPortraitMask()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
-    Module.ChangeFonts()
 end
