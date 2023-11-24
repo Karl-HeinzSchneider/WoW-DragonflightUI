@@ -2086,6 +2086,14 @@ function Module.ChangeFonts()
     changeFont(PlayerFrameManaBarTextLeft, std)
     changeFont(PlayerFrameManaBarTextRight, std)
 
+    changeFont(PetFrameHealthBarText, std)
+    changeFont(PetFrameHealthBarTextLeft, std)
+    changeFont(PetFrameHealthBarTextRight, std)
+
+    changeFont(PetFrameManaBarText, std)
+    changeFont(PetFrameManaBarTextLeft, std)
+    changeFont(PetFrameManaBarTextRight, std)
+
     changeFont(TargetFrameTextureFrame.HealthBarText, std)
     changeFont(TargetFrameTextureFrame.HealthBarTextLeft, std)
     changeFont(TargetFrameTextureFrame.HealthBarTextRight, std)
