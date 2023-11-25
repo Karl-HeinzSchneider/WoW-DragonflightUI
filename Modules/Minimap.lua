@@ -1,10 +1,11 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Minimap'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
+Module.Tmp = {}
 
 local db, getOptions
 
-local defaults = {profile = {scale = 1, x = -10, y = -105}}
+local defaults = {profile = {scale = 1, x = -10, y = -105, locked = true}}
 
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
@@ -87,6 +88,12 @@ local options = {
             max = 2500,
             bigStep = 0.50,
             order = 102
+        },
+        locked = {
+            type = 'toggle',
+            name = 'Locked',
+            desc = 'Lock the Minimap. Unlocked Minimap can be moved ' .. getDefaultStr('locked'),
+            order = 103
         }
     }
 }
@@ -120,6 +127,8 @@ function Module:ApplySettings()
     Module.MoveMinimap(db.x, db.y)
     local dfScale = 1.25
     Minimap:SetScale(db.scale * dfScale)
+
+    Module.LockMinimap(db.locked)
 end
 
 local frame = CreateFrame('FRAME')
@@ -256,6 +265,7 @@ function Module.MoveDefaultStuff()
 end
 
 function Module.MoveMinimap(x, y)
+    Minimap:ClearAllPoints()
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', x, y)
     -- MinimapCluster:ClearAllPoints()
     -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
@@ -476,6 +486,50 @@ function Module.DrawMinimapBorder()
 end
 
 function Module.ReplaceTextures()
+end
+
+function Module.LockMinimap(locked)
+    if locked then
+        -- print('locked')
+        Minimap:SetMovable(false)
+        Minimap:EnableMouse(false)
+    else
+        -- print('not locked')
+
+        Minimap:SetMovable(true)
+        Minimap:EnableMouse(true)
+        Minimap:SetClampedToScreen(true)
+        Minimap:RegisterForDrag("LeftButton", "RightButton")
+        Minimap:SetScript("OnDragStart", function(self)
+            if IsShiftKeyDown() then
+                local x, y = Minimap:GetCenter()
+                -- print('before', x, y)
+                Module.Tmp.MinimapX = x
+                Module.Tmp.MinimapY = y
+
+                self:StartMoving()
+            end
+        end)
+        Minimap:SetScript("OnDragStop", function(self)
+            -- print('OnDragStop')
+            self:StopMovingOrSizing()
+            -- local point, relativeTo, relativePoint, xOfs, yOfs = Minimap:GetPoint(1)
+            -- print(xOfs, yOfs)
+            local x, y = Minimap:GetCenter()
+            -- print('after', x, y)
+
+            local dx = Module.Tmp.MinimapX - x
+            local dy = Module.Tmp.MinimapY - y
+            -- print('delta', dx, dy)
+
+            db = Module.db.profile
+
+            db.x = db.x - dx
+            db.y = db.y - dy
+            Module.ApplySettings()
+        end)
+        Minimap:SetUserPlaced(true)
+    end
 end
 
 function Module.MoveBuffs()
