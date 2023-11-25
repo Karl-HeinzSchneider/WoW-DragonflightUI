@@ -395,7 +395,14 @@ function Module.HookCalendar()
     local size = 24
     button:SetSize(size * 1.105, size)
     button:SetScale(0.8)
-    button:SetParent(Minimap)
+
+    -- button:SetParent(Minimap)
+    local relativeScale = 0.8
+    -- workaround, because sometimes the button dissappears when parent = Minimap
+    hooksecurefunc(Minimap, 'SetScale', function()
+        button:SetScale(Minimap:GetScale() * relativeScale)
+    end)
+
     button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
 
     -- button:ClearAllPoints()
@@ -611,15 +618,7 @@ function Module.ChangeEra()
 end
 
 function frame:OnEvent(event, arg1)
-    -- print('event', event)
-    if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TimeManager' then
-        -- print('Blizzard_TimeManager')
-        Module.ChangeClock()
-        if DF.Wrath then
-            Module.HookCalendar()
-            Module.UpdateCalendar()
-        end
-    end
+    -- print('event', event) 
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 

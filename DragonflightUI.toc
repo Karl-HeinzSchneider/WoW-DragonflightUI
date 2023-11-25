@@ -8,7 +8,7 @@
 ## X-Curse-Project-ID: 819757
 ## Version: @project-version@
 ## SavedVariables: DragonflightUIDB
-## OptionalDeps: Ace3, Blizzard_TalentUI, NovaWorldBuffs
+## OptionalDeps: Ace3, Blizzard_TalentUI, Blizzard_TimeManager, NovaWorldBuffs
 
 # Libs
 Libs\LibStub\LibStub.lua
