@@ -11,7 +11,7 @@ local defaults = {
         scale = 1,
         focus = {
             classcolor = false,
-            breakUpLargeNumbers = false,
+            breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
             anchor = 'TOPLEFT',
@@ -21,7 +21,7 @@ local defaults = {
         },
         player = {
             classcolor = false,
-            breakUpLargeNumbers = false,
+            breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
             anchor = 'TOPLEFT',
@@ -31,7 +31,7 @@ local defaults = {
         },
         target = {
             classcolor = false,
-            breakUpLargeNumbers = false,
+            breakUpLargeNumbers = true,
             enableNumericThreat = true,
             enableThreatGlow = true,
             scale = 1.0,
@@ -42,7 +42,7 @@ local defaults = {
             y = -4
         },
         boss = {
-            breakUpLargeNumbers = false,
+            breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
             anchor = 'TOPRIGHT',
@@ -461,6 +461,10 @@ function Module:OnEnable()
     end
     Module:SaveLocalSettings()
     Module:ApplySettings()
+
+    hooksecurefunc('UIParent_UpdateTopFramePositions', function()
+        Module:SaveLocalSettings()
+    end)
 end
 
 function Module:OnDisable()
