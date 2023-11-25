@@ -1281,6 +1281,10 @@ function Module.ChangeTargetFrame()
     local CorrectionX = -5
     TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
 
+    -- TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER',TargetFrameTextureFrame,'TOPRIGHT',-73,-14)
+    -- TargetFrameTextureFrameRaidTargetIcon:GetHeight()
+    TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', TargetFramePortrait, 'TOP', 0, 2)
+
     -- TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)
 
     -- @TODO: change text spacing
@@ -1583,6 +1587,8 @@ function Module.ChangeFocusFrame()
     local CorrectionY = -3
     local CorrectionX = -5
     FocusFramePortrait:SetPoint('TOPRIGHT', FocusFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
+
+    FocusFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', FocusFramePortrait, 'TOP', 0, 2)
 
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetTexture(base)
