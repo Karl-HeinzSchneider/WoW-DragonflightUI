@@ -65,10 +65,10 @@ local options = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale'),
             min = 0.2,
-            max = 1.5,
+            max = 3,
             bigStep = 0.025,
             order = 101,
-            disabled = true
+            disabled = false
         },
         x = {
             type = 'range',
@@ -118,6 +118,8 @@ function Module:ApplySettings()
     db = Module.db.profile
 
     Module.MoveMinimap(db.x, db.y)
+    local dfScale = 1.25
+    Minimap:SetScale(db.scale * dfScale)
 end
 
 local frame = CreateFrame('FRAME')
@@ -241,7 +243,7 @@ end
 function Module.MoveDefaultStuff()
     -- CENTER table: 000001F816E0E7B0 TOP 9 -92
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
-    Minimap:SetScale(1.25)
+    -- Minimap:SetScale(1.25)
 
     DurabilityFrame:ClearAllPoints()
     -- DurabilityFrame:SetPoint('CENTER',Minimap,'CENTER',0,-100)
@@ -308,6 +310,8 @@ end
 function Module.CreateMinimapInfoFrame()
     local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
     f:SetSize(170, 22)
+    f:SetScale(0.8)
+    f:SetParent(Minimap)
     f:SetPoint('CENTER', Minimap, 'TOP', 0, 25)
 
     local background = f:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
@@ -374,12 +378,15 @@ function Module.HookCalendar()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar32'
 
     local button = CreateFrame('Button', 'DragonflightUICalendarButton', UIParent)
-    button:SetPoint('CENTER', 0, 75)
+    -- button:SetPoint('CENTER', 0, 75)
     local size = 24
     button:SetSize(size * 1.105, size)
-
-    button:ClearAllPoints()
+    button:SetScale(0.8)
+    button:SetParent(Minimap)
     button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
+
+    -- button:ClearAllPoints()
+    -- button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
 
     local text = button:CreateFontString('DragonflightUICalendarButtonText', 'ARTWORK', 'GameFontBlack')
     text:SetText('12')
@@ -455,13 +462,15 @@ function Module.ChangeTracking()
 end
 
 function Module.DrawMinimapBorder()
-    local texture = MinimapCluster:CreateTexture()
+    local texture = Minimap:CreateTexture()
     texture:SetDrawLayer('ARTWORK', 7)
     texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     texture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
-    texture:SetPoint('CENTER', 'Minimap', 'CENTER', 0, 0)
-    texture:SetSize(219, 230)
-    texture:SetScale(0.88)
+    texture:SetPoint('CENTER', 'Minimap', 'CENTER', 1, 0)
+    local delta = 22
+    local dx = 6
+    texture:SetSize(140 + delta - dx, 140 + delta)
+    -- texture:SetScale(0.88)
 
     frame.minimap = texture
 end
