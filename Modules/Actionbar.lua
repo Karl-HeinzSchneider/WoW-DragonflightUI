@@ -1761,8 +1761,16 @@ function Module.MoveBars()
     MainMenuBarBackpackButton:ClearAllPoints()
     MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
 
-    CharacterMicroButton:ClearAllPoints()
-    CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
+    if DF.Wrath then
+        CharacterMicroButton:ClearAllPoints()
+        CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
+    elseif DF.Era then
+        CharacterMicroButton:ClearAllPoints()
+        CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 95, 0)
+    else
+        CharacterMicroButton:ClearAllPoints()
+        CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
+    end
 
     CharacterMicroButton.SetPoint = noop
     CharacterMicroButton.ClearAllPoints = noop
