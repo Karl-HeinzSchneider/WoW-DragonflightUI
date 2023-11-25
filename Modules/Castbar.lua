@@ -79,10 +79,10 @@ local options = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale'),
             min = 0.2,
-            max = 1.5,
+            max = 3,
             bigStep = 0.025,
             order = 101,
-            disabled = true
+            disabled = false
         },
         x = {
             type = 'range',
@@ -172,6 +172,7 @@ end
 
 function Module:ApplySettings()
     db = Module.db.profile
+    Module.Castbar:SetScale(db.scale)
     Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
     Module.Castbar:SetSize(db.sizeX, db.sizeY)
     Module.Castbar:SetPrecision(db.preci, db.preciMax)
