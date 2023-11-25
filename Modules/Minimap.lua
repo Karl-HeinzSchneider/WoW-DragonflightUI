@@ -261,8 +261,8 @@ function Module.MoveMinimap(x, y)
 end
 
 function Module.ChangeZoom()
-    local dx, dy = 5, 65
-    MinimapZoomIn:SetScale(0.75)
+    local dx, dy = 5, 90
+    MinimapZoomIn:SetScale(0.55)
     MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
     MinimapZoomIn:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomIn:GetNormalTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
@@ -276,7 +276,7 @@ function Module.ChangeZoom()
     MinimapZoomIn:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomIn:GetHighlightTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
 
-    MinimapZoomOut:SetScale(0.75)
+    MinimapZoomOut:SetScale(0.55)
     MinimapZoomOut:SetPoint('CENTER', Minimap, 'BOTTOM', dy, dx)
     MinimapZoomOut:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapZoomOut:GetNormalTexture():SetTexCoord(0.353515625, 0.419921875, 0.5078125, 0.525390625)
