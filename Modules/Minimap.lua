@@ -115,6 +115,9 @@ function Module:OnEnable()
         Module.Era()
     end
 
+    Module.Tmp.MinimapX = 0
+    Module.Tmp.MinimapY = 0
+
     Module.ApplySettings()
 end
 
@@ -499,16 +502,14 @@ function Module.LockMinimap(locked)
         Minimap:SetMovable(true)
         Minimap:EnableMouse(true)
         Minimap:SetClampedToScreen(true)
-        Minimap:RegisterForDrag("LeftButton", "RightButton")
+        Minimap:RegisterForDrag("LeftButton")
         Minimap:SetScript("OnDragStart", function(self)
-            if IsShiftKeyDown() then
-                local x, y = Minimap:GetCenter()
-                -- print('before', x, y)
-                Module.Tmp.MinimapX = x
-                Module.Tmp.MinimapY = y
+            local x, y = Minimap:GetCenter()
+            -- print('before', x, y)
+            Module.Tmp.MinimapX = x
+            Module.Tmp.MinimapY = y
 
-                self:StartMoving()
-            end
+            if IsShiftKeyDown() then self:StartMoving() end
         end)
         Minimap:SetScript("OnDragStop", function(self)
             -- print('OnDragStop')
