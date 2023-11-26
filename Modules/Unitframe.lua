@@ -41,6 +41,16 @@ local defaults = {
             x = 250,
             y = -4
         },
+        pet = {
+            breakUpLargeNumbers = true,
+            enableThreatGlow = true,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = 100,
+            y = -70
+        },
         boss = {
             breakUpLargeNumbers = true,
             scale = 1.0,
@@ -67,7 +77,8 @@ local localSettings = {
     scale = 1,
     focus = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 250, y = -170},
     player = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4},
-    target = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 250, y = -4}
+    target = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 250, y = -4},
+    pet = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 100, y = -70}
 }
 
 local function getDefaultStr(key, sub)
@@ -316,6 +327,94 @@ local optionsTarget = {
     }
 }
 
+local optionsPet = {
+    name = 'Pet',
+    desc = 'PetFrameDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        configGeneral = {type = 'header', name = 'General', order = 10},
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 10.2
+        },
+        enableThreatGlow = {
+            type = 'toggle',
+            name = 'threat glow',
+            desc = 'Enable threat glow',
+            order = 10.4,
+            disabled = true
+        },
+        configSize = {type = 'header', name = 'Size', order = 50},
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'pet'),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.025,
+            order = 50.1
+        },
+        configPos = {type = 'header', name = 'Position', order = 100},
+        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'pet'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'pet'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105.1
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
+        }
+    }
+}
+
 local optionsFocus = {
     name = 'Focus',
     desc = 'FocusFrameDesc',
@@ -438,7 +537,8 @@ local options = {
         },
         focus = optionsFocus,
         player = optionsPlayer,
-        target = optionsTarget
+        target = optionsTarget,
+        pet = optionsPet
     }
 }
 
@@ -497,6 +597,19 @@ function Module:SaveLocalSettings()
         obj.x = xOfs
         obj.y = yOfs
     end
+    --[[    -- petframe
+    do
+        local scale = PetFrame:GetScale()
+        local point, relativeTo, relativePoint, xOfs, yOfs = PetFrame:GetPoint(1)
+        -- print('TargetFrame', point, relativePoint, xOfs, yOfs)
+
+        local obj = localSettings.pet
+        obj.scale = scale
+        obj.anchor = point
+        obj.anchorParent = relativePoint
+        obj.x = xOfs
+        obj.y = yOfs
+    end ]]
     -- focusframe
     if DF.Wrath then
         do
@@ -551,6 +664,25 @@ function Module:ApplySettings()
         Module.ReApplyTargetFrame()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
+    end
+
+    -- pet
+    do
+        local obj = db.pet
+        local objLocal = localSettings.pet
+
+        if obj.override then
+            PetFrame:ClearAllPoints()
+            PetFrame:SetPoint(obj.anchor, PlayerFrame, obj.anchorParent, obj.x, obj.y)
+        else
+            PetFrame:ClearAllPoints()
+            PetFrame:SetPoint(objLocal.anchor, PlayerFrame, objLocal.anchorParent, objLocal.x, objLocal.y)
+        end
+
+        PetFrame:SetScale(obj.scale)
+        Module.ReApplyTargetFrame()
+        PetFrame.breakUpLargeNumbers = obj.breakUpLargeNumbers
+        TextStatusBar_UpdateTextString(PetFrameHealthBar)
     end
 
     if DF.Wrath then
