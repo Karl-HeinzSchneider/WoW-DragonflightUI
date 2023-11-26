@@ -502,12 +502,12 @@ function Module.LockMinimap(locked)
     if locked then
         -- print('locked')
         Minimap:SetMovable(false)
-        Minimap:EnableMouse(false)
+        -- Minimap:EnableMouse(false)
     else
         -- print('not locked')
 
         Minimap:SetMovable(true)
-        Minimap:EnableMouse(true)
+        -- Minimap:EnableMouse(true)
         Minimap:SetClampedToScreen(true)
         Minimap:RegisterForDrag("LeftButton")
         Minimap:SetScript("OnDragStart", function(self)
