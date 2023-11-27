@@ -2313,7 +2313,7 @@ function Module.ChangePetFrame()
 end
 
 function Module.ChangePartyFrame()
-    for i = 1, 1 do
+    for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
         pf:SetSize(120, 53)
 
@@ -2410,6 +2410,34 @@ function Module.ChangePartyFrame()
         notPresentIcon:ClearAllPoints()
         notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
 
+        if DF.Wrath then
+            local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
+            roleIcon:SetSize(12, 12)
+            roleIcon:SetPoint('TOPRIGHT', -5, -5)
+            roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
+            roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+
+            pf.RoleIcon = roleIcon
+
+            local updateRoleIcon = function()
+                local role = UnitGroupRolesAssigned(pf.unit)
+                if role == 'TANK' then
+                    roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
+                elseif role == 'HEALER' then
+                    roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
+                elseif role == 'DAMAGER' then
+                    roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+                end
+            end
+
+            updateRoleIcon()
+
+            pf:HookScript('OnEvent', function(self, event, ...)
+                -- print('events', event)
+                if event == 'GROUP_ROSTER_UPDATE' then updateRoleIcon() end
+            end)
+        end
+
         local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
         healthbar:SetSize(70 + 1, 10)
         healthbar:ClearAllPoints()
@@ -2454,6 +2482,7 @@ function Module.ChangePartyFrame()
             local texture = _G['PartyMemberFrame' .. i .. 'Texture']
             texture:SetTexture()
             texture:Hide()
+            healthbar:SetStatusBarColor(1, 1, 1, 1)
 
             local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
             leaderIcon:ClearAllPoints()
@@ -2466,6 +2495,18 @@ function Module.ChangePartyFrame()
             local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
             guideIcon:ClearAllPoints()
             guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+
+            local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
+            pvpIcon:ClearAllPoints()
+            pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
+
+            local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
+            readyCheck:ClearAllPoints()
+            readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
+
+            local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
+            notPresentIcon:ClearAllPoints()
+            notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
         end)
     end
 end
@@ -2473,8 +2514,8 @@ end
 function Module.UpdatePartyManaBar(i)
     local pf = _G['PartyMemberFrame' .. i]
     local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
-    local powerType, powerTypeString = UnitPowerType('party1')
-    powerTypeString = 'RUNIC_POWER'
+    local powerType, powerTypeString = UnitPowerType('party' .. i)
+    -- powerTypeString = 'RUNIC_POWER'
 
     if powerTypeString == 'MANA' then
         manabar:GetStatusBarTexture():SetTexture(
@@ -2493,6 +2534,9 @@ function Module.UpdatePartyManaBar(i)
             'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-RunicPower')
     end
     manabar:SetStatusBarColor(1, 1, 1, 1)
+
+    local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
+    healthbar:SetStatusBarColor(1, 1, 1, 1)
 
     -- print('UpdatePartyManaBar', i, powerType, powerTypeString)
 end
