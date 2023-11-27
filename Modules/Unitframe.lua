@@ -1335,8 +1335,16 @@ function Module.HookEnergyBar()
             FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
                 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
             FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+        elseif name == 'PartyMemberFrame1ManaBar' then
+            Module.UpdatePartyManaBar(1)
+        elseif name == 'PartyMemberFrame2ManaBar' then
+            Module.UpdatePartyManaBar(2)
+        elseif name == 'PartyMemberFrame3ManaBar' then
+            Module.UpdatePartyManaBar(3)
+        elseif name == 'PartyMemberFrame4ManaBar' then
+            Module.UpdatePartyManaBar(4)
         else
-            -- print('HookEnergyBar', manaBar:GetName())
+            print('HookEnergyBar', manaBar:GetName())
         end
     end)
 end
@@ -2313,6 +2321,14 @@ function Module.ChangePartyFrame()
         local bg = _G['PartyMemberFrame' .. i .. 'Background']
         bg:Hide()
 
+        local flash = _G['PartyMemberFrame' .. i .. 'Flash']
+        flash:SetSize(114, 47)
+        flash:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+        flash:SetTexCoord(0.480469, 0.925781, 0.453125, 0.636719)
+        flash:SetPoint('TOPLEFT', 1 + 1, -2)
+        flash:SetVertexColor(1, 0, 0, 1)
+        flash:SetDrawLayer('ARTWORK', 5)
+
         local portrait = _G['PartyMemberFrame' .. i .. 'Portrait']
         -- portrait:SetSize(37,37)
         -- portrait:SetPoint('TOPLEFT',7,-6)
@@ -2341,6 +2357,31 @@ function Module.ChangePartyFrame()
             -- border:Hide()
 
             pf.PartyFrameBorder = border
+        end
+
+        local status = _G['PartyMemberFrame' .. i .. 'Status']
+        status:SetSize(114, 47)
+        status:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+        status:SetTexCoord(0.00390625, 0.472656, 0.453125, 0.644531)
+        status:SetPoint('TOPLEFT', 1, -2)
+        status:SetDrawLayer('ARTWORK', 5)
+
+        if not pf.tmp and false then
+            tmp = pf:CreateTexture('DragonflightUIPartyFrameTmp')
+            -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')          
+            tmp:SetSize(120, 49)
+            tmp:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+            tmp:SetTexCoord(0.00390625, 0.472656, 0.453125, 0.644531)
+            tmp:ClearAllPoints()
+            tmp:SetPoint('TOPLEFT', 1, -2)
+            -- tmp:SetVertexColor(1, 0, 0, 1)
+            tmp:SetDrawLayer('ARTWORK', 5)
+
+            -- border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
+            -- border:Hide()
+            tmp:Hide()
+
+            pf.tmp = tmp
         end
 
         -- layer = 'OVERLAY' => LeaderIcon etc
@@ -2403,6 +2444,12 @@ function Module.ChangePartyFrame()
         manaMask:SetSize(74, 7)
         manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
+        Module.UpdatePartyManaBar(i)
+
+        -- debuff
+        local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
+        debuffOne:SetPoint('TOPLEFT', 120, -20)
+
         pf:HookScript('OnEvent', function(self, event, ...)
             local texture = _G['PartyMemberFrame' .. i .. 'Texture']
             texture:SetTexture()
@@ -2421,6 +2468,33 @@ function Module.ChangePartyFrame()
             guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
         end)
     end
+end
+
+function Module.UpdatePartyManaBar(i)
+    local pf = _G['PartyMemberFrame' .. i]
+    local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
+    local powerType, powerTypeString = UnitPowerType('party1')
+    powerTypeString = 'RUNIC_POWER'
+
+    if powerTypeString == 'MANA' then
+        manabar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana')
+    elseif powerTypeString == 'FOCUS' then
+        manabar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Focus')
+    elseif powerTypeString == 'RAGE' then
+        manabar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Rage')
+    elseif powerTypeString == 'ENERGY' then
+        manabar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Energy')
+    elseif powerTypeString == 'RUNIC_POWER' then
+        manabar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-RunicPower')
+    end
+    manabar:SetStatusBarColor(1, 1, 1, 1)
+
+    -- print('UpdatePartyManaBar', i, powerType, powerTypeString)
 end
 
 function Module.CreateRestFlipbook()
