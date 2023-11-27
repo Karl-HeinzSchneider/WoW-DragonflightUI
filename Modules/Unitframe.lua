@@ -790,7 +790,8 @@ function Module:ApplySettings()
 
         for i = 1, 4 do
             local pf = _G['PartyMemberFrame' .. i]
-            local dfScale = 1.25
+            -- local dfScale = 1.25
+            local dfScale = 1
             pf:SetScale(obj.scale * dfScale)
             Module.UpdatePartyHPBar(i)
             TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
