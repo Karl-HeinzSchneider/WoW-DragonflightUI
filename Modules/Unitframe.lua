@@ -792,6 +792,7 @@ function Module:ApplySettings()
             local pf = _G['PartyMemberFrame' .. i]
             pf:SetScale(obj.scale)
             Module.UpdatePartyHPBar(i)
+            -- TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
         end
     end
 
@@ -2506,7 +2507,7 @@ function Module.ChangePartyFrame()
                 -- print(portrait:GetHeight(), PartyMemberBuffTooltip:GetHeight())
                 -- PartyMemberBuffTooltip:SetScale(pf:GetScale())
                 PartyMemberBuffTooltip:ClearAllPoints()
-                PartyMemberBuffTooltip:SetPoint('LEFT', portrait, 'RIGHT', 0, 0)
+                PartyMemberBuffTooltip:SetPoint('LEFT', pf, 'RIGHT', 0, 0)
 
                 local scale = pf:GetScale()
                 if scale > 2 then
