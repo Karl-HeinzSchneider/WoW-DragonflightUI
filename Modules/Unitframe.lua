@@ -790,9 +790,11 @@ function Module:ApplySettings()
 
         for i = 1, 4 do
             local pf = _G['PartyMemberFrame' .. i]
-            pf:SetScale(obj.scale)
+            local dfScale = 1.25
+            pf:SetScale(obj.scale * dfScale)
             Module.UpdatePartyHPBar(i)
-            -- TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
+            TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
+            TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
         end
     end
 
@@ -2328,6 +2330,8 @@ function Module.ChangePartyFrame()
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
         pf:SetSize(120, 53)
+        -- pf:ClearAllPoints()
+        pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
 
         pf:SetHitRectInsets(0, 0, 0, 12)
 
