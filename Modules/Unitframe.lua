@@ -2319,6 +2319,8 @@ function Module.ChangePartyFrame()
         local pf = _G['PartyMemberFrame' .. i]
         pf:SetSize(120, 53)
 
+        pf:SetHitRectInsets(0, 0, 0, 12)
+
         -- layer = 'BACKGROUND => Flash,Portrait,Background
         local bg = _G['PartyMemberFrame' .. i .. 'Background']
         bg:Hide()
@@ -2479,6 +2481,33 @@ function Module.ChangePartyFrame()
         -- debuff
         local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
         debuffOne:SetPoint('TOPLEFT', 120, -20)
+
+        hooksecurefunc('PartyMemberBuffTooltip_Update', function(self)
+            -- print('PartyMemberBuffTooltip_Update', self:GetName())
+
+            local point, relativeTo, relativePoint, xOfs, yOfs = PartyMemberBuffTooltip:GetPoint(1)
+
+            if relativeTo == pf then
+                -- print('sAME')
+                -- print(point, relativeTo:GetName(), relativePoint, xOfs, yOfs)
+                -- PartyMemberBuffTooltip:SetPoint('TOPLEFT', portrait, 'TOPLEFT', 32, -2.5)
+                -- print('scale', PartyMemberBuffTooltip:GetScale())
+                -- print(portrait:GetHeight(), PartyMemberBuffTooltip:GetHeight())
+                -- PartyMemberBuffTooltip:SetScale(pf:GetScale())
+                PartyMemberBuffTooltip:ClearAllPoints()
+                PartyMemberBuffTooltip:SetPoint('LEFT', portrait, 'RIGHT', 0, 0)
+
+                local scale = pf:GetScale()
+                if scale > 2 then
+                    scale = 2
+                else
+                end
+                PartyMemberBuffTooltip:SetScale(0.8 * scale)
+
+            end
+
+            -- [07:05:37] TOPLEFT PartyMemberFrame1 TOPLEFT 47 -30
+        end)
 
         pf:HookScript('OnEvent', function(self, event, ...)
             local texture = _G['PartyMemberFrame' .. i .. 'Texture']
