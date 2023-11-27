@@ -2460,8 +2460,6 @@ function Module.ChangePartyFrame()
             'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
         healthbar:SetStatusBarColor(1, 1, 1, 1)
 
-        Module.UpdatePartyHPBar(i)
-
         local hpMask = healthbar:CreateMaskTexture()
         -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
         hpMask:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
@@ -2470,6 +2468,20 @@ function Module.ChangePartyFrame()
             'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
         hpMask:SetSize(70 + 1, 10)
         healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
+
+        healthbar.HealthBarText = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        healthbar.HealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+        healthbar.TextString = healthbar.HealthBarText
+
+        healthbar.HealthBarTextLeft = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        healthbar.HealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
+        healthbar.LeftText = healthbar.HealthBarTextLeft
+
+        healthbar.HealthBarTextRight = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        healthbar.HealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
+        healthbar.RightText = healthbar.HealthBarTextRight
+
+        Module.UpdatePartyHPBar(i)
 
         local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
         manabar:SetSize(74, 7)
@@ -2488,7 +2500,25 @@ function Module.ChangePartyFrame()
         manaMask:SetSize(74, 7)
         manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
+        manabar.ManaBarText = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        manabar.ManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
+        manabar.TextString = manabar.ManaBarText
+
+        manabar.ManaBarTextLeft = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        manabar.ManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
+        manabar.LeftText = manabar.ManaBarTextLeft
+
+        manabar.ManaBarTextRight = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        manabar.ManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
+        manabar.RightText = manabar.ManaBarTextRight
+
         Module.UpdatePartyManaBar(i)
+
+        -- parent.HealthBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- TargetFrameHealthBar.LeftText = parent.HealthBarTextLeft
+
+        -- parent.HealthBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- TargetFrameHealthBar.RightText = parent.HealthBarTextRight
 
         -- debuff
         local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
@@ -2721,6 +2751,18 @@ function Module.ChangeFonts()
     changeFont(TargetFrameTextureFrame.ManaBarTextLeft, std)
     changeFont(TargetFrameTextureFrame.ManaBarTextRight, std)
 
+    for i = 1, 4 do
+        local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
+        changeFont(healthbar.HealthBarText, std)
+        changeFont(healthbar.HealthBarTextLeft, std)
+        changeFont(healthbar.HealthBarTextRight, std)
+
+        local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
+        changeFont(manabar.ManaBarText, std)
+        changeFont(manabar.ManaBarTextLeft, std)
+        changeFont(manabar.ManaBarTextRight, std)
+    end
+
     if DF.Wrath then
         changeFont(FocusFrameTextureFrame.HealthBarText, std)
         changeFont(FocusFrameTextureFrame.HealthBarTextLeft, std)
@@ -2749,7 +2791,6 @@ function frame:OnEvent(event, arg1)
         Module.CreatePlayerFrameTextures()
         Module.ChangePlayerframe()
         Module.ChangeTargetFrame()
-        Module.ChangeFonts()
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ChangeStatusIcons()
@@ -2761,6 +2802,7 @@ function frame:OnEvent(event, arg1)
         Module.ChangePetFrame()
         Module.ChangePartyFrame()
 
+        Module.ChangeFonts()
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         -- Module.ApplySettings()
