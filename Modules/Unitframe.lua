@@ -2037,6 +2037,73 @@ function Module.ChangePetFrame()
     PetFrameTexture:SetTexture('')
     PetFrameTexture:Hide()
 
+    if not frame.PetAttackModeTexture then
+        -- local attack = PetFrame:CreateTexture('DragonflightUIPetAttackModeTexture')
+        local attack = PetFrameHealthBar:CreateTexture('DragonflightUIPetAttackModeTexture')
+        attack:SetDrawLayer('ARTWORK', 3)
+        attack:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status')
+        attack:SetSize(120, 49)
+        attack:SetTexCoord(0, 120 / 128, 0, 49 / 64)
+        attack:SetPoint('CENTER', PetFrame, 'CENTER', -2, 0)
+        attack:SetBlendMode('ADD')
+        attack:SetVertexColor(239 / 256, 0, 0)
+
+        attack.attackModeCounter = 0
+        attack.attackModeSign = -1
+
+        PetFrame:HookScript('OnUpdate', function(self, elapsed)
+            -- print('OnUpdate', elapsed)
+            PetAttackModeTexture:Hide()
+
+            if attack:IsShown() then
+                local alpha = 255;
+                local counter = attack.attackModeCounter + elapsed;
+                local sign = attack.attackModeSign;
+
+                if (counter > 0.5) then
+                    sign = -sign;
+                    attack.attackModeSign = sign;
+                end
+                counter = mod(counter, 0.5);
+                attack.attackModeCounter = counter;
+
+                if (sign == 1) then
+                    alpha = (55 + (counter * 400)) / 255;
+                else
+                    alpha = (255 - (counter * 400)) / 255;
+                end
+                -- attack:SetVertexColor(239 / 256, 0, 0, alpha);
+                attack:SetVertexColor(1, 0, 0, alpha);
+
+            else
+            end
+        end)
+
+        attack:Hide()
+        PetFrame:HookScript('OnEvent', function(self, event, ...)
+            if event == 'PET_ATTACK_START' then
+                attack:Show()
+            elseif event == 'PET_ATTACK_STOP' then
+                attack:Hide()
+            end
+        end)
+
+        frame.PetAttackModeTexture = attack
+    end
+
+    -- PetAttackModeTexture:ClearAllPoints()
+    -- PetAttackModeTexture:SetSize(120, 49)
+    -- local attSize = 40
+    -- PetAttackModeTexture:SetSize(attSize * 2, attSize * 2)
+
+    -- PetAttackModeTexture:SetTexCoord(0.703125, 1.0, 0, 1.0)
+    -- PetAttackModeTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status')
+    -- PetAttackModeTexture:SetTexCoord(0.441406, 0.558594, 0.3125, 0.408203)
+    -- PetAttackModeTexture:SetTexCoord(0, 120 / 128, 0, 49 / 64)
+    -- PetAttackModeTexture:SetPoint('CENTER', PetFrame, 'CENTER', -2, 0)
+    -- PetAttackModeTexture:SetVertexColor(239 / 256, 0, 0)
+
     if not frame.PetFrameBackground then
         local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
         background:SetDrawLayer('BACKGROUND', 1)
