@@ -1343,8 +1343,10 @@ function Module.HookEnergyBar()
             Module.UpdatePartyManaBar(3)
         elseif name == 'PartyMemberFrame4ManaBar' then
             Module.UpdatePartyManaBar(4)
+        elseif name == 'PetFrameManaBar' then
+            -- frame.UpdatePetManaBarTexture()
         else
-            print('HookEnergyBar', manaBar:GetName())
+            -- print('HookEnergyBar', manaBar:GetName())
         end
     end)
 end
