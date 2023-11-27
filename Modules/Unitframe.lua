@@ -51,6 +51,16 @@ local defaults = {
             x = 100,
             y = -70
         },
+        party = {
+            classcolor = false,
+            breakUpLargeNumbers = true,
+            scale = 1.0,
+            override = false,
+            anchor = 'TOPLEFT',
+            anchorParent = 'TOPLEFT',
+            x = -19,
+            y = -4
+        },
         boss = {
             breakUpLargeNumbers = true,
             scale = 1.0,
@@ -502,6 +512,93 @@ local optionsFocus = {
     }
 }
 
+local optionsParty = {
+    name = 'Party',
+    desc = 'PartyframeDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        configGeneral = {type = 'header', name = 'General', order = 10},
+        classcolor = {
+            type = 'toggle',
+            name = 'class color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 10.1
+        },
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 10.2
+        },
+        configSize = {type = 'header', name = 'Size', order = 50},
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'party'),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.025,
+            order = 50.1
+        },
+        configPos = {type = 'header', name = 'Position', order = 100},
+        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'party'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'party'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 105.1
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'party'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 107
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'party'),
+            min = -2500,
+            max = 2500,
+            bigStep = 0.50,
+            order = 108
+        }
+    }
+}
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -538,7 +635,8 @@ local options = {
         focus = optionsFocus,
         player = optionsPlayer,
         target = optionsTarget,
-        pet = optionsPet
+        pet = optionsPet,
+        party = optionsParty
     }
 }
 
@@ -683,6 +781,17 @@ function Module:ApplySettings()
         Module.ReApplyTargetFrame()
         PetFrame.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PetFrameHealthBar)
+    end
+
+    -- party
+    do
+        local obj = db.party
+        local objLocal = localSettings.party
+
+        for i = 1, 4 do
+            local pf = _G['PartyMemberFrame' .. i]
+            pf:SetScale(obj.scale)
+        end
     end
 
     if DF.Wrath then
@@ -2195,6 +2304,82 @@ function Module.ChangePetFrame()
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
 
+function Module.ChangePartyFrame()
+    for i = 1, 1 do
+        local pf = _G['PartyMemberFrame' .. i]
+        pf:SetSize(120, 53)
+
+        -- layer = 'BACKGROUND => Flash,Portrait,Background
+        local bg = _G['PartyMemberFrame' .. i .. 'Background']
+        bg:Hide()
+
+        local portrait = _G['PartyMemberFrame' .. i .. 'Portrait']
+        -- portrait:SetSize(37,37)
+        -- portrait:SetPoint('TOPLEFT',7,-6)
+
+        -- layer = 'BORDER' => Texture, VehicleTexture,Name
+        local texture = _G['PartyMemberFrame' .. i .. 'Texture']
+        texture:Hide()
+
+        local name = _G['PartyMemberFrame' .. i .. 'Name']
+        name:ClearAllPoints()
+        name:SetSize(57, 12)
+        name:SetPoint('TOPLEFT', 46, -6)
+
+        -- layer = 'ARTWORK' => Status
+
+        if not pf.PartyFrameBorder then
+            border = pf:CreateTexture('DragonflightUIPartyFrameBorder')
+            -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')
+            border:SetDrawLayer('ARTWORK', 3)
+            border:SetSize(120, 49)
+            border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+            border:SetTexCoord(0.480469, 0.949219, 0.222656, 0.414062)
+            border:SetPoint('TOPLEFT', 1, -2)
+            -- border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
+            -- border:Hide()
+
+            pf.PartyFrameBorder = border
+        end
+
+        -- layer = 'OVERLAY' => LeaderIcon etc
+
+        local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
+        healthbar:SetSize(70 + 1, 10)
+        healthbar:ClearAllPoints()
+        healthbar:SetPoint('TOPLEFT', 45 - 1, -19)
+        healthbar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
+        healthbar:SetStatusBarColor(1, 1, 1, 1)
+
+        local hpMask = healthbar:CreateMaskTexture()
+        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
+        hpMask:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+        hpMask:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Mask',
+            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        hpMask:SetSize(70 + 1, 10)
+        healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
+
+        local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
+        manabar:SetSize(74, 7)
+        manabar:ClearAllPoints()
+        manabar:SetPoint('TOPLEFT', 41, -30)
+        manabar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana')
+        manabar:SetStatusBarColor(1, 1, 1, 1)
+
+        local manaMask = manabar:CreateMaskTexture()
+        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
+        manaMask:SetPoint('CENTER', manabar, 'CENTER', 0, 0)
+        manaMask:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
+            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetSize(74, 7)
+        manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
+    end
+end
+
 function Module.CreateRestFlipbook()
     if not frame.RestIcon then
         -- Era seems to support Flipbookanimations now, use anmiated resting icon for all versions; delete old code later @CLEANUP
@@ -2351,6 +2536,7 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusToT()
         end
         Module.ChangePetFrame()
+        Module.ChangePartyFrame()
 
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
