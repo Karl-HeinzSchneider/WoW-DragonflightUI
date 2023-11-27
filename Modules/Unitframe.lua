@@ -2122,6 +2122,8 @@ function Module.ChangePetFrame()
         frame.PetFrameBorder = border
     end
 
+    PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -7, -2)
+
     PetFrameHealthBar:ClearAllPoints()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
     PetFrameHealthBar:SetSize(70.5, 10)
