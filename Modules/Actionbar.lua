@@ -1768,6 +1768,126 @@ function Module.GetBagSlots(id)
     end
 end
 
+function Module.ChangeBackpackNew()
+    local bagAtlas = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+    -- MainMenuBarBackpackButton
+    do
+        local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbag'
+        local highlight = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbagHighlight'
+
+        MainMenuBarBackpackButton:SetScale(1.5)
+
+        SetItemButtonTexture(MainMenuBarBackpackButton, texture)
+        MainMenuBarBackpackButton:SetHighlightTexture(highlight)
+        MainMenuBarBackpackButton:SetPushedTexture(highlight)
+        MainMenuBarBackpackButton:SetCheckedTexture(highlight)
+
+        MainMenuBarBackpackButtonNormalTexture:Hide()
+        MainMenuBarBackpackButtonNormalTexture:SetTexture()
+    end
+
+    do
+        CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
+
+        for i = 1, 3 do
+            local gap = 0
+            _G['CharacterBag' .. i .. 'Slot']:SetPoint('RIGHT', _G['CharacterBag' .. (i - 1) .. 'Slot'], 'LEFT', -gap, 0)
+        end
+
+        for i = 0, 3 do
+            local slot = _G['CharacterBag' .. i .. 'Slot']
+            -- print(i, slot:GetSize())
+            slot:SetScale(1)
+
+            local size = 30.5
+
+            local normal = slot:GetNormalTexture()
+            normal:SetTexture(bagAtlas)
+            normal:SetTexCoord(0.576172, 0.695312, 0.5, 0.976562)
+            normal:SetSize(size, size)
+            normal:SetPoint('CENTER', 2, -1)
+            normal:SetDrawLayer('BORDER', 0)
+            -- normal:SetPoint('CENTER', 0, 0)
+
+            -- normal:SetTexture()
+
+            local highlight = slot:GetHighlightTexture()
+            highlight:SetTexture(bagAtlas)
+            highlight:SetTexCoord(0.699219, 0.818359, 0.0078125, 0.484375)
+            highlight:SetSize(size, size)
+            highlight:ClearAllPoints()
+            highlight:SetPoint('CENTER', 2, -1)
+            -- highlight:SetPoint('CENTER', 0, 0)
+
+            -- DF:Dump(highlight:GetPoint(1))
+
+            -- highlight:SetTexture()
+
+            local checked = slot:GetCheckedTexture()
+            checked:SetTexture(bagAtlas)
+            checked:SetTexCoord(0.699219, 0.818359, 0.0078125, 0.484375)
+            checked:SetSize(size, size)
+            checked:ClearAllPoints()
+            checked:SetPoint('CENTER', 2, -1)
+            -- checked:SetPoint('CENTER', 0, 0)
+
+            -- checked:SetTexture()
+
+            local pushed = slot:GetPushedTexture()
+            pushed:SetTexture(bagAtlas)
+            pushed:SetTexCoord(0.576172, 0.695312, 0.5, 0.976562)
+            pushed:SetSize(size, size)
+            pushed:ClearAllPoints()
+            pushed:SetPoint('CENTER', 2, -1)
+            pushed:SetDrawLayer('BORDER', 0)
+
+            -- TODO
+            --[[ local circleMask = slot:CreateMaskTexture()
+            circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
+            circleMask:SetPoint('TOPLEFT', 2, -2)
+            circleMask:SetPoint('BOTTOMRIGHT', -4, 4)
+            circleMask:SetSize(30, 30)
+ ]]
+            local iconTexture = _G['CharacterBag' .. i .. 'SlotIconTexture']
+            -- _G['CharacterBag1SlotIconTexture']:GetSize()
+            -- iconTexture:AddMaskTexture(circleMask)
+            -- DF:Dump(iconTexture:GetPoint(1))
+            iconTexture:ClearAllPoints()
+            iconTexture:SetPoint('CENTER', 0, 0)
+
+            local bagmask = 'Interface\\Addons\\DragonflightUI\\Textures\\bagmask'
+            iconTexture:SetMask(bagmask)
+            iconTexture:SetSize(30, 30)
+            iconTexture:SetDrawLayer('BORDER', 2)
+
+            if not slot.Border then
+                local border = slot:CreateTexture('DragonflightUIBagBorder')
+                border:SetTexture(bagAtlas)
+                border:SetTexCoord(0.576172, 0.695312, 0.0078125, 0.484375)
+                border:SetSize(size, size)
+                border:SetPoint('CENTER', 2, -1)
+
+                slot.Border = border
+            end
+        end
+    end
+end
+
+function Module.UpdateBagSlotIcons()
+    for i = 0, 3 do
+        local slot = _G['CharacterBag' .. i .. 'Slot']
+        local iconTexture = _G['CharacterBag' .. i .. 'SlotIconTexture']
+
+        local slots = Module.GetBagSlots(i + 1)
+        -- print('bag', i, slots)
+        if slots == 0 then
+            iconTexture:SetDrawLayer('BORDER', -1)
+        else
+            iconTexture:SetDrawLayer('BORDER', 2)
+        end
+    end
+end
+
 function Module.ChangeBackpack()
     -- MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
     local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbag'
@@ -1978,6 +2098,8 @@ end
 function frameBagToggle:OnEvent(event, arg1)
     if event == 'BAG_UPDATE_DELAYED' then
         Module.RefreshBagBarToggle()
+        Module.UpdateBagSlotIcons()
+        -- print('BAG_UPDATE_DELAYED')
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         frameBagToggle:Hide()
     elseif event == 'UNIT_EXITED_VEHICLE' then
@@ -2082,7 +2204,7 @@ function Module.Wrath()
 
     -- Core.Sub.Micromenu()
     Module.ChangeMicroMenuNew()
-    Module.ChangeBackpack()
+    Module.ChangeBackpackNew()
     Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
@@ -2118,7 +2240,7 @@ function Module.Era()
 
     -- Core.Sub.Micromenu()
     Module.ChangeMicroMenuNew()
-    Module.ChangeBackpack()
+    Module.ChangeBackpackNew()
     Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
