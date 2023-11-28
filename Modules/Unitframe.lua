@@ -2805,7 +2805,7 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusToT()
         end
         Module.ChangePetFrame()
-        Module.ChangePartyFrame()
+        -- Module.ChangePartyFrame()
 
         Module.ChangeFonts()
         Module.ApplySettings()
@@ -2986,6 +2986,7 @@ function Module.Wrath()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
+    Module.ChangePartyFrame()
 end
 
 function Module.Era()
@@ -3013,6 +3014,7 @@ function Module.Era()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
+    Module.ChangePartyFrame()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
 end
