@@ -1786,6 +1786,7 @@ function Module.ChangeBackpackNew()
         MainMenuBarBackpackButtonNormalTexture:SetTexture()
     end
 
+    -- bags
     do
         CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
 
@@ -1798,6 +1799,7 @@ function Module.ChangeBackpackNew()
             local slot = _G['CharacterBag' .. i .. 'Slot']
             -- print(i, slot:GetSize())
             slot:SetScale(1)
+            slot:SetSize(30, 30)
 
             local size = 30.5
 
@@ -1847,7 +1849,7 @@ function Module.ChangeBackpackNew()
             circleMask:SetPoint('TOPLEFT', 2, -2)
             circleMask:SetPoint('BOTTOMRIGHT', -4, 4)
             circleMask:SetSize(30, 30)
- ]]
+                                        ]]
             local iconTexture = _G['CharacterBag' .. i .. 'SlotIconTexture']
             -- _G['CharacterBag1SlotIconTexture']:GetSize()
             -- iconTexture:AddMaskTexture(circleMask)
@@ -1870,6 +1872,72 @@ function Module.ChangeBackpackNew()
                 slot.Border = border
             end
         end
+    end
+
+    -- keyring
+    do
+        KeyRingButton:SetSize(30, 30)
+        KeyRingButton:ClearAllPoints()
+        KeyRingButton:SetPoint('RIGHT', _G['CharacterBag3Slot'], 'LEFT', 0, 0)
+        KeyRingButton:SetScale(1)
+
+        local size = 30.5
+
+        local normal = KeyRingButton:GetNormalTexture()
+        normal:SetTexture(bagAtlas)
+        normal:SetTexCoord(0.822266, 0.941406, 0.0078125, 0.484375)
+        normal:SetSize(size, size)
+        normal:ClearAllPoints()
+        normal:SetPoint('CENTER', 2, -1)
+        normal:SetDrawLayer('BORDER', 0)
+
+        local highlight = KeyRingButton:GetHighlightTexture()
+        highlight:SetTexture(bagAtlas)
+        highlight:SetTexCoord(0.699219, 0.818359, 0.0078125, 0.484375)
+        highlight:SetSize(size, size)
+        highlight:ClearAllPoints()
+        highlight:SetPoint('CENTER', 2, -1)
+
+        -- local checked = KeyRingButton:GetCheckedTexture()
+        -- checked:Hide()
+
+        local pushed = KeyRingButton:GetPushedTexture()
+        pushed:SetTexture(bagAtlas)
+        pushed:SetTexCoord(0.699219, 0.818359, 0.0078125, 0.484375)
+        pushed:SetSize(size, size)
+        pushed:ClearAllPoints()
+        pushed:SetPoint('CENTER', 2, -1)
+        -- pushed:SetDrawLayer('BORDER', 0)
+
+        if not KeyRingButton.Icon then
+            -- 237379   key icon
+            local icon = KeyRingButton:CreateTexture('DragonflightUIKeyRingIconTexture')
+            -- icon:SetTexture(135828)
+            -- icon:SetTexture('Interface\\ContainerFrame\\KeyRing-Bag-Icon')
+            icon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\KeyRing-Bag-Icon')
+
+            local delta = 6
+            icon:SetSize(size - delta, size - delta)
+            icon:SetPoint('CENTER', 0, 0)
+            icon:SetDrawLayer('BORDER', 2)
+
+            local bagmask = 'Interface\\Addons\\DragonflightUI\\Textures\\bagmask'
+            icon:SetMask(bagmask)
+            KeyRingButton.Icon = icon
+
+            -- icon:Hide()
+        end
+
+        if not KeyRingButton.Border then
+            local border = KeyRingButton:CreateTexture('DragonflightUIKeyRingBorder')
+            border:SetTexture(bagAtlas)
+            border:SetTexCoord(0.699219, 0.818359, 0.5, 0.976562)
+            border:SetSize(size, size)
+            border:SetPoint('CENTER', 2, -1)
+
+            KeyRingButton.Border = border
+        end
+
     end
 end
 
@@ -2091,6 +2159,7 @@ function Module.CreateBagExpandButton()
         Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
     end)
     f:RegisterEvent('BAG_UPDATE_DELAYED')
+    f:RegisterEvent('PLAYER_ENTERING_WORLD')
     f:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     f:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 end
@@ -2100,6 +2169,8 @@ function frameBagToggle:OnEvent(event, arg1)
         Module.RefreshBagBarToggle()
         Module.UpdateBagSlotIcons()
         -- print('BAG_UPDATE_DELAYED')
+    elseif event == 'PLAYER_ENTERING_WORLD' then
+        Module.UpdateBagSlotIcons()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         frameBagToggle:Hide()
     elseif event == 'UNIT_EXITED_VEHICLE' then
