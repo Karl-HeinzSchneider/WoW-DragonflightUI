@@ -14,11 +14,15 @@ local defaults = {
         y = 0,
         showGryphon = true,
         changeSides = true,
+        sideRows = 3,
+        sideButtons = 12,
         bagsExpanded = true,
         alwaysShowXP = false,
         alwaysShowRep = false
     }
 }
+
+local defaultsActionbarPROTO = {scale = 1, x = 0, y = 0, orientation = 'horizontal', rows = 3, buttons = 12}
 
 local function getDefaultStr(key)
     return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
@@ -130,6 +134,27 @@ local options = {
             desc = 'Set to always show text on Reputation bar' .. getDefaultStr('alwaysShowRep'),
             order = 201,
             width = '4'
+        },
+        config = {type = 'header', name = 'EXPERIMENTAL - Actionbar 4/5', order = 300},
+        sideRows = {
+            type = 'range',
+            name = '# of Rows',
+            desc = '' .. getDefaultStr('sideRows'),
+            min = 1,
+            max = 3,
+            bigStep = 1,
+            order = 301.1,
+            disabled = false
+        },
+        sideButtons = {
+            type = 'range',
+            name = '# of Buttons',
+            desc = '' .. getDefaultStr('sideButtons'),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 301.2,
+            disabled = false
         }
     }
 }
@@ -160,7 +185,8 @@ end
 function Module:ApplySettings()
     db = Module.db.profile
     Module.ChangeGryphonVisibility(db.showGryphon)
-    Module.MoveSideBars(db.changeSides)
+    -- Module.MoveSideBars(db.changeSides)
+    Module.MoveSideBarsDynamic(db.changeSides)
     Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
 
     local MinimapModule = DF:GetModule('Minimap')
@@ -692,6 +718,145 @@ function Module.HookPetBar()
     -- local offset = 0 + 34
     local offset = Module.GetPetbarOffset()
     PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
+end
+
+function Module.MoveSideBarsDynamic(shouldMove)
+    local gap = 3
+    local delta = 70
+
+    if shouldMove then
+        local db = Module.db.profile
+        local rows = db.sideRows
+        local buttons = db.sideButtons
+        -- print('dynamic', rows, buttons)
+
+        -- right
+        do
+            for i = 1, 12 do
+                local btn = _G['MultiBarRightButton' .. i]
+                -- btn:Show()
+                btn:ClearAllPoints()
+            end
+
+            local modulo = buttons % rows
+            -- print('modulo', modulo)
+
+            local index = 12
+            local firstButtons = {}
+
+            for i = 1, rows do
+                local rowButtons = buttons / rows
+
+                if i <= modulo then
+                    rowButtons = math.ceil(rowButtons)
+                else
+                    rowButtons = math.floor(rowButtons)
+                end
+                -- print('row', i, rowButtons)
+
+                for j = rowButtons, 1, -1 do
+                    -- print('loop j=', j, index)
+                    local btn = _G['MultiBarRightButton' .. (index)]
+                    local btnNext = _G['MultiBarRightButton' .. (index - 1)]
+                    btn:Show()
+                    if j == 1 then
+                        if i == 1 then
+                            btn:SetPoint('LEFT', _G['ActionButton12'], 'RIGHT', delta, 0)
+                            firstButtons[1] = btn
+                        else
+                            local anchor = firstButtons[i - 1]
+                            btn:SetPoint('BOTTOM', anchor, 'TOP', 0, gap)
+                            firstButtons[i] = btn
+
+                        end
+                    else
+                        btn:SetPoint('LEFT', btnNext, 'RIGHT', gap, 0)
+                    end
+
+                    index = index - 1
+                end
+            end
+
+            for i = index, 1, -1 do
+                -- print('hide', i)
+                local btn = _G['MultiBarRightButton' .. (index)]
+                btn:Hide()
+            end
+        end
+
+        -- left
+        do
+            for i = 1, 12 do
+                local btn = _G['MultiBarLeftButton' .. i]
+                -- btn:Show()
+                btn:ClearAllPoints()
+            end
+
+            local modulo = buttons % rows
+            -- print('modulo', modulo)
+
+            local index = 12
+            local firstButtons = {}
+
+            for i = 1, rows do
+                local rowButtons = buttons / rows
+
+                if i <= modulo then
+                    rowButtons = math.ceil(rowButtons)
+                else
+                    rowButtons = math.floor(rowButtons)
+                end
+                -- print('row', i, rowButtons)
+
+                for j = rowButtons, 1, -1 do
+                    -- print('loop j=', j, index)
+                    local btn = _G['MultiBarLeftButton' .. (index)]
+                    local btnNext = _G['MultiBarLeftButton' .. (index + 1)]
+                    btn:Show()
+                    if j == rowButtons then
+                        if i == 1 then
+                            btn:SetPoint('RIGHT', _G['ActionButton1'], 'LEFT', -delta, 0)
+                            firstButtons[1] = btn
+                        else
+                            local anchor = firstButtons[i - 1]
+                            btn:SetPoint('BOTTOM', anchor, 'TOP', 0, gap)
+                            firstButtons[i] = btn
+
+                        end
+                    else
+                        btn:SetPoint('RIGHT', btnNext, 'LEFT', -gap, 0)
+                    end
+
+                    index = index - 1
+                end
+            end
+
+            for i = index, 1, -1 do
+                -- print('hide', i)
+                local btn = _G['MultiBarLeftButton' .. (index)]
+                btn:Hide()
+            end
+        end
+    else
+        -- Default
+        -- right
+        _G['MultiBarRightButton1']:ClearAllPoints()
+        _G['MultiBarRightButton1']:SetPoint('TOPRIGHT', MultiBarRight, 'TOPRIGHT', -2, -gap)
+
+        for i = 2, 12 do
+            _G['MultiBarRightButton' .. i]:ClearAllPoints()
+            _G['MultiBarRightButton' .. i]:SetPoint('TOP', _G['MultiBarRightButton' .. (i - 1)], 'BOTTOM', 0, -gap)
+        end
+
+        -- left
+        _G['MultiBarLeftButton1']:ClearAllPoints()
+        _G['MultiBarLeftButton1']:SetPoint('TOPRIGHT', MultiBarLeft, 'TOPRIGHT', -2, -gap)
+
+        for i = 2, 12 do
+            _G['MultiBarLeftButton' .. i]:ClearAllPoints()
+            _G['MultiBarLeftButton' .. i]:SetPoint('TOP', _G['MultiBarLeftButton' .. (i - 1)], 'BOTTOM', 0, -gap)
+        end
+    end
 end
 
 function Module.MoveSideBars(shouldMove)
