@@ -2328,11 +2328,14 @@ function Module.ChangePetFrame()
 end
 
 function Module.ChangePartyFrame()
+    local first = _G['PartyMemberFrame' .. 1]
+    first:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
         pf:SetSize(120, 53)
         -- pf:ClearAllPoints()
-        pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+        -- pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
 
         pf:SetHitRectInsets(0, 0, 0, 12)
 
