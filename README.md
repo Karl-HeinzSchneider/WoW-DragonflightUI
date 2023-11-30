@@ -44,7 +44,7 @@ Official supported Game Versions: **Wotlk Classic** and **Era**
 
 ## Support
 
-If you want to support the development, like and share, but if you're feeling extra kind, you can [buy me a slice of pizza.](https://www.buymeacoffee.com/karlheinzschneider "https://www.buymeacoffee.com/") . Thanks!
+If you want to support the development, like and share, but if you're feeling extra kind, you can [buy me a slice of pizza.](https://www.buymeacoffee.com/karlheinzschneider "https://www.buymeacoffee.com/karlheinzschneider") . Thanks!
 
 # Preview
 
