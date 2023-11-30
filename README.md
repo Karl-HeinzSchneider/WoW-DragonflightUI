@@ -1,10 +1,11 @@
-# DragonflightUI classic 
+# DragonflightUI classic
+
 World of Warcraft (classic) Addon to bring the new Retail UI to WoW Classic!
 
 View on Curseforge: https://www.curseforge.com/wow/addons/dragonflight-ui-classic
 
-
 ## Features
+
 _Minimalistic - Modern - Modular_\
 No carbon copy of the new retail Dragonflight UI, but a faithful adaption with extra, classic related features.\
 Beta, but battle-tested inside Naxx and Ulduar, and in active development (please report any bug you might find, and feel free to request new features!).\
@@ -15,43 +16,58 @@ Hidden content (e.g. rare/elite marke on special pets, hunter approved!).\
 Fast hotfixes for bugs, and frequent updates with new features.
 
 ## Modules
+
 De-/activate any modul under InterfaceOptions/Addons/DragonflightUI (or type: '**/dragonflight**' or '**/df** !) and '**/reload**'.
 
-Modules: 
-* Actionbar
-* Castbar
-* Chat
-* Minimap
-* Unitframe
+Modules:
+
+- Actionbar
+- Castbar
+- Chat
+- Minimap
+- Unitframe
 
 ## Known Issues
-* ...
+
+- ...
 
 ## Possible Features coming soon
-* enhanced Tooltips
-* complete UI Texture overhaul
-* Era (/hardcore) specific features
+
+- enhanced Tooltips
+- complete UI Texture overhaul
+- Era (/hardcore) specific features
+
 ## Compatibility
+
 Developed for default Blizzard UI, but should work on any UI.\
 Official supported Game Versions: **Wotlk Classic** and **Era**
+
+## Support
+
+If you want to support the development, like and share, but if you're feeling extra kind, you can [buy me a slice of pizza.](https://www.buymeacoffee.com/karlheinzschneider "https://www.buymeacoffee.com/") . Thanks!
 
 # Preview
 
 ## Actionbar
-![](<Screenshots/v2/Actionbar.png>)
+
+![](Screenshots/v2/Actionbar.png)
 
 ## Castbar
-![](<Screenshots/v2/Castbar.png>)
+
+![](Screenshots/v2/Castbar.png)
 
 ## Minimap
-![](<Screenshots/v2/Minimap.png>)
+
+![](Screenshots/v2/Minimap.png)
 
 ## Micromenu/Bags
-![](<Screenshots/v2/MicroMenu-Bag.png>)
+
+![](Screenshots/v2/MicroMenu-Bag.png)
 
 ## Unitframe
-![](<Screenshots/v2/Unitframe.png>)
+
+![](Screenshots/v2/Unitframe.png)
 
 ## Complete UI
-![](<Screenshots/v2/CompleteUI.png>)
 
+![](Screenshots/v2/CompleteUI.png)
