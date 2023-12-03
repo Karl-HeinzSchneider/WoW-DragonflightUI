@@ -220,7 +220,7 @@ Module.ChannelTicks = DF.Wrath and {
     [GetSpellInfo(755)] = 10, -- health funnel
     [GetSpellInfo(1949)] = 15, -- hellfire
     -- priest
-    [GetSpellInfo(47540)] = 2, -- penance
+    [GetSpellInfo(47540)] = 3, -- penance
     [GetSpellInfo(15407)] = 3, -- mind flay
     [GetSpellInfo(64843)] = 4, -- divine hymn
     [GetSpellInfo(64901)] = 4, -- hymn of hope
