@@ -19,6 +19,12 @@ local options = {
                     order = 69
                 }
             }
+        },
+        info = {
+            type = 'description',
+            name = 'PSA: \nFor Module Options press the big minus icon on the left to open up the SubMenu List \n \nNew menu system coming soon!',
+            fontSize = 'large',
+            order = 420
         }
     }
 }
