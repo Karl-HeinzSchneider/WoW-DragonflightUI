@@ -135,6 +135,7 @@ function Module:ApplySettings()
 
     ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', db.x, db.y)
     ChatFrame1:SetSize(db.sizeX, db.sizeY)
+    ChatFrame1:SetUserPlaced(true)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIChatFrame', UIParent)
@@ -154,7 +155,7 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module.Wrath()
-    Module.ChangeSizeAndPosition()
+    -- Module.ChangeSizeAndPosition()
 
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
