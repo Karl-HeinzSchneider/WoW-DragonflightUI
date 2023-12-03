@@ -16,7 +16,8 @@ local defaults = {
         castTimeEnabled = true,
         castTimeMaxEnabled = true,
         compactLayout = true,
-        showIcon = false
+        showIcon = false,
+        showTicks = false
     }
 }
 
@@ -144,7 +145,9 @@ local options = {
         castTimeMaxEnabled = {type = 'toggle', name = 'Show cast time max text', order = 105.2},
         castTimeSpacer = {type = 'description', name = '', order = 105.3},
         compactLayout = {type = 'toggle', name = 'Compact Layout', order = 106.1},
-        showIcon = {type = 'toggle', name = 'Show Icon', order = 106.2}
+        showIcon = {type = 'toggle', name = 'Show Icon', order = 106.2},
+        showTicks = {type = 'toggle', name = 'Show Ticks', order = 107.1}
+
     }
 }
 
@@ -179,6 +182,7 @@ function Module:ApplySettings()
     Module.Castbar:SetCastTimeTextShown(db.castTimeEnabled)
     Module.Castbar:SetCastTimeTextMaxShown(db.castTimeMaxEnabled)
     Module.Castbar:SetCompactLayout(db.compactLayout)
+    Module.Castbar:SetShowTicks(db.showTicks)
     Module.Castbar:SetIconShown(db.showIcon)
     Module.Castbar.Icon:SetSize(db.sizeY, db.sizeY)
 end
@@ -227,9 +231,35 @@ Module.ChannelTicks = DF.Wrath and {
     [GetSpellInfo(740)] = 4, -- tranquility
     [GetSpellInfo(16914)] = 10, -- hurricane
     -- mage
+    [5143] = 3, -- arcane missiles rank 1
+    [5144] = 4, -- arcane missiles rank 2
     [GetSpellInfo(5145)] = 5, -- arcane missiles
     [GetSpellInfo(10)] = 8 -- blizzard
-} or DF.Era and {}
+} or DF.Era and {
+    -- wl
+    [GetSpellInfo(5740)] = 4, -- rain of fire
+    [GetSpellInfo(5138)] = 5, -- drain mana
+    [GetSpellInfo(689)] = 5, -- drain life
+    [GetSpellInfo(1120)] = 5, -- drain soul
+    [GetSpellInfo(755)] = 10, -- health funnel
+    [GetSpellInfo(1949)] = 15, -- hellfire
+    -- priest
+    [GetSpellInfo(15407)] = 3, -- mind flay
+    [GetSpellInfo(402174)] = 2, -- penance
+    [GetSpellInfo(413259)] = 2, -- mind sear
+    -- hunter
+    [GetSpellInfo(1510)] = 6, -- volley
+    -- druid
+    [GetSpellInfo(740)] = 4, -- tranquility
+    [GetSpellInfo(16914)] = 10, -- hurricane
+    -- mage
+    [5143] = 3, -- arcane missiles rank 1
+    [5144] = 4, -- arcane missiles rank 2
+    [GetSpellInfo(5145)] = 5, -- arcane missiles
+    [GetSpellInfo(10)] = 8, -- blizzard,
+    [GetSpellInfo(401417)] = 3, -- regeneration
+    [GetSpellInfo(412510)] = 3 -- mass regeneration
+}
 
 function Module.AddNewCastbar()
     local castbar = CreateFrame('StatusBar', 'DragonflightUIPlayerCastbar', CastingBarFrame,

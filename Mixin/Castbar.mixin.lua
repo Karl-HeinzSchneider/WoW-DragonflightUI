@@ -15,6 +15,7 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     self.showCastbar = true;
     self:SetCastTimeTextShown(true)
     self.showTradeSkills = true
+    self.showTicks = false
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -168,8 +169,9 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             end
         end
 
-        local tickCount = self.tickTable[name]
-        if tickCount then
+        -- local tickCount = self.tickTable[name]
+        local tickCount = self:GetTickCount(name, spellID)
+        if tickCount and tickCount > 0 then
             local tickDelta = self:GetWidth() / tickCount
 
             for i = 1, tickCount - 1 do
@@ -539,4 +541,16 @@ function DragonFlightUICastbarMixin:AddTickTable(data)
     else
         self.tickTable = {}
     end
+end
+
+function DragonFlightUICastbarMixin:GetTickCount(spell, spellID)
+    -- local tickCount = self.tickTable[name]
+
+    if not self.showTicks then return 0 end
+
+    return self.tickTable[spellID] or self.tickTable[spell] or 0
+end
+
+function DragonFlightUICastbarMixin:SetShowTicks(showTicks)
+    self.showTicks = showTicks
 end
