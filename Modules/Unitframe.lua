@@ -1588,24 +1588,33 @@ function Module.ChangeTargetFrame()
     if DF.Era then
         local parent = TargetFrameTextureFrame
         -- health
-        parent.HealthBarText = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        TargetFrameHealthBar.TextString = parent.HealthBarText
+        if not parent.HealthBarText then
+            parent.HealthBarText = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+            TargetFrameHealthBar.TextString = parent.HealthBarText
+        end
 
-        parent.HealthBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        TargetFrameHealthBar.LeftText = parent.HealthBarTextLeft
+        if not parent.HealthBarTextLeft then
+            parent.HealthBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+            TargetFrameHealthBar.LeftText = parent.HealthBarTextLeft
+        end
 
-        parent.HealthBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        TargetFrameHealthBar.RightText = parent.HealthBarTextRight
-
+        if not parent.HealthBarTextRight then
+            parent.HealthBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+            TargetFrameHealthBar.RightText = parent.HealthBarTextRight
+        end
         -- mana
-        parent.ManaBarText = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        TargetFrameManaBar.TextString = parent.ManaBarText
-
-        parent.ManaBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        TargetFrameManaBar.LeftText = parent.ManaBarTextLeft
-
-        parent.ManaBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        TargetFrameManaBar.RightText = parent.ManaBarTextRight
+        if not parent.ManaBarText then
+            parent.ManaBarText = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+            TargetFrameManaBar.TextString = parent.ManaBarText
+        end
+        if not parent.ManaBarTextLeft then
+            parent.ManaBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+            TargetFrameManaBar.LeftText = parent.ManaBarTextLeft
+        end
+        if not parent.ManaBarTextRight then
+            parent.ManaBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+            TargetFrameManaBar.RightText = parent.ManaBarTextRight
+        end
     end
 
     if DF.Wrath or DF.Era then
