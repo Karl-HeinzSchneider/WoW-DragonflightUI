@@ -2042,8 +2042,14 @@ function Module.HookBags()
     -- from '\BlizzardInterfaceCode\Interface\FrameXML\ContainerFrame_Shared.lua'
     local UpdateContainerFrameAnchorsModified = function()
         -- CHANGE
-        local CONTAINER_OFFSET_X = 0
-        local CONTAINER_OFFSET_Y = 92
+        local CONTAINER_OFFSET_X_DF = 0
+        local CONTAINER_OFFSET_Y_DF = 92
+
+        if Module.db.profile.changeSides then
+        else
+            CONTAINER_OFFSET_X_DF = CONTAINER_OFFSET_X
+            -- CONTAINER_OFFSET_Y_DF = CONTAINER_OFFSET_Y
+        end
 
         local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
         local screenWidth = GetScreenWidth()
@@ -2053,9 +2059,9 @@ function Module.HookBags()
 
         while (containerScale > CONTAINER_SCALE) do
             screenHeight = GetScreenHeight() / containerScale
-            -- Adjust the start anchor for bags depending on the multibars
-            xOffset = CONTAINER_OFFSET_X / containerScale
-            yOffset = CONTAINER_OFFSET_Y / containerScale
+            -- Adjust the start anchor for bags depending on the multibars          
+            xOffset = CONTAINER_OFFSET_X_DF / containerScale
+            yOffset = CONTAINER_OFFSET_Y_DF / containerScale
             -- freeScreenHeight determines when to start a new column of bags
             freeScreenHeight = screenHeight - yOffset
             leftMostPoint = screenWidth - xOffset
@@ -2082,8 +2088,8 @@ function Module.HookBags()
 
         screenHeight = GetScreenHeight() / containerScale
         -- Adjust the start anchor for bags depending on the multibars
-        xOffset = CONTAINER_OFFSET_X / containerScale
-        yOffset = CONTAINER_OFFSET_Y / containerScale
+        xOffset = CONTAINER_OFFSET_X_DF / containerScale
+        yOffset = CONTAINER_OFFSET_Y_DF / containerScale
         -- freeScreenHeight determines when to start a new column of bags
         freeScreenHeight = screenHeight - yOffset
         column = 0
