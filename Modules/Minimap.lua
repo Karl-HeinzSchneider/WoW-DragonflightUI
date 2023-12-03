@@ -413,7 +413,11 @@ function Module.HookCalendar()
     text:SetPoint('CENTER', -2, 1)
 
     button:SetScript('OnClick', function()
-        ToggleCalendar()
+        if DF.Wrath then
+            ToggleCalendar()
+        elseif DF.Era then
+            Module:Print("Era doesn't have an ingame Calendar, sorry.")
+        end
     end)
 
     button:SetNormalTexture(base)
@@ -658,6 +662,9 @@ function Module.Era()
     Module.HookMouseWheel()
     Module.ChangeMail()
     Module.ChangeEra()
+
+    Module.HookCalendar()
+    Module.UpdateCalendar()
 
     -- frame:RegisterEvent('ADDON_LOADED')
 end
