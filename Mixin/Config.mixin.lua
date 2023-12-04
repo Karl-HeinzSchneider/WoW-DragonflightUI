@@ -29,7 +29,7 @@ end
 function DragonFlightUIConfigMixin:OnShow()
     -- print('DragonFlightUIConfigMixin:OnShow')
     if not self.selected then
-        local btn = self.categorys['General'].subCategorys['Actionbar']
+        local btn = self.categorys['General'].subCategorys['Info']
         self:SubCategoryBtnClicked(btn)
         btn:UpdateState()
     end
@@ -55,7 +55,29 @@ function DragonFlightUIConfigMixin:SetupCategorys()
     do
         -- General
         local cat = self:AddCategory('General')
-        self:AddSubCategory(cat, 'Actionbar')
+        self:AddSubCategory(cat, 'Info')
+        self:AddSubCategory(cat, 'Profiles')
+        self:AddSubCategory(cat, 'WhatsNew')
+
+        self:AddSpacer(20)
+    end
+
+    do
+        -- Actionbar
+        local cat = self:AddCategory('Actionbar')
+
+        self:AddSubCategory(cat, 'Actionbar1')
+        self:AddSubCategory(cat, 'Actionbar2')
+        self:AddSubCategory(cat, 'Actionbar3')
+        self:AddSubCategory(cat, 'Actionbar4')
+        self:AddSubCategory(cat, 'Actionbar5')
+
+        self:AddSpacer(20)
+    end
+
+    do
+        -- Misc
+        local cat = self:AddCategory('Misc')
         self:AddSubCategory(cat, 'Castbar')
         self:AddSubCategory(cat, 'Chat')
         self:AddSubCategory(cat, 'Minimap')
@@ -72,13 +94,6 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Pet')
         self:AddSubCategory(cat, 'Player')
         self:AddSubCategory(cat, 'Target')
-
-        self:AddSpacer(20)
-    end
-
-    do
-        -- Misc
-        local cat = self:AddCategory('Misc')
     end
 end
 
