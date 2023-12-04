@@ -1,6 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
 	<Script file="Mixin/Config.mixin.lua" />
+	<Script file="Mixin/SettingsCategoryList.mixin.lua" />
+	<Script file="Mixin/ConfigCategoryButton.mixin.lua" />
+	<Script file="Mixin/ConfigCategory.mixin.lua" />
 	<Frame name="DragonflightUIConfigFrameTemplate" mixin="DragonFlightUIConfigMixin" inherits="SettingsFrameTemplate" toplevel="true" hidden="true" movable="true" enableMouse="true" resizable="true" frameStrata="HIGH" virtual="true">
 		<Size x="920" y="724" />
 		<Anchors>
@@ -29,12 +32,24 @@ UI_shared.xsd">
 					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
 				</Anchors>
 			</Button>
-			<Frame parentKey="CategoryListDF" inherits="SettingsCategoryListTemplateDF">
+			<!-- inherits="SettingsCategoryListTemplateDF" -->
+			<Frame parentKey="CategoryList">
 				<Size x="199" y="569" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="18" y="-76" />
 					<Anchor point="BOTTOMLEFT" x="178" y="46" />
 				</Anchors>
+			</Frame>
+			<Frame parentKey="Container">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.CategoryList" relativePoint="TOPRIGHT" x="16" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.CategoryList" relativePoint="BOTTOMRIGHT" x="16" y="1" />
+					<Anchor point="RIGHT" x="-22" />
+				</Anchors>
+				<Frames>
+					<Frame parentKey="SettingsCanvas" setAllPoints="true" />
+					<Frame parentKey="SettingsList" inherits="SettingsListTemplate" setAllPoints="true" />
+				</Frames>
 			</Frame>
 		</Frames>
 		<Scripts>
@@ -65,4 +80,72 @@ UI_shared.xsd">
 			<OnLoad inherit="prepend" method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<Frame name="SettingsCategoryListHeaderTemplateDF" mixin="DragonFlightUIConfigCategoryMixin" virtual="true">
+		<Size x="175" y="30" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Background">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Label" inherits="GameFontHighlightMedium" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="LEFT" x="20" y="-1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad inherit="prepend" method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<Button name="SettingsCategoryListButtonTemplateDF" mixin="DragonFlightUIConfigCategoryButtonMixin" virtual="true">
+		<Size x="175" y="20" />
+		<Frames>
+			<EventButton parentKey="Toggle" hidden="true">
+				<Size x="22" y="22" />
+				<Anchors>
+					<Anchor point="LEFT" x="9" />
+				</Anchors>
+				<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-MinusButton-UP" />
+				<PushedTexture name="$parentPushedTexture" file="Interface\Buttons\UI-MinusButton-DOWN" />
+				<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
+			</EventButton>
+		</Frames>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Texture">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="36" y="1" />
+						<Anchor point="BOTTOMRIGHT" y="1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="NewFeature" inherits="NewFeatureLabelTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Label" relativePoint="LEFT" x="-37" y="3" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnMouseDown method="OnMouseDown" />
+			<OnMouseUp method="OnMouseUp" />
+		</Scripts>
+	</Button>
 </Ui>
