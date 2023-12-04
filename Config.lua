@@ -52,8 +52,8 @@ function DF:RegisterModuleOptions(name, options)
 end
 
 function DF:RegisterSlashCommands()
-    self:RegisterChatCommand('df', 'SlashCommand')
-    self:RegisterChatCommand('dragonflight', 'SlashCommand')
+    -- self:RegisterChatCommand('df', 'SlashCommand')
+    -- self:RegisterChatCommand('dragonflight', 'SlashCommand')
 
     -- "default" quick reload command
     self:RegisterChatCommand('rl', 'ReloadCommand')

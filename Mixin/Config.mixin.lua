@@ -2,7 +2,7 @@ DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
 
 function DragonFlightUIConfigMixin:OnLoad()
-    print('DragonFlightUIConfigMixin:OnLoad')
+    -- print('DragonFlightUIConfigMixin:OnLoad')
 
     self.NineSlice.Text:SetText('DragonflightUI')
 
@@ -22,18 +22,25 @@ function DragonFlightUIConfigMixin:OnLoad()
     self.categorys = {}
     self.lastElement = nil
     self:SetupCategorys()
+
+    self.selected = nil
 end
 
 function DragonFlightUIConfigMixin:OnShow()
-    print('DragonFlightUIConfigMixin:OnShow')
+    -- print('DragonFlightUIConfigMixin:OnShow')
+    if not self.selected then
+        local btn = self.categorys['General'].subCategorys['Actionbar']
+        self:SubCategoryBtnClicked(btn)
+        btn:UpdateState()
+    end
 end
 
 function DragonFlightUIConfigMixin:OnHide()
-    print('DragonFlightUIConfigMixin:OnHide')
+    -- print('DragonFlightUIConfigMixin:OnHide')
 end
 
 function DragonFlightUIConfigMixin:OnEvent(event, ...)
-    print('DragonFlightUIConfigMixin:OnEvent')
+    -- print('DragonFlightUIConfigMixin:OnEvent')
 end
 
 function DragonFlightUIConfigMixin:Close()
@@ -83,6 +90,8 @@ function DragonFlightUIConfigMixin:AddCategory(name)
     cat.Label:SetText(name)
     cat.Background:SetAtlas('Options_CategoryHeader_1', true)
 
+    cat:SetCategory(name, self)
+
     if self.lastElement then
         cat:SetPoint('TOPLEFT', self.lastElement, 'BOTTOMLEFT', 0, 0)
         cat:SetPoint('TOPRIGHT', self.lastElement, 'BOTTOMRIGHT', 0, 0)
@@ -101,6 +110,13 @@ function DragonFlightUIConfigMixin:AddSubCategory(cat, sub)
     local btn = CreateFrame('Frame', 'DragonflightUIConfigCategoryButton' .. sub, self,
                             'SettingsCategoryListButtonTemplateDF')
     btn.Label:SetText(sub)
+
+    cat:AddSubCategory(btn, sub)
+    btn:SetCategory(cat, sub)
+    btn:SetCallback(self.SubCategoryBtnClicked)
+    --[[    btn:RegisterCallback('BtnClicked', function(self)
+        print('ccallback')
+    end) ]]
 
     local gap = 2
 
@@ -142,23 +158,20 @@ function DragonFlightUIConfigMixin:GetSettingsCanvas()
     return self.Container.SettingsCanvas;
 end
 
-function DragonFlightUIConfigMixin:GetAllCategories()
-    return self:GetCategoryList():GetAllCategories();
-end
+function DragonFlightUIConfigMixin:SubCategoryBtnClicked(btn)
+    print('SubCategoryBtnClicked', btn.category, btn.subCategory)
 
-function DragonFlightUIConfigMixin:RegisterCategory(category, group, addon)
-    self:GetCategoryList():AddCategory(category, group, addon);
-end
+    local old
 
-function DragonFlightUIConfigMixin:GetCategory(categoryName)
-    return self:GetCategoryList():GetCategory(categoryName);
-end
+    if self.selected then
+        old = self.selected
+        old.isSelected = false
+        old:UpdateState()
+        -- print('Selected', btn.subCategory, old.subCategory)
+    else
+        -- print('Selected', btn.subCategory, nil)
+    end
 
-function DragonFlightUIConfigMixin:GetOrCreateGroup(group, order)
-    return self:GetCategoryList():GetOrCreateGroup(group, order);
-end
-
-function DragonFlightUIConfigMixin:SelectFirstCategory()
-    local categories = self:GetAllCategories();
-    if #categories > 0 then self:SelectCategory(categories[1]); end
+    btn.isSelected = true
+    self.selected = btn
 end

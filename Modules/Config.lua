@@ -77,14 +77,7 @@ function Module.AddMainMenuButton()
     GameMenuButtonOptions:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
 
     btn:SetScript('OnClick', function()
-        local configFrame = Module.ConfigFrame
-
-        if configFrame:IsShown() then
-            configFrame:Hide()
-        else
-            configFrame:Show()
-        end
-
+        Module.ToggleConfigFrame()
         HideUIPanel(GameMenuFrame)
     end)
 end
@@ -93,6 +86,24 @@ function Module.AddConfigFrame()
     local config = CreateFrame('Frame', 'DragonflightUIConfigFrame', UIParent, 'DragonflightUIConfigFrameTemplate')
     Module.ConfigFrame = config
     -- config:Show()
+
+    Module:RegisterChatCommand('dragonflight', 'SlashCommand')
+    Module:RegisterChatCommand('df', 'SlashCommand')
+
+end
+
+function Module.ToggleConfigFrame()
+    local configFrame = Module.ConfigFrame
+
+    if configFrame:IsShown() then
+        configFrame:Hide()
+    else
+        configFrame:Show()
+    end
+end
+
+function Module:SlashCommand()
+    Module.ToggleConfigFrame()
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)
