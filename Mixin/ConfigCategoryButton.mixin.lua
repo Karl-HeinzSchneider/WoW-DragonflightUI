@@ -17,6 +17,8 @@ function DragonFlightUIConfigCategoryButtonMixin:OnLoad()
     self.category = nil
     self.categoryRef = nil
     self.subCategory = nil
+
+    self.displayData = nil
 end
 
 function DragonFlightUIConfigCategoryButtonMixin:OnEnter()
@@ -106,4 +108,8 @@ function DragonFlightUIConfigCategoryButtonMixin:UpdateState()
             self.Texture:Hide();
         end
     end
+end
+
+function DragonFlightUIConfigCategoryButtonMixin:SetDisplayData(data)
+    self.displayData = data
 end

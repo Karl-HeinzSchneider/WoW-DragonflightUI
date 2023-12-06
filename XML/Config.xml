@@ -4,6 +4,7 @@ UI_shared.xsd">
 	<Script file="Mixin/SettingsCategoryList.mixin.lua" />
 	<Script file="Mixin/ConfigCategoryButton.mixin.lua" />
 	<Script file="Mixin/ConfigCategory.mixin.lua" />
+	<Script file="Mixin/SettingsList.mixin.lua" />
 	<Frame name="DragonflightUIConfigFrameTemplate" mixin="DragonFlightUIConfigMixin" inherits="SettingsFrameTemplate" toplevel="true" hidden="true" movable="true" enableMouse="true" resizable="true" frameStrata="HIGH" virtual="true">
 		<Size x="920" y="724" />
 		<Anchors>
@@ -57,66 +58,6 @@ UI_shared.xsd">
 			<OnEvent method="OnEvent" />
 			<OnShow method="OnShow" />
 			<OnHide method="OnHide" />
-		</Scripts>
-	</Frame>
-	<!-- SettingsListTemplate -->
-	<Frame name="SettingsListTemplateDF" mixin="SettingsListMixin" virtual="true">
-		<Frames>
-			<Frame parentKey="Header">
-				<Size y="50" />
-				<Anchors>
-					<Anchor point="TOPLEFT" />
-					<Anchor point="TOPRIGHT" />
-				</Anchors>
-				<Layers>
-					<Layer level="ARTWORK">
-						<FontString parentKey="Title" inherits="GameFontHighlightHuge" justifyH="LEFT">
-							<Anchors>
-								<Anchor point="TOPLEFT" x="7" y="-22" />
-							</Anchors>
-						</FontString>
-						<Texture atlas="Options_HorizontalDivider" useAtlasSize="true">
-							<Anchors>
-								<Anchor point="TOP" y="-50" />
-							</Anchors>
-						</Texture>
-					</Layer>
-				</Layers>
-				<Frames>
-					<Button parentKey="DefaultsButton" inherits="UIPanelButtonTemplate">
-						<Size x="96" y="22" />
-						<Anchors>
-							<Anchor point="TOPRIGHT" x="-36" y="-16" />
-						</Anchors>
-					</Button>
-					<Button parentKey="TutorialButton" inherits="MainHelpPlateButton" hidden="true">
-						<Anchors>
-							<Anchor point="TOPRIGHT" x="15" y="5" />
-						</Anchors>
-						<HighlightTexture file="Interface\common\help-i" alphaMode="ADD" hidden="true">
-							<Size x="46" y="46" />
-							<Anchors>
-								<Anchor point="CENTER" />
-							</Anchors>
-							<Color r="1" g="1" b="1" a=".2" />
-						</HighlightTexture>
-					</Button>
-				</Frames>
-			</Frame>
-			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-				<Frames>
-					<Button parentKey="InputBlocker" clipChildren="true" setAllPoints="true" hidden="true" />
-				</Frames>
-			</Frame>
-			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="-4" />
-					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-1" y="7" />
-				</Anchors>
-			</EventFrame>
-		</Frames>
-		<Scripts>
-			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
 	<!-- Blizzard_CategoryList.xml -->

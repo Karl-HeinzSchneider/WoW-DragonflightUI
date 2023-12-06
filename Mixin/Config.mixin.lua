@@ -2,7 +2,7 @@ DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
 
 function DragonFlightUIConfigMixin:OnLoad()
-    -- print('DragonFlightUIConfigMixin:OnLoad')
+    print('DragonFlightUIConfigMixin:OnLoad')
 
     self.NineSlice.Text:SetText('DragonflightUI')
 
@@ -209,6 +209,22 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
     self.selected = subCategory
 
     local settingsList = self:GetSettingsList()
-    settingsList.Header.Title:SetText(subCategory.subCategory)
+    settingsList:Display(subCategory.displayData)
+    -- settingsList.Header.Title:SetText(subCategory.subCategory)
 
+end
+
+function DragonFlightUIConfigMixin:GetSubCategory(cat, sub)
+    local category = self.categorys[cat]
+    if not category then
+        print("Category doesn't exist!", cat, sub)
+        return nil
+    end
+    local subCategory = category.subCategorys[sub]
+    if not subCategory then
+        print("Subcategory doesn't exist!", cat, sub)
+        return nil
+    end
+
+    return subCategory
 end

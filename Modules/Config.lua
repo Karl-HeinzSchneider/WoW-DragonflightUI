@@ -41,15 +41,16 @@ function Module:OnInitialize()
     -- self:SetEnabledState(DF:GetModuleEnabled(mName))
     self:SetEnabledState(true)
 
+    DF.ConfigModule = self
     -- DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     if DF.Wrath then
-        Module.Wrath()
+        Module:Wrath()
     else
-        Module.Era()
+        Module:Era()
     end
 end
 
@@ -60,7 +61,7 @@ function Module:ApplySettings()
     db = self.db.profile
 end
 
-function Module.AddMainMenuButton()
+function Module:AddMainMenuButton()
     hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
         -- print('GameMenuFrame_UpdateVisibleButtons')
         local blizzHeight = self:GetHeight()
@@ -82,7 +83,7 @@ function Module.AddMainMenuButton()
     end)
 end
 
-function Module.AddConfigFrame()
+function Module:AddConfigFrame()
     local config = CreateFrame('Frame', 'DragonflightUIConfigFrame', UIParent, 'DragonflightUIConfigFrameTemplate')
     Module.ConfigFrame = config
     -- config:Show()
@@ -92,7 +93,7 @@ function Module.AddConfigFrame()
 
 end
 
-function Module.ToggleConfigFrame()
+function Module:ToggleConfigFrame()
     local configFrame = Module.ConfigFrame
 
     if configFrame:IsShown() then
@@ -103,7 +104,15 @@ function Module.ToggleConfigFrame()
 end
 
 function Module:SlashCommand()
-    Module.ToggleConfigFrame()
+    Module:ToggleConfigFrame()
+end
+
+function Module:RegisterOptionScreen(cat, sub, data)
+    print('RegisterOptionScreen', cat, sub)
+    local config = Module.ConfigFrame
+    local subCategory = config:GetSubCategory(cat, sub)
+
+    if subCategory then subCategory:SetDisplayData(data) end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)
@@ -114,13 +123,13 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
-function Module.Wrath()
-    Module.AddConfigFrame()
-    Module.AddMainMenuButton()
+function Module:Wrath()
+    Module:AddConfigFrame()
+    Module:AddMainMenuButton()
 
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function Module.Era()
-    Module.Wrath()
+function Module:Era()
+    Module:Wrath()
 end

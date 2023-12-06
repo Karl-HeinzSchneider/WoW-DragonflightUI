@@ -28,6 +28,7 @@ Config.lua
 # XML
 XML\Castbar.xml
 XML\Config.xml
+XML\SettingsList.xml
 
 # Config
 Modules\Config.lua
