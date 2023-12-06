@@ -1532,6 +1532,13 @@ function Module.HookPlayerStatus()
     hooksecurefunc('PlayerFrame_UpdateStatus', UpdateStatus)
 end
 
+function Module.HookPlayerArt()
+    hooksecurefunc('PlayerFrame_ToPlayerArt', function()
+        -- print('PlayerFrame_ToPlayerArt')
+        Module.ChangePlayerframe()
+    end)
+end
+
 function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
     PlayerFrame:ClearAllPoints()
     PlayerFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
@@ -3012,6 +3019,7 @@ function Module.Wrath()
     Module.HookVertexColor()
     Module.HookEnergyBar()
     Module.HookPlayerStatus()
+    Module.HookPlayerArt()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
@@ -3040,6 +3048,7 @@ function Module.Era()
     Module.HookVertexColor()
     Module.HookEnergyBar()
     Module.HookPlayerStatus()
+    Module.HookPlayerArt()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
