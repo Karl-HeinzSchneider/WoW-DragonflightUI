@@ -60,16 +60,62 @@
 			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<!-- Background texture -->
+	<Texture name="HoverBackgroundTemplateDF" virtual="true" hidden="true">
+		<Anchors>
+			<Anchor relativeKey="$parent.$parent" point="TOPLEFT" x="-10" />
+			<Anchor relativeKey="$parent.$parent" point="BOTTOMRIGHT" x="-5" />
+		</Anchors>
+		<Color a="0.1" r="1" g="1" b="1" />
+	</Texture>
 	<!-- formatting for each row of the list -->
 	<Frame name="ScrollableListItemTemplateDF" mixin="ScrollableListItemMixinDF" virtual="true">
-		<Size y="21" />
+		<Frames>
+			<Frame parentKey="Header" inherits="SettingsListSectionHeaderTemplateDF" hidden="true" setAllPoints="true">
+			</Frame>
+		</Frames>
+	</Frame>
+	<!-- Header -->
+	<Frame name="SettingsListSectionHeaderTemplateDF" virtual="true">
+		<Size y="45" />
 		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture parentKey="Background" setAllPoints="true" />
-			</Layer>
 			<Layer level="OVERLAY">
-				<FontString parentKey="Text" inherits="GameFontHighlight" setAllPoints="true" />
+				<FontString parentKey="Title" inherits="GameFontHighlightLarge" justifyH="LEFT" justifyV="TOP">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="7" y="-16" />
+					</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
+	</Frame>
+	<!-- mixin="SettingsListElementMixin" -->
+	<Frame name="SettingsListElementTemplateDF" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Text" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false" />
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Tooltip" mixin="DefaultTooltipMixin">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-80" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="HoverBackground" inherits="HoverBackgroundTemplateDF" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad method="OnLoad" />
+				</Scripts>
+			</Frame>
+			<Frame parentKey="NewFeature" inherits="NewFeatureLabelTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Text" relativePoint="LEFT" x="-37" y="3" />
+				</Anchors>
+			</Frame>
+		</Frames>
 	</Frame>
 </Ui>

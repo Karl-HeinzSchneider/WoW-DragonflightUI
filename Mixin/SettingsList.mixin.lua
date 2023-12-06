@@ -1,9 +1,26 @@
 ScrollableListItemMixinDF = {}
 
 function ScrollableListItemMixinDF:Init(elementData)
-    self.Background:SetColorTexture(elementData.color:GetRGBA())
-    self.Text:SetText(elementData.text)
+    -- self.Background:SetColorTexture(elementData.color:GetRGBA())
+    -- self.Text:SetText(elementData.text)
+
+    local key = elementData.key
+    local data = elementData.args
+
+    -- self.Text:SetText(data.type)
+    if data.type == 'range' then
+        self.Header.Title:SetText('range' .. key)
+        self.Header:SetShown(true)
+    elseif data.type == 'toggle' then
+    elseif data.type == 'execute' then
+    elseif data.type == 'description' then
+    elseif data.type == 'toggle' then
+    elseif data.type == 'toggle' then
+    elseif data.type == 'toggle' then
+    end
 end
+
+local elementSize = {header = 45, range = 45}
 
 --------------------------
 SettingsListMixinDF = {}
@@ -20,8 +37,7 @@ function SettingsListMixinDF:OnLoad()
     self.ScrollView:SetDataProvider(self.DataProvider)
 
     local function ExtentCalculator(dataIndex, elementData)
-        local extent = elementData.viewH
-        return extent or 1
+        return elementSize[elementData.args.type] or 1
     end
     self.ScrollView:SetElementExtentCalculator(ExtentCalculator)
 
@@ -73,20 +89,22 @@ end
 
 function SettingsListMixinDF:Display(data)
     self.DataProvider:Flush()
+
     if not data then
         print('SettingsListMixinDF:Display', 'no data')
         return
     end
 
     self.Header.Title:SetText(data.name)
+
+    for k, v in pairs(data.options.args) do
+        local elementData = {key = k, args = v, viewH = 45}
+        self.DataProvider:Insert(elementData)
+    end
 end
 
 function SettingsListMixinDF:RemoveListItem()
     local lastIndex = self.DataProvider:GetSize()
     self.DataProvider:RemoveIndex(lastIndex)
-end
-
-function SettingsListMixinDF:RegisterSettings(cat, sub, data)
-    print('RegisterSettigs', cat, sub)
 end
 
