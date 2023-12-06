@@ -31,9 +31,10 @@ end
 function DragonFlightUIConfigMixin:OnShow()
     -- print('DragonFlightUIConfigMixin:OnShow')
     if not self.selected then
-        local btn = self.categorys['General'].subCategorys['Info']
-        self:SubCategoryBtnClicked(btn)
-        btn:UpdateState()
+        -- local btn = self.categorys['General'].subCategorys['Info']
+        -- self:SubCategoryBtnClicked(btn)
+        -- btn:UpdateState()
+        self:SelectCategory('General', 'Info')
     end
 end
 
@@ -178,17 +179,36 @@ end
 function DragonFlightUIConfigMixin:SubCategoryBtnClicked(btn)
     print('SubCategoryBtnClicked', btn.category, btn.subCategory)
 
-    local old
+    self:SelectCategory(btn.category, btn.subCategory)
+end
 
-    if self.selected then
-        old = self.selected
+function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
+    print('select Cat:', cat, sub)
+
+    local category = self.categorys[cat]
+    if not category then
+        print("Category doesn't exist!", cat, sub)
+        return
+    end
+    local subCategory = category.subCategorys[sub]
+    if not subCategory then
+        print("Subcategory doesn't exist!", cat, sub)
+        return
+    end
+    -- local btn = self.categorys['General'].subCategorys['Info']
+
+    local old = self.selected
+
+    if old then
         old.isSelected = false
         old:UpdateState()
-        -- print('Selected', btn.subCategory, old.subCategory)
-    else
-        -- print('Selected', btn.subCategory, nil)
     end
 
-    btn.isSelected = true
-    self.selected = btn
+    subCategory.isSelected = true
+    subCategory:UpdateState()
+    self.selected = subCategory
+
+    local settingsList = self:GetSettingsList()
+    settingsList.Header.Title:SetText(subCategory.subCategory)
+
 end
