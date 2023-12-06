@@ -44,6 +44,11 @@ function DragonFlightUIConfigCategoryButtonMixin:IsEnabled()
     return self.isEnabled
 end
 
+function DragonFlightUIConfigCategoryButtonMixin:SetEnabled(enabled)
+    self.isEnabled = enabled
+    self:UpdateState()
+end
+
 function DragonFlightUIConfigCategoryButtonMixin:SetCallback(cb)
     self.callback = cb
 end

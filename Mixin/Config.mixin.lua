@@ -19,6 +19,8 @@ function DragonFlightUIConfigMixin:OnLoad()
         -- TODO: defaults
     end);
 
+    settingsList.Header.Title:SetText('Title')
+
     self.categorys = {}
     self.lastElement = nil
     self:SetupCategorys()
