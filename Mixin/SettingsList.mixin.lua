@@ -196,7 +196,6 @@ function SettingsListMixinDF:Display(data)
         end
     end
 
-    print('----')
     for k, v in spairs(data.options.args, function(t, a, b)
         return t[b].order > t[a].order
     end) do
