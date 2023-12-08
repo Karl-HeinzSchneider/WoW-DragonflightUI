@@ -42,6 +42,7 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -85, 0);
     self.Item:Hide()
 
+    self.Item.Checkbox:SetParent(self)
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -80, 0)
     self.Item.Checkbox:Hide()
 end
@@ -57,11 +58,13 @@ function ScrollableListItemMixinDF:SetText(text)
 end
 
 function ScrollableListItemMixinDF:SetTooltip(name, desc)
-    self.Item.Tooltip:SetTooltipFunc(GenerateClosure(Settings.InitTooltip, name, desc or ''))
+    local tooltipFunc = GenerateClosure(Settings.InitTooltip, name, desc or '')
+    self.Item.Tooltip:SetTooltipFunc(tooltipFunc)
+    self.Item.Checkbox.tooltipFunc = tooltipFunc
 end
 
 function ScrollableListItemMixinDF:SetCheckbox(checked)
-    -- self.Item.Checkbox:SetValue(checked)
+    self.Item.Checkbox:SetValue(checked)
     self.Item.Checkbox:Show()
 end
 
@@ -70,10 +73,20 @@ SettingsCheckBoxMixinDF = {};
 function SettingsCheckBoxMixinDF:OnLoad()
 end
 function SettingsCheckBoxMixinDF:OnEnter()
-    print('SettingsCheckBoxMixinDF OnEnter')
+    -- print('SettingsCheckBoxMixinDF OnEnter')
+    local parent = self:GetParent()
+
+    parent.Item.Tooltip.HoverBackground:Show()
+
+    SettingsTooltip:SetOwner(self, 'ANCHOR_RIGHT', 0, 0);
+    parent.Item.Checkbox.tooltipFunc()
+    SettingsTooltip:Show()
 end
 function SettingsCheckBoxMixinDF:OnLeave()
-    print('SettingsCheckBoxMixinDF OnLeave')
+    -- print('SettingsCheckBoxMixinDF OnLeave')
+    local parent = self:GetParent()
+    parent.Item.Tooltip.HoverBackground:Hide()
+    SettingsTooltip:Hide();
 end
 
 function SettingsCheckBoxMixinDF:SetValue(value)
