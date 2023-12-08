@@ -16,7 +16,7 @@ function ScrollableListItemMixinDF:Init(elementData)
         self.Item.Text:SetPoint("RIGHT", self, "CENTER", -85, 0);
 
         -- self.Item.Tooltip.tooltipText = 'tooltipsss'
-        self.Item.Tooltip:SetTooltipFunc(GenerateClosure(Settings.InitTooltip, data.name, data.desc or ''))
+        -- self.Item.Tooltip:SetTooltipFunc(GenerateClosure(Settings.InitTooltip, data.name, data.desc or ''))
     end
 
     -- self.Text:SetText(data.type)
@@ -25,7 +25,8 @@ function ScrollableListItemMixinDF:Init(elementData)
         self.Header:SetAllPoints()
         self.Header.Title:SetText(data.name)
     elseif data.type == 'range' then
-        normal()
+        -- normal()
+
     elseif data.type == 'execute' then
         normal()
     elseif data.type == 'description' then
@@ -33,7 +34,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     elseif data.type == 'toggle' then
         normal()
     elseif data.type == 'toggle' then
-        normal()
+        --
     elseif data.type == 'toggle' then
     end
 end
@@ -117,9 +118,37 @@ function SettingsListMixinDF:Display(data)
 
     self.Header.Title:SetText(data.name)
 
-    for k, v in pairs(data.options.args) do
+    -- https://stackoverflow.com/a/15706820
+    function spairs(t, order)
+        -- collect the keys
+        local keys = {}
+        for k in pairs(t) do keys[#keys + 1] = k end
+
+        -- if order function given, sort by it by passing the table and keys a, b,
+        -- otherwise just sort the keys 
+        if order then
+            table.sort(keys, function(a, b)
+                return order(t, a, b)
+            end)
+        else
+            table.sort(keys)
+        end
+
+        -- return the iterator function
+        local i = 0
+        return function()
+            i = i + 1
+            if keys[i] then return keys[i], t[keys[i]] end
+        end
+    end
+
+    print('----')
+    for k, v in spairs(data.options.args, function(t, a, b)
+        return t[b].order > t[a].order
+    end) do
         local elementData = {key = k, args = v, viewH = 45}
         self.DataProvider:Insert(elementData)
+        -- print(k, v.order)
     end
 end
 

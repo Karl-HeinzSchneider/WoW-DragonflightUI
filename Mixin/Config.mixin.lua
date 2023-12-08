@@ -13,19 +13,20 @@ function DragonFlightUIConfigMixin:OnLoad()
     self.CloseButton.Text:SetText(SETTINGS_CLOSE);
     self.CloseButton:SetScript("OnClick", closePanel);
 
-    local settingsList = self:GetSettingsList();
+    --[[    local settingsList = self:GetSettingsList();
     settingsList.Header.DefaultsButton.Text:SetText(SETTINGS_DEFAULTS);
     settingsList.Header.DefaultsButton:SetScript("OnClick", function(button, buttonName, down)
         -- TODO: defaults
     end);
 
-    settingsList.Header.Title:SetText('Title')
+    settingsList.Header.Title:SetText('Title') ]]
 
     self.categorys = {}
     self.lastElement = nil
     self:SetupCategorys()
 
     self.selected = nil
+    self.selectedFrame = nil
 end
 
 function DragonFlightUIConfigMixin:OnShow()
@@ -208,9 +209,24 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
     subCategory:UpdateState()
     self.selected = subCategory
 
-    local settingsList = self:GetSettingsList()
-    settingsList:Display(subCategory.displayData)
+    -- local settingsList = self:GetSettingsList()
+    -- settingsList:Display(subCategory.displayData)
     -- settingsList.Header.Title:SetText(subCategory.subCategory)
+
+    local oldFrame = self.selectedFrame
+    if oldFrame then oldFrame:Hide() end
+
+    local newFrame = subCategory.displayFrame
+    if newFrame then
+        newFrame:ClearAllPoints()
+        newFrame:SetParent(self.Container)
+        newFrame:SetPoint('TOPLEFT', self.Container, 'TOPLEFT', 0, 0)
+        newFrame:SetPoint('BOTTOMRIGHT', self.Container, 'BOTTOMRIGHT', 0, 0)
+        newFrame:Show()
+        self.selectedFrame = newFrame
+    else
+        print('no displayframe - nothing to show!')
+    end
 
 end
 
