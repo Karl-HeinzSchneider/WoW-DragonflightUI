@@ -81,7 +81,7 @@ local options = {
             desc = '' .. getDefaultStr('scale'),
             min = 0.2,
             max = 3,
-            bigStep = 0.025,
+            bigStep = 0.1,
             order = 101,
             disabled = false
         },

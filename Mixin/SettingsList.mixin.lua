@@ -14,6 +14,12 @@ function ScrollableListItemMixinDF:Init(elementData)
     elseif data.type == 'range' then
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
+        self:SetSlider(1, data.min, data.max, data.bigStep)
+        -- DevTools_Dump(data)
+
+        -- self.Item.Slider:SetMinMaxValues(0, 25);
+        -- self.Item.Slider:SetValueStep(1);
+        -- self.Item.Slider:SetValue(11);
 
     elseif data.type == 'execute' then
         self:SetText(data.name)
@@ -45,6 +51,11 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Checkbox:SetParent(self)
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -80, 0)
     self.Item.Checkbox:Hide()
+
+    self.Item.Slider:SetParent(self)
+    self.Item.Slider:SetWidth(250)
+    self.Item.Slider:SetPoint("LEFT", self, "CENTER", -80, 3)
+    self.Item.Slider:Hide()
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
@@ -66,6 +77,14 @@ end
 function ScrollableListItemMixinDF:SetCheckbox(checked)
     self.Item.Checkbox:SetValue(checked)
     self.Item.Checkbox:Show()
+end
+
+function ScrollableListItemMixinDF:SetSlider(value, minValue, maxValue, step)
+    self.Item.Slider:Show()
+    local options = Settings.CreateSliderOptions(0, 500, 1);
+    self.Item.Slider.Slider:SetMinMaxValues(minValue, maxValue)
+    self.Item.Slider.Slider:SetValueStep(step)
+    self.Item.Slider.Slider:SetValue(42)
 end
 
 --- Checkbox
@@ -106,6 +125,35 @@ function SettingsCheckBoxMixinDF:SetValue(value)
     else
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
     end
+end
+
+--- Slider
+SettingsSliderMixinDF = CreateFromMixins(CallbackRegistryMixin);
+SettingsSliderMixinDF:GenerateCallbackEvents({"OnValueChanged", "OnInteractStart", "OnInteractEnd"});
+
+local sliderFormat = {}
+-- sliderFormat[2] = CreateMinimalSliderFormatter()
+sliderFormat[2] = function(value)
+    if math.floor(value) == value then
+        return value
+    else
+        return string.format('%.2f', value)
+    end
+end
+
+DevTools_Dump(sliderFormat[2])
+
+function SettingsSliderMixinDF:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
+
+    -- self:Init(setting:GetValue(), options.minValue, options.maxValue, options.steps, options.formatters);   
+    local options = Settings.CreateSliderOptions(0, 100, 1);
+    self:Init(41, options.minValue, options.maxValue, options.steps, sliderFormat)
+
+    self:SetEnabled_(true)
+
+    self.Back:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, false))
+    self.Forward:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, true))
 end
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}

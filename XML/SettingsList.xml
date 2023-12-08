@@ -120,6 +120,8 @@
 			</Frame>
 			<CheckButton parentKey="Checkbox" inherits="SettingsCheckBoxTemplateDF" hidden="true" setAllPoints="false">
 			</CheckButton>
+			<Frame parentKey="Slider" inherits="SettingsSliderTemplateDF" hidden="false" setAllPoints="false">
+			</Frame>
 		</Frames>
 	</Frame>
 	<!-- Checkbox -->
@@ -145,4 +147,10 @@
 		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
 		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
 	</CheckButton>
+	<!-- Slider -->
+	<Frame name="SettingsSliderTemplateDF" inherits="MinimalSliderWithSteppersTemplate" mixin="SettingsSliderMixinDF" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
 </Ui>
