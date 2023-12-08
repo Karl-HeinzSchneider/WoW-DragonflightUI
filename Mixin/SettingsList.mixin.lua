@@ -20,21 +20,25 @@ function ScrollableListItemMixinDF:Init(elementData)
     end
 
     -- self.Text:SetText(data.type)
-    if data.type == 'range' then
-        normal()
-    elseif data.type == 'header' then
+    if data.type == 'header' then
         self.Header = CreateFrame('Frame', nil, self, 'SettingsListSectionHeaderTemplateDF')
         self.Header:SetAllPoints()
         self.Header.Title:SetText(data.name)
+    elseif data.type == 'range' then
+        normal()
     elseif data.type == 'execute' then
+        normal()
     elseif data.type == 'description' then
+        normal()
     elseif data.type == 'toggle' then
+        normal()
     elseif data.type == 'toggle' then
+        normal()
     elseif data.type == 'toggle' then
     end
 end
 
-local elementSize = {header = 45, range = 26}
+local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
 
 --------------------------
 SettingsListMixinDF = {}
