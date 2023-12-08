@@ -77,7 +77,7 @@ function SettingsCheckBoxMixinDF:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
 
     self:SetScript('OnClick', function(button, buttonName, down)
-        print(button, buttonName, down)
+        -- print(button, buttonName, down)
         self:TriggerEvent(SettingsCheckBoxMixinDF.Event.OnValueChanged, button:GetChecked())
     end)
 end
