@@ -68,10 +68,20 @@ function ScrollableListItemMixinDF:SetCheckbox(checked)
     self.Item.Checkbox:Show()
 end
 
---------------------------
-SettingsCheckBoxMixinDF = {};
+--- Checkbox
+-- SettingsCheckBoxMixinDF = {};
+SettingsCheckBoxMixinDF = CreateFromMixins(CallbackRegistryMixin);
+SettingsCheckBoxMixinDF:GenerateCallbackEvents({"OnValueChanged"});
+
 function SettingsCheckBoxMixinDF:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
+
+    self:SetScript('OnClick', function(button, buttonName, down)
+        print(button, buttonName, down)
+        self:TriggerEvent(SettingsCheckBoxMixinDF.Event.OnValueChanged, button:GetChecked())
+    end)
 end
+
 function SettingsCheckBoxMixinDF:OnEnter()
     -- print('SettingsCheckBoxMixinDF OnEnter')
     local parent = self:GetParent()
@@ -91,11 +101,16 @@ end
 
 function SettingsCheckBoxMixinDF:SetValue(value)
     self:SetChecked(value)
+    if value then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+    else
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+    end
 end
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
 
---------------------------
+--- Settingslist
 SettingsListMixinDF = {}
 
 function SettingsListMixinDF:OnLoad()
