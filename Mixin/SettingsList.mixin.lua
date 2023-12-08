@@ -7,11 +7,25 @@ function ScrollableListItemMixinDF:Init(elementData)
     local key = elementData.key
     local data = elementData.args
 
+    local normal = function()
+        self.Item = CreateFrame('Frame', nil, self, 'SettingsListElementTemplateDF')
+        self.Item:SetAllPoints()
+        self.Item.Text:SetText(data.name)
+        -- self.Text:SetPoint("LEFT", (self:GetIndent() + 37), 0);
+        self.Item.Text:SetPoint("LEFT", 37, 0);
+        self.Item.Text:SetPoint("RIGHT", self, "CENTER", -85, 0);
+
+        -- self.Item.Tooltip.tooltipText = 'tooltipsss'
+        self.Item.Tooltip:SetTooltipFunc(GenerateClosure(Settings.InitTooltip, data.name, data.desc or ''))
+    end
+
     -- self.Text:SetText(data.type)
     if data.type == 'range' then
-        self.Header.Title:SetText('range' .. key)
-        self.Header:SetShown(true)
-    elseif data.type == 'toggle' then
+        normal()
+    elseif data.type == 'header' then
+        self.Header = CreateFrame('Frame', nil, self, 'SettingsListSectionHeaderTemplateDF')
+        self.Header:SetAllPoints()
+        self.Header.Title:SetText(data.name)
     elseif data.type == 'execute' then
     elseif data.type == 'description' then
     elseif data.type == 'toggle' then
@@ -20,7 +34,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     end
 end
 
-local elementSize = {header = 45, range = 45}
+local elementSize = {header = 45, range = 26}
 
 --------------------------
 SettingsListMixinDF = {}

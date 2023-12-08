@@ -70,10 +70,6 @@
 	</Texture>
 	<!-- formatting for each row of the list -->
 	<Frame name="ScrollableListItemTemplateDF" mixin="ScrollableListItemMixinDF" virtual="true">
-		<Frames>
-			<Frame parentKey="Header" inherits="SettingsListSectionHeaderTemplateDF" hidden="true" setAllPoints="true">
-			</Frame>
-		</Frames>
 	</Frame>
 	<!-- Header -->
 	<Frame name="SettingsListSectionHeaderTemplateDF" virtual="true">
