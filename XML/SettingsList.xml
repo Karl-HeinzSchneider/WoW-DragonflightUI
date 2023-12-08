@@ -70,6 +70,12 @@
 	</Texture>
 	<!-- formatting for each row of the list -->
 	<Frame name="ScrollableListItemTemplateDF" mixin="ScrollableListItemMixinDF" virtual="true">
+		<Frames>
+			<Frame parentKey="Header" inherits="SettingsListSectionHeaderTemplateDF" hidden="true" setAllPoints="true">
+			</Frame>
+			<Frame parentKey="Item" inherits="SettingsListElementTemplateDF" hidden="true" setAllPoints="true">
+			</Frame>
+		</Frames>
 	</Frame>
 	<!-- Header -->
 	<Frame name="SettingsListSectionHeaderTemplateDF" virtual="true">
@@ -114,4 +120,22 @@
 			</Frame>
 		</Frames>
 	</Frame>
+	<!--  -->
+	<CheckButton name="SettingsCheckBoxTemplateDF" mixin="SettingsCheckBoxMixinDF" motionScriptsWhileDisabled="true" virtual="true">
+		<Size x="30" y="29" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="HoverBackground" inherits="HoverBackgroundTemplateDF" />
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+		<NormalTexture atlas="checkbox-minimal" useAtlasSize="true" />
+		<PushedTexture atlas="checkbox-minimal" useAtlasSize="true" />
+		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
+		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
+	</CheckButton>
 </Ui>

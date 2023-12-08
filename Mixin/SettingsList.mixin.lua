@@ -7,36 +7,44 @@ function ScrollableListItemMixinDF:Init(elementData)
     local key = elementData.key
     local data = elementData.args
 
-    local normal = function()
-        self.Item = CreateFrame('Frame', nil, self, 'SettingsListElementTemplateDF')
-        self.Item:SetAllPoints()
-        self.Item.Text:SetText(data.name)
-        -- self.Text:SetPoint("LEFT", (self:GetIndent() + 37), 0);
-        self.Item.Text:SetPoint("LEFT", 37, 0);
-        self.Item.Text:SetPoint("RIGHT", self, "CENTER", -85, 0);
+    self:Reset()
 
-        -- self.Item.Tooltip.tooltipText = 'tooltipsss'
-        -- self.Item.Tooltip:SetTooltipFunc(GenerateClosure(Settings.InitTooltip, data.name, data.desc or ''))
-    end
-
-    -- self.Text:SetText(data.type)
     if data.type == 'header' then
-        self.Header = CreateFrame('Frame', nil, self, 'SettingsListSectionHeaderTemplateDF')
-        self.Header:SetAllPoints()
-        self.Header.Title:SetText(data.name)
+        self:SetHeader(data.name)
     elseif data.type == 'range' then
-        -- normal()
-
+        self:SetText(data.name)
     elseif data.type == 'execute' then
-        normal()
+        self:SetText(data.name)
+
     elseif data.type == 'description' then
-        normal()
+        self:SetText(data.name)
+
     elseif data.type == 'toggle' then
-        normal()
+        self:SetText(data.name)
+
     elseif data.type == 'toggle' then
         --
     elseif data.type == 'toggle' then
     end
+end
+
+function ScrollableListItemMixinDF:Reset()
+    self.Header:Hide()
+
+    -- self.Item:ClearAllPoints()
+    self.Item.Text:SetPoint("LEFT", 37, 0);
+    self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -85, 0);
+    self.Item:Hide()
+end
+
+function ScrollableListItemMixinDF:SetHeader(header)
+    self.Header:Show()
+    self.Header.Title:SetText(header)
+end
+
+function ScrollableListItemMixinDF:SetText(text)
+    self.Item:Show()
+    self.Item.Text:SetText(text)
 end
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
