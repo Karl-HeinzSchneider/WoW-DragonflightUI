@@ -118,9 +118,16 @@
 					<Anchor point="RIGHT" relativeKey="$parent.Text" relativePoint="LEFT" x="-37" y="3" />
 				</Anchors>
 			</Frame>
+			<CheckButton parentKey="Checkbox" inherits="SettingsCheckBoxTemplateDF" hidden="true" setAllPoints="false">
+			</CheckButton>
 		</Frames>
 	</Frame>
-	<!--  -->
+	<!-- Checkbox -->
+	<Frame name="SettingsCheckBoxControlTemplateDF" virtual="true">
+		<Size x="280" y="26" />
+		<CheckButton parentKey="$parent.Checkbox" inherits="SettingsCheckBoxTemplateDF" hidden="true" setAllPoints="false">
+		</CheckButton>
+	</Frame>
 	<CheckButton name="SettingsCheckBoxTemplateDF" mixin="SettingsCheckBoxMixinDF" motionScriptsWhileDisabled="true" virtual="true">
 		<Size x="30" y="29" />
 		<Layers>

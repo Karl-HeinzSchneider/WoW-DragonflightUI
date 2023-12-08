@@ -13,14 +13,20 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetHeader(data.name)
     elseif data.type == 'range' then
         self:SetText(data.name)
+        self:SetTooltip(data.name, data.desc)
+
     elseif data.type == 'execute' then
         self:SetText(data.name)
+        self:SetTooltip(data.name, data.desc)
 
     elseif data.type == 'description' then
         self:SetText(data.name)
+        self:SetTooltip(data.name, data.desc)
 
     elseif data.type == 'toggle' then
         self:SetText(data.name)
+        self:SetTooltip(data.name, data.desc)
+        self:SetCheckbox(true)
 
     elseif data.type == 'toggle' then
         --
@@ -35,6 +41,9 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Text:SetPoint("LEFT", 37, 0);
     self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -85, 0);
     self.Item:Hide()
+
+    self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -80, 0)
+    self.Item.Checkbox:Hide()
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
@@ -45,6 +54,30 @@ end
 function ScrollableListItemMixinDF:SetText(text)
     self.Item:Show()
     self.Item.Text:SetText(text)
+end
+
+function ScrollableListItemMixinDF:SetTooltip(name, desc)
+    self.Item.Tooltip:SetTooltipFunc(GenerateClosure(Settings.InitTooltip, name, desc or ''))
+end
+
+function ScrollableListItemMixinDF:SetCheckbox(checked)
+    -- self.Item.Checkbox:SetValue(checked)
+    self.Item.Checkbox:Show()
+end
+
+--------------------------
+SettingsCheckBoxMixinDF = {};
+function SettingsCheckBoxMixinDF:OnLoad()
+end
+function SettingsCheckBoxMixinDF:OnEnter()
+    print('SettingsCheckBoxMixinDF OnEnter')
+end
+function SettingsCheckBoxMixinDF:OnLeave()
+    print('SettingsCheckBoxMixinDF OnLeave')
+end
+
+function SettingsCheckBoxMixinDF:SetValue(value)
+    self:SetChecked(value)
 end
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
