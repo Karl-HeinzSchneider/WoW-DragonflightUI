@@ -88,7 +88,9 @@ function SettingsListMixinDF:SetRandomProvider()
 end
 
 function SettingsListMixinDF:Display(data)
-    self.DataProvider:Flush()
+    -- self.DataProvider:Flush()
+    self.DataProvider = CreateDataProvider()
+    self.ScrollView:SetDataProvider(self.DataProvider)
 
     if not data then
         print('SettingsListMixinDF:Display', 'no data')
