@@ -19,6 +19,7 @@ function DragonFlightUIConfigCategoryButtonMixin:OnLoad()
     self.subCategory = nil
 
     self.displayData = nil
+    self.displayFrame = nil
 end
 
 function DragonFlightUIConfigCategoryButtonMixin:OnEnter()
@@ -112,4 +113,7 @@ end
 
 function DragonFlightUIConfigCategoryButtonMixin:SetDisplayData(data)
     self.displayData = data
+    if self.displayFrame then self.displayFrame:Hide() end
+    self.displayFrame = CreateFrame('Frame', nil, nil, 'SettingsListTemplateDF')
+    self.displayFrame:Display(data)
 end
