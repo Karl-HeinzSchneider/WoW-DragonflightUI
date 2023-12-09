@@ -33,6 +33,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetCheckbox(true)
+        self.Item.Tooltip:SetScript('OnMouseDown', function()
+            self.Item.Checkbox:SetValue(not self.Item.Checkbox:GetChecked())
+        end)
 
     elseif data.type == 'toggle' then
         --
@@ -42,6 +45,8 @@ end
 
 function ScrollableListItemMixinDF:Reset()
     self.Header:Hide()
+
+    self.Item.Tooltip:SetScript('OnMouseDown', nil)
 
     -- self.Item:ClearAllPoints()
     self.Item.Text:SetPoint("LEFT", 37, 0);
