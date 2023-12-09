@@ -92,7 +92,8 @@ local options = {
         locked = {
             type = 'toggle',
             name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved ' .. getDefaultStr('locked'),
+            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
+                getDefaultStr('locked'),
             order = 103
         }
     }
@@ -119,6 +120,9 @@ function Module:OnEnable()
     Module.Tmp.MinimapY = 0
 
     Module.ApplySettings()
+
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap',
+                                         {name = 'Minimap', options = options, default = setDefaultValues})
 end
 
 function Module:OnDisable()
@@ -269,6 +273,7 @@ end
 
 function Module.MoveMinimap(x, y)
     Minimap:ClearAllPoints()
+    Minimap:SetClampedToScreen(true)
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', x, y)
     -- MinimapCluster:ClearAllPoints()
     -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
@@ -506,13 +511,15 @@ function Module.LockMinimap(locked)
     if locked then
         -- print('locked')
         Minimap:SetMovable(false)
+        Minimap:SetScript('OnDragStart', nil)
+        Minimap:SetScript('OnDragStop', nil)
+
         -- Minimap:EnableMouse(false)
     else
         -- print('not locked')
 
         Minimap:SetMovable(true)
-        -- Minimap:EnableMouse(true)
-        Minimap:SetClampedToScreen(true)
+        -- Minimap:EnableMouse(true)      
         Minimap:RegisterForDrag("LeftButton")
         Minimap:SetScript("OnDragStart", function(self)
             local x, y = Minimap:GetCenter()
