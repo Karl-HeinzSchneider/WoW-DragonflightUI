@@ -80,7 +80,7 @@ local options = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale'),
             min = 0.2,
-            max = 3,
+            max = 5,
             bigStep = 0.1,
             order = 101,
             disabled = false
@@ -91,7 +91,7 @@ local options = {
             desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 102.1
         },
         y = {
@@ -100,7 +100,7 @@ local options = {
             desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 102.2
         },
         sizeX = {
