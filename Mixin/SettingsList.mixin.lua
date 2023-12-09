@@ -6,6 +6,8 @@ function ScrollableListItemMixinDF:Init(elementData)
 
     local key = elementData.key
     local data = elementData.args
+    local get = elementData.get
+    local set = elementData.set
 
     self:Reset()
 
@@ -14,7 +16,8 @@ function ScrollableListItemMixinDF:Init(elementData)
     elseif data.type == 'range' then
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
-        self:SetSlider(1, data.min, data.max, data.bigStep)
+        self:SetSlider(get({key}), data.min, data.max, data.bigStep)
+        -- print(key, get({key}))
         -- DevTools_Dump(data)
 
         -- self.Item.Slider:SetMinMaxValues(0, 25);
@@ -32,11 +35,15 @@ function ScrollableListItemMixinDF:Init(elementData)
     elseif data.type == 'toggle' then
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
-        self:SetCheckbox(true)
+        self:SetCheckbox(get({key}))
         self.Item.Tooltip:SetScript('OnMouseDown', function()
             self.Item.Checkbox:SetValue(not self.Item.Checkbox:GetChecked())
+            self.Item.Checkbox:TriggerEvent(SettingsCheckBoxMixinDF.Event.OnValueChanged,
+                                            self.Item.Checkbox:GetChecked())
         end)
-
+        self.Item.Checkbox:RegisterCallback('OnValueChanged', function(self, ...)
+            set({key}, self.Item.Checkbox:GetChecked())
+        end, self)
     elseif data.type == 'toggle' then
         --
     elseif data.type == 'toggle' then
@@ -56,6 +63,7 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Checkbox:SetParent(self)
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -80, 0)
     self.Item.Checkbox:Hide()
+    self.Item.Checkbox:UnregisterCallback('OnValueChanged', self)
 
     self.Item.Slider:SetParent(self)
     self.Item.Slider:SetWidth(250)
@@ -89,7 +97,7 @@ function ScrollableListItemMixinDF:SetSlider(value, minValue, maxValue, step)
     local options = Settings.CreateSliderOptions(0, 500, 1);
     self.Item.Slider.Slider:SetMinMaxValues(minValue, maxValue)
     self.Item.Slider.Slider:SetValueStep(step)
-    self.Item.Slider.Slider:SetValue(42)
+    self.Item.Slider.Slider:SetValue(value)
 end
 
 --- Checkbox
@@ -268,7 +276,7 @@ function SettingsListMixinDF:Display(data)
     for k, v in spairs(data.options.args, function(t, a, b)
         return t[b].order > t[a].order
     end) do
-        local elementData = {key = k, args = v, viewH = 45}
+        local elementData = {key = k, args = v, get = data.options.get, set = data.options.set}
         if v.name ~= '' and v.name ~= 'Enable' and v.type ~= 'execute' then self.DataProvider:Insert(elementData) end
         -- print(k, v.order)
     end
