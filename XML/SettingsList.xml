@@ -151,6 +151,8 @@
 	<Frame name="SettingsSliderTemplateDF" inherits="MinimalSliderWithSteppersTemplate" mixin="SettingsSliderMixinDF" virtual="true">
 		<Scripts>
 			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Frame>
 </Ui>

@@ -141,7 +141,7 @@ sliderFormat[2] = function(value)
     end
 end
 
-DevTools_Dump(sliderFormat[2])
+-- DevTools_Dump(sliderFormat[2])
 
 function SettingsSliderMixinDF:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
@@ -154,6 +154,29 @@ function SettingsSliderMixinDF:OnLoad()
 
     self.Back:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, false))
     self.Forward:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, true))
+
+    self.Slider:HookScript('OnEnter', function()
+        self:OnEnter()
+    end)
+    self.Slider:HookScript('OnLeave', function()
+        self:OnLeave()
+    end)
+end
+
+function SettingsSliderMixinDF:OnEnter()
+    local parent = self:GetParent()
+
+    parent.Item.Tooltip.HoverBackground:Show()
+
+    SettingsTooltip:SetOwner(self, 'ANCHOR_RIGHT', 0, 0);
+    parent.Item.Checkbox.tooltipFunc()
+    SettingsTooltip:Show()
+end
+
+function SettingsSliderMixinDF:OnLeave()
+    local parent = self:GetParent()
+    parent.Item.Tooltip.HoverBackground:Hide()
+    SettingsTooltip:Hide();
 end
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
