@@ -8,6 +8,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     local data = elementData.args
     local get = elementData.get
     local set = elementData.set
+    local list = elementData.settingsList
 
     self:Reset()
 
@@ -19,6 +20,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetSlider(get({key}), data.min, data.max, data.bigStep)
         self.Item.Slider:RegisterCallback('OnValueChanged', function(self, ...)
             set({key}, self.Item.Slider.Slider:GetValue())
+        end, self)
+        list:RegisterCallback('OnDefaults', function(self, ...)
+            self:SetSlider(get({key}), data.min, data.max, data.bigStep)
         end, self)
     elseif data.type == 'execute' then
         self:SetText(data.name)
@@ -39,6 +43,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         end)
         self.Item.Checkbox:RegisterCallback('OnValueChanged', function(self, ...)
             set({key}, self.Item.Checkbox:GetChecked())
+        end, self)
+        list:RegisterCallback('OnDefaults', function(self, ...)
+            self.Item.Checkbox:SetValue(get({key}))
         end, self)
     elseif data.type == 'toggle' then
         --
@@ -192,9 +199,12 @@ end
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
 
 --- Settingslist
-SettingsListMixinDF = {}
+SettingsListMixinDF = CreateFromMixins(CallbackRegistryMixin);
+SettingsListMixinDF:GenerateCallbackEvents({"OnDefaults"});
 
 function SettingsListMixinDF:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
+
     print('SettingsListMixinDF', 'OnLoad')
     self.DataProvider = CreateDataProvider()
 
@@ -235,13 +245,24 @@ function SettingsListMixinDF:Display(data)
     self.DataProvider = CreateDataProvider()
     self.ScrollView:SetDataProvider(self.DataProvider)
 
+    self.Header.DefaultsButton:Hide()
+
     if not data then
         print('SettingsListMixinDF:Display', 'no data')
         return
     end
 
     self.Header.Title:SetText(data.name)
-    self.Header.DefaultsButton:Hide()
+
+    if data.default then
+        self.Header.DefaultsButton:Show()
+        self.Header.DefaultsButton:SetText('Defaults')
+
+        self.Header.DefaultsButton:SetScript('OnClick', function()
+            data.default()
+            self:TriggerEvent('OnDefaults', 'set Defaults')
+        end)
+    end
 
     -- self.Header.DefaultsButton:Show()
     -- self.Header.DefaultsButton:SetText('TEST')
@@ -273,7 +294,7 @@ function SettingsListMixinDF:Display(data)
     for k, v in spairs(data.options.args, function(t, a, b)
         return t[b].order > t[a].order
     end) do
-        local elementData = {key = k, args = v, get = data.options.get, set = data.options.set}
+        local elementData = {key = k, args = v, get = data.options.get, set = data.options.set, settingsList = self}
         if v.name ~= '' and v.name ~= 'Enable' and v.type ~= 'execute' then self.DataProvider:Insert(elementData) end
         -- print(k, v.order)
     end

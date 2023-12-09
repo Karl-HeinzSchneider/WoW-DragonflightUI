@@ -168,7 +168,8 @@ function Module:OnEnable()
         Module.Era()
     end
     Module:ApplySettings()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Castbar', {name = 'Castbar', options = options})
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Castbar',
+                                         {name = 'Castbar', options = options, default = setDefaultValues})
 end
 
 function Module:OnDisable()
