@@ -103,6 +103,9 @@ function Module:ToggleConfigFrame()
         configFrame:Hide()
     else
         configFrame:Show()
+
+        HideUIPanel(GameMenuFrame)
+        HideUIPanel(SettingsPanel)
     end
 end
 
