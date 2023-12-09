@@ -17,13 +17,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetSlider(get({key}), data.min, data.max, data.bigStep)
-        -- print(key, get({key}))
-        -- DevTools_Dump(data)
-
-        -- self.Item.Slider:SetMinMaxValues(0, 25);
-        -- self.Item.Slider:SetValueStep(1);
-        -- self.Item.Slider:SetValue(11);
-
+        self.Item.Slider:RegisterCallback('OnValueChanged', function(self, ...)
+            set({key}, self.Item.Slider.Slider:GetValue())
+        end, self)
     elseif data.type == 'execute' then
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
@@ -69,6 +65,7 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Slider:SetWidth(250)
     self.Item.Slider:SetPoint("LEFT", self, "CENTER", -80, 3)
     self.Item.Slider:Hide()
+    self.Item.Slider:UnregisterCallback('OnValueChanged', self)
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
