@@ -64,8 +64,8 @@ local options = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale'),
             min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 101,
             disabled = true
         },
@@ -75,7 +75,7 @@ local options = {
             desc = 'X relative to BOTTOM LEFT' .. getDefaultStr('x'),
             min = 0,
             max = 3500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 102
         },
         y = {
@@ -84,7 +84,7 @@ local options = {
             desc = 'Y relative to BOTTOM LEFT' .. getDefaultStr('y'),
             min = 0,
             max = 3500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 102
         },
         sizeX = {
@@ -93,7 +93,7 @@ local options = {
             desc = 'Size X' .. getDefaultStr('sizeX'),
             min = 0,
             max = 1000,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 103
         },
         sizeY = {
@@ -102,7 +102,7 @@ local options = {
             desc = 'Size Y' .. getDefaultStr('sizeY'),
             min = 0,
             max = 1000,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 103
         }
     }
@@ -125,6 +125,7 @@ function Module:OnEnable()
         Module.Era()
     end
     Module:ApplySettings()
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Chat', {name = 'Chat', options = options, default = setDefaultValues})
 end
 
 function Module:OnDisable()
