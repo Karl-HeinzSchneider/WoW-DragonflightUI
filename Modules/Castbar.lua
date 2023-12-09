@@ -74,7 +74,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {type = 'header', name = 'Config - Player', order = 100},
+        config = {type = 'header', name = 'Player', order = 100},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -92,7 +92,7 @@ local options = {
             min = -2500,
             max = 2500,
             bigStep = 0.50,
-            order = 102
+            order = 102.1
         },
         y = {
             type = 'range',
@@ -101,7 +101,7 @@ local options = {
             min = -2500,
             max = 2500,
             bigStep = 0.50,
-            order = 102
+            order = 102.2
         },
         sizeX = {
             type = 'range',

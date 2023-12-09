@@ -236,6 +236,10 @@ function SettingsListMixinDF:Display(data)
     end
 
     self.Header.Title:SetText(data.name)
+    self.Header.DefaultsButton:Hide()
+
+    -- self.Header.DefaultsButton:Show()
+    -- self.Header.DefaultsButton:SetText('TEST')
 
     -- https://stackoverflow.com/a/15706820
     function spairs(t, order)
@@ -265,7 +269,7 @@ function SettingsListMixinDF:Display(data)
         return t[b].order > t[a].order
     end) do
         local elementData = {key = k, args = v, viewH = 45}
-        if v.name ~= '' then self.DataProvider:Insert(elementData) end
+        if v.name ~= '' and v.name ~= 'Enable' and v.type ~= 'execute' then self.DataProvider:Insert(elementData) end
         -- print(k, v.order)
     end
 end
