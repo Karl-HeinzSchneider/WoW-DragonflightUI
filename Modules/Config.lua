@@ -94,6 +94,40 @@ function Module:AddConfigFrame()
     Module:RegisterChatCommand('dragonflight', 'SlashCommand')
     Module:RegisterChatCommand('df', 'SlashCommand')
 
+    Module:AddTestConfig()
+end
+
+function Module:AddTestConfig()
+    local options = {
+        name = 'WhatsNew',
+        get = function(info)
+            return false
+        end,
+        args = {
+            configSize = {type = 'header', name = 'Size', order = 1},
+            tog = {type = 'toggle', name = 'toggle me', order = 42},
+            selectTest = {
+                type = 'select',
+                name = 'selectTest',
+                desc = 'testing',
+                values = {
+                    ['TOP'] = 'TOP',
+                    ['RIGHT'] = 'RIGHT',
+                    ['BOTTOM'] = 'BOTTOM',
+                    ['LEFT'] = 'LEFT',
+                    ['TOPRIGHT'] = 'TOPRIGHT',
+                    ['TOPLEFT'] = 'TOPLEFT',
+                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                    ['CENTER'] = 'CENTER'
+                },
+                order = 69
+            },
+            steptog = {type = 'toggle', name = 'toggle me steptoggler', order = 666}
+        }
+    }
+    local config = {name = 'WhatsNew', options = options}
+    Module:RegisterOptionScreen('General', 'WhatsNew', config)
 end
 
 function Module:ToggleConfigFrame()

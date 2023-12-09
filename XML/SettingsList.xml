@@ -122,6 +122,8 @@
 			</CheckButton>
 			<Frame parentKey="Slider" inherits="SettingsSliderTemplateDF" hidden="false" setAllPoints="false">
 			</Frame>
+			<Frame parentKey="Dropdown" inherits="SettingsDropdownTemplateDF" hidden="false" setAllPoints="false">
+			</Frame>
 		</Frames>
 	</Frame>
 	<!-- Checkbox -->
@@ -153,6 +155,55 @@
 			<OnLoad method="OnLoad" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Frame>
+	<!-- Dropdown -->
+	<Frame name="SettingsDropdownTemplateDF" mixin="SettingsDropdownMixinDF" virtual="true">
+		<Size x="223" y="38" />
+		<KeyValues>
+			<KeyValue key="decrementOffsetX" value="4" type="number" />
+			<KeyValue key="incrementOffsetX" value="-4" type="number" />
+		</KeyValues>
+		<Frames>
+			<Button mixin="SelectionPopoutButtonMixinDF" parentKey="Button">
+				<Size x="250" y="38" />
+				<Anchors>
+					<Anchor point="CENTER" />
+				</Anchors>
+				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-dropdownbox" />
+				<HighlightTexture parentKey="HighlightTexture" atlas="charactercreate-customize-dropdownbox-open" alphaMode="ADD" alpha="0" />
+				<PushedTextOffset x="2" y="-2" />
+				<Frames>
+					<Frame parentKey="Popout" inherits="SelectionPopoutTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="3" y="11" />
+						</Anchors>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad method="OnLoad" />
+					<OnHide method="OnHide" />
+					<OnMouseDown method="OnMouseDown" />
+					<OnMouseWheel method="OnMouseWheel" />
+					<OnEnter method="OnEnter" />
+					<OnLeave method="OnLeave" />
+				</Scripts>
+			</Button>
+			<Button parentKey="IncrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
+				<Size x="32" y="32" />
+				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-nextbutton" />
+				<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-nextbutton-down" />
+				<DisabledTexture atlas="charactercreate-customize-nextbutton-disabled" />
+			</Button>
+			<Button parentKey="DecrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
+				<Size x="32" y="32" />
+				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-backbutton" />
+				<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-backbutton-down" />
+				<DisabledTexture atlas="charactercreate-customize-backbutton-disabled" />
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
 </Ui>

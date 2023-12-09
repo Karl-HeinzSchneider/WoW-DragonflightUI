@@ -47,8 +47,11 @@ function ScrollableListItemMixinDF:Init(elementData)
         list:RegisterCallback('OnDefaults', function(self, ...)
             self.Item.Checkbox:SetValue(get({key}))
         end, self)
-    elseif data.type == 'toggle' then
-        --
+    elseif data.type == 'select' then
+        print('select')
+        self:SetText(data.name)
+        self:SetTooltip(data.name, data.desc)
+        self:SetDropdown()
     elseif data.type == 'toggle' then
     end
 end
@@ -73,6 +76,12 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Slider:SetPoint("LEFT", self, "CENTER", -80, 3)
     self.Item.Slider:Hide()
     self.Item.Slider:UnregisterCallback('OnValueChanged', self)
+
+    self.Item.Dropdown:SetParent(self)
+    self.Item.Dropdown:SetPoint("LEFT", self, "CENTER", -40, 3)
+    self.Item.Dropdown:Hide()
+    self.Item.Dropdown:UnregisterCallback('OnValueChanged', self)
+
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
@@ -102,6 +111,10 @@ function ScrollableListItemMixinDF:SetSlider(value, minValue, maxValue, step)
     self.Item.Slider.Slider:SetMinMaxValues(minValue, maxValue)
     self.Item.Slider.Slider:SetValueStep(step)
     self.Item.Slider.Slider:SetValue(value)
+end
+
+function ScrollableListItemMixinDF:SetDropdown()
+    self.Item.Dropdown:Show()
 end
 
 --- Checkbox
@@ -196,7 +209,58 @@ function SettingsSliderMixinDF:OnLeave()
     SettingsTooltip:Hide();
 end
 
-local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26}
+--- dropdown button
+SelectionPopoutButtonMixinDF = CreateFromMixins(CallbackRegistryMixin)
+SelectionPopoutButtonMixinDF:GenerateCallbackEvents({"OnValueChanged"})
+
+function SelectionPopoutButtonMixinDF:OnLoad()
+    -- print('SelectionPopoutButtonMixinDF', 'OnLoad')
+    CallbackRegistryMixin.OnLoad(self);
+
+    self.parent = self:GetParent();
+end
+function SelectionPopoutButtonMixinDF:OnHide()
+end
+function SelectionPopoutButtonMixinDF:OnMouseDown()
+end
+function SelectionPopoutButtonMixinDF:OnMouseWheel()
+end
+function SelectionPopoutButtonMixinDF:OnEnter()
+    if self.parent.OnEnter then self.parent:OnEnter(); end
+    if not self.Popout:IsShown() then self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox-hover"); end
+end
+function SelectionPopoutButtonMixinDF:OnLeave()
+    if self.parent.OnLeave then self.parent:OnLeave(); end
+    if not self.Popout:IsShown() then self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox"); end
+end
+
+--- dropdown
+SettingsDropdownMixinDF = CreateFromMixins(CallbackRegistryMixin)
+SettingsDropdownMixinDF:GenerateCallbackEvents({"OnValueChanged"})
+
+function SettingsDropdownMixinDF:OnLoad()
+    -- print('SettingsDropdownMixinDF', 'OnLoad')
+    CallbackRegistryMixin.OnLoad(self);
+    -- local xOffset = self.incrementOffsetX or 4;
+    -- self.IncrementButton:SetPoint("LEFT", self.Button, "RIGHT", xOffset, 0);
+    -- self.IncrementButton:SetScript("OnClick", GenerateClosure(self.OnIncrementClicked, self));
+
+    -- xOffset = self.decrementOffsetX or -5;
+    -- self.DecrementButton:SetPoint("RIGHT", self.Button, "LEFT", xOffset, 0);
+    -- self.DecrementButton:SetScript("OnClick", GenerateClosure(self.OnDecrementClicked, self));
+    local xOffset = self.incrementOffsetX or 4
+    self.IncrementButton:SetPoint("LEFT", self.Button, "RIGHT", xOffset, 0)
+
+    xOffset = self.decrementOffsetX or -5
+    self.DecrementButton:SetPoint("RIGHT", self.Button, "LEFT", xOffset, 0)
+
+end
+function SettingsDropdownMixinDF:OnEnter()
+end
+function SettingsDropdownMixinDF:OnLeave()
+end
+
+local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26}
 
 --- Settingslist
 SettingsListMixinDF = CreateFromMixins(CallbackRegistryMixin);
@@ -205,7 +269,7 @@ SettingsListMixinDF:GenerateCallbackEvents({"OnDefaults"});
 function SettingsListMixinDF:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
 
-    print('SettingsListMixinDF', 'OnLoad')
+    -- print('SettingsListMixinDF', 'OnLoad')
     self.DataProvider = CreateDataProvider()
 
     local verticalPad = 10;
