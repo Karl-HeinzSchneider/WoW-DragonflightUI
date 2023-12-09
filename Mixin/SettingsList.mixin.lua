@@ -220,32 +220,6 @@ function SettingsListMixinDF:OnLoad()
     -- ScrollUtil.AddResizableChildrenBehavior(self.ScrollBox);
 end
 
-function SettingsListMixinDF:AppendListItem() -- this creates the line items 
-    local color = CreateColor(fastrandom(), fastrandom(), fastrandom())
-    local text = string.format("Time: %.5f", GetTime())
-
-    local elementData = -- Used by the list to display each list row text and color as they're scrolled
-    {color = color, text = text, viewH = 21}
-
-    self.DataProvider:Insert(elementData)
-    self.ScrollBox:ScrollToEnd(ScrollBoxConstants.NoScrollInterpolation)
-end
-
-function SettingsListMixinDF:SetRandomProvider()
-    -- self.DataProvider = CreateDataProvider()
-    -- self.ScrollView:SetDataProvider(self.DataProvider)
-    self.DataProvider:Flush()
-
-    local rnd = fastrandom(0, 42)
-    print('random', i)
-
-    for i = 1, rnd do
-        print('rnd', i)
-        self:AppendListItem()
-    end
-
-end
-
 function SettingsListMixinDF:Display(data)
     -- self.DataProvider:Flush()
     self.DataProvider = CreateDataProvider()
