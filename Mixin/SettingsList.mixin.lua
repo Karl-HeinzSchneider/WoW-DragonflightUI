@@ -260,7 +260,7 @@ function SettingsListMixinDF:Display(data)
         return t[b].order > t[a].order
     end) do
         local elementData = {key = k, args = v, viewH = 45}
-        self.DataProvider:Insert(elementData)
+        if v.name ~= '' then self.DataProvider:Insert(elementData) end
         -- print(k, v.order)
     end
 end
