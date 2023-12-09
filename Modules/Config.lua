@@ -88,6 +88,9 @@ function Module:AddConfigFrame()
     Module.ConfigFrame = config
     -- config:Show()
 
+    _G['DragonflightUIConfigFrame'] = config
+    tinsert(UISpecialFrames, 'DragonflightUIConfigFrame')
+
     Module:RegisterChatCommand('dragonflight', 'SlashCommand')
     Module:RegisterChatCommand('df', 'SlashCommand')
 
