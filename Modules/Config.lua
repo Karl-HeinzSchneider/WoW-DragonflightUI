@@ -112,7 +112,10 @@ function Module:RegisterOptionScreen(cat, sub, data)
     local config = Module.ConfigFrame
     local subCategory = config:GetSubCategory(cat, sub)
 
-    if subCategory then subCategory:SetDisplayData(data) end
+    if subCategory then
+        subCategory:SetDisplayData(data)
+        subCategory:SetEnabled(true)
+    end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)

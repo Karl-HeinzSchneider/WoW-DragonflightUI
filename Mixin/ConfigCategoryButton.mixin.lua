@@ -11,7 +11,7 @@ function DragonFlightUIConfigCategoryButtonMixin:OnLoad()
 
     self.over = nil
     self.down = nil
-    self.isEnabled = true
+    self.isEnabled = false
     self.isSelected = false
 
     self.category = nil
@@ -20,6 +20,8 @@ function DragonFlightUIConfigCategoryButtonMixin:OnLoad()
 
     self.displayData = nil
     self.displayFrame = nil
+
+    self:UpdateState()
 end
 
 function DragonFlightUIConfigCategoryButtonMixin:OnEnter()
@@ -58,7 +60,7 @@ end
 
 function DragonFlightUIConfigCategoryButtonMixin:BtnClicked()
     -- print('DragonFlightUIConfigCategoryButtonMixin:BtnClicked()')  
-    self.categoryRef.configRef:SubCategoryBtnClicked(self)
+    if self:IsEnabled() then self.categoryRef.configRef:SubCategoryBtnClicked(self) end
     self:UpdateState()
 end
 
@@ -95,12 +97,20 @@ end
 
 function DragonFlightUIConfigCategoryButtonMixin:UpdateState()
     -- self:UpdateStateInternal(g_selectionBehavior:IsSelected(self));
-    if self.isSelected then
+    if not self:IsEnabled() then
         self.Label:SetFontObject("GameFontHighlight");
+        self.Label:SetAlpha(0.5)
+
+        self.Texture:Hide()
+    elseif self.isSelected then
+        self.Label:SetFontObject("GameFontHighlight");
+        self.Label:SetAlpha(1)
+
         self.Texture:SetAtlas("Options_List_Active", TextureKitConstants.UseAtlasSize);
         self.Texture:Show();
     else
         self.Label:SetFontObject("GameFontNormal");
+        self.Label:SetAlpha(1)
 
         if self.over then
             self.Texture:SetAtlas("Options_List_Hover", TextureKitConstants.UseAtlasSize);

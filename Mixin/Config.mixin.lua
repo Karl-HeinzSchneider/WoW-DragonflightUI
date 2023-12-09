@@ -60,6 +60,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         -- General
         local cat = self:AddCategory('General')
         self:AddSubCategory(cat, 'Info')
+        self:AddSubCategory(cat, 'Modules')
         self:AddSubCategory(cat, 'Profiles')
         self:AddSubCategory(cat, 'WhatsNew')
 
