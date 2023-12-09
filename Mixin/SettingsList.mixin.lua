@@ -294,7 +294,26 @@ function SettingsListMixinDF:Display(data)
     for k, v in spairs(data.options.args, function(t, a, b)
         return t[b].order > t[a].order
     end) do
-        local elementData = {key = k, args = v, get = data.options.get, set = data.options.set, settingsList = self}
+        local elementData
+        if data.sub then
+            local subGet = function(info)
+                -- print('subGet', info[1])
+                local newInfo = {}
+                newInfo[1] = data.sub
+                newInfo[2] = info[1]
+                return data.options.get(newInfo)
+            end
+            local subSet = function(info, value)
+                local newInfo = {}
+                newInfo[1] = data.sub
+                newInfo[2] = info[1]
+                return data.options.set(newInfo, value)
+            end
+            elementData = {key = k, args = v, get = subGet, set = subSet, settingsList = self}
+        else
+            elementData = {key = k, args = v, get = data.options.get, set = data.options.set, settingsList = self}
+        end
+
         if v.name ~= '' and v.name ~= 'Enable' and v.type ~= 'execute' then self.DataProvider:Insert(elementData) end
         -- print(k, v.order)
     end
