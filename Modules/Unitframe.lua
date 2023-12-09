@@ -116,6 +116,15 @@ local function setDefaultValues()
     Module.ApplySettings()
 end
 
+local function setDefaultSubValues(sub)
+    local db = Module.db.profile
+
+    if db[sub] then
+        for k, v in pairs(defaults.profile[sub]) do db[sub][k] = v end
+        Module.ApplySettings()
+    end
+end
+
 -- db[info[#info] = VALUE
 local function getOption(info)
     local key = info[1]
@@ -175,8 +184,8 @@ local optionsPlayer = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'player'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 50.1
         },
         configPos = {type = 'header', name = 'Position', order = 100},
@@ -221,7 +230,7 @@ local optionsPlayer = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'player'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 107
         },
         y = {
@@ -230,7 +239,7 @@ local optionsPlayer = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'player'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 108
         }
     }
@@ -276,8 +285,8 @@ local optionsTarget = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'target'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 50.1
         },
         configPos = {type = 'header', name = 'Position', order = 100},
@@ -322,7 +331,7 @@ local optionsTarget = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'target'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 107
         },
         y = {
@@ -331,7 +340,7 @@ local optionsTarget = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'target'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 108
         }
     }
@@ -355,7 +364,7 @@ local optionsPet = {
             type = 'toggle',
             name = 'threat glow',
             desc = 'Enable threat glow',
-            order = 10.4,
+            order = 10.1,
             disabled = true
         },
         configSize = {type = 'header', name = 'Size', order = 50},
@@ -364,8 +373,8 @@ local optionsPet = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'pet'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 50.1
         },
         configPos = {type = 'header', name = 'Position', order = 100},
@@ -410,7 +419,7 @@ local optionsPet = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 107
         },
         y = {
@@ -419,7 +428,7 @@ local optionsPet = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 108
         }
     }
@@ -451,8 +460,8 @@ local optionsFocus = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'focus'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 50.1
         },
         configPos = {type = 'header', name = 'Position', order = 100},
@@ -497,7 +506,7 @@ local optionsFocus = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'focus'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 107
         },
         y = {
@@ -506,7 +515,7 @@ local optionsFocus = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'focus'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 108
         }
     }
@@ -538,8 +547,8 @@ local optionsParty = {
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'party'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 50.1
         },
         configPos = {type = 'header', name = 'Position', order = 100},
@@ -584,7 +593,7 @@ local optionsParty = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'party'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 107
         },
         y = {
@@ -593,7 +602,7 @@ local optionsParty = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'party'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
+            bigStep = 1,
             order = 108
         }
     }
@@ -663,9 +672,71 @@ function Module:OnEnable()
     hooksecurefunc('UIParent_UpdateTopFramePositions', function()
         Module:SaveLocalSettings()
     end)
+    Module:RegisterOptionScreens()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterOptionScreens()
+    local function filterTableByFunction(opts, fnc)
+        local newOpts = {}
+        for k, v in pairs(opts) do if k ~= 'args' then newOpts[k] = v end end
+        newOpts.args = {}
+        for k, v in pairs(opts.args) do if fnc(v.type) then newOpts.args[k] = v end end
+        return newOpts
+    end
+
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Focus', {
+        name = 'Focus',
+        sub = 'focus',
+        options = filterTableByFunction(optionsFocus, function(v)
+            return v ~= 'header' and v ~= 'select'
+        end),
+        default = function()
+            setDefaultSubValues('focus')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Party', {
+        name = 'Party',
+        sub = 'party',
+        options = filterTableByFunction(optionsParty, function(v)
+            return v ~= 'header' and v ~= 'select'
+        end),
+        default = function()
+            setDefaultSubValues('party')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Pet', {
+        name = 'Pet',
+        sub = 'pet',
+        options = filterTableByFunction(optionsPet, function(v)
+            return v ~= 'header' and v ~= 'select'
+        end),
+        default = function()
+            setDefaultSubValues('pet')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Player', {
+        name = 'Player',
+        sub = 'player',
+        options = filterTableByFunction(optionsPlayer, function(v)
+            return v ~= 'header' and v ~= 'select'
+        end),
+        default = function()
+            setDefaultSubValues('player')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Target', {
+        name = 'Target',
+        sub = 'target',
+        options = filterTableByFunction(optionsTarget, function(v)
+            return v ~= 'header' and v ~= 'select'
+        end),
+        default = function()
+            setDefaultSubValues('target')
+        end
+    })
 end
 
 function Module:SaveLocalSettings()
