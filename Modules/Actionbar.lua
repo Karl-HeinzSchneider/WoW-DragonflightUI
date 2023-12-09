@@ -24,24 +24,71 @@ local defaults = {
 
 local defaultsActionbarPROTO = {scale = 1, x = 0, y = 0, orientation = 'horizontal', rows = 3, buttons = 12}
 
-local function getDefaultStr(key)
-    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+local function getDefaultStr(key, sub)
+    -- print('default str', sub, key)
+    if sub then
+        local obj = defaults.profile[sub]
+        local value = obj[key]
+        return '\n' .. '(Default: ' .. tostring(value) .. ')'
+    else
+        local obj = defaults.profile
+        local value = obj[key]
+        return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
+    end
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
+    for k, v in pairs(defaults.profile) do
+        if type(v) == 'table' then
+            local obj = Module.db.profile[k]
+            for kSub, vSub in pairs(v) do obj[kSub] = vSub end
+        else
+            Module.db.profile[k] = v
+        end
+    end
     Module.ApplySettings()
+end
+
+local function setDefaultSubValues(sub)
+    local db = Module.db.profile
+
+    if db[sub] then
+        for k, v in pairs(defaults.profile[sub]) do db[sub][k] = v end
+        Module.ApplySettings()
+    end
 end
 
 -- db[info[#info] = VALUE
 local function getOption(info)
-    return db[info[#info]]
+    local key = info[1]
+    local sub = info[2]
+    -- print('getOption', key, sub)
+    -- print('db', db[key])
+
+    if sub then
+        -- return db[key .. '.' .. sub]
+        local t = Module.db.profile[key]
+        return t[sub]
+    else
+        -- return db[info[#info]]
+        return db[key]
+    end
 end
 
 local function setOption(info, value)
     local key = info[1]
-    Module.db.profile[key] = value
-    Module.ApplySettings()
+    local sub = info[2]
+    -- print('setOption', key, sub)
+
+    if sub then
+        local t = Module.db.profile[key]
+        t[sub] = value
+        -- Module.db.profile[key .. '.' .. sub] = value
+        Module.ApplySettings()
+    else
+        Module.db.profile[key] = value
+        Module.ApplySettings()
+    end
 end
 
 local options = {
