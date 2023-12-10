@@ -51,7 +51,8 @@ function ScrollableListItemMixinDF:Init(elementData)
         print('select')
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
-        self:SetDropdown()
+        self:SetDropdown(data.values)
+        self.Item.Dropdown:SetDropdownSelection('TOP')
     elseif data.type == 'toggle' then
     end
 end
@@ -113,10 +114,9 @@ function ScrollableListItemMixinDF:SetSlider(value, minValue, maxValue, step)
     self.Item.Slider.Slider:SetValue(value)
 end
 
-function ScrollableListItemMixinDF:SetDropdown()
+function ScrollableListItemMixinDF:SetDropdown(options)
     self.Item.Dropdown:Show()
-    self.Item.Dropdown:SetDropdownSelectionOptions({})
-    self.Item.Dropdown:SetDropdownSelection('SELECTS')
+    self.Item.Dropdown:SetDropdownSelectionOptions(options)
 end
 
 --- Checkbox
@@ -221,16 +221,21 @@ function SelectionPopoutButtonMixinDF:OnLoad()
 
     self.parent = self:GetParent();
 end
+
 function SelectionPopoutButtonMixinDF:OnHide()
 end
+
 function SelectionPopoutButtonMixinDF:OnMouseDown()
 end
+
 function SelectionPopoutButtonMixinDF:OnMouseWheel()
 end
+
 function SelectionPopoutButtonMixinDF:OnEnter()
     if self.parent.OnEnter then self.parent:OnEnter(); end
     if not self.Popout:IsShown() then self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox-hover"); end
 end
+
 function SelectionPopoutButtonMixinDF:OnLeave()
     if self.parent.OnLeave then self.parent:OnLeave(); end
     if not self.Popout:IsShown() then self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox"); end
@@ -246,27 +251,139 @@ function SettingsDropdownMixinDF:OnLoad()
 
     local xOffset = self.incrementOffsetX or 4
     self.IncrementButton:SetPoint("LEFT", self.Button, "RIGHT", xOffset, 0)
+    self.IncrementButton:SetScript("OnClick", GenerateClosure(self.OnIncrementClicked, self));
 
     xOffset = self.decrementOffsetX or -5
     self.DecrementButton:SetPoint("RIGHT", self.Button, "LEFT", xOffset, 0)
+    self.DecrementButton:SetScript("OnClick", GenerateClosure(self.OnDecrementClicked, self));
 
     self.options = {}
-    self.selectedOption = nil
+    self.selectedIndex = 0
 
+    self.isEnabledDF = true
 end
+
 function SettingsDropdownMixinDF:OnEnter()
 end
+
 function SettingsDropdownMixinDF:OnLeave()
+end
+
+function SettingsDropdownMixinDF:IsEnabledDF()
+    return self.isEnabledDF
 end
 
 function SettingsDropdownMixinDF:SetDropdownSelection(selection)
     self.Button.SelectionDetails.SelectionName:Show()
-    self.Button.SelectionDetails.SelectionName:SetText(selection)
+    local index = self:GetIndex(selection)
+    print('index', selection, index)
+    if index > 0 then
+        self.selectedIndex = index
+        local option = self.options[index]
+        self.Button.SelectionDetails.SelectionName:SetText(option.value)
+
+    else
+        self.Button.SelectionDetails.SelectionName:SetText('ERROR')
+    end
 
 end
+
 function SettingsDropdownMixinDF:SetDropdownSelectionOptions(options)
-    self.options = options
+
+    local newTable = {}
+
+    for k, v in pairs(options) do table.insert(newTable, {key = k, value = v}) end
+
+    self.options = newTable
+    DevTools_Dump(newTable)
 end
+
+function SettingsDropdownMixinDF:GetIndex(value)
+    for k, v in pairs(self.options) do if v.key == value then return k end end
+    return 0
+end
+
+function SettingsDropdownMixinDF:GetAdjustedIndex(forward, selections)
+    if not self.selectedIndex then return nil; end
+    local offset = forward and 1 or -1;
+    local nextIndex = self.selectedIndex + offset;
+    local data = selections[nextIndex];
+    while data do
+        if data.disabled == nil and not data.isLocked then
+            return nextIndex;
+        else
+            nextIndex = nextIndex + offset;
+            data = selections[nextIndex];
+        end
+    end
+
+    return nil;
+end
+
+function SettingsDropdownMixinDF:OnIncrementClicked(button, buttonName, down)
+    self:Increment();
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+end
+
+function SettingsDropdownMixinDF:Increment()
+    local forward = true;
+    local index = self:GetAdjustedIndex(forward, self.options);
+    self:SetSelectedIndex(index);
+end
+
+function SettingsDropdownMixinDF:OnDecrementClicked(button, buttonName, down)
+    self:Decrement();
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+end
+
+function SettingsDropdownMixinDF:Decrement()
+    local forward = false;
+    local index = self:GetAdjustedIndex(forward, self.options);
+    self:SetSelectedIndex(index);
+end
+
+function SettingsDropdownMixinDF:SetSelectedIndex(newIndex)
+    local oldIndex = self.selectedIndex;
+    local isNewIndex = newIndex and newIndex ~= oldIndex;
+    if isNewIndex then
+        self.selectedIndex = newIndex;
+        self:Update();
+        print('setindex', oldIndex, newIndex)
+
+        local option = self.options[newIndex]
+        self.Button.SelectionDetails.SelectionName:SetText(option.value)
+
+        self:TriggerEvent(SettingsDropdownMixinDF.Event.OnValueChanged, self.options[newIndex].key);
+    end
+end
+
+function SettingsDropdownMixinDF:Update()
+    -- print('Update!')
+    self:UpdateButtons()
+    self:UpdatePopout()
+end
+
+function SettingsDropdownMixinDF:UpdateButtons()
+    local enabled = self:IsEnabledDF()
+    if enabled then
+        local incr = self.selectedIndex == #self.options
+        self.IncrementButton:SetEnabled(not incr)
+
+        local decr = self.selectedIndex == 1
+        self.DecrementButton:SetEnabled(not decr)
+        print(incr, decr)
+    else
+        self.IncrementButton:SetEnabled(false)
+        self.DecrementButton:SetEnabled(false)
+    end
+    -- print('UpdateButtons')
+end
+
+function SettingsDropdownMixinDF:UpdatePopout()
+    -- print('UpdatePopout!')
+end
+
+------------------------------------
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26}
 
