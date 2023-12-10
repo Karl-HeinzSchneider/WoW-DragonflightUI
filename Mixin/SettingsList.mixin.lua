@@ -9,7 +9,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     local get = elementData.get
     local set = elementData.set
     local list = elementData.settingsList
-
+    -- print('init', key, data)
     self:Reset()
 
     if data.type == 'header' then
@@ -48,14 +48,13 @@ function ScrollableListItemMixinDF:Init(elementData)
             self.Item.Checkbox:SetValue(get({key}))
         end, self)
     elseif data.type == 'select' then
-        print('select')
+        -- print('select')
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetDropdown(data.values)
         self.Item.Dropdown:SetDropdownSelection('TOP')
         self.Item.Dropdown:RegisterCallback('OnValueChanged', function(self, ...)
-
-            print('OnValueChanged', ...)
+            print('OnValueChanged', key, ...)
         end)
     elseif data.type == 'toggle' then
     end
@@ -293,6 +292,13 @@ function SettingsDropdownMixinDF:OnLoad()
     self.selectedIndex = 0
 
     self.isEnabledDF = true
+
+    self.Button.Popout:RegisterCallback('OnEntryClicked', function(self, ...)
+        local index = ...
+        print('clicked', index, 'SettingsDropdownMixinDF')
+        self:SetSelectedIndex(index)
+    end, self)
+
 end
 
 function SettingsDropdownMixinDF:OnEnter()
@@ -308,7 +314,7 @@ end
 function SettingsDropdownMixinDF:SetDropdownSelection(selection)
     self.Button.SelectionDetails.SelectionName:Show()
     local index = self:GetIndex(selection)
-    print('index', selection, index)
+    -- print('index', selection, index)
     if index > 0 then
         self.selectedIndex = index
         local option = self.options[index]
@@ -321,13 +327,12 @@ function SettingsDropdownMixinDF:SetDropdownSelection(selection)
 end
 
 function SettingsDropdownMixinDF:SetDropdownSelectionOptions(options)
-
     local newTable = {}
 
     for k, v in pairs(options) do table.insert(newTable, {key = k, value = v}) end
 
     self.options = newTable
-    DevTools_Dump(newTable)
+    -- DevTools_Dump(newTable)
     self.Button.Popout:SetEntrys(newTable)
 end
 
@@ -381,7 +386,7 @@ function SettingsDropdownMixinDF:SetSelectedIndex(newIndex)
     if isNewIndex then
         self.selectedIndex = newIndex;
         self:Update();
-        print('setindex', oldIndex, newIndex)
+        -- print('setindex', oldIndex, newIndex)
 
         local option = self.options[newIndex]
         self.Button.SelectionDetails.SelectionName:SetText(option.value)
@@ -405,7 +410,7 @@ function SettingsDropdownMixinDF:UpdateButtons()
 
         local decr = self.selectedIndex == 1
         self.DecrementButton:SetEnabled(not decr)
-        print(incr, decr)
+        -- print(incr, decr)
     else
         self.IncrementButton:SetEnabled(false)
         self.DecrementButton:SetEnabled(false)
@@ -419,10 +424,12 @@ end
 
 ----- popup
 
-SelectionPopoutMixinDF = {}
+SelectionPopoutMixinDF = CreateFromMixins(CallbackRegistryMixin);
+SelectionPopoutMixinDF:GenerateCallbackEvents({"OnEntryClicked"});
 
 function SelectionPopoutMixinDF:OnLoad()
-    print('SelectionPopoutMixinDF:OnLoad()')
+    -- print('SelectionPopoutMixinDF:OnLoad()')
+    CallbackRegistryMixin.OnLoad(self);
 
     self.MAX_POOL = 16
     self.entryPool = {}
@@ -438,13 +445,25 @@ end
 function SelectionPopoutMixinDF:OnHide()
 end
 
+function SelectionPopoutMixinDF:OnEntryClicked(index)
+    self:TriggerEvent(SettingsSelectionPopoutEntryMixinDF.Event.OnEntryClicked, index)
+    self:Hide()
+end
+
 function SelectionPopoutMixinDF:CreateEntrys(MAX_POOL)
     local last = nil
-    local heightPadding = 13
+    local heightPadding = 12
     for i = 1, MAX_POOL do
         local tmp = CreateFrame('Button', nil, self, 'SettingsSelectionPopoutEntryTemplateDF')
         table.insert(self.entryPool, tmp)
+
+        tmp.index = i
         tmp.SelectionName:SetText('TMP' .. i)
+
+        tmp:RegisterCallback('OnEntryClicked', function(self, ...)
+            self:OnEntryClicked(...)
+        end, self)
+
         if last then
             tmp:SetPoint('TOP', last, 'BOTTOM', 0, 0)
         else
@@ -455,10 +474,10 @@ function SelectionPopoutMixinDF:CreateEntrys(MAX_POOL)
 end
 
 function SelectionPopoutMixinDF:SetHeightForN(n)
-    local heightPadding = 13
+    local heightPadding = 12
     local h = 20
     local newHeight = 2 * heightPadding + (n + 1) * h
-    print('newHeight', newHeight)
+    -- print('newHeight', newHeight)
     self:SetHeight(newHeight)
 end
 
@@ -498,13 +517,18 @@ end
 
 --- popup entry
 
-SettingsSelectionPopoutEntryMixinDF = {}
+SettingsSelectionPopoutEntryMixinDF = CreateFromMixins(CallbackRegistryMixin)
+SettingsSelectionPopoutEntryMixinDF:GenerateCallbackEvents({"OnEntryClicked"})
 
 function SettingsSelectionPopoutEntryMixinDF:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
     self.isSelected = false
+    self.index = 0
 end
 
 function SettingsSelectionPopoutEntryMixinDF:OnClick()
+    self:TriggerEvent(SettingsSelectionPopoutEntryMixinDF.Event.OnEntryClicked, self.index)
+    -- print('clicked', self.index)
 end
 
 function SettingsSelectionPopoutEntryMixinDF:OnEnter()

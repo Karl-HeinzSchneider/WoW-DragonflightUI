@@ -120,9 +120,9 @@
 			</Frame>
 			<CheckButton parentKey="Checkbox" inherits="SettingsCheckBoxTemplateDF" hidden="true" setAllPoints="false">
 			</CheckButton>
-			<Frame parentKey="Slider" inherits="SettingsSliderTemplateDF" hidden="false" setAllPoints="false">
+			<Frame parentKey="Slider" inherits="SettingsSliderTemplateDF" hidden="true" setAllPoints="false">
 			</Frame>
-			<Frame parentKey="Dropdown" inherits="SettingsDropdownTemplateDF" hidden="false" setAllPoints="false">
+			<Frame parentKey="Dropdown" inherits="SettingsDropdownTemplateDF" hidden="true" setAllPoints="false">
 			</Frame>
 		</Frames>
 	</Frame>
@@ -272,8 +272,10 @@
 			</Frame>
 		</Frames>
 		<Scripts>
+			<OnLoad method="OnLoad" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
 		</Scripts>
 	</Button>
 </Ui>
