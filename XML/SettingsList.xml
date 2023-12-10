@@ -177,10 +177,7 @@
 				<HighlightTexture parentKey="HighlightTexture" atlas="charactercreate-customize-dropdownbox-open" alphaMode="ADD" alpha="0" />
 				<PushedTextOffset x="2" y="-2" />
 				<Frames>
-					<Frame parentKey="Popout" inherits="SelectionPopoutTemplate" hidden="true">
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="3" y="11" />
-						</Anchors>
+					<Frame parentKey="Popout" inherits="SelectionPopoutTemplateDF" hidden="true">
 					</Frame>
 					<Frame parentKey="SelectionDetails" setAllPoints="true" mixin="SettingsSelectionPopoutDetailsMixin">
 						<Size x="250" y="20" />
@@ -217,4 +214,41 @@
 			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<Frame name="SelectionPopoutTemplateDF" mixin="SelectionPopoutMixinDF" virtual="true">
+		<Size x="250" y="255" />
+		<Anchors>
+			<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="3" y="11" />
+		</Anchors>
+		<Frames>
+			<Frame parentKey="Border" useParentLevel="true" inherits="NineSlicePanelTemplate">
+				<KeyValues>
+					<KeyValue key="layoutType" value="CharacterCreateDropdown" type="string" />
+				</KeyValues>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<OnMouseWheel function="nop" />
+		</Scripts>
+	</Frame>
+	<!-- inherits="SelectionPopoutEntryTemplate"  mixin="SettingsSelectionPopoutEntryMixin" -->
+	<Button name="SettingsSelectionPopoutEntryTemplateDF" mixin="SettingsSelectionPopoutEntryMixinDF" motionScriptsWhileDisabled="true" virtual="true">
+		<Size x="238" y="20" />
+		<Layers>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<FontString parentKey="SelectionName" font="GameFontNormal" justifyH="LEFT" maxLines="1" hidden="false">
+					<Size x="250" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="14" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Button>
 </Ui>

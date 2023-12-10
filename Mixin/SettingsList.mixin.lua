@@ -53,6 +53,10 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetTooltip(data.name, data.desc)
         self:SetDropdown(data.values)
         self.Item.Dropdown:SetDropdownSelection('TOP')
+        self.Item.Dropdown:RegisterCallback('OnValueChanged', function(self, ...)
+
+            print('OnValueChanged', ...)
+        end)
     elseif data.type == 'toggle' then
     end
 end
@@ -226,6 +230,7 @@ function SelectionPopoutButtonMixinDF:OnHide()
 end
 
 function SelectionPopoutButtonMixinDF:OnMouseDown()
+    self:TogglePopout()
 end
 
 function SelectionPopoutButtonMixinDF:OnMouseWheel()
@@ -239,6 +244,33 @@ end
 function SelectionPopoutButtonMixinDF:OnLeave()
     if self.parent.OnLeave then self.parent:OnLeave(); end
     if not self.Popout:IsShown() then self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox"); end
+end
+
+function SelectionPopoutButtonMixinDF:TogglePopout()
+    local showPopup = not self.Popout:IsShown();
+    if showPopup then
+        self:ShowPopout();
+    else
+        self:HidePopout();
+    end
+end
+
+function SelectionPopoutButtonMixinDF:ShowPopout()
+    self.Popout:Show();
+    self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox-open");
+    self.HighlightTexture:SetAlpha(0.2);
+end
+
+function SelectionPopoutButtonMixinDF:HidePopout()
+    self.Popout:Hide();
+
+    if GetMouseFocus() == self then
+        self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox-hover");
+    else
+        self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox");
+    end
+
+    self.HighlightTexture:SetAlpha(0);
 end
 
 --- dropdown
@@ -296,6 +328,7 @@ function SettingsDropdownMixinDF:SetDropdownSelectionOptions(options)
 
     self.options = newTable
     DevTools_Dump(newTable)
+    self.Button.Popout:SetEntrys(newTable)
 end
 
 function SettingsDropdownMixinDF:GetIndex(value)
@@ -381,6 +414,86 @@ end
 
 function SettingsDropdownMixinDF:UpdatePopout()
     -- print('UpdatePopout!')
+end
+
+----- popup
+
+SelectionPopoutMixinDF = {}
+
+function SelectionPopoutMixinDF:OnLoad()
+    print('SelectionPopoutMixinDF:OnLoad()')
+
+    self.MAX_POOL = 10
+    self.entryPool = {}
+
+    self:CreateEntrys(self.MAX_POOL)
+    self:SetHeightForN(self.MAX_POOL)
+end
+
+function SelectionPopoutMixinDF:OnShow()
+end
+
+function SelectionPopoutMixinDF:OnHide()
+end
+
+function SelectionPopoutMixinDF:CreateEntrys(MAX_POOL)
+    local last = nil
+    local heightPadding = 13
+    for i = 1, MAX_POOL do
+        local tmp = CreateFrame('Button', nil, self, 'SettingsSelectionPopoutEntryTemplateDF')
+        table.insert(self.entryPool, tmp)
+        tmp.SelectionName:SetText('TMP' .. i)
+        if last then
+            tmp:SetPoint('TOP', last, 'BOTTOM', 0, 0)
+        else
+            tmp:SetPoint('TOP', self, 'TOP', 0, -heightPadding)
+        end
+        last = tmp
+    end
+end
+
+function SelectionPopoutMixinDF:SetHeightForN(n)
+    local heightPadding = 13
+    local h = 20
+    local newHeight = 2 * heightPadding + (n + 1) * h
+    print('newHeight', newHeight)
+    self:SetHeight(newHeight)
+end
+
+function SelectionPopoutMixinDF:SetEntrys(data)
+    local count = #data
+    if count > self.MAX_POOL then
+        print('DATA TO BIG')
+        return
+    end
+
+    for i = 1, count do
+        local tmpSelection = data[i]
+        local tmp = self.entryPool[i]
+        tmp.SelectionName:SetText(tmpSelection.value)
+        tmp.SelectionName.key = tmpSelection.key
+        tmp.SelectionName.value = tmpSelection.value
+    end
+
+    for i = count + 1, self.MAX_POOL do self.entryPool[i]:Hide() end
+
+    self:SetHeightForN(count)
+end
+
+--- popup entry
+
+SettingsSelectionPopoutEntryMixinDF = {}
+
+function SettingsSelectionPopoutEntryMixinDF:OnLoad()
+end
+
+function SettingsSelectionPopoutEntryMixinDF:OnClick()
+end
+
+function SettingsSelectionPopoutEntryMixinDF:OnEnter()
+end
+
+function SettingsSelectionPopoutEntryMixinDF:OnLeave()
 end
 
 ------------------------------------
