@@ -170,6 +170,9 @@
 				<Anchors>
 					<Anchor point="CENTER" />
 				</Anchors>
+				<KeyValues>
+					<KeyValue key="selectionEntryTemplates" value="SettingsSelectionPopoutEntryTemplate" type="string" />
+				</KeyValues>
 				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-dropdownbox" />
 				<HighlightTexture parentKey="HighlightTexture" atlas="charactercreate-customize-dropdownbox-open" alphaMode="ADD" alpha="0" />
 				<PushedTextOffset x="2" y="-2" />
@@ -178,6 +181,14 @@
 						<Anchors>
 							<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="3" y="11" />
 						</Anchors>
+					</Frame>
+					<Frame parentKey="SelectionDetails" setAllPoints="true" mixin="SettingsSelectionPopoutDetailsMixin">
+						<Size x="250" y="20" />
+						<Layers>
+							<Layer level="OVERLAY" textureSubLevel="1">
+								<FontString parentKey="SelectionName" font="GameFontNormal" justifyH="CENTER" maxLines="1" hidden="true" />
+							</Layer>
+						</Layers>
 					</Frame>
 				</Frames>
 				<Scripts>

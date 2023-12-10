@@ -115,6 +115,8 @@ end
 
 function ScrollableListItemMixinDF:SetDropdown()
     self.Item.Dropdown:Show()
+    self.Item.Dropdown:SetDropdownSelectionOptions({})
+    self.Item.Dropdown:SetDropdownSelection('SELECTS')
 end
 
 --- Checkbox
@@ -241,23 +243,29 @@ SettingsDropdownMixinDF:GenerateCallbackEvents({"OnValueChanged"})
 function SettingsDropdownMixinDF:OnLoad()
     -- print('SettingsDropdownMixinDF', 'OnLoad')
     CallbackRegistryMixin.OnLoad(self);
-    -- local xOffset = self.incrementOffsetX or 4;
-    -- self.IncrementButton:SetPoint("LEFT", self.Button, "RIGHT", xOffset, 0);
-    -- self.IncrementButton:SetScript("OnClick", GenerateClosure(self.OnIncrementClicked, self));
 
-    -- xOffset = self.decrementOffsetX or -5;
-    -- self.DecrementButton:SetPoint("RIGHT", self.Button, "LEFT", xOffset, 0);
-    -- self.DecrementButton:SetScript("OnClick", GenerateClosure(self.OnDecrementClicked, self));
     local xOffset = self.incrementOffsetX or 4
     self.IncrementButton:SetPoint("LEFT", self.Button, "RIGHT", xOffset, 0)
 
     xOffset = self.decrementOffsetX or -5
     self.DecrementButton:SetPoint("RIGHT", self.Button, "LEFT", xOffset, 0)
 
+    self.options = {}
+    self.selectedOption = nil
+
 end
 function SettingsDropdownMixinDF:OnEnter()
 end
 function SettingsDropdownMixinDF:OnLeave()
+end
+
+function SettingsDropdownMixinDF:SetDropdownSelection(selection)
+    self.Button.SelectionDetails.SelectionName:Show()
+    self.Button.SelectionDetails.SelectionName:SetText(selection)
+
+end
+function SettingsDropdownMixinDF:SetDropdownSelectionOptions(options)
+    self.options = options
 end
 
 local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26}
