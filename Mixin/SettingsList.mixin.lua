@@ -313,7 +313,7 @@ function SettingsDropdownMixinDF:SetDropdownSelection(selection)
         self.selectedIndex = index
         local option = self.options[index]
         self.Button.SelectionDetails.SelectionName:SetText(option.value)
-
+        self.Button.Popout:UpdateSelected(index)
     else
         self.Button.SelectionDetails.SelectionName:SetText('ERROR')
     end
@@ -385,6 +385,7 @@ function SettingsDropdownMixinDF:SetSelectedIndex(newIndex)
 
         local option = self.options[newIndex]
         self.Button.SelectionDetails.SelectionName:SetText(option.value)
+        self.Button.Popout:UpdateSelected(newIndex)
 
         self:TriggerEvent(SettingsDropdownMixinDF.Event.OnValueChanged, self.options[newIndex].key);
     end
@@ -423,8 +424,9 @@ SelectionPopoutMixinDF = {}
 function SelectionPopoutMixinDF:OnLoad()
     print('SelectionPopoutMixinDF:OnLoad()')
 
-    self.MAX_POOL = 10
+    self.MAX_POOL = 16
     self.entryPool = {}
+    self.data = {}
 
     self:CreateEntrys(self.MAX_POOL)
     self:SetHeightForN(self.MAX_POOL)
@@ -467,6 +469,8 @@ function SelectionPopoutMixinDF:SetEntrys(data)
         return
     end
 
+    self.data = data
+
     for i = 1, count do
         local tmpSelection = data[i]
         local tmp = self.entryPool[i]
@@ -480,20 +484,63 @@ function SelectionPopoutMixinDF:SetEntrys(data)
     self:SetHeightForN(count)
 end
 
+function SelectionPopoutMixinDF:UpdateSelected(index)
+    local count = #self.data
+    for i = 1, count do
+        local tmp = self.entryPool[i]
+        if i == index then
+            tmp:Update(true)
+        else
+            tmp:Update(false)
+        end
+    end
+end
+
 --- popup entry
 
 SettingsSelectionPopoutEntryMixinDF = {}
 
 function SettingsSelectionPopoutEntryMixinDF:OnLoad()
+    self.isSelected = false
 end
 
 function SettingsSelectionPopoutEntryMixinDF:OnClick()
 end
 
 function SettingsSelectionPopoutEntryMixinDF:OnEnter()
+    self.HighlightBGTex:SetAlpha(0.15);
+
+    if not self.isSelected then self.SelectionName:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB()); end
 end
 
 function SettingsSelectionPopoutEntryMixinDF:OnLeave()
+    self.HighlightBGTex:SetAlpha(0);
+
+    if not self.isSelected then
+        --[[ local fontColor = nil;
+		if self.selectionData.disabled == nil then
+			fontColor = VERY_LIGHT_GRAY_COLOR;
+		else
+			fontColor = DISABLED_FONT_COLOR;
+		end ]]
+
+        local fontColor = VERY_LIGHT_GRAY_COLOR
+        self.SelectionName:SetTextColor(fontColor:GetRGB())
+    end
+end
+
+function SettingsSelectionPopoutEntryMixinDF:Update(selected)
+    self.isSelected = selected
+    local fontColor = nil;
+    if selected then
+        fontColor = NORMAL_FONT_COLOR;
+    else
+        fontColor = VERY_LIGHT_GRAY_COLOR;
+    end
+    self.SelectionName:SetTextColor(fontColor:GetRGB());
+
+    local maxNameWidth = 200;
+    if self.SelectionName:GetWidth() > maxNameWidth then self.SelectionName:SetWidth(maxNameWidth); end
 end
 
 ------------------------------------
