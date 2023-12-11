@@ -15,6 +15,10 @@ function DragonflightUIActionbarMixin:Init()
     self.box.texture:SetColorTexture(0, 0.8, 0, 0.42)
 end
 
+function DragonflightUIActionbarMixin:ShowHighlight(show)
+    self.box:SetShown(show)
+end
+
 function DragonflightUIActionbarMixin:SetButtons(buttons)
     self.buttonTable = buttons
     print('DragonflightUIActionbarMixin:SetButtons(buttons)', #buttons)
@@ -44,7 +48,13 @@ function DragonflightUIActionbarMixin:Update()
     -- print("DragonflightUIActionbarMixin:Update()", state)
     -- DevTools_Dump(state)
 
-    local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
+    local btnScale = state.buttonScale
+    local btnSize = self.buttonTable[1]:GetWidth()
+    -- local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
+    -- local btnSize = (self.buttonTable[1]:GetWidth() / self.buttonTable[1]:GetScale()) * btnScale
+    -- local btnSize = 36 * state.buttonScale
+
+    print(btnScale, btnSize)
 
     local modulo = state.buttons % state.rows
 
@@ -56,8 +66,8 @@ function DragonflightUIActionbarMixin:Update()
     -- print('maxRowButtons', maxRowButtons)
 
     local padding = state.padding
-    local width = maxRowButtons * btnSize + (maxRowButtons + 1) * padding
-    local height = rows * btnSize + (rows + 1) * padding
+    local width = (maxRowButtons * btnSize + (maxRowButtons + 1) * padding) * btnScale
+    local height = (rows * btnSize + (rows + 1) * padding) * btnScale
 
     if state.orientation == 'horizontal' then
         self:SetSize(width, height)
@@ -93,6 +103,7 @@ function DragonflightUIActionbarMixin:Update()
             -- print('btn', i, btn:GetName())
             btn:ClearAllPoints()
             btn:Show()
+            btn:SetScale(btnScale)
             local dx = j * padding + (j - 1) * btnSize
             local dy = i * padding + (i - 1) * btnSize
 
@@ -102,7 +113,11 @@ function DragonflightUIActionbarMixin:Update()
                 btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
             end
 
+            -- ActionButton_ShowGrid(btn)
+            btn:SetAttribute('showgrid', 1)
+
             index = index + 1
         end
     end
+    self:ShowHighlight(false)
 end
