@@ -121,7 +121,7 @@ function DragonflightUIActionbarMixin:Update()
             index = index + 1
         end
     end
-    self:ShowHighlight(true)
+    self:ShowHighlight(false)
 
     -- print(self.buttonTable[1]:GetName(), 'update')
     -- self:UpdateGrid(state.alwaysShow)
