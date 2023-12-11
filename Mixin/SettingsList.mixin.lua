@@ -9,6 +9,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     local get = elementData.get
     local set = elementData.set
     local list = elementData.settingsList
+    list:UnregisterCallback('OnDefaults', self)
     -- print('init', key, data)
     self:Reset()
 
