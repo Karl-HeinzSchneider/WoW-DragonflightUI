@@ -1205,7 +1205,7 @@ function Module.HookDrag()
 end
 
 function Module.HookVertexColor()
-    PlayerFrameHealthBar:HookScript('OnValueChanged', function(self)
+    local updatePlayerFrameHealthBar = function()
         if Module.db.profile.player.classcolor then
             PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
                 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
@@ -1217,9 +1217,13 @@ function Module.HookVertexColor()
                 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
             PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
         end
+    end
+    PlayerFrameHealthBar:HookScript('OnValueChanged', updatePlayerFrameHealthBar)
+    PlayerFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
+        if event == 'UNIT_MAXHEALTH' and arg1 == 'player' then updatePlayerFrameHealthBar() end
     end)
 
-    TargetFrameHealthBar:HookScript('OnValueChanged', function(self)
+    local updateTargetFrameHealthBar = function()
         if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
             TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
                 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
@@ -1230,6 +1234,10 @@ function Module.HookVertexColor()
                 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
             TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
         end
+    end
+    TargetFrameHealthBar:HookScript('OnValueChanged', updateTargetFrameHealthBar)
+    TargetFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
+        if event == 'UNIT_MAXHEALTH' and arg1 == 'target' then updateTargetFrameHealthBar() end
     end)
 
     for i = 1, 4 do
@@ -1238,10 +1246,14 @@ function Module.HookVertexColor()
             -- print('OnValueChanged', i)
             Module.UpdatePartyHPBar(i)
         end)
+        healthbar:HookScript('OnEvent', function(self, event, arg1)
+            -- print('OnValueChanged', i)
+            if event == 'UNIT_MAXHEALTH' then Module.UpdatePartyHPBar(i) end
+        end)
     end
 
     if DF.Wrath then
-        FocusFrameHealthBar:HookScript('OnValueChanged', function(self)
+        local updateFocusFrameHealthBar = function()
             if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
                 FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
@@ -1252,6 +1264,11 @@ function Module.HookVertexColor()
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
                 FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
             end
+        end
+
+        FocusFrameHealthBar:HookScript('OnValueChanged', updateFocusFrameHealthBar)
+        FocusFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
+            if event == 'UNIT_MAXHEALTH' and arg1 == 'focus' then updateFocusFrameHealthBar() end
         end)
     end
 end
@@ -1540,6 +1557,13 @@ function Module.HookPlayerStatus()
     end
 
     hooksecurefunc('PlayerFrame_UpdateStatus', UpdateStatus)
+end
+
+function Module.HookPlayerArt()
+    hooksecurefunc('PlayerFrame_ToPlayerArt', function()
+        -- print('PlayerFrame_ToPlayerArt')
+        Module.ChangePlayerframe()
+    end)
 end
 
 function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
@@ -3022,6 +3046,7 @@ function Module.Wrath()
     Module.HookVertexColor()
     Module.HookEnergyBar()
     Module.HookPlayerStatus()
+    Module.HookPlayerArt()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
@@ -3050,6 +3075,7 @@ function Module.Era()
     Module.HookVertexColor()
     Module.HookEnergyBar()
     Module.HookPlayerStatus()
+    Module.HookPlayerArt()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
