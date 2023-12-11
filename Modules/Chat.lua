@@ -2,27 +2,25 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Chat'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {profile = {scale = 1, x = 42, y = 35, sizeX = 460, sizeY = 207}}
+Module:SetDefaults(defaults)
+
 local function getDefaultStr(key)
-    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+    return Module:GetDefaultStr(key)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
-    Module.ApplySettings()
+    Module:SetDefaultValues()
 end
 
--- db[info[#info] = VALUE
 local function getOption(info)
-    return db[info[#info]]
+    return Module:GetOption(info)
 end
 
 local function setOption(info, value)
-    local key = info[1]
-    Module.db.profile[key] = value
-    Module.ApplySettings()
+    Module:SetOption(info, value)
 end
 
 local options = {
@@ -111,7 +109,6 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
 
     self:SetEnabledState(DF:GetModuleEnabled(mName))
     DF:RegisterModuleOptions(mName, options)
@@ -132,7 +129,7 @@ function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
 
     ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', db.x, db.y)
     ChatFrame1:SetSize(db.sizeX, db.sizeY)

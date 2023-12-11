@@ -5,7 +5,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0')
 local noop = function()
 end
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {
     profile = {
@@ -21,74 +21,28 @@ local defaults = {
         alwaysShowRep = false
     }
 }
+Module:SetDefaults(defaults)
 
 local defaultsActionbarPROTO = {scale = 1, x = 0, y = 0, orientation = 'horizontal', rows = 3, buttons = 12}
 
-local function getDefaultStr(key, sub)
-    -- print('default str', sub, key)
-    if sub then
-        local obj = defaults.profile[sub]
-        local value = obj[key]
-        return '\n' .. '(Default: ' .. tostring(value) .. ')'
-    else
-        local obj = defaults.profile
-        local value = obj[key]
-        return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
-    end
+local function getDefaultStr(key)
+    return Module:GetDefaultStr(key)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        if type(v) == 'table' then
-            local obj = Module.db.profile[k]
-            for kSub, vSub in pairs(v) do obj[kSub] = vSub end
-        else
-            Module.db.profile[k] = v
-        end
-    end
-    Module.ApplySettings()
+    Module:SetDefaultValues()
 end
 
 local function setDefaultSubValues(sub)
-    local db = Module.db.profile
-
-    if db[sub] then
-        for k, v in pairs(defaults.profile[sub]) do db[sub][k] = v end
-        Module.ApplySettings()
-    end
+    Module:SetDefaultSubValues(sub)
 end
 
--- db[info[#info] = VALUE
 local function getOption(info)
-    local key = info[1]
-    local sub = info[2]
-    -- print('getOption', key, sub)
-    -- print('db', db[key])
-
-    if sub then
-        -- return db[key .. '.' .. sub]
-        local t = Module.db.profile[key]
-        return t[sub]
-    else
-        -- return db[info[#info]]
-        return db[key]
-    end
+    return Module:GetOption(info)
 end
 
 local function setOption(info, value)
-    local key = info[1]
-    local sub = info[2]
-    -- print('setOption', key, sub)
-
-    if sub then
-        local t = Module.db.profile[key]
-        t[sub] = value
-        -- Module.db.profile[key .. '.' .. sub] = value
-        Module.ApplySettings()
-    else
-        Module.db.profile[key] = value
-        Module.ApplySettings()
-    end
+    Module:SetOption(info, value)
 end
 
 local options = {
@@ -209,7 +163,6 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
 
     self:SetEnabledState(DF:GetModuleEnabled(mName))
     DF:RegisterModuleOptions(mName, options)
@@ -230,7 +183,7 @@ function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
     Module.ChangeGryphonVisibility(db.showGryphon)
     -- Module.MoveSideBars(db.changeSides)
     Module.MoveSideBarsDynamic(db.changeSides)

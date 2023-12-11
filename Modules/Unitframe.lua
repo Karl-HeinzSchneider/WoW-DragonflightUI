@@ -2,7 +2,9 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
+
+-- local db, getOptions
 
 Module.famous = {['Norbert'] = true}
 
@@ -72,6 +74,7 @@ local defaults = {
         }
     }
 }
+Module:SetDefaults(defaults)
 
 local defaultsPROTO = {
     classcolor = false,
@@ -91,71 +94,24 @@ local localSettings = {
     pet = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 100, y = -70}
 }
 
-local function getDefaultStr(key, sub)
-    -- print('default str', sub, key)
-    if sub then
-        local obj = defaults.profile[sub]
-        local value = obj[key]
-        return '\n' .. '(Default: ' .. tostring(value) .. ')'
-    else
-        local obj = defaults.profile
-        local value = obj[key]
-        return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
-    end
+local function getDefaultStr(key)
+    return Module:GetDefaultStr(key)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        if type(v) == 'table' then
-            local obj = Module.db.profile[k]
-            for kSub, vSub in pairs(v) do obj[kSub] = vSub end
-        else
-            Module.db.profile[k] = v
-        end
-    end
-    Module.ApplySettings()
+    Module:SetDefaultValues()
 end
 
 local function setDefaultSubValues(sub)
-    local db = Module.db.profile
-
-    if db[sub] then
-        for k, v in pairs(defaults.profile[sub]) do db[sub][k] = v end
-        Module.ApplySettings()
-    end
+    Module:SetDefaultSubValues(sub)
 end
 
--- db[info[#info] = VALUE
 local function getOption(info)
-    local key = info[1]
-    local sub = info[2]
-    -- print('getOption', key, sub)
-    -- print('db', db[key])
-
-    if sub then
-        -- return db[key .. '.' .. sub]
-        local t = Module.db.profile[key]
-        return t[sub]
-    else
-        -- return db[info[#info]]
-        return db[key]
-    end
+    return Module:GetOption(info)
 end
 
 local function setOption(info, value)
-    local key = info[1]
-    local sub = info[2]
-    -- print('setOption', key, sub)
-
-    if sub then
-        local t = Module.db.profile[key]
-        t[sub] = value
-        -- Module.db.profile[key .. '.' .. sub] = value
-        Module.ApplySettings()
-    else
-        Module.db.profile[key] = value
-        Module.ApplySettings()
-    end
+    Module:SetOption(info, value)
 end
 
 local optionsPlayer = {
@@ -652,7 +608,7 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
+    -- db = self.db.profile
 
     self:SetEnabledState(DF:GetModuleEnabled(mName))
     DF:RegisterModuleOptions(mName, options)
@@ -799,7 +755,7 @@ function Module:SaveLocalSettings()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
     local orig = defaults.profile
 
     -- playerframe
@@ -890,7 +846,7 @@ function Module:ApplySettings()
 end
 
 function Module.MovePlayerTargetPreset(name)
-    db = Module.db.profile
+    local db = Module.db.profile
 
     if name == 'DEFAULT' then
         local orig = defaults.profile
