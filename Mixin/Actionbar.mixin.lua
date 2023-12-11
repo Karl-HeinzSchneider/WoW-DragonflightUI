@@ -41,7 +41,7 @@ end
 
 function DragonflightUIActionbarMixin:Update()
     local state = self.state
-    print("DragonflightUIActionbarMixin:Update()", state)
+    -- print("DragonflightUIActionbarMixin:Update()", state)
     -- DevTools_Dump(state)
 
     local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
@@ -59,7 +59,12 @@ function DragonflightUIActionbarMixin:Update()
     local width = maxRowButtons * btnSize + (maxRowButtons + 1) * padding
     local height = rows * btnSize + (rows + 1) * padding
 
-    self:SetSize(width, height)
+    if state.orientation == 'horizontal' then
+        self:SetSize(width, height)
+    else
+        self:SetSize(height, width)
+    end
+
     local parent = _G[state.anchorFrame]
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
@@ -90,7 +95,12 @@ function DragonflightUIActionbarMixin:Update()
             btn:Show()
             local dx = j * padding + (j - 1) * btnSize
             local dy = i * padding + (i - 1) * btnSize
-            btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dx, dy)
+
+            if state.orientation == 'horizontal' then
+                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dx, dy)
+            else
+                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
+            end
 
             index = index + 1
         end
