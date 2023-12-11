@@ -18,12 +18,37 @@ local defaults = {
         sideButtons = 12,
         bagsExpanded = true,
         alwaysShowXP = false,
-        alwaysShowRep = false
+        alwaysShowRep = false,
+        bar3 = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            buttonScale = 1,
+            rows = 1,
+            buttons = 12,
+            alwaysShow = true
+        }
     }
 }
 Module:SetDefaults(defaults)
 
-local defaultsActionbarPROTO = {scale = 1, x = 0, y = 0, orientation = 'horizontal', rows = 3, buttons = 12}
+local defaultsActionbarPROTO = {
+    scale = 1,
+    anchorFrame = 'UIParent',
+    anchor = 'CENTER',
+    anchorParent = 'CENTER',
+    x = 0,
+    y = 0,
+    orientation = 'horizontal',
+    buttonScale = 1,
+    rows = 1,
+    buttons = 12,
+    alwaysShow = true
+}
 
 local function getDefaultStr(key)
     return Module:GetDefaultStr(key)
@@ -160,6 +185,127 @@ local options = {
     }
 }
 
+local function GetBarOption(n)
+    local opt = {
+        name = 'Actionbar' .. n,
+        desc = 'Actionbar3' .. n,
+        get = getOption,
+        set = setOption,
+        type = 'group',
+        args = {
+            scale = {
+                type = 'range',
+                name = 'Scale',
+                desc = '' .. getDefaultStr('scale', 'bar' .. n),
+                min = 0.1,
+                max = 5,
+                bigStep = 0.1,
+                order = 1
+            },
+            anchorFrame = {
+                type = 'select',
+                name = 'Anchorframe',
+                desc = 'Anchor' .. getDefaultStr('anchorFrame', 'bar' .. n),
+                values = {['UIParent'] = 'UIParent', ['Actionbar1'] = 'Actionbar1'},
+                order = 2
+            },
+            anchor = {
+                type = 'select',
+                name = 'Anchor',
+                desc = 'Anchor' .. getDefaultStr('anchor', 'bar' .. n),
+                values = {
+                    ['TOP'] = 'TOP',
+                    ['RIGHT'] = 'RIGHT',
+                    ['BOTTOM'] = 'BOTTOM',
+                    ['LEFT'] = 'LEFT',
+                    ['TOPRIGHT'] = 'TOPRIGHT',
+                    ['TOPLEFT'] = 'TOPLEFT',
+                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                    ['CENTER'] = 'CENTER'
+                },
+                order = 3
+            },
+            anchorParent = {
+                type = 'select',
+                name = 'AnchorParent',
+                desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'bar' .. n),
+                values = {
+                    ['TOP'] = 'TOP',
+                    ['RIGHT'] = 'RIGHT',
+                    ['BOTTOM'] = 'BOTTOM',
+                    ['LEFT'] = 'LEFT',
+                    ['TOPRIGHT'] = 'TOPRIGHT',
+                    ['TOPLEFT'] = 'TOPLEFT',
+                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                    ['CENTER'] = 'CENTER'
+                },
+                order = 4
+            },
+            x = {
+                type = 'range',
+                name = 'X',
+                desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'bar' .. n),
+                min = -2500,
+                max = 2500,
+                bigStep = 1,
+                order = 5
+            },
+            y = {
+                type = 'range',
+                name = 'Y',
+                desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'bar' .. n),
+                min = -2500,
+                max = 2500,
+                bigStep = 1,
+                order = 6
+            },
+            orientation = {
+                type = 'select',
+                name = 'Orientation',
+                desc = 'Orientation' .. getDefaultStr('orientation', 'bar' .. n),
+                values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+                order = 7
+            },
+            buttonScale = {
+                type = 'range',
+                name = 'ButtonScale',
+                desc = '' .. getDefaultStr('buttonScale', 'bar' .. n),
+                min = 0.1,
+                max = 5,
+                bigStep = 0.1,
+                order = 1
+            },
+            rows = {
+                type = 'range',
+                name = '# of Rows',
+                desc = '' .. getDefaultStr('rows', 'bar' .. n),
+                min = 1,
+                max = 12,
+                bigStep = 1,
+                order = 9
+            },
+            buttons = {
+                type = 'range',
+                name = '# of Buttons',
+                desc = '' .. getDefaultStr('buttons', 'bar' .. n),
+                min = 1,
+                max = 12,
+                bigStep = 1,
+                order = 10
+            },
+            alwaysShow = {
+                type = 'toggle',
+                name = 'Always show Actionbar',
+                desc = '' .. getDefaultStr('alwaysShow', 'bar' .. n),
+                order = 11
+            }
+        }
+    }
+    return opt
+end
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -176,10 +322,28 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:SetupActionbarFrames()
     Module:ApplySettings()
+    Module:RegisterOptionScreens()
 end
 
 function Module:OnDisable()
+end
+
+function Module:SetupActionbarFrames()
+
+end
+
+function Module:RegisterOptionScreens()
+    local optionsBar3 = GetBarOption(3)
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar3', {
+        name = 'Actionbar3',
+        sub = 'bar3',
+        options = optionsBar3,
+        default = function()
+            setDefaultSubValues('bar3')
+        end
+    })
 end
 
 function Module:ApplySettings()
