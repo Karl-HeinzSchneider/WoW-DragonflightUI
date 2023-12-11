@@ -210,11 +210,11 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
     subCategory:UpdateState()
     self.selected = subCategory
 
-    local settingsList = self:GetSettingsList()
-    settingsList:Display(subCategory.displayData)
+    -- local settingsList = self:GetSettingsList()
+    -- settingsList:Display(subCategory.displayData)
     -- settingsList.Header.Title:SetText(subCategory.subCategory)
 
-    --[[    local oldFrame = self.selectedFrame
+    local oldFrame = self.selectedFrame
     if oldFrame then oldFrame:Hide() end
 
     local newFrame = subCategory.displayFrame
@@ -227,7 +227,7 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
         self.selectedFrame = newFrame
     else
         print('no displayframe - nothing to show!')
-    end ]]
+    end
 
 end
 
