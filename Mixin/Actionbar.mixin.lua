@@ -66,8 +66,9 @@ function DragonflightUIActionbarMixin:Update()
     -- print('maxRowButtons', maxRowButtons)
 
     local padding = state.padding
-    local width = (maxRowButtons * btnSize + (maxRowButtons + 1) * padding) * btnScale
-    local height = (rows * btnSize + (rows + 1) * padding) * btnScale
+    -- local width = (maxRowButtons * btnSize + (maxRowButtons + 1) * padding) * btnScale
+    local width = (maxRowButtons * (btnSize + 2 * padding)) * btnScale
+    local height = (rows * (btnSize + 2 * padding)) * btnScale
 
     if state.orientation == 'horizontal' then
         self:SetSize(width, height)
@@ -105,8 +106,8 @@ function DragonflightUIActionbarMixin:Update()
             btn:ClearAllPoints()
             btn:Show()
             btn:SetScale(btnScale)
-            local dx = j * padding + (j - 1) * btnSize
-            local dy = i * padding + (i - 1) * btnSize
+            local dx = (2 * j - 1) * padding + (j - 1) * btnSize
+            local dy = (2 * i - 1) * padding + (i - 1) * btnSize
 
             if state.orientation == 'horizontal' then
                 btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dx, dy)
