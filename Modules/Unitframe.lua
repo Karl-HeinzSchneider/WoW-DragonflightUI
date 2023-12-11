@@ -94,8 +94,8 @@ local localSettings = {
     pet = {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = 100, y = -70}
 }
 
-local function getDefaultStr(key)
-    return Module:GetDefaultStr(key)
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()

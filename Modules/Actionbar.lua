@@ -50,8 +50,8 @@ local defaultsActionbarPROTO = {
     alwaysShow = true
 }
 
-local function getDefaultStr(key)
-    return Module:GetDefaultStr(key)
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
@@ -186,6 +186,9 @@ local options = {
 }
 
 local function GetBarOption(n)
+    local barname = 'bar' .. n
+
+    print('Barname', barname)
     local opt = {
         name = 'Actionbar' .. n,
         desc = 'Actionbar3' .. n,
@@ -196,7 +199,7 @@ local function GetBarOption(n)
             scale = {
                 type = 'range',
                 name = 'Scale',
-                desc = '' .. getDefaultStr('scale', 'bar' .. n),
+                desc = '' .. getDefaultStr('scale', barname),
                 min = 0.1,
                 max = 5,
                 bigStep = 0.1,
@@ -205,14 +208,14 @@ local function GetBarOption(n)
             anchorFrame = {
                 type = 'select',
                 name = 'Anchorframe',
-                desc = 'Anchor' .. getDefaultStr('anchorFrame', 'bar' .. n),
+                desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
                 values = {['UIParent'] = 'UIParent', ['Actionbar1'] = 'Actionbar1'},
                 order = 2
             },
             anchor = {
                 type = 'select',
                 name = 'Anchor',
-                desc = 'Anchor' .. getDefaultStr('anchor', 'bar' .. n),
+                desc = 'Anchor' .. getDefaultStr('anchor', barname),
                 values = {
                     ['TOP'] = 'TOP',
                     ['RIGHT'] = 'RIGHT',
@@ -229,7 +232,7 @@ local function GetBarOption(n)
             anchorParent = {
                 type = 'select',
                 name = 'AnchorParent',
-                desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'bar' .. n),
+                desc = 'AnchorParent' .. getDefaultStr('anchorParent', barname),
                 values = {
                     ['TOP'] = 'TOP',
                     ['RIGHT'] = 'RIGHT',
@@ -246,7 +249,7 @@ local function GetBarOption(n)
             x = {
                 type = 'range',
                 name = 'X',
-                desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'bar' .. n),
+                desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', barname),
                 min = -2500,
                 max = 2500,
                 bigStep = 1,
@@ -255,7 +258,7 @@ local function GetBarOption(n)
             y = {
                 type = 'range',
                 name = 'Y',
-                desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'bar' .. n),
+                desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', barname),
                 min = -2500,
                 max = 2500,
                 bigStep = 1,
@@ -264,14 +267,14 @@ local function GetBarOption(n)
             orientation = {
                 type = 'select',
                 name = 'Orientation',
-                desc = 'Orientation' .. getDefaultStr('orientation', 'bar' .. n),
+                desc = 'Orientation' .. getDefaultStr('orientation', barname),
                 values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
                 order = 7
             },
             buttonScale = {
                 type = 'range',
                 name = 'ButtonScale',
-                desc = '' .. getDefaultStr('buttonScale', 'bar' .. n),
+                desc = '' .. getDefaultStr('buttonScale', barname),
                 min = 0.1,
                 max = 5,
                 bigStep = 0.1,
@@ -280,7 +283,7 @@ local function GetBarOption(n)
             rows = {
                 type = 'range',
                 name = '# of Rows',
-                desc = '' .. getDefaultStr('rows', 'bar' .. n),
+                desc = '' .. getDefaultStr('rows', barname),
                 min = 1,
                 max = 12,
                 bigStep = 1,
@@ -289,7 +292,7 @@ local function GetBarOption(n)
             buttons = {
                 type = 'range',
                 name = '# of Buttons',
-                desc = '' .. getDefaultStr('buttons', 'bar' .. n),
+                desc = '' .. getDefaultStr('buttons', barname),
                 min = 1,
                 max = 12,
                 bigStep = 1,
@@ -298,7 +301,7 @@ local function GetBarOption(n)
             alwaysShow = {
                 type = 'toggle',
                 name = 'Always show Actionbar',
-                desc = '' .. getDefaultStr('alwaysShow', 'bar' .. n),
+                desc = '' .. getDefaultStr('alwaysShow', barname),
                 order = 11
             }
         }
