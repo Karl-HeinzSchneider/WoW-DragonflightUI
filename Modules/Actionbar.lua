@@ -30,6 +30,7 @@ local defaults = {
             buttonScale = 1,
             rows = 1,
             buttons = 12,
+            padding = 3,
             alwaysShow = true
         }
     }
@@ -47,6 +48,7 @@ local defaultsActionbarPROTO = {
     buttonScale = 1,
     rows = 1,
     buttons = 12,
+    padding = 3,
     alwaysShow = true
 }
 
@@ -187,8 +189,6 @@ local options = {
 
 local function GetBarOption(n)
     local barname = 'bar' .. n
-
-    print('Barname', barname)
     local opt = {
         name = 'Actionbar' .. n,
         desc = 'Actionbar3' .. n,
@@ -210,7 +210,7 @@ local function GetBarOption(n)
                 name = 'Anchorframe',
                 desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
                 values = {['UIParent'] = 'UIParent', ['Actionbar1'] = 'Actionbar1'},
-                order = 2
+                order = 4
             },
             anchor = {
                 type = 'select',
@@ -227,7 +227,7 @@ local function GetBarOption(n)
                     ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                     ['CENTER'] = 'CENTER'
                 },
-                order = 3
+                order = 2
             },
             anchorParent = {
                 type = 'select',
@@ -244,7 +244,7 @@ local function GetBarOption(n)
                     ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                     ['CENTER'] = 'CENTER'
                 },
-                order = 4
+                order = 3
             },
             x = {
                 type = 'range',
@@ -298,11 +298,20 @@ local function GetBarOption(n)
                 bigStep = 1,
                 order = 10
             },
+            padding = {
+                type = 'range',
+                name = 'Padding',
+                desc = '' .. getDefaultStr('padding', barname),
+                min = 0,
+                max = 10,
+                bigStep = 1,
+                order = 11
+            },
             alwaysShow = {
                 type = 'toggle',
                 name = 'Always show Actionbar',
                 desc = '' .. getDefaultStr('alwaysShow', barname),
-                order = 11
+                order = 12
             }
         }
     }
@@ -334,7 +343,19 @@ function Module:OnDisable()
 end
 
 function Module:SetupActionbarFrames()
-
+    -- bar3
+    do
+        Module.bar3 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame3', UIParent,
+                                  'DragonflightUIActionbarFrameTemplate')
+        local buttons = {}
+        for i = 1, 12 do
+            local name = 'MultiBarBottomRightButton' .. i
+            local btn = _G[name]
+            buttons[i] = btn
+        end
+        Module.bar3:Init()
+        Module.bar3:SetButtons(buttons)
+    end
 end
 
 function Module:RegisterOptionScreens()
@@ -358,6 +379,8 @@ function Module:ApplySettings()
 
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
+
+    Module.bar3:SetState(db.bar3)
 end
 
 -- Actionbar
