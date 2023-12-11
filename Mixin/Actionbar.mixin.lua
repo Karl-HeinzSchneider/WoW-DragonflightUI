@@ -4,9 +4,15 @@ function DragonflightUIActionbarMixin:Init()
     self:SetPoint('BOTTOMLEFT', UIParent, 'CENTER', 0, 380)
     self:SetSize(250, 142)
 
-    self.box = self:CreateTexture(nil, 'ARTWORK')
+    self.box = CreateFrame('FRAME')
+    self.box:SetParent(self)
     self.box:SetAllPoints()
-    self.box:SetColorTexture(0, 0.8, 0, 0.6)
+    self.box:SetFrameLevel(42)
+    self.box:SetFrameStrata('HIGH')
+
+    self.box.texture = self.box:CreateTexture(nil, 'OVERLAY')
+    self.box.texture:SetAllPoints()
+    self.box.texture:SetColorTexture(0, 0.8, 0, 0.42)
 end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
@@ -36,7 +42,7 @@ end
 function DragonflightUIActionbarMixin:Update()
     local state = self.state
     print("DragonflightUIActionbarMixin:Update()", state)
-    -- DevTools_Dump(state)    
+    -- DevTools_Dump(state)
 
     local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
 
@@ -54,6 +60,9 @@ function DragonflightUIActionbarMixin:Update()
     local height = rows * btnSize + (rows + 1) * padding
 
     self:SetSize(width, height)
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     for i = buttons + 1, 12 do
         local btn = self.buttonTable[i]
