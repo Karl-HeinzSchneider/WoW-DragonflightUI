@@ -52,10 +52,17 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetDropdown(data.values)
-        self.Item.Dropdown:SetDropdownSelection('TOP')
+        -- self.Item.Dropdown:SetDropdownSelection('TOP')
+        self.Item.Dropdown:SetDropdownSelection(get({key}))
         self.Item.Dropdown:RegisterCallback('OnValueChanged', function(self, ...)
-            print('OnValueChanged', key, ...)
+            -- print('OnValueChanged', key, ...)
+            local newValue = ...
+            set({key}, newValue)
         end)
+        list:RegisterCallback('OnDefaults', function(self, ...)
+            -- print('OnDefaults')
+            self.Item.Dropdown:SetDropdownSelection(get({key}))
+        end, self)
     elseif data.type == 'toggle' then
     end
 end
@@ -295,9 +302,10 @@ function SettingsDropdownMixinDF:OnLoad()
 
     self.Button.Popout:RegisterCallback('OnEntryClicked', function(self, ...)
         local index = ...
-        print('clicked', index, 'SettingsDropdownMixinDF')
+        -- print('clicked', index, 'SettingsDropdownMixinDF')
         self:SetSelectedIndex(index)
     end, self)
+    self.Button.Popout:SetFrameStrata('FULLSCREEN_DIALOG')
 
 end
 
@@ -323,7 +331,7 @@ function SettingsDropdownMixinDF:SetDropdownSelection(selection)
     else
         self.Button.SelectionDetails.SelectionName:SetText('ERROR')
     end
-
+    self:Update()
 end
 
 function SettingsDropdownMixinDF:SetDropdownSelectionOptions(options)
