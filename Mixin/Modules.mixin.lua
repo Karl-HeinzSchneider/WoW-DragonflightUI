@@ -20,6 +20,7 @@ function DragonflightUIModulesMixin:GetDefaultStr(key, sub)
 end
 
 function DragonflightUIModulesMixin:SetDefaultValues()
+    -- print('DragonflightUIModulesMixin:SetDefaultValues()')
     for k, v in pairs(self.defaults.profile) do
         if type(v) == 'table' then
             local obj = self.db.profile[k]
@@ -31,7 +32,8 @@ function DragonflightUIModulesMixin:SetDefaultValues()
     self:ApplySettings()
 end
 
-function DragonflightUIModulesMixin:SetDefaultSubValues(key, sub)
+function DragonflightUIModulesMixin:SetDefaultSubValues(sub)
+    -- print('DragonflightUIModulesMixin:SetDefaultSubValues(key, sub)', sub)
     local db = self.db.profile
 
     if db[sub] then
