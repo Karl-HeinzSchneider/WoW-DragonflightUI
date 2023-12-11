@@ -19,7 +19,8 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetSlider(get({key}), data.min, data.max, data.bigStep)
-        self.Item.Slider:RegisterCallback('OnValueChangedFilter', function(self, ...)
+        -- self.Item.Slider.lastValue = get({key})
+        self.Item.Slider:RegisterCallback('OnValueChanged', function(self, ...)
             local newValue = ...
             set({key}, newValue)
         end, self)
@@ -208,7 +209,7 @@ function SettingsSliderMixinDF:OnLoad()
         self:OnLeave()
     end)
 
-    self.lastValue = nil
+    --[[ self.lastValue = nil
 
     self:RegisterCallback('OnValueChanged', function(self, ...)
         -- print('valuechangeslider')
@@ -220,7 +221,7 @@ function SettingsSliderMixinDF:OnLoad()
         else
             -- same -> do nothing
         end
-    end, self)
+    end, self) ]]
 end
 
 function SettingsSliderMixinDF:OnEnter()

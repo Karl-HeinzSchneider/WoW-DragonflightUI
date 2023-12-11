@@ -21,7 +21,7 @@ end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
     self.buttonTable = buttons
-    print('DragonflightUIActionbarMixin:SetButtons(buttons)', #buttons)
+    print('DragonflightUIActionbarMixin:SetButtons(buttons)', #buttons, buttons[1]:GetName())
 end
 
 --[[ local defaultsActionbarPROTO = {
@@ -46,7 +46,7 @@ end
 function DragonflightUIActionbarMixin:Update()
     local state = self.state
     -- print("DragonflightUIActionbarMixin:Update()", state)
-    -- DevTools_Dump(state)
+    DevTools_Dump(state)
 
     local btnScale = state.buttonScale
     local btnSize = self.buttonTable[1]:GetWidth()
@@ -54,7 +54,7 @@ function DragonflightUIActionbarMixin:Update()
     -- local btnSize = (self.buttonTable[1]:GetWidth() / self.buttonTable[1]:GetScale()) * btnScale
     -- local btnSize = 36 * state.buttonScale
 
-    print(btnScale, btnSize)
+    -- print(btnScale, btnSize)
 
     local modulo = state.buttons % state.rows
 
@@ -114,10 +114,31 @@ function DragonflightUIActionbarMixin:Update()
             end
 
             -- ActionButton_ShowGrid(btn)
-            btn:SetAttribute('showgrid', 1)
+            -- btn:SetAttribute('showgrid', 1)
 
             index = index + 1
         end
     end
-    self:ShowHighlight(false)
+    self:ShowHighlight(true)
+
+    self:UpdateGrid(state.alwaysShow)
+end
+
+function DragonflightUIActionbarMixin:UpdateGrid(show)
+    for k, v in pairs(self.buttonTable) do
+        -- print(k, v:GetName(), show)
+        if show then
+            -- v:SetAttribute('showgrid', 1)
+            ActionButton_ShowGrid(v)
+
+        else
+            -- v:SetAttribute('showgrid', 0)
+            ActionButton_HideGrid(v)
+        end
+    end
+
+    for i = self.state.buttons + 1, 12 do
+        local btn = self.buttonTable[i]
+        btn:Hide()
+    end
 end

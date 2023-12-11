@@ -19,6 +19,20 @@ local defaults = {
         bagsExpanded = true,
         alwaysShowXP = false,
         alwaysShowRep = false,
+        bar2 = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            buttonScale = 1,
+            rows = 1,
+            buttons = 6,
+            padding = 3,
+            alwaysShow = true
+        },
         bar3 = {
             scale = 1,
             anchorFrame = 'UIParent',
@@ -191,7 +205,7 @@ local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
         name = 'Actionbar' .. n,
-        desc = 'Actionbar3' .. n,
+        desc = 'Actionbar' .. n,
         get = getOption,
         set = setOption,
         type = 'group',
@@ -343,8 +357,21 @@ function Module:OnDisable()
 end
 
 function Module:SetupActionbarFrames()
-    -- bar3
+    -- bar2
     do
+        Module.bar2 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame2', UIParent,
+                                  'DragonflightUIActionbarFrameTemplate')
+        local buttons = {}
+        for i = 1, 12 do
+            local name = 'MultiBarBottomLeftButton' .. i
+            local btn = _G[name]
+            buttons[i] = btn
+        end
+        Module.bar2:Init()
+        Module.bar2:SetButtons(buttons)
+    end
+    -- bar3
+    --[[    do
         Module.bar3 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame3', UIParent,
                                   'DragonflightUIActionbarFrameTemplate')
         local buttons = {}
@@ -355,11 +382,21 @@ function Module:SetupActionbarFrames()
         end
         Module.bar3:Init()
         Module.bar3:SetButtons(buttons)
-    end
+    end ]]
 end
 
 function Module:RegisterOptionScreens()
-    local optionsBar3 = GetBarOption(3)
+    local optionsBar2 = GetBarOption(2)
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar2', {
+        name = 'Actionbar2',
+        sub = 'bar2',
+        options = optionsBar2,
+        default = function()
+            setDefaultSubValues('bar2')
+        end
+    })
+
+    --[[    local optionsBar3 = GetBarOption(3)
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar3', {
         name = 'Actionbar3',
         sub = 'bar3',
@@ -367,7 +404,7 @@ function Module:RegisterOptionScreens()
         default = function()
             setDefaultSubValues('bar3')
         end
-    })
+    }) ]]
 end
 
 function Module:ApplySettings()
@@ -380,7 +417,8 @@ function Module:ApplySettings()
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
 
-    Module.bar3:SetState(db.bar3)
+    Module.bar2:SetState(db.bar2)
+    -- Module.bar3:SetState(db.bar3)
 end
 
 -- Actionbar
@@ -837,6 +875,14 @@ function Module.ApplyMask()
             end
         end
     end
+end
+
+function Module.HookAlwaysShowActionbar()
+    hooksecurefunc('MultiActionBar_UpdateGridVisibility', function()
+        DF:Debug(Module, 'MultiActionBar_UpdateGridVisibility')
+        Module.bar2:UpdateGrid(getOption({'alwaysShow'}), 'bar2')
+        -- Module.bar3:UpdateGrid(getOption({'alwaysShow'}), 'bar3')
+    end)
 end
 
 function Module.ChangeButtonSpacing()
@@ -2449,6 +2495,7 @@ function Module.Wrath()
     Module.StyleButtons()
     Module.StylePageNumber()
     Module.ApplyMask()
+    Module.HookAlwaysShowActionbar()
     Module.ChangeButtonSpacing()
     frame.UpdateXPBar()
     frame.UpdateRepBar()
@@ -2487,6 +2534,7 @@ function Module.Era()
     Module.StyleButtons()
     Module.StylePageNumber()
     Module.ApplyMask()
+    Module.HookAlwaysShowActionbar()
     Module.ChangeButtonSpacing()
     frame.UpdateXPBar()
     frame.UpdateRepBar()
