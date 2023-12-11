@@ -371,7 +371,7 @@ function Module:SetupActionbarFrames()
         Module.bar2:SetButtons(buttons)
     end
     -- bar3
-    --[[    do
+    do
         Module.bar3 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame3', UIParent,
                                   'DragonflightUIActionbarFrameTemplate')
         local buttons = {}
@@ -382,7 +382,7 @@ function Module:SetupActionbarFrames()
         end
         Module.bar3:Init()
         Module.bar3:SetButtons(buttons)
-    end ]]
+    end
 end
 
 function Module:RegisterOptionScreens()
@@ -396,7 +396,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    --[[    local optionsBar3 = GetBarOption(3)
+    local optionsBar3 = GetBarOption(3)
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar3', {
         name = 'Actionbar3',
         sub = 'bar3',
@@ -404,7 +404,7 @@ function Module:RegisterOptionScreens()
         default = function()
             setDefaultSubValues('bar3')
         end
-    }) ]]
+    })
 end
 
 function Module:ApplySettings()
@@ -418,7 +418,7 @@ function Module:ApplySettings()
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
 
     Module.bar2:SetState(db.bar2)
-    -- Module.bar3:SetState(db.bar3)
+    Module.bar3:SetState(db.bar3)
 end
 
 -- Actionbar
@@ -878,11 +878,32 @@ function Module.ApplyMask()
 end
 
 function Module.HookAlwaysShowActionbar()
+    local updateGrids = function()
+        print('updateGrids')
+        print(Module.db.profile.bar2.alwaysShow, Module.db.profile.bar3.alwaysShow)
+        Module.bar2:UpdateGrid(Module.db.profile.bar2.alwaysShow)
+        Module.bar3:UpdateGrid(Module.db.profile.bar3.alwaysShow)
+    end
     hooksecurefunc('MultiActionBar_UpdateGridVisibility', function()
-        DF:Debug(Module, 'MultiActionBar_UpdateGridVisibility')
-        Module.bar2:UpdateGrid(getOption({'alwaysShow'}), 'bar2')
-        -- Module.bar3:UpdateGrid(getOption({'alwaysShow'}), 'bar3')
+        -- print('MultiActionBar_UpdateGridVisibility')
+        -- updateGrids()
     end)
+    hooksecurefunc('MultiActionBar_ShowAllGrids', function()
+        print('MultiActionBar_ShowAllGrids')
+        updateGrids()
+        C_Timer.After(2, updateGrids)
+    end)
+    hooksecurefunc('MultiActionBar_HideAllGrids', function()
+        print('MultiActionBar_HideAllGrids')
+        updateGrids()
+        C_Timer.After(2, updateGrids)
+
+    end)
+
+    hooksecurefunc('ActionButton_ShowGrid', function(btn)
+        print('ShowGrid', btn:GetName())
+    end)
+
 end
 
 function Module.ChangeButtonSpacing()
@@ -2495,7 +2516,7 @@ function Module.Wrath()
     Module.StyleButtons()
     Module.StylePageNumber()
     Module.ApplyMask()
-    Module.HookAlwaysShowActionbar()
+    --Module.HookAlwaysShowActionbar()
     Module.ChangeButtonSpacing()
     frame.UpdateXPBar()
     frame.UpdateRepBar()
@@ -2504,7 +2525,6 @@ function Module.Wrath()
     Module.MoveTotem()
     Module.ChangePossessBar()
     -- Module.MoveSideBars()
-
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     -- Core.Sub.Artframe()
@@ -2534,7 +2554,7 @@ function Module.Era()
     Module.StyleButtons()
     Module.StylePageNumber()
     Module.ApplyMask()
-    Module.HookAlwaysShowActionbar()
+    --Module.HookAlwaysShowActionbar()
     Module.ChangeButtonSpacing()
     frame.UpdateXPBar()
     frame.UpdateRepBar()
