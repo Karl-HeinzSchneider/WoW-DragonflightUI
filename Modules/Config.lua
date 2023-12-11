@@ -36,7 +36,6 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
 
     -- self:SetEnabledState(DF:GetModuleEnabled(mName))
     self:SetEnabledState(true)
@@ -58,7 +57,7 @@ function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = self.db.profile
+    local db = self.db.profile
 end
 
 function Module:AddMainMenuButton()

@@ -173,7 +173,7 @@ function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
     Module.Castbar:SetScale(db.scale)
     Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
     Module.Castbar:SetSize(db.sizeX, db.sizeY)

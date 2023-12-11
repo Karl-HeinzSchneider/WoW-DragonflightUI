@@ -125,7 +125,7 @@ function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
 
     Module.MoveMinimap(db.x, db.y)
     local dfScale = 1.25
@@ -537,7 +537,7 @@ function Module.LockMinimap(locked)
             local dy = Module.Tmp.MinimapY - y
             -- print('delta', dx, dy)
 
-            db = Module.db.profile
+            local db = Module.db.profile
 
             db.x = db.x - dx
             db.y = db.y - dy
