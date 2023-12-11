@@ -103,7 +103,6 @@ local function setDefaultValues()
 end
 
 local function setDefaultSubValues(sub)
-    print('mod', 'setDefaultSubValues', sub)
     Module:SetDefaultSubValues(sub)
 end
 
