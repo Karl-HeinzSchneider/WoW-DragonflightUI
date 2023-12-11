@@ -19,8 +19,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetSlider(get({key}), data.min, data.max, data.bigStep)
-        self.Item.Slider:RegisterCallback('OnValueChanged', function(self, ...)
-            set({key}, self.Item.Slider.Slider:GetValue())
+        self.Item.Slider:RegisterCallback('OnValueChangedFilter', function(self, ...)
+            local newValue = ...
+            set({key}, newValue)
         end, self)
         list:RegisterCallback('OnDefaults', function(self, ...)
             self:SetSlider(get({key}), data.min, data.max, data.bigStep)
@@ -172,7 +173,9 @@ end
 
 --- Slider
 SettingsSliderMixinDF = CreateFromMixins(CallbackRegistryMixin);
-SettingsSliderMixinDF:GenerateCallbackEvents({"OnValueChanged", "OnInteractStart", "OnInteractEnd"});
+SettingsSliderMixinDF:GenerateCallbackEvents({
+    "OnValueChanged", "OnValueChangedFilter", "OnInteractStart", "OnInteractEnd"
+});
 
 local sliderFormat = {}
 -- sliderFormat[2] = CreateMinimalSliderFormatter()
@@ -204,6 +207,20 @@ function SettingsSliderMixinDF:OnLoad()
     self.Slider:HookScript('OnLeave', function()
         self:OnLeave()
     end)
+
+    self.lastValue = nil
+
+    self:RegisterCallback('OnValueChanged', function(self, ...)
+        -- print('valuechangeslider')
+        local newValue = ...
+
+        if newValue ~= self.lastValue then
+            self.lastValue = newValue
+            self:TriggerEvent(SettingsSliderMixinDF.Event.OnValueChangedFilter, newValue);
+        else
+            -- same -> do nothing
+        end
+    end, self)
 end
 
 function SettingsSliderMixinDF:OnEnter()
