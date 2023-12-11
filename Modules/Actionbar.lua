@@ -19,17 +19,31 @@ local defaults = {
         bagsExpanded = true,
         alwaysShowXP = false,
         alwaysShowRep = false,
-        bar2 = {
+        bar1 = {
             scale = 1,
             anchorFrame = 'UIParent',
-            anchor = 'CENTER',
-            anchorParent = 'CENTER',
+            anchor = 'BOTTOM',
+            anchorParent = 'BOTTOM',
+            x = 0,
+            y = 56,
+            orientation = 'horizontal',
+            buttonScale = 1,
+            rows = 1,
+            buttons = 12,
+            padding = 3,
+            alwaysShow = true
+        },
+        bar2 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame1',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
             x = 0,
             y = 0,
             orientation = 'horizontal',
             buttonScale = 1,
             rows = 1,
-            buttons = 6,
+            buttons = 12,
             padding = 3,
             alwaysShow = true
         },
@@ -44,6 +58,34 @@ local defaults = {
             buttonScale = 1,
             rows = 1,
             buttons = 12,
+            padding = 3,
+            alwaysShow = true
+        },
+        bar4 = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            buttonScale = 1,
+            rows = 1,
+            buttons = 6,
+            padding = 3,
+            alwaysShow = true
+        },
+        bar5 = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            buttonScale = 1,
+            rows = 1,
+            buttons = 6,
             padding = 3,
             alwaysShow = true
         }
@@ -223,7 +265,14 @@ local function GetBarOption(n)
                 type = 'select',
                 name = 'Anchorframe',
                 desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
-                values = {['UIParent'] = 'UIParent', ['Actionbar1'] = 'Actionbar1'},
+                values = {
+                    ['UIParent'] = 'UIParent',
+                    ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
+                    ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
+                    ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
+                    ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
+                    ['DragonflightUIActionbarFrame5'] = 'Actionbar5'
+                },
                 order = 4
             },
             anchor = {
@@ -329,6 +378,7 @@ local function GetBarOption(n)
             }
         }
     }
+    -- if n == 1 then opt.args.anchorFrame['DragonflightUIActionbarFrame1'] = nil end
     return opt
 end
 
@@ -357,7 +407,29 @@ function Module:OnDisable()
 end
 
 function Module:SetupActionbarFrames()
-    -- bar2
+
+    local createStuff = function(n, base)
+
+        local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
+                                'DragonflightUIActionbarFrameTemplate')
+        local buttons = {}
+        for i = 1, 12 do
+            local name = base .. i
+            local btn = _G[name]
+            buttons[i] = btn
+        end
+        bar:Init()
+        bar:SetButtons(buttons)
+        Module['bar' .. n] = bar
+    end
+
+    createStuff(1, 'ActionButton')
+    createStuff(2, 'MultiBarBottomLeftButton')
+    createStuff(3, 'MultiBarBottomRightButton')
+    createStuff(4, 'MultiBarLeftButton')
+    createStuff(5, 'MultiBarRightButton')
+
+    --[[     -- bar2
     do
         Module.bar2 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame2', UIParent,
                                   'DragonflightUIActionbarFrameTemplate')
@@ -382,10 +454,24 @@ function Module:SetupActionbarFrames()
         end
         Module.bar3:Init()
         Module.bar3:SetButtons(buttons)
-    end
+    end ]]
 end
 
 function Module:RegisterOptionScreens()
+
+    for i = 1, 5 do
+        local optionsBar = GetBarOption(i)
+        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
+            name = 'Actionbar' .. i,
+            sub = 'bar' .. i,
+            options = optionsBar,
+            default = function()
+                setDefaultSubValues('bar' .. i)
+            end
+        })
+
+    end
+    --[[ 
     local optionsBar2 = GetBarOption(2)
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar2', {
         name = 'Actionbar2',
@@ -404,21 +490,24 @@ function Module:RegisterOptionScreens()
         default = function()
             setDefaultSubValues('bar3')
         end
-    })
+    }) ]]
 end
 
 function Module:ApplySettings()
     local db = Module.db.profile
     Module.ChangeGryphonVisibility(db.showGryphon)
     -- Module.MoveSideBars(db.changeSides)
-    Module.MoveSideBarsDynamic(db.changeSides)
+    -- Module.MoveSideBarsDynamic(db.changeSides)
     Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
 
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
 
+    Module.bar1:SetState(db.bar1)
     Module.bar2:SetState(db.bar2)
     Module.bar3:SetState(db.bar3)
+    Module.bar4:SetState(db.bar4)
+    Module.bar5:SetState(db.bar5)
 end
 
 -- Actionbar
@@ -427,16 +516,20 @@ frame:SetFrameStrata('HIGH')
 Module.Frame = frame
 
 function Module.ChangeActionbar()
-    ActionButton1:ClearAllPoints()
-    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+    -- ActionButton1:ClearAllPoints()
+    -- ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+    ActionButton1.ignoreFramePositionManager = true
 
-    MultiBarBottomLeft:ClearAllPoints()
-    MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
+    -- MultiBarBottomLeft:ClearAllPoints()
+    -- MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
     MultiBarBottomLeft.ignoreFramePositionManager = true
 
-    MultiBarBottomRight:ClearAllPoints()
-    MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
+    -- MultiBarBottomRight:ClearAllPoints()
+    -- MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
     MultiBarBottomRight.ignoreFramePositionManager = true
+
+    MultiBarLeft.ignoreFramePositionManager = true
+    MultiBarRight.ignoreFramePositionManager = true
 
     StanceButton1:ClearAllPoints()
     StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
@@ -917,6 +1010,7 @@ end
 -- @TODO: better system
 function Module.SetNumBars()
     local inLockdown = InCombatLockdown()
+    if true then return end
     if inLockdown then
         -- return
         -- print('[DragonflightUI] changing Frames after combat ends..')
@@ -1263,21 +1357,21 @@ function frame:OnEvent(event, arg1)
     if event == 'PLAYER_ENTERING_WORLD' then
         frame.UpdateXPBar()
         frame.UpdateRepBar()
-        Module.SetNumBars()
+        -- Module.SetNumBars()
         frame:RegisterEvent('UPDATE_FACTION')
     elseif event == 'UPDATE_FACTION' then
         frame.UpdateRepBar()
-        Module.SetNumBars()
+        -- Module.SetNumBars()
     elseif event == 'PLAYER_XP_UPDATE' then
         frame.UpdateXPBar()
-        Module.SetNumBars()
+        -- Module.SetNumBars()
     elseif event == 'UPDATE_EXHAUSTION' then
         frame.UpdateXPBar()
-        Module.SetNumBars()
+        -- Module.SetNumBars()
     elseif event == 'PLAYER_REGEN_ENABLED' then
         frame.UpdateXPBar()
         frame.UpdateRepBar()
-        Module.SetNumBars()
+        -- Module.SetNumBars()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
@@ -2516,8 +2610,8 @@ function Module.Wrath()
     Module.StyleButtons()
     Module.StylePageNumber()
     Module.ApplyMask()
-    --Module.HookAlwaysShowActionbar()
-    Module.ChangeButtonSpacing()
+    -- Module.HookAlwaysShowActionbar()
+    -- Module.ChangeButtonSpacing()
     frame.UpdateXPBar()
     frame.UpdateRepBar()
     Module.SetNumBars()
@@ -2554,8 +2648,8 @@ function Module.Era()
     Module.StyleButtons()
     Module.StylePageNumber()
     Module.ApplyMask()
-    --Module.HookAlwaysShowActionbar()
-    Module.ChangeButtonSpacing()
+    -- Module.HookAlwaysShowActionbar()
+    -- Module.ChangeButtonSpacing()
     frame.UpdateXPBar()
     frame.UpdateRepBar()
     Module.SetNumBars()

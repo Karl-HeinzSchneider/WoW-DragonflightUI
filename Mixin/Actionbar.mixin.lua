@@ -81,6 +81,7 @@ function DragonflightUIActionbarMixin:Update()
 
     for i = buttons + 1, 12 do
         local btn = self.buttonTable[i]
+        btn:ClearAllPoints()
         btn:Hide()
     end
 
@@ -119,7 +120,7 @@ function DragonflightUIActionbarMixin:Update()
             index = index + 1
         end
     end
-    self:ShowHighlight(false)
+    self:ShowHighlight(true)
 
     -- print(self.buttonTable[1]:GetName(), 'update')
     -- self:UpdateGrid(state.alwaysShow)
