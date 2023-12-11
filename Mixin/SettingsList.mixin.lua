@@ -319,6 +319,8 @@ function SettingsDropdownMixinDF:OnLoad()
 
     self.isEnabledDF = true
 
+    self.Button.Popout:UnregisterCallback('OnEntryClicked', self)
+
     self.Button.Popout:RegisterCallback('OnEntryClicked', function(self, ...)
         local index = ...
         -- print('clicked', index, 'SettingsDropdownMixinDF')
