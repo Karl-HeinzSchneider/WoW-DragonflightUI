@@ -122,7 +122,7 @@ function DragonflightUIActionbarMixin:Update()
             -- print('btn', i, btn:GetName())
             btn:ClearAllPoints()
             btn:Show()
-            if btn.decoDF then btn.decoDF:Show() end
+            if btn.decoDF then btn.decoDF:SetShown(not state.hideArt) end
 
             btn:SetScale(btnScale)
             local dx = (2 * j - 1) * padding + (j - 1) * btnSize
