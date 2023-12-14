@@ -99,6 +99,8 @@ function DragonflightUIActionbarMixin:Update()
         local btn = buttonTable[i]
         btn:ClearAllPoints()
         btn:Hide()
+
+        if btn.decoDF then btn.decoDF:Hide() end
     end
 
     local index = 1
@@ -120,6 +122,8 @@ function DragonflightUIActionbarMixin:Update()
             -- print('btn', i, btn:GetName())
             btn:ClearAllPoints()
             btn:Show()
+            if btn.decoDF then btn.decoDF:Show() end
+
             btn:SetScale(btnScale)
             local dx = (2 * j - 1) * padding + (j - 1) * btnSize
             local dy = (2 * i - 1) * padding + (i - 1) * btnSize
@@ -151,6 +155,8 @@ function DragonflightUIActionbarMixin:Update()
             self.numberFrame:Show()
         end
     end
+
+    if self.decoFrame then self.decoFrame.update(state) end
 end
 
 function DragonflightUIActionbarMixin:UpdateGrid(show)
@@ -173,6 +179,7 @@ end
 function DragonflightUIActionbarMixin:SetupMainBar()
     self:AddGryphons()
     self:SetupPageNumberFrame()
+    -- self:AddDeco()
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
@@ -296,6 +303,45 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
 
     self.numberFrame = f
     -- f:Hide()
+end
+
+function DragonflightUIActionbarMixin:AddDeco()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    self.decoFrame = CreateFrame('Frame', 'DragonflightUIMainActionBarDecoFrame')
+    self.decoFrame:SetFrameStrata('LOW')
+    self.decoFrame:SetPoint('CENTER')
+    self.decoFrame.decoTable = {}
+
+    for i = 1, 12 do
+
+        local tex = self.decoFrame:CreateTexture()
+        tex:SetTexture(textureRef)
+        tex:SetSize(128, 124)
+        tex:SetScale(0.3)
+        tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
+        self.decoFrame.decoTable[i] = tex
+    end
+
+    self.decoFrame.update = function(state)
+        local a1, a2 = self:GetSize()
+        self.decoFrame:SetSize(a1, a2)
+
+        local padding = state.padding
+        local btnSize = self.buttonTable[1]:GetWidth()
+
+        for i = 1, 1 do
+
+            local point, relativeTo, relativePoint, xOfs, yOfs = self.buttonTable[i]:GetPoint(1)
+
+            local deco = self.decoFrame.decoTable[i]
+            deco:Show()
+            deco:ClearAllPoints()
+            deco:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs)
+            deco:SetSize(btnSize, btnSize)
+            deco:SetScale(1)
+        end
+    end
 end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)

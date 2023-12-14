@@ -1479,6 +1479,9 @@ function Module.DrawActionbarDeco()
                                                  'ActionbarDeco' .. i)
         deco:SetScale(0.3)
         deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
+        -- deco:SetParent(_G['ActionButton' .. i])
+        deco:SetFrameStrata('LOW')
+        _G['ActionButton' .. i].decoDF = deco
     end
 end
 
