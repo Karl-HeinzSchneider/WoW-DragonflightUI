@@ -21,11 +21,11 @@ local defaults = {
         alwaysShowRep = false,
         bar1 = {
             scale = 1,
-            anchorFrame = 'UIParent',
+            anchorFrame = 'DragonflightUIRepBar',
             anchor = 'BOTTOM',
-            anchorParent = 'BOTTOM',
+            anchorParent = 'TOP',
             x = 0,
-            y = 56,
+            y = 10,
             orientation = 'horizontal',
             reverse = false,
             buttonScale = 1,
@@ -113,16 +113,16 @@ local defaults = {
             scale = 1,
             anchorFrame = 'UIParent',
             anchor = 'BOTTOM',
-            anchorParent = 'CENTER',
+            anchorParent = 'BOTTOM',
             x = 0,
-            y = 0,
+            y = 5,
             alwaysShowXP = false
         },
         rep = {
             scale = 1,
-            anchorFrame = 'UIParent',
+            anchorFrame = 'DragonflightUIXPBar',
             anchor = 'BOTTOM',
-            anchorParent = 'CENTER',
+            anchorParent = 'TOP',
             x = 0,
             y = 0,
             alwaysShowXP = false
@@ -173,7 +173,9 @@ local frameTable = {
     ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
     ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
     ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
-    ['DragonflightUIXPBar'] = 'XPbar'
+    ['DragonflightUIXPBar'] = 'XPbar',
+    ['DragonflightUIRepBar'] = 'RepBar'
+
 }
 
 local options = {
@@ -774,46 +776,16 @@ function Module:SetupActionbarFrames()
     do
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}
+
         for i = 1, 10 do
-            -- local name = base .. i
-            -- local btn = _G[name]
-            -- buttons[i] = btn
-            for i = 1, 10 do
-                local btn = _G['PetActionButton' .. i]
-                buttons[i] = btn
-            end
+            local btn = _G['PetActionButton' .. i]
+            buttons[i] = btn
         end
+
         bar:Init()
         bar:SetButtons(buttons)
         Module['petbar'] = bar
     end
-
-    --[[     -- bar2
-    do
-        Module.bar2 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame2', UIParent,
-                                  'DragonflightUIActionbarFrameTemplate')
-        local buttons = {}
-        for i = 1, 12 do
-            local name = 'MultiBarBottomLeftButton' .. i
-            local btn = _G[name]
-            buttons[i] = btn
-        end
-        Module.bar2:Init()
-        Module.bar2:SetButtons(buttons)
-    end
-    -- bar3
-    do
-        Module.bar3 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame3', UIParent,
-                                  'DragonflightUIActionbarFrameTemplate')
-        local buttons = {}
-        for i = 1, 12 do
-            local name = 'MultiBarBottomRightButton' .. i
-            local btn = _G[name]
-            buttons[i] = btn
-        end
-        Module.bar3:Init()
-        Module.bar3:SetButtons(buttons)
-    end ]]
 end
 
 function Module:RegisterOptionScreens()
@@ -848,34 +820,20 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('xp')
         end
     })
-    --[[ 
-    local optionsBar2 = GetBarOption(2)
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar2', {
-        name = 'Actionbar2',
-        sub = 'bar2',
-        options = optionsBar2,
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Repbar', {
+        name = 'Repbar',
+        sub = 'rep',
+        options = repOptions,
         default = function()
-            setDefaultSubValues('bar2')
+            setDefaultSubValues('rep')
         end
     })
-
-    local optionsBar3 = GetBarOption(3)
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar3', {
-        name = 'Actionbar3',
-        sub = 'bar3',
-        options = optionsBar3,
-        default = function()
-            setDefaultSubValues('bar3')
-        end
-    }) ]]
 end
 
 function Module:ApplySettings()
     local db = Module.db.profile
     Module.ChangeGryphonVisibility(db.showGryphon)
-    -- Module.MoveSideBars(db.changeSides)
-    -- Module.MoveSideBarsDynamic(db.changeSides)
-    -- Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
 
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
@@ -887,6 +845,7 @@ function Module:ApplySettings()
     Module.bar5:SetState(db.bar5)
     Module.petbar:SetState(db.pet)
     Module.xpbar:SetState(db.xp)
+    Module.repbar:SetState(db.rep)
 end
 
 -- Actionbar
@@ -949,84 +908,8 @@ function Module.CreateNewXPBar()
 end
 
 function Module.CreateNewRepBar()
-    local sizeX, sizeY = 466, 20
-
-    local f = CreateFrame('Frame', 'DragonflightUIRepBar', UIParent)
-    f:SetSize(sizeX, sizeY)
-    f:SetPoint('BOTTOM', 0, 5 + 20)
-
-    local tex = f:CreateTexture('Background', 'BACKGROUND')
-    tex:SetAllPoints()
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
-    tex:SetTexCoord(0, 0.55517578, 0, 1)
-    f.Background = tex
-
-    -- actual status bar, child of parent above
-    f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetPoint('TOPLEFT', 0, 0)
-    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
-    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\Rep')
-
-    -- border
-    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
-    border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
-    border:SetPoint('CENTER')
-    f.Border = border
-
-    -- text
-    f.Bar:EnableMouse(true)
-    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
-    f.Text:SetTextColor(1, 1, 1, 1)
-    f.Text:SetText('')
-    f.Text:ClearAllPoints()
-    f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 1)
-
-    frame.RepBar = f
-
-    frame.RepBar.Bar:SetMinMaxValues(0, 125)
-    frame.RepBar.Bar:SetValue(69)
-
-    frame.RepBar.valid = false
-
-    frame.RepBar.Bar:SetScript('OnMouseDown', function(self, button)
-        if button == 'LeftButton' then ToggleCharacter('ReputationFrame') end
-    end)
-
-    frame.UpdateRepBar = function()
-        local name, standing, min, max, value = GetWatchedFactionInfo()
-        if name then
-            -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
-            frame.RepBar.valid = true
-            frame.RepBar.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
-            frame.RepBar.Bar:SetMinMaxValues(0, max - min)
-            frame.RepBar.Bar:SetValue(value - min)
-
-            if standing == 1 or standing == 2 then
-                -- hated, hostile
-                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepRed')
-            elseif standing == 3 then
-                -- unfriendly
-                frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepOrange')
-            elseif standing == 4 then
-                -- neutral
-                frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepYellow')
-            elseif standing == 5 or standing == 6 or standing == 7 or standing == 8 then
-                -- friendly, honored, revered, exalted
-                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
-            else
-                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
-            end
-        else
-            frame.RepBar.valid = false
-        end
-    end
+    local newRep = CreateFrame('Frame', 'DragonflightUIRepBar', UIParent, 'DragonflightUIRepBarTemplate')
+    Module.repbar = newRep
 end
 
 function Module.StyleButtons()
@@ -1559,26 +1442,7 @@ function Module.ChangePossessBar()
 end
 
 function frame:OnEvent(event, arg1)
-    -- print('event', event)
-    if event == 'PLAYER_ENTERING_WORLD' then
-
-        frame.UpdateRepBar()
-        -- Module.SetNumBars()
-        frame:RegisterEvent('UPDATE_FACTION')
-    elseif event == 'UPDATE_FACTION' then
-        frame.UpdateRepBar()
-        -- Module.SetNumBars()
-    elseif event == 'PLAYER_XP_UPDATE' then
-
-        -- Module.SetNumBars()
-    elseif event == 'UPDATE_EXHAUSTION' then
-
-        -- Module.SetNumBars()
-    elseif event == 'PLAYER_REGEN_ENABLED' then
-
-        frame.UpdateRepBar()
-        -- Module.SetNumBars()
-    end
+    -- print('event', event)  
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
@@ -2819,7 +2683,6 @@ function Module.Wrath()
     -- Module.HookAlwaysShowActionbar()
     -- Module.ChangeButtonSpacing()
 
-    frame.UpdateRepBar()
     Module.SetNumBars()
     Module.HookPetBar()
     Module.MoveTotem()
@@ -2857,7 +2720,6 @@ function Module.Era()
     -- Module.HookAlwaysShowActionbar()
     -- Module.ChangeButtonSpacing()
 
-    frame.UpdateRepBar()
     Module.SetNumBars()
     Module.HookPetBar()
     -- Module.MoveSideBars()

@@ -10,6 +10,7 @@ function DragonflightUIXPBarMixin:OnLoad()
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:RegisterEvent('PLAYER_XP_UPDATE')
     self:RegisterEvent('UPDATE_EXHAUSTION')
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     self:SetScript('OnEvent', self.OnEvent)
 end
@@ -185,6 +186,7 @@ function DragonflightUIXPBarMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     self:Collapse(not showXP)
+    -- self:Collapse(false)
 
     if state.alwaysShowXP then
         self.Text:SetDrawLayer('OVERLAY')
@@ -196,11 +198,11 @@ end
 function DragonflightUIXPBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
     if collapse then
-        self:Show()
-        self:SetHeight(20)
-    else
         self:Hide()
         self:SetHeight(0.00000001)
+    else
+        self:Show()
+        self:SetHeight(20)
     end
 end
 
@@ -214,16 +216,119 @@ function DragonflightUIRepBarMixin:OnLoad()
     -- self:Update()
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:RegisterEvent('UPDATE_FACTION')
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     self:SetScript('OnEvent', self.OnEvent)
 end
 
 function DragonflightUIRepBarMixin:OnEvent()
+    self:Update()
 end
 
 function DragonflightUIRepBarMixin:CreateBar()
+    local f = self
+
+    local sizeX, sizeY = 466, 20
+    self:SetSize(sizeX, sizeY)
+    self:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    print('BARS')
+
+    local tex = f:CreateTexture('Background', 'BACKGROUND')
+    tex:SetAllPoints()
+    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
+    tex:SetTexCoord(0, 0.55517578, 0, 1)
+    f.Background = tex
+
+    -- actual status bar, child of parent above
+    f.Bar = CreateFrame('StatusBar', nil, f)
+    f.Bar:SetPoint('TOPLEFT', 0, 0)
+    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
+    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\Rep')
+
+    -- border
+    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
+    border:SetTexCoord(0, 0.55517578, 0, 1)
+    border:SetSize(sizeX, sizeY)
+    border:SetPoint('CENTER')
+    f.Border = border
+
+    -- text
+    f.Bar:EnableMouse(true)
+    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
+    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
+    f.Text:SetTextColor(1, 1, 1, 1)
+    f.Text:SetText('')
+    f.Text:ClearAllPoints()
+    f.Text:SetParent(f.Bar)
+    f.Text:SetPoint('CENTER', 0, 1)
+
+    self.Bar:SetMinMaxValues(0, 125)
+    self.Bar:SetValue(69)
 end
 
 function DragonflightUIRepBarMixin:SetupTooltip()
+    self.Bar:SetScript('OnMouseDown', function(self, button)
+        if button == 'LeftButton' then ToggleCharacter('ReputationFrame') end
+    end)
 end
 
+function DragonflightUIRepBarMixin:SetState(state)
+    self.state = state
+    self:Update()
+end
+
+function DragonflightUIRepBarMixin:Update()
+    local state = self.state
+
+    local name, standing, min, max, value = GetWatchedFactionInfo()
+    if name then
+        -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
+        self.valid = true
+        self.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
+        self.Bar:SetMinMaxValues(0, max - min)
+        self.Bar:SetValue(value - min)
+
+        if standing == 1 or standing == 2 then
+            -- hated, hostile
+            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepRed')
+        elseif standing == 3 then
+            -- unfriendly
+            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepOrange')
+        elseif standing == 4 then
+            -- neutral
+            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepYellow')
+        elseif standing == 5 or standing == 6 or standing == 7 or standing == 8 then
+            -- friendly, honored, revered, exalted
+            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
+        else
+            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
+        end
+    else
+    end
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    self:Collapse(not name)
+
+    if state.alwaysShowRep then
+        self.Text:SetDrawLayer('OVERLAY')
+    else
+        self.Text:SetDrawLayer('HIGHLIGHT')
+    end
+end
+
+function DragonflightUIRepBarMixin:Collapse(collapse)
+    -- @TODO: add combatlock
+    if collapse then
+        self:Hide()
+        self:SetHeight(0.00000001)
+    else
+        self:Show()
+        self:SetHeight(20)
+    end
+end
