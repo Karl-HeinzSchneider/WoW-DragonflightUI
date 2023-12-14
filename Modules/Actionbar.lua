@@ -88,6 +88,20 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true
+        },
+        pet = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            buttonScale = 1,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            alwaysShow = true
         }
     }
 }
@@ -382,6 +396,140 @@ local function GetBarOption(n)
     return opt
 end
 
+local petOptions = {
+    name = 'PetBar',
+    desc = 'PetBar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'pet'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
+            values = {
+                ['UIParent'] = 'UIParent',
+                ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
+                ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
+                ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
+                ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
+                ['DragonflightUIActionbarFrame5'] = 'Actionbar5'
+            },
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'pet'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'pet'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        orientation = {
+            type = 'select',
+            name = 'Orientation',
+            desc = 'Orientation' .. getDefaultStr('orientation', 'pet'),
+            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            order = 7
+        },
+        buttonScale = {
+            type = 'range',
+            name = 'ButtonScale',
+            desc = '' .. getDefaultStr('buttonScale', 'pet'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        rows = {
+            type = 'range',
+            name = '# of Rows',
+            desc = '' .. getDefaultStr('rows', 'pet'),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 9
+        },
+        buttons = {
+            type = 'range',
+            name = '# of Buttons',
+            desc = '' .. getDefaultStr('buttons', 'pet'),
+            min = 1,
+            max = 10,
+            bigStep = 1,
+            order = 10
+        },
+        padding = {
+            type = 'range',
+            name = 'Padding',
+            desc = '' .. getDefaultStr('padding', 'pet'),
+            min = 0,
+            max = 10,
+            bigStep = 1,
+            order = 11
+        },
+        alwaysShow = {
+            type = 'toggle',
+            name = 'Always show Actionbar',
+            desc = '' .. getDefaultStr('alwaysShow', 'pet'),
+            order = 12
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -429,6 +577,23 @@ function Module:SetupActionbarFrames()
     createStuff(4, 'MultiBarLeftButton')
     createStuff(5, 'MultiBarRightButton')
 
+    do
+        local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
+        local buttons = {}
+        for i = 1, 10 do
+            -- local name = base .. i
+            -- local btn = _G[name]
+            -- buttons[i] = btn
+            for i = 1, 10 do
+                local btn = _G['PetActionButton' .. i]
+                buttons[i] = btn
+            end
+        end
+        bar:Init()
+        bar:SetButtons(buttons)
+        Module['petbar'] = bar
+    end
+
     --[[     -- bar2
     do
         Module.bar2 = CreateFrame('FRAME', 'DragonflightUIActionbarFrame2', UIParent,
@@ -471,6 +636,15 @@ function Module:RegisterOptionScreens()
         })
 
     end
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Petbar', {
+        name = 'Petbar',
+        sub = 'pet',
+        options = petOptions,
+        default = function()
+            setDefaultSubValues('pet')
+        end
+    })
     --[[ 
     local optionsBar2 = GetBarOption(2)
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar2', {
@@ -508,6 +682,7 @@ function Module:ApplySettings()
     Module.bar3:SetState(db.bar3)
     Module.bar4:SetState(db.bar4)
     Module.bar5:SetState(db.bar5)
+    Module.petbar:SetState(db.pet)
 end
 
 -- Actionbar
@@ -1051,9 +1226,10 @@ end
 
 function Module.HookPetBar()
     PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetPoint('CENTER', MultiBarBottomRight, 'CENTER', 0, 45)
+    PetActionBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    PetActionBarFrame.ignoreFramePositionManager = true
 
-    frame:RegisterEvent('PET_BAR_UPDATE')
+    -- frame:RegisterEvent('PET_BAR_UPDATE')
 
     for i = 1, 10 do
         _G['PetActionButton' .. i]:SetSize(30, 30)
@@ -1067,8 +1243,8 @@ function Module.HookPetBar()
 
     -- different offset for each class (stance vs no stance)
     -- local offset = 0 + 34
-    local offset = Module.GetPetbarOffset()
-    PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
+    -- local offset = Module.GetPetbarOffset()
+    -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 
 function Module.MoveSideBarsDynamic(shouldMove)

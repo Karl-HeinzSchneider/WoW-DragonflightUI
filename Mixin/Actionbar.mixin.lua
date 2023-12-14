@@ -54,6 +54,8 @@ function DragonflightUIActionbarMixin:Update()
     -- print("DragonflightUIActionbarMixin:Update()", state)
     -- DevTools_Dump(state)
 
+    local btnCount = #self.buttonTable
+
     local btnScale = state.buttonScale
     local btnSize = self.buttonTable[1]:GetWidth()
     -- local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
@@ -86,7 +88,7 @@ function DragonflightUIActionbarMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    for i = buttons + 1, 12 do
+    for i = buttons + 1, btnCount do
         local btn = self.buttonTable[i]
         btn:ClearAllPoints()
         btn:Hide()
@@ -152,8 +154,11 @@ end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
 
-function DragonflightUIPetbarMixin:Update()
-end
+--[[ function DragonflightUIPetbarMixin:Update()
+    local state = self.state
+    print("DragonflightUIPetbarMixin:Update()", state)
+    DevTools_Dump(state)
+end ]]
 
 function DragonflightUIPetbarMixin:UpdateGrid()
 end

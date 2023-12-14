@@ -2,4 +2,6 @@
 	<Script file="Mixin/Actionbar.mixin.lua" />
 	<Frame name="DragonflightUIActionbarFrameTemplate" mixin="DragonflightUIActionbarMixin" virtual="true">
 	</Frame>
+	<Frame name="DragonflightUIPetbarFrameTemplate" mixin="DragonflightUIPetbarMixin" virtual="true">
+	</Frame>
 </Ui>
