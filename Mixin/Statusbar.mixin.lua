@@ -17,7 +17,8 @@ end
 
 function DragonflightUIXPBarMixin:OnEvent()
     -- print('EVENTS')
-    self:Update()
+    -- self:Update()
+    self:UpdateText()
 end
 
 function DragonflightUIXPBarMixin:CreateBar()
@@ -142,42 +143,7 @@ function DragonflightUIXPBarMixin:Update()
     end
 
     if showXP then
-        -- exhaustion
-        local exhaustionStateID = GetRestState()
-        if (exhaustionStateID == 1) then
-            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
-        elseif (exhaustionStateID == 2) then
-            self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-        end
-
-        -- value
-        local playerCurrXP = UnitXP('player')
-        local playerMaxXP = UnitXPMax('player')
-        local restedXP = GetXPExhaustion()
-
-        if (restedXP and restedXP > 0) then
-            if (playerCurrXP + restedXP > playerMaxXP) then
-                self.RestedBar:Hide()
-
-                self.RestedBarMark:Hide()
-            else
-                self.RestedBar:Show()
-                self.RestedBar:SetMinMaxValues(0, playerMaxXP)
-                self.RestedBar:SetValue(playerCurrXP + restedXP)
-
-                self.RestedBarMark:Show()
-                self.RestedBarMark:SetPoint('LEFT', (playerCurrXP + restedXP) / playerMaxXP * sizeX +
-                                                restedBarMarkOffsetX - restedBarMarkSizeX / 2, restedBarMarkOffsetY)
-            end
-        else
-            self.RestedBar:Hide()
-            self.RestedBarMark:Hide()
-        end
-
-        self.Bar:SetMinMaxValues(0, playerMaxXP)
-        self.Bar:SetValue(playerCurrXP)
-
-        self.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
+        self:UpdateText()
     else
     end
 
@@ -193,6 +159,46 @@ function DragonflightUIXPBarMixin:Update()
     else
         self.Text:SetDrawLayer('HIGHLIGHT')
     end
+end
+
+function DragonflightUIXPBarMixin:UpdateText()
+    -- exhaustion
+    local exhaustionStateID = GetRestState()
+    if (exhaustionStateID == 1) then
+        self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
+    elseif (exhaustionStateID == 2) then
+        self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
+    end
+
+    -- value
+    local playerCurrXP = UnitXP('player')
+    local playerMaxXP = UnitXPMax('player')
+    local restedXP = GetXPExhaustion()
+
+    if (restedXP and restedXP > 0) then
+        if (playerCurrXP + restedXP > playerMaxXP) then
+            self.RestedBar:Hide()
+
+            self.RestedBarMark:Hide()
+        else
+            self.RestedBar:Show()
+            self.RestedBar:SetMinMaxValues(0, playerMaxXP)
+            self.RestedBar:SetValue(playerCurrXP + restedXP)
+
+            self.RestedBarMark:Show()
+            self.RestedBarMark:SetPoint('LEFT',
+                                        (playerCurrXP + restedXP) / playerMaxXP * sizeX + restedBarMarkOffsetX -
+                                            restedBarMarkSizeX / 2, restedBarMarkOffsetY)
+        end
+    else
+        self.RestedBar:Hide()
+        self.RestedBarMark:Hide()
+    end
+
+    self.Bar:SetMinMaxValues(0, playerMaxXP)
+    self.Bar:SetValue(playerCurrXP)
+
+    self.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
 end
 
 function DragonflightUIXPBarMixin:Collapse(collapse)
