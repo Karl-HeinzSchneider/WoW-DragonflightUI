@@ -15,10 +15,8 @@ function DragonflightUIXPBarMixin:OnLoad()
     self:SetScript('OnEvent', self.OnEvent)
 end
 
-function DragonflightUIXPBarMixin:OnEvent()
-    -- print('EVENTS')
-    -- self:Update()
-    self:UpdateText()
+function DragonflightUIXPBarMixin:OnEvent(event, arg1)
+    self:Update()
 end
 
 function DragonflightUIXPBarMixin:CreateBar()
@@ -147,17 +145,20 @@ function DragonflightUIXPBarMixin:Update()
     else
     end
 
-    local parent = _G[state.anchorFrame]
-    self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-
-    self:Collapse(not showXP)
-    -- self:Collapse(false)
-
     if state.alwaysShowXP then
         self.Text:SetDrawLayer('OVERLAY')
     else
         self.Text:SetDrawLayer('HIGHLIGHT')
+    end
+
+    if InCombatLockdown() then
+        -- print('XP-bar update after combat fades...')
+    else
+        local parent = _G[state.anchorFrame]
+        self:ClearAllPoints()
+        self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+        self:Collapse(not showXP)
     end
 end
 
@@ -228,7 +229,7 @@ function DragonflightUIRepBarMixin:OnLoad()
     self:SetScript('OnEvent', self.OnEvent)
 end
 
-function DragonflightUIRepBarMixin:OnEvent()
+function DragonflightUIRepBarMixin:OnEvent(event, arg1)
     self:Update()
 end
 
@@ -291,6 +292,30 @@ function DragonflightUIRepBarMixin:Update()
 
     local name, standing, min, max, value = GetWatchedFactionInfo()
     if name then
+        self:UpdateText()
+    else
+    end
+
+    if state.alwaysShowRep then
+        self.Text:SetDrawLayer('OVERLAY')
+    else
+        self.Text:SetDrawLayer('HIGHLIGHT')
+    end
+
+    if InCombatLockdown() then
+        -- print('Rep-bar update after combat fades...')
+    else
+        local parent = _G[state.anchorFrame]
+        self:ClearAllPoints()
+        self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+        self:Collapse(not name)
+    end
+end
+
+function DragonflightUIRepBarMixin:UpdateText()
+    local name, standing, min, max, value = GetWatchedFactionInfo()
+    if name then
         -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
         self.valid = true
         self.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
@@ -313,18 +338,6 @@ function DragonflightUIRepBarMixin:Update()
             self.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
         end
     else
-    end
-
-    local parent = _G[state.anchorFrame]
-    self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-
-    self:Collapse(not name)
-
-    if state.alwaysShowRep then
-        self.Text:SetDrawLayer('OVERLAY')
-    else
-        self.Text:SetDrawLayer('HIGHLIGHT')
     end
 end
 
