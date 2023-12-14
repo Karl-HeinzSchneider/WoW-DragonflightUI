@@ -53,11 +53,18 @@ function DragonflightUIActionbarMixin:Update()
     local state = self.state
     -- print("DragonflightUIActionbarMixin:Update()", state)
     -- DevTools_Dump(state)
+    local buttonTable = self.buttonTable
+    local btnCount = #buttonTable
 
-    local btnCount = #self.buttonTable
+    if state.reverse then
+        local tmp = {}
+        for i = 1, btnCount do tmp[i] = buttonTable[i] end
+        buttonTable = {}
+        for i = 1, btnCount do buttonTable[btnCount + 1 - i] = tmp[i] end
+    end
 
     local btnScale = state.buttonScale
-    local btnSize = self.buttonTable[1]:GetWidth()
+    local btnSize = buttonTable[1]:GetWidth()
     -- local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
     -- local btnSize = (self.buttonTable[1]:GetWidth() / self.buttonTable[1]:GetScale()) * btnScale
     -- local btnSize = 36 * state.buttonScale
@@ -89,7 +96,7 @@ function DragonflightUIActionbarMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     for i = buttons + 1, btnCount do
-        local btn = self.buttonTable[i]
+        local btn = buttonTable[i]
         btn:ClearAllPoints()
         btn:Hide()
     end
@@ -109,7 +116,7 @@ function DragonflightUIActionbarMixin:Update()
 
         -- j = btn in row index
         for j = 1, rowButtons do
-            local btn = self.buttonTable[index]
+            local btn = buttonTable[index]
             -- print('btn', i, btn:GetName())
             btn:ClearAllPoints()
             btn:Show()
