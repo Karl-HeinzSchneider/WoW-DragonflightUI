@@ -32,7 +32,10 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = true,
+            hideArt = false,
+            hideScrolling = false,
+            gryphons = 'DEFAULT'
         },
         bar2 = {
             scale = 1,
@@ -302,7 +305,7 @@ local function GetBarOption(n)
         set = setOption,
         type = 'group',
         args = {
-            scale = {
+            --[[    scale = {
                 type = 'range',
                 name = 'Scale',
                 desc = '' .. getDefaultStr('scale', barname),
@@ -310,7 +313,7 @@ local function GetBarOption(n)
                 max = 5,
                 bigStep = 0.1,
                 order = 1
-            },
+            }, ]]
             anchorFrame = {
                 type = 'select',
                 name = 'Anchorframe',
@@ -428,6 +431,34 @@ local function GetBarOption(n)
         }
     }
     -- if n == 1 then opt.args.anchorFrame['DragonflightUIActionbarFrame1'] = nil end
+
+    if n == 1 then
+        -- print('111111')
+        local moreOptions = {
+            hideArt = {
+                type = 'toggle',
+                name = 'Hide bar art',
+                desc = '' .. getDefaultStr('hideArt', barname),
+                order = 14
+            },
+            hideScrolling = {
+                type = 'toggle',
+                name = 'Hide bar scrolling',
+                desc = '' .. getDefaultStr('hideScrolling', barname),
+                order = 15
+            },
+            gryphons = {
+                type = 'select',
+                name = 'Gryphons',
+                desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
+                values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
+                order = 13
+            }
+        }
+
+        for k, v in pairs(moreOptions) do opt.args[k] = v end
+    end
+
     return opt
 end
 
@@ -768,6 +799,7 @@ function Module:SetupActionbarFrames()
     end
 
     createStuff(1, 'ActionButton')
+    Module.bar1:SetupMainBar()
     createStuff(2, 'MultiBarBottomLeftButton')
     createStuff(3, 'MultiBarBottomRightButton')
     createStuff(4, 'MultiBarLeftButton')
@@ -833,7 +865,7 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
-    Module.ChangeGryphonVisibility(db.showGryphon)
+    -- Module.ChangeGryphonVisibility(db.showGryphon)
 
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
@@ -952,48 +984,6 @@ function Module.StyleButtons()
             end
         end
     end
-end
-
-function Module.StylePageNumber()
-    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-
-    -- actionbar switch buttons
-    ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
-    ActionBarUpButton:GetNormalTexture():SetTexCoord(0.701171875, 0.767578125, 0.40673828125, 0.42041015625)
-    ActionBarUpButton:GetHighlightTexture():SetTexture(textureRef)
-    ActionBarUpButton:GetHighlightTexture():SetTexCoord(0.884765625, 0.951171875, 0.34619140625, 0.35986328125)
-    ActionBarUpButton:GetPushedTexture():SetTexture(textureRef)
-    ActionBarUpButton:GetPushedTexture():SetTexCoord(0.884765625, 0.951171875, 0.33154296875, 0.34521484375)
-
-    ActionBarDownButton:GetNormalTexture():SetTexture(textureRef)
-    ActionBarDownButton:GetNormalTexture():SetTexCoord(0.904296875, 0.970703125, 0.29541015625, 0.30908203125)
-    ActionBarDownButton:GetHighlightTexture():SetTexture(textureRef)
-    ActionBarDownButton:GetHighlightTexture():SetTexCoord(0.904296875, 0.970703125, 0.28076171875, 0.29443359375)
-    ActionBarDownButton:GetPushedTexture():SetTexture(textureRef)
-    ActionBarDownButton:GetPushedTexture():SetTexCoord(0.904296875, 0.970703125, 0.26611328125, 0.27978515625)
-
-    -- gryphon = 100
-    local buttonScale = 0.42
-    ActionBarUpButton:SetFrameStrata('HIGH')
-    ActionBarUpButton:SetFrameLevel(105)
-    ActionBarUpButton:SetScale(buttonScale)
-    ActionBarDownButton:SetFrameStrata('HIGH')
-    ActionBarDownButton:SetFrameLevel(105)
-    ActionBarDownButton:SetScale(buttonScale)
-    -- MainMenuBarPageNumber:SetFrameStrata('HIGH')
-
-    -- MainMenuBarPageNumber:SetFrameLevel(105)
-    local frameName = 'DragonflightUIPageNumberFrame'
-    local f = CreateFrame('Frame', frameName, UIParent)
-    f:SetSize(25, 25)
-    f:SetPoint('CENTER', ActionButton1, 'CENTER')
-    f:SetFrameStrata('HIGH')
-    f:SetFrameLevel(105)
-
-    MainMenuBarPageNumber:ClearAllPoints()
-    MainMenuBarPageNumber:SetPoint('LEFT', _G[frameName], 'LEFT', -15.5, 0)
-    MainMenuBarPageNumber:SetParent(_G[frameName])
-    MainMenuBarPageNumber:SetScale(1.25)
 end
 
 function Module.ApplyMask()
@@ -1446,10 +1436,6 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
--- Artframe
-local frameArt = CreateFrame('FRAME', 'DragonflightUIArtframe', UIParent)
-Module.FrameArt = frameArt
-
 local atlasActionbar = {
     ['UI-HUD-ActionBar-Gryphon-Left'] = {200, 188, 0.001953125, 0.697265625, 0.10205078125, 0.26513671875, false, false},
     ['UI-HUD-ActionBar-Gryphon-Right'] = {
@@ -1486,37 +1472,6 @@ function Module.ChangeGryphon()
     MainMenuBarTexture3:Hide()
 end
 
-function Module.DrawGryphon()
-    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-    local scale = 0.42
-    local dx, dy = 125, 5
-    local GryphonLeft = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef,
-                                                    'GryphonLeft')
-    GryphonLeft:SetScale(scale)
-    GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -dx, dy)
-    GryphonLeft:SetFrameStrata('HIGH')
-    GryphonLeft:SetFrameLevel(100)
-    frameArt.GryphonLeft = GryphonLeft
-
-    local GryphonRight = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef,
-                                                     'GryphonRight')
-    GryphonRight:SetScale(scale)
-    GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', dx, dy)
-    GryphonRight:SetFrameStrata('HIGH')
-    GryphonRight:SetFrameLevel(100)
-    frameArt.GryphonRight = GryphonRight
-end
-
-function Module.ChangeGryphonStyle(ally)
-    if ally then
-        frameArt.GryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.26611328125, 0.42919921875)
-        frameArt.GryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.10205078125, 0.26513671875)
-    else
-        frameArt.GryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.59423828125, 0.75732421875)
-        frameArt.GryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.43017578125, 0.59326171875)
-    end
-end
-
 function Module.DrawActionbarDeco()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     for i = 1, 12 do
@@ -1526,38 +1481,6 @@ function Module.DrawActionbarDeco()
         deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
     end
 end
-
-function Module.ChangeGryphonVisibility(visible)
-    if visible and Module.db.profile.showGryphon then
-        -- MainMenuBarPageNumber:Show()
-        frameArt.GryphonRight:Show()
-        frameArt.GryphonLeft:Show()
-    else
-        -- MainMenuBarPageNumber:Hide()
-        frameArt.GryphonRight:Hide()
-        frameArt.GryphonLeft:Hide()
-    end
-end
-
-function frameArt:OnEvent(event, arg1)
-    -- print('art event', event)
-    if event == 'UNIT_ENTERED_VEHICLE' then
-        Module.ChangeGryphonVisibility(false)
-        MainMenuBarPageNumber:Hide()
-    elseif event == 'UNIT_EXITED_VEHICLE' then
-        Module.ChangeGryphonVisibility(true)
-        MainMenuBarPageNumber:Show()
-    elseif event == 'PLAYER_ENTERING_WORLD' then
-        local englishFaction, localizedFaction = UnitFactionGroup('player')
-
-        if englishFaction == 'Alliance' then
-            Module.ChangeGryphonStyle(true)
-        else
-            Module.ChangeGryphonStyle(false)
-        end
-    end
-end
-frameArt:SetScript('OnEvent', frameArt.OnEvent)
 
 -- Micromenu
 function Module.SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
@@ -2678,7 +2601,6 @@ function Module.Wrath()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
     Module.StyleButtons()
-    Module.StylePageNumber()
     Module.ApplyMask()
     -- Module.HookAlwaysShowActionbar()
     -- Module.ChangeButtonSpacing()
@@ -2692,12 +2614,8 @@ function Module.Wrath()
 
     -- Core.Sub.Artframe()
     Module.ChangeGryphon()
-    Module.DrawGryphon()
+    -- Module.DrawGryphon()
     Module.DrawActionbarDeco()
-
-    frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
-    frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
-    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
 
     -- Core.Sub.Micromenu()
     Module.ChangeMicroMenuNew()
@@ -2715,7 +2633,6 @@ function Module.Era()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
     Module.StyleButtons()
-    Module.StylePageNumber()
     Module.ApplyMask()
     -- Module.HookAlwaysShowActionbar()
     -- Module.ChangeButtonSpacing()
@@ -2728,12 +2645,8 @@ function Module.Era()
 
     -- Core.Sub.Artframe()
     Module.ChangeGryphon()
-    Module.DrawGryphon()
+    -- Module.DrawGryphon()
     Module.DrawActionbarDeco()
-
-    frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
-    frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
-    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
 
     -- Core.Sub.Micromenu()
     Module.ChangeMicroMenuNew()
