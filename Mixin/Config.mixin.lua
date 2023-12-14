@@ -64,7 +64,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Profiles')
         self:AddSubCategory(cat, 'WhatsNew')
 
-        self:AddSpacer(20)
+        -- self:AddSpacer(20)
     end
 
     do
@@ -77,8 +77,10 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Actionbar4')
         self:AddSubCategory(cat, 'Actionbar5')
         self:AddSubCategory(cat, 'Petbar')
+        self:AddSubCategory(cat, 'XPbar')
+        self:AddSubCategory(cat, 'Repbar')
 
-        self:AddSpacer(20)
+        -- self:AddSpacer(20)
     end
 
     do
@@ -88,7 +90,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Chat')
         self:AddSubCategory(cat, 'Minimap')
 
-        self:AddSpacer(20)
+        -- self:AddSpacer(20)
     end
 
     do

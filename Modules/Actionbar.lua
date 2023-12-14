@@ -108,6 +108,24 @@ local defaults = {
             buttons = 10,
             padding = 2,
             alwaysShow = true
+        },
+        xp = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOM',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            alwaysShowXP = false
+        },
+        rep = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOM',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            alwaysShowXP = false
         }
     }
 }
@@ -147,6 +165,16 @@ end
 local function setOption(info, value)
     Module:SetOption(info, value)
 end
+
+local frameTable = {
+    ['UIParent'] = 'UIParent',
+    ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
+    ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
+    ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
+    ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
+    ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
+    ['DragonflightUIXPBar'] = 'XPbar'
+}
 
 local options = {
     type = 'group',
@@ -285,14 +313,7 @@ local function GetBarOption(n)
                 type = 'select',
                 name = 'Anchorframe',
                 desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
-                values = {
-                    ['UIParent'] = 'UIParent',
-                    ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
-                    ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
-                    ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
-                    ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
-                    ['DragonflightUIActionbarFrame5'] = 'Actionbar5'
-                },
+                values = frameTable,
                 order = 4
             },
             anchor = {
@@ -428,14 +449,7 @@ local petOptions = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
-            values = {
-                ['UIParent'] = 'UIParent',
-                ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
-                ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
-                ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
-                ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
-                ['DragonflightUIActionbarFrame5'] = 'Actionbar5'
-            },
+            values = frameTable,
             order = 4
         },
         anchor = {
@@ -537,6 +551,174 @@ local petOptions = {
             type = 'toggle',
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', 'pet'),
+            order = 12
+        }
+    }
+}
+
+local xpOptions = {
+    name = 'XP',
+    desc = 'XP',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'xp'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'xp'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'xp'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'xp'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'xp'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'xp'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        alwaysShowXP = {
+            type = 'toggle',
+            name = 'Always show XP text',
+            desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
+            order = 12
+        }
+    }
+}
+
+local repOptions = {
+    name = 'Rep',
+    desc = 'Rep',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'rep'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'rep'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'rep'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'rep'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'rep'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'rep'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        alwaysShowRep = {
+            type = 'toggle',
+            name = 'Always show Rep text',
+            desc = '' .. getDefaultStr('alwaysShowRep', 'rep'),
             order = 12
         }
     }
@@ -657,6 +839,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('pet')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'XPbar', {
+        name = 'XPbar',
+        sub = 'xp',
+        options = xpOptions,
+        default = function()
+            setDefaultSubValues('xp')
+        end
+    })
     --[[ 
     local optionsBar2 = GetBarOption(2)
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar2', {
@@ -684,7 +875,7 @@ function Module:ApplySettings()
     Module.ChangeGryphonVisibility(db.showGryphon)
     -- Module.MoveSideBars(db.changeSides)
     -- Module.MoveSideBarsDynamic(db.changeSides)
-    Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
+    -- Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
 
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
@@ -695,6 +886,7 @@ function Module:ApplySettings()
     Module.bar4:SetState(db.bar4)
     Module.bar5:SetState(db.bar5)
     Module.petbar:SetState(db.pet)
+    Module.xpbar:SetState(db.xp)
 end
 
 -- Actionbar
@@ -752,168 +944,8 @@ function Module.ChangeActionbar()
 end
 
 function Module.CreateNewXPBar()
-    local sizeX, sizeY = 466, 20
-
-    local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
-    f:SetSize(sizeX, sizeY)
-    f:SetPoint('BOTTOM', 0, 5)
-
-    local tex = f:CreateTexture('Background', 'BACKGROUND')
-    tex:SetAllPoints()
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
-    tex:SetTexCoord(0, 0.55517578, 0, 1)
-    f.Background = tex
-
-    -- actual status bar, child of parent above
-    f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetPoint('TOPLEFT', 0, 0)
-    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
-    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-
-    f.RestedBar = CreateFrame('StatusBar', nil, f)
-    f.RestedBar:SetPoint('CENTER')
-    f.RestedBar:SetSize(sizeX, sizeY)
-
-    f.RestedBar.Texture = f.RestedBar:CreateTexture(nil, 'BORDER', nil)
-    f.RestedBar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\RestedBackground')
-    f.RestedBar.Texture:SetAllPoints()
-    f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
-
-    -- @TODO: needs more visibility
-    local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
-    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
-
-    f.RestedBarMark = CreateFrame('Frame', nil, f)
-    f.RestedBarMark:SetPoint('CENTER', restedBarMarkOffsetX, restedBarMarkOffsetY)
-    f.RestedBarMark:SetSize(restedBarMarkSizeX, restedBarMarkSizeY)
-
-    f.RestedBarMark.Texture = f.RestedBarMark:CreateTexture(nil, 'OVERLAY')
-    f.RestedBarMark.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    f.RestedBarMark.Texture:SetTexCoord(1170 / 2048, 1192 / 2048, 201 / 256, 231 / 256)
-    f.RestedBarMark.Texture:SetAllPoints()
-
-    -- border
-    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
-    border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
-    border:SetPoint('CENTER')
-    f.Border = border
-
-    -- text
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    f.Bar:EnableMouse(true)
-
-    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
-    f.Text:SetTextColor(1, 1, 1, 1)
-    f.Text:SetText('')
-    f.Text:ClearAllPoints()
-    f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 1.5)
-
-    frame.XPBar = f
-
-    frame.XPBar.valid = false
-
-    frame.XPBar.Bar:SetScript('OnEnter', function(self)
-        local label = XPBAR_LABEL
-        GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
-        GameTooltip.canAddRestStateLine = 1
-        ExhaustionToolTipText()
-
-        local playerCurrXP = UnitXP('player')
-        local playerMaxXP = UnitXPMax('player')
-        local playerPercent = 100 * playerCurrXP / playerMaxXP
-        local playerXPLeft = playerMaxXP - playerCurrXP
-        local playerXPLeftPercent = 100 - playerPercent
-
-        local restedXP = GetXPExhaustion() or 0
-        local restedMax = playerMaxXP * 1.5
-        local restedPercent = 100 * restedXP / restedMax
-
-        GameTooltip:AddDoubleLine(' ')
-        GameTooltip:AddDoubleLine('XP: ',
-                                  '|cFFFFFFFF' .. FormatLargeNumber(playerCurrXP) .. '/' ..
-                                      FormatLargeNumber(playerMaxXP) .. ' (' .. string.format('%.2f', playerPercent) ..
-                                      '%)')
-        GameTooltip:AddDoubleLine('XP left:', '|cFFFFFFFF' .. FormatLargeNumber(playerXPLeft) .. ' (' ..
-                                      string.format('%.2f', playerXPLeftPercent) .. '%)')
-        GameTooltip:AddDoubleLine('Rested: ', '|cFFFFFFFF' .. FormatLargeNumber(restedXP) .. ' (' ..
-                                      string.format('%.2f', restedPercent) .. '%)')
-
-        if restedPercent < 100 then
-            local restedTime = (100 * (restedMax - restedXP) / restedMax) / 10 * 3 * 8 * 60 * 60
-            GameTooltip:AddDoubleLine('Time to max rested:', '|cFFFFFFFF' .. SecondsToTime(restedTime))
-        end
-
-        GameTooltip:Show()
-    end)
-
-    frame.XPBar.Bar:SetScript('OnLeave', function(self)
-        local label = XPBAR_LABEL
-        GameTooltip:Hide()
-    end)
-
-    frame.UpdateXPBar = function()
-        local showXP = false
-        if DF.Wrath then
-            showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
-        else
-            showXP = UnitLevel('player') < GetMaxPlayerLevel()
-        end
-
-        if showXP then
-            -- exhaustion
-            local exhaustionStateID = GetRestState()
-            if (exhaustionStateID == 1) then
-                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
-            elseif (exhaustionStateID == 2) then
-                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-            end
-
-            -- value
-            local playerCurrXP = UnitXP('player')
-            local playerMaxXP = UnitXPMax('player')
-            local restedXP = GetXPExhaustion()
-
-            if (restedXP and restedXP > 0) then
-                if (playerCurrXP + restedXP > playerMaxXP) then
-                    frame.XPBar.RestedBar:Hide()
-
-                    frame.XPBar.RestedBarMark:Hide()
-                else
-                    frame.XPBar.RestedBar:Show()
-                    frame.XPBar.RestedBar:SetMinMaxValues(0, playerMaxXP)
-                    frame.XPBar.RestedBar:SetValue(playerCurrXP + restedXP)
-
-                    frame.XPBar.RestedBarMark:Show()
-                    frame.XPBar.RestedBarMark:SetPoint('LEFT', (playerCurrXP + restedXP) / playerMaxXP * sizeX +
-                                                           restedBarMarkOffsetX - restedBarMarkSizeX / 2,
-                                                       restedBarMarkOffsetY)
-                end
-            else
-                frame.XPBar.RestedBar:Hide()
-                frame.XPBar.RestedBarMark:Hide()
-            end
-
-            frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
-            frame.XPBar.Bar:SetValue(playerCurrXP)
-
-            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
-            -- frame.XPBar:Show()
-            frame.XPBar.valid = true
-        else
-            -- frame.XPBar:Hide()
-            frame.XPBar.valid = false
-        end
-    end
-
-    frame:RegisterEvent('PLAYER_XP_UPDATE')
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('UPDATE_EXHAUSTION')
+    local newF = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent, 'DragonflightUIXPBarTemplate')
+    Module.xpbar = newF
 end
 
 function Module.CreateNewRepBar()
@@ -994,20 +1026,6 @@ function Module.CreateNewRepBar()
         else
             frame.RepBar.valid = false
         end
-    end
-end
-
-function Module.SetAlwaysShowXPRepText(xp, rep)
-    if xp then
-        frame.XPBar.Text:SetDrawLayer('OVERLAY')
-    else
-        frame.XPBar.Text:SetDrawLayer('HIGHLIGHT')
-    end
-
-    if rep then
-        frame.RepBar.Text:SetDrawLayer('OVERLAY')
-    else
-        frame.RepBar.Text:SetDrawLayer('HIGHLIGHT')
     end
 end
 
@@ -1543,7 +1561,7 @@ end
 function frame:OnEvent(event, arg1)
     -- print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        frame.UpdateXPBar()
+
         frame.UpdateRepBar()
         -- Module.SetNumBars()
         frame:RegisterEvent('UPDATE_FACTION')
@@ -1551,13 +1569,13 @@ function frame:OnEvent(event, arg1)
         frame.UpdateRepBar()
         -- Module.SetNumBars()
     elseif event == 'PLAYER_XP_UPDATE' then
-        frame.UpdateXPBar()
+
         -- Module.SetNumBars()
     elseif event == 'UPDATE_EXHAUSTION' then
-        frame.UpdateXPBar()
+
         -- Module.SetNumBars()
     elseif event == 'PLAYER_REGEN_ENABLED' then
-        frame.UpdateXPBar()
+
         frame.UpdateRepBar()
         -- Module.SetNumBars()
     end
@@ -2800,7 +2818,7 @@ function Module.Wrath()
     Module.ApplyMask()
     -- Module.HookAlwaysShowActionbar()
     -- Module.ChangeButtonSpacing()
-    frame.UpdateXPBar()
+
     frame.UpdateRepBar()
     Module.SetNumBars()
     Module.HookPetBar()
@@ -2838,7 +2856,7 @@ function Module.Era()
     Module.ApplyMask()
     -- Module.HookAlwaysShowActionbar()
     -- Module.ChangeButtonSpacing()
-    frame.UpdateXPBar()
+
     frame.UpdateRepBar()
     Module.SetNumBars()
     Module.HookPetBar()
