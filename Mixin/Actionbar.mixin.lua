@@ -1,9 +1,6 @@
-DragonflightUIActionbarMixin = {}
+DragonflightUIEditModeMixin = {}
 
-function DragonflightUIActionbarMixin:Init()
-    self:SetPoint('BOTTOMLEFT', UIParent, 'CENTER', 0, 380)
-    self:SetSize(250, 142)
-
+function DragonflightUIEditModeMixin:InitEditMode()
     self.box = CreateFrame('FRAME')
     self.box:SetParent(self)
     self.box:SetAllPoints()
@@ -15,8 +12,17 @@ function DragonflightUIActionbarMixin:Init()
     self.box.texture:SetColorTexture(0, 0.8, 0, 0.42)
 end
 
-function DragonflightUIActionbarMixin:ShowHighlight(show)
+function DragonflightUIEditModeMixin:ShowHighlight(show)
     self.box:SetShown(show)
+end
+
+DragonflightUIActionbarMixin = CreateFromMixins(DragonflightUIEditModeMixin)
+
+function DragonflightUIActionbarMixin:Init()
+    self:SetPoint('BOTTOMLEFT', UIParent, 'CENTER', 0, 380)
+    self:SetSize(250, 142)
+
+    self:InitEditMode()
 end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
@@ -143,3 +149,12 @@ function DragonflightUIActionbarMixin:UpdateGrid(show)
         btn:Hide()
     end
 end
+
+DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
+
+function DragonflightUIPetbarMixin:Update()
+end
+
+function DragonflightUIPetbarMixin:UpdateGrid()
+end
+
