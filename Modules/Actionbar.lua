@@ -1169,6 +1169,22 @@ function Module.StyleButtons()
             end
         end
     end
+
+    for i = 1, 10 do
+        local btn = _G['StanceButton' .. i]
+        local tex = _G['StanceButton' .. i .. 'NormalTexture2']
+        tex:SetSize(52, 52)
+
+        --TODO can maybe break
+        hooksecurefunc(tex, 'SetWidth', function()
+            -- print(tex:GetName(), 'SetSize')
+            tex:SetSize(52, 52)
+        end)
+        hooksecurefunc(tex, 'SetHeight', function()
+            -- print(tex:GetName(), 'SetSize')
+            tex:SetSize(52, 52)
+        end)       
+    end
 end
 
 function Module.ApplyMask()
