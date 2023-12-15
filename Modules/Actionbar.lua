@@ -976,6 +976,17 @@ function Module:SetupActionbarFrames()
         bar:SetButtons(buttons)
         Module['stancebar'] = bar
     end
+
+    -- @TODO
+    do
+        MultiBarBottomLeft.ignoreFramePositionManager = true
+        MultiBarBottomLeft:ClearAllPoints()
+        MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
+
+        MultiBarBottomRight.ignoreFramePositionManager = true
+        MultiBarBottomRight:ClearAllPoints()
+        MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+    end
 end
 
 function Module:RegisterOptionScreens()
@@ -1061,10 +1072,14 @@ function Module.ChangeActionbar()
     -- MultiBarBottomLeft:ClearAllPoints()
     -- MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
     MultiBarBottomLeft.ignoreFramePositionManager = true
+    -- MultiBarBottomLeft:ClearAllPoints()
+    -- MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
 
     -- MultiBarBottomRight:ClearAllPoints()
     -- MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
     MultiBarBottomRight.ignoreFramePositionManager = true
+    -- MultiBarBottomRight:ClearAllPoints()
+    -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
 
     MultiBarLeft.ignoreFramePositionManager = true
     MultiBarRight.ignoreFramePositionManager = true
@@ -1578,6 +1593,7 @@ function Module.MoveSideBarsOLD()
     end
 end
 
+-- TODO
 function Module.MoveTotem()
     MultiCastActionBarFrame.ignoreFramePositionManager = true
     Module.Temp.TotemFixing = nil
@@ -1587,7 +1603,7 @@ function Module.MoveTotem()
         Module.Temp.TotemFixing = true
         MultiCastActionBarFrame:ClearAllPoints()
         -- MultiCastActionBarFrame:SetPoint('BOTTOM', -348, 147)
-        MultiCastActionBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
+        MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
         -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5,4 + offset)
         Module.Temp.TotemFixing = nil
     end)
