@@ -18,15 +18,154 @@ local defaults = {
         sideButtons = 12,
         bagsExpanded = true,
         alwaysShowXP = false,
-        alwaysShowRep = false
+        alwaysShowRep = false,
+        bar1 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIRepBar',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 10,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true,
+            hideArt = false,
+            hideScrolling = false,
+            gryphons = 'DEFAULT'
+        },
+        bar2 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame1',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true
+        },
+        bar3 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame2',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true
+        },
+        bar4 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame2',
+            anchor = 'RIGHT',
+            anchorParent = 'LEFT',
+            x = -64,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 3,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true
+        },
+        bar5 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame2',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 64,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 3,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true
+        },
+        pet = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            alwaysShow = true
+        },
+        xp = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOM',
+            anchorParent = 'BOTTOM',
+            x = 0,
+            y = 5,
+            alwaysShowXP = false
+        },
+        rep = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIXPBar',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            alwaysShowXP = false
+        },
+        stance = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            alwaysShow = true
+        }
     }
 }
 Module:SetDefaults(defaults)
 
-local defaultsActionbarPROTO = {scale = 1, x = 0, y = 0, orientation = 'horizontal', rows = 3, buttons = 12}
+local defaultsActionbarPROTO = {
+    scale = 1,
+    anchorFrame = 'UIParent',
+    anchor = 'CENTER',
+    anchorParent = 'CENTER',
+    x = 0,
+    y = 0,
+    orientation = 'horizontal',
+    buttonScale = 1,
+    rows = 1,
+    buttons = 12,
+    padding = 3,
+    alwaysShow = true
+}
 
-local function getDefaultStr(key)
-    return Module:GetDefaultStr(key)
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
@@ -44,6 +183,19 @@ end
 local function setOption(info, value)
     Module:SetOption(info, value)
 end
+
+local frameTable = {
+    ['UIParent'] = 'UIParent',
+    ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
+    ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
+    ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
+    ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
+    ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
+    ['DragonflightUIXPBar'] = 'XPbar',
+    ['DragonflightUIRepBar'] = 'RepBar',
+    ['DragonflightUIPetBar'] = 'PetBar',
+    ['DragonflightUIStancebar'] = 'Stancebar'
+}
 
 local options = {
     type = 'group',
@@ -160,6 +312,594 @@ local options = {
     }
 }
 
+local function GetBarOption(n)
+    local barname = 'bar' .. n
+    local opt = {
+        name = 'Actionbar' .. n,
+        desc = 'Actionbar' .. n,
+        get = getOption,
+        set = setOption,
+        type = 'group',
+        args = {
+            --[[    scale = {
+                type = 'range',
+                name = 'Scale',
+                desc = '' .. getDefaultStr('scale', barname),
+                min = 0.1,
+                max = 5,
+                bigStep = 0.1,
+                order = 1
+            }, ]]
+            anchorFrame = {
+                type = 'select',
+                name = 'Anchorframe',
+                desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
+                values = frameTable,
+                order = 4
+            },
+            anchor = {
+                type = 'select',
+                name = 'Anchor',
+                desc = 'Anchor' .. getDefaultStr('anchor', barname),
+                values = {
+                    ['TOP'] = 'TOP',
+                    ['RIGHT'] = 'RIGHT',
+                    ['BOTTOM'] = 'BOTTOM',
+                    ['LEFT'] = 'LEFT',
+                    ['TOPRIGHT'] = 'TOPRIGHT',
+                    ['TOPLEFT'] = 'TOPLEFT',
+                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                    ['CENTER'] = 'CENTER'
+                },
+                order = 2
+            },
+            anchorParent = {
+                type = 'select',
+                name = 'AnchorParent',
+                desc = 'AnchorParent' .. getDefaultStr('anchorParent', barname),
+                values = {
+                    ['TOP'] = 'TOP',
+                    ['RIGHT'] = 'RIGHT',
+                    ['BOTTOM'] = 'BOTTOM',
+                    ['LEFT'] = 'LEFT',
+                    ['TOPRIGHT'] = 'TOPRIGHT',
+                    ['TOPLEFT'] = 'TOPLEFT',
+                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                    ['CENTER'] = 'CENTER'
+                },
+                order = 3
+            },
+            x = {
+                type = 'range',
+                name = 'X',
+                desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', barname),
+                min = -2500,
+                max = 2500,
+                bigStep = 1,
+                order = 5
+            },
+            y = {
+                type = 'range',
+                name = 'Y',
+                desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', barname),
+                min = -2500,
+                max = 2500,
+                bigStep = 1,
+                order = 6
+            },
+            orientation = {
+                type = 'select',
+                name = 'Orientation',
+                desc = 'Orientation' .. getDefaultStr('orientation', barname),
+                values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+                order = 7
+            },
+            reverse = {
+                type = 'toggle',
+                name = 'Reverse Button order',
+                desc = '' .. getDefaultStr('reverse', barname),
+                order = 7.5
+            },
+            buttonScale = {
+                type = 'range',
+                name = 'ButtonScale',
+                desc = '' .. getDefaultStr('buttonScale', barname),
+                min = 0.1,
+                max = 5,
+                bigStep = 0.1,
+                order = 1
+            },
+            rows = {
+                type = 'range',
+                name = '# of Rows',
+                desc = '' .. getDefaultStr('rows', barname),
+                min = 1,
+                max = 12,
+                bigStep = 1,
+                order = 9
+            },
+            buttons = {
+                type = 'range',
+                name = '# of Buttons',
+                desc = '' .. getDefaultStr('buttons', barname),
+                min = 1,
+                max = 12,
+                bigStep = 1,
+                order = 10
+            },
+            padding = {
+                type = 'range',
+                name = 'Padding',
+                desc = '' .. getDefaultStr('padding', barname),
+                min = 0,
+                max = 10,
+                bigStep = 1,
+                order = 11
+            },
+            alwaysShow = {
+                type = 'toggle',
+                name = 'Always show Actionbar',
+                desc = '' .. getDefaultStr('alwaysShow', barname),
+                order = 12
+            }
+        }
+    }
+    -- if n == 1 then opt.args.anchorFrame['DragonflightUIActionbarFrame1'] = nil end
+
+    if n == 1 then
+        -- print('111111')
+        local moreOptions = {
+            hideArt = {
+                type = 'toggle',
+                name = 'Hide bar art',
+                desc = '' .. getDefaultStr('hideArt', barname),
+                order = 14
+            },
+            hideScrolling = {
+                type = 'toggle',
+                name = 'Hide bar scrolling',
+                desc = '' .. getDefaultStr('hideScrolling', barname),
+                order = 15
+            },
+            gryphons = {
+                type = 'select',
+                name = 'Gryphons',
+                desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
+                values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
+                order = 13
+            }
+        }
+
+        for k, v in pairs(moreOptions) do opt.args[k] = v end
+    end
+
+    return opt
+end
+
+local petOptions = {
+    name = 'PetBar',
+    desc = 'PetBar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'pet'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'pet'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'pet'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        orientation = {
+            type = 'select',
+            name = 'Orientation',
+            desc = 'Orientation' .. getDefaultStr('orientation', 'pet'),
+            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            order = 7
+        },
+        buttonScale = {
+            type = 'range',
+            name = 'ButtonScale',
+            desc = '' .. getDefaultStr('buttonScale', 'pet'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        rows = {
+            type = 'range',
+            name = '# of Rows',
+            desc = '' .. getDefaultStr('rows', 'pet'),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 9
+        },
+        buttons = {
+            type = 'range',
+            name = '# of Buttons',
+            desc = '' .. getDefaultStr('buttons', 'pet'),
+            min = 1,
+            max = 10,
+            bigStep = 1,
+            order = 10
+        },
+        padding = {
+            type = 'range',
+            name = 'Padding',
+            desc = '' .. getDefaultStr('padding', 'pet'),
+            min = 0,
+            max = 10,
+            bigStep = 1,
+            order = 11
+        },
+        alwaysShow = {
+            type = 'toggle',
+            name = 'Always show Actionbar',
+            desc = '' .. getDefaultStr('alwaysShow', 'pet'),
+            order = 12
+        }
+    }
+}
+
+local xpOptions = {
+    name = 'XP',
+    desc = 'XP',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'xp'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'xp'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'xp'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'xp'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'xp'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'xp'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        alwaysShowXP = {
+            type = 'toggle',
+            name = 'Always show XP text',
+            desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
+            order = 12
+        }
+    }
+}
+
+local repOptions = {
+    name = 'Rep',
+    desc = 'Rep',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'rep'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'rep'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'rep'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'rep'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'rep'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'rep'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        alwaysShowRep = {
+            type = 'toggle',
+            name = 'Always show Rep text',
+            desc = '' .. getDefaultStr('alwaysShowRep', 'rep'),
+            order = 12
+        }
+    }
+}
+
+local stanceOptions = {
+    name = 'StanceBar',
+    desc = 'StanceBar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'stance'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'stance'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'stance'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'stance'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'stance'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'stance'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        orientation = {
+            type = 'select',
+            name = 'Orientation',
+            desc = 'Orientation' .. getDefaultStr('orientation', 'stance'),
+            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            order = 7
+        },
+        buttonScale = {
+            type = 'range',
+            name = 'ButtonScale',
+            desc = '' .. getDefaultStr('buttonScale', 'stance'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        rows = {
+            type = 'range',
+            name = '# of Rows',
+            desc = '' .. getDefaultStr('rows', 'stance'),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 9
+        },
+        buttons = {
+            type = 'range',
+            name = '# of Buttons',
+            desc = '' .. getDefaultStr('buttons', 'stance'),
+            min = 1,
+            max = 10,
+            bigStep = 1,
+            order = 10
+        },
+        padding = {
+            type = 'range',
+            name = 'Padding',
+            desc = '' .. getDefaultStr('padding', 'stance'),
+            min = 0,
+            max = 10,
+            bigStep = 1,
+            order = 11
+        },
+        alwaysShow = {
+            type = 'toggle',
+            name = 'Always show Actionbar',
+            desc = '' .. getDefaultStr('alwaysShow', 'stance'),
+            order = 12
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -176,21 +916,147 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:SetupActionbarFrames()
     Module:ApplySettings()
+    Module:RegisterOptionScreens()
 end
 
 function Module:OnDisable()
 end
 
+function Module:SetupActionbarFrames()
+
+    local createStuff = function(n, base)
+
+        local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
+                                'DragonflightUIActionbarFrameTemplate')
+        local buttons = {}
+        for i = 1, 12 do
+            local name = base .. i
+            local btn = _G[name]
+            buttons[i] = btn
+        end
+        bar:Init()
+        bar:SetButtons(buttons)
+        Module['bar' .. n] = bar
+    end
+
+    createStuff(1, 'ActionButton')
+    Module.bar1:SetupMainBar()
+    createStuff(2, 'MultiBarBottomLeftButton')
+    createStuff(3, 'MultiBarBottomRightButton')
+    createStuff(4, 'MultiBarLeftButton')
+    createStuff(5, 'MultiBarRightButton')
+
+    do
+        local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
+        local buttons = {}
+
+        for i = 1, 10 do
+            local btn = _G['PetActionButton' .. i]
+            buttons[i] = btn
+        end
+
+        bar:Init()
+        bar:SetButtons(buttons)
+        Module['petbar'] = bar
+    end
+
+    do
+        local bar = CreateFrame('FRAME', 'DragonflightUIStancebarFrame', UIParent,
+                                'DragonflightUIActionbarFrameTemplate')
+        local buttons = {}
+
+        for i = 1, 10 do
+            local btn = _G['StanceButton' .. i]
+            buttons[i] = btn
+        end
+
+        bar:Init()
+        bar:SetButtons(buttons)
+        Module['stancebar'] = bar
+    end
+
+    -- @TODO
+    do
+        MultiBarBottomLeft.ignoreFramePositionManager = true
+        MultiBarBottomLeft:ClearAllPoints()
+        MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
+
+        MultiBarBottomRight.ignoreFramePositionManager = true
+        MultiBarBottomRight:ClearAllPoints()
+        MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+    end
+end
+
+function Module:RegisterOptionScreens()
+
+    for i = 1, 5 do
+        local optionsBar = GetBarOption(i)
+        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
+            name = 'Actionbar' .. i,
+            sub = 'bar' .. i,
+            options = optionsBar,
+            default = function()
+                setDefaultSubValues('bar' .. i)
+            end
+        })
+
+    end
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Petbar', {
+        name = 'Petbar',
+        sub = 'pet',
+        options = petOptions,
+        default = function()
+            setDefaultSubValues('pet')
+        end
+    })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'XPbar', {
+        name = 'XPbar',
+        sub = 'xp',
+        options = xpOptions,
+        default = function()
+            setDefaultSubValues('xp')
+        end
+    })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Repbar', {
+        name = 'Repbar',
+        sub = 'rep',
+        options = repOptions,
+        default = function()
+            setDefaultSubValues('rep')
+        end
+    })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Stancebar', {
+        name = 'Stancebar',
+        sub = 'stance',
+        options = stanceOptions,
+        default = function()
+            setDefaultSubValues('stance')
+        end
+    })
+end
+
 function Module:ApplySettings()
     local db = Module.db.profile
-    Module.ChangeGryphonVisibility(db.showGryphon)
-    -- Module.MoveSideBars(db.changeSides)
-    Module.MoveSideBarsDynamic(db.changeSides)
-    Module.SetAlwaysShowXPRepText(db.alwaysShowXP, db.alwaysShowRep)
+    -- Module.ChangeGryphonVisibility(db.showGryphon)
 
     local MinimapModule = DF:GetModule('Minimap')
     if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
+
+    Module.bar1:SetState(db.bar1)
+    Module.bar2:SetState(db.bar2)
+    Module.bar3:SetState(db.bar3)
+    Module.bar4:SetState(db.bar4)
+    Module.bar5:SetState(db.bar5)
+    Module.petbar:SetState(db.pet)
+    Module.xpbar:SetState(db.xp)
+    Module.repbar:SetState(db.rep)
+    Module.stancebar:SetState(db.stance)
 end
 
 -- Actionbar
@@ -199,16 +1065,24 @@ frame:SetFrameStrata('HIGH')
 Module.Frame = frame
 
 function Module.ChangeActionbar()
-    ActionButton1:ClearAllPoints()
-    ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+    -- ActionButton1:ClearAllPoints()
+    -- ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18)
+    ActionButton1.ignoreFramePositionManager = true
 
-    MultiBarBottomLeft:ClearAllPoints()
-    MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
+    -- MultiBarBottomLeft:ClearAllPoints()
+    -- MultiBarBottomLeft:SetPoint('LEFT', ActionButton1, 'LEFT', 0, 40)
     MultiBarBottomLeft.ignoreFramePositionManager = true
+    -- MultiBarBottomLeft:ClearAllPoints()
+    -- MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
 
-    MultiBarBottomRight:ClearAllPoints()
-    MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
+    -- MultiBarBottomRight:ClearAllPoints()
+    -- MultiBarBottomRight:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 0, 40)
     MultiBarBottomRight.ignoreFramePositionManager = true
+    -- MultiBarBottomRight:ClearAllPoints()
+    -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+
+    MultiBarLeft.ignoreFramePositionManager = true
+    MultiBarRight.ignoreFramePositionManager = true
 
     StanceButton1:ClearAllPoints()
     StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
@@ -224,10 +1098,12 @@ function Module.ChangeActionbar()
         StanceBarRight:Hide()
     end)
 
-    ActionBarUpButton:ClearAllPoints()
+    --[[    ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
     ActionBarDownButton:ClearAllPoints()
-    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7)
+    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7) ]]
+
+    MainMenuBar:SetSize(1, 1)
 
     MainMenuExpBar:Hide()
     hooksecurefunc(MainMenuExpBar, 'Show', function()
@@ -244,263 +1120,13 @@ function Module.ChangeActionbar()
 end
 
 function Module.CreateNewXPBar()
-    local sizeX, sizeY = 466, 20
-
-    local f = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent)
-    f:SetSize(sizeX, sizeY)
-    f:SetPoint('BOTTOM', 0, 5)
-
-    local tex = f:CreateTexture('Background', 'BACKGROUND')
-    tex:SetAllPoints()
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
-    tex:SetTexCoord(0, 0.55517578, 0, 1)
-    f.Background = tex
-
-    -- actual status bar, child of parent above
-    f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetPoint('TOPLEFT', 0, 0)
-    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
-    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-
-    f.RestedBar = CreateFrame('StatusBar', nil, f)
-    f.RestedBar:SetPoint('CENTER')
-    f.RestedBar:SetSize(sizeX, sizeY)
-
-    f.RestedBar.Texture = f.RestedBar:CreateTexture(nil, 'BORDER', nil)
-    f.RestedBar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\RestedBackground')
-    f.RestedBar.Texture:SetAllPoints()
-    f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
-
-    -- @TODO: needs more visibility
-    local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
-    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
-
-    f.RestedBarMark = CreateFrame('Frame', nil, f)
-    f.RestedBarMark:SetPoint('CENTER', restedBarMarkOffsetX, restedBarMarkOffsetY)
-    f.RestedBarMark:SetSize(restedBarMarkSizeX, restedBarMarkSizeY)
-
-    f.RestedBarMark.Texture = f.RestedBarMark:CreateTexture(nil, 'OVERLAY')
-    f.RestedBarMark.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiexperiencebar2x')
-    f.RestedBarMark.Texture:SetTexCoord(1170 / 2048, 1192 / 2048, 201 / 256, 231 / 256)
-    f.RestedBarMark.Texture:SetAllPoints()
-
-    -- border
-    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
-    border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
-    border:SetPoint('CENTER')
-    f.Border = border
-
-    -- text
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
-    f.Bar:EnableMouse(true)
-
-    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
-    f.Text:SetTextColor(1, 1, 1, 1)
-    f.Text:SetText('')
-    f.Text:ClearAllPoints()
-    f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 1.5)
-
-    frame.XPBar = f
-
-    frame.XPBar.valid = false
-
-    frame.XPBar.Bar:SetScript('OnEnter', function(self)
-        local label = XPBAR_LABEL
-        GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
-        GameTooltip.canAddRestStateLine = 1
-        ExhaustionToolTipText()
-
-        local playerCurrXP = UnitXP('player')
-        local playerMaxXP = UnitXPMax('player')
-        local playerPercent = 100 * playerCurrXP / playerMaxXP
-        local playerXPLeft = playerMaxXP - playerCurrXP
-        local playerXPLeftPercent = 100 - playerPercent
-
-        local restedXP = GetXPExhaustion() or 0
-        local restedMax = playerMaxXP * 1.5
-        local restedPercent = 100 * restedXP / restedMax
-
-        GameTooltip:AddDoubleLine(' ')
-        GameTooltip:AddDoubleLine('XP: ',
-                                  '|cFFFFFFFF' .. FormatLargeNumber(playerCurrXP) .. '/' ..
-                                      FormatLargeNumber(playerMaxXP) .. ' (' .. string.format('%.2f', playerPercent) ..
-                                      '%)')
-        GameTooltip:AddDoubleLine('XP left:', '|cFFFFFFFF' .. FormatLargeNumber(playerXPLeft) .. ' (' ..
-                                      string.format('%.2f', playerXPLeftPercent) .. '%)')
-        GameTooltip:AddDoubleLine('Rested: ', '|cFFFFFFFF' .. FormatLargeNumber(restedXP) .. ' (' ..
-                                      string.format('%.2f', restedPercent) .. '%)')
-
-        if restedPercent < 100 then
-            local restedTime = (100 * (restedMax - restedXP) / restedMax) / 10 * 3 * 8 * 60 * 60
-            GameTooltip:AddDoubleLine('Time to max rested:', '|cFFFFFFFF' .. SecondsToTime(restedTime))
-        end
-
-        GameTooltip:Show()
-    end)
-
-    frame.XPBar.Bar:SetScript('OnLeave', function(self)
-        local label = XPBAR_LABEL
-        GameTooltip:Hide()
-    end)
-
-    frame.UpdateXPBar = function()
-        local showXP = false
-        if DF.Wrath then
-            showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
-        else
-            showXP = UnitLevel('player') < GetMaxPlayerLevel()
-        end
-
-        if showXP then
-            -- exhaustion
-            local exhaustionStateID = GetRestState()
-            if (exhaustionStateID == 1) then
-                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Rested')
-            elseif (exhaustionStateID == 2) then
-                f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
-            end
-
-            -- value
-            local playerCurrXP = UnitXP('player')
-            local playerMaxXP = UnitXPMax('player')
-            local restedXP = GetXPExhaustion()
-
-            if (restedXP and restedXP > 0) then
-                if (playerCurrXP + restedXP > playerMaxXP) then
-                    frame.XPBar.RestedBar:Hide()
-
-                    frame.XPBar.RestedBarMark:Hide()
-                else
-                    frame.XPBar.RestedBar:Show()
-                    frame.XPBar.RestedBar:SetMinMaxValues(0, playerMaxXP)
-                    frame.XPBar.RestedBar:SetValue(playerCurrXP + restedXP)
-
-                    frame.XPBar.RestedBarMark:Show()
-                    frame.XPBar.RestedBarMark:SetPoint('LEFT', (playerCurrXP + restedXP) / playerMaxXP * sizeX +
-                                                           restedBarMarkOffsetX - restedBarMarkSizeX / 2,
-                                                       restedBarMarkOffsetY)
-                end
-            else
-                frame.XPBar.RestedBar:Hide()
-                frame.XPBar.RestedBarMark:Hide()
-            end
-
-            frame.XPBar.Bar:SetMinMaxValues(0, playerMaxXP)
-            frame.XPBar.Bar:SetValue(playerCurrXP)
-
-            frame.XPBar.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
-            -- frame.XPBar:Show()
-            frame.XPBar.valid = true
-        else
-            -- frame.XPBar:Hide()
-            frame.XPBar.valid = false
-        end
-    end
-
-    frame:RegisterEvent('PLAYER_XP_UPDATE')
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('UPDATE_EXHAUSTION')
+    local newF = CreateFrame('Frame', 'DragonflightUIXPBar', UIParent, 'DragonflightUIXPBarTemplate')
+    Module.xpbar = newF
 end
 
 function Module.CreateNewRepBar()
-    local sizeX, sizeY = 466, 20
-
-    local f = CreateFrame('Frame', 'DragonflightUIRepBar', UIParent)
-    f:SetSize(sizeX, sizeY)
-    f:SetPoint('BOTTOM', 0, 5 + 20)
-
-    local tex = f:CreateTexture('Background', 'BACKGROUND')
-    tex:SetAllPoints()
-    tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Background')
-    tex:SetTexCoord(0, 0.55517578, 0, 1)
-    f.Background = tex
-
-    -- actual status bar, child of parent above
-    f.Bar = CreateFrame('StatusBar', nil, f)
-    f.Bar:SetPoint('TOPLEFT', 0, 0)
-    f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
-    f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\Rep')
-
-    -- border
-    local border = f.Bar:CreateTexture('Border', 'OVERLAY')
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
-    border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
-    border:SetPoint('CENTER')
-    f.Border = border
-
-    -- text
-    f.Bar:EnableMouse(true)
-    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
-    f.Text:SetTextColor(1, 1, 1, 1)
-    f.Text:SetText('')
-    f.Text:ClearAllPoints()
-    f.Text:SetParent(f.Bar)
-    f.Text:SetPoint('CENTER', 0, 1)
-
-    frame.RepBar = f
-
-    frame.RepBar.Bar:SetMinMaxValues(0, 125)
-    frame.RepBar.Bar:SetValue(69)
-
-    frame.RepBar.valid = false
-
-    frame.RepBar.Bar:SetScript('OnMouseDown', function(self, button)
-        if button == 'LeftButton' then ToggleCharacter('ReputationFrame') end
-    end)
-
-    frame.UpdateRepBar = function()
-        local name, standing, min, max, value = GetWatchedFactionInfo()
-        if name then
-            -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
-            frame.RepBar.valid = true
-            frame.RepBar.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
-            frame.RepBar.Bar:SetMinMaxValues(0, max - min)
-            frame.RepBar.Bar:SetValue(value - min)
-
-            if standing == 1 or standing == 2 then
-                -- hated, hostile
-                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepRed')
-            elseif standing == 3 then
-                -- unfriendly
-                frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepOrange')
-            elseif standing == 4 then
-                -- neutral
-                frame.RepBar.Bar:SetStatusBarTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepYellow')
-            elseif standing == 5 or standing == 6 or standing == 7 or standing == 8 then
-                -- friendly, honored, revered, exalted
-                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
-            else
-                frame.RepBar.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\Reputation\\RepGreen')
-            end
-        else
-            frame.RepBar.valid = false
-        end
-    end
-end
-
-function Module.SetAlwaysShowXPRepText(xp, rep)
-    if xp then
-        frame.XPBar.Text:SetDrawLayer('OVERLAY')
-    else
-        frame.XPBar.Text:SetDrawLayer('HIGHLIGHT')
-    end
-
-    if rep then
-        frame.RepBar.Text:SetDrawLayer('OVERLAY')
-    else
-        frame.RepBar.Text:SetDrawLayer('HIGHLIGHT')
-    end
+    local newRep = CreateFrame('Frame', 'DragonflightUIRepBar', UIParent, 'DragonflightUIRepBarTemplate')
+    Module.repbar = newRep
 end
 
 function Module.StyleButtons()
@@ -543,48 +1169,6 @@ function Module.StyleButtons()
             end
         end
     end
-end
-
-function Module.StylePageNumber()
-    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-
-    -- actionbar switch buttons
-    ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
-    ActionBarUpButton:GetNormalTexture():SetTexCoord(0.701171875, 0.767578125, 0.40673828125, 0.42041015625)
-    ActionBarUpButton:GetHighlightTexture():SetTexture(textureRef)
-    ActionBarUpButton:GetHighlightTexture():SetTexCoord(0.884765625, 0.951171875, 0.34619140625, 0.35986328125)
-    ActionBarUpButton:GetPushedTexture():SetTexture(textureRef)
-    ActionBarUpButton:GetPushedTexture():SetTexCoord(0.884765625, 0.951171875, 0.33154296875, 0.34521484375)
-
-    ActionBarDownButton:GetNormalTexture():SetTexture(textureRef)
-    ActionBarDownButton:GetNormalTexture():SetTexCoord(0.904296875, 0.970703125, 0.29541015625, 0.30908203125)
-    ActionBarDownButton:GetHighlightTexture():SetTexture(textureRef)
-    ActionBarDownButton:GetHighlightTexture():SetTexCoord(0.904296875, 0.970703125, 0.28076171875, 0.29443359375)
-    ActionBarDownButton:GetPushedTexture():SetTexture(textureRef)
-    ActionBarDownButton:GetPushedTexture():SetTexCoord(0.904296875, 0.970703125, 0.26611328125, 0.27978515625)
-
-    -- gryphon = 100
-    local buttonScale = 0.42
-    ActionBarUpButton:SetFrameStrata('HIGH')
-    ActionBarUpButton:SetFrameLevel(105)
-    ActionBarUpButton:SetScale(buttonScale)
-    ActionBarDownButton:SetFrameStrata('HIGH')
-    ActionBarDownButton:SetFrameLevel(105)
-    ActionBarDownButton:SetScale(buttonScale)
-    -- MainMenuBarPageNumber:SetFrameStrata('HIGH')
-
-    -- MainMenuBarPageNumber:SetFrameLevel(105)
-    local frameName = 'DragonflightUIPageNumberFrame'
-    local f = CreateFrame('Frame', frameName, UIParent)
-    f:SetSize(25, 25)
-    f:SetPoint('CENTER', ActionButton1, 'CENTER')
-    f:SetFrameStrata('HIGH')
-    f:SetFrameLevel(105)
-
-    MainMenuBarPageNumber:ClearAllPoints()
-    MainMenuBarPageNumber:SetPoint('LEFT', _G[frameName], 'LEFT', -15.5, 0)
-    MainMenuBarPageNumber:SetParent(_G[frameName])
-    MainMenuBarPageNumber:SetScale(1.25)
 end
 
 function Module.ApplyMask()
@@ -649,6 +1233,35 @@ function Module.ApplyMask()
     end
 end
 
+function Module.HookAlwaysShowActionbar()
+    local updateGrids = function()
+        print('updateGrids')
+        print(Module.db.profile.bar2.alwaysShow, Module.db.profile.bar3.alwaysShow)
+        Module.bar2:UpdateGrid(Module.db.profile.bar2.alwaysShow)
+        Module.bar3:UpdateGrid(Module.db.profile.bar3.alwaysShow)
+    end
+    hooksecurefunc('MultiActionBar_UpdateGridVisibility', function()
+        -- print('MultiActionBar_UpdateGridVisibility')
+        -- updateGrids()
+    end)
+    hooksecurefunc('MultiActionBar_ShowAllGrids', function()
+        print('MultiActionBar_ShowAllGrids')
+        updateGrids()
+        C_Timer.After(2, updateGrids)
+    end)
+    hooksecurefunc('MultiActionBar_HideAllGrids', function()
+        print('MultiActionBar_HideAllGrids')
+        updateGrids()
+        C_Timer.After(2, updateGrids)
+
+    end)
+
+    hooksecurefunc('ActionButton_ShowGrid', function(btn)
+        print('ShowGrid', btn:GetName())
+    end)
+
+end
+
 function Module.ChangeButtonSpacing()
     local spacing = 3 -- default: 6
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
@@ -660,6 +1273,7 @@ end
 -- @TODO: better system
 function Module.SetNumBars()
     local inLockdown = InCombatLockdown()
+    if true then return end
     if inLockdown then
         -- return
         -- print('[DragonflightUI] changing Frames after combat ends..')
@@ -700,9 +1314,10 @@ end
 
 function Module.HookPetBar()
     PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetPoint('CENTER', MultiBarBottomRight, 'CENTER', 0, 45)
+    PetActionBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    PetActionBarFrame.ignoreFramePositionManager = true
 
-    frame:RegisterEvent('PET_BAR_UPDATE')
+    -- frame:RegisterEvent('PET_BAR_UPDATE')
 
     for i = 1, 10 do
         _G['PetActionButton' .. i]:SetSize(30, 30)
@@ -716,8 +1331,8 @@ function Module.HookPetBar()
 
     -- different offset for each class (stance vs no stance)
     -- local offset = 0 + 34
-    local offset = Module.GetPetbarOffset()
-    PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
+    -- local offset = Module.GetPetbarOffset()
+    -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 
 function Module.MoveSideBarsDynamic(shouldMove)
@@ -978,6 +1593,7 @@ function Module.MoveSideBarsOLD()
     end
 end
 
+-- TODO
 function Module.MoveTotem()
     MultiCastActionBarFrame.ignoreFramePositionManager = true
     Module.Temp.TotemFixing = nil
@@ -987,7 +1603,7 @@ function Module.MoveTotem()
         Module.Temp.TotemFixing = true
         MultiCastActionBarFrame:ClearAllPoints()
         -- MultiCastActionBarFrame:SetPoint('BOTTOM', -348, 147)
-        MultiCastActionBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
+        MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
         -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5,4 + offset)
         Module.Temp.TotemFixing = nil
     end)
@@ -1002,32 +1618,9 @@ function Module.ChangePossessBar()
 end
 
 function frame:OnEvent(event, arg1)
-    -- print('event', event)
-    if event == 'PLAYER_ENTERING_WORLD' then
-        frame.UpdateXPBar()
-        frame.UpdateRepBar()
-        Module.SetNumBars()
-        frame:RegisterEvent('UPDATE_FACTION')
-    elseif event == 'UPDATE_FACTION' then
-        frame.UpdateRepBar()
-        Module.SetNumBars()
-    elseif event == 'PLAYER_XP_UPDATE' then
-        frame.UpdateXPBar()
-        Module.SetNumBars()
-    elseif event == 'UPDATE_EXHAUSTION' then
-        frame.UpdateXPBar()
-        Module.SetNumBars()
-    elseif event == 'PLAYER_REGEN_ENABLED' then
-        frame.UpdateXPBar()
-        frame.UpdateRepBar()
-        Module.SetNumBars()
-    end
+    -- print('event', event)  
 end
 frame:SetScript('OnEvent', frame.OnEvent)
-
--- Artframe
-local frameArt = CreateFrame('FRAME', 'DragonflightUIArtframe', UIParent)
-Module.FrameArt = frameArt
 
 local atlasActionbar = {
     ['UI-HUD-ActionBar-Gryphon-Left'] = {200, 188, 0.001953125, 0.697265625, 0.10205078125, 0.26513671875, false, false},
@@ -1065,37 +1658,6 @@ function Module.ChangeGryphon()
     MainMenuBarTexture3:Hide()
 end
 
-function Module.DrawGryphon()
-    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-    local scale = 0.42
-    local dx, dy = 125, 5
-    local GryphonLeft = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Left', textureRef,
-                                                    'GryphonLeft')
-    GryphonLeft:SetScale(scale)
-    GryphonLeft:SetPoint('CENTER', ActionButton1, 'CENTER', -dx, dy)
-    GryphonLeft:SetFrameStrata('HIGH')
-    GryphonLeft:SetFrameLevel(100)
-    frameArt.GryphonLeft = GryphonLeft
-
-    local GryphonRight = Module.CreateFrameFromAtlas(atlasActionbar, 'UI-HUD-ActionBar-Gryphon-Right', textureRef,
-                                                     'GryphonRight')
-    GryphonRight:SetScale(scale)
-    GryphonRight:SetPoint('CENTER', ActionButton12, 'CENTER', dx, dy)
-    GryphonRight:SetFrameStrata('HIGH')
-    GryphonRight:SetFrameLevel(100)
-    frameArt.GryphonRight = GryphonRight
-end
-
-function Module.ChangeGryphonStyle(ally)
-    if ally then
-        frameArt.GryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.26611328125, 0.42919921875)
-        frameArt.GryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.10205078125, 0.26513671875)
-    else
-        frameArt.GryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.59423828125, 0.75732421875)
-        frameArt.GryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.43017578125, 0.59326171875)
-    end
-end
-
 function Module.DrawActionbarDeco()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     for i = 1, 12 do
@@ -1103,40 +1665,11 @@ function Module.DrawActionbarDeco()
                                                  'ActionbarDeco' .. i)
         deco:SetScale(0.3)
         deco:SetPoint('CENTER', _G['ActionButton' .. i], 'CENTER', 0, 0)
+        -- deco:SetParent(_G['ActionButton' .. i])
+        deco:SetFrameStrata('LOW')
+        _G['ActionButton' .. i].decoDF = deco
     end
 end
-
-function Module.ChangeGryphonVisibility(visible)
-    if visible and Module.db.profile.showGryphon then
-        -- MainMenuBarPageNumber:Show()
-        frameArt.GryphonRight:Show()
-        frameArt.GryphonLeft:Show()
-    else
-        -- MainMenuBarPageNumber:Hide()
-        frameArt.GryphonRight:Hide()
-        frameArt.GryphonLeft:Hide()
-    end
-end
-
-function frameArt:OnEvent(event, arg1)
-    -- print('art event', event)
-    if event == 'UNIT_ENTERED_VEHICLE' then
-        Module.ChangeGryphonVisibility(false)
-        MainMenuBarPageNumber:Hide()
-    elseif event == 'UNIT_EXITED_VEHICLE' then
-        Module.ChangeGryphonVisibility(true)
-        MainMenuBarPageNumber:Show()
-    elseif event == 'PLAYER_ENTERING_WORLD' then
-        local englishFaction, localizedFaction = UnitFactionGroup('player')
-
-        if englishFaction == 'Alliance' then
-            Module.ChangeGryphonStyle(true)
-        else
-            Module.ChangeGryphonStyle(false)
-        end
-    end
-end
-frameArt:SetScript('OnEvent', frameArt.OnEvent)
 
 -- Micromenu
 function Module.SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
@@ -2257,29 +2790,18 @@ function Module.Wrath()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
     Module.StyleButtons()
-    Module.StylePageNumber()
     Module.ApplyMask()
-    Module.ChangeButtonSpacing()
-    frame.UpdateXPBar()
-    frame.UpdateRepBar()
+
     Module.SetNumBars()
     Module.HookPetBar()
     Module.MoveTotem()
     Module.ChangePossessBar()
-    -- Module.MoveSideBars()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
-    -- Core.Sub.Artframe()
     Module.ChangeGryphon()
-    Module.DrawGryphon()
     Module.DrawActionbarDeco()
 
-    frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
-    frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
-    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
-
-    -- Core.Sub.Micromenu()
     Module.ChangeMicroMenuNew()
     Module.ChangeBackpackNew()
     Module.MoveBars()
@@ -2295,27 +2817,17 @@ function Module.Era()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
     Module.StyleButtons()
-    Module.StylePageNumber()
     Module.ApplyMask()
-    Module.ChangeButtonSpacing()
-    frame.UpdateXPBar()
-    frame.UpdateRepBar()
+
     Module.SetNumBars()
     Module.HookPetBar()
-    -- Module.MoveSideBars()
+    Module.MoveTotem()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
-    -- Core.Sub.Artframe()
     Module.ChangeGryphon()
-    Module.DrawGryphon()
     Module.DrawActionbarDeco()
 
-    frameArt:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
-    frameArt:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
-    frameArt:RegisterEvent('PLAYER_ENTERING_WORLD')
-
-    -- Core.Sub.Micromenu()
     Module.ChangeMicroMenuNew()
     Module.ChangeBackpackNew()
     Module.MoveBars()

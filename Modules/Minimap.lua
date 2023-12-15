@@ -8,12 +8,16 @@ Mixin(Module, DragonflightUIModulesMixin)
 local defaults = {profile = {scale = 1, x = -10, y = -105, locked = true}}
 Module:SetDefaults(defaults)
 
-local function getDefaultStr(key)
-    return Module:GetDefaultStr(key)
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
     Module:SetDefaultValues()
+end
+
+local function setDefaultSubValues(sub)
+    Module:SetDefaultSubValues(sub)
 end
 
 local function getOption(info)

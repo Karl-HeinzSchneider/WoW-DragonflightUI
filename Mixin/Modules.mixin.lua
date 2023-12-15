@@ -33,7 +33,7 @@ function DragonflightUIModulesMixin:SetDefaultValues()
 end
 
 function DragonflightUIModulesMixin:SetDefaultSubValues(sub)
-    -- print('DragonflightUIModulesMixin:SetDefaultSubValues(key, sub)', sub)
+    -- print('DragonflightUIModulesMixin:SetDefaultSubValues(sub)', sub)
     local db = self.db.profile
 
     if db[sub] then

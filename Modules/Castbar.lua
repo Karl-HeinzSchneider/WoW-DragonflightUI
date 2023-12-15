@@ -22,12 +22,16 @@ local defaults = {
 }
 Module:SetDefaults(defaults)
 
-local function getDefaultStr(key)
-    return Module:GetDefaultStr(key)
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
     Module:SetDefaultValues()
+end
+
+local function setDefaultSubValues(sub)
+    Module:SetDefaultSubValues(sub)
 end
 
 local function getOption(info)

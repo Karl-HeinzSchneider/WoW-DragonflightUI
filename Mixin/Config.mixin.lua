@@ -64,7 +64,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Profiles')
         self:AddSubCategory(cat, 'WhatsNew')
 
-        self:AddSpacer(20)
+        -- self:AddSpacer(20)
     end
 
     do
@@ -76,8 +76,12 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Actionbar3')
         self:AddSubCategory(cat, 'Actionbar4')
         self:AddSubCategory(cat, 'Actionbar5')
+        self:AddSubCategory(cat, 'Petbar')
+        self:AddSubCategory(cat, 'XPbar')
+        self:AddSubCategory(cat, 'Repbar')
+        self:AddSubCategory(cat, 'Stancebar')
 
-        self:AddSpacer(20)
+        -- self:AddSpacer(20)
     end
 
     do
@@ -87,7 +91,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Chat')
         self:AddSubCategory(cat, 'Minimap')
 
-        self:AddSpacer(20)
+        -- self:AddSpacer(20)
     end
 
     do
@@ -210,11 +214,11 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
     subCategory:UpdateState()
     self.selected = subCategory
 
-    local settingsList = self:GetSettingsList()
-    settingsList:Display(subCategory.displayData)
+    -- local settingsList = self:GetSettingsList()
+    -- settingsList:Display(subCategory.displayData)
     -- settingsList.Header.Title:SetText(subCategory.subCategory)
 
-    --[[    local oldFrame = self.selectedFrame
+    local oldFrame = self.selectedFrame
     if oldFrame then oldFrame:Hide() end
 
     local newFrame = subCategory.displayFrame
@@ -227,7 +231,7 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
         self.selectedFrame = newFrame
     else
         print('no displayframe - nothing to show!')
-    end ]]
+    end
 
 end
 

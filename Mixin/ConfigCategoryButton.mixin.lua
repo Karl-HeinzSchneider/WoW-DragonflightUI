@@ -124,6 +124,6 @@ end
 function DragonFlightUIConfigCategoryButtonMixin:SetDisplayData(data)
     self.displayData = data
     -- if self.displayFrame then self.displayFrame:Hide() end
-    -- self.displayFrame = CreateFrame('Frame', nil, nil, 'SettingsListTemplateDF')
-    -- self.displayFrame:Display(data)
+    self.displayFrame = CreateFrame('Frame', nil, nil, 'SettingsListTemplateDF')
+    self.displayFrame:Display(data)
 end

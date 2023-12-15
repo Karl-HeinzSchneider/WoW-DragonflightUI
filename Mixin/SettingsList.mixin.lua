@@ -9,6 +9,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     local get = elementData.get
     local set = elementData.set
     local list = elementData.settingsList
+    list:UnregisterCallback('OnDefaults', self)
     -- print('init', key, data)
     self:Reset()
 
@@ -18,8 +19,10 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetSlider(get({key}), data.min, data.max, data.bigStep)
+        -- self.Item.Slider.lastValue = get({key})
         self.Item.Slider:RegisterCallback('OnValueChanged', function(self, ...)
-            set({key}, self.Item.Slider.Slider:GetValue())
+            local newValue = ...
+            set({key}, newValue)
         end, self)
         list:RegisterCallback('OnDefaults', function(self, ...)
             self:SetSlider(get({key}), data.min, data.max, data.bigStep)
@@ -52,10 +55,17 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
         self:SetDropdown(data.values)
-        self.Item.Dropdown:SetDropdownSelection('TOP')
+        -- self.Item.Dropdown:SetDropdownSelection('TOP')
+        self.Item.Dropdown:SetDropdownSelection(get({key}))
         self.Item.Dropdown:RegisterCallback('OnValueChanged', function(self, ...)
-            print('OnValueChanged', key, ...)
+            -- print('OnValueChanged', key, ...)
+            local newValue = ...
+            set({key}, newValue)
         end)
+        list:RegisterCallback('OnDefaults', function(self, ...)
+            -- print('OnDefaults')
+            self.Item.Dropdown:SetDropdownSelection(get({key}))
+        end, self)
     elseif data.type == 'toggle' then
     end
 end
@@ -164,7 +174,9 @@ end
 
 --- Slider
 SettingsSliderMixinDF = CreateFromMixins(CallbackRegistryMixin);
-SettingsSliderMixinDF:GenerateCallbackEvents({"OnValueChanged", "OnInteractStart", "OnInteractEnd"});
+SettingsSliderMixinDF:GenerateCallbackEvents({
+    "OnValueChanged", "OnValueChangedFilter", "OnInteractStart", "OnInteractEnd"
+});
 
 local sliderFormat = {}
 -- sliderFormat[2] = CreateMinimalSliderFormatter()
@@ -196,6 +208,20 @@ function SettingsSliderMixinDF:OnLoad()
     self.Slider:HookScript('OnLeave', function()
         self:OnLeave()
     end)
+
+    --[[ self.lastValue = nil
+
+    self:RegisterCallback('OnValueChanged', function(self, ...)
+        -- print('valuechangeslider')
+        local newValue = ...
+
+        if newValue ~= self.lastValue then
+            self.lastValue = newValue
+            self:TriggerEvent(SettingsSliderMixinDF.Event.OnValueChangedFilter, newValue);
+        else
+            -- same -> do nothing
+        end
+    end, self) ]]
 end
 
 function SettingsSliderMixinDF:OnEnter()
@@ -293,11 +319,14 @@ function SettingsDropdownMixinDF:OnLoad()
 
     self.isEnabledDF = true
 
+    self.Button.Popout:UnregisterCallback('OnEntryClicked', self)
+
     self.Button.Popout:RegisterCallback('OnEntryClicked', function(self, ...)
         local index = ...
-        print('clicked', index, 'SettingsDropdownMixinDF')
+        -- print('clicked', index, 'SettingsDropdownMixinDF')
         self:SetSelectedIndex(index)
     end, self)
+    self.Button.Popout:SetFrameStrata('FULLSCREEN_DIALOG')
 
 end
 
@@ -323,7 +352,7 @@ function SettingsDropdownMixinDF:SetDropdownSelection(selection)
     else
         self.Button.SelectionDetails.SelectionName:SetText('ERROR')
     end
-
+    self:Update()
 end
 
 function SettingsDropdownMixinDF:SetDropdownSelectionOptions(options)
