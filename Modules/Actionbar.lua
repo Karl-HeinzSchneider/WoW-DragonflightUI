@@ -1083,10 +1083,12 @@ function Module.ChangeActionbar()
         StanceBarRight:Hide()
     end)
 
-    ActionBarUpButton:ClearAllPoints()
+    --[[    ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
     ActionBarDownButton:ClearAllPoints()
-    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7)
+    ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7) ]]
+
+    MainMenuBar:SetSize(1, 1)
 
     MainMenuExpBar:Hide()
     hooksecurefunc(MainMenuExpBar, 'Show', function()
