@@ -163,6 +163,11 @@ function DragonflightUIXPBarMixin:Update()
 end
 
 function DragonflightUIXPBarMixin:UpdateText()
+    local sizeX, sizeY = 466, 20
+    -- @TODO: needs more visibility
+    local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
+    local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
+
     -- exhaustion
     local exhaustionStateID = GetRestState()
     if (exhaustionStateID == 1) then
