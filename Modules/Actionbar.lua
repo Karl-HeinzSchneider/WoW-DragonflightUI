@@ -1175,7 +1175,7 @@ function Module.StyleButtons()
         local tex = _G['StanceButton' .. i .. 'NormalTexture2']
         tex:SetSize(52, 52)
 
-        --TODO can maybe break
+        -- TODO can maybe break
         hooksecurefunc(tex, 'SetWidth', function()
             -- print(tex:GetName(), 'SetSize')
             tex:SetSize(52, 52)
@@ -1183,7 +1183,7 @@ function Module.StyleButtons()
         hooksecurefunc(tex, 'SetHeight', function()
             -- print(tex:GetName(), 'SetSize')
             tex:SetSize(52, 52)
-        end)       
+        end)
     end
 end
 
@@ -2837,7 +2837,7 @@ function Module.Era()
 
     Module.SetNumBars()
     Module.HookPetBar()
-    Module.MoveTotem()
+    -- Module.MoveTotem()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
