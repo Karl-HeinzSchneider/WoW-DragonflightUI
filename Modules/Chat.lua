@@ -60,7 +60,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {type = 'header', name = 'Config - Chat', order = 100},
+        --[[   config = {type = 'header', name = 'Config - Chat', order = 100}, ]]
         scale = {
             type = 'range',
             name = 'Scale',

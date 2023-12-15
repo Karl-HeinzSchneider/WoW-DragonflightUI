@@ -61,7 +61,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {type = 'header', name = 'Config - Player', order = 100},
+        --[[ config = {type = 'header', name = 'Config - Player', order = 100}, ]]
         scale = {
             type = 'range',
             name = 'Scale',
