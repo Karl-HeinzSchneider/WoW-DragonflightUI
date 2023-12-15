@@ -129,6 +129,21 @@ local defaults = {
             x = 0,
             y = 0,
             alwaysShowXP = false
+        },
+        stance = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 1,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            alwaysShow = true
         }
     }
 }
@@ -177,8 +192,9 @@ local frameTable = {
     ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
     ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
     ['DragonflightUIXPBar'] = 'XPbar',
-    ['DragonflightUIRepBar'] = 'RepBar'
-
+    ['DragonflightUIRepBar'] = 'RepBar',
+    ['DragonflightUIPetBar'] = 'PetBar',
+    ['DragonflightUIStancebar'] = 'Stancebar'
 }
 
 local options = {
@@ -757,6 +773,133 @@ local repOptions = {
     }
 }
 
+local stanceOptions = {
+    name = 'StanceBar',
+    desc = 'StanceBar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'stance'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'stance'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'stance'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'stance'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'stance'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'stance'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        orientation = {
+            type = 'select',
+            name = 'Orientation',
+            desc = 'Orientation' .. getDefaultStr('orientation', 'stance'),
+            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            order = 7
+        },
+        buttonScale = {
+            type = 'range',
+            name = 'ButtonScale',
+            desc = '' .. getDefaultStr('buttonScale', 'stance'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        rows = {
+            type = 'range',
+            name = '# of Rows',
+            desc = '' .. getDefaultStr('rows', 'stance'),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 9
+        },
+        buttons = {
+            type = 'range',
+            name = '# of Buttons',
+            desc = '' .. getDefaultStr('buttons', 'stance'),
+            min = 1,
+            max = 10,
+            bigStep = 1,
+            order = 10
+        },
+        padding = {
+            type = 'range',
+            name = 'Padding',
+            desc = '' .. getDefaultStr('padding', 'stance'),
+            min = 0,
+            max = 10,
+            bigStep = 1,
+            order = 11
+        },
+        alwaysShow = {
+            type = 'toggle',
+            name = 'Always show Actionbar',
+            desc = '' .. getDefaultStr('alwaysShow', 'stance'),
+            order = 12
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -818,6 +961,21 @@ function Module:SetupActionbarFrames()
         bar:SetButtons(buttons)
         Module['petbar'] = bar
     end
+
+    do
+        local bar = CreateFrame('FRAME', 'DragonflightUIStancebarFrame', UIParent,
+                                'DragonflightUIActionbarFrameTemplate')
+        local buttons = {}
+
+        for i = 1, 10 do
+            local btn = _G['StanceButton' .. i]
+            buttons[i] = btn
+        end
+
+        bar:Init()
+        bar:SetButtons(buttons)
+        Module['stancebar'] = bar
+    end
 end
 
 function Module:RegisterOptionScreens()
@@ -861,6 +1019,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('rep')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Stancebar', {
+        name = 'Stancebar',
+        sub = 'stance',
+        options = stanceOptions,
+        default = function()
+            setDefaultSubValues('stance')
+        end
+    })
 end
 
 function Module:ApplySettings()
@@ -878,6 +1045,7 @@ function Module:ApplySettings()
     Module.petbar:SetState(db.pet)
     Module.xpbar:SetState(db.xp)
     Module.repbar:SetState(db.rep)
+    Module.stancebar:SetState(db.stance)
 end
 
 -- Actionbar

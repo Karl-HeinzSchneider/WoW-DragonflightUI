@@ -79,6 +79,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Petbar')
         self:AddSubCategory(cat, 'XPbar')
         self:AddSubCategory(cat, 'Repbar')
+        self:AddSubCategory(cat, 'Stancebar')
 
         -- self:AddSpacer(20)
     end
