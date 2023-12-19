@@ -361,6 +361,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
 
         btn:SetSize(45, 45)
         -- print(btn:GetName())
+        -- print(btn:GetName(), btn:GetAttribute("statehidden"))
 
         local icon = _G[btnName .. 'Icon']
         icon:ClearAllPoints()
@@ -407,6 +408,16 @@ function DragonflightUIActionbarMixin:StyleButtons()
             floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
             floatingBG:SetAllPoints()
         end
+
+        -- TODO: better visibility
+        -- iconframe-border
+        local border = _G[btnName .. 'Border']
+        border:ClearAllPoints()
+        border:SetSize(46, 45)
+        border:SetPoint('TOPLEFT')
+        border:SetTexture(textureRefTwo)
+        border:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+        border:SetDrawLayer('OVERLAY')
 
         -- iconframe
         local normal = btn:GetNormalTexture()
