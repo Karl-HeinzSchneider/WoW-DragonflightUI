@@ -350,6 +350,11 @@ function DragonflightUIActionbarMixin:StyleButtons()
     local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
     local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
 
+    self.mask = self:CreateMaskTexture()
+    self.mask:SetTexture(maskRef, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    self.mask:SetSize(45, 45)
+    self.mask:SetPoint('CENTER')
+
     for i = 1, count do
         local btn = self.buttonTable[i]
         local btnName = btn:GetName()
@@ -360,7 +365,38 @@ function DragonflightUIActionbarMixin:StyleButtons()
         local icon = _G[btnName .. 'Icon']
         icon:ClearAllPoints()
         icon:SetSize(45, 45)
-        icon:SetPoint('CENTER')
+        -- icon:SetPoint('CENTER')
+
+        -- mask
+        do
+            local mask = btn:CreateTexture('DragonflightUIMaskTexture')
+            btn.DragonflightUIMaskTexture = mask
+            mask:SetSize(45, 45)
+            mask:SetPoint('CENTER', 0, 0)
+            -- mask:SetColorTexture(0, 1, 0, 1)       
+            mask:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+            mask:SetDrawLayer('BACKGROUND')
+            -- mask:SetTexture(136197)
+
+            hooksecurefunc(icon, 'Show', function(self)
+                local tex = self:GetTexture()
+                if tex then
+                    mask:Show()
+                    mask:SetTexture(tex)
+                end
+            end)
+            hooksecurefunc(icon, 'Hide', function(self)
+                mask:Hide()
+            end)
+            hooksecurefunc(icon, 'SetVertexColor', function(self)
+                local r, g, b = self:GetVertexColor()
+                mask:SetVertexColor(r, g, b)
+            end)
+        end
+
+        local cd = _G[btnName .. 'Cooldown']
+        cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
+        -- cd:GetSwipeTexture():SetAlpha(0.5)
 
         local floatingBG = _G[btnName .. 'FloatingBG']
         floatingBG:ClearAllPoints()
