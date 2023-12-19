@@ -344,6 +344,66 @@ function DragonflightUIActionbarMixin:AddDeco()
     end
 end
 
+function DragonflightUIActionbarMixin:StyleButtons()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        btn:SetSize(45, 45)
+        print(btn:GetName())
+
+        local icon = _G[btnName .. 'Icon']
+        icon:ClearAllPoints()
+        icon:SetSize(45, 45)
+        icon:SetPoint('CENTER')
+
+        local floatingBG = _G[btnName .. 'FloatingBG']
+        floatingBG:ClearAllPoints()
+        floatingBG:SetSize(46, 45)
+        floatingBG:SetTexture(textureRef)
+        floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
+        floatingBG:SetAllPoints()
+
+        -- iconframe
+        local normal = btn:GetNormalTexture()
+        normal:ClearAllPoints()
+        normal:SetSize(46, 45)
+        normal:SetPoint('TOPLEFT')
+        normal:SetTexture(textureRefTwo)
+        normal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+
+        -- iconframe-down
+        local pushed = btn:GetPushedTexture()
+        pushed:ClearAllPoints()
+        pushed:SetSize(46, 45)
+        pushed:SetPoint('TOPLEFT')
+        pushed:SetTexture(textureRefTwo)
+        pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+
+        -- iconframe-mouseover
+        local highlight = btn:GetHighlightTexture()
+        highlight:ClearAllPoints()
+        highlight:SetSize(46, 45)
+        highlight:SetPoint('TOPLEFT')
+        highlight:SetTexture(textureRefTwo)
+        highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+        -- iconframe-mouseover
+        local checked = btn:GetCheckedTexture()
+        checked:ClearAllPoints()
+        checked:SetSize(46, 45)
+        checked:SetPoint('TOPLEFT')
+        checked:SetTexture(textureRefTwo)
+        checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+    end
+end
+
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
 
 --[[ function DragonflightUIPetbarMixin:Update()

@@ -948,6 +948,8 @@ function Module:SetupActionbarFrames()
     createStuff(4, 'MultiBarLeftButton')
     createStuff(5, 'MultiBarRightButton')
 
+    Module.bar3:StyleButtons()
+
     do
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}
@@ -2805,8 +2807,8 @@ function Module.Wrath()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
-    Module.StyleButtons()
-    Module.ApplyMask()
+    -- Module.StyleButtons()
+    -- Module.ApplyMask()
 
     Module.SetNumBars()
     Module.HookPetBar()
