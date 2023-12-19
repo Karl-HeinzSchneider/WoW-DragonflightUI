@@ -948,7 +948,11 @@ function Module:SetupActionbarFrames()
     createStuff(4, 'MultiBarLeftButton')
     createStuff(5, 'MultiBarRightButton')
 
+    Module.bar1:StyleButtons()
+    Module.bar2:StyleButtons()
     Module.bar3:StyleButtons()
+    Module.bar4:StyleButtons()
+    Module.bar5:StyleButtons()
 
     do
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
@@ -2818,7 +2822,7 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     Module.ChangeGryphon()
-    Module.DrawActionbarDeco()
+    -- Module.DrawActionbarDeco()
 
     Module.ChangeMicroMenuNew()
     Module.ChangeBackpackNew()
@@ -2844,7 +2848,7 @@ function Module.Era()
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     Module.ChangeGryphon()
-    Module.DrawActionbarDeco()
+    -- Module.DrawActionbarDeco()
 
     Module.ChangeMicroMenuNew()
     Module.ChangeBackpackNew()

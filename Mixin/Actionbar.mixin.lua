@@ -360,12 +360,13 @@ function DragonflightUIActionbarMixin:StyleButtons()
         local btnName = btn:GetName()
 
         btn:SetSize(45, 45)
-        print(btn:GetName())
+        -- print(btn:GetName())
 
         local icon = _G[btnName .. 'Icon']
         icon:ClearAllPoints()
         icon:SetSize(45, 45)
         -- icon:SetPoint('CENTER')
+        icon:SetAlpha(0)
 
         -- mask
         do
@@ -399,11 +400,13 @@ function DragonflightUIActionbarMixin:StyleButtons()
         -- cd:GetSwipeTexture():SetAlpha(0.5)
 
         local floatingBG = _G[btnName .. 'FloatingBG']
-        floatingBG:ClearAllPoints()
-        floatingBG:SetSize(46, 45)
-        floatingBG:SetTexture(textureRef)
-        floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
-        floatingBG:SetAllPoints()
+        if floatingBG then
+            floatingBG:ClearAllPoints()
+            floatingBG:SetSize(46, 45)
+            floatingBG:SetTexture(textureRef)
+            floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
+            floatingBG:SetAllPoints()
+        end
 
         -- iconframe
         local normal = btn:GetNormalTexture()
