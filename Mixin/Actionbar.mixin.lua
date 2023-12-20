@@ -23,6 +23,11 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:SetScript('OnEvent', function(event, arg1)
+        self:Update()
+    end)
 end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
@@ -98,6 +103,7 @@ function DragonflightUIActionbarMixin:Update()
     for i = buttons + 1, btnCount do
         local btn = buttonTable[i]
         btn:ClearAllPoints()
+        btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
         btn:Hide()
 
         if btn.decoDF then btn.decoDF:Hide() end
@@ -134,8 +140,18 @@ function DragonflightUIActionbarMixin:Update()
                 btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
             end
 
-            -- ActionButton_ShowGrid(btn)
-            -- btn:SetAttribute('showgrid', 1)
+            -- btn:GetAttribute("showgrid") can be nil
+            if state.alwaysShow then
+                if btn:GetAttribute("showgrid") then
+                    if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
+                else
+                    btn:SetAttribute("showgrid", 1)
+                end
+            else
+                if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
+                    btn:SetAttribute("showgrid", 0)
+                end
+            end
 
             index = index + 1
         end
@@ -462,6 +478,45 @@ function DragonflightUIActionbarMixin:StyleButtons()
         name:SetPoint('BOTTOM', 0, 2)
 
     end
+end
+
+-- TODO only debug for now..
+function DragonflightUIActionbarMixin:HookGrid()
+
+    local updateButton = function(btn)
+        local mix = btn.DFMixin
+        local state = mix.state
+
+        if not state then return end
+
+        if state.alwaysShow then
+            -- btn:SetAttribute("showgrid", 1)
+            -- ActionButton_ShowGrid(btn)
+        else
+            -- btn:SetAttribute("showgrid", 0)
+            -- ActionButton_HideGrid(btn)
+        end
+    end
+
+    hooksecurefunc('ActionButton_ShowGrid', function(button)
+        if button.DFMixin then
+            -- print('ActionButton_ShowGrid', button:GetName())
+            -- updateButton(button)
+        end
+    end)
+    hooksecurefunc('ActionButton_HideGrid', function(button)
+        if button.DFMixin then
+            -- print('ActionButton_HideGrid', button:GetName())
+            -- updateButton(button)
+        end
+    end)
+
+    hooksecurefunc('ActionButton_Update', function(button)
+        print('ActionButton_Update', button:GetName(), button:GetAttribute("statehidden"),
+              button:GetAttribute("showgrid"))
+        -- button:Show()
+    end)
+
 end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
