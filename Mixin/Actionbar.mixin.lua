@@ -253,7 +253,12 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
     self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
     self.gryphonLeft:SetScale(gryphonScale)
 
-    self.gryphonRight:SetPoint('LEFT', self.buttonTable[btnCount], 'RIGHT', -dx, dy)
+    local rows = state.rows
+    if rows > btnCount then rows = btnCount end
+
+    local maxRowButtons = math.ceil(btnCount / rows)
+
+    self.gryphonRight:SetPoint('LEFT', self.buttonTable[maxRowButtons], 'RIGHT', -dx, dy)
     self.gryphonRight:SetScale(gryphonScale)
 
     self.numberFrame:SetScale(btnScale)
