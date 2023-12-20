@@ -244,12 +244,19 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
 
     -- local dy = self.buttonTable[1]:GetHeight() + padding
 
+    local btnScale = state.buttonScale
+    local gryphonScale = btnScale * 0.42
+
     local dx = padding + 15
     local dy = 6
 
     self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
+    self.gryphonLeft:SetScale(gryphonScale)
 
     self.gryphonRight:SetPoint('LEFT', self.buttonTable[btnCount], 'RIGHT', -dx, dy)
+    self.gryphonRight:SetScale(gryphonScale)
+
+    self.numberFrame:SetScale(btnScale)
 
     if gryphons == 'DEFAULT' then
         local englishFaction, localizedFaction = UnitFactionGroup('player')
