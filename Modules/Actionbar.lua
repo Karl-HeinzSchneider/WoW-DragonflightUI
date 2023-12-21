@@ -941,6 +941,8 @@ function Module:SetupActionbarFrames()
         Module['bar' .. n] = bar
     end
 
+    DragonflightUIActionbarMixin:HookGrid()
+
     createStuff(1, 'ActionButton')
     Module.bar1:SetupMainBar()
     createStuff(2, 'MultiBarBottomLeftButton')

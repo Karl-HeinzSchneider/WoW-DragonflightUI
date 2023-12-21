@@ -543,7 +543,11 @@ end
 -- TODO only debug for now..
 function DragonflightUIActionbarMixin:HookGrid()
 
-    local updateButton = function(btn)
+    hooksecurefunc('ActionButton_ShowGrid', function(btn)
+        if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 1); end
+    end)
+
+    --[[    local updateButton = function(btn)
         local mix = btn.DFMixin
         local state = mix.state
 
@@ -575,8 +579,7 @@ function DragonflightUIActionbarMixin:HookGrid()
         print('ActionButton_Update', button:GetName(), button:GetAttribute("statehidden"),
               button:GetAttribute("showgrid"))
         -- button:Show()
-    end)
-
+    end) ]]
 end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
