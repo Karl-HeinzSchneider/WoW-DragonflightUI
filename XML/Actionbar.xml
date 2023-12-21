@@ -15,4 +15,6 @@
 			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<Frame name="DragonflightUIDecoFrameTemplate" inherits="ButtonFrameTemplate" virtual="true">
+	</Frame>
 </Ui>

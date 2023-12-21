@@ -147,10 +147,12 @@ function DragonflightUIActionbarMixin:Update()
                 else
                     btn:SetAttribute("showgrid", 1)
                 end
+                if btn.DFDeco then btn.DFDeco:Show() end
             else
                 if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
                     btn:SetAttribute("showgrid", 0)
                 end
+                if btn.DFDeco then btn.DFDeco:Hide() end
             end
 
             index = index + 1
@@ -172,7 +174,7 @@ function DragonflightUIActionbarMixin:Update()
         end
     end
 
-    if self.decoFrame then self.decoFrame.update(state) end
+    -- if self.decoFrame then self.decoFrame.update(state) end
 end
 
 function DragonflightUIActionbarMixin:UpdateGrid(show)
@@ -196,6 +198,7 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     self:AddGryphons()
     self:SetupPageNumberFrame()
     -- self:AddDeco()
+    self:AddDecoNew()
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
@@ -331,6 +334,47 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
 
     self.numberFrame = f
     -- f:Hide()
+end
+
+function DragonflightUIActionbarMixin:AddDecoNew()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    -- self.decoFrame:SetPoint('TOPLEFT')
+    -- self.decoFrame:SetPoint('BOTTOMRIGHT')
+
+    do
+        self.decoFrame = CreateFrame('Frame', 'DragonflightUIMainActionBarDecoFrame', self)
+        self.decoFrame:SetFrameStrata('LOW')
+        self.decoFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+        self.decoFrame:SetSize(500, 500)
+        self.decoFrame.decoTable = {}
+
+        local tex = self.decoFrame:CreateTexture()
+
+        -- tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Actionbar-nineslice')
+        -- tex:SetTextureSliceMargins(36, 36, 36, 36)
+
+    end
+
+    for k, v in ipairs(self.buttonTable) do
+        local tex = v:CreateTexture('DragonflightUISlotDeco')
+        v.DFDeco = tex
+        tex:SetTexture(textureRef)
+        tex:SetSize(45, 45 - 2)
+        tex:SetPoint('TOPLEFT')
+        tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
+        tex:SetDrawLayer('BACKGROUND', -5)
+        -- tex:SetFrameLevel('1')
+    end
+
+    for i = 1, 1 do
+        local tex = self.decoFrame:CreateTexture()
+        tex:SetTexture(textureRef)
+        tex:SetSize(45, 45)
+        -- tex:SetScale(1)
+        tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
+        self.decoFrame.decoTable[i] = tex
+    end
 end
 
 function DragonflightUIActionbarMixin:AddDeco()
