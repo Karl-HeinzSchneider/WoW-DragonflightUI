@@ -23,6 +23,11 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:SetScript('OnEvent', function(event, arg1)
+        self:Update()
+    end)
 end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
@@ -98,6 +103,7 @@ function DragonflightUIActionbarMixin:Update()
     for i = buttons + 1, btnCount do
         local btn = buttonTable[i]
         btn:ClearAllPoints()
+        btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
         btn:Hide()
 
         if btn.decoDF then btn.decoDF:Hide() end
@@ -134,8 +140,24 @@ function DragonflightUIActionbarMixin:Update()
                 btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
             end
 
-            -- ActionButton_ShowGrid(btn)
-            -- btn:SetAttribute('showgrid', 1)
+            -- btn:GetAttribute("showgrid") can be nil
+            if state.alwaysShow then
+                if btn:GetAttribute("showgrid") then
+                    if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
+                else
+                    btn:SetAttribute("showgrid", 1)
+                end
+            else
+                if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
+                    btn:SetAttribute("showgrid", 0)
+                end
+            end
+
+            if state.hideArt then
+                if btn.DFDeco then btn.DFDeco:Hide() end
+            else
+                if btn.DFDeco then btn.DFDeco:Show() end
+            end
 
             index = index + 1
         end
@@ -156,7 +178,7 @@ function DragonflightUIActionbarMixin:Update()
         end
     end
 
-    if self.decoFrame then self.decoFrame.update(state) end
+    -- if self.decoFrame then self.decoFrame.update(state) end
 end
 
 function DragonflightUIActionbarMixin:UpdateGrid(show)
@@ -180,6 +202,7 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     self:AddGryphons()
     self:SetupPageNumberFrame()
     -- self:AddDeco()
+    self:AddDecoNew()
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
@@ -228,12 +251,24 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
 
     -- local dy = self.buttonTable[1]:GetHeight() + padding
 
+    local btnScale = state.buttonScale
+    local gryphonScale = btnScale * 0.42
+
     local dx = padding + 15
     local dy = 6
 
     self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
+    self.gryphonLeft:SetScale(gryphonScale)
 
-    self.gryphonRight:SetPoint('LEFT', self.buttonTable[btnCount], 'RIGHT', -dx, dy)
+    local rows = state.rows
+    if rows > btnCount then rows = btnCount end
+
+    local maxRowButtons = math.ceil(btnCount / rows)
+
+    self.gryphonRight:SetPoint('LEFT', self.buttonTable[maxRowButtons], 'RIGHT', -dx, dy)
+    self.gryphonRight:SetScale(gryphonScale)
+
+    self.numberFrame:SetScale(btnScale)
 
     if gryphons == 'DEFAULT' then
         local englishFaction, localizedFaction = UnitFactionGroup('player')
@@ -305,6 +340,47 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     -- f:Hide()
 end
 
+function DragonflightUIActionbarMixin:AddDecoNew()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    -- self.decoFrame:SetPoint('TOPLEFT')
+    -- self.decoFrame:SetPoint('BOTTOMRIGHT')
+
+    do
+        self.decoFrame = CreateFrame('Frame', 'DragonflightUIMainActionBarDecoFrame', self)
+        self.decoFrame:SetFrameStrata('LOW')
+        self.decoFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+        self.decoFrame:SetSize(500, 500)
+        self.decoFrame.decoTable = {}
+
+        local tex = self.decoFrame:CreateTexture()
+
+        -- tex:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Actionbar-nineslice')
+        -- tex:SetTextureSliceMargins(36, 36, 36, 36)
+
+    end
+
+    for k, v in ipairs(self.buttonTable) do
+        local tex = v:CreateTexture('DragonflightUISlotDeco')
+        v.DFDeco = tex
+        tex:SetTexture(textureRef)
+        tex:SetSize(45, 45 - 2)
+        tex:SetPoint('TOPLEFT')
+        tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
+        tex:SetDrawLayer('BACKGROUND', -5)
+        -- tex:SetFrameLevel('1')
+    end
+
+    --[[    for i = 1, 1 do
+        local tex = self.decoFrame:CreateTexture()
+        tex:SetTexture(textureRef)
+        tex:SetSize(45, 45)
+        -- tex:SetScale(1)
+        tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
+        self.decoFrame.decoTable[i] = tex
+    end ]]
+end
+
 function DragonflightUIActionbarMixin:AddDeco()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
@@ -342,6 +418,165 @@ function DragonflightUIActionbarMixin:AddDeco()
             deco:SetScale(1)
         end
     end
+end
+
+function DragonflightUIActionbarMixin:StyleButtons()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    self.mask = self:CreateMaskTexture()
+    self.mask:SetTexture(maskRef, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    self.mask:SetSize(45, 45)
+    self.mask:SetPoint('CENTER')
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        btn:SetSize(45, 45)
+        -- print(btn:GetName())
+        -- print(btn:GetName(), btn:GetAttribute("statehidden"))
+
+        local icon = _G[btnName .. 'Icon']
+        icon:ClearAllPoints()
+        icon:SetSize(45, 45)
+        -- icon:SetPoint('CENTER')
+        icon:SetAlpha(0)
+
+        -- mask
+        do
+            local mask = btn:CreateTexture('DragonflightUIMaskTexture')
+            btn.DragonflightUIMaskTexture = mask
+            mask:SetSize(45, 45)
+            mask:SetPoint('CENTER', 0, 0)
+            -- mask:SetColorTexture(0, 1, 0, 1)       
+            mask:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+            mask:SetDrawLayer('BACKGROUND')
+            -- mask:SetTexture(136197)
+
+            hooksecurefunc(icon, 'Show', function(self)
+                local tex = self:GetTexture()
+                if tex then
+                    mask:Show()
+                    mask:SetTexture(tex)
+                end
+            end)
+            hooksecurefunc(icon, 'Hide', function(self)
+                mask:Hide()
+            end)
+            hooksecurefunc(icon, 'SetVertexColor', function(self)
+                local r, g, b = self:GetVertexColor()
+                mask:SetVertexColor(r, g, b)
+            end)
+        end
+
+        local cd = _G[btnName .. 'Cooldown']
+        cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
+        -- cd:GetSwipeTexture():SetAlpha(0.5)
+
+        local floatingBG = _G[btnName .. 'FloatingBG']
+        if floatingBG then
+            floatingBG:ClearAllPoints()
+            floatingBG:SetSize(46, 45)
+            floatingBG:SetTexture(textureRef)
+            floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
+            floatingBG:SetAllPoints()
+        end
+
+        -- TODO: better visibility
+        -- iconframe-border
+        local border = _G[btnName .. 'Border']
+        border:ClearAllPoints()
+        border:SetSize(46, 45)
+        border:SetPoint('TOPLEFT')
+        border:SetTexture(textureRefTwo)
+        border:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+        border:SetDrawLayer('OVERLAY')
+
+        -- iconframe
+        local normal = btn:GetNormalTexture()
+        normal:ClearAllPoints()
+        normal:SetSize(46, 45)
+        normal:SetPoint('TOPLEFT')
+        normal:SetTexture(textureRefTwo)
+        normal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+
+        -- iconframe-down
+        local pushed = btn:GetPushedTexture()
+        pushed:ClearAllPoints()
+        pushed:SetSize(46, 45)
+        pushed:SetPoint('TOPLEFT')
+        pushed:SetTexture(textureRefTwo)
+        pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+
+        -- iconframe-mouseover
+        local highlight = btn:GetHighlightTexture()
+        highlight:ClearAllPoints()
+        highlight:SetSize(46, 45)
+        highlight:SetPoint('TOPLEFT')
+        highlight:SetTexture(textureRefTwo)
+        highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+        -- iconframe-mouseover
+        local checked = btn:GetCheckedTexture()
+        checked:ClearAllPoints()
+        checked:SetSize(46, 45)
+        checked:SetPoint('TOPLEFT')
+        checked:SetTexture(textureRefTwo)
+        checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+        local hotkey = _G[btnName .. 'HotKey']
+        hotkey:ClearAllPoints()
+        hotkey:SetSize(32, 10)
+        hotkey:SetPoint('TOPRIGHT', -5, -5)
+
+        local name = _G[btnName .. 'Name']
+        name:ClearAllPoints()
+        name:SetSize(32, 10)
+        name:SetPoint('BOTTOM', 0, 2)
+
+    end
+end
+
+-- TODO only debug for now..
+function DragonflightUIActionbarMixin:HookGrid()
+
+    local updateButton = function(btn)
+        local mix = btn.DFMixin
+        local state = mix.state
+
+        if not state then return end
+
+        if state.alwaysShow then
+            -- btn:SetAttribute("showgrid", 1)
+            -- ActionButton_ShowGrid(btn)
+        else
+            -- btn:SetAttribute("showgrid", 0)
+            -- ActionButton_HideGrid(btn)
+        end
+    end
+
+    hooksecurefunc('ActionButton_ShowGrid', function(button)
+        if button.DFMixin then
+            -- print('ActionButton_ShowGrid', button:GetName())
+            -- updateButton(button)
+        end
+    end)
+    hooksecurefunc('ActionButton_HideGrid', function(button)
+        if button.DFMixin then
+            -- print('ActionButton_HideGrid', button:GetName())
+            -- updateButton(button)
+        end
+    end)
+
+    hooksecurefunc('ActionButton_Update', function(button)
+        print('ActionButton_Update', button:GetName(), button:GetAttribute("statehidden"),
+              button:GetAttribute("showgrid"))
+        -- button:Show()
+    end)
+
 end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
