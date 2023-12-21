@@ -147,12 +147,16 @@ function DragonflightUIActionbarMixin:Update()
                 else
                     btn:SetAttribute("showgrid", 1)
                 end
-                if btn.DFDeco then btn.DFDeco:Show() end
             else
                 if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
                     btn:SetAttribute("showgrid", 0)
                 end
+            end
+
+            if state.hideArt then
                 if btn.DFDeco then btn.DFDeco:Hide() end
+            else
+                if btn.DFDeco then btn.DFDeco:Show() end
             end
 
             index = index + 1
@@ -367,14 +371,14 @@ function DragonflightUIActionbarMixin:AddDecoNew()
         -- tex:SetFrameLevel('1')
     end
 
-    for i = 1, 1 do
+    --[[    for i = 1, 1 do
         local tex = self.decoFrame:CreateTexture()
         tex:SetTexture(textureRef)
         tex:SetSize(45, 45)
         -- tex:SetScale(1)
         tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
         self.decoFrame.decoTable[i] = tex
-    end
+    end ]]
 end
 
 function DragonflightUIActionbarMixin:AddDeco()
