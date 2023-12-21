@@ -544,7 +544,7 @@ end
 function DragonflightUIActionbarMixin:HookGrid()
 
     hooksecurefunc('ActionButton_ShowGrid', function(btn)
-        if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 1); end
+        if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 0.69); end
     end)
 
     --[[    local updateButton = function(btn)
