@@ -244,7 +244,7 @@ function DragonflightUIRepBarMixin:CreateBar()
     local sizeX, sizeY = 466, 20
     self:SetSize(sizeX, sizeY)
     self:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-    print('BARS')
+    -- print('BARS')
 
     local tex = f:CreateTexture('Background', 'BACKGROUND')
     tex:SetAllPoints()

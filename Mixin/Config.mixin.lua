@@ -2,7 +2,7 @@ DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
 
 function DragonFlightUIConfigMixin:OnLoad()
-    print('DragonFlightUIConfigMixin:OnLoad')
+    -- print('DragonFlightUIConfigMixin:OnLoad')
 
     self.NineSlice.Text:SetText('DragonflightUI')
 
@@ -183,22 +183,22 @@ function DragonFlightUIConfigMixin:GetSettingsCanvas()
 end
 
 function DragonFlightUIConfigMixin:SubCategoryBtnClicked(btn)
-    print('SubCategoryBtnClicked', btn.category, btn.subCategory)
+    -- print('SubCategoryBtnClicked', btn.category, btn.subCategory)
 
     self:SelectCategory(btn.category, btn.subCategory)
 end
 
 function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
-    print('select Cat:', cat, sub)
+    -- print('select Cat:', cat, sub)
 
     local category = self.categorys[cat]
     if not category then
-        print("Category doesn't exist!", cat, sub)
+        -- print("Category doesn't exist!", cat, sub)
         return
     end
     local subCategory = category.subCategorys[sub]
     if not subCategory then
-        print("Subcategory doesn't exist!", cat, sub)
+        -- print("Subcategory doesn't exist!", cat, sub)
         return
     end
     -- local btn = self.categorys['General'].subCategorys['Info']
@@ -230,7 +230,7 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
         newFrame:Show()
         self.selectedFrame = newFrame
     else
-        print('no displayframe - nothing to show!')
+        -- print('no displayframe - nothing to show!')
     end
 
 end
@@ -238,12 +238,12 @@ end
 function DragonFlightUIConfigMixin:GetSubCategory(cat, sub)
     local category = self.categorys[cat]
     if not category then
-        print("Category doesn't exist!", cat, sub)
+        -- print("Category doesn't exist!", cat, sub)
         return nil
     end
     local subCategory = category.subCategorys[sub]
     if not subCategory then
-        print("Subcategory doesn't exist!", cat, sub)
+        -- print("Subcategory doesn't exist!", cat, sub)
         return nil
     end
 

@@ -207,7 +207,7 @@ function Module:SlashCommand()
 end
 
 function Module:RegisterOptionScreen(cat, sub, data)
-    print('RegisterOptionScreen', cat, sub)
+    -- print('RegisterOptionScreen', cat, sub)
     local config = Module.ConfigFrame
     local subCategory = config:GetSubCategory(cat, sub)
 
