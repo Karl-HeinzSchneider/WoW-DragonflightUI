@@ -52,10 +52,10 @@ local defaults = {
             scale = 1.0,
             override = false,
             anchorFrame = 'PlayerFrame',
-            anchor = 'TOPLEFT',
-            anchorParent = 'TOPLEFT',
-            x = 100,
-            y = -70
+            anchor = 'TOPRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = 4,
+            y = 28
         },
         party = {
             classcolor = false,
@@ -763,12 +763,10 @@ function Module:ApplySettings()
     do
         local obj = db.player
         local objLocal = localSettings.player
-        if obj.override then
-            Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-            PlayerFrame:SetUserPlaced(true)
-        else
-            Module.MovePlayerFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
-        end
+
+        Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
+        PlayerFrame:SetUserPlaced(true)
+
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
         Module.ScaleRestFlipbook()
@@ -780,12 +778,10 @@ function Module:ApplySettings()
     do
         local obj = db.target
         local objLocal = localSettings.target
-        if obj.override then
-            Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-            TargetFrame:SetUserPlaced(true)
-        else
-            Module.MoveTargetFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
-        end
+
+        Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
+        TargetFrame:SetUserPlaced(true)
+
         TargetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
@@ -797,13 +793,8 @@ function Module:ApplySettings()
         local obj = db.pet
         local objLocal = localSettings.pet
 
-        if obj.override then
-            PetFrame:ClearAllPoints()
-            PetFrame:SetPoint(obj.anchor, PlayerFrame, obj.anchorParent, obj.x, obj.y)
-        else
-            PetFrame:ClearAllPoints()
-            PetFrame:SetPoint(objLocal.anchor, PlayerFrame, objLocal.anchorParent, objLocal.x, objLocal.y)
-        end
+        PetFrame:ClearAllPoints()
+        PetFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
 
         PetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
@@ -832,12 +823,10 @@ function Module:ApplySettings()
         do
             local obj = db.focus
             local objLocal = localSettings.focus
-            if obj.override then
-                Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-                FocusFrame:SetUserPlaced(true)
-            else
-                Module.MoveFocusFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
-            end
+
+            Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
+            FocusFrame:SetUserPlaced(true)
+
             FocusFrame:SetScale(obj.scale)
             Module.ReApplyFocusFrame()
             FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
@@ -1179,7 +1168,7 @@ function Module.HookDrag()
         Module.SaveLocalSettings()
 
         for k, v in pairs(localSettings.player) do Module.db.profile.player[k] = v end
-        Module.db.profile.player.override = false
+        Module.db.profile.player.anchorFrame = 'UIParent'
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
     hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
@@ -1188,7 +1177,7 @@ function Module.HookDrag()
         Module.SaveLocalSettings()
 
         for k, v in pairs(localSettings.target) do Module.db.profile.target[k] = v end
-        Module.db.profile.target.override = false
+        Module.db.profile.target.anchorFrame = 'UIParent'
     end
     TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
     hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
@@ -1198,7 +1187,7 @@ function Module.HookDrag()
             Module.SaveLocalSettings()
 
             for k, v in pairs(localSettings.focus) do Module.db.profile.focus[k] = v end
-            Module.db.profile.focus.override = false
+            Module.db.profile.focus.anchorFrame = 'UIParent'
         end
         FocusFrame:HookScript('OnDragStop', DragStopFocusFrame)
         -- hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)
@@ -1567,9 +1556,9 @@ function Module.HookPlayerArt()
     end)
 end
 
-function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
+function Module.MovePlayerFrame(anchor, anchorOther, anchorFrame, dx, dy)
     PlayerFrame:ClearAllPoints()
-    PlayerFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+    PlayerFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
 end
 
 function Module.ChangeTargetFrame()
@@ -1800,9 +1789,9 @@ function Module.ReApplyTargetFrame()
 end
 -- frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
-function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
+function Module.MoveTargetFrame(anchor, anchorOther, anchorFrame, dx, dy)
     TargetFrame:ClearAllPoints()
-    TargetFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+    TargetFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
 end
 
 function Module.ShouldKnowHealth(unit)
@@ -2112,9 +2101,9 @@ end
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
-function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
+function Module.MoveFocusFrame(anchor, anchorOther, anchorFrame, dx, dy)
     FocusFrame:ClearAllPoints()
-    FocusFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+    FocusFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
 end
 
 function Module.ReApplyFocusFrame()
