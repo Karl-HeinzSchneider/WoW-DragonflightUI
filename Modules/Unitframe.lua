@@ -696,6 +696,21 @@ function Module:RegisterOptionScreens()
     })
 end
 
+function Module:RefreshOptionScreens()
+    --print('Module:RefreshOptionScreens()')
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+
+    local player = configFrame:GetSubCategory('Unitframes', 'Player')
+    player.displayFrame:CallRefresh()
+
+    local target = configFrame:GetSubCategory('Unitframes', 'Target')
+    target.displayFrame:CallRefresh()
+
+    local focus = configFrame:GetSubCategory('Unitframes', 'Focus')
+    focus.displayFrame:CallRefresh()
+end
+
 function Module:SaveLocalSettings()
     -- playerframe
     do
@@ -1169,6 +1184,7 @@ function Module.HookDrag()
 
         for k, v in pairs(localSettings.player) do Module.db.profile.player[k] = v end
         Module.db.profile.player.anchorFrame = 'UIParent'
+        Module:RefreshOptionScreens()
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
     hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
@@ -1178,6 +1194,7 @@ function Module.HookDrag()
 
         for k, v in pairs(localSettings.target) do Module.db.profile.target[k] = v end
         Module.db.profile.target.anchorFrame = 'UIParent'
+        Module:RefreshOptionScreens()
     end
     TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
     hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
@@ -1188,6 +1205,7 @@ function Module.HookDrag()
 
             for k, v in pairs(localSettings.focus) do Module.db.profile.focus[k] = v end
             Module.db.profile.focus.anchorFrame = 'UIParent'
+            Module:RefreshOptionScreens()
         end
         FocusFrame:HookScript('OnDragStop', DragStopFocusFrame)
         -- hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)

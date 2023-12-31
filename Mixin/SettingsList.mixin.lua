@@ -10,6 +10,8 @@ function ScrollableListItemMixinDF:Init(elementData)
     local set = elementData.set
     local list = elementData.settingsList
     list:UnregisterCallback('OnDefaults', self)
+    list:UnregisterCallback('OnRefresh', self)
+
     -- print('init', key, data)
     self:Reset()
 
@@ -25,6 +27,9 @@ function ScrollableListItemMixinDF:Init(elementData)
             set({key}, newValue)
         end, self)
         list:RegisterCallback('OnDefaults', function(self, ...)
+            self:SetSlider(get({key}), data.min, data.max, data.bigStep)
+        end, self)
+        list:RegisterCallback('OnRefresh', function(self, ...)
             self:SetSlider(get({key}), data.min, data.max, data.bigStep)
         end, self)
     elseif data.type == 'execute' then
@@ -50,6 +55,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         list:RegisterCallback('OnDefaults', function(self, ...)
             self.Item.Checkbox:SetValue(get({key}))
         end, self)
+        list:RegisterCallback('OnRefresh', function(self, ...)
+            self.Item.Checkbox:SetValue(get({key}))
+        end, self)
     elseif data.type == 'select' then
         -- print('select')
         self:SetText(data.name)
@@ -63,6 +71,10 @@ function ScrollableListItemMixinDF:Init(elementData)
             set({key}, newValue)
         end)
         list:RegisterCallback('OnDefaults', function(self, ...)
+            -- print('OnDefaults')
+            self.Item.Dropdown:SetDropdownSelection(get({key}))
+        end, self)
+        list:RegisterCallback('OnRefresh', function(self, ...)
             -- print('OnDefaults')
             self.Item.Dropdown:SetDropdownSelection(get({key}))
         end, self)
@@ -602,7 +614,7 @@ local elementSize = {header = 45, range = 26, execute = 26, description = 26, to
 
 --- Settingslist
 SettingsListMixinDF = CreateFromMixins(CallbackRegistryMixin);
-SettingsListMixinDF:GenerateCallbackEvents({"OnDefaults"});
+SettingsListMixinDF:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
 function SettingsListMixinDF:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
@@ -640,6 +652,11 @@ function SettingsListMixinDF:OnLoad()
     ScrollUtil.AddManagedScrollBarVisibilityBehavior(self.ScrollBox, self.ScrollBar, scrollBoxAnchors, scrollBoxAnchors);
 
     -- ScrollUtil.AddResizableChildrenBehavior(self.ScrollBox);
+end
+
+function SettingsListMixinDF:CallRefresh()
+    -- print('CallRefresh')
+    self:TriggerEvent(SettingsListMixinDF.Event.OnRefresh, true)
 end
 
 function SettingsListMixinDF:Display(data)
