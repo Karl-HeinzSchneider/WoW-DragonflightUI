@@ -2,34 +2,47 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Config'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, dX = 42, dY = 35, sizeX = 460, sizeY = 207}}
+local defaults = {
+    profile = {
+        modules = {['Actionbar'] = true, ['Castbar'] = true, ['Chat'] = false, ['Minimap'] = true, ['Unitframe'] = true},
+        bestnumber = 42
+    }
+}
+Module:SetDefaults(defaults)
 
-local options = {
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
+end
+
+local function setDefaultValues()
+    Module:SetDefaultValues()
+end
+
+local function setDefaultSubValues(sub)
+    Module:SetDefaultSubValues(sub)
+end
+
+local function getOption(info)
+    return Module:GetOption(info)
+end
+
+local function setOption(info, value)
+    Module:SetOption(info, value)
+end
+
+local modulesOptions = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
     args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 69
-        }
+        Actionbar = {type = 'toggle', name = 'Actionbar', desc = '' .. getDefaultStr('Actionbar', 'modules'), order = 1},
+        Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 2},
+        Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 3},
+        Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 4},
+        Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 5}
     }
 }
 
@@ -39,9 +52,10 @@ function Module:OnInitialize()
 
     -- self:SetEnabledState(DF:GetModuleEnabled(mName))
     self:SetEnabledState(true)
+    self:SetWasEnabled(true)
 
     DF.ConfigModule = self
-    -- DF:RegisterModuleOptions(mName, options)
+    DF:RegisterModuleOptions(mName, modulesOptions)
 end
 
 function Module:OnEnable()
@@ -51,14 +65,60 @@ function Module:OnEnable()
     else
         Module:Era()
     end
+
+    Module:ApplySettings()
+
+    DF.ConfigModule:RegisterOptionScreen('General', 'Modules', {
+        name = 'Modules',
+        sub = 'modules',
+        options = modulesOptions,
+        default = function()
+            setDefaultSubValues('modules')
+        end
+    })
 end
 
 function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    local db = self.db.profile
+    local db = Module.db.profile
+
+    local modules = db.modules
+
+    for k, v in pairs(modules) do
+        -- print(k, v)
+
+        local dfmod = DF:GetModule(k)
+        if dfmod then
+            if v and not dfmod:GetWasEnabled() then
+                DF:EnableModule(k)
+            elseif not v and dfmod:GetWasEnabled() then
+                DF:Print("Already loaded module was deactivated, please '/reload' !")
+            end
+        end
+    end
 end
+
+function Module:GetModuleEnabled(module)
+    return self.db.profile.modules[module]
+end
+
+--[[ function Module:SetModuleEnabled(module, value)
+    print('SetModuleEnabled', module, value)
+    local old = self.db.profile.modules[module]
+    self.db.profile.modules[module] = value
+    if old ~= value then
+        if value then
+            DF:EnableModule(module)
+            print('true')
+        else
+            DF:DisableModule(module)
+            print('false')
+        end
+        self:Print('/reload')
+    end
+end ]]
 
 function Module:AddMainMenuButton()
     hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)

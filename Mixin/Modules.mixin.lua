@@ -2,6 +2,7 @@ DragonflightUIModulesMixin = {}
 
 function DragonflightUIModulesMixin:SetDefaults(data)
     self.defaults = data
+    self.wasEnabled = false
     -- print('DEFAULTS')
     -- DevTools_Dump(data)
 end
@@ -70,3 +71,12 @@ function DragonflightUIModulesMixin:SetOption(info, value)
     end
     self:ApplySettings()
 end
+
+function DragonflightUIModulesMixin:SetWasEnabled(state)
+    if state then self.wasEnabled = true end
+end
+
+function DragonflightUIModulesMixin:GetWasEnabled()
+    return self.wasEnabled
+end
+

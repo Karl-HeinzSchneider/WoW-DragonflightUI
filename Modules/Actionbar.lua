@@ -904,12 +904,15 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
-    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
+
     DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    self:SetWasEnabled(true)
+
     Module.Temp = {}
     if DF.Wrath then
         Module.Wrath()

@@ -5,12 +5,7 @@ DF.InterfaceVersion = select(4, GetBuildInfo())
 DF.Wrath = DF.InterfaceVersion >= 30400
 DF.Era = DF.InterfaceVersion <= 20000
 
-local defaults = {
-    profile = {
-        modules = {['Actionbar'] = true, ['Castbar'] = true, ['Chat'] = false, ['Minimap'] = true, ['Unitframe'] = true},
-        bestnumber = 42
-    }
-}
+local defaults = {profile = {bestnumber = 42}}
 
 function DF:OnInitialize()
     -- Called when the addon is loaded
@@ -28,23 +23,6 @@ end
 
 function DF:OnDisable()
     -- Called when the addon is disabled
-end
-
-function DF:GetModuleEnabled(module)
-    return db.modules[module]
-end
-
-function DF:SetModuleEnabled(module, value)
-    local old = db.modules[module]
-    db.modules[module] = value
-    if old ~= value then
-        if value then
-            self:EnableModule(module)
-        else
-            self:DisableModule(module)
-        end
-        self:Print('/reload')
-    end
 end
 
 local name, realm = UnitName('player')
