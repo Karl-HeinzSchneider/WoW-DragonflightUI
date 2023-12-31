@@ -62,11 +62,11 @@ local defaults = {
             breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
-            anchorFrame = 'UIParent',
+            anchorFrame = 'CompactRaidFrameManager',
             anchor = 'TOPLEFT',
-            anchorParent = 'TOPLEFT',
-            x = -19,
-            y = -4
+            anchorParent = 'TOPRIGHT',
+            x = 0,
+            y = 0
         },
         boss = {
             breakUpLargeNumbers = true,
@@ -120,9 +120,21 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local frameTable = {['UIParent'] = 'UIParent', ['PlayerFrame'] = 'PlayerFrame', ['PetFrame'] = 'PetFrame'}
-
+local frameTable = {
+    ['UIParent'] = 'UIParent',
+    ['PlayerFrame'] = 'PlayerFrame',
+    ['TargetFrame'] = 'TargetFrame',
+    ['CompactRaidFrameManager'] = 'CompactRaidFrameManager'
+}
 if DF.Wrath then frameTable['FocusFrame'] = 'FocusFrame' end
+
+local function frameTableWithout(without)
+    local newTable = {}
+
+    for k, v in pairs(frameTable) do if k ~= without then newTable[k] = v end end
+
+    return newTable
+end
 
 local optionsPlayer = {
     name = 'Player',
@@ -144,7 +156,7 @@ local optionsPlayer = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'player'),
-            values = frameTable,
+            values = frameTableWithout('PlayerFrame'),
             order = 4
         },
         anchor = {
@@ -229,7 +241,7 @@ local optionsTarget = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
-            values = frameTable,
+            values = frameTableWithout('TargetFrame'),
             order = 4
         },
         anchor = {
@@ -328,7 +340,7 @@ local optionsPet = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
-            values = frameTable,
+            values = frameTableWithout('PetFrame'),
             order = 4
         },
         anchor = {
@@ -419,7 +431,7 @@ local optionsFocus = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
-            values = frameTable,
+            values = frameTableWithout('FocusFrame'),
             order = 4
         },
         anchor = {
@@ -491,20 +503,6 @@ local optionsParty = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {type = 'header', name = 'General', order = 10},
-        classcolor = {
-            type = 'toggle',
-            name = 'class color',
-            desc = 'Enable classcolors for the healthbar',
-            order = 10.1
-        },
-        breakUpLargeNumbers = {
-            type = 'toggle',
-            name = 'break up large numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 10.2
-        },
-        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
@@ -512,10 +510,15 @@ local optionsParty = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 50.1
+            order = 1
         },
-        configPos = {type = 'header', name = 'Position', order = 100},
-        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'party'),
+            values = frameTable,
+            order = 4
+        },
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -531,7 +534,7 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 2
         },
         anchorParent = {
             type = 'select',
@@ -548,7 +551,7 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105.1
+            order = 3
         },
         x = {
             type = 'range',
@@ -557,7 +560,7 @@ local optionsParty = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 107
+            order = 5
         },
         y = {
             type = 'range',
@@ -566,7 +569,14 @@ local optionsParty = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 108
+            order = 6
+        },
+        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 8
         }
     }
 }
@@ -663,9 +673,7 @@ function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Party', {
         name = 'Party',
         sub = 'party',
-        options = filterTableByFunction(optionsParty, function(v)
-            return v ~= 'header' and v ~= 'select'
-        end),
+        options = optionsParty,
         default = function()
             setDefaultSubValues('party')
         end
@@ -697,7 +705,7 @@ function Module:RegisterOptionScreens()
 end
 
 function Module:RefreshOptionScreens()
-    --print('Module:RefreshOptionScreens()')
+    -- print('Module:RefreshOptionScreens()')
 
     local configFrame = DF.ConfigModule.ConfigFrame
 
@@ -821,6 +829,10 @@ function Module:ApplySettings()
     do
         local obj = db.party
         local objLocal = localSettings.party
+
+        local party1 = _G['PartyMemberFrame' .. 1]
+        party1:ClearAllPoints()
+        party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
 
         for i = 1, 4 do
             local pf = _G['PartyMemberFrame' .. i]
