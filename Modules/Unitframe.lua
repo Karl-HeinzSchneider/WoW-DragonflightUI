@@ -1431,7 +1431,7 @@ end
 function Module.ChangePlayerframe()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    Module.RefreshPortrait()
+    -- Module.RefreshPortrait()
 
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
@@ -2238,7 +2238,7 @@ end
 function Module.HookFunctions()
     hooksecurefunc(PlayerFrameTexture, 'Show', function()
         -- print('PlayerFrameTexture - Show()')
-        Module.ChangePlayerframe()
+        -- Module.ChangePlayerframe()
     end)
 end
 
@@ -2895,7 +2895,7 @@ function frame:OnEvent(event, arg1)
     elseif event == 'PLAYER_TARGET_CHANGED' then
         -- Module.ApplySettings()
         Module.ReApplyTargetFrame()
-        Module.ChangePlayerframe()
+        -- Module.ChangePlayerframe()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangePlayerframe()
     elseif event == 'UNIT_EXITED_VEHICLE' then
@@ -2911,9 +2911,9 @@ end
 
 function Module.RefreshPortrait()
     if UnitHasVehiclePlayerFrameUI('player') then
-        SetPortraitTexture(PlayerPortrait, 'vehicle', true)
+        -- SetPortraitTexture(PlayerPortrait, 'vehicle', true)
     else
-        SetPortraitTexture(PlayerPortrait, 'player', true)
+        -- SetPortraitTexture(PlayerPortrait, 'player', true)
     end
 end
 
