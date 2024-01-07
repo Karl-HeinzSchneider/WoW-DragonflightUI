@@ -399,13 +399,13 @@ local optionsPet = {
             type = 'toggle',
             name = 'break up large numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 8
+            order = 9
         },
         enableThreatGlow = {
             type = 'toggle',
             name = 'threat glow',
             desc = 'Enable threat glow',
-            order = 9,
+            order = 8,
             disabled = true
         }
     }
