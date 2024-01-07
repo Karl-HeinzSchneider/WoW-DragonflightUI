@@ -1344,6 +1344,9 @@ function Module.HookPetBar()
     PetActionBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
     PetActionBarFrame.ignoreFramePositionManager = true
 
+    SlidingActionBarTexture0:SetTexture('')
+    SlidingActionBarTexture1:SetTexture('')
+
     -- frame:RegisterEvent('PET_BAR_UPDATE')
 
     for i = 1, 10 do
