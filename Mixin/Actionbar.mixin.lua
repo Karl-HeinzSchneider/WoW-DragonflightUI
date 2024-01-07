@@ -170,13 +170,7 @@ function DragonflightUIActionbarMixin:Update()
     -- mainbar only
     if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
 
-    if self.numberFrame then
-        if state.hideScrolling then
-            self.numberFrame:Hide()
-        else
-            self.numberFrame:Show()
-        end
-    end
+    if self.numberFrame then self:UpdateNumberFrame() end
 
     -- if self.decoFrame then self.decoFrame.update(state) end
 end
@@ -257,16 +251,24 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
     local dx = padding + 15
     local dy = 6
 
-    self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
-    self.gryphonLeft:SetScale(gryphonScale)
-
     local rows = state.rows
     if rows > btnCount then rows = btnCount end
 
     local maxRowButtons = math.ceil(btnCount / rows)
 
-    self.gryphonRight:SetPoint('LEFT', self.buttonTable[maxRowButtons], 'RIGHT', -dx, dy)
-    self.gryphonRight:SetScale(gryphonScale)
+    if state.reverse then
+        self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[12], 'LEFT', dx, dy)
+        self.gryphonLeft:SetScale(gryphonScale)
+
+        self.gryphonRight:SetPoint('LEFT', self.buttonTable[12 - maxRowButtons + 1], 'RIGHT', -dx, dy)
+        self.gryphonRight:SetScale(gryphonScale)
+    else
+        self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
+        self.gryphonLeft:SetScale(gryphonScale)
+
+        self.gryphonRight:SetPoint('LEFT', self.buttonTable[maxRowButtons], 'RIGHT', -dx, dy)
+        self.gryphonRight:SetScale(gryphonScale)
+    end
 
     self.numberFrame:SetScale(btnScale)
 
@@ -338,6 +340,37 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
 
     self.numberFrame = f
     -- f:Hide()
+end
+
+function DragonflightUIActionbarMixin:UpdateNumberFrame()
+    local state = self.state
+    local padding = state.padding
+    local btnCount = state.buttons
+
+    -- local dy = self.buttonTable[1]:GetHeight() + padding
+
+    local btnScale = state.buttonScale
+    local gryphonScale = btnScale * 0.42
+
+    local dx = padding + 15
+    local dy = 6
+
+    local rows = state.rows
+    if rows > btnCount then rows = btnCount end
+
+    local maxRowButtons = math.ceil(btnCount / rows)
+
+    if state.hideScrolling then
+        self.numberFrame:Hide()
+    else
+        self.numberFrame:Show()
+    end
+
+    if state.reverse then
+        self.numberFrame:SetPoint('RIGHT', ActionButton12, 'LEFT')
+    else
+        self.numberFrame:SetPoint('RIGHT', ActionButton1, 'LEFT')
+    end
 end
 
 function DragonflightUIActionbarMixin:AddDecoNew()
