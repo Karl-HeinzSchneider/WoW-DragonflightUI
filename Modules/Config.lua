@@ -153,7 +153,7 @@ function Module:AddConfigFrame()
     Module:RegisterChatCommand('dragonflight', 'SlashCommand')
     Module:RegisterChatCommand('df', 'SlashCommand')
 
-    Module:AddTestConfig()
+    -- Module:AddTestConfig()
 end
 
 function Module:AddTestConfig()

@@ -35,7 +35,7 @@ function DragonFlightUIConfigMixin:OnShow()
         -- local btn = self.categorys['General'].subCategorys['Info']
         -- self:SubCategoryBtnClicked(btn)
         -- btn:UpdateState()
-        self:SelectCategory('General', 'Info')
+        self:SelectCategory('General', 'Modules')
     end
 end
 
