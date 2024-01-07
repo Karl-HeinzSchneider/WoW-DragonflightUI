@@ -4,27 +4,22 @@ local moduleOptions = {}
 local options = {
     type = 'group',
     args = {
-        general = {
-            type = 'group',
-            inline = true,
-            name = 'General Options',
-            args = {
-                unlock = {
-                    type = 'execute',
-                    name = 'Do Nothing',
-                    desc = 'Does nothing',
-                    func = function()
-                        DF:Print('Dont press me, i do nothing!')
-                    end,
-                    order = 69
-                }
-            }
-        },
         info = {
             type = 'description',
-            name = 'PSA: \nFor Module Options press the big minus icon on the left to open up the SubMenu List \n \nNew menu system coming soon!',
+            name = "Type '/df' or '/dragonflight' to open the (new) config window - or use the game menu button",
             fontSize = 'large',
             order = 420
+        },
+        unlock = {
+            type = 'execute',
+            name = 'Open config window',
+            desc = 'Opens the Dragonflight UI config window',
+            func = function()
+                -- DF:Print('Dont press me, i do nothing!')
+                local ConfigModule = DF:GetModule('Config')
+                if ConfigModule then ConfigModule:ToggleConfigFrame() end
+            end,
+            order = 69
         }
     }
 }
@@ -47,8 +42,8 @@ function DF:RegisterModuleOptions(name, options)
     -- function AceConfigDialog:AddToBlizOptions(appName, name, parent, ...)
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('DragonflightUI_' .. name, options)
 
-    self.optFrames[name] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_' .. name, name,
-                                                                           'DragonflightUI')
+    -- self.optFrames[name] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_' .. name, name,
+    --                                                                        'DragonflightUI')
 end
 
 function DF:RegisterSlashCommands()
