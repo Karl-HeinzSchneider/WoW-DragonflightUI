@@ -3,28 +3,29 @@ local mName = 'Minimap'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
 Module.Tmp = {}
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {profile = {scale = 1, x = -10, y = -105, locked = true}}
+Module:SetDefaults(defaults)
 
-local function getDefaultStr(key)
-    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
-    Module.ApplySettings()
+    Module:SetDefaultValues()
 end
 
--- db[info[#info] = VALUE
+local function setDefaultSubValues(sub)
+    Module:SetDefaultSubValues(sub)
+end
+
 local function getOption(info)
-    return db[info[#info]]
+    return Module:GetOption(info)
 end
 
 local function setOption(info, value)
-    local key = info[1]
-    Module.db.profile[key] = value
-    Module.ApplySettings()
+    Module:SetOption(info, value)
 end
 
 local options = {
@@ -60,7 +61,7 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {type = 'header', name = 'Config - Player', order = 100},
+        --[[ config = {type = 'header', name = 'Config - Player', order = 100}, ]]
         scale = {
             type = 'range',
             name = 'Scale',
@@ -92,7 +93,8 @@ local options = {
         locked = {
             type = 'toggle',
             name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved ' .. getDefaultStr('locked'),
+            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
+                getDefaultStr('locked'),
             order = 103
         }
     }
@@ -101,14 +103,16 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
 
-    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
+
     DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    self:SetWasEnabled(true)
+
     if DF.Wrath then
         Module.Wrath()
     else
@@ -119,13 +123,16 @@ function Module:OnEnable()
     Module.Tmp.MinimapY = 0
 
     Module.ApplySettings()
+
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap',
+                                         {name = 'Minimap', options = options, default = setDefaultValues})
 end
 
 function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
 
     Module.MoveMinimap(db.x, db.y)
     local dfScale = 1.25
@@ -269,6 +276,7 @@ end
 
 function Module.MoveMinimap(x, y)
     Minimap:ClearAllPoints()
+    Minimap:SetClampedToScreen(true)
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', x, y)
     -- MinimapCluster:ClearAllPoints()
     -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
@@ -506,13 +514,15 @@ function Module.LockMinimap(locked)
     if locked then
         -- print('locked')
         Minimap:SetMovable(false)
+        Minimap:SetScript('OnDragStart', nil)
+        Minimap:SetScript('OnDragStop', nil)
+
         -- Minimap:EnableMouse(false)
     else
         -- print('not locked')
 
         Minimap:SetMovable(true)
-        -- Minimap:EnableMouse(true)
-        Minimap:SetClampedToScreen(true)
+        -- Minimap:EnableMouse(true)      
         Minimap:RegisterForDrag("LeftButton")
         Minimap:SetScript("OnDragStart", function(self)
             local x, y = Minimap:GetCenter()
@@ -534,7 +544,7 @@ function Module.LockMinimap(locked)
             local dy = Module.Tmp.MinimapY - y
             -- print('delta', dx, dy)
 
-            db = Module.db.profile
+            local db = Module.db.profile
 
             db.x = db.x - dx
             db.y = db.y - dy

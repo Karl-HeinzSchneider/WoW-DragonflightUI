@@ -24,8 +24,16 @@ Libs\AceConfig-3.0\AceConfig-3.0.xml
 Core.lua
 Config.lua
 
+XML\Includes.xml
+
 # XML
+XML\Actionbar.xml
 XML\Castbar.xml
+XML\Config.xml
+XML\SettingsList.xml
+
+# Config
+Modules\Config.lua
 
 # Modules
 Modules\Actionbar.lua

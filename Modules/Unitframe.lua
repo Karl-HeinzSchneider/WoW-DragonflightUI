@@ -2,7 +2,9 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
+
+-- local db, getOptions
 
 Module.famous = {['Norbert'] = true}
 
@@ -14,6 +16,7 @@ local defaults = {
             breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
+            anchorFrame = 'UIParent',
             anchor = 'TOPLEFT',
             anchorParent = 'TOPLEFT',
             x = 250,
@@ -24,6 +27,7 @@ local defaults = {
             breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
+            anchorFrame = 'UIParent',
             anchor = 'TOPLEFT',
             anchorParent = 'TOPLEFT',
             x = -19,
@@ -36,6 +40,7 @@ local defaults = {
             enableThreatGlow = true,
             scale = 1.0,
             override = false,
+            anchorFrame = 'UIParent',
             anchor = 'TOPLEFT',
             anchorParent = 'TOPLEFT',
             x = 250,
@@ -46,25 +51,28 @@ local defaults = {
             enableThreatGlow = true,
             scale = 1.0,
             override = false,
-            anchor = 'TOPLEFT',
-            anchorParent = 'TOPLEFT',
-            x = 100,
-            y = -70
+            anchorFrame = 'PlayerFrame',
+            anchor = 'TOPRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = 4,
+            y = 28
         },
         party = {
             classcolor = false,
             breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
+            anchorFrame = 'CompactRaidFrameManager',
             anchor = 'TOPLEFT',
-            anchorParent = 'TOPLEFT',
-            x = -19,
-            y = -4
+            anchorParent = 'TOPRIGHT',
+            x = 0,
+            y = 0
         },
         boss = {
             breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
+            anchorFrame = 'UIParent',
             anchor = 'TOPRIGHT',
             anchorParent = 'TOPRIGHT',
             x = 55,
@@ -72,6 +80,7 @@ local defaults = {
         }
     }
 }
+Module:SetDefaults(defaults)
 
 local defaultsPROTO = {
     classcolor = false,
@@ -92,61 +101,39 @@ local localSettings = {
 }
 
 local function getDefaultStr(key, sub)
-    -- print('default str', sub, key)
-    if sub then
-        local obj = defaults.profile[sub]
-        local value = obj[key]
-        return '\n' .. '(Default: ' .. tostring(value) .. ')'
-    else
-        local obj = defaults.profile
-        local value = obj[key]
-        return '\n' .. '(Default: ' .. tostring(defaults.profile[key]) .. ')'
-    end
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do
-        if type(v) == 'table' then
-            local obj = Module.db.profile[k]
-            for kSub, vSub in pairs(v) do obj[kSub] = vSub end
-        else
-            Module.db.profile[k] = v
-        end
-    end
-    Module.ApplySettings()
+    Module:SetDefaultValues()
 end
 
--- db[info[#info] = VALUE
-local function getOption(info)
-    local key = info[1]
-    local sub = info[2]
-    -- print('getOption', key, sub)
-    -- print('db', db[key])
+local function setDefaultSubValues(sub)
+    Module:SetDefaultSubValues(sub)
+end
 
-    if sub then
-        -- return db[key .. '.' .. sub]
-        local t = Module.db.profile[key]
-        return t[sub]
-    else
-        -- return db[info[#info]]
-        return db[key]
-    end
+local function getOption(info)
+    return Module:GetOption(info)
 end
 
 local function setOption(info, value)
-    local key = info[1]
-    local sub = info[2]
-    -- print('setOption', key, sub)
+    Module:SetOption(info, value)
+end
 
-    if sub then
-        local t = Module.db.profile[key]
-        t[sub] = value
-        -- Module.db.profile[key .. '.' .. sub] = value
-        Module.ApplySettings()
-    else
-        Module.db.profile[key] = value
-        Module.ApplySettings()
-    end
+local frameTable = {
+    ['UIParent'] = 'UIParent',
+    ['PlayerFrame'] = 'PlayerFrame',
+    ['TargetFrame'] = 'TargetFrame',
+    ['CompactRaidFrameManager'] = 'CompactRaidFrameManager'
+}
+if DF.Wrath then frameTable['FocusFrame'] = 'FocusFrame' end
+
+local function frameTableWithout(without)
+    local newTable = {}
+
+    for k, v in pairs(frameTable) do if k ~= without then newTable[k] = v end end
+
+    return newTable
 end
 
 local optionsPlayer = {
@@ -156,31 +143,22 @@ local optionsPlayer = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {type = 'header', name = 'General', order = 10},
-        classcolor = {
-            type = 'toggle',
-            name = 'class color',
-            desc = 'Enable classcolors for the healthbar',
-            order = 10.1
-        },
-        breakUpLargeNumbers = {
-            type = 'toggle',
-            name = 'break up large numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 10.2
-        },
-        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'player'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
-            order = 50.1
+            max = 5,
+            bigStep = 0.1,
+            order = 1
         },
-        configPos = {type = 'header', name = 'Position', order = 100},
-        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'player'),
+            values = frameTableWithout('PlayerFrame'),
+            order = 4
+        },
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -196,7 +174,7 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 2
         },
         anchorParent = {
             type = 'select',
@@ -213,7 +191,7 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105.1
+            order = 3
         },
         x = {
             type = 'range',
@@ -221,8 +199,8 @@ local optionsPlayer = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'player'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 107
+            bigStep = 1,
+            order = 5
         },
         y = {
             type = 'range',
@@ -230,8 +208,15 @@ local optionsPlayer = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'player'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 108
+            bigStep = 1,
+            order = 6
+        },
+        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 8
         }
     }
 }
@@ -243,45 +228,22 @@ local optionsTarget = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {type = 'header', name = 'General', order = 10},
-        classcolor = {
-            type = 'toggle',
-            name = 'class color',
-            desc = 'Enable classcolors for the healthbar',
-            order = 10.1
-        },
-        breakUpLargeNumbers = {
-            type = 'toggle',
-            name = 'break up large numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 10.2
-        },
-        enableNumericThreat = {
-            type = 'toggle',
-            name = 'numeric threat',
-            desc = 'Enable numeric threat',
-            order = 10.3,
-            disabled = not DF.Era
-        },
-        enableThreatGlow = {
-            type = 'toggle',
-            name = 'threat glow',
-            desc = 'Enable threat glow',
-            order = 10.4,
-            disabled = true
-        },
-        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'target'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
-            order = 50.1
+            max = 5,
+            bigStep = 0.1,
+            order = 1
         },
-        configPos = {type = 'header', name = 'Position', order = 100},
-        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
+            values = frameTableWithout('TargetFrame'),
+            order = 4
+        },
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -297,7 +259,7 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 2
         },
         anchorParent = {
             type = 'select',
@@ -314,7 +276,7 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105.1
+            order = 3
         },
         x = {
             type = 'range',
@@ -322,8 +284,8 @@ local optionsTarget = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'target'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 107
+            bigStep = 1,
+            order = 5
         },
         y = {
             type = 'range',
@@ -331,8 +293,29 @@ local optionsTarget = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'target'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 108
+            bigStep = 1,
+            order = 6
+        },
+        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 8
+        },
+        enableNumericThreat = {
+            type = 'toggle',
+            name = 'numeric threat',
+            desc = 'Enable numeric threat',
+            order = 9,
+            disabled = not DF.Era
+        },
+        enableThreatGlow = {
+            type = 'toggle',
+            name = 'threat glow',
+            desc = 'Enable threat glow',
+            order = 10,
+            disabled = true
         }
     }
 }
@@ -344,32 +327,22 @@ local optionsPet = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {type = 'header', name = 'General', order = 10},
-        breakUpLargeNumbers = {
-            type = 'toggle',
-            name = 'break up large numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 10.2
-        },
-        enableThreatGlow = {
-            type = 'toggle',
-            name = 'threat glow',
-            desc = 'Enable threat glow',
-            order = 10.4,
-            disabled = true
-        },
-        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'pet'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
-            order = 50.1
+            max = 5,
+            bigStep = 0.1,
+            order = 1
         },
-        configPos = {type = 'header', name = 'Position', order = 100},
-        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
+            values = frameTableWithout('PetFrame'),
+            order = 4
+        },
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -385,7 +358,7 @@ local optionsPet = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 2
         },
         anchorParent = {
             type = 'select',
@@ -402,7 +375,7 @@ local optionsPet = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105.1
+            order = 3
         },
         x = {
             type = 'range',
@@ -410,8 +383,8 @@ local optionsPet = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 107
+            bigStep = 1,
+            order = 5
         },
         y = {
             type = 'range',
@@ -419,8 +392,21 @@ local optionsPet = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 108
+            bigStep = 1,
+            order = 6
+        },
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 8
+        },
+        enableThreatGlow = {
+            type = 'toggle',
+            name = 'threat glow',
+            desc = 'Enable threat glow',
+            order = 9,
+            disabled = true
         }
     }
 }
@@ -432,31 +418,22 @@ local optionsFocus = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {type = 'header', name = 'General', order = 10},
-        classcolor = {
-            type = 'toggle',
-            name = 'class color',
-            desc = 'Enable classcolors for the healthbar',
-            order = 10.1
-        },
-        breakUpLargeNumbers = {
-            type = 'toggle',
-            name = 'break up large numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 10.2
-        },
-        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'focus'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
-            order = 50.1
+            max = 5,
+            bigStep = 0.1,
+            order = 1
         },
-        configPos = {type = 'header', name = 'Position', order = 100},
-        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
+            values = frameTableWithout('FocusFrame'),
+            order = 4
+        },
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -472,7 +449,7 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 2
         },
         anchorParent = {
             type = 'select',
@@ -489,7 +466,7 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105.1
+            order = 3
         },
         x = {
             type = 'range',
@@ -497,8 +474,8 @@ local optionsFocus = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'focus'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 107
+            bigStep = 1,
+            order = 5
         },
         y = {
             type = 'range',
@@ -506,8 +483,15 @@ local optionsFocus = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'focus'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 108
+            bigStep = 1,
+            order = 6
+        },
+        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 8
         }
     }
 }
@@ -519,31 +503,22 @@ local optionsParty = {
     set = setOption,
     type = 'group',
     args = {
-        configGeneral = {type = 'header', name = 'General', order = 10},
-        classcolor = {
-            type = 'toggle',
-            name = 'class color',
-            desc = 'Enable classcolors for the healthbar',
-            order = 10.1
-        },
-        breakUpLargeNumbers = {
-            type = 'toggle',
-            name = 'break up large numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 10.2
-        },
-        configSize = {type = 'header', name = 'Size', order = 50},
         scale = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale', 'party'),
             min = 0.1,
-            max = 3,
-            bigStep = 0.025,
-            order = 50.1
+            max = 5,
+            bigStep = 0.1,
+            order = 1
         },
-        configPos = {type = 'header', name = 'Position', order = 100},
-        override = {type = 'toggle', name = 'Override', desc = 'Override positions', order = 101, width = 'full'},
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'party'),
+            values = frameTable,
+            order = 4
+        },
         anchor = {
             type = 'select',
             name = 'Anchor',
@@ -559,7 +534,7 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105
+            order = 2
         },
         anchorParent = {
             type = 'select',
@@ -576,7 +551,7 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 105.1
+            order = 3
         },
         x = {
             type = 'range',
@@ -584,8 +559,8 @@ local optionsParty = {
             desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'party'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 107
+            bigStep = 1,
+            order = 5
         },
         y = {
             type = 'range',
@@ -593,8 +568,15 @@ local optionsParty = {
             desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'party'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 108
+            bigStep = 1,
+            order = 6
+        },
+        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        breakUpLargeNumbers = {
+            type = 'toggle',
+            name = 'break up large numbers',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            order = 8
         }
     }
 }
@@ -643,14 +625,16 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
+    -- db = self.db.profile
 
-    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
+
     DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    self:SetWasEnabled(true)
 
     if DF.Wrath then
         Module.Wrath()
@@ -663,9 +647,76 @@ function Module:OnEnable()
     hooksecurefunc('UIParent_UpdateTopFramePositions', function()
         Module:SaveLocalSettings()
     end)
+    Module:RegisterOptionScreens()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterOptionScreens()
+    local function filterTableByFunction(opts, fnc)
+        local newOpts = {}
+        for k, v in pairs(opts) do if k ~= 'args' then newOpts[k] = v end end
+        newOpts.args = {}
+        for k, v in pairs(opts.args) do if fnc(v.type) then newOpts.args[k] = v end end
+        return newOpts
+    end
+
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Focus', {
+        name = 'Focus',
+        sub = 'focus',
+        options = optionsFocus,
+        default = function()
+            setDefaultSubValues('focus')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Party', {
+        name = 'Party',
+        sub = 'party',
+        options = optionsParty,
+        default = function()
+            setDefaultSubValues('party')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Pet', {
+        name = 'Pet',
+        sub = 'pet',
+        options = optionsPet,
+        default = function()
+            setDefaultSubValues('pet')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Player', {
+        name = 'Player',
+        sub = 'player',
+        options = optionsPlayer,
+        default = function()
+            setDefaultSubValues('player')
+        end
+    })
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Target', {
+        name = 'Target',
+        sub = 'target',
+        options = optionsTarget,
+        default = function()
+            setDefaultSubValues('target')
+        end
+    })
+end
+
+function Module:RefreshOptionScreens()
+    -- print('Module:RefreshOptionScreens()')
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+
+    local player = configFrame:GetSubCategory('Unitframes', 'Player')
+    player.displayFrame:CallRefresh()
+
+    local target = configFrame:GetSubCategory('Unitframes', 'Target')
+    target.displayFrame:CallRefresh()
+
+    local focus = configFrame:GetSubCategory('Unitframes', 'Focus')
+    focus.displayFrame:CallRefresh()
 end
 
 function Module:SaveLocalSettings()
@@ -728,19 +779,17 @@ function Module:SaveLocalSettings()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
     local orig = defaults.profile
 
     -- playerframe
     do
         local obj = db.player
         local objLocal = localSettings.player
-        if obj.override then
-            Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-            PlayerFrame:SetUserPlaced(true)
-        else
-            Module.MovePlayerFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
-        end
+
+        Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
+        PlayerFrame:SetUserPlaced(true)
+
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
         Module.ScaleRestFlipbook()
@@ -752,12 +801,10 @@ function Module:ApplySettings()
     do
         local obj = db.target
         local objLocal = localSettings.target
-        if obj.override then
-            Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-            TargetFrame:SetUserPlaced(true)
-        else
-            Module.MoveTargetFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
-        end
+
+        Module.MoveTargetFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
+        TargetFrame:SetUserPlaced(true)
+
         TargetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
@@ -769,13 +816,8 @@ function Module:ApplySettings()
         local obj = db.pet
         local objLocal = localSettings.pet
 
-        if obj.override then
-            PetFrame:ClearAllPoints()
-            PetFrame:SetPoint(obj.anchor, PlayerFrame, obj.anchorParent, obj.x, obj.y)
-        else
-            PetFrame:ClearAllPoints()
-            PetFrame:SetPoint(objLocal.anchor, PlayerFrame, objLocal.anchorParent, objLocal.x, objLocal.y)
-        end
+        PetFrame:ClearAllPoints()
+        PetFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
 
         PetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
@@ -787,6 +829,10 @@ function Module:ApplySettings()
     do
         local obj = db.party
         local objLocal = localSettings.party
+
+        local party1 = _G['PartyMemberFrame' .. 1]
+        party1:ClearAllPoints()
+        party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
 
         for i = 1, 4 do
             local pf = _G['PartyMemberFrame' .. i]
@@ -804,12 +850,10 @@ function Module:ApplySettings()
         do
             local obj = db.focus
             local objLocal = localSettings.focus
-            if obj.override then
-                Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.x, obj.y)
-                FocusFrame:SetUserPlaced(true)
-            else
-                Module.MoveFocusFrame(objLocal.anchor, objLocal.anchorParent, objLocal.x, objLocal.y)
-            end
+
+            Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
+            FocusFrame:SetUserPlaced(true)
+
             FocusFrame:SetScale(obj.scale)
             Module.ReApplyFocusFrame()
             FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
@@ -819,7 +863,7 @@ function Module:ApplySettings()
 end
 
 function Module.MovePlayerTargetPreset(name)
-    db = Module.db.profile
+    local db = Module.db.profile
 
     if name == 'DEFAULT' then
         local orig = defaults.profile
@@ -1151,7 +1195,8 @@ function Module.HookDrag()
         Module.SaveLocalSettings()
 
         for k, v in pairs(localSettings.player) do Module.db.profile.player[k] = v end
-        Module.db.profile.player.override = false
+        Module.db.profile.player.anchorFrame = 'UIParent'
+        Module:RefreshOptionScreens()
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
     hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
@@ -1160,7 +1205,8 @@ function Module.HookDrag()
         Module.SaveLocalSettings()
 
         for k, v in pairs(localSettings.target) do Module.db.profile.target[k] = v end
-        Module.db.profile.target.override = false
+        Module.db.profile.target.anchorFrame = 'UIParent'
+        Module:RefreshOptionScreens()
     end
     TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
     hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
@@ -1170,7 +1216,8 @@ function Module.HookDrag()
             Module.SaveLocalSettings()
 
             for k, v in pairs(localSettings.focus) do Module.db.profile.focus[k] = v end
-            Module.db.profile.focus.override = false
+            Module.db.profile.focus.anchorFrame = 'UIParent'
+            Module:RefreshOptionScreens()
         end
         FocusFrame:HookScript('OnDragStop', DragStopFocusFrame)
         -- hooksecurefunc('FocusFrame_ResetUserPlacedPosition', DragStopFocusFrame)
@@ -1539,9 +1586,9 @@ function Module.HookPlayerArt()
     end)
 end
 
-function Module.MovePlayerFrame(anchor, anchorOther, dx, dy)
+function Module.MovePlayerFrame(anchor, anchorOther, anchorFrame, dx, dy)
     PlayerFrame:ClearAllPoints()
-    PlayerFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+    PlayerFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
 end
 
 function Module.ChangeTargetFrame()
@@ -1772,9 +1819,9 @@ function Module.ReApplyTargetFrame()
 end
 -- frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 
-function Module.MoveTargetFrame(anchor, anchorOther, dx, dy)
+function Module.MoveTargetFrame(anchor, anchorOther, anchorFrame, dx, dy)
     TargetFrame:ClearAllPoints()
-    TargetFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+    TargetFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
 end
 
 function Module.ShouldKnowHealth(unit)
@@ -2084,9 +2131,9 @@ end
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 -- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
 
-function Module.MoveFocusFrame(anchor, anchorOther, dx, dy)
+function Module.MoveFocusFrame(anchor, anchorOther, anchorFrame, dx, dy)
     FocusFrame:ClearAllPoints()
-    FocusFrame:SetPoint(anchor, UIParent, anchorOther, dx, dy)
+    FocusFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
 end
 
 function Module.ReApplyFocusFrame()

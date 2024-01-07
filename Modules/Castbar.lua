@@ -2,7 +2,7 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Castbar'
 local Module = DF:NewModule(mName, 'AceConsole-3.0')
 
-local db, getOptions
+Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {
     profile = {
@@ -20,25 +20,26 @@ local defaults = {
         showTicks = false
     }
 }
+Module:SetDefaults(defaults)
 
-local function getDefaultStr(key)
-    return ' (Default: ' .. tostring(defaults.profile[key]) .. ')'
+local function getDefaultStr(key, sub)
+    return Module:GetDefaultStr(key, sub)
 end
 
 local function setDefaultValues()
-    for k, v in pairs(defaults.profile) do Module.db.profile[k] = v end
-    Module.ApplySettings()
+    Module:SetDefaultValues()
 end
 
--- db[info[#info] = VALUE
+local function setDefaultSubValues(sub)
+    Module:SetDefaultSubValues(sub)
+end
+
 local function getOption(info)
-    return db[info[#info]]
+    return Module:GetOption(info)
 end
 
 local function setOption(info, value)
-    local key = info[1]
-    Module.db.profile[key] = value
-    Module.ApplySettings()
+    Module:SetOption(info, value)
 end
 
 local options = {
@@ -74,14 +75,14 @@ local options = {
             func = setDefaultValues,
             order = 1.1
         },
-        config = {type = 'header', name = 'Config - Player', order = 100},
+        config = {type = 'header', name = 'Player', order = 100},
         scale = {
             type = 'range',
             name = 'Scale',
             desc = '' .. getDefaultStr('scale'),
             min = 0.2,
-            max = 3,
-            bigStep = 0.025,
+            max = 5,
+            bigStep = 0.1,
             order = 101,
             disabled = false
         },
@@ -91,8 +92,8 @@ local options = {
             desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 102
+            bigStep = 1,
+            order = 102.1
         },
         y = {
             type = 'range',
@@ -100,8 +101,8 @@ local options = {
             desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y'),
             min = -2500,
             max = 2500,
-            bigStep = 0.50,
-            order = 102
+            bigStep = 1,
+            order = 102.2
         },
         sizeX = {
             type = 'range',
@@ -154,27 +155,32 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
-    db = self.db.profile
+    -- db = self.db.profile
 
-    self:SetEnabledState(DF:GetModuleEnabled(mName))
+    self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
+
     DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
+    self:SetWasEnabled(true)
+
     if DF.Wrath then
         Module.Wrath()
     else
         Module.Era()
     end
     Module:ApplySettings()
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Castbar',
+                                         {name = 'Castbar', options = options, default = setDefaultValues})
 end
 
 function Module:OnDisable()
 end
 
 function Module:ApplySettings()
-    db = Module.db.profile
+    local db = Module.db.profile
     Module.Castbar:SetScale(db.scale)
     Module.Castbar:SetPoint('CENTER', UIParent, 'BOTTOM', db.x, db.y)
     Module.Castbar:SetSize(db.sizeX, db.sizeY)
