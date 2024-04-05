@@ -1816,6 +1816,8 @@ Module.MicromenuAtlas = {
 function Module.ChangeMicroMenuButton(frame, name)
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
+    if DF.Era then microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA' end
+
     local pre = 'UI-HUD-MicroMenu-'
     local key = pre .. name
     local up = Module.MicromenuAtlas[key .. '-Up']
@@ -2160,6 +2162,7 @@ function Module.ChangeMicroMenuNew()
         Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
         Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
         -- WorldMapMicroButton    
+        Module.ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
         Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
         Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
         Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
