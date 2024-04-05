@@ -217,7 +217,31 @@ function Module.ChangeDefaultCastbar()
     end
 end
 
-Module.ChannelTicks = DF.Wrath and {
+Module.ChannelTicks = DF.Cata and {
+    -- wl
+    [GetSpellInfo(5740)] = 4, -- rain of fire
+    -- [GetSpellInfo(5138)] = 5, -- drain mana
+    [GetSpellInfo(689)] = 5, -- drain life
+    [GetSpellInfo(1120)] = 5, -- drain soul
+    [GetSpellInfo(755)] = 10, -- health funnel
+    [GetSpellInfo(1949)] = 15, -- hellfire
+    -- priest
+    [GetSpellInfo(47540)] = 2, -- penance
+    [GetSpellInfo(15407)] = 3, -- mind flay
+    [GetSpellInfo(64843)] = 4, -- divine hymn
+    [GetSpellInfo(64901)] = 4, -- hymn of hope
+    [GetSpellInfo(48045)] = 5, -- mind sear
+    -- hunter
+    -- [GetSpellInfo(1510)] = 6, -- volley
+    -- druid
+    [GetSpellInfo(740)] = 4, -- tranquility
+    [GetSpellInfo(16914)] = 10, -- hurricane
+    -- mage
+    [5143] = 3, -- arcane missiles rank 1
+    [5144] = 4, -- arcane missiles rank 2
+    -- [GetSpellInfo(5145)] = 5, -- arcane missiles
+    [GetSpellInfo(10)] = 8 -- blizzard
+} or DF.Wrath and {
     -- wl
     [GetSpellInfo(5740)] = 4, -- rain of fire
     [GetSpellInfo(5138)] = 5, -- drain mana
