@@ -122,7 +122,7 @@ end ]]
 
 function Module:AddMainMenuButton()
     hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
-        print('GameMenuFrame_UpdateVisibleButtons')
+        -- print('GameMenuFrame_UpdateVisibleButtons')
         local blizzHeight = self:GetHeight()
 
         self:SetHeight(blizzHeight + 22)
