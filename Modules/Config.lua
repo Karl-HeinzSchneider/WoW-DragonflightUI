@@ -122,19 +122,34 @@ end ]]
 
 function Module:AddMainMenuButton()
     hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
-        -- print('GameMenuFrame_UpdateVisibleButtons')
+        print('GameMenuFrame_UpdateVisibleButtons')
         local blizzHeight = self:GetHeight()
 
         self:SetHeight(blizzHeight + 22)
+
+        Module.UpdateMainMenuButtons()
     end)
 
     local btn = CreateFrame('Button', 'DragonflightUIMainMenuButton', GameMenuFrame, 'UIPanelButtonTemplate')
     btn:SetSize(145, 21)
     btn:SetText('DragonflightUI')
-    btn:SetPoint('TOP', GameMenuButtonStore, 'BOTTOM', 0, -16)
+    Module.MainMenuButton = btn
 
-    -- GameMenuButtonOptions:SetPoint('TOP', GameMenuButtonStore, 'BOTTOM', 0, -16 - 22)
-    GameMenuButtonOptions:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
+    Module.UpdateMainMenuButtons = function()
+        local btn = Module.MainMenuButton
+
+        -- TODO:
+        -- 'Interface action failed because of an AddOn' when infight and clicking DF Menu button    
+        local storeIsRestricted = IsTrialAccount();
+        if (C_StorePublic.IsEnabled() and C_StorePublic.HasPurchaseableProducts() and not storeIsRestricted) then
+            btn:SetPoint('TOP', GameMenuButtonStore, 'BOTTOM', 0, -16)
+        else
+            btn:SetPoint('TOP', GameMenuButtonHelp, 'BOTTOM', 0, -16)
+        end
+
+        GameMenuButtonOptions:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
+    end
+    Module.UpdateMainMenuButtons()
 
     btn:SetScript('OnClick', function()
         Module.ToggleConfigFrame()
