@@ -612,7 +612,9 @@ function Module.ChangeMail()
     if MiniMapTracking then
         MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
     else
-        MiniMapMailFrame:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMLEFT', 2, -1)
+        -- MiniMapMailFrame:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMLEFT', 2, -1)
+        MiniMapMailFrame:ClearAllPoints()
+        MiniMapMailFrame:SetPoint('RIGHT', _G['DragonflightUIMinimapTop'], 'LEFT', 0, 0)
     end
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
