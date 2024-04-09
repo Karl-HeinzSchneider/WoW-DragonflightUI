@@ -603,6 +603,11 @@ function Module.ChangeLFG()
     -- MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
 end
 
+function Module.ChangeDifficulty()
+    MiniMapInstanceDifficulty:ClearAllPoints()
+    MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMRIGHT', 0, 0)
+end
+
 function Module.ChangeMail()
     MiniMapMailBorder:Hide()
     MiniMapMailIcon:Hide()
@@ -652,6 +657,7 @@ function Module.Wrath()
     Module.MoveBuffs()
     Module.MoveTracker()
     Module.ChangeLFG()
+    Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
 
