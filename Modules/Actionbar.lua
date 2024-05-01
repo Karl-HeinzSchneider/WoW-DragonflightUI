@@ -2135,7 +2135,27 @@ function Module.ChangeCharacterMicroButton()
 end
 
 function Module.ChangeMicroMenuNew()
-    if DF.Wrath then
+    if DF.Cata then
+        Module.ChangeCharacterMicroButton()
+        Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
+        Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
+        Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities')
+        Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
+        Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
+        PVPMicroButtonTexture:Hide()
+        Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
+        Module.ChangeMicroMenuButton(EJMicroButton, 'AdventureGuide')
+        Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
+        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
+
+        MainMenuBarTextureExtender:Hide()
+
+        -- MainMenuBarPerformanceBar:ClearAllPoints()
+        MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
+        MainMenuBarPerformanceBar:SetSize(19, 39)
+    elseif DF.Wrath then
         Module.ChangeCharacterMicroButton()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
