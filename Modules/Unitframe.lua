@@ -2243,6 +2243,7 @@ function Module.HookFunctions()
 end
 
 function Module.ChangePetFrame()
+    frame.PetFrameChanged = true
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
@@ -2333,8 +2334,7 @@ function Module.ChangePetFrame()
         border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
         frame.PetFrameBorder = border
     end
-
-    PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -7, -2)
+    if PetFrameHappiness then PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -7, -2) end
 
     PetFrameHealthBar:ClearAllPoints()
     PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
@@ -2390,21 +2390,21 @@ function Module.ChangePetFrame()
     PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
-    PetFrameHealthBarTextLeft:SetPoint('LEFT', PetFrameHealthBar, 'LEFT', dx, 0)
-    PetFrameHealthBarTextRight:SetPoint('RIGHT', PetFrameHealthBar, 'RIGHT', -dx, 0)
+    -- PetFrameHealthBarTextLeft:SetPoint('LEFT', PetFrameHealthBar, 'LEFT', dx, 0)
+    -- PetFrameHealthBarTextRight:SetPoint('RIGHT', PetFrameHealthBar, 'RIGHT', -dx, 0)
 
     PetFrameHealthBarText:SetScale(newPetTextScale)
-    PetFrameHealthBarTextLeft:SetScale(newPetTextScale)
-    PetFrameHealthBarTextRight:SetScale(newPetTextScale)
+    -- PetFrameHealthBarTextLeft:SetScale(newPetTextScale)
+    -- PetFrameHealthBarTextRight:SetScale(newPetTextScale)
 
     PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', deltaSize / 2, 0)
-    PetFrameManaBarTextLeft:ClearAllPoints()
-    PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
-    PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
+    -- PetFrameManaBarTextLeft:ClearAllPoints()
+    -- PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
+    -- PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
 
     PetFrameManaBarText:SetScale(newPetTextScale)
-    PetFrameManaBarTextLeft:SetScale(newPetTextScale)
-    PetFrameManaBarTextRight:SetScale(newPetTextScale)
+    -- PetFrameManaBarTextLeft:SetScale(newPetTextScale)
+    -- PetFrameManaBarTextRight:SetScale(newPetTextScale)
 end
 
 function Module.ChangePartyFrame()
@@ -2867,6 +2867,9 @@ function frame:OnEvent(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
+    elseif event == 'PET_BAR_UPDATE' then
+        -- print('PET_BAR_UPDATE')
+        if not frame.PetFrameChanged then Module.ChangePetFrame() end
     elseif event == 'UNIT_POWER_UPDATE' then
         -- print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
@@ -2887,7 +2890,7 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
         end
-        Module.ChangePetFrame()
+        -- Module.ChangePetFrame()
         -- Module.ChangePartyFrame()
 
         Module.ChangeFonts()
@@ -3046,6 +3049,7 @@ function Module.Wrath()
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
     frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
+    frame:RegisterEvent('PET_BAR_UPDATE')
 
     frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
     frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
