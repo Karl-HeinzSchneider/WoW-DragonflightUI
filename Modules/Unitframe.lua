@@ -2808,6 +2808,8 @@ end
 function Module.ChangeFonts()
     local newFont = 'Fonts\\FRIZQT__.ttf'
 
+    if GetLocale() == "ruRU" then newFont = "Fonts\\FRIZQT___CYR.TTF" end
+
     local changeFont = function(f, newsize)
         local path, size, flags = f:GetFont()
         f:SetFont(newFont, newsize, flags)
