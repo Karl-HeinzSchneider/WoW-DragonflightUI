@@ -2875,6 +2875,7 @@ function Module.Era()
     Module.SetNumBars()
     Module.HookPetBar()
     -- Module.MoveTotem()
+    Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
