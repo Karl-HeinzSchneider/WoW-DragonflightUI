@@ -469,6 +469,9 @@ function Module.ChangeClock()
         TimeManagerClockButton:ClearAllPoints()
         TimeManagerClockButton:SetPoint('RIGHT', frame.MinimapInfo, 'RIGHT', 5, 0)
         TimeManagerClockButton:SetParent(frame.MinimapInfo)
+
+        TimeManagerAlarmFiredTexture:SetPoint("TOPLEFT", TimeManagerClockButton, "TOPLEFT", 0, 5)
+        TimeManagerAlarmFiredTexture:SetPoint("BOTTOMRIGHT", TimeManagerClockButton, "BOTTOMRIGHT", -2, -11)
     end
 end
 
