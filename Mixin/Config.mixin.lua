@@ -227,6 +227,7 @@ function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
         newFrame:SetParent(self.Container)
         newFrame:SetPoint('TOPLEFT', self.Container, 'TOPLEFT', 0, 0)
         newFrame:SetPoint('BOTTOMRIGHT', self.Container, 'BOTTOMRIGHT', 0, 0)
+        newFrame:CallRefresh()
         newFrame:Show()
         self.selectedFrame = newFrame
     else

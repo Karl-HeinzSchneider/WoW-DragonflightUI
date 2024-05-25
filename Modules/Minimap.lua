@@ -1,6 +1,6 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Minimap'
-local Module = DF:NewModule(mName, 'AceConsole-3.0')
+local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
@@ -126,9 +126,28 @@ function Module:OnEnable()
 
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap',
                                          {name = 'Minimap', options = options, default = setDefaultValues})
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+        Module:RefreshOptionScreens()
+    end)
 end
 
 function Module:OnDisable()
+end
+
+function Module:RefreshOptionScreens()
+    -- print('Module:RefreshOptionScreens()')
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('Misc', name)
+        subCat.displayFrame:CallRefresh()
+    end
+
+    refreshCat('Minimap')
 end
 
 function Module:ApplySettings()

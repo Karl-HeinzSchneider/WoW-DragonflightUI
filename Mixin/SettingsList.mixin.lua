@@ -62,7 +62,12 @@ function ScrollableListItemMixinDF:Init(elementData)
         -- print('select')
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
-        self:SetDropdown(data.values)
+        if data.valuesFunction then
+            local funcValues = data.valuesFunction()
+            self:SetDropdown(funcValues)
+        else
+            self:SetDropdown(data.values)
+        end
         -- self.Item.Dropdown:SetDropdownSelection('TOP')
         self.Item.Dropdown:SetDropdownSelection(get({key}))
         self.Item.Dropdown:RegisterCallback('OnValueChanged', function(self, ...)
@@ -76,6 +81,10 @@ function ScrollableListItemMixinDF:Init(elementData)
         end, self)
         list:RegisterCallback('OnRefresh', function(self, ...)
             -- print('OnDefaults')
+            if data.valuesFunction then
+                local funcValues = data.valuesFunction()
+                self:SetDropdown(funcValues)
+            end
             self.Item.Dropdown:SetDropdownSelection(get({key}))
         end, self)
     elseif data.type == 'toggle' then

@@ -1,6 +1,6 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Config'
-local Module = DF:NewModule(mName, 'AceConsole-3.0')
+local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
@@ -76,6 +76,11 @@ function Module:OnEnable()
             setDefaultSubValues('modules')
         end
     })
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+    end)
 end
 
 function Module:OnDisable()
@@ -169,6 +174,7 @@ function Module:AddConfigFrame()
     Module:RegisterChatCommand('df', 'SlashCommand')
 
     -- Module:AddTestConfig()
+    Module:AddProfileConfig()
 end
 
 function Module:AddTestConfig()
@@ -202,6 +208,156 @@ function Module:AddTestConfig()
     }
     local config = {name = 'WhatsNew', options = options}
     Module:RegisterOptionScreen('General', 'WhatsNew', config)
+end
+
+function Module:AddProfileConfig()
+    local configFrame = DF.ConfigModule.ConfigFrame
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('General', name)
+        subCat.displayFrame:CallRefresh()
+    end
+
+    local getCurrentProfile = function()
+        return DF.db:GetCurrentProfile()
+    end
+
+    local setCurrentProfile = function(name)
+        DF.db:SetProfile(name)
+    end
+
+    local copyProfile = function(name)
+        DF.db:CopyProfile(name, false)
+    end
+
+    local deleteProfile = function(name)
+        DF.db:DeleteProfile(name, false)
+    end
+
+    local getProfiles = function()
+        local profilesT = DF.db:GetProfiles()
+        local profiles = {}
+        local current = getCurrentProfile()
+
+        for k, v in ipairs(profilesT) do profiles[v] = v end
+
+        return profiles
+    end
+    local profiles = getProfiles()
+
+    local getProfilesWithDefaults = function()
+        local prof = getProfiles()
+
+        local char = DF.db.keys.char
+        local realm = DF.db.keys.realm
+
+        prof["Default"] = "Default"
+        prof[char] = char
+        prof[realm] = realm
+
+        return prof
+    end
+    local profilesWithDefaults = getProfilesWithDefaults()
+
+    local getProfilesWithoutCurrent = function()
+        local prof = getProfiles()
+        local current = getCurrentProfile()
+
+        if prof[current] then prof[current] = nil end
+
+        return prof
+    end
+    local profilesWithoutCurrent = getProfilesWithoutCurrent()
+
+    local getProfilesForCopy = function()
+        local newProf = {}
+
+        local prof = getProfilesWithoutCurrent()
+
+        for k, v in pairs(prof) do
+            --
+            newProf[k] = v
+        end
+        newProf[" "] = " "
+
+        return newProf
+    end
+    local profilesForCopy = getProfilesForCopy()
+
+    local get = function(info)
+        -- print('get', info, info[1])
+        local key = info[1]
+        -- local sub = info[2]
+        if key == "currentProfile" then return getCurrentProfile() end
+        if key == "copyProfile" then return " " end
+        if key == "deleteProfile" then return " " end
+
+        return true
+    end
+
+    local set = function(info, value)
+        local key = info[1]
+        -- local sub = info[2]
+
+        -- print('set', info, info[1], value)
+
+        if key == "currentProfile" then
+            --
+            setCurrentProfile(value)
+        end
+
+        if key == "copyProfile" then
+            --
+            if value ~= " " then
+                --
+                copyProfile(value)
+            end
+        end
+
+        if key == "deleteProfile" then
+            --
+            if value ~= " " then
+                --
+                deleteProfile(value)
+            end
+        end
+
+        -- TODO
+        -- refreshCat('Profiles')
+    end
+
+    local options = {
+        name = 'Profiles',
+        get = get,
+        set = set,
+        args = {
+            currentProfile = {
+                type = 'select',
+                name = 'Current Profile',
+                desc = 'testing',
+                -- values = profilesWithDefaults,
+                valuesFunction = getProfilesWithDefaults,
+                order = 42
+            },
+            copyProfile = {
+                type = 'select',
+                name = 'Copy From',
+                desc = 'testing',
+                -- values = getProfilesForCopy(),
+                valuesFunction = getProfilesForCopy,
+                order = 69
+            },
+            deleteProfile = {
+                type = 'select',
+                name = 'Delete',
+                desc = 'testing',
+                -- values = getProfilesForCopy(),
+                valuesFunction = getProfilesForCopy,
+                order = 69
+            }
+        }
+    }
+    local config = {name = 'Profiles', options = options}
+    Module:RegisterOptionScreen('General', 'Profiles', config)
 end
 
 function Module:ToggleConfigFrame()

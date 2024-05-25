@@ -1,6 +1,6 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Unitframe'
-local Module = DF:NewModule(mName, 'AceConsole-3.0')
+local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
@@ -648,6 +648,12 @@ function Module:OnEnable()
         Module:SaveLocalSettings()
     end)
     Module:RegisterOptionScreens()
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)      
+        Module:ApplySettings()
+        Module:RefreshOptionScreens()
+    end)
 end
 
 function Module:OnDisable()
@@ -709,14 +715,16 @@ function Module:RefreshOptionScreens()
 
     local configFrame = DF.ConfigModule.ConfigFrame
 
-    local player = configFrame:GetSubCategory('Unitframes', 'Player')
-    player.displayFrame:CallRefresh()
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('Unitframes', name)
+        subCat.displayFrame:CallRefresh()
+    end
 
-    local target = configFrame:GetSubCategory('Unitframes', 'Target')
-    target.displayFrame:CallRefresh()
-
-    local focus = configFrame:GetSubCategory('Unitframes', 'Focus')
-    focus.displayFrame:CallRefresh()
+    refreshCat('Focus')
+    refreshCat('Party')
+    refreshCat('Pet')
+    refreshCat('Player')
+    refreshCat('Target')
 end
 
 function Module:SaveLocalSettings()

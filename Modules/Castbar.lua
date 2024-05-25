@@ -1,6 +1,6 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Castbar'
-local Module = DF:NewModule(mName, 'AceConsole-3.0')
+local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
@@ -174,9 +174,28 @@ function Module:OnEnable()
     Module:ApplySettings()
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Castbar',
                                          {name = 'Castbar', options = options, default = setDefaultValues})
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+        Module:RefreshOptionScreens()
+    end)
 end
 
 function Module:OnDisable()
+end
+
+function Module:RefreshOptionScreens()
+    -- print('Module:RefreshOptionScreens()')
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('Misc', name)
+        subCat.displayFrame:CallRefresh()
+    end
+
+    refreshCat('Castbar')
 end
 
 function Module:ApplySettings()

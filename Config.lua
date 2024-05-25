@@ -32,8 +32,42 @@ function DF:SetupOptions()
 
     local profiles = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     profiles.order = 666
+
+    DF.OptionTableProfiles = profiles
     LibStub('AceConfig-3.0'):RegisterOptionsTable('DragonflightUI_Profiles', profiles)
-    LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_Profiles', 'Profiles', 'DragonflightUI')
+    local frame, name = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_Profiles', 'Profiles',
+                                                                        'DragonflightUI')
+
+    DF.db.RegisterCallback(self, "OnProfileChanged", "OnProfileChanged")
+    DF.db.RegisterCallback(self, "OnProfileCopied", "OnProfileCopied")
+    DF.db.RegisterCallback(self, "OnProfileReset", "OnProfileReset")
+end
+
+function DF:OnProfileChanged(name)
+    -- print("OnProfileChanged!", name)
+    DF:RefreshConfig()
+end
+
+function DF:OnProfileCopied(name)
+    -- print("OnProfileCopied!", name)
+    DF:RefreshConfig()
+end
+
+function DF:OnProfileReset()
+    -- print("OnProfileReset!")
+    DF:RefreshConfig()
+end
+
+function DF:RefreshConfig()
+    -- would do some stuff here
+    -- print("RefreshConfig!")
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('General', name)
+        subCat.displayFrame:CallRefresh()
+    end
+    refreshCat('Profiles')
 end
 
 function DF:RegisterModuleOptions(name, options)
