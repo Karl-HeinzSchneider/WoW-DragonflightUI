@@ -648,6 +648,11 @@ function Module:OnEnable()
         Module:SaveLocalSettings()
     end)
     Module:RegisterOptionScreens()
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)      
+        Module:ApplySettings()
+    end)
 end
 
 function Module:OnDisable()

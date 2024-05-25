@@ -126,6 +126,11 @@ function Module:OnEnable()
 
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap',
                                          {name = 'Minimap', options = options, default = setDefaultValues})
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+    end)
 end
 
 function Module:OnDisable()

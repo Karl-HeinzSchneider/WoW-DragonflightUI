@@ -922,6 +922,11 @@ function Module:OnEnable()
     Module:SetupActionbarFrames()
     Module:ApplySettings()
     Module:RegisterOptionScreens()
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+    end)
 end
 
 function Module:OnDisable()

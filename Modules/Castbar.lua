@@ -174,6 +174,11 @@ function Module:OnEnable()
     Module:ApplySettings()
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Castbar',
                                          {name = 'Castbar', options = options, default = setDefaultValues})
+
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+    end)
 end
 
 function Module:OnDisable()
