@@ -926,6 +926,7 @@ function Module:OnEnable()
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
         Module:ApplySettings()
+        Module:RefreshOptionScreens()
     end)
 end
 
@@ -1055,6 +1056,23 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('stance')
         end
     })
+end
+
+function Module:RefreshOptionScreens()
+    -- print('Module:RefreshOptionScreens()')
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('Actionbar', name)
+        subCat.displayFrame:CallRefresh()
+    end
+
+    for i = 1, 5 do refreshCat('Actionbar' .. i) end
+    refreshCat('Petbar')
+    refreshCat('XPbar')
+    refreshCat('Repbar')
+    refreshCat('Stancebar')
 end
 
 function Module:ApplySettings()

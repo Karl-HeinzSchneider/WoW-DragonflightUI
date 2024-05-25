@@ -178,10 +178,24 @@ function Module:OnEnable()
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
         Module:ApplySettings()
+        Module:RefreshOptionScreens()
     end)
 end
 
 function Module:OnDisable()
+end
+
+function Module:RefreshOptionScreens()
+    -- print('Module:RefreshOptionScreens()')
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('Misc', name)
+        subCat.displayFrame:CallRefresh()
+    end
+
+    refreshCat('Castbar')
 end
 
 function Module:ApplySettings()
