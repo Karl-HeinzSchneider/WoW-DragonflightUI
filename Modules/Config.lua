@@ -218,6 +218,10 @@ function Module:AddProfileConfig()
         DF.db:CopyProfile(name, false)
     end
 
+    local deleteProfile = function(name)
+        DF.db:DeleteProfile(name, false)
+    end
+
     local getProfiles = function()
         local profilesT = DF.db:GetProfiles()
         local profiles = {}
@@ -267,6 +271,7 @@ function Module:AddProfileConfig()
         -- local sub = info[2]
         if key == "currentProfile" then return getCurrentProfile() end
         if key == "copyProfile" then return " " end
+        if key == "deleteProfile" then return " " end
 
         return true
     end
@@ -289,6 +294,14 @@ function Module:AddProfileConfig()
                 copyProfile(value)
             end
         end
+
+        if key == "deleteProfile" then
+            --
+            if value ~= " " then
+                --
+                deleteProfile(value)
+            end
+        end
     end
 
     local options = {
@@ -307,6 +320,14 @@ function Module:AddProfileConfig()
             copyProfile = {
                 type = 'select',
                 name = 'copy from',
+                desc = 'testing',
+                values = profilesForCopy,
+                valuesFunction = getProfilesWithoutCurrent,
+                order = 69
+            },
+            deleteProfile = {
+                type = 'select',
+                name = 'delete',
                 desc = 'testing',
                 values = profilesForCopy,
                 valuesFunction = getProfilesWithoutCurrent,
