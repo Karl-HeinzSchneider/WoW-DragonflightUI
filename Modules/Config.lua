@@ -214,6 +214,10 @@ function Module:AddProfileConfig()
         DF.db:SetProfile(name)
     end
 
+    local copyProfile = function(name)
+        DF.db:CopyProfile(name, false)
+    end
+
     local getProfiles = function()
         local profilesT = DF.db:GetProfiles()
         local profiles = {}
@@ -221,24 +225,48 @@ function Module:AddProfileConfig()
 
         for k, v in ipairs(profilesT) do profiles[v] = v end
 
-        local char = DF.db.keys.char
-        local realm = DF.db.keys.realm
-
-        profiles["Default"] = "Default"
-        profiles[char] = char
-        profiles[realm] = realm
-
-        DevTools_Dump(profiles)
-
         return profiles
     end
     local profiles = getProfiles()
+
+    local getProfilesWithDefaults = function()
+        local prof = getProfiles()
+
+        local char = DF.db.keys.char
+        local realm = DF.db.keys.realm
+
+        prof["Default"] = "Default"
+        prof[char] = char
+        prof[realm] = realm
+
+        return prof
+    end
+    local profilesWithDefaults = getProfilesWithDefaults()
+
+    local getProfilesWithoutCurrent = function()
+        local prof = getProfiles()
+        local current = getCurrentProfile()
+
+        if prof[current] then prof[current] = nil end
+
+        return prof
+    end
+    local profilesWithoutCurrent = getProfilesWithoutCurrent()
+
+    local profilesForCopy = {}
+
+    for k, v in pairs(profilesWithoutCurrent) do
+        --
+        profilesForCopy[k] = v
+    end
+    profilesForCopy[" "] = " "
 
     local get = function(info)
         print('get', info, info[1])
         local key = info[1]
         -- local sub = info[2]
         if key == "currentProfile" then return getCurrentProfile() end
+        if key == "copyProfile" then return " " end
 
         return true
     end
@@ -249,8 +277,18 @@ function Module:AddProfileConfig()
 
         print('set', info, info[1], value)
 
-        if key == "currentProfile" then setCurrentProfile(value) end
+        if key == "currentProfile" then
+            --
+            setCurrentProfile(value)
+        end
 
+        if key == "copyProfile" then
+            --
+            if value ~= " " then
+                --
+                copyProfile(value)
+            end
+        end
     end
 
     local options = {
@@ -262,11 +300,18 @@ function Module:AddProfileConfig()
                 type = 'select',
                 name = 'Current Profile',
                 desc = 'testing',
-                values = profiles,
-                valuesFunction = getProfiles,
-                order = 69
+                values = profilesWithDefaults,
+                valuesFunction = getProfilesWithDefaults,
+                order = 42
             },
-            steptog = {type = 'toggle', name = 'toggle me steptoggler', order = 666}
+            copyProfile = {
+                type = 'select',
+                name = 'copy from',
+                desc = 'testing',
+                values = profilesForCopy,
+                valuesFunction = getProfilesWithoutCurrent,
+                order = 69
+            }
         }
     }
     local config = {name = 'Profiles', options = options}
