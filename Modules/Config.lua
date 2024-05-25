@@ -169,6 +169,7 @@ function Module:AddConfigFrame()
     Module:RegisterChatCommand('df', 'SlashCommand')
 
     -- Module:AddTestConfig()
+    Module:AddProfileConfig()
 end
 
 function Module:AddTestConfig()
@@ -202,6 +203,74 @@ function Module:AddTestConfig()
     }
     local config = {name = 'WhatsNew', options = options}
     Module:RegisterOptionScreen('General', 'WhatsNew', config)
+end
+
+function Module:AddProfileConfig()
+    local getCurrentProfile = function()
+        return DF.db:GetCurrentProfile()
+    end
+
+    local setCurrentProfile = function(name)
+        DF.db:SetProfile(name)
+    end
+
+    local getProfiles = function()
+        local profilesT = DF.db:GetProfiles()
+        local profiles = {}
+        local current = getCurrentProfile()
+
+        for k, v in ipairs(profilesT) do profiles[v] = v end
+
+        local char = DF.db.keys.char
+        local realm = DF.db.keys.realm
+
+        profiles["Default"] = "Default"
+        profiles[char] = char
+        profiles[realm] = realm
+
+        DevTools_Dump(profiles)
+
+        return profiles
+    end
+    local profiles = getProfiles()
+
+    local get = function(info)
+        print('get', info, info[1])
+        local key = info[1]
+        -- local sub = info[2]
+        if key == "currentProfile" then return getCurrentProfile() end
+
+        return true
+    end
+
+    local set = function(info, value)
+        local key = info[1]
+        -- local sub = info[2]
+
+        print('set', info, info[1], value)
+
+        if key == "currentProfile" then setCurrentProfile(value) end
+
+    end
+
+    local options = {
+        name = 'Profiles',
+        get = get,
+        set = set,
+        args = {
+            currentProfile = {
+                type = 'select',
+                name = 'Current Profile',
+                desc = 'testing',
+                values = profiles,
+                valuesFunction = getProfiles,
+                order = 69
+            },
+            steptog = {type = 'toggle', name = 'toggle me steptoggler', order = 666}
+        }
+    }
+    local config = {name = 'Profiles', options = options}
+    Module:RegisterOptionScreen('General', 'Profiles', config)
 end
 
 function Module:ToggleConfigFrame()
