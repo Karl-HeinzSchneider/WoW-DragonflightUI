@@ -262,13 +262,20 @@ function Module:AddProfileConfig()
     end
     local profilesWithoutCurrent = getProfilesWithoutCurrent()
 
-    local profilesForCopy = {}
+    local getProfilesForCopy = function()
+        local newProf = {}
 
-    for k, v in pairs(profilesWithoutCurrent) do
-        --
-        profilesForCopy[k] = v
+        local prof = getProfilesWithoutCurrent()
+
+        for k, v in pairs(prof) do
+            --
+            newProf[k] = v
+        end
+        newProf[" "] = " "
+
+        return newProf
     end
-    profilesForCopy[" "] = " "
+    local profilesForCopy = getProfilesForCopy()
 
     local get = function(info)
         print('get', info, info[1])
@@ -326,16 +333,16 @@ function Module:AddProfileConfig()
                 type = 'select',
                 name = 'copy from',
                 desc = 'testing',
-                values = profilesForCopy,
-                valuesFunction = getProfilesWithoutCurrent,
+                values = getProfilesForCopy(),
+                valuesFunction = getProfilesForCopy,
                 order = 69
             },
             deleteProfile = {
                 type = 'select',
                 name = 'delete',
                 desc = 'testing',
-                values = profilesForCopy,
-                valuesFunction = getProfilesWithoutCurrent,
+                values = getProfilesForCopy(),
+                valuesFunction = getProfilesForCopy,
                 order = 69
             }
         }
