@@ -32,8 +32,20 @@ function DF:SetupOptions()
 
     local profiles = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     profiles.order = 666
+
+    DF.OptionTableProfiles = profiles
     LibStub('AceConfig-3.0'):RegisterOptionsTable('DragonflightUI_Profiles', profiles)
-    LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_Profiles', 'Profiles', 'DragonflightUI')
+    local frame, name = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_Profiles', 'Profiles',
+                                                                        'DragonflightUI')
+
+    DF.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
+    DF.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
+    DF.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+end
+
+function DF:RefreshConfig()
+    -- would do some stuff here
+    print("RefreshConfig!")
 end
 
 function DF:RegisterModuleOptions(name, options)
