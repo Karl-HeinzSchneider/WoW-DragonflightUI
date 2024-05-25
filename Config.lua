@@ -38,9 +38,24 @@ function DF:SetupOptions()
     local frame, name = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('DragonflightUI_Profiles', 'Profiles',
                                                                         'DragonflightUI')
 
-    DF.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
-    DF.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
-    DF.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+    DF.db.RegisterCallback(self, "OnProfileChanged", "OnProfileChanged")
+    DF.db.RegisterCallback(self, "OnProfileCopied", "OnProfileCopied")
+    DF.db.RegisterCallback(self, "OnProfileReset", "OnProfileReset")
+end
+
+function DF:OnProfileChanged(name)
+    -- print("OnProfileChanged!", name)
+    DF:RefreshConfig()
+end
+
+function DF:OnProfileCopied(name)
+    -- print("OnProfileCopied!", name)
+    DF:RefreshConfig()
+end
+
+function DF:OnProfileReset()
+    -- print("OnProfileReset!")
+    DF:RefreshConfig()
 end
 
 function DF:RefreshConfig()
