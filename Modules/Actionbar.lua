@@ -913,6 +913,9 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
+    -- not the best solution, override global CVAR and let DF UI handle everything
+    C_CVar.SetCVar("alwaysShowActionBars", 1)
+
     Module.Temp = {}
     if DF.Wrath then
         Module.Wrath()
