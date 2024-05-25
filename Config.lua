@@ -60,7 +60,14 @@ end
 
 function DF:RefreshConfig()
     -- would do some stuff here
-    print("RefreshConfig!")
+    -- print("RefreshConfig!")
+
+    local configFrame = DF.ConfigModule.ConfigFrame
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('General', name)
+        subCat.displayFrame:CallRefresh()
+    end
+    refreshCat('Profiles')
 end
 
 function DF:RegisterModuleOptions(name, options)

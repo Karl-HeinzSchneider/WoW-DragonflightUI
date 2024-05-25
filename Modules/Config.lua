@@ -211,6 +211,12 @@ function Module:AddTestConfig()
 end
 
 function Module:AddProfileConfig()
+    local configFrame = DF.ConfigModule.ConfigFrame
+    local refreshCat = function(name)
+        local subCat = configFrame:GetSubCategory('General', name)
+        subCat.displayFrame:CallRefresh()
+    end
+
     local getCurrentProfile = function()
         return DF.db:GetCurrentProfile()
     end
@@ -278,7 +284,7 @@ function Module:AddProfileConfig()
     local profilesForCopy = getProfilesForCopy()
 
     local get = function(info)
-        print('get', info, info[1])
+        -- print('get', info, info[1])
         local key = info[1]
         -- local sub = info[2]
         if key == "currentProfile" then return getCurrentProfile() end
@@ -292,7 +298,7 @@ function Module:AddProfileConfig()
         local key = info[1]
         -- local sub = info[2]
 
-        print('set', info, info[1], value)
+        -- print('set', info, info[1], value)
 
         if key == "currentProfile" then
             --
@@ -314,6 +320,9 @@ function Module:AddProfileConfig()
                 deleteProfile(value)
             end
         end
+
+        -- TODO
+        -- refreshCat('Profiles')
     end
 
     local options = {
@@ -325,23 +334,23 @@ function Module:AddProfileConfig()
                 type = 'select',
                 name = 'Current Profile',
                 desc = 'testing',
-                values = profilesWithDefaults,
+                -- values = profilesWithDefaults,
                 valuesFunction = getProfilesWithDefaults,
                 order = 42
             },
             copyProfile = {
                 type = 'select',
-                name = 'copy from',
+                name = 'Copy From',
                 desc = 'testing',
-                values = getProfilesForCopy(),
+                -- values = getProfilesForCopy(),
                 valuesFunction = getProfilesForCopy,
                 order = 69
             },
             deleteProfile = {
                 type = 'select',
-                name = 'delete',
+                name = 'Delete',
                 desc = 'testing',
-                values = getProfilesForCopy(),
+                -- values = getProfilesForCopy(),
                 valuesFunction = getProfilesForCopy,
                 order = 69
             }
