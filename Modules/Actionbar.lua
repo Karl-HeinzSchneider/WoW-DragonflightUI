@@ -155,9 +155,19 @@ local defaults = {
             expanded = true,
             hideArrow = false,
             hidden = false
+        },
+        micro = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -295,
+            y = 0,
+            hidden = false
         }
     }
 }
+if DF.Era then defaults.profile.micro.x = -205 end
 Module:SetDefaults(defaults)
 
 local defaultsActionbarPROTO = {
@@ -997,6 +1007,90 @@ local bagsOptions = {
     }
 }
 
+local microOptions = {
+    name = 'Micromenu',
+    desc = 'Micromenu',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'micro'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'micro'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'micro'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'micro'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'micro'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'micro'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        hidden = {
+            type = 'toggle',
+            name = 'Hidden',
+            desc = 'Micromenu hidden' .. getDefaultStr('hidden', 'micro'),
+            order = 7
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -1165,6 +1259,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('bags')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Micromenu', {
+        name = 'Micromenu',
+        sub = 'micro',
+        options = microOptions,
+        default = function()
+            setDefaultSubValues('micro')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -1183,6 +1286,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Repbar')
     refreshCat('Stancebar')
     refreshCat('Bags')
+    refreshCat('Micromenu')
 end
 
 function Module:ApplySettings()
@@ -1203,6 +1307,7 @@ function Module:ApplySettings()
     Module.stancebar:SetState(db.stance)
 
     Module.UpdateBagState(db.bags)
+    Module.UpdateMicromenuState(db.micro)
 end
 
 -- Actionbar
@@ -2478,6 +2583,43 @@ function Module.ChangeMicroMenu()
     end
 end
 
+function Module.UpdateMicromenuState(state)
+    -- print('UpdateMicromenuState')
+
+    CharacterMicroButton:ClearAllPoints()
+    CharacterMicroButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    local buttons = {}
+
+    if DF.Cata then
+        buttons = {
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton,
+            GuildMicroButton, CollectionsMicroButton, PVPMicroButton, LFGMicroButton, EJMicroButton,
+            MainMenuMicroButton, HelpMicroButton
+        }
+    elseif DF.Wrath then
+        buttons = {
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton,
+            SocialsMicroButton, CollectionsMicroButton, PVPMicroButton, LFGMicroButton, MainMenuMicroButton,
+            HelpMicroButton
+        }
+    elseif DF.Era then
+        buttons = {
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, QuestLogMicroButton, SocialsMicroButton,
+            WorldMapMicroButton, LFGMicroButton, MainMenuMicroButton, HelpMicroButton
+        }
+    end
+
+    for k, v in ipairs(buttons) do
+        --
+        v:SetScale(state.scale)
+        v:SetShown(not state.hidden)
+    end
+
+    local playerLevel = UnitLevel("player");
+    if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
+end
+
 function Module.GetBagSlots(id)
     local build, _, _, _ = GetBuildInfo()
     if not GetContainerNumSlots then
@@ -2880,8 +3022,8 @@ function Module.MoveBars()
         CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
     end
 
-    CharacterMicroButton.SetPoint = noop
-    CharacterMicroButton.ClearAllPoints = noop
+    -- CharacterMicroButton.SetPoint = noop
+    -- CharacterMicroButton.ClearAllPoints = noop
 
     if DF.Wrath then
         PVPMicroButton.SetPoint = noop
