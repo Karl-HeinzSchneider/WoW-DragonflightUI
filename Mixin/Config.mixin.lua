@@ -59,7 +59,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
     do
         -- General
         local cat = self:AddCategory('General')
-        self:AddSubCategory(cat, 'Info')
+        -- self:AddSubCategory(cat, 'Info')
         self:AddSubCategory(cat, 'Modules')
         self:AddSubCategory(cat, 'Profiles')
         self:AddSubCategory(cat, 'WhatsNew')
@@ -80,6 +80,8 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'XPbar')
         self:AddSubCategory(cat, 'Repbar')
         self:AddSubCategory(cat, 'Stancebar')
+        self:AddSubCategory(cat, 'Bags')
+        self:AddSubCategory(cat, 'Micromenu')
 
         -- self:AddSpacer(20)
     end
