@@ -144,6 +144,17 @@ local defaults = {
             buttons = 10,
             padding = 2,
             alwaysShow = true
+        },
+        bags = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = 0,
+            y = 26,
+            expanded = true,
+            hideArrow = false,
+            hidden = false
         }
     }
 }
@@ -900,6 +911,92 @@ local stanceOptions = {
     }
 }
 
+local bagsOptions = {
+    name = 'Bags',
+    desc = 'Bags',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'bags'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'bags'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'bags'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'bags'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'bags'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'bags'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        expanded = {type = 'toggle', name = 'Expanded', desc = '' .. getDefaultStr('expanded', 'bags'), order = 7},
+        hideArrow = {type = 'toggle', name = 'HideArrow', desc = '' .. getDefaultStr('hideArrow', 'bags'), order = 8},
+        hidden = {
+            type = 'toggle',
+            name = 'Hidden',
+            desc = 'Backpack hidden' .. getDefaultStr('hidden', 'bags'),
+            order = 9
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -1059,6 +1156,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('stance')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Bags', {
+        name = 'Bags',
+        sub = 'bags',
+        options = bagsOptions,
+        default = function()
+            setDefaultSubValues('bags')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -1076,6 +1182,7 @@ function Module:RefreshOptionScreens()
     refreshCat('XPbar')
     refreshCat('Repbar')
     refreshCat('Stancebar')
+    refreshCat('Bags')
 end
 
 function Module:ApplySettings()
@@ -1094,6 +1201,8 @@ function Module:ApplySettings()
     Module.xpbar:SetState(db.xp)
     Module.repbar:SetState(db.rep)
     Module.stancebar:SetState(db.stance)
+
+    Module.UpdateBagState(db.bags)
 end
 
 -- Actionbar
@@ -2728,6 +2837,34 @@ function Module.HookBags()
     hooksecurefunc('UpdateContainerFrameAnchors', UpdateContainerFrameAnchorsModified)
 end
 
+function Module.UpdateBagState(state)
+    MainMenuBarBackpackButton:ClearAllPoints()
+    MainMenuBarBackpackButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    MainMenuBarBackpackButton:SetScale(1.5 * state.scale)
+
+    for i = 0, 3 do
+        local slot = _G['CharacterBag' .. i .. 'Slot']
+        slot:SetScale(state.scale)
+    end
+
+    if state.hidden then
+        MainMenuBarBackpackButton:Hide()
+        Module.BagBarExpandToggled(state.expanded, true)
+    else
+        MainMenuBarBackpackButton:Show()
+        Module.BagBarExpandToggled(state.expanded, false)
+    end
+
+    local toggle = Module.FrameBagToggle
+    if state.hideArrow then
+        toggle:Hide()
+        CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', 0, 0)
+    else
+        toggle:Show()
+        CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
+    end
+end
+
 function Module.MoveBars()
     MainMenuBarBackpackButton:ClearAllPoints()
     MainMenuBarBackpackButton:SetPoint('BOTTOMRIGHT', UIParent, 0, 26)
@@ -2752,7 +2889,7 @@ function Module.MoveBars()
     end
 end
 
-local frameBagToggle = CreateFrame('Button', 'DragonflightUIBagToggleFrame', UIParent)
+local frameBagToggle = CreateFrame('Button', 'DragonflightUIBagToggleFrame', MainMenuBarBackpackButton)
 Module.FrameBagToggle = frameBagToggle
 
 function Module.CreateBagExpandButton()
@@ -2761,7 +2898,7 @@ function Module.CreateBagExpandButton()
 
     local f = Module.FrameBagToggle
     f:SetSize(16, 30)
-    f:SetScale(0.5)
+    f:SetScale(0.5 / 1.5)
     f:ClearAllPoints()
     f:SetPoint(point, MainMenuBarBackpackButton, relativePoint)
 
@@ -2773,8 +2910,8 @@ function Module.CreateBagExpandButton()
     f:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
 
     f:SetScript('OnClick', function()
-        setOption({'bagsExpanded'}, not Module.db.profile.bagsExpanded)
-        Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+        setOption({'bags', 'expanded'}, not Module.db.profile.bags.expanded)
+        -- Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
     end)
     f:RegisterEvent('BAG_UPDATE_DELAYED')
     f:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -2797,10 +2934,10 @@ function frameBagToggle:OnEvent(event, arg1)
 end
 frameBagToggle:SetScript('OnEvent', frameBagToggle.OnEvent)
 
-function Module.BagBarExpandToggled(Expanded)
+function Module.BagBarExpandToggled(expanded, hidden)
     local rotation
 
-    if (Expanded) then
+    if (expanded) then
         rotation = math.pi
     else
         rotation = 0
@@ -2813,7 +2950,7 @@ function Module.BagBarExpandToggled(Expanded)
     f:GetHighlightTexture():SetRotation(rotation)
 
     for i = 0, 3 do
-        if (Expanded) then
+        if (expanded and not hidden) then
             _G['CharacterBag' .. i .. 'Slot']:Show()
             if not DF.Cata then KeyRingButton:Show() end
         else
@@ -2824,7 +2961,7 @@ function Module.BagBarExpandToggled(Expanded)
 end
 
 function Module.RefreshBagBarToggle()
-    Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
+    Module.BagBarExpandToggled(Module.db.profile.bags.expanded, Module.db.profile.bags.hidden)
 end
 
 function Module.ChangeFramerate()
