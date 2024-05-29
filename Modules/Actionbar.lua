@@ -2487,7 +2487,7 @@ function Module.ChangeBackpackNew()
     end
 
     -- keyring
-    do
+    if not DF.Cata then
         KeyRingButton:SetSize(30, 30)
         KeyRingButton:ClearAllPoints()
         KeyRingButton:SetPoint('RIGHT', _G['CharacterBag3Slot'], 'LEFT', 0, 0)
@@ -2815,10 +2815,10 @@ function Module.BagBarExpandToggled(Expanded)
     for i = 0, 3 do
         if (Expanded) then
             _G['CharacterBag' .. i .. 'Slot']:Show()
-            KeyRingButton:Show()
+            if not DF.Cata then KeyRingButton:Show() end
         else
             _G['CharacterBag' .. i .. 'Slot']:Hide()
-            KeyRingButton:Hide()
+            if not DF.Cata then KeyRingButton:Hide() end
         end
     end
 end
