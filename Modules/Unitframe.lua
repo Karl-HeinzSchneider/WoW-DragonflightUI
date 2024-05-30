@@ -2879,7 +2879,10 @@ function frame:OnEvent(event, arg1)
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
     elseif event == 'PET_BAR_UPDATE' then
         -- print('PET_BAR_UPDATE')
-        if not frame.PetFrameChanged then Module.ChangePetFrame() end
+        if not frame.PetFrameChanged then
+            Module.ChangePetFrame()
+            Module.ApplySettings()
+        end
     elseif event == 'UNIT_POWER_UPDATE' then
         -- print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
