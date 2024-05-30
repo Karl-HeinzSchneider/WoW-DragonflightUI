@@ -55,7 +55,8 @@ local defaults = {
             anchor = 'TOPRIGHT',
             anchorParent = 'BOTTOMRIGHT',
             x = 4,
-            y = 28
+            y = 28,
+            hideStatusbarText = false
         },
         party = {
             classcolor = false,
@@ -407,7 +408,8 @@ local optionsPet = {
             desc = 'Enable threat glow',
             order = 8,
             disabled = true
-        }
+        },
+        hideStatusbarText = {type = 'toggle', name = 'hide statusbar text', desc = '', order = 10}
     }
 }
 
@@ -831,6 +833,11 @@ function Module:ApplySettings()
         Module.ReApplyTargetFrame()
         PetFrame.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PetFrameHealthBar)
+
+        local alpha = 1
+        if obj.hideStatusbarText then alpha = 0 end
+        PetFrameHealthBarText:SetAlpha(alpha)
+        PetFrameManaBarText:SetAlpha(alpha)
     end
 
     -- party
