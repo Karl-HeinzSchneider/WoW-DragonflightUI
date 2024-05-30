@@ -163,7 +163,10 @@ local defaults = {
             anchorParent = 'BOTTOMRIGHT',
             x = -295,
             y = 0,
-            hidden = false
+            hidden = false,
+            hideDefaultFPS = true,
+            alwaysShowFPS = true,
+            showPing = true
         }
     }
 }
@@ -1087,6 +1090,24 @@ local microOptions = {
             name = 'Hidden',
             desc = 'Micromenu hidden' .. getDefaultStr('hidden', 'micro'),
             order = 7
+        },
+        hideDefaultFPS = {
+            type = 'toggle',
+            name = 'HideDefaultFPS',
+            desc = 'Micromenu hidden' .. getDefaultStr('hideDefaultFPS', 'micro'),
+            order = 8
+        },
+        alwaysShowFPS = {
+            type = 'toggle',
+            name = 'AlwaysShowFPS',
+            desc = 'Micromenu hidden' .. getDefaultStr('alwaysShowFPS', 'micro'),
+            order = 9
+        },
+        showPing = {
+            type = 'toggle',
+            name = 'ShowPing',
+            desc = 'Micromenu hidden' .. getDefaultStr('showPing', 'micro'),
+            order = 10
         }
     }
 }
@@ -2618,6 +2639,30 @@ function Module.UpdateMicromenuState(state)
 
     local playerLevel = UnitLevel("player");
     if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
+
+    -- FPS
+    Module.UpdateFPSState(state)
+end
+
+function Module.UpdateFPSState(state)
+    FramerateLabel:ClearAllPoints()
+    if state.hideDefaultFPS then
+        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117 - 500)
+    else
+        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117)
+    end
+
+    local fps = Module.FPSFrame
+
+    if state.alwaysShowFPS then fps:Show() end
+
+    if state.showPing then
+        fps.PingLabel:Show()
+        fps.PingText:Show()
+    else
+        fps.PingLabel:Hide()
+        fps.PingText:Hide()
+    end
 end
 
 function Module.GetBagSlots(id)
@@ -3107,38 +3152,85 @@ function Module.RefreshBagBarToggle()
 end
 
 function Module.ChangeFramerate()
-    FramerateLabel:ClearAllPoints()
-    FramerateLabel:SetPoint('BOTTOM', CharacterMicroButton, 'BOTTOM', -80, 6)
-    local scale = 0.75
-    FramerateLabel:SetScale(scale)
-    FramerateText:SetScale(scale)
     UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
 
-    -- text
-
-    local f = CreateFrame('Frame', 'PingTextFrame', UIParent)
-    f:SetWidth(1)
-    f:SetHeight(1)
-    f:ClearAllPoints()
-    f:SetPoint('LEFT', FramerateLabel, 'LEFT', 0, 14)
-    local t = f:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
-    t:SetPoint('LEFT', 0, 0)
-    t:SetText('')
-
+    -- fps
     local Path, Size, Flags = FramerateText:GetFont()
-    t:SetFont(Path, Size, Flags)
 
-    hooksecurefunc(FramerateText, 'SetFormattedText', function()
-        local down, up, lagHome, lagWorld = GetNetStats()
-        -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
-        local str = 'MS: ' .. math.max(lagHome, lagWorld)
-        t:SetText(str)
+    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', UIParent)
+    fps:SetSize(65, 26)
+    fps:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -10, 0)
+
+    Module.FPSFrame = fps
+
+    do
+        local t = fps:CreateFontString('FPSLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPLEFT', 0, 0)
+        t:SetText('FPS:')
+        t:SetFont(Path, Size, Flags)
+
+        fps.FPSLabel = t
+    end
+
+    do
+        local t = fps:CreateFontString('PingLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPLEFT', fps.FPSLabel, 'BOTTOMLEFT', 0, 0)
+        t:SetText('MS:')
+        t:SetFont(Path, Size, Flags)
+
+        fps.PingLabel = t
+    end
+
+    do
+        local t = fps:CreateFontString('FPSText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPRIGHT', fps, 'TOPRIGHT', 0, 0)
+        t:SetText('')
+        t:SetFont(Path, Size, Flags)
+
+        fps.FPSText = t
+    end
+
+    do
+        local t = fps:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPRIGHT', fps.FPSText, 'BOTTOMRIGHT', 0, 0)
+        t:SetText('')
+        t:SetFont(Path, Size, Flags)
+
+        fps.PingText = t
+    end
+
+    fps:SetScript('OnUpdate', function(self, elapsed)
+        if (fps:IsShown()) then
+            local timeLeft = fps.fpsTime - elapsed
+            if (timeLeft <= 0) then
+                fps.fpsTime = FRAMERATE_FREQUENCY;
+
+                local framerate = GetFramerate();
+                fps.FPSText:SetFormattedText("%.1f", framerate);
+
+                local down, up, lagHome, lagWorld = GetNetStats()
+                -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
+                local str = tostring(math.max(lagHome, lagWorld))
+                fps.PingText:SetText(str)
+            else
+                fps.fpsTime = timeLeft;
+            end
+        end
     end)
-    hooksecurefunc(FramerateText, 'Show', function()
-        f:Show()
-    end)
-    hooksecurefunc(FramerateText, 'Hide', function()
-        f:Hide()
+    fps.fpsTime = 0;
+    fps:Hide()
+
+    hooksecurefunc('ToggleFramerate', function()
+        local fps = Module.FPSFrame
+        local state = Module.db.profile.micro
+
+        if (fps:IsShown()) then
+            fps:Hide()
+        else
+            fps:Show()
+        end
+
+        Module.UpdateFPSState(state)
     end)
 end
 
