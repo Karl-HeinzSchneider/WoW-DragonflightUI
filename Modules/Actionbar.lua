@@ -1322,7 +1322,7 @@ function Module:ApplySettings()
     -- Module.ChangeGryphonVisibility(db.showGryphon)
 
     local MinimapModule = DF:GetModule('Minimap')
-    if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
+    -- if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
 
     Module.bar1:SetState(db.bar1)
     Module.bar2:SetState(db.bar2)
