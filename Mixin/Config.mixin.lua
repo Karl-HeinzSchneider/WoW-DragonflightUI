@@ -92,6 +92,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Castbar')
         self:AddSubCategory(cat, 'Chat')
         self:AddSubCategory(cat, 'Minimap')
+        self:AddSubCategory(cat, 'Questtracker')
 
         -- self:AddSpacer(20)
     end

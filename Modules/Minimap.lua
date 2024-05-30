@@ -17,7 +17,8 @@ local defaults = {
             y = -105,
             locked = true,
             durability = 'BOTTOM'
-        }
+        },
+        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
 }
 Module:SetDefaults(defaults)
@@ -129,6 +130,7 @@ local options = {
 }
 
 local frameTable = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster'}
+local frameTableTracker = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster', ['Minimap'] = 'Minimap'}
 
 local minimapOptions = {
     type = 'group',
@@ -223,8 +225,84 @@ local minimapOptions = {
                 ['LEFT'] = 'LEFT'
             },
             order = 20
+        }
+    }
+}
+
+local trackerOptions = {
+    type = 'group',
+    name = 'Tracker',
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'tracker'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
         },
-        trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 30}
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'tracker'),
+            values = frameTableTracker,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'tracker'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'tracker'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'tracker'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'tracker'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        }
     }
 }
 
@@ -272,6 +350,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('minimap')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
+        name = 'Questtracker',
+        sub = 'tracker',
+        options = trackerOptions,
+        default = function()
+            setDefaultSubValues('tracker')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -285,12 +372,14 @@ function Module:RefreshOptionScreens()
     end
 
     refreshCat('Minimap')
+    refreshCat('Questtracker')
 end
 
 function Module:ApplySettings()
     local db = Module.db.profile
 
     Module.UpdateMinimapState(db.minimap)
+    Module.UpdateTrackerState(db.tracker)
 end
 
 local frame = CreateFrame('FRAME')
@@ -406,6 +495,18 @@ function Module.UpdateMinimapState(state)
 
     Module.LockMinimap(state.locked)
     Module.UpdateDurabilityState(state)
+end
+
+function Module.UpdateTrackerState(state)
+    if not WatchFrame then return end
+    WatchFrame:SetClampedToScreen(false)
+
+    WatchFrame:SetScale(state.scale)
+    WatchFrame:ClearAllPoints()
+    WatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    WatchFrame:SetHeight(800)
+    WatchFrame:SetWidth(204)
 end
 
 function Module.HideDefaultStuff()
@@ -810,7 +911,9 @@ function Module.MoveTracker()
     hooksecurefunc(WatchFrame, 'SetPoint', function(self)
         if not setting then
             setting = true
-            Module.MoveTrackerFunc()
+            -- print('WatchFrame SetPoint')
+            local state = Module.db.profile.tracker
+            Module.UpdateTrackerState(state)
             setting = nil
         end
     end)
@@ -894,7 +997,7 @@ function Module.Wrath()
     Module.ChangeTracking()
     Module.DrawMinimapBorder()
     Module.MoveBuffs()
-    -- Module.MoveTracker()
+    Module.MoveTracker()
     Module.ChangeLFG()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
