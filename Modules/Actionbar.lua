@@ -155,9 +155,23 @@ local defaults = {
             expanded = true,
             hideArrow = false,
             hidden = false
+        },
+        micro = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -295,
+            y = 0,
+            hidden = false,
+            hideDefaultFPS = true,
+            showFPS = true,
+            alwaysShowFPS = false,
+            showPing = true
         }
     }
 }
+if DF.Era then defaults.profile.micro.x = -205 end
 Module:SetDefaults(defaults)
 
 local defaultsActionbarPROTO = {
@@ -997,6 +1011,114 @@ local bagsOptions = {
     }
 }
 
+local microOptions = {
+    name = 'Micromenu',
+    desc = 'Micromenu',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'micro'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'micro'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'micro'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'micro'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'micro'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'micro'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        hidden = {
+            type = 'toggle',
+            name = 'Hidden',
+            desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
+            order = 7
+        },
+        hideDefaultFPS = {
+            type = 'toggle',
+            name = 'HideDefaultFPS',
+            desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'micro'),
+            order = 8
+        },
+        showFPS = {
+            type = 'toggle',
+            name = 'ShowFPS',
+            desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'micro'),
+            order = 9
+        },
+        alwaysShowFPS = {
+            type = 'toggle',
+            name = 'AlwaysShowFPS',
+            desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'micro'),
+            order = 10
+        },
+        showPing = {
+            type = 'toggle',
+            name = 'ShowPing',
+            desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'micro'),
+            order = 11
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -1165,6 +1287,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('bags')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Micromenu', {
+        name = 'Micromenu',
+        sub = 'micro',
+        options = microOptions,
+        default = function()
+            setDefaultSubValues('micro')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -1183,6 +1314,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Repbar')
     refreshCat('Stancebar')
     refreshCat('Bags')
+    refreshCat('Micromenu')
 end
 
 function Module:ApplySettings()
@@ -1203,6 +1335,7 @@ function Module:ApplySettings()
     Module.stancebar:SetState(db.stance)
 
     Module.UpdateBagState(db.bags)
+    Module.UpdateMicromenuState(db.micro)
 end
 
 -- Actionbar
@@ -2478,6 +2611,69 @@ function Module.ChangeMicroMenu()
     end
 end
 
+function Module.UpdateMicromenuState(state)
+    -- print('UpdateMicromenuState')
+
+    CharacterMicroButton:ClearAllPoints()
+    CharacterMicroButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    local buttons = {}
+
+    if DF.Cata then
+        buttons = {
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton,
+            GuildMicroButton, CollectionsMicroButton, PVPMicroButton, LFGMicroButton, EJMicroButton,
+            MainMenuMicroButton, HelpMicroButton
+        }
+    elseif DF.Wrath then
+        buttons = {
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton,
+            SocialsMicroButton, CollectionsMicroButton, PVPMicroButton, LFGMicroButton, MainMenuMicroButton,
+            HelpMicroButton
+        }
+    elseif DF.Era then
+        buttons = {
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, QuestLogMicroButton, SocialsMicroButton,
+            WorldMapMicroButton, LFGMicroButton, MainMenuMicroButton, HelpMicroButton
+        }
+    end
+
+    for k, v in ipairs(buttons) do
+        --
+        v:SetScale(state.scale)
+        v:SetShown(not state.hidden)
+    end
+
+    local playerLevel = UnitLevel("player");
+    if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
+
+    -- FPS
+    Module.UpdateFPSState(state)
+end
+
+function Module.UpdateFPSState(state)
+    FramerateLabel:ClearAllPoints()
+    if state.hideDefaultFPS then
+        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117 - 500)
+    else
+        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117)
+    end
+
+    local fps = Module.FPSFrame
+
+    if state.alwaysShowFPS then fps:Show() end
+
+    if state.showPing then
+        fps.PingLabel:Show()
+        fps.PingText:Show()
+    else
+        fps.PingLabel:Hide()
+        fps.PingText:Hide()
+    end
+
+    if not state.showFPS then fps:Hide() end
+end
+
 function Module.GetBagSlots(id)
     local build, _, _, _ = GetBuildInfo()
     if not GetContainerNumSlots then
@@ -2880,8 +3076,8 @@ function Module.MoveBars()
         CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
     end
 
-    CharacterMicroButton.SetPoint = noop
-    CharacterMicroButton.ClearAllPoints = noop
+    -- CharacterMicroButton.SetPoint = noop
+    -- CharacterMicroButton.ClearAllPoints = noop
 
     if DF.Wrath then
         PVPMicroButton.SetPoint = noop
@@ -2965,38 +3161,85 @@ function Module.RefreshBagBarToggle()
 end
 
 function Module.ChangeFramerate()
-    FramerateLabel:ClearAllPoints()
-    FramerateLabel:SetPoint('BOTTOM', CharacterMicroButton, 'BOTTOM', -80, 6)
-    local scale = 0.75
-    FramerateLabel:SetScale(scale)
-    FramerateText:SetScale(scale)
     UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
 
-    -- text
-
-    local f = CreateFrame('Frame', 'PingTextFrame', UIParent)
-    f:SetWidth(1)
-    f:SetHeight(1)
-    f:ClearAllPoints()
-    f:SetPoint('LEFT', FramerateLabel, 'LEFT', 0, 14)
-    local t = f:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
-    t:SetPoint('LEFT', 0, 0)
-    t:SetText('')
-
+    -- fps
     local Path, Size, Flags = FramerateText:GetFont()
-    t:SetFont(Path, Size, Flags)
 
-    hooksecurefunc(FramerateText, 'SetFormattedText', function()
-        local down, up, lagHome, lagWorld = GetNetStats()
-        -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
-        local str = 'MS: ' .. math.max(lagHome, lagWorld)
-        t:SetText(str)
+    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', UIParent)
+    fps:SetSize(65, 26)
+    fps:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -10, 0)
+
+    Module.FPSFrame = fps
+
+    do
+        local t = fps:CreateFontString('FPSLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPLEFT', 0, 0)
+        t:SetText('FPS:')
+        t:SetFont(Path, Size, Flags)
+
+        fps.FPSLabel = t
+    end
+
+    do
+        local t = fps:CreateFontString('PingLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPLEFT', fps.FPSLabel, 'BOTTOMLEFT', 0, 0)
+        t:SetText('MS:')
+        t:SetFont(Path, Size, Flags)
+
+        fps.PingLabel = t
+    end
+
+    do
+        local t = fps:CreateFontString('FPSText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPRIGHT', fps, 'TOPRIGHT', 0, 0)
+        t:SetText('')
+        t:SetFont(Path, Size, Flags)
+
+        fps.FPSText = t
+    end
+
+    do
+        local t = fps:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPRIGHT', fps.FPSText, 'BOTTOMRIGHT', 0, 0)
+        t:SetText('')
+        t:SetFont(Path, Size, Flags)
+
+        fps.PingText = t
+    end
+
+    fps:SetScript('OnUpdate', function(self, elapsed)
+        if (fps:IsShown()) then
+            local timeLeft = fps.fpsTime - elapsed
+            if (timeLeft <= 0) then
+                fps.fpsTime = FRAMERATE_FREQUENCY;
+
+                local framerate = GetFramerate();
+                fps.FPSText:SetFormattedText("%.1f", framerate);
+
+                local down, up, lagHome, lagWorld = GetNetStats()
+                -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
+                local str = tostring(math.max(lagHome, lagWorld))
+                fps.PingText:SetText(str)
+            else
+                fps.fpsTime = timeLeft;
+            end
+        end
     end)
-    hooksecurefunc(FramerateText, 'Show', function()
-        f:Show()
-    end)
-    hooksecurefunc(FramerateText, 'Hide', function()
-        f:Hide()
+    fps.fpsTime = 0;
+    fps:Hide()
+
+    hooksecurefunc('ToggleFramerate', function()
+        local fps = Module.FPSFrame
+        local state = Module.db.profile.micro
+
+        if (fps:IsShown()) then
+            fps:Hide()
+        else
+            fps:Show()
+        end
+
+        Module.UpdateFPSState(state)
     end)
 end
 
