@@ -1336,6 +1336,8 @@ function Module:ApplySettings()
 
     Module.UpdateBagState(db.bags)
     Module.UpdateMicromenuState(db.micro)
+
+    Module.ChangePossessBar()
 end
 
 -- Actionbar
@@ -1911,8 +1913,11 @@ function Module.ChangePossessBar()
     PossessBarFrame.ignoreFramePositionManager = true
 
     PossessBarFrame:ClearAllPoints()
-    PossessBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
-
+    -- PossessBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
+    local ab = _G['DragonflightUIActionbarFrame1']
+    local dy = 2 * ab:GetHeight() + 2
+    local dx = -2
+    PossessBarFrame:SetPoint('BOTTOMLEFT', ab, 'TOPLEFT', dx, dy)
 end
 
 function frame:OnEvent(event, arg1)
@@ -3254,7 +3259,7 @@ function Module.Wrath()
     Module.SetNumBars()
     Module.HookPetBar()
     Module.MoveTotem()
-    Module.ChangePossessBar()
+    -- Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
@@ -3281,7 +3286,7 @@ function Module.Era()
     Module.SetNumBars()
     Module.HookPetBar()
     -- Module.MoveTotem()
-    Module.ChangePossessBar()
+    -- Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
