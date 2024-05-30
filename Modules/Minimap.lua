@@ -5,7 +5,7 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, x = -10, y = -105, locked = true}}
+local defaults = {profile = {scale = 1, x = -10, y = -105, locked = true, durability = 'BOTTOM'}}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -96,6 +96,19 @@ local options = {
             desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
                 getDefaultStr('locked'),
             order = 103
+        },
+        durability = {
+            type = 'select',
+            name = 'Durability',
+            desc = 'Durability' .. getDefaultStr('durability', barname),
+            values = {
+                ['HIDDEN'] = 'HIDDEN',
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT'
+            },
+            order = 110
         }
     }
 }
@@ -158,6 +171,7 @@ function Module:ApplySettings()
     Minimap:SetScale(db.scale * dfScale)
 
     Module.LockMinimap(db.locked)
+    Module.UpdateDurabilityState(db)
 end
 
 local frame = CreateFrame('FRAME')
@@ -288,9 +302,40 @@ function Module.MoveDefaultStuff()
     -- DurabilityFrame:SetPoint('TOPRIGHT',MinimapCluster,'BOTTOMRIGHT',-84,-100)
     DurabilityFrame:SetPoint('CENTER', Minimap, 'CENTER', 0, -142)
 
+    DurabilityFrame.SetPointOrig = DurabilityFrame.SetPoint
     DurabilityFrame.SetPoint = function()
     end
 
+    hooksecurefunc(DurabilityFrame, 'Show', function()
+        local state = Module.db.profile
+
+        if state.durability == 'HIDDEN' then DurabilityFrame:Hide() end
+    end)
+end
+
+function Module.UpdateDurabilityState(state)
+    local dur = state.durability
+
+    if dur == 'HIDDEN' then
+        DurabilityFrame:Hide()
+        return
+    end
+
+    DurabilityFrame:Show()
+    DurabilityFrame:ClearAllPoints()
+    local delta = 15
+
+    DurabilityFrame:SetScale(state.scale)
+
+    if dur == 'TOP' then
+        DurabilityFrame:SetPointOrig('BOTTOM', Minimap, 'TOP', 0, delta + 20)
+    elseif dur == 'RIGHT' then
+        DurabilityFrame:SetPointOrig('LEFT', Minimap, 'RIGHT', delta, 0)
+    elseif dur == 'BOTTOM' then
+        DurabilityFrame:SetPointOrig('TOP', Minimap, 'BOTTOM', 0, -delta)
+    elseif dur == 'LEFT' then
+        DurabilityFrame:SetPointOrig('RIGHT', Minimap, 'LEFT', -delta, 0)
+    end
 end
 
 function Module.MoveMinimap(x, y)
