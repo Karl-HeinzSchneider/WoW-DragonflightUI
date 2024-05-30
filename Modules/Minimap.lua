@@ -498,15 +498,27 @@ function Module.UpdateMinimapState(state)
 end
 
 function Module.UpdateTrackerState(state)
-    if not WatchFrame then return end
-    WatchFrame:SetClampedToScreen(false)
+    if DF.Era then
+        QuestWatchFrame:SetClampedToScreen(false)
 
-    WatchFrame:SetScale(state.scale)
-    WatchFrame:ClearAllPoints()
-    WatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+        QuestWatchFrame:SetScale(state.scale)
+        QuestWatchFrame:ClearAllPoints()
+        QuestWatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
 
-    WatchFrame:SetHeight(800)
-    WatchFrame:SetWidth(204)
+        -- QuestWatchFrame:SetHeight(800)
+        -- QuestWatchFrame:SetWidth(204)        
+
+    elseif DF.Cata then
+        if not WatchFrame then return end
+        WatchFrame:SetClampedToScreen(false)
+
+        WatchFrame:SetScale(state.scale)
+        WatchFrame:ClearAllPoints()
+        WatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+        WatchFrame:SetHeight(800)
+        WatchFrame:SetWidth(204)
+    end
 end
 
 function Module.HideDefaultStuff()
@@ -910,15 +922,28 @@ end
 
 function Module.MoveTracker()
     local setting
-    hooksecurefunc(WatchFrame, 'SetPoint', function(self)
-        if not setting then
-            setting = true
-            -- print('WatchFrame SetPoint')
-            local state = Module.db.profile.tracker
-            Module.UpdateTrackerState(state)
-            setting = nil
-        end
-    end)
+
+    if DF.Era then
+        hooksecurefunc(QuestWatchFrame, 'SetPoint', function(self)
+            if not setting then
+                setting = true
+                -- print('WatchFrame SetPoint')
+                local state = Module.db.profile.tracker
+                Module.UpdateTrackerState(state)
+                setting = nil
+            end
+        end)
+    elseif DF.Cata then
+        hooksecurefunc(WatchFrame, 'SetPoint', function(self)
+            if not setting then
+                setting = true
+                -- print('WatchFrame SetPoint')
+                local state = Module.db.profile.tracker
+                Module.UpdateTrackerState(state)
+                setting = nil
+            end
+        end)
+    end
 end
 
 function Module.MoveTrackerFunc()
@@ -1021,6 +1046,7 @@ function Module.Era()
     Module.ChangeZoneText()
     Module.DrawMinimapBorder()
     Module.MoveBuffs()
+    Module.MoveTracker()
     Module.HookMouseWheel()
     Module.ChangeMail()
     Module.ChangeEra()
