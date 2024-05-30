@@ -738,44 +738,46 @@ function Module.HookCalendar()
         Module.UpdateCalendar()
     end)
 
-    -- GameTimeCalendarInvitesTexture + Glow
-    GameTimeCalendarInvitesTexture:ClearAllPoints()
-    GameTimeCalendarInvitesTexture:SetParent(button)
-    GameTimeCalendarInvitesTexture:SetPoint('CENTER', text, 'CENTER', 0, 0)
-    GameTimeCalendarInvitesTexture:SetSize(size, size)
-    GameTimeCalendarInvitesTexture:SetScale(1)
-    GameTimeCalendarInvitesTexture:SetDrawLayer('OVERLAY', 2)
+    if DF.Cata then
+        -- GameTimeCalendarInvitesTexture + Glow
+        GameTimeCalendarInvitesTexture:ClearAllPoints()
+        GameTimeCalendarInvitesTexture:SetParent(button)
+        GameTimeCalendarInvitesTexture:SetPoint('CENTER', text, 'CENTER', 0, 0)
+        GameTimeCalendarInvitesTexture:SetSize(size, size)
+        GameTimeCalendarInvitesTexture:SetScale(1)
+        GameTimeCalendarInvitesTexture:SetDrawLayer('OVERLAY', 2)
 
-    local glowSize = size + 10
-    GameTimeCalendarInvitesGlow:ClearAllPoints()
-    GameTimeCalendarInvitesGlow:SetParent(button)
-    GameTimeCalendarInvitesGlow:SetPoint('CENTER', text, 'CENTER', 0, 0)
-    GameTimeCalendarInvitesGlow:SetSize(glowSize, glowSize)
-    GameTimeCalendarInvitesGlow:SetScale(1)
-    GameTimeCalendarInvitesGlow:SetDrawLayer('OVERLAY', 1)
+        local glowSize = size + 10
+        GameTimeCalendarInvitesGlow:ClearAllPoints()
+        GameTimeCalendarInvitesGlow:SetParent(button)
+        GameTimeCalendarInvitesGlow:SetPoint('CENTER', text, 'CENTER', 0, 0)
+        GameTimeCalendarInvitesGlow:SetSize(glowSize, glowSize)
+        GameTimeCalendarInvitesGlow:SetScale(1)
+        GameTimeCalendarInvitesGlow:SetDrawLayer('OVERLAY', 1)
 
-    local PI = PI;
-    local TWOPI = PI * 2.0;
-    local cos = math.cos;
-    local INVITE_PULSE_SEC = 1.0 / (2.0 * 1.0); -- mul by 2 so the pulse constant counts for half a flash
+        local PI = PI;
+        local TWOPI = PI * 2.0;
+        local cos = math.cos;
+        local INVITE_PULSE_SEC = 1.0 / (2.0 * 1.0); -- mul by 2 so the pulse constant counts for half a flash
 
-    Module.minimapFlashTimer = 0.0
+        Module.minimapFlashTimer = 0.0
 
-    Minimap:HookScript('OnUpdate', function(self, elapsed)
-        -- Flashing stuff, from GameTime.lua line 112++
-        if (elapsed and GameTimeFrame.flashInvite) then
-            local flashIndex = TWOPI * Module.minimapFlashTimer * INVITE_PULSE_SEC;
-            local flashValue = max(0.0, 0.5 + 0.5 * cos(flashIndex));
-            if (flashIndex >= TWOPI) then
-                Module.minimapFlashTimer = 0.0;
-            else
-                Module.minimapFlashTimer = Module.minimapFlashTimer + elapsed;
+        Minimap:HookScript('OnUpdate', function(self, elapsed)
+            -- Flashing stuff, from GameTime.lua line 112++
+            if (elapsed and GameTimeFrame.flashInvite) then
+                local flashIndex = TWOPI * Module.minimapFlashTimer * INVITE_PULSE_SEC;
+                local flashValue = max(0.0, 0.5 + 0.5 * cos(flashIndex));
+                if (flashIndex >= TWOPI) then
+                    Module.minimapFlashTimer = 0.0;
+                else
+                    Module.minimapFlashTimer = Module.minimapFlashTimer + elapsed;
+                end
+
+                GameTimeCalendarInvitesTexture:SetAlpha(flashValue);
+                GameTimeCalendarInvitesGlow:SetAlpha(flashValue);
             end
-
-            GameTimeCalendarInvitesTexture:SetAlpha(flashValue);
-            GameTimeCalendarInvitesGlow:SetAlpha(flashValue);
-        end
-    end)
+        end)
+    end
 end
 
 function Module.ChangeClock()
