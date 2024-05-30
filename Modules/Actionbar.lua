@@ -165,7 +165,8 @@ local defaults = {
             y = 0,
             hidden = false,
             hideDefaultFPS = true,
-            alwaysShowFPS = true,
+            showFPS = true,
+            alwaysShowFPS = false,
             showPing = true
         }
     }
@@ -1088,26 +1089,32 @@ local microOptions = {
         hidden = {
             type = 'toggle',
             name = 'Hidden',
-            desc = 'Micromenu hidden' .. getDefaultStr('hidden', 'micro'),
+            desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
             order = 7
         },
         hideDefaultFPS = {
             type = 'toggle',
             name = 'HideDefaultFPS',
-            desc = 'Micromenu hidden' .. getDefaultStr('hideDefaultFPS', 'micro'),
+            desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'micro'),
             order = 8
+        },
+        showFPS = {
+            type = 'toggle',
+            name = 'ShowFPS',
+            desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'micro'),
+            order = 9
         },
         alwaysShowFPS = {
             type = 'toggle',
             name = 'AlwaysShowFPS',
-            desc = 'Micromenu hidden' .. getDefaultStr('alwaysShowFPS', 'micro'),
-            order = 9
+            desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'micro'),
+            order = 10
         },
         showPing = {
             type = 'toggle',
             name = 'ShowPing',
-            desc = 'Micromenu hidden' .. getDefaultStr('showPing', 'micro'),
-            order = 10
+            desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'micro'),
+            order = 11
         }
     }
 }
@@ -2663,6 +2670,8 @@ function Module.UpdateFPSState(state)
         fps.PingLabel:Hide()
         fps.PingText:Hide()
     end
+
+    if not state.showFPS then fps:Hide() end
 end
 
 function Module.GetBagSlots(id)
