@@ -5,7 +5,21 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, x = -10, y = -105, locked = true, durability = 'BOTTOM'}}
+local defaults = {
+    profile = {
+        scale = 1,
+        minimap = {
+            scale = 1,
+            anchorFrame = 'MinimapCluster',
+            anchor = 'CENTER',
+            anchorParent = 'TOP',
+            x = -10,
+            y = -105,
+            locked = true,
+            durability = 'BOTTOM'
+        }
+    }
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -109,7 +123,108 @@ local options = {
                 ['LEFT'] = 'LEFT'
             },
             order = 110
-        }
+        },
+        trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 120}
+    }
+}
+
+local frameTable = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster'}
+
+local minimapOptions = {
+    type = 'group',
+    name = 'Minimap',
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'minimap'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'minimap'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'minimap'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'minimap'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'minimap'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        locked = {
+            type = 'toggle',
+            name = 'Locked',
+            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
+                getDefaultStr('locked', 'minimap'),
+            order = 10
+        },
+        durability = {
+            type = 'select',
+            name = 'Durability',
+            desc = 'Durability' .. getDefaultStr('durability', 'minimap'),
+            values = {
+                ['HIDDEN'] = 'HIDDEN',
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT'
+            },
+            order = 20
+        },
+        trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 30}
     }
 }
 
@@ -136,9 +251,7 @@ function Module:OnEnable()
     Module.Tmp.MinimapY = 0
 
     Module.ApplySettings()
-
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap',
-                                         {name = 'Minimap', options = options, default = setDefaultValues})
+    Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -148,6 +261,17 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterOptionScreens()
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap', {
+        name = 'Minimap',
+        sub = 'minimap',
+        options = minimapOptions,
+        default = function()
+            setDefaultSubValues('minimap')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -166,12 +290,7 @@ end
 function Module:ApplySettings()
     local db = Module.db.profile
 
-    Module.MoveMinimap(db.x, db.y)
-    local dfScale = 1.25
-    Minimap:SetScale(db.scale * dfScale)
-
-    Module.LockMinimap(db.locked)
-    Module.UpdateDurabilityState(db)
+    Module.UpdateMinimapState(db.minimap)
 end
 
 local frame = CreateFrame('FRAME')
@@ -275,6 +394,18 @@ function Module.GetCoords(key)
 
     local data = uiunitframe[key]
     return data[3], data[4], data[5], data[6]
+end
+
+function Module.UpdateMinimapState(state)
+    Minimap:ClearAllPoints()
+    Minimap:SetClampedToScreen(true)
+    Minimap:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    local dfScale = 1.25
+    Minimap:SetScale(state.scale * dfScale)
+
+    Module.LockMinimap(state.locked)
+    Module.UpdateDurabilityState(state)
 end
 
 function Module.HideDefaultStuff()
@@ -650,7 +781,7 @@ function Module.LockMinimap(locked)
             local dy = Module.Tmp.MinimapY - y
             -- print('delta', dx, dy)
 
-            local db = Module.db.profile
+            local db = Module.db.profile.minimap
 
             db.x = db.x - dx
             db.y = db.y - dy
@@ -763,7 +894,7 @@ function Module.Wrath()
     Module.ChangeTracking()
     Module.DrawMinimapBorder()
     Module.MoveBuffs()
-    Module.MoveTracker()
+    -- Module.MoveTracker()
     Module.ChangeLFG()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
