@@ -383,7 +383,7 @@ function DragonflightUIActionbarMixin:AddDecoNew()
         self.decoFrame = CreateFrame('Frame', 'DragonflightUIMainActionBarDecoFrame', self)
         self.decoFrame:SetFrameStrata('LOW')
         self.decoFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-        self.decoFrame:SetSize(500, 500)
+        self.decoFrame:SetSize(1, 1)
         self.decoFrame.decoTable = {}
 
         local tex = self.decoFrame:CreateTexture()
