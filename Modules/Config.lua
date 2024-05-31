@@ -6,7 +6,14 @@ Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {
     profile = {
-        modules = {['Actionbar'] = true, ['Castbar'] = true, ['Chat'] = false, ['Minimap'] = true, ['Unitframe'] = true},
+        modules = {
+            ['Actionbar'] = true,
+            ['Bossframe'] = false,
+            ['Castbar'] = true,
+            ['Chat'] = false,
+            ['Minimap'] = true,
+            ['Unitframe'] = true
+        },
         bestnumber = 42
     }
 }
@@ -39,10 +46,11 @@ local modulesOptions = {
     set = setOption,
     args = {
         Actionbar = {type = 'toggle', name = 'Actionbar', desc = '' .. getDefaultStr('Actionbar', 'modules'), order = 1},
-        Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 2},
-        Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 3},
-        Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 4},
-        Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 5}
+        Bossframe = {type = 'toggle', name = 'Bossframe', desc = '' .. getDefaultStr('Bossframe', 'modules'), order = 2},
+        Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 3},
+        Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
+        Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 5},
+        Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 6}
     }
 }
 
