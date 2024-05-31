@@ -39,6 +39,7 @@ Modules\Config.lua
 
 # Modules
 Modules\Actionbar.lua
+Modules\Bossframe.lua
 Modules\Castbar.lua
 Modules\Chat.lua
 Modules\Minimap.lua

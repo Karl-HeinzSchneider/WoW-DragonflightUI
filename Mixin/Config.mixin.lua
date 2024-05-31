@@ -101,6 +101,7 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         -- Unitframes
         local cat = self:AddCategory('Unitframes')
 
+        self:AddSubCategory(cat, 'Boss')
         self:AddSubCategory(cat, 'Focus')
         self:AddSubCategory(cat, 'Party')
         self:AddSubCategory(cat, 'Pet')
