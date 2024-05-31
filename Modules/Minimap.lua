@@ -541,44 +541,54 @@ function Module.MoveDefaultStuff()
     Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
     -- Minimap:SetScale(1.25)
 
-    DurabilityFrame:ClearAllPoints()
-    -- DurabilityFrame:SetPoint('CENTER',Minimap,'CENTER',0,-100)
-    -- DurabilityFrame:SetPoint('TOPRIGHT',MinimapCluster,'BOTTOMRIGHT',-84,-100)
-    DurabilityFrame:SetPoint('CENTER', Minimap, 'CENTER', 0, -142)
+    local container = CreateFrame('Frame', 'DragonflightUIDurabilityContainer', UIParent)
+    container:SetPoint('CENTER', Minimap, 'CENTER', 0, -142)
+    container:SetSize(92, 75)
+    Module.DurabilityContainer = container
 
-    DurabilityFrame.SetPointOrig = DurabilityFrame.SetPoint
-    DurabilityFrame.SetPoint = function()
+    local moveDur = function()
+        local widthMax = 92
+        local width = DurabilityFrame:GetWidth()
+        local delta = (widthMax - width) / 2
+
+        DurabilityFrame:SetPoint('TOPRIGHT', container, 'TOPRIGHT', -delta, 0)
+        DurabilityFrame:SetParent(container)
     end
+    DurabilityFrame:ClearAllPoints()
+    moveDur()
 
-    hooksecurefunc(DurabilityFrame, 'Show', function()
-        local state = Module.db.profile
-
-        if state.durability == 'HIDDEN' then DurabilityFrame:Hide() end
+    hooksecurefunc(DurabilityFrame, 'SetPoint', function(self, void, rel)
+        -- print('DurabilityFrame', 'SetPoint')
+        if rel and (rel ~= container) then
+            -- print('DurabilityFrame', 'inside')
+            moveDur()
+        end
     end)
 end
 
 function Module.UpdateDurabilityState(state)
     local dur = state.durability
+    local container = Module.DurabilityContainer
 
     if dur == 'HIDDEN' then
-        DurabilityFrame:Hide()
+        container:Hide()
         return
     end
 
-    DurabilityFrame:Show()
-    DurabilityFrame:ClearAllPoints()
+    container:Show()
+    container:ClearAllPoints()
     local delta = 15
 
-    DurabilityFrame:SetScale(state.scale)
+    container:SetScale(state.scale)
 
     if dur == 'TOP' then
-        DurabilityFrame:SetPointOrig('BOTTOM', Minimap, 'TOP', 0, delta + 20)
+        container:SetPoint('BOTTOM', Minimap, 'TOP', 0, delta + 20)
     elseif dur == 'RIGHT' then
-        DurabilityFrame:SetPointOrig('LEFT', Minimap, 'RIGHT', delta, 0)
+        container:SetPoint('LEFT', Minimap, 'RIGHT', delta, 0)
     elseif dur == 'BOTTOM' then
-        DurabilityFrame:SetPointOrig('TOP', Minimap, 'BOTTOM', 0, -delta)
+        container:SetPoint('TOP', Minimap, 'BOTTOM', 0, -delta)
     elseif dur == 'LEFT' then
-        DurabilityFrame:SetPointOrig('RIGHT', Minimap, 'LEFT', -delta, 0)
+        container:SetPoint('RIGHT', Minimap, 'LEFT', -delta, 0)
     end
 end
 
@@ -907,12 +917,15 @@ function Module.LockMinimap(locked)
 end
 
 function Module.MoveBuffs()
-    local dx = -45 - 10
-    BuffFrame:ClearAllPoints()
-    BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', dx, -13)
-    hooksecurefunc('UIParent_UpdateTopFramePositions', function()
+    local move = function(state)
+        local dx = -45 - 10
         BuffFrame:ClearAllPoints()
         BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', dx, -13)
+    end
+
+    hooksecurefunc('UIParent_UpdateTopFramePositions', function()
+        print('UIParent_UpdateTopFramePositions')
+        move({})
     end)
     -- @TODO: Taint ingame
     --[[ BuffFrame.SetPoint = function()
