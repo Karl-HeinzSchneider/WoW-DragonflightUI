@@ -924,7 +924,7 @@ function Module.MoveBuffs()
     end
 
     hooksecurefunc('UIParent_UpdateTopFramePositions', function()
-        print('UIParent_UpdateTopFramePositions')
+        -- print('UIParent_UpdateTopFramePositions')
         move({})
     end)
     -- @TODO: Taint ingame
