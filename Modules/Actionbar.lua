@@ -2428,6 +2428,8 @@ function Module.ChangeMicroMenuNew()
         -- MainMenuBarPerformanceBar:ClearAllPoints()
         MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
         MainMenuBarPerformanceBar:SetSize(19, 39)
+
+        Module.HookMicromenuOverride()
     elseif DF.Wrath then
         Module.ChangeCharacterMicroButton()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
@@ -2463,6 +2465,22 @@ function Module.ChangeMicroMenuNew()
         MainMenuBarPerformanceBarFrame:Hide()
     end
 
+end
+
+function Module.HookMicromenuOverride()
+    hooksecurefunc('MoveMicroButtons', function(self, anchor, anchorTo, relAnchor, x, y, isStacked)
+        -- print('MoveMicroButtons', anchor:GetName(), anchorTo, relAnchor, x, y, isStacked)
+        if isStacked then
+            -- CharacterMicroButton:SetPoint('BOTTOMLEFT', OverrideActionBar, 'BOTTOMLEFT', 532, 41)
+            GuildMicroButton:ClearAllPoints()
+            GuildMicroButton:SetPoint('BOTTOMLEFT', QuestLogMicroButton, 'BOTTOMRIGHT', -3, 0)
+            CollectionsMicroButton:ClearAllPoints()
+            CollectionsMicroButton:SetPoint('TOPLEFT', CharacterMicroButton, 'BOTTOMLEFT', 0, 5)
+        else
+            local db = Module.db.profile
+            Module.UpdateMicromenuState(db.micro)
+        end
+    end)
 end
 
 function Module.ChangeMicroMenu()
