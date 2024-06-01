@@ -19,11 +19,12 @@ function DragonflightUIBossframeMixin:Setup(unit)
 
     self:SetSize(232, 100)
     self:SetPoint('CENTER', UIParent, 'CENTER', 0, 80)
-    self:SetScale(2)
+    self:SetScale(1)
 
     self:SetupTextures()
     self:CreateHP(unit)
     self:CreateMana(unit)
+    self:SetupName(unit)
 end
 
 function DragonflightUIBossframeMixin:SetupTextures()
@@ -46,7 +47,15 @@ function DragonflightUIBossframeMixin:SetupTextures()
     bosstype:SetSize(173, 36)
     bosstype:SetPoint('TOPLEFT', 4, -14)
     bosstype:SetVertexColor(1.0, 0, 0, 1.0)
+end
 
+function DragonflightUIBossframeMixin:SetupName(unit)
+    local f = self
+    local name = f:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+    f.name = name
+    name:SetSize(90, 12)
+    name:SetPoint('BOTTOM', f.hp, 'TOP', 0, 4)
+    name:SetText('Zimtdev')
 end
 
 function DragonflightUIBossframeMixin:CreateHP(unit)
@@ -73,6 +82,6 @@ function DragonflightUIBossframeMixin:CreateMana(unit)
     mana:SetPoint("TOPRIGHT", f.hp, "BOTTOMRIGHT", 0, -1);
 
     mana:SetStatusBarTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Bossframe\\UI-HUD-UnitFrame-Target-Boss-Small-PortraitOff-Bar-Mana')
+        'Interface\\Addons\\DragonflightUI\\Textures\\Bossframe\\UI-HUD-UnitFrame-Target-Boss-Small-PortraitOff-Bar-Rage')
     mana:SetStatusBarColor(1, 1, 1, 1)
 end
