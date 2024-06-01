@@ -30,6 +30,7 @@ XML\Includes.xml
 
 # XML
 XML\Actionbar.xml
+XML\Bossframe.xml
 XML\Castbar.xml
 XML\Config.xml
 XML\SettingsList.xml

@@ -240,8 +240,8 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Wrath then
-        Module.Wrath()
+    if DF.Cata then
+        Module.Cata()
     else
         Module.Era()
     end
@@ -287,6 +287,61 @@ function Module:ApplySettings()
     local db = Module.db.profile
 end
 
+function Module:CreateBossFrames()
+
+    for id = 1, 1 do
+        print('createBossFrames', id)
+        local f = Module:CreateBossFrame(id)
+    end
+
+    -- frame = CreateFrame(frameType [, name, parent, template, id])
+
+    -- for id = 1, 5 do
+    --     local name = 'DragonflightUIBoss' .. id .. 'Frame'
+    --     print('create', name)
+    --     local f = CreateFrame('Button', name, UIParent, 'BossTargetFrameTemplate', id)
+    --     f:SetPoint('CENTER', UIParent, 'CENTER', 0, 80 * id)
+
+    --     if (id == 1) then
+    --         BossTargetFrame_OnLoad(f, "boss1", "INSTANCE_ENCOUNTER_ENGAGE_UNIT");
+    --     else
+    --         BossTargetFrame_OnLoad(f, "boss" .. id);
+    --     end
+    --     TargetFrame_CreateSpellbar(f, "INSTANCE_ENCOUNTER_ENGAGE_UNIT", true);
+    -- end
+
+end
+
+function Module:CreateBossFrame(id)
+    local name = 'DragonflightUIBoss' .. id .. 'Frame'
+    local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate')
+    local unit = 'player'
+    f:Setup(unit)
+
+    return f
+end
+
+function Module:HookBossframe()
+    local b = _G.Boss1TargetFrame
+    b:SetMovable(true)
+    b:SetUserPlaced(true)
+    b:ClearAllPoints()
+    b:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -470)
+    b:SetMovable(false)
+
+    local moving
+    hooksecurefunc(Boss1TargetFrame, "SetPoint", function(self)
+        if moving then return end
+        moving = true
+        self:SetMovable(true)
+        self:SetUserPlaced(true)
+        self:ClearAllPoints()
+        self:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -470)
+        self:SetMovable(false)
+        moving = nil
+    end)
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1)
@@ -294,9 +349,13 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
+-- Cata
+function Module.Cata()
+    Module:CreateBossFrames()
+end
+
 -- Wrath
 function Module.Wrath()
-
 end
 
 -- Era
