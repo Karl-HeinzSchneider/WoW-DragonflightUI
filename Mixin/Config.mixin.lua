@@ -107,6 +107,10 @@ function DragonFlightUIConfigMixin:SetupCategorys()
         self:AddSubCategory(cat, 'Player')
         self:AddSubCategory(cat, 'Target')
     end
+
+    local categoryList = self:GetCategoryList()
+    categoryList:SetAlpha(0)
+    categoryList:ClearAllPoints()
 end
 
 function DragonFlightUIConfigMixin:AddCategory(name)
