@@ -76,8 +76,46 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('WhatsNew', cat)
     end
 
-    -- for i = 0, 35 do addSubCat('TEST', 'General') end
+    do
+        -- Actionbar
+        local cat = 'Actionbar'
+        addCat(cat)
+        addSubCat('Actionbar1', cat)
+        addSubCat('Actionbar2', cat)
+        addSubCat('Actionbar3', cat)
+        addSubCat('Actionbar4', cat)
+        addSubCat('Actionbar5', cat)
 
+        addSubCat('Petbar', cat)
+        addSubCat('XPbar', cat)
+        addSubCat('Repbar', cat)
+        addSubCat('Stancebar', cat)
+        addSubCat('Bags', cat)
+        addSubCat('Micromenu', cat)
+    end
+
+    do
+        -- Misc
+        local cat = 'Misc'
+        addCat(cat)
+        addSubCat('Castbar', cat)
+        addSubCat('Chat', cat)
+        addSubCat('Minimap', cat)
+        addSubCat('Questtracker', cat)
+    end
+
+    do
+        -- Unitframes
+        local cat = 'Unitframes'
+        addCat(cat)
+        addSubCat('Focus', cat)
+        addSubCat('Party', cat)
+        addSubCat('Pet', cat)
+        addSubCat('Player', cat)
+        addSubCat('Target', cat)
+    end
+
+    -- for i = 0, 35 do addSubCat('TEST', 'General') end
 end
 
 function DragonFlightUIConfigMixin:SetupCategorys()
