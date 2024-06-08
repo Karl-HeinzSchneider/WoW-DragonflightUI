@@ -51,7 +51,7 @@ end
 DragonFlightUIConfigCategoryListElementMixin = {}
 
 function DragonFlightUIConfigCategoryListElementMixin:OnLoad()
-    print('DragonFlightUIConfigCategoryListElementMixin:OnLoad()')
+    -- print('DragonFlightUIConfigCategoryListElementMixin:OnLoad()')
 end
 
 function DragonFlightUIConfigCategoryListElementMixin:Init(elementData)
@@ -80,18 +80,34 @@ function DragonFlightUIConfigCategoryListHeaderMixin:OnLoad()
 end
 
 -- Button
-DragonFlightUIConfigCategoryListButtonMixin = {}
+DragonFlightUIConfigCategoryListButtonMixin = CreateFromMixins(ButtonStateBehaviorMixin)
 
 function DragonFlightUIConfigCategoryListButtonMixin:OnLoad()
     -- print('DragonFlightUIConfigCategoryListButtonMixin:OnLoad()')
+
+    self.over = nil
+    self.down = nil
+    self.isEnabled = false
+    self.isSelected = false
+
+    self.category = nil
+    self.categoryRef = nil
+    self.subCategory = nil
+
+    self.displayData = nil
+    self.displayFrame = nil
+
+    self:UpdateState()
 end
 
 function DragonFlightUIConfigCategoryListButtonMixin:OnEnter()
     -- print(self:GetName(), 'OnEnter')
+    if ButtonStateBehaviorMixin.OnEnter(self) then self:UpdateState(); end
 end
 
 function DragonFlightUIConfigCategoryListButtonMixin:OnLeave()
     -- print(self:GetName(), 'OnLeave')
+    if ButtonStateBehaviorMixin.OnLeave(self) then self:UpdateState(); end
 end
 
 function DragonFlightUIConfigCategoryListButtonMixin:OnMouseDown()
@@ -100,5 +116,54 @@ end
 
 function DragonFlightUIConfigCategoryListButtonMixin:OnMouseUp()
     -- print(self:GetName(), 'OnMouseUp')  
+    self:BtnClicked()
+end
+
+function DragonFlightUIConfigCategoryListButtonMixin:IsEnabled()
+    return self.isEnabled
+end
+
+function DragonFlightUIConfigCategoryListButtonMixin:SetEnabled(enabled)
+    self.isEnabled = enabled
+    self:UpdateState()
+end
+
+function DragonFlightUIConfigCategoryListButtonMixin:BtnClicked()
+    -- print('DragonFlightUIConfigCategoryButtonMixin:BtnClicked()')  
+    -- if self:IsEnabled() then self.categoryRef.configRef:SubCategoryBtnClicked(self) end
+    self:UpdateState()
+end
+
+function DragonFlightUIConfigCategoryListButtonMixin:UpdateState()
+    -- self:UpdateStateInternal(g_selectionBehavior:IsSelected(self));
+    if not self:IsEnabled() then
+        self.Label:SetFontObject("GameFontHighlight");
+        self.Label:SetAlpha(0.5)
+
+        self.Texture:Hide()
+    elseif self.isSelected then
+        self.Label:SetFontObject("GameFontHighlight");
+        self.Label:SetAlpha(1)
+
+        self.Texture:SetAtlas("Options_List_Active", TextureKitConstants.UseAtlasSize);
+        self.Texture:Show();
+    else
+        self.Label:SetFontObject("GameFontNormal");
+        self.Label:SetAlpha(1)
+
+        if self.over then
+            self.Texture:SetAtlas("Options_List_Hover", TextureKitConstants.UseAtlasSize);
+            self.Texture:Show();
+        else
+            self.Texture:Hide();
+        end
+    end
+end
+
+function DragonFlightUIConfigCategoryListButtonMixin:SetDisplayData(data)
+    self.displayData = data
+    -- if self.displayFrame then self.displayFrame:Hide() end
+    self.displayFrame = CreateFrame('Frame', nil, nil, 'SettingsListTemplateDF')
+    self.displayFrame:Display(data)
 end
 
