@@ -24,6 +24,7 @@ function DragonFlightUIConfigMixin:OnLoad()
     self.categorys = {}
     self.lastElement = nil
     self:SetupCategorys()
+    self:InitCategorys()
 
     self.selected = nil
     self.selectedFrame = nil
@@ -53,6 +54,30 @@ end
 
 function DragonFlightUIConfigMixin:GetCategoryList()
     return self.CategoryList;
+end
+
+function DragonFlightUIConfigMixin:InitCategorys()
+    local list = self.DFCategoryList
+
+    local addCat = function(name)
+        list:AddElement({name = name, header = true})
+    end
+
+    local addSubCat = function(name, cat)
+        list:AddElement({name = name})
+    end
+
+    do
+        -- General
+        local cat = 'General'
+        addCat(cat)
+        addSubCat('Modules', cat)
+        addSubCat('Profiles', cat)
+        addSubCat('WhatsNew', cat)
+    end
+
+    -- for i = 0, 35 do addSubCat('TEST', 'General') end
+
 end
 
 function DragonFlightUIConfigMixin:SetupCategorys()
