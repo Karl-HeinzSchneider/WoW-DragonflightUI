@@ -2,7 +2,7 @@
 local DF_selectionBehavior;
 DragonFlightUIConfigCategoryListMixin = CreateFromMixins(CallbackRegistryMixin);
 
-DragonFlightUIConfigCategoryListMixin:GenerateCallbackEvents({"OnCategorySelected"});
+DragonFlightUIConfigCategoryListMixin:GenerateCallbackEvents({"OnSelectionChanged"});
 
 function DragonFlightUIConfigCategoryListMixin:OnLoad()
     print('DragonFlightUIConfigCategoryListMixin:OnLoad()')
@@ -33,14 +33,9 @@ function DragonFlightUIConfigCategoryListMixin:OnLoad()
     end
     self.ScrollView:SetElementIndentCalculator(IndentCalculator);
 
-    local selfRef = self
     self.ScrollView:SetElementInitializer("DragonflightUIConfigCategoryListElementTemplate",
-                                          function(frame, elementData)
-        -- This is called each time the scrollview acquires a frame this
-        -- should generally call a method on the acquired frame and update
-        -- its visual state accordingly.
-        frame:Init(elementData, selfRef)
-    end)
+                                          GenerateClosure(self.OnElementInitialize, self));
+    self.ScrollView:SetElementResetter(GenerateClosure(self.OnElementReset, self));
 
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, self.ScrollView)
 
@@ -50,11 +45,46 @@ function DragonFlightUIConfigCategoryListMixin:OnLoad()
                                                      scrollBoxAnchorsWithoutBar);
 
     local function OnSelectionChanged(o, elementData, selected)
-        local button = self.ScrollBox:FindFrame(elementData);
-        if button then button:SetSelected(selected); end
+        local frame = self.ScrollBox:FindFrame(elementData);
+        if frame then frame.Button:SetSelected(selected); end
 
         if selected then self.ScrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignNearest); end
     end
+
+    self.selectionBehavior = ScrollUtil.AddSelectionBehavior(self.ScrollBox);
+    self.selectionBehavior:RegisterCallback("OnSelectionChanged", self.OnElementSelectionChanged, self)
+end
+
+function DragonFlightUIConfigCategoryListMixin:OnElementInitialize(element, elementData)
+    element:Init(elementData, nil)
+    element.Button:SetEnabled(true)
+    element.Button:SetSelected(self.selectionBehavior:IsSelected(element))
+
+    element:RegisterCallback('OnClick', self.OnElementClicked, self)
+end
+
+function DragonFlightUIConfigCategoryListMixin:OnElementReset(element)
+    element:UnregisterCallback("OnClick", self);
+end
+
+function DragonFlightUIConfigCategoryListMixin:OnElementClicked(element)
+    print('OnElementClicked', element.elementData.name)
+    self.selectionBehavior:Select(element);
+end
+
+function DragonFlightUIConfigCategoryListMixin:OnElementSelectionChanged(elementData, selected)
+    -- Trigger a visual update on the item that was just [de]selected prior
+    -- to notifying listeners of the change in selection.
+    print('OnElementSelectionChanged', elementData.name, selected)
+    local element = self.ScrollView:FindFrame(elementData);
+
+    if element then element.Button:SetSelected(selected); end
+
+    -- The below is set up such that we'll only notify listeners of our
+    -- *new* selection, and not that we've deselected something in order
+    -- to select something new first.
+
+    -- if selected then self:TriggerEvent("OnSelectionChanged", elementData, selected); end
 end
 
 function DragonFlightUIConfigCategoryListMixin:AddElement(elementData)
@@ -78,10 +108,26 @@ function DragonFlightUIConfigCategoryListMixin:CatButtonClicked(elementData)
 end
 
 -- Element
-DragonFlightUIConfigCategoryListElementMixin = {}
+DragonFlightUIConfigCategoryListElementMixin = CreateFromMixins(CallbackRegistryMixin);
+DragonFlightUIConfigCategoryListElementMixin:GenerateCallbackEvents({"OnClick"});
 
 function DragonFlightUIConfigCategoryListElementMixin:OnLoad()
     -- print('DragonFlightUIConfigCategoryListElementMixin:OnLoad()')
+    CallbackRegistryMixin.OnLoad(self);
+
+    self.Button:SetScript('OnMouseUp', function(button, buttonName, down)
+        self:OnMouseUp()
+    end)
+end
+
+function DragonFlightUIConfigCategoryListElementMixin:OnMouseUp()
+    DevTools_Dump(self.elementData)
+
+    if self.elementData.header then
+    else
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        self:TriggerEvent("OnClick", self);
+    end
 end
 
 function DragonFlightUIConfigCategoryListElementMixin:Init(elementData, listRef)
@@ -162,21 +208,17 @@ function DragonFlightUIConfigCategoryListButtonMixin:OnLeave()
     if ButtonStateBehaviorMixin.OnLeave(self) then self:UpdateState(); end
 end
 
-function DragonFlightUIConfigCategoryListButtonMixin:OnMouseDown()
-    -- print(self:GetName(), 'OnMouseDown')
-end
-
-function DragonFlightUIConfigCategoryListButtonMixin:OnMouseUp()
-    -- print(self:GetName(), 'OnMouseUp')  
-    self:BtnClicked()
-end
-
 function DragonFlightUIConfigCategoryListButtonMixin:IsEnabled()
     return self.isEnabled
 end
 
 function DragonFlightUIConfigCategoryListButtonMixin:SetEnabled(enabled)
     self.isEnabled = enabled
+    self:UpdateState()
+end
+
+function DragonFlightUIConfigCategoryListButtonMixin:SetSelected(selected)
+    self.isSelected = selected
     self:UpdateState()
 end
 
