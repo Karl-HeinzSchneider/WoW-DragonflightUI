@@ -61,6 +61,89 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
         self.Portrait = portrait
     end
+
+    do
+        local extra = self:CreateTexture('DragonflightUIBossFramePortraitExtra')
+        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+        extra:SetSize(80, 79)
+        extra:SetDrawLayer('ARTWORK', 3)
+        extra:SetPoint('CENTER', self.Portrait, 'CENTER', 4, 1)
+
+        self.PortraitExtra = extra
+
+        self:UpdatePortraitExtra('worldboss')
+    end
+
+    do
+        local hp = CreateFrame('StatusBar', nil, self)
+        hp:SetSize(125, 20)
+        hp:SetPoint('RIGHT', self.Portrait, 'LEFT', -1, 0)
+
+        hp:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+        hp:SetStatusBarColor(1, 1, 1, 1)
+
+        self.HealthBar = hp
+    end
+
+    do
+        local mana = CreateFrame('StatusBar', nil, self)
+        mana:SetSize(132, 9)
+        mana:SetPoint('RIGHT', self.Portrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
+
+        mana:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+        mana:SetStatusBarColor(1, 1, 1, 1)
+
+        self.ManaBar = mana
+
+        -- local powerType, powerTypeString = UnitPowerType('target')   
+        self:UpdatePowerType('MANA')
+    end
+end
+
+function DragonflightUIBossframeMixin:UpdatePortraitExtra(class)
+    --    local class = UnitClassification('target')
+    if class == 'worldboss' then
+        self.PortraitExtra:Show()
+        self.PortraitExtra:SetSize(99, 81)
+        self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+        self.PortraitExtra:SetPoint('CENTER', self.Portrait, 'CENTER', 13, 1)
+    elseif class == 'rareelite' or class == 'rare' then
+        self.PortraitExtra:Show()
+        self.PortraitExtra:SetSize(80, 79)
+        self.PortraitExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+        self.PortraitExtra:SetPoint('CENTER', self.Portrait, 'CENTER', 4, 1)
+    elseif class == 'elite' then
+        self.PortraitExtra:Show()
+        self.PortraitExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+        self.PortraitExtra:SetSize(80, 79)
+        self.PortraitExtra:SetPoint('CENTER', self.Portrait, 'CENTER', 4, 1)
+    else
+        self.PortraitExtra:Hide()
+    end
+end
+
+function DragonflightUIBossframeMixin:UpdatePowerType(powerTypeString)
+    local mana = self.ManaBar
+
+    if powerTypeString == 'MANA' then
+        mana:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
+    elseif powerTypeString == 'FOCUS' then
+        mana:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
+    elseif powerTypeString == 'RAGE' then
+        mana:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
+    elseif powerTypeString == 'ENERGY' then
+        mana:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
+    elseif powerTypeString == 'RUNIC_POWER' then
+        mana:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
+    end
 end
 
 function DragonflightUIBossframeMixin:SetupTextures()
