@@ -50,8 +50,8 @@ UI_shared.xsd">
 			</Frame>
 			<Frame parentKey="Container">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.CategoryList" relativePoint="TOPRIGHT" x="16" />
-					<Anchor point="BOTTOMLEFT" relativeKey="$parent.CategoryList" relativePoint="BOTTOMRIGHT" x="16" y="1" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.DFCategoryList" relativePoint="TOPRIGHT" x="16" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.DFCategoryList" relativePoint="BOTTOMRIGHT" x="16" y="1" />
 					<Anchor point="RIGHT" x="-22" />
 				</Anchors>
 				<Frames>

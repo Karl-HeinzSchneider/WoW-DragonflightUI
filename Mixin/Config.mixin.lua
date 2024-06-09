@@ -116,6 +116,33 @@ function DragonFlightUIConfigMixin:InitCategorys()
     end
 
     -- for i = 0, 35 do addSubCat('TEST', 'General') end
+    list:RegisterCallback('OnSelectionChanged', self.OnSelectionChanged, self)
+end
+
+function DragonFlightUIConfigMixin:OnSelectionChanged(elementData, selected)
+    if not selected then return end
+    print('DragonFlightUIConfigMixin:OnSelectionChanged', elementData.cat, elementData.name)
+
+    local cats = self.DFCategoryList.Cats
+
+    local cat = cats[elementData.cat]
+    local sub = cat[elementData.name]
+    local newFrame = sub.displayFrame
+
+    if not newFrame then return end
+
+    local oldFrame = self.selectedFrame
+    if oldFrame then oldFrame:Hide() end
+
+    local f = self.Container
+
+    newFrame:ClearAllPoints()
+    newFrame:SetParent(f)
+    newFrame:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
+    newFrame:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    newFrame:CallRefresh()
+    newFrame:Show()
+    self.selectedFrame = newFrame
 end
 
 function DragonFlightUIConfigMixin:SetupCategorys()

@@ -9,7 +9,6 @@ function DragonFlightUIConfigCategoryListMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self)
 
     self.Cats = {}
-    self.CatsFrameData = {}
 
     self.DataProvider = CreateDataProvider()
 
