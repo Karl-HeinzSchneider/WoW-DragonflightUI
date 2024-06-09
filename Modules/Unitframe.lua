@@ -718,8 +718,7 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
-        local subCat = configFrame:GetSubCategory('Unitframes', name)
-        subCat.displayFrame:CallRefresh()
+        configFrame:RefreshCatSub('Unitframes', name)
     end
 
     refreshCat('Focus')

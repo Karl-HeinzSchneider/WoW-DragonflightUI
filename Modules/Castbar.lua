@@ -191,8 +191,7 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
-        local subCat = configFrame:GetSubCategory('Misc', name)
-        subCat.displayFrame:CallRefresh()
+        configFrame:RefreshCatSub('Misc', name)
     end
 
     refreshCat('Castbar')

@@ -135,3 +135,15 @@ function DragonFlightUIConfigMixin:OnSelectionChanged(elementData, selected)
     newFrame:Show()
     self.selectedFrame = newFrame
 end
+
+function DragonFlightUIConfigMixin:RefreshCatSub(cat, sub)
+    local cats = self.DFCategoryList.Cats
+
+    local _cat = cats[cat]
+    local _sub = _cat[sub]
+    local newFrame = _sub.displayFrame
+
+    if not newFrame then return end
+
+    newFrame:CallRefresh()
+end

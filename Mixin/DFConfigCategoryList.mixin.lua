@@ -110,6 +110,12 @@ function DragonFlightUIConfigCategoryListMixin:SetDisplayData(cat, sub, data)
     _cat[sub] = {displayFrame = displayFrame}
 
     local elementData = {name = sub, cat = cat}
+    local element = self:GetCatSubScrollElement(cat, sub)
+
+    if element then element.Button:SetEnabled(true); end
+end
+
+function DragonFlightUIConfigCategoryListMixin:GetCatSubScrollElement(cat, sub)
     local element = self.ScrollView:FindFrameByPredicate(function(frame, data)
         if (data.name == sub) and (data.cat == cat) then
             return true
@@ -118,7 +124,7 @@ function DragonFlightUIConfigCategoryListMixin:SetDisplayData(cat, sub, data)
         end
     end);
 
-    if element then element.Button:SetEnabled(true); end
+    return element
 end
 
 -- Element
