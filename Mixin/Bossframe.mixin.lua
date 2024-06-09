@@ -78,6 +78,7 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
     elseif (event == 'INSTANCE_ENCOUNTER_ENGAGE_UNIT') then
         self:UpdatePortrait(unit)
         self:UpdatePortraitExtra(unit)
+        self.NameBackground:SetVertexColor(UnitSelectionColor(self.unit))
     end
 end
 
@@ -185,7 +186,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         nameBG:SetPoint('BOTTOMLEFT', self.HealthBar, 'TOPLEFT', -2, -4 - 1)
 
         -- TODO
-        nameBG:Hide()
+        -- nameBG:Hide()
 
         self.NameBackground = nameBG
     end
