@@ -285,6 +285,8 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
+
+    Module.Testframe:UpdateState(db.boss)
 end
 
 function Module:CreateBossFrames()
@@ -292,6 +294,7 @@ function Module:CreateBossFrames()
     for id = 1, 1 do
         print('createBossFrames', id)
         local f = Module:CreateBossFrame(id)
+        Module.Testframe = f
     end
 
     -- frame = CreateFrame(frameType [, name, parent, template, id])

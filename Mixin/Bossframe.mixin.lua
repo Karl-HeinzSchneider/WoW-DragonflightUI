@@ -21,10 +21,46 @@ function DragonflightUIBossframeMixin:Setup(unit)
     self:SetPoint('CENTER', UIParent, 'CENTER', 0, 80)
     self:SetScale(1)
 
-    self:SetupTextures()
-    self:CreateHP(unit)
-    self:CreateMana(unit)
-    self:SetupName(unit)
+    self:SetupTargetFrameStyle()
+end
+
+function DragonflightUIBossframeMixin:UpdateState(state)
+    self:UpdatePortrait(self.unit)
+end
+
+function DragonflightUIBossframeMixin:UpdatePortrait(unit)
+    SetPortraitTexture(self.Portrait, unit)
+end
+
+function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    do
+        local background = self:CreateTexture('DragonflightUIBossFrameBackground')
+        background:SetDrawLayer('BACKGROUND', 2)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
+        background:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
+        self.FrameBackground = background
+    end
+
+    do
+        local border = self:CreateTexture('DragonflightUIBossFrameBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+        border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
+        self.FrameBorder = border
+    end
+
+    do
+        local portrait = self:CreateTexture('DragonflightUIBossFramePortrait')
+        portrait:SetDrawLayer('ARTWORK', 1)
+        portrait:SetSize(56, 56)
+        local CorrectionY = -3
+        local CorrectionX = -5
+        portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
+        self.Portrait = portrait
+    end
 end
 
 function DragonflightUIBossframeMixin:SetupTextures()
