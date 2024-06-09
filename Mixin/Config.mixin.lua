@@ -64,7 +64,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
     end
 
     local addSubCat = function(name, cat)
-        list:AddElement({name = name})
+        list:AddElement({name = name, cat = cat})
     end
 
     do

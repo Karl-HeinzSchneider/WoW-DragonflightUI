@@ -1,8 +1,14 @@
 -- List
-DragonFlightUIConfigCategoryListMixin = {}
+local DF_selectionBehavior;
+DragonFlightUIConfigCategoryListMixin = CreateFromMixins(CallbackRegistryMixin);
+
+DragonFlightUIConfigCategoryListMixin:GenerateCallbackEvents({"OnCategorySelected"});
 
 function DragonFlightUIConfigCategoryListMixin:OnLoad()
     print('DragonFlightUIConfigCategoryListMixin:OnLoad()')
+
+    self.Cats = {}
+    self.CatsFrameData = {}
 
     self.DataProvider = CreateDataProvider()
 
@@ -27,12 +33,13 @@ function DragonFlightUIConfigCategoryListMixin:OnLoad()
     end
     self.ScrollView:SetElementIndentCalculator(IndentCalculator);
 
+    local selfRef = self
     self.ScrollView:SetElementInitializer("DragonflightUIConfigCategoryListElementTemplate",
                                           function(frame, elementData)
         -- This is called each time the scrollview acquires a frame this
         -- should generally call a method on the acquired frame and update
         -- its visual state accordingly.
-        frame:Init(elementData)
+        frame:Init(elementData, selfRef)
     end)
 
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, self.ScrollView)
@@ -41,10 +48,33 @@ function DragonFlightUIConfigCategoryListMixin:OnLoad()
     local scrollBoxAnchorsWithoutBar = {scrollBoxAnchorsWithBar[1], CreateAnchor("BOTTOMRIGHT", 0, 0)};
     ScrollUtil.AddManagedScrollBarVisibilityBehavior(self.ScrollBox, self.ScrollBar, scrollBoxAnchorsWithBar,
                                                      scrollBoxAnchorsWithoutBar);
+
+    local function OnSelectionChanged(o, elementData, selected)
+        local button = self.ScrollBox:FindFrame(elementData);
+        if button then button:SetSelected(selected); end
+
+        if selected then self.ScrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignNearest); end
+    end
 end
 
 function DragonFlightUIConfigCategoryListMixin:AddElement(elementData)
     self.DataProvider:Insert(elementData)
+
+    if elementData.header then self.Cats[elementData.name] = {} end
+end
+
+function DragonFlightUIConfigCategoryListMixin:SetDisplayData(cat, sub, data)
+    print('SetDisplayData', cat, sub, data)
+    local displayFrame = CreateFrame('Frame', nil, nil, 'SettingsListTemplateDF')
+    displayFrame:Display(data)
+
+    local _cat = self.Cats[cat]
+    _cat[sub] = {}
+    _cat[sub].displayFrame = displayframe
+end
+
+function DragonFlightUIConfigCategoryListMixin:CatButtonClicked(elementData)
+    print('CatButtonClicked', elementData.name)
 end
 
 -- Element
@@ -54,8 +84,15 @@ function DragonFlightUIConfigCategoryListElementMixin:OnLoad()
     -- print('DragonFlightUIConfigCategoryListElementMixin:OnLoad()')
 end
 
-function DragonFlightUIConfigCategoryListElementMixin:Init(elementData)
+function DragonFlightUIConfigCategoryListElementMixin:Init(elementData, listRef)
+    print('DragonFlightUIConfigCategoryListElementMixin:Init', elementData.name)
+    self.listRef = listRef
+    self.elementData = elementData
+    self.Button.listRef = listRef
+    self.Button.elementData = elementData
     self:Reset()
+
+    -- self:RefreshCatState()
 
     if elementData.header then
         self.Header:Show()
@@ -69,6 +106,21 @@ end
 function DragonFlightUIConfigCategoryListElementMixin:Reset()
     self.Header:Hide()
     self.Button:Hide()
+end
+
+function DragonFlightUIConfigCategoryListElementMixin:RefreshCatState()
+    if self.elementData.header then return end
+
+    local cat = self.elementData.cat
+    local sub = self.elementData.name
+
+    if self.listRef.Cats[cat][sub] then
+        self.Button:SetEnabled(true)
+    else
+        self.Button:SetEnabled(false)
+    end
+
+    DevTools_Dump(self.listRef.Cats)
 end
 
 -- Header
@@ -129,8 +181,12 @@ function DragonFlightUIConfigCategoryListButtonMixin:SetEnabled(enabled)
 end
 
 function DragonFlightUIConfigCategoryListButtonMixin:BtnClicked()
-    -- print('DragonFlightUIConfigCategoryButtonMixin:BtnClicked()')  
+    -- print('DragonFlightUIConfigCategoryListButtonMixin:BtnClicked()')
     -- if self:IsEnabled() then self.categoryRef.configRef:SubCategoryBtnClicked(self) end
+
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+    self.listRef:CatButtonClicked(self.elementData)
+
     self:UpdateState()
 end
 
