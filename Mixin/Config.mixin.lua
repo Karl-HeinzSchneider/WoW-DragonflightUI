@@ -32,6 +32,7 @@ function DragonFlightUIConfigMixin:OnShow()
         -- self:SubCategoryBtnClicked(btn)
         -- btn:UpdateState()
         -- self:SelectCategory('General', 'Modules')
+        self:OnSelectionChanged({cat = 'General', name = 'Modules'}, true)
     end
 end
 
@@ -54,14 +55,15 @@ function DragonFlightUIConfigMixin:InitCategorys()
         list:AddElement({name = name, header = true})
     end
 
-    local addSubCat = function(name, cat)
-        list:AddElement({name = name, cat = cat})
+    local addSubCat = function(name, cat, new)
+        list:AddElement({name = name, cat = cat, new = new})
     end
 
     do
         -- General
         local cat = 'General'
         addCat(cat)
+        addSubCat('Info', cat)
         addSubCat('Modules', cat)
         addSubCat('Profiles', cat)
         addSubCat('WhatsNew', cat)
@@ -81,6 +83,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('XPbar', cat)
         addSubCat('Repbar', cat)
         addSubCat('Stancebar', cat)
+        addSubCat('Totembar', cat, true)
         addSubCat('Bags', cat)
         addSubCat('Micromenu', cat)
     end
@@ -112,7 +115,7 @@ end
 
 function DragonFlightUIConfigMixin:OnSelectionChanged(elementData, selected)
     if not selected then return end
-    print('DragonFlightUIConfigMixin:OnSelectionChanged', elementData.cat, elementData.name)
+    -- print('DragonFlightUIConfigMixin:OnSelectionChanged', elementData.cat, elementData.name)
 
     local cats = self.DFCategoryList.Cats
 
@@ -134,6 +137,7 @@ function DragonFlightUIConfigMixin:OnSelectionChanged(elementData, selected)
     newFrame:CallRefresh()
     newFrame:Show()
     self.selectedFrame = newFrame
+    self.selected = true
 end
 
 function DragonFlightUIConfigMixin:RefreshCatSub(cat, sub)

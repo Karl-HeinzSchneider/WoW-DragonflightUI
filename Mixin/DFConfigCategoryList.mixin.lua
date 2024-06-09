@@ -168,12 +168,14 @@ function DragonFlightUIConfigCategoryListElementMixin:Init(elementData, listRef)
     else
         self.Button:Show()
         self.Button.Label:SetText(elementData.name)
+        self.Button.NewFeature:SetShown(elementData.new)
     end
 end
 
 function DragonFlightUIConfigCategoryListElementMixin:Reset()
     self.Header:Hide()
     self.Button:Hide()
+    self.Button.NewFeature:Hide()
 end
 
 -- Header
