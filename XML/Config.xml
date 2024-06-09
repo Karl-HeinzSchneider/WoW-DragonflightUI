@@ -33,14 +33,6 @@ UI_shared.xsd">
 					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
 				</Anchors>
 			</Button>
-			<!-- inherits="SettingsCategoryListTemplateDF" -->
-			<Frame parentKey="CategoryList">
-				<Size x="199" y="569" />
-				<Anchors>
-					<Anchor point="TOPLEFT" x="18" y="-76" />
-					<Anchor point="BOTTOMLEFT" x="178" y="46" />
-				</Anchors>
-			</Frame>
 			<Frame parentKey="DFCategoryList" inherits="DragonflightUIConfigCategoryListTemplate">
 				<Size x="199" y="569" />
 				<Anchors>
