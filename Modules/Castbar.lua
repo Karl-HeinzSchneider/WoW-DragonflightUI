@@ -172,8 +172,8 @@ function Module:OnEnable()
         Module.Era()
     end
     Module:ApplySettings()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Castbar',
-                                         {name = 'Castbar', options = options, default = setDefaultValues})
+    DF.ConfigModule:RegisterOptionScreen('Castbar', 'Player',
+                                         {name = 'Player', options = options, default = setDefaultValues})
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -191,10 +191,10 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
-        configFrame:RefreshCatSub('Misc', name)
+        configFrame:RefreshCatSub('Castbar', name)
     end
 
-    refreshCat('Castbar')
+    refreshCat('Player')
 end
 
 function Module:ApplySettings()

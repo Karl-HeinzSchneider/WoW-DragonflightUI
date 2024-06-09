@@ -89,10 +89,18 @@ function DragonFlightUIConfigMixin:InitCategorys()
     end
 
     do
+        -- Castbar
+        local cat = 'Castbar'
+        addCat(cat)
+        addSubCat('Focus', cat)
+        addSubCat('Player', cat)
+        addSubCat('Target', cat)
+    end
+
+    do
         -- Misc
         local cat = 'Misc'
         addCat(cat)
-        addSubCat('Castbar', cat)
         addSubCat('Chat', cat)
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
