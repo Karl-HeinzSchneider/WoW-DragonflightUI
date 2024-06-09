@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
 	<Script file="Mixin/DFConfigCategoryList.mixin.lua" />
-	<!-- Blizzard_CategoryList.xml -->
+	<!-- List -->
 	<Frame name="DragonflightUIConfigCategoryListTemplate" mixin="DragonFlightUIConfigCategoryListMixin" virtual="true">
 		<Frames>
 			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
@@ -22,6 +22,7 @@ UI_shared.xsd">
 			<OnLoad inherit="prepend" method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<!-- Element -->
 	<Frame name="DragonflightUIConfigCategoryListElementTemplate" mixin="DragonFlightUIConfigCategoryListElementMixin" virtual="true">
 		<Frames>
 			<Frame parentKey="Header" inherits="DragonflightUIConfigCategoryListHeaderTemplate" hidden="false" setAllPoints="true">
@@ -31,6 +32,7 @@ UI_shared.xsd">
 		</Frames>
 		<Scripts>
 			<OnLoad inherit="prepend" method="OnLoad" />
+			<OnMouseUp method="OnMouseUp" />
 		</Scripts>
 	</Frame>
 	<!-- Header -->
@@ -99,8 +101,6 @@ UI_shared.xsd">
 			<OnLoad method="OnLoad" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />
-			<OnMouseDown method="OnMouseDown" />
-			<OnMouseUp method="OnMouseUp" />
 		</Scripts>
 	</Button>
 </Ui>
