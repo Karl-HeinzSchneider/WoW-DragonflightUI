@@ -30,6 +30,7 @@ function DragonflightUIBossframeMixin:Setup(unit, id)
     self:RegisterEvent("UNIT_NAME_UPDATE")
     self:RegisterEvent("CVAR_UPDATE")
     self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+    self:RegisterEvent("RAID_TARGET_UPDATE")
 
     self:RegisterUnitEvent("UNIT_HEALTH", unit)
     -- self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
@@ -47,6 +48,8 @@ function DragonflightUIBossframeMixin:OnShow()
     if not unit then return end
 
     self:UpdateName(unit)
+    self:UpdateLevel(unit)
+    self:UpdateTargetIcon(unit)
     self:OnEvent("UNIT_HEALTH", unit)
     self:OnEvent("UNIT_POWER_UPDATE", unit)
     self:OnEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
@@ -79,6 +82,8 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
         self:UpdatePortrait(unit)
         self:UpdatePortraitExtra(unit)
         self.NameBackground:SetVertexColor(UnitSelectionColor(self.unit))
+    elseif (event == 'RAID_TARGET_UPDATE') then
+        self:UpdateTargetIcon(unit)
     end
 end
 
@@ -202,6 +207,29 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     end
 
     do
+        local level = self:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+        -- level:SetSize(100, 10)    
+        level:SetPoint('BOTTOMRIGHT', self.HealthBar, 'TOPLEFT', 16, 3 - 2)
+
+        -- level:SetText('69')
+        self.Level = level
+    end
+
+    do
+        local targetIcon = self.TextureFrame:CreateTexture('DragonflightUIBossFrameRaidTargetIcon')
+
+        targetIcon:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcons')
+        targetIcon:SetDrawLayer('ARTWORK', 5)
+        targetIcon:SetSize(26, 26)
+        targetIcon:ClearAllPoints()
+        targetIcon:SetPoint('CENTER', self.Portrait, 'TOP', 0, 2)
+
+        targetIcon:Hide()
+
+        self.RaidTargetIcon = targetIcon
+    end
+
+    do
         local dx = 5
         -- health vs mana bar
         local deltaSize = 132 - 125
@@ -282,6 +310,27 @@ end
 function DragonflightUIBossframeMixin:UpdateName(unit)
     local name = GetUnitName(unit)
     self.Name:SetText(name)
+end
+
+function DragonflightUIBossframeMixin:UpdateLevel(unit)
+    local targetEffectiveLevel = UnitLevel(self.unit);
+
+    if targetEffectiveLevel > 0 then
+        -- self.Level:Show()
+        self.Level:SetText(targetEffectiveLevel)
+    else
+        self.Level:SetText('??')
+    end
+end
+
+function DragonflightUIBossframeMixin:UpdateTargetIcon(unit)
+    local index = GetRaidTargetIndex(unit);
+    if (index) then
+        SetRaidTargetIconTexture(self.RaidTargetIcon, index);
+        self.RaidTargetIcon:Show();
+    else
+        self.RaidTargetIcon:Hide();
+    end
 end
 
 function DragonflightUIBossframeMixin:UpdateHealth(unit)
