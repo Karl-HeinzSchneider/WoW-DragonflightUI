@@ -325,6 +325,7 @@ function Module:CreateBossFrame(id)
     local name = 'DragonflightUIBoss' .. id .. 'Frame'
     local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate')
     local unit = 'boss' .. id
+    -- unit = 'player'
     f:Setup(unit, id)
 
     return f
