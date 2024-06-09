@@ -22,6 +22,29 @@ function DragonflightUIBossframeMixin:Setup(unit)
     self:SetScale(1)
 
     self:SetupTargetFrameStyle()
+
+    self:RegisterEvent("UNIT_NAME_UPDATE")
+
+    self:RegisterUnitEvent("UNIT_HEALTH", unit)
+    -- self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+    self:RegisterUnitEvent("UNIT_POWER_UPDATE", unit)
+    -- self:RegisterUnitEvent("UNIT_MAXPOWER", unit)^
+
+    self:SetScript("OnEvent", self.OnEvent)
+end
+
+function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
+    print('OnEvent', event, eventUnit)
+
+    if (event == "UNIT_NAME_UPDATE") then
+
+    elseif (event == "UNIT_HEALTH") then
+
+    elseif (event == "UNIT_POWER_UPDATE") then
+
+    elseif (event == "UNIT_POWER_UPDATE") then
+
+    end
 end
 
 function DragonflightUIBossframeMixin:UpdateState(state)
