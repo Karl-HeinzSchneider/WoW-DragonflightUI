@@ -365,14 +365,9 @@ function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
 
     local configFrame = DF.ConfigModule.ConfigFrame
-
-    local refreshCat = function(name)
-        local subCat = configFrame:GetSubCategory('Misc', name)
-        subCat.displayFrame:CallRefresh()
-    end
-
-    refreshCat('Minimap')
-    refreshCat('Questtracker')
+    local cat = 'Misc'
+    configFrame:RefreshCatSub(cat, 'Minimap')
+    configFrame:RefreshCatSub(cat, 'Questtracker')
 end
 
 function Module:ApplySettings()
