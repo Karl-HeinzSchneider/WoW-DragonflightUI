@@ -193,7 +193,7 @@ local bossOptions = {
         locked = {
             type = 'toggle',
             name = 'Locked',
-            desc = 'Lock the Preview Frame.' .. getDefaultStr('locked', 'boss'),
+            desc = 'Lock the Preview Frame. Use this to position the frames.' .. getDefaultStr('locked', 'boss'),
             order = 10
         }
     }
