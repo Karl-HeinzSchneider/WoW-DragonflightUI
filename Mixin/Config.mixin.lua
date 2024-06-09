@@ -64,7 +64,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         local cat = 'General'
         addCat(cat)
         addSubCat('Info', cat)
-        addSubCat('Modules', cat)
+        addSubCat('Modules', cat, true)
         addSubCat('Profiles', cat)
         addSubCat('WhatsNew', cat)
     end
@@ -110,6 +110,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Unitframes
         local cat = 'Unitframes'
         addCat(cat)
+        addSubCat('Boss', cat, true)
         addSubCat('Focus', cat)
         addSubCat('Party', cat)
         addSubCat('Pet', cat)
