@@ -36,6 +36,13 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     do
+        local textureFrame = CreateFrame('Frame', 'DragonflightUIBossFrameTextureFrame', self)
+        textureFrame:SetPoint('CENTER')
+        textureFrame:SetFrameLevel(3)
+        self.TextureFrame = textureFrame
+    end
+
+    do
         local background = self:CreateTexture('DragonflightUIBossFrameBackground')
         background:SetDrawLayer('BACKGROUND', 2)
         background:SetTexture(
@@ -45,7 +52,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     end
 
     do
-        local border = self:CreateTexture('DragonflightUIBossFrameBorder')
+        local border = self.TextureFrame:CreateTexture('DragonflightUIBossFrameBorder')
         border:SetDrawLayer('ARTWORK', 2)
         border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
         border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
@@ -53,7 +60,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     end
 
     do
-        local portrait = self:CreateTexture('DragonflightUIBossFramePortrait')
+        local portrait = self.TextureFrame:CreateTexture('DragonflightUIBossFramePortrait')
         portrait:SetDrawLayer('ARTWORK', 1)
         portrait:SetSize(56, 56)
         local CorrectionY = -3
@@ -79,7 +86,6 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         local hp = CreateFrame('StatusBar', nil, self)
         hp:SetSize(125, 20)
         hp:SetPoint('RIGHT', self.Portrait, 'LEFT', -1, 0)
-
         hp:SetStatusBarTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
         hp:SetStatusBarColor(1, 1, 1, 1)
