@@ -290,7 +290,7 @@ function Module:CreateBossFrames()
     end
 
     for id = 1, 4 do
-        print('createBossFrames', id)
+        -- print('createBossFrames', id)
         local f = Module:CreateBossFrame(id)
 
         Module['BossFrame' .. id] = f

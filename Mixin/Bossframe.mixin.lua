@@ -1,12 +1,11 @@
 DragonflightUIBossframeMixin = {}
 
 function DragonflightUIBossframeMixin:OnLoad()
-    print('DragonflightUIBossframeMixin:OnLoad()')
-
+    -- print('DragonflightUIBossframeMixin:OnLoad()')
 end
 
 function DragonflightUIBossframeMixin:Setup(unit, id)
-    print('DragonflightUIBossframeMixin:Setup()', unit)
+    -- print('DragonflightUIBossframeMixin:Setup()', unit)
 
     self.unit = unit
     self.id = id
