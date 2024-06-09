@@ -1304,8 +1304,7 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
-        local subCat = configFrame:GetSubCategory('Actionbar', name)
-        subCat.displayFrame:CallRefresh()
+        configFrame:RefreshCatSub('Actionbar',name)   
     end
 
     for i = 1, 5 do refreshCat('Actionbar' .. i) end

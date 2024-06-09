@@ -21,11 +21,7 @@ function DragonFlightUIConfigMixin:OnLoad()
 
     settingsList.Header.Title:SetText('Title') ]]
 
-    self.categorys = {}
-    self.lastElement = nil
-    self:SetupCategorys()
-
-    self.selected = nil
+    self:InitCategorys()
     self.selectedFrame = nil
 end
 
@@ -35,7 +31,8 @@ function DragonFlightUIConfigMixin:OnShow()
         -- local btn = self.categorys['General'].subCategorys['Info']
         -- self:SubCategoryBtnClicked(btn)
         -- btn:UpdateState()
-        self:SelectCategory('General', 'Modules')
+        -- self:SelectCategory('General', 'Modules')
+        self:OnSelectionChanged({cat = 'General', name = 'Modules'}, true)
     end
 end
 
@@ -51,205 +48,114 @@ function DragonFlightUIConfigMixin:Close()
     self:Hide()
 end
 
-function DragonFlightUIConfigMixin:GetCategoryList()
-    return self.CategoryList;
-end
+function DragonFlightUIConfigMixin:InitCategorys()
+    local list = self.DFCategoryList
 
-function DragonFlightUIConfigMixin:SetupCategorys()
+    local addCat = function(name)
+        list:AddElement({name = name, header = true})
+    end
+
+    local addSubCat = function(name, cat, new)
+        list:AddElement({name = name, cat = cat, new = new})
+    end
+
     do
         -- General
-        local cat = self:AddCategory('General')
-        -- self:AddSubCategory(cat, 'Info')
-        self:AddSubCategory(cat, 'Modules')
-        self:AddSubCategory(cat, 'Profiles')
-        self:AddSubCategory(cat, 'WhatsNew')
-
-        -- self:AddSpacer(20)
+        local cat = 'General'
+        addCat(cat)
+        addSubCat('Info', cat)
+        addSubCat('Modules', cat)
+        addSubCat('Profiles', cat)
+        addSubCat('WhatsNew', cat)
     end
 
     do
         -- Actionbar
-        local cat = self:AddCategory('Actionbar')
+        local cat = 'Actionbar'
+        addCat(cat)
+        addSubCat('Actionbar1', cat)
+        addSubCat('Actionbar2', cat)
+        addSubCat('Actionbar3', cat)
+        addSubCat('Actionbar4', cat)
+        addSubCat('Actionbar5', cat)
 
-        self:AddSubCategory(cat, 'Actionbar1')
-        self:AddSubCategory(cat, 'Actionbar2')
-        self:AddSubCategory(cat, 'Actionbar3')
-        self:AddSubCategory(cat, 'Actionbar4')
-        self:AddSubCategory(cat, 'Actionbar5')
-        self:AddSubCategory(cat, 'Petbar')
-        self:AddSubCategory(cat, 'XPbar')
-        self:AddSubCategory(cat, 'Repbar')
-        self:AddSubCategory(cat, 'Stancebar')
-        self:AddSubCategory(cat, 'Bags')
-        self:AddSubCategory(cat, 'Micromenu')
+        addSubCat('Petbar', cat)
+        addSubCat('XPbar', cat)
+        addSubCat('Repbar', cat)
+        addSubCat('Stancebar', cat)
+        addSubCat('Totembar', cat, true)
+        addSubCat('Bags', cat)
+        addSubCat('Micromenu', cat)
+    end
 
-        -- self:AddSpacer(20)
+    do
+        -- Castbar
+        local cat = 'Castbar'
+        addCat(cat)
+        addSubCat('Focus', cat)
+        addSubCat('Player', cat)
+        addSubCat('Target', cat)
     end
 
     do
         -- Misc
-        local cat = self:AddCategory('Misc')
-        self:AddSubCategory(cat, 'Castbar')
-        self:AddSubCategory(cat, 'Chat')
-        self:AddSubCategory(cat, 'Minimap')
-        self:AddSubCategory(cat, 'Questtracker')
-
-        -- self:AddSpacer(20)
+        local cat = 'Misc'
+        addCat(cat)
+        addSubCat('Chat', cat)
+        addSubCat('Minimap', cat)
+        addSubCat('Questtracker', cat)
     end
 
     do
         -- Unitframes
-        local cat = self:AddCategory('Unitframes')
-
-        self:AddSubCategory(cat, 'Focus')
-        self:AddSubCategory(cat, 'Party')
-        self:AddSubCategory(cat, 'Pet')
-        self:AddSubCategory(cat, 'Player')
-        self:AddSubCategory(cat, 'Target')
-    end
-end
-
-function DragonFlightUIConfigMixin:AddCategory(name)
-    local categoryList = self:GetCategoryList()
-
-    local cat = CreateFrame('Frame', 'DragonflightUIConfigCategory' .. name, self,
-                            'SettingsCategoryListHeaderTemplateDF')
-    cat.Label:SetText(name)
-    cat.Background:SetAtlas('Options_CategoryHeader_1', true)
-
-    cat:SetCategory(name, self)
-
-    if self.lastElement then
-        cat:SetPoint('TOPLEFT', self.lastElement, 'BOTTOMLEFT', 0, 0)
-        cat:SetPoint('TOPRIGHT', self.lastElement, 'BOTTOMRIGHT', 0, 0)
-    else
-        cat:SetPoint('TOPLEFT', self.CategoryList, 'TOPLEFT', 0, 0)
-        cat:SetPoint('TOPRIGHT', self.CategoryList, 'TOPRIGHT', 0, 0)
+        local cat = 'Unitframes'
+        addCat(cat)
+        addSubCat('Focus', cat)
+        addSubCat('Party', cat)
+        addSubCat('Pet', cat)
+        addSubCat('Player', cat)
+        addSubCat('Target', cat)
     end
 
-    self.lastElement = cat
-    self.categorys[name] = cat
-
-    return cat
+    -- for i = 0, 35 do addSubCat('TEST', 'General') end
+    list:RegisterCallback('OnSelectionChanged', self.OnSelectionChanged, self)
 end
 
-function DragonFlightUIConfigMixin:AddSubCategory(cat, sub)
-    local btn = CreateFrame('Frame', 'DragonflightUIConfigCategoryButton' .. sub, self,
-                            'SettingsCategoryListButtonTemplateDF')
-    btn.Label:SetText(sub)
+function DragonFlightUIConfigMixin:OnSelectionChanged(elementData, selected)
+    if not selected then return end
+    -- print('DragonFlightUIConfigMixin:OnSelectionChanged', elementData.cat, elementData.name)
 
-    cat:AddSubCategory(btn, sub)
-    btn:SetCategory(cat, sub)
-    btn:SetCallback(self.SubCategoryBtnClicked)
-    --[[    btn:RegisterCallback('BtnClicked', function(self)
-        print('ccallback')
-    end) ]]
+    local cats = self.DFCategoryList.Cats
 
-    local gap = 2
+    local cat = cats[elementData.cat]
+    local sub = cat[elementData.name]
+    local newFrame = sub.displayFrame
 
-    if self.lastElement then
-        btn:SetPoint('TOPLEFT', self.lastElement, 'BOTTOMLEFT', 0, -gap)
-        btn:SetPoint('TOPRIGHT', self.lastElement, 'BOTTOMRIGHT', 0, -gap)
-    else
-        btn:SetPoint('TOPLEFT', self.CategoryList, 'TOPLEFT', 0, -gap)
-        btn:SetPoint('TOPRIGHT', self.CategoryList, 'TOPRIGHT', 0, -gap)
-    end
-
-    self.lastElement = btn
-
-    return btn
-end
-
-function DragonFlightUIConfigMixin:AddSpacer(h)
-    local sp = CreateFrame('Frame', 'Spacer', self)
-    sp:SetHeight(h)
-
-    if self.lastElement then
-        sp:SetPoint('TOPLEFT', self.lastElement, 'BOTTOMLEFT', 0, 0)
-        sp:SetPoint('TOPRIGHT', self.lastElement, 'BOTTOMRIGHT', 0, 0)
-    else
-        sp:SetPoint('TOPLEFT', self.CategoryList, 'TOPLEFT', 0, 0)
-        sp:SetPoint('TOPRIGHT', self.CategoryList, 'TOPRIGHT', 0, 0)
-    end
-
-    self.lastElement = sp
-
-    return sp
-end
-
-function DragonFlightUIConfigMixin:GetSettingsList()
-    return self.Container.SettingsList;
-end
-
-function DragonFlightUIConfigMixin:GetSettingsCanvas()
-    return self.Container.SettingsCanvas;
-end
-
-function DragonFlightUIConfigMixin:SubCategoryBtnClicked(btn)
-    -- print('SubCategoryBtnClicked', btn.category, btn.subCategory)
-
-    self:SelectCategory(btn.category, btn.subCategory)
-end
-
-function DragonFlightUIConfigMixin:SelectCategory(cat, sub)
-    -- print('select Cat:', cat, sub)
-
-    local category = self.categorys[cat]
-    if not category then
-        -- print("Category doesn't exist!", cat, sub)
-        return
-    end
-    local subCategory = category.subCategorys[sub]
-    if not subCategory then
-        -- print("Subcategory doesn't exist!", cat, sub)
-        return
-    end
-    -- local btn = self.categorys['General'].subCategorys['Info']
-
-    local old = self.selected
-
-    if old then
-        old.isSelected = false
-        old:UpdateState()
-    end
-
-    subCategory.isSelected = true
-    subCategory:UpdateState()
-    self.selected = subCategory
-
-    -- local settingsList = self:GetSettingsList()
-    -- settingsList:Display(subCategory.displayData)
-    -- settingsList.Header.Title:SetText(subCategory.subCategory)
+    if not newFrame then return end
 
     local oldFrame = self.selectedFrame
     if oldFrame then oldFrame:Hide() end
 
-    local newFrame = subCategory.displayFrame
-    if newFrame then
-        newFrame:ClearAllPoints()
-        newFrame:SetParent(self.Container)
-        newFrame:SetPoint('TOPLEFT', self.Container, 'TOPLEFT', 0, 0)
-        newFrame:SetPoint('BOTTOMRIGHT', self.Container, 'BOTTOMRIGHT', 0, 0)
-        newFrame:CallRefresh()
-        newFrame:Show()
-        self.selectedFrame = newFrame
-    else
-        -- print('no displayframe - nothing to show!')
-    end
+    local f = self.Container
 
+    newFrame:ClearAllPoints()
+    newFrame:SetParent(f)
+    newFrame:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
+    newFrame:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    newFrame:CallRefresh()
+    newFrame:Show()
+    self.selectedFrame = newFrame
+    self.selected = true
 end
 
-function DragonFlightUIConfigMixin:GetSubCategory(cat, sub)
-    local category = self.categorys[cat]
-    if not category then
-        -- print("Category doesn't exist!", cat, sub)
-        return nil
-    end
-    local subCategory = category.subCategorys[sub]
-    if not subCategory then
-        -- print("Subcategory doesn't exist!", cat, sub)
-        return nil
-    end
+function DragonFlightUIConfigMixin:RefreshCatSub(cat, sub)
+    local cats = self.DFCategoryList.Cats
 
-    return subCategory
+    local _cat = cats[cat]
+    local _sub = _cat[sub]
+    local newFrame = _sub.displayFrame
+
+    if not newFrame then return end
+
+    newFrame:CallRefresh()
 end

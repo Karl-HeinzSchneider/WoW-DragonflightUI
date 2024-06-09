@@ -380,12 +380,8 @@ end
 function Module:RegisterOptionScreen(cat, sub, data)
     -- print('RegisterOptionScreen', cat, sub)
     local config = Module.ConfigFrame
-    local subCategory = config:GetSubCategory(cat, sub)
 
-    if subCategory then
-        subCategory:SetDisplayData(data)
-        subCategory:SetEnabled(true)
-    end
+    config.DFCategoryList:SetDisplayData(cat, sub, data)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)
