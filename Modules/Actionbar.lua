@@ -145,6 +145,14 @@ local defaults = {
             padding = 2,
             alwaysShow = true
         },
+        totem = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 2
+        },
         bags = {
             scale = 1,
             anchorFrame = 'UIParent',
@@ -925,6 +933,84 @@ local stanceOptions = {
     }
 }
 
+local totemOptions = {
+    name = 'Totembar',
+    desc = 'Totembar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'totem'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'totem'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'totem'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'totem'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'totem'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'totem'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        }
+    }
+}
+
 local bagsOptions = {
     name = 'Bags',
     desc = 'Bags',
@@ -1279,6 +1365,15 @@ function Module:RegisterOptionScreens()
         end
     })
 
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Totembar', {
+        name = 'Totembar',
+        sub = 'totem',
+        options = totemOptions,
+        default = function()
+            setDefaultSubValues('totem')
+        end
+    })
+
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Bags', {
         name = 'Bags',
         sub = 'bags',
@@ -1304,7 +1399,7 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
-        configFrame:RefreshCatSub('Actionbar',name)   
+        configFrame:RefreshCatSub('Actionbar', name)
     end
 
     for i = 1, 5 do refreshCat('Actionbar' .. i) end
@@ -1312,6 +1407,7 @@ function Module:RefreshOptionScreens()
     refreshCat('XPbar')
     refreshCat('Repbar')
     refreshCat('Stancebar')
+    refreshCat('Totembar')
     refreshCat('Bags')
     refreshCat('Micromenu')
 end
@@ -1332,6 +1428,8 @@ function Module:ApplySettings()
     Module.xpbar:SetState(db.xp)
     Module.repbar:SetState(db.rep)
     Module.stancebar:SetState(db.stance)
+
+    Module.UpdateTotemState(db.totem)
 
     Module.UpdateBagState(db.bags)
     Module.UpdateMicromenuState(db.micro)
@@ -1898,12 +1996,11 @@ function Module.MoveTotem()
     Module.Temp.TotemFixing = nil
     hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
         if Module.Temp.TotemFixing or InCombatLockdown() then return end
-
         Module.Temp.TotemFixing = true
-        MultiCastActionBarFrame:ClearAllPoints()
-        -- MultiCastActionBarFrame:SetPoint('BOTTOM', -348, 147)
-        MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
-        -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5,4 + offset)
+
+        local db = Module.db.profile
+        Module.UpdateTotemState(db.totem)
+
         Module.Temp.TotemFixing = nil
     end)
 end
@@ -2671,6 +2768,20 @@ function Module.UpdateMicromenuState(state)
 
     -- FPS
     Module.UpdateFPSState(state)
+end
+
+function Module.UpdateTotemState(state)
+    -- print('UpdateTotemState')
+    Module.Temp.TotemFixing = true
+    -- MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
+
+    local parent = _G[state.anchorFrame]
+    MultiCastActionBarFrame:ClearAllPoints()
+    MultiCastActionBarFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    MultiCastActionBarFrame:SetScale(state.scale)
+
+    Module.Temp.TotemFixing = nil
 end
 
 function Module.UpdateFPSState(state)
