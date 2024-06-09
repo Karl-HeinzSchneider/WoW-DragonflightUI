@@ -13,8 +13,8 @@ local defaults = {
             anchorFrame = 'MinimapCluster',
             anchor = 'TOPRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = -49.2,
-            y = 0,
+            x = -200,
+            y = -140,
             locked = true,
             durability = 'BOTTOM'
         }
@@ -107,22 +107,8 @@ local options = {
         locked = {
             type = 'toggle',
             name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked'),
+            desc = 'Lock the Preview Frame.' .. getDefaultStr('locked'),
             order = 103
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability', barname),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 110
         },
         trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 120}
     }
@@ -207,22 +193,8 @@ local bossOptions = {
         locked = {
             type = 'toggle',
             name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked', 'boss'),
+            desc = 'Lock the Preview Frame.' .. getDefaultStr('locked', 'boss'),
             order = 10
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability', 'boss'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 20
         }
     }
 }
@@ -283,18 +255,41 @@ function Module:RefreshOptionScreens()
 end
 
 function Module:ApplySettings()
-    local db = Module.db.profile
+    local state = Module.db.profile.boss
 
-    for id = 1, 1 do
+    do
+        local tex = Module.TmpTex
+
+        if state.locked then
+            tex:Hide()
+        else
+            tex:Show()
+            tex:SetScale(state.scale)
+
+            local parent = _G[state.anchorFrame]
+            tex:ClearAllPoints()
+            tex:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        end
+    end
+
+    for id = 1, 4 do
         local f = Module['BossFrame' .. id]
 
-        f:UpdateState(db.boss)
+        f:UpdateState(state)
     end
 end
 
 function Module:CreateBossFrames()
+    do
+        local tex = UIParent:CreateTexture()
+        tex:SetPoint('CENTER')
+        tex:SetSize(232, 100 + 3 * 70)
+        tex:SetColorTexture(1, 1, 0, 0.5)
 
-    for id = 1, 1 do
+        Module.TmpTex = tex
+    end
+
+    for id = 1, 4 do
         print('createBossFrames', id)
         local f = Module:CreateBossFrame(id)
 
@@ -319,11 +314,18 @@ function Module:CreateBossFrames()
 
 end
 
+function Module:HideDefault()
+    for id = 1, 4 do
+        local f = _G['Boss' .. id .. 'TargetFrame']
+        f:SetAlpha(0)
+    end
+end
+
 function Module:CreateBossFrame(id)
     local name = 'DragonflightUIBoss' .. id .. 'Frame'
     local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate')
-    local unit = 'player'
-    f:Setup(unit)
+    local unit = 'boss' .. id
+    f:Setup(unit, id)
 
     return f
 end
@@ -359,6 +361,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 -- Cata
 function Module.Cata()
     Module:CreateBossFrames()
+    Module:HideDefault()
 end
 
 -- Wrath

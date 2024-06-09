@@ -5,14 +5,13 @@ function DragonflightUIBossframeMixin:OnLoad()
 
 end
 
-function DragonflightUIBossframeMixin:Setup(unit)
+function DragonflightUIBossframeMixin:Setup(unit, id)
     print('DragonflightUIBossframeMixin:Setup()', unit)
 
     self.unit = unit
+    self.id = id
     self:SetAttribute('unit', unit)
     self:RegisterForClicks("AnyUp")
-
-    RegisterUnitWatch(self)
 
     self:SetAttribute("type1", "macro")
     self:SetAttribute('macrotext', '/targetexact ' .. unit)
@@ -22,12 +21,15 @@ function DragonflightUIBossframeMixin:Setup(unit)
     self:SetScale(1)
 
     self:SetupTargetFrameStyle()
-    -- self:UpdateStatusStyle()
+
     self:UpdateHealth(unit)
     self:UpdatePower(unit)
+    self:UpdatePortrait(unit)
+    self:UpdatePortraitExtra(unit)
 
     self:RegisterEvent("UNIT_NAME_UPDATE")
     self:RegisterEvent("CVAR_UPDATE")
+    self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 
     self:RegisterUnitEvent("UNIT_HEALTH", unit)
     -- self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
@@ -35,10 +37,27 @@ function DragonflightUIBossframeMixin:Setup(unit)
     -- self:RegisterUnitEvent("UNIT_MAXPOWER", unit)
 
     self:SetScript("OnEvent", self.OnEvent)
+
+    RegisterUnitWatch(self)
+end
+
+function DragonflightUIBossframeMixin:OnShow()
+    -- print('OnShow')
+    local unit = self.unit
+    if not unit then return end
+
+    self:UpdateName(unit)
+    self:OnEvent("UNIT_HEALTH", unit)
+    self:OnEvent("UNIT_POWER_UPDATE", unit)
+    self:OnEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+end
+
+function DragonflightUIBossframeMixin:OnHide()
+    -- print('OnHide')
 end
 
 function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
-    print('OnEvent', event, eventUnit)
+    -- print('OnEvent', event, eventUnit)
     local unit = self.unit
 
     if (event == "UNIT_NAME_UPDATE") then
@@ -56,15 +75,20 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
         -- self:UpdateStatusStyle()
         self:UpdateHealth(unit)
         self:UpdatePower(unit)
+    elseif (event == 'INSTANCE_ENCOUNTER_ENGAGE_UNIT') then
+        self:UpdatePortrait(unit)
+        self:UpdatePortraitExtra(unit)
     end
 end
 
 function DragonflightUIBossframeMixin:UpdateState(state)
     self:UpdatePortrait(self.unit)
 
+    local deltaY = (1 - self.id) * 70
+
     local parent = _G[state.anchorFrame]
     self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y + deltaY)
 
     self:SetScale(state.scale)
 end
@@ -120,7 +144,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
 
         self.PortraitExtra = extra
 
-        self:UpdatePortraitExtra('worldboss')
+        -- self:UpdatePortraitExtra('worldboss')
     end
 
     do
@@ -173,7 +197,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
 
         self.Name = name
 
-        self:UpdateName('Zimtdev')
+        -- self:UpdateName('Zimtdev')
     end
 
     do
@@ -211,8 +235,8 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     end
 end
 
-function DragonflightUIBossframeMixin:UpdatePortraitExtra(class)
-    --    local class = UnitClassification('target')
+function DragonflightUIBossframeMixin:UpdatePortraitExtra(unit)
+    local class = UnitClassification(unit)
     if class == 'worldboss' then
         self.PortraitExtra:Show()
         self.PortraitExtra:SetSize(99, 81)
@@ -254,7 +278,8 @@ function DragonflightUIBossframeMixin:UpdatePowerType(powerTypeString)
     end
 end
 
-function DragonflightUIBossframeMixin:UpdateName(name)
+function DragonflightUIBossframeMixin:UpdateName(unit)
+    local name = GetUnitName(unit)
     self.Name:SetText(name)
 end
 
