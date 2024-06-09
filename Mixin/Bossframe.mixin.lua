@@ -22,28 +22,40 @@ function DragonflightUIBossframeMixin:Setup(unit)
     self:SetScale(1)
 
     self:SetupTargetFrameStyle()
+    -- self:UpdateStatusStyle()
+    self:UpdateHealth(unit)
+    self:UpdatePower(unit)
 
     self:RegisterEvent("UNIT_NAME_UPDATE")
+    self:RegisterEvent("CVAR_UPDATE")
 
     self:RegisterUnitEvent("UNIT_HEALTH", unit)
     -- self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
     self:RegisterUnitEvent("UNIT_POWER_UPDATE", unit)
-    -- self:RegisterUnitEvent("UNIT_MAXPOWER", unit)^
+    -- self:RegisterUnitEvent("UNIT_MAXPOWER", unit)
 
     self:SetScript("OnEvent", self.OnEvent)
 end
 
 function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
     print('OnEvent', event, eventUnit)
+    local unit = self.unit
 
     if (event == "UNIT_NAME_UPDATE") then
 
     elseif (event == "UNIT_HEALTH") then
-
+        self:UpdateHealth(unit)
+    elseif (event == "UNIT_MAXHEALTH") then
+        self:UpdateHealth(unit)
     elseif (event == "UNIT_POWER_UPDATE") then
+        self:UpdatePower(unit)
+    elseif (event == "UNIT_MAXPOWER") then
+        self:UpdatePower(unit)
 
-    elseif (event == "UNIT_POWER_UPDATE") then
-
+    elseif (event == 'CVAR_UPDATE') and (eventUnit == 'statusTextDisplay') then
+        -- self:UpdateStatusStyle()
+        self:UpdateHealth(unit)
+        self:UpdatePower(unit)
     end
 end
 
@@ -118,6 +130,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         hp:SetStatusBarTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
         hp:SetStatusBarColor(1, 1, 1, 1)
+        hp.breakUpLargeNumbers = true
 
         self.HealthBar = hp
     end
@@ -130,6 +143,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         mana:SetStatusBarTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
         mana:SetStatusBarColor(1, 1, 1, 1)
+        mana.breakUpLargeNumbers = true
 
         self.ManaBar = mana
 
@@ -173,13 +187,13 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         self.HealthBar.HealthBarText:SetPoint('CENTER', self.HealthBar, 'CENTER', 0, 0)
         self.HealthBar.HealthBarText:Hide()
 
-        self.HealthBar.HealthBarTextLeft = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        self.HealthBar.HealthBarTextLeft:SetText('100%')
-        self.HealthBar.HealthBarTextLeft:SetPoint('LEFT', self.HealthBar, 'LEFT', dx, 0)
+        self.HealthBar.LeftText = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.HealthBar.LeftText:SetText('100%')
+        self.HealthBar.LeftText:SetPoint('LEFT', self.HealthBar, 'LEFT', dx, 0)
 
-        self.HealthBar.HealthBarTextRight = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        self.HealthBar.HealthBarTextRight:SetText('6942')
-        self.HealthBar.HealthBarTextRight:SetPoint('RIGHT', self.HealthBar, 'RIGHT', -dx, 0)
+        self.HealthBar.RightText = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.HealthBar.RightText:SetText('6942')
+        self.HealthBar.RightText:SetPoint('RIGHT', self.HealthBar, 'RIGHT', -dx, 0)
 
         -- Mana
         self.ManaBar.ManaBarText = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
@@ -187,13 +201,13 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         self.ManaBar.ManaBarText:SetPoint('CENTER', self.ManaBar, 'CENTER', -deltaSize / 2, 0)
         self.ManaBar.ManaBarText:Hide()
 
-        self.ManaBar.ManaBarTextLeft = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        self.ManaBar.ManaBarTextLeft:SetText('100%')
-        self.ManaBar.ManaBarTextLeft:SetPoint('LEFT', self.ManaBar, 'LEFT', dx, 0)
+        self.ManaBar.LeftText = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.ManaBar.LeftText:SetText('100%')
+        self.ManaBar.LeftText:SetPoint('LEFT', self.ManaBar, 'LEFT', dx, 0)
 
-        self.ManaBar.ManaBarTextRight = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        self.ManaBar.ManaBarTextRight:SetText('6942')
-        self.ManaBar.ManaBarTextRight:SetPoint('RIGHT', self.ManaBar, 'RIGHT', -deltaSize - dx, 0)
+        self.ManaBar.RightText = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.ManaBar.RightText:SetText('6942')
+        self.ManaBar.RightText:SetPoint('RIGHT', self.ManaBar, 'RIGHT', -deltaSize - dx, 0)
     end
 end
 
@@ -243,3 +257,45 @@ end
 function DragonflightUIBossframeMixin:UpdateName(name)
     self.Name:SetText(name)
 end
+
+function DragonflightUIBossframeMixin:UpdateHealth(unit)
+    self.HealthBar:SetMinMaxValues(0, UnitHealthMax(unit))
+    self.HealthBar:SetValue(UnitHealth(unit))
+
+    local value = self.HealthBar:GetValue();
+    local valueMin, valueMax = self.HealthBar:GetMinMaxValues();
+
+    local statusStyle = GetCVar("statusTextDisplay")
+    if statusStyle == 'NONE' then
+        self.HealthBar.lockShow = 0
+    else
+        self.HealthBar.lockShow = 1
+    end
+
+    TextStatusBar_UpdateTextStringWithValues(self.HealthBar, self.HealthBar.HealthBarText, value, valueMin, valueMax)
+end
+
+function DragonflightUIBossframeMixin:UpdatePower(unit)
+    local powerType, powerTypeString = UnitPowerType(unit)
+
+    if self.PowerTypeString ~= powerTypeString then
+        self:UpdatePowerType(powerTypeString)
+        self.PowerTypeString = powerTypeString
+    end
+
+    self.ManaBar:SetMinMaxValues(0, UnitPowerMax(unit))
+    self.ManaBar:SetValue(UnitPower(unit))
+
+    local value = self.ManaBar:GetValue();
+    local valueMin, valueMax = self.ManaBar:GetMinMaxValues();
+
+    local statusStyle = GetCVar("statusTextDisplay")
+    if statusStyle == 'NONE' then
+        self.ManaBar.lockShow = 0
+    else
+        self.ManaBar.lockShow = 1
+    end
+
+    TextStatusBar_UpdateTextStringWithValues(self.ManaBar, self.ManaBar.ManaBarText, value, valueMin, valueMax)
+end
+
