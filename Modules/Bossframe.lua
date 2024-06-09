@@ -276,8 +276,7 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
-        local subCat = configFrame:GetSubCategory('Unitframes', name)
-        subCat.displayFrame:CallRefresh()
+        configFrame:RefreshCatSub('Unitframes', name)
     end
 
     refreshCat('Boss')
@@ -286,7 +285,11 @@ end
 function Module:ApplySettings()
     local db = Module.db.profile
 
-    Module.Testframe:UpdateState(db.boss)
+    for id = 1, 1 do
+        local f = Module['BossFrame' .. id]
+
+        f:UpdateState(db.boss)
+    end
 end
 
 function Module:CreateBossFrames()
@@ -294,7 +297,8 @@ function Module:CreateBossFrames()
     for id = 1, 1 do
         print('createBossFrames', id)
         local f = Module:CreateBossFrame(id)
-        Module.Testframe = f
+
+        Module['BossFrame' .. id] = f
     end
 
     -- frame = CreateFrame(frameType [, name, parent, template, id])

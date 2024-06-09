@@ -26,6 +26,12 @@ end
 
 function DragonflightUIBossframeMixin:UpdateState(state)
     self:UpdatePortrait(self.unit)
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    self:SetScale(state.scale)
 end
 
 function DragonflightUIBossframeMixin:UpdatePortrait(unit)
