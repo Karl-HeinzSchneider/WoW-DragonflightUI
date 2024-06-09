@@ -101,6 +101,65 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         -- local powerType, powerTypeString = UnitPowerType('target')   
         self:UpdatePowerType('MANA')
     end
+
+    do
+        local nameBG = self:CreateTexture('DragonflightUIBossFrameNameBackground')
+
+        nameBG:SetTexture(base)
+        nameBG:SetTexCoord(0.7939453125, 0.92578125, 0.3125, 0.34765625)
+        nameBG:SetSize(135, 18)
+        nameBG:ClearAllPoints()
+        nameBG:SetPoint('BOTTOMLEFT', self.HealthBar, 'TOPLEFT', -2, -4 - 1)
+
+        -- TODO
+        nameBG:Hide()
+
+        self.NameBackground = nameBG
+    end
+
+    do
+        local name = self:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+        name:SetSize(100, 10)
+        name:SetPoint('BOTTOM', self.HealthBar, 'TOP', 10, 3 - 2)
+
+        self.Name = name
+
+        self:UpdateName('Zimtdev')
+    end
+
+    do
+        local dx = 5
+        -- health vs mana bar
+        local deltaSize = 132 - 125
+
+        -- HP
+        self.HealthBar.HealthBarText = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.HealthBar.HealthBarText:SetText('100/100')
+        self.HealthBar.HealthBarText:SetPoint('CENTER', self.HealthBar, 'CENTER', 0, 0)
+        self.HealthBar.HealthBarText:Hide()
+
+        self.HealthBar.HealthBarTextLeft = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.HealthBar.HealthBarTextLeft:SetText('100%')
+        self.HealthBar.HealthBarTextLeft:SetPoint('LEFT', self.HealthBar, 'LEFT', dx, 0)
+
+        self.HealthBar.HealthBarTextRight = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.HealthBar.HealthBarTextRight:SetText('6942')
+        self.HealthBar.HealthBarTextRight:SetPoint('RIGHT', self.HealthBar, 'RIGHT', -dx, 0)
+
+        -- Mana
+        self.ManaBar.ManaBarText = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.ManaBar.ManaBarText:SetText('100/100')
+        self.ManaBar.ManaBarText:SetPoint('CENTER', self.ManaBar, 'CENTER', -deltaSize / 2, 0)
+        self.ManaBar.ManaBarText:Hide()
+
+        self.ManaBar.ManaBarTextLeft = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.ManaBar.ManaBarTextLeft:SetText('100%')
+        self.ManaBar.ManaBarTextLeft:SetPoint('LEFT', self.ManaBar, 'LEFT', dx, 0)
+
+        self.ManaBar.ManaBarTextRight = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        self.ManaBar.ManaBarTextRight:SetText('6942')
+        self.ManaBar.ManaBarTextRight:SetPoint('RIGHT', self.ManaBar, 'RIGHT', -deltaSize - dx, 0)
+    end
 end
 
 function DragonflightUIBossframeMixin:UpdatePortraitExtra(class)
@@ -144,6 +203,10 @@ function DragonflightUIBossframeMixin:UpdatePowerType(powerTypeString)
         mana:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
     end
+end
+
+function DragonflightUIBossframeMixin:UpdateName(name)
+    self.Name:SetText(name)
 end
 
 function DragonflightUIBossframeMixin:SetupTextures()
