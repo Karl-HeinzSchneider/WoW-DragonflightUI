@@ -51,8 +51,16 @@ end
 
 function DragonFlightUIConfigCategoryListMixin:OnElementInitialize(element, elementData)
     element:Init(elementData, nil)
-    -- element.Button:SetEnabled(true)
     element.Button:SetSelected(self.selectionBehavior:IsSelected(element))
+
+    if not elementData.header then
+        local _cat = self.Cats[elementData.cat]
+        if _cat[elementData.name] then
+            element.Button:SetEnabled(true)
+        else
+            element.Button:SetEnabled(false)
+        end
+    end
 
     element:RegisterCallback('OnClick', self.OnElementClicked, self)
 end
@@ -103,7 +111,13 @@ function DragonFlightUIConfigCategoryListMixin:SetDisplayData(cat, sub, data)
     _cat[sub] = {displayFrame = displayFrame}
 
     local elementData = {name = sub, cat = cat}
-    local element = self.ScrollView:FindFrame(elementData);
+    local element = self.ScrollView:FindFrameByPredicate(function(frame, data)
+        if (data.name == sub) and (data.cat == cat) then
+            return true
+        else
+            return false
+        end
+    end);
 
     if element then element.Button:SetEnabled(true); end
 end
