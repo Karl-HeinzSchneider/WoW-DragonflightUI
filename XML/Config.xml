@@ -33,6 +33,12 @@ UI_shared.xsd">
 					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
 				</Anchors>
 			</Button>
+			<Button parentKey="MinimizeButton" inherits="MaximizeMinimizeButtonFrameTemplate">
+				<Size x="32" y="32" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.ClosePanelButton" relativePoint="LEFT" x="10" y="0" />
+				</Anchors>
+			</Button>
 			<Frame parentKey="DFCategoryList" inherits="DragonflightUIConfigCategoryListTemplate">
 				<Size x="199" y="569" />
 				<Anchors>
