@@ -1364,16 +1364,16 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('stance')
         end
     })
-
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Totembar', {
-        name = 'Totembar',
-        sub = 'totem',
-        options = totemOptions,
-        default = function()
-            setDefaultSubValues('totem')
-        end
-    })
-
+    if DF.Cata then
+        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Totembar', {
+            name = 'Totembar',
+            sub = 'totem',
+            options = totemOptions,
+            default = function()
+                setDefaultSubValues('totem')
+            end
+        })
+    end
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Bags', {
         name = 'Bags',
         sub = 'bags',
@@ -1407,7 +1407,7 @@ function Module:RefreshOptionScreens()
     refreshCat('XPbar')
     refreshCat('Repbar')
     refreshCat('Stancebar')
-    refreshCat('Totembar')
+    if DF.Cata then refreshCat('Totembar') end
     refreshCat('Bags')
     refreshCat('Micromenu')
 end
@@ -1429,7 +1429,7 @@ function Module:ApplySettings()
     Module.repbar:SetState(db.rep)
     Module.stancebar:SetState(db.stance)
 
-    Module.UpdateTotemState(db.totem)
+    if DF.Cata then Module.UpdateTotemState(db.totem) end
 
     Module.UpdateBagState(db.bags)
     Module.UpdateMicromenuState(db.micro)
