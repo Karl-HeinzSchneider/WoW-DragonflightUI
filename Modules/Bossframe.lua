@@ -232,6 +232,7 @@ function Module:OnDisable()
 end
 
 function Module:RegisterOptionScreens()
+    if not DF.Cata then return end
     DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Boss', {
         name = 'Boss',
         sub = 'boss',
@@ -256,7 +257,7 @@ end
 
 function Module:ApplySettings()
     local state = Module.db.profile.boss
-
+    if not DF.Cata then return end
     do
         local tex = Module.TmpTex
 
