@@ -13,6 +13,18 @@ function DragonFlightUIConfigMixin:OnLoad()
     self.CloseButton.Text:SetText(SETTINGS_CLOSE);
     self.CloseButton:SetScript("OnClick", closePanel);
 
+    self.MinimizeButton:SetOnMaximizedCallback(function(btn)
+        -- print('SetOnMaximizedCallback')
+        self:Minimize(false)
+    end)
+    self.MinimizeButton:SetOnMinimizedCallback(function(btn)
+        -- print('SetOnMinimizedCallback')
+        self:Minimize(true)
+    end)
+
+    Mixin(self, DragonFlightUIKeybindingMixin)
+    -- self:CreatePopup()
+
     --[[    local settingsList = self:GetSettingsList();
     settingsList.Header.DefaultsButton.Text:SetText(SETTINGS_DEFAULTS);
     settingsList.Header.DefaultsButton:SetScript("OnClick", function(button, buttonName, down)
@@ -46,6 +58,16 @@ end
 
 function DragonFlightUIConfigMixin:Close()
     self:Hide()
+end
+
+function DragonFlightUIConfigMixin:Minimize(minimize)
+    -- print('Minimize', minimize)
+    -- <Size x="920" y="724" />
+    if minimize then
+        self:SetSize(920, 250)
+    else
+        self:SetSize(920, 724)
+    end
 end
 
 function DragonFlightUIConfigMixin:InitCategorys()
