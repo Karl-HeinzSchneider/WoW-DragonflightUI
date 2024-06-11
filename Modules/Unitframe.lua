@@ -656,6 +656,8 @@ function Module:OnEnable()
         Module:ApplySettings()
         Module:RefreshOptionScreens()
     end)
+
+    Module.FixBlizzardBug()
 end
 
 function Module:OnDisable()
@@ -918,6 +920,13 @@ function Module.MovePlayerTargetPreset(name)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
+
+function Module.FixBlizzardBug()
+    SetTextStatusBarText(PlayerFrameManaBar, PlayerFrameManaBarText)
+    SetTextStatusBarText(PlayerFrameHealthBar, PlayerFrameHealthBarText)
+    TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
+    TextStatusBar_UpdateTextString(PlayerFrameManaBar)
+end
 
 function Module.GetCoords(key)
     local uiunitframe = {
