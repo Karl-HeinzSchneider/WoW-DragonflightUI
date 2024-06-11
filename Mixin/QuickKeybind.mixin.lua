@@ -45,9 +45,29 @@ function DragonFlightUIQuickKeybindMixin:OnLoad()
 end
 
 function DragonFlightUIQuickKeybindMixin:OnShow()
+    local isCharacterSet = GetCurrentBindingSet() == Enum.BindingSet.Character;
+    self.UseCharacterBindingsButton:SetChecked(isCharacterSet);
+
+    self:ClearOutputText();
+
+    self.mouseOverButton = nil;
+
+    -- ActionButtonUtil.ShowAllActionButtonGrids();
+    -- ActionButtonUtil.ShowAllQuickKeybindButtonHighlights();
+    local showQuickKeybindEffects = true;
+    -- ACTION BARS TODO: Re-enable these effects with proper art
+    -- MainMenuBar:SetQuickKeybindModeEffectsShown(showQuickKeybindEffects);
+    -- MultiActionBar_SetAllQuickKeybindModeEffectsShown(showQuickKeybindEffects);
+    -- ExtraActionBar_ForceShowIfNeeded();
 end
 
 function DragonFlightUIQuickKeybindMixin:OnHide()
+end
+
+function DragonFlightUIQuickKeybindMixin:CancelBinding()
+    LoadBindings(GetCurrentBindingSet());
+    KeybindListener:StopListening();
+    HideUIPanel(self);
 end
 
 function DragonFlightUIQuickKeybindMixin:OnKeyDown()
@@ -57,9 +77,11 @@ function DragonFlightUIQuickKeybindMixin:OnMouseWheel()
 end
 
 function DragonFlightUIQuickKeybindMixin:OnDragStart()
+    self:StartMoving();
 end
 
 function DragonFlightUIQuickKeybindMixin:OnDragStop()
+    self:StopMovingOrSizing();
 end
 
 function DragonFlightUIQuickKeybindMixin:SetOutputText(text)
