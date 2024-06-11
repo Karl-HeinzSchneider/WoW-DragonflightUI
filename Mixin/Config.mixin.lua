@@ -27,8 +27,6 @@ function DragonFlightUIConfigMixin:OnLoad()
         self:Minimize(true)
     end)
 
-    -- Mixin(self, DragonFlightUIKeybindingMixin)
-    -- self:CreatePopup()
     self:InitQuickKeybind()
 
     --[[    local settingsList = self:GetSettingsList();
