@@ -1,3 +1,44 @@
+DragonFlightUIQuickKeybindButtonMixin = {}
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindInit(frameRef)
+    self.QuickKeybindFrame = frameRef
+
+    self:HookScript('OnEnter', self.QuickKeybindButtonOnEnter)
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnShow()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnHide()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnClick()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnEnter()
+    if not self.QuickKeybindFrame:IsInQuickKeybindMode() then return end
+
+    print('OnEnter', self:GetName())
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnLeave()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnMouseWheel()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonSetTooltip()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnUpdate()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:UpdateMouseWheelHandler()
+end
+
+function DragonFlightUIQuickKeybindButtonMixin:DoModeChange()
+end
+
 DragonFlightUIQuickKeybindMixin = {}
 
 local QUICK_KEYBIND_DESCRIPTION = QUICK_KEYBIND_DESCRIPTION or
@@ -42,6 +83,8 @@ function DragonFlightUIQuickKeybindMixin:OnLoad()
     EventRegistry:RegisterCallback("KeybindListener.UnbindFailed", self.OnKeybindUnbindFailed, self);
     EventRegistry:RegisterCallback("KeybindListener.RebindFailed", self.OnKeybindRebindFailed, self);
     EventRegistry:RegisterCallback("KeybindListener.RebindSuccess", self.OnKeybindRebindSuccess, self);
+
+    self:HookButtons()
 end
 
 function DragonFlightUIQuickKeybindMixin:OnShow()
@@ -59,15 +102,38 @@ function DragonFlightUIQuickKeybindMixin:OnShow()
     -- MainMenuBar:SetQuickKeybindModeEffectsShown(showQuickKeybindEffects);
     -- MultiActionBar_SetAllQuickKeybindModeEffectsShown(showQuickKeybindEffects);
     -- ExtraActionBar_ForceShowIfNeeded();
+
+    self.InQuickKeybindMode = true
 end
 
 function DragonFlightUIQuickKeybindMixin:OnHide()
+    self.InQuickKeybindMode = false
+end
+
+function DragonFlightUIQuickKeybindMixin:IsInQuickKeybindMode()
+    return self.InQuickKeybindMode
 end
 
 function DragonFlightUIQuickKeybindMixin:CancelBinding()
     LoadBindings(GetCurrentBindingSet());
     KeybindListener:StopListening();
     HideUIPanel(self);
+end
+
+function DragonFlightUIQuickKeybindMixin:HookButtons()
+
+    local ActionBarButtonNames = {
+        "ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarLeftButton",
+        "MultiBarRightButton"
+    }
+
+    for _, actionBar in ipairs(ActionBarButtonNames) do
+        for i = 1, 12 do
+            local btn = _G[actionBar .. i]
+            Mixin(btn, DragonFlightUIQuickKeybindButtonMixin)
+            btn:QuickKeybindInit(self)
+        end
+    end
 end
 
 function DragonFlightUIQuickKeybindMixin:OnKeyDown()
