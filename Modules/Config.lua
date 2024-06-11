@@ -175,6 +175,8 @@ function Module:AddConfigFrame()
     Module.ConfigFrame = config
     -- config:Show()
 
+    if DF.Cata then config:InitQuickKeybind() end
+
     _G['DragonflightUIConfigFrame'] = config
     tinsert(UISpecialFrames, 'DragonflightUIConfigFrame')
 
