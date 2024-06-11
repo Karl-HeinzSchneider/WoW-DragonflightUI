@@ -2746,53 +2746,32 @@ end
 
 function Module.CreateRestFlipbook()
     if not frame.RestIcon then
-        -- Era seems to support Flipbookanimations now, use anmiated resting icon for all versions; delete old code later @CLEANUP
-        if true then
-            local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
-            rest:SetSize(20, 20)
-            rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
+        local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
+        rest:SetSize(20, 20)
+        rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', -4, 4)
 
-            local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
-            restTexture:SetAllPoints()
-            restTexture:SetColorTexture(1, 1, 1, 1)
-            restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+        local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
+        restTexture:SetAllPoints()
+        restTexture:SetColorTexture(1, 1, 1, 1)
+        restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
+        restTexture:SetTexCoord(0, 7 / 8, 0, 7 / 8)
 
-            local animationGroup = restTexture:CreateAnimationGroup()
-            local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
+        local animationGroup = restTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'RestFlipbookAnimation')
 
-            animationGroup:SetLooping('REPEAT')
-            animation:SetFlipBookFrameWidth(64)
-            animation:SetFlipBookFrameHeight(64)
-            animation:SetFlipBookRows(1)
-            animation:SetFlipBookColumns(8)
-            animation:SetFlipBookFrames(8)
-            animation:SetDuration(2)
+        animationGroup:SetLooping('REPEAT')
+        local size = 60
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(7)
+        animation:SetFlipBookColumns(6)
+        animation:SetFlipBookFrames(42)
+        animation:SetDuration(1.5)
 
-            frame.RestIcon = rest
-            frame.RestIconAnimation = animationGroup
+        frame.RestIcon = rest
+        frame.RestIconAnimation = animationGroup
 
-            PlayerFrame_UpdateStatus()
-        else
-            local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
-            rest:SetSize(20, 20)
-            rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', 0, 0)
-
-            local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
-            restTexture:SetAllPoints()
-            restTexture:SetColorTexture(1, 1, 1, 1)
-            restTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframerestingflipbook')
-            restTexture:SetTexCoord(128 / 1024, 192 / 1024, 0, 64 / 128)
-
-            local animationGroup = restTexture:CreateAnimationGroup()
-            -- flipbook doesn't seem to be supported on Era :/   lua error when calling 'SetFlipBookFrameWidth' etc
-            -- @TODO: maybe other animation, better than static rest icon
-
-            frame.RestIcon = rest
-            -- 'pointless', but saves multiple 'If DF.Wrath...' to eliminate lua error in HookRestFunctions
-            frame.RestIconAnimation = animationGroup
-
-            PlayerFrame_UpdateStatus()
-        end
+        PlayerFrame_UpdateStatus()
     end
 end
 
