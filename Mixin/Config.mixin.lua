@@ -22,8 +22,9 @@ function DragonFlightUIConfigMixin:OnLoad()
         self:Minimize(true)
     end)
 
-    Mixin(self, DragonFlightUIKeybindingMixin)
+    -- Mixin(self, DragonFlightUIKeybindingMixin)
     -- self:CreatePopup()
+    self:InitQuickKeybind()
 
     --[[    local settingsList = self:GetSettingsList();
     settingsList.Header.DefaultsButton.Text:SetText(SETTINGS_DEFAULTS);
@@ -68,6 +69,12 @@ function DragonFlightUIConfigMixin:Minimize(minimize)
     else
         self:SetSize(920, 724)
     end
+end
+
+function DragonFlightUIConfigMixin:InitQuickKeybind()
+    local quick = CreateFrame('Frame', 'DragonflightUIQuickKeybindFrame', UIParent,
+                              'DragonflightUIQuickKeybindFrameTemplate')
+    self.QuickKeybind = quick
 end
 
 function DragonFlightUIConfigMixin:InitCategorys()
