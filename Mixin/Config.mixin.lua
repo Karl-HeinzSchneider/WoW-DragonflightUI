@@ -22,6 +22,9 @@ function DragonFlightUIConfigMixin:OnLoad()
         self:Minimize(true)
     end)
 
+    Mixin(self, DragonFlightUIKeybindingMixin)
+    -- self:CreatePopup()
+
     --[[    local settingsList = self:GetSettingsList();
     settingsList.Header.DefaultsButton.Text:SetText(SETTINGS_DEFAULTS);
     settingsList.Header.DefaultsButton:SetScript("OnClick", function(button, buttonName, down)
