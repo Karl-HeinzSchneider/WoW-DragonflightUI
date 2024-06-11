@@ -51,6 +51,7 @@ end
 } ]]
 function DragonflightUIActionbarMixin:SetState(state)
     self.state = state
+    self.savedAlwaysShow = state.alwaysShow
     self:Update()
 end
 
@@ -190,6 +191,20 @@ function DragonflightUIActionbarMixin:UpdateGrid(show)
         local btn = self.buttonTable[i]
         btn:Hide()
     end
+end
+
+function DragonflightUIActionbarMixin:HookQuickbindMode()
+    EventRegistry:RegisterCallback("DragonflightUI.ToggleQuickKeybindMode", self.OnToggleQuickKeybindMode, self);
+end
+
+function DragonflightUIActionbarMixin:OnToggleQuickKeybindMode(on)
+    -- print('OnToggleQuickKeybindMode', on)
+    if on then
+        self.state.alwaysShow = true
+    else
+        self.state.alwaysShow = self.savedAlwaysShow
+    end
+    self:Update()
 end
 
 function DragonflightUIActionbarMixin:SetupMainBar()
@@ -560,10 +575,13 @@ function DragonflightUIActionbarMixin:StyleButtons()
         checked:SetTexture(textureRefTwo)
         checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
 
-        local hotkey = _G[btnName .. 'HotKey']
-        hotkey:ClearAllPoints()
-        hotkey:SetSize(32, 10)
-        hotkey:SetPoint('TOPRIGHT', -5, -5)
+        btn.DragonflightFixHotkeyPosition = function()
+            local hotkey = _G[btnName .. 'HotKey']
+            hotkey:ClearAllPoints()
+            hotkey:SetSize(32, 10)
+            hotkey:SetPoint('TOPRIGHT', -5, -5)
+        end
+        btn.DragonflightFixHotkeyPosition()
 
         local name = _G[btnName .. 'Name']
         name:ClearAllPoints()
