@@ -980,6 +980,40 @@ function Module.ChangeLFG()
     -- MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
 end
 
+function Module.CreateLFGAnimation()
+    local lfg = CreateFrame('Frame', 'DragonflightUILFGFlipbook')
+    lfg:SetSize(22, 22)
+    lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+
+    local searchingTexture = lfg:CreateTexture('DragonflightUIRestFlipbookTexture')
+    searchingTexture:SetAllPoints()
+    searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-searching')
+    -- searchingTexture:SetSize(44, 44)
+    -- searchingTexture:SetSize(484, 352)
+    -- searchingTexture:SetTexCoord(0.000488281, 0.236816, 0.305664, 0.649414)
+
+    local animationGroup = searchingTexture:CreateAnimationGroup()
+    local animation = animationGroup:CreateAnimation('Flipbook', 'LFGFlipbookAnimation')
+
+    animationGroup:SetLooping('REPEAT')
+
+    animation:SetOrder(1)
+    local size = 44
+    animation:SetFlipBookFrameWidth(size)
+    animation:SetFlipBookFrameHeight(size)
+    animation:SetFlipBookRows(8)
+    animation:SetFlipBookColumns(11)
+    animation:SetFlipBookFrames(80)
+    animation:SetDuration(2)
+
+    animationGroup:Play()
+
+    Module.LFGAnimation = animation
+
+    print('Module.LFGAnimation')
+
+end
+
 function Module.ChangeDifficulty()
     MiniMapInstanceDifficulty:ClearAllPoints()
     MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMRIGHT', 0, 0)
@@ -1034,6 +1068,7 @@ function Module.Wrath()
     Module.MoveBuffs()
     Module.MoveTracker()
     Module.ChangeLFG()
+    Module.CreateLFGAnimation()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
