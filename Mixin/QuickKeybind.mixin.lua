@@ -13,6 +13,75 @@ local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or 'Quick Keybind Mode'
 
 -------------------
 
+local DragonflightUIQuickKeybindButtonOverlay
+
+DragonFlightUIQuickKeybindButtonOverlayMixin = {}
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnLoad()
+    DragonflightUIQuickKeybindButtonOverlay = self
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnEnter()
+    self:UpdateTooltip()
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnLeave()
+    self:ClearButton()
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnKeyUp()
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp()
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:SetButton(btn)
+    self.buttonRef = btn
+    self.command = btn.command
+    self.commandHuman = btn.commandHuman
+
+    self:ClearAllPoints()
+    self:SetAllPoints(btn)
+    self:Show()
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:ClearButton()
+    self.command = nil
+    self.commandHuman = nil
+
+    self:Hide()
+    GameTooltip:Hide()
+end
+
+function DragonFlightUIQuickKeybindButtonOverlayMixin:UpdateTooltip()
+    GameTooltip:ClearLines();
+    GameTooltip:SetOwner(self, "ANCHOR_TOP");
+    -- GameTooltip:AddDoubleLine("Left", "Right", 1, 0, 0, 0, 0, 1);
+
+    -- GameTooltip_AddHighlightLine(GameTooltip, 'GameTooltip_AddHighlightLine')
+    -- GameTooltip_AddInstructionLine(GameTooltip, 'GameTooltip_AddInstructionLine')
+    -- GameTooltip_AddNormalLine(GameTooltip, 'GameTooltip_AddNormalLine')
+    -- GameTooltip_AddErrorLine(GameTooltip, 'GameTooltip_AddErrorLine')
+
+    local command = self.command
+    local commandHuman = self.commandHuman
+
+    GameTooltip_AddHighlightLine(GameTooltip, commandHuman)
+    GameTooltip_AddHighlightLine(GameTooltip, '(' .. command .. ')')
+
+    local hasKeybindings = true
+
+    if hasKeybindings then
+        GameTooltip_AddInstructionLine(GameTooltip, '...')
+        GameTooltip_AddNormalLine(GameTooltip, ESCAPE_TO_UNBIND)
+    else
+        GameTooltip_AddErrorLine(GameTooltip, NOT_BOUND)
+        GameTooltip_AddNormalLine(GameTooltip, PRESS_KEY_TO_BIND)
+    end
+
+    GameTooltip:Show();
+end
+
 DragonFlightUIQuickKeybindButtonMixin = {}
 
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindInit(frameRef)
@@ -34,7 +103,8 @@ function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnEnter()
     if not self.QuickKeybindFrame:IsInQuickKeybindMode() then return end
 
     -- print('OnEnter', self:GetName())
-    self:QuickKeybindButtonSetTooltip()
+    -- self:QuickKeybindButtonSetTooltip()
+    DragonflightUIQuickKeybindButtonOverlay:SetButton(self)
 end
 
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnLeave()
