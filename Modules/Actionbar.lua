@@ -1273,6 +1273,11 @@ function Module:SetupActionbarFrames()
     Module.bar4:StyleButtons()
     Module.bar5:StyleButtons()
 
+    hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
+        -- print('ActionButton_UpdateHotkeys')        
+        if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
+    end)
+
     do
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}

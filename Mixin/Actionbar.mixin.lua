@@ -560,10 +560,13 @@ function DragonflightUIActionbarMixin:StyleButtons()
         checked:SetTexture(textureRefTwo)
         checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
 
-        local hotkey = _G[btnName .. 'HotKey']
-        hotkey:ClearAllPoints()
-        hotkey:SetSize(32, 10)
-        hotkey:SetPoint('TOPRIGHT', -5, -5)
+        btn.DragonflightFixHotkeyPosition = function()
+            local hotkey = _G[btnName .. 'HotKey']
+            hotkey:ClearAllPoints()
+            hotkey:SetSize(32, 10)
+            hotkey:SetPoint('TOPRIGHT', -5, -5)
+        end
+        btn.DragonflightFixHotkeyPosition()
 
         local name = _G[btnName .. 'Name']
         name:ClearAllPoints()

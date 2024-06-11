@@ -264,10 +264,6 @@ function DragonFlightUIQuickKeybindMixin:OnKeyDown(input)
     end
 end
 
-function DragonFlightUIQuickKeybindMixin:ClearActionPrimaryBinding()
-
-end
-
 function DragonFlightUIQuickKeybindMixin:OnCharacterBindingsChanged(setting, value)
     self.UseCharacterBindingsButton:SetChecked(value);
 end
