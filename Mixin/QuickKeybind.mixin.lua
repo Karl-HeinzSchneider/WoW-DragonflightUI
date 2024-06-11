@@ -1,3 +1,18 @@
+local ESCAPE_TO_UNBIND = ESCAPE_TO_UNBIND or "Press the escape key to unbind this action."
+
+local NOT_BOUND = NOT_BOUND or "Not Bound"
+
+local PRESS_KEY_TO_BIND = PRESS_KEY_TO_BIND or "Press a key to set the binding for this action."
+
+local QUICK_KEYBIND_DESCRIPTION = QUICK_KEYBIND_DESCRIPTION or
+                                      "You are in Quick Keybind Mode. Mouse over a button and press the desired key to set the binding for that button.";
+local QUICK_KEYBIND_CANCEL_DESCRIPTION = QUICK_KEYBIND_CANCEL_DESCRIPTION or
+                                             'Canceling will remove you from Quick Keybind Mode.'
+
+local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or 'Quick Keybind Mode'
+
+-------------------
+
 DragonFlightUIQuickKeybindButtonMixin = {}
 
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindInit(frameRef)
@@ -18,7 +33,8 @@ end
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnEnter()
     if not self.QuickKeybindFrame:IsInQuickKeybindMode() then return end
 
-    print('OnEnter', self:GetName())
+    -- print('OnEnter', self:GetName())
+    self:QuickKeybindButtonSetTooltip()
 end
 
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnLeave()
@@ -28,6 +44,32 @@ function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnMouseWheel()
 end
 
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonSetTooltip()
+    GameTooltip:ClearLines();
+    GameTooltip:SetOwner(self, "ANCHOR_TOP");
+    -- GameTooltip:AddDoubleLine("Left", "Right", 1, 0, 0, 0, 0, 1);
+
+    -- GameTooltip_AddHighlightLine(GameTooltip, 'GameTooltip_AddHighlightLine')
+    -- GameTooltip_AddInstructionLine(GameTooltip, 'GameTooltip_AddInstructionLine')
+    -- GameTooltip_AddNormalLine(GameTooltip, 'GameTooltip_AddNormalLine')
+    -- GameTooltip_AddErrorLine(GameTooltip, 'GameTooltip_AddErrorLine')
+
+    local command = self.command
+    local commandHuman = self.commandHuman
+
+    GameTooltip_AddHighlightLine(GameTooltip, commandHuman)
+    GameTooltip_AddHighlightLine(GameTooltip, '(' .. command .. ')')
+
+    local hasKeybindings = true
+
+    if hasKeybindings then
+        GameTooltip_AddInstructionLine(GameTooltip, '...')
+        GameTooltip_AddNormalLine(GameTooltip, ESCAPE_TO_UNBIND)
+    else
+        GameTooltip_AddErrorLine(GameTooltip, NOT_BOUND)
+        GameTooltip_AddNormalLine(GameTooltip, PRESS_KEY_TO_BIND)
+    end
+
+    GameTooltip:Show();
 end
 
 function DragonFlightUIQuickKeybindButtonMixin:QuickKeybindButtonOnUpdate()
@@ -40,13 +82,6 @@ function DragonFlightUIQuickKeybindButtonMixin:DoModeChange()
 end
 
 DragonFlightUIQuickKeybindMixin = {}
-
-local QUICK_KEYBIND_DESCRIPTION = QUICK_KEYBIND_DESCRIPTION or
-                                      "You are in Quick Keybind Mode. Mouse over a button and press the desired key to set the binding for that button.";
-local QUICK_KEYBIND_CANCEL_DESCRIPTION = QUICK_KEYBIND_CANCEL_DESCRIPTION or
-                                             'Canceling will remove you from Quick Keybind Mode.'
-
-local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or 'Quick Keybind Mode'
 
 function DragonFlightUIQuickKeybindMixin:OnLoad()
     self.InstructionText:SetText(QUICK_KEYBIND_DESCRIPTION)
@@ -123,15 +158,17 @@ end
 function DragonFlightUIQuickKeybindMixin:HookButtons()
 
     local ActionBarButtonNames = {
-        "ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarLeftButton",
-        "MultiBarRightButton"
+        "ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarRightButton",
+        "MultiBarLeftButton"
     }
 
-    for _, actionBar in ipairs(ActionBarButtonNames) do
+    for b, actionBar in ipairs(ActionBarButtonNames) do
         for i = 1, 12 do
             local btn = _G[actionBar .. i]
             Mixin(btn, DragonFlightUIQuickKeybindButtonMixin)
             btn:QuickKeybindInit(self)
+            btn.command = actionBar .. i
+            btn.commandHuman = 'Action Bar ' .. b .. ' Button ' .. i
         end
     end
 end
