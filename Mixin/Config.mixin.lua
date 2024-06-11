@@ -1,6 +1,8 @@
 DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
 
+local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or "Quick Keybind Mode";
+
 function DragonFlightUIConfigMixin:OnLoad()
     -- print('DragonFlightUIConfigMixin:OnLoad')
 
@@ -12,6 +14,9 @@ function DragonFlightUIConfigMixin:OnLoad()
 
     self.CloseButton.Text:SetText(SETTINGS_CLOSE);
     self.CloseButton:SetScript("OnClick", closePanel);
+
+    self.KeybindButton.Text:SetText(QUICK_KEYBIND_MODE);
+    self.KeybindButton:SetScript("OnClick", GenerateClosure(self.ShowQuickKeybind, self, true));
 
     self.MinimizeButton:SetOnMaximizedCallback(function(btn)
         -- print('SetOnMaximizedCallback')
@@ -74,7 +79,17 @@ end
 function DragonFlightUIConfigMixin:InitQuickKeybind()
     local quick = CreateFrame('Frame', 'DragonflightUIQuickKeybindFrame', UIParent,
                               'DragonflightUIQuickKeybindFrameTemplate')
+    quick:Hide()
     self.QuickKeybind = quick
+end
+
+function DragonFlightUIConfigMixin:ShowQuickKeybind(show)
+    if show then
+        self:Close()
+        self.QuickKeybind:Show()
+    else
+        self.QuickKeybind:Hide()
+    end
 end
 
 function DragonFlightUIConfigMixin:InitCategorys()

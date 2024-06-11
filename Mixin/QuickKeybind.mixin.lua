@@ -240,7 +240,7 @@ function DragonFlightUIQuickKeybindMixin:SetSelected(command, actionButton)
 end
 
 function DragonFlightUIQuickKeybindMixin:OnKeyDown(input)
-    print('QuickKeybindMixin:OnKeyDown')
+    -- print('QuickKeybindMixin:OnKeyDown')
     local listening = KeybindListener:IsListening();
 
     local gmkey1, gmkey2 = GetBindingKey("TOGGLEGAMEMENU");
