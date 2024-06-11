@@ -181,6 +181,8 @@ function Module:AddConfigFrame()
     Module:RegisterChatCommand('dragonflight', 'SlashCommand')
     Module:RegisterChatCommand('df', 'SlashCommand')
 
+    Module:RegisterChatCommand('kb', 'ToggleQuickKeybindMode')
+
     -- Module:AddTestConfig()
     Module:AddProfileConfig()
 end
@@ -383,6 +385,22 @@ end
 
 function Module:SlashCommand()
     Module:ToggleConfigFrame()
+end
+
+function Module:ToggleQuickKeybindMode()
+    local configFrame = Module.ConfigFrame
+
+    if not configFrame then return end
+
+    if configFrame.QuickKeybind:IsShown() then
+        configFrame:ShowQuickKeybind(false)
+    else
+        configFrame:ShowQuickKeybind(true)
+        configFrame:Hide()
+
+        HideUIPanel(GameMenuFrame)
+        HideUIPanel(SettingsPanel)
+    end
 end
 
 function Module:RegisterOptionScreen(cat, sub, data)
