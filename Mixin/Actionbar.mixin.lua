@@ -51,6 +51,7 @@ end
 } ]]
 function DragonflightUIActionbarMixin:SetState(state)
     self.state = state
+    self.savedAlwaysShow = state.alwaysShow
     self:Update()
 end
 
@@ -190,6 +191,20 @@ function DragonflightUIActionbarMixin:UpdateGrid(show)
         local btn = self.buttonTable[i]
         btn:Hide()
     end
+end
+
+function DragonflightUIActionbarMixin:HookQuickbindMode()
+    EventRegistry:RegisterCallback("DragonflightUI.ToggleQuickKeybindMode", self.OnToggleQuickKeybindMode, self);
+end
+
+function DragonflightUIActionbarMixin:OnToggleQuickKeybindMode(on)
+    -- print('OnToggleQuickKeybindMode', on)
+    if on then
+        self.state.alwaysShow = true
+    else
+        self.state.alwaysShow = self.savedAlwaysShow
+    end
+    self:Update()
 end
 
 function DragonflightUIActionbarMixin:SetupMainBar()

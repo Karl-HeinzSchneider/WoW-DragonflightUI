@@ -162,10 +162,12 @@ function DragonFlightUIQuickKeybindMixin:OnShow()
     -- ExtraActionBar_ForceShowIfNeeded();
 
     self.InQuickKeybindMode = true
+    EventRegistry:TriggerEvent("DragonflightUI.ToggleQuickKeybindMode", true);
 end
 
 function DragonFlightUIQuickKeybindMixin:OnHide()
     self.InQuickKeybindMode = false
+    EventRegistry:TriggerEvent("DragonflightUI.ToggleQuickKeybindMode", false);
 end
 
 function DragonFlightUIQuickKeybindMixin:IsInQuickKeybindMode()
