@@ -185,7 +185,11 @@ function DragonFlightUIQuickKeybindMixin:HookButtons()
         for i = 1, 12 do
             local btn = _G[actionBar .. i]
 
-            btn.command = actionBar .. i
+            if b == 1 then
+                btn.command = 'ACTIONBUTTON' .. i
+            else
+                btn.command = 'MULTIACTIONBAR' .. (b - 1) .. 'BUTTON' .. i
+            end
             btn.commandHuman = 'Action Bar ' .. b .. ' Button ' .. i
 
             btn:HookScript('OnEnter', function(selfButton)
