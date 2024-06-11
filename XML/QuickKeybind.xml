@@ -75,7 +75,7 @@ UI_shared.xsd">
 			<OnLoad method="OnLoad" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />
-			<OnKeyUp method="OnKeyUp" />
+			<OnKeyDown method="OnKeyDown" />
 			<OnMouseUp method="OnMouseUp" />
 		</Scripts>
 	</Frame>
