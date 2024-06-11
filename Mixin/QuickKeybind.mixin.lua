@@ -30,7 +30,7 @@ function DragonFlightUIQuickKeybindButtonOverlayMixin:OnLeave()
 end
 
 function DragonFlightUIQuickKeybindButtonOverlayMixin:OnKeyDown(input)
-    print('ButtonOverlayMixin:OnKeyDown', input)
+    -- print('ButtonOverlayMixin:OnKeyDown', input)
     DragonflightUIQuickKeybindFrame:OnKeyDown(input)
 end
 
@@ -75,10 +75,12 @@ function DragonFlightUIQuickKeybindButtonOverlayMixin:UpdateTooltip()
     GameTooltip_AddHighlightLine(GameTooltip, commandHuman)
     GameTooltip_AddHighlightLine(GameTooltip, '(' .. command .. ')')
 
-    local hasKeybindings = true
+    local keys = {GetBindingKey(self.command)}
+
+    local hasKeybindings = #keys > 0
 
     if hasKeybindings then
-        GameTooltip_AddInstructionLine(GameTooltip, '...')
+        GameTooltip_AddInstructionLine(GameTooltip, table.concat(keys, ", "))
         GameTooltip_AddNormalLine(GameTooltip, ESCAPE_TO_UNBIND)
     else
         GameTooltip_AddErrorLine(GameTooltip, NOT_BOUND)
@@ -131,12 +133,14 @@ function DragonFlightUIQuickKeybindMixin:OnLoad()
     EventRegistry:RegisterCallback("KeybindListener.RebindSuccess", self.OnKeybindRebindSuccess, self);
 
     -- debug
-    EventRegistry:RegisterCallback("KeybindListener.StartedListening", function(self, action, slotIndex)
-        print('StartedListening', action, slotIndex)
-    end, self);
-    EventRegistry:RegisterCallback("KeybindListener.StoppedListening", function(self, oldAction, slotIndex)
-        print('StoppedListening', oldAction, slotIndex)
-    end, self);
+    if false then
+        EventRegistry:RegisterCallback("KeybindListener.StartedListening", function(self, action, slotIndex)
+            print('StartedListening', action, slotIndex)
+        end, self);
+        EventRegistry:RegisterCallback("KeybindListener.StoppedListening", function(self, oldAction, slotIndex)
+            print('StoppedListening', oldAction, slotIndex)
+        end, self);
+    end
 
     self:HookButtons()
 end
@@ -224,7 +228,7 @@ function DragonFlightUIQuickKeybindMixin:ClearOutputText()
 end
 
 function DragonFlightUIQuickKeybindMixin:SetSelected(command, actionButton)
-    print('SetSelected', command, actionButton)
+    -- print('SetSelected', command, actionButton)
     self.mouseOverButton = actionButton;
 
     if command == nil then
@@ -241,13 +245,13 @@ function DragonFlightUIQuickKeybindMixin:OnKeyDown(input)
 
     local gmkey1, gmkey2 = GetBindingKey("TOGGLEGAMEMENU");
     if (input == gmkey1 or input == gmkey1) and not listening then
-        print('(input == gmkey1 or input == gmkey1) and not listening')
+        -- print('(input == gmkey1 or input == gmkey1) and not listening')
         self:CancelBinding();
     elseif input == "ESCAPE" and listening then
-        print('input == "ESCAPE" and listening ')
+        -- print('input == "ESCAPE" and listening ')
         KeybindListener:ClearActionPrimaryBinding();
     else
-        print('else')
+        -- print('else')
         KeybindListener:OnKeyDown(input);
     end
 
@@ -271,15 +275,15 @@ end
 function DragonFlightUIQuickKeybindMixin:OnKeybindUnbindFailed(action, unbindAction, unbindSlotIndex)
     local errorFormat = unbindSlotIndex == 1 and PRIMARY_KEY_UNBOUND_ERROR or KEY_UNBOUND_ERROR;
     self:SetOutputText(errorFormat:format(GetBindingName(unbindAction)));
-    print('OnKeybindUnbindFailed:', action, unbindAction, unbindSlotIndex)
+    -- print('OnKeybindUnbindFailed:', action, unbindAction, unbindSlotIndex)
 end
 
 function DragonFlightUIQuickKeybindMixin:OnKeybindRebindFailed(action)
     self:SetOutputText(KEYBINDINGFRAME_MOUSEWHEEL_ERROR);
-    print('OnKeybindRebindFailed:', action)
+    -- print('OnKeybindRebindFailed:', action)
 end
 
 function DragonFlightUIQuickKeybindMixin:OnKeybindRebindSuccess(action)
     self:SetOutputText(KEY_BOUND);
-    print('OnKeybindRebindSuccess', action)
+    -- print('OnKeybindRebindSuccess', action)
 end
