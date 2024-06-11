@@ -981,36 +981,92 @@ function Module.ChangeLFG()
 end
 
 function Module.CreateLFGAnimation()
-    local lfg = CreateFrame('Frame', 'DragonflightUILFGFlipbook')
-    lfg:SetSize(22, 22)
+    local lfg = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
+    lfg:SetSize(33, 33)
     lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 
-    local searchingTexture = lfg:CreateTexture('DragonflightUIRestFlipbookTexture')
-    searchingTexture:SetAllPoints()
-    searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-searching')
-    -- searchingTexture:SetSize(44, 44)
-    -- searchingTexture:SetSize(484, 352)
-    -- searchingTexture:SetTexCoord(0.000488281, 0.236816, 0.305664, 0.649414)
+    Module.LFG = lfg
 
-    local animationGroup = searchingTexture:CreateAnimationGroup()
-    local animation = animationGroup:CreateAnimation('Flipbook', 'LFGFlipbookAnimation')
+    do
+        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
+        searching:SetSize(33, 33)
+        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
 
-    animationGroup:SetLooping('REPEAT')
+        local searchingTexture = searching:CreateTexture('DragonflightUILFGSearchingFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-searching')
+        -- searchingTexture:SetBlendMode('BLEND')
 
-    animation:SetOrder(1)
-    local size = 44
-    animation:SetFlipBookFrameWidth(size)
-    animation:SetFlipBookFrameHeight(size)
-    animation:SetFlipBookRows(8)
-    animation:SetFlipBookColumns(11)
-    animation:SetFlipBookFrames(80)
-    animation:SetDuration(2)
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGSearchingFlipbookAnimation')
 
-    animationGroup:Play()
+        animationGroup:SetLooping('REPEAT')
 
-    Module.LFGAnimation = animation
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(8)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(80)
+        animation:SetDuration(2)
 
-    print('Module.LFGAnimation')
+        animationGroup:Play()
+        animationGroup:Stop()
+        searching:Hide()
+
+        searching.animation = animationGroup
+        lfg.searching = searching
+    end
+
+    do
+        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
+        searching:SetSize(33, 33)
+        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
+
+        local searchingTexture = searching:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-mouseover')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 43 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(1)
+        animation:SetFlipBookColumns(12)
+        animation:SetFlipBookFrames(12)
+        animation:SetDuration(0.4)
+
+        animationGroup:Play()
+        animationGroup:Stop()
+        searching:Hide()
+
+        searching.animation = animationGroup
+        lfg.mouseover = searching
+    end
+
+    lfg:SetScript('OnEnter', function()
+        lfg.searching.animation:Stop()
+        lfg.searching:Hide()
+        lfg.mouseover:Show()
+        lfg.mouseover.animation:Play()
+    end)
+
+    lfg:SetScript('OnLeave', function()
+        lfg.mouseover.animation:Stop()
+        lfg.mouseover:Hide()
+        lfg.searching:Show()
+        lfg.searching.animation:Play()
+    end)
+
+    lfg.searching:Show()
+    lfg.searching.animation:Play()
 
 end
 
