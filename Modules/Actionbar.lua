@@ -345,6 +345,59 @@ local options = {
     }
 }
 
+-- .....\BlizzardInterfaceCode\Interface\FrameXML\SettingDefinitions\ActionBarsOverrides.lua
+local ActionBarSettingsTogglesCache = nil;
+local ActionBarSettingsLastCacheTime = 0;
+local ActionBarSettingsCacheTimeout = 10;
+
+local actionBars = {
+    {
+        variable = "PROXY_SHOW_ACTIONBAR_2",
+        label = OPTION_SHOW_ACTION_BAR:format(2),
+        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR1,
+        uvar = "SHOW_MULTI_ACTIONBAR_1"
+    }, {
+        variable = "PROXY_SHOW_ACTIONBAR_3",
+        label = OPTION_SHOW_ACTION_BAR:format(3),
+        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR2,
+        uvar = "SHOW_MULTI_ACTIONBAR_2"
+    }, {
+        variable = "PROXY_SHOW_ACTIONBAR_4",
+        label = OPTION_SHOW_ACTION_BAR:format(4),
+        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR3,
+        uvar = "SHOW_MULTI_ACTIONBAR_3"
+    }, {
+        variable = "PROXY_SHOW_ACTIONBAR_5",
+        label = OPTION_SHOW_ACTION_BAR:format(5),
+        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR4,
+        uvar = "SHOW_MULTI_ACTIONBAR_4"
+    }
+};
+
+local function SetActionBarToggle(index, value)
+    -- Use local cache instead of GetActionBarToggles since it could lead to inconsistencies between UI and server state.
+    -- If SetActionBarToggle is called multiple times before the server has mirrored the data back to the client, the client will send an outdated mask to the server and clear out values that were just set.
+    -- Timeout the cache so we use latest mirror data after a period of time. This is incase actionbar toggles are set through macros or other addons, we need to make sure the settings still syncs with mirror data.
+    if ((ActionBarSettingsTogglesCache == nil) or
+        (GetTime() - ActionBarSettingsLastCacheTime > ActionBarSettingsCacheTimeout)) then
+        ActionBarSettingsTogglesCache = {GetActionBarToggles()};
+    end
+
+    -- reset cache timeout each time set actionbar is called so that it doesnt timeout while toggling quickly
+    ActionBarSettingsLastCacheTime = GetTime();
+
+    ActionBarSettingsTogglesCache[index] = value;
+
+    _G[actionBars[index].uvar] = value;
+
+    SetActionBarToggles(unpack(ActionBarSettingsTogglesCache));
+    MultiActionBar_Update();
+end
+
+local function GetActionBarToggle(index)
+    return select(index, GetActionBarToggles());
+end
+
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
@@ -506,6 +559,40 @@ local function GetBarOption(n)
         }
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
+    else
+        local moreOptions = {
+            activate = {
+                type = 'toggle',
+                name = actionBars[n - 1].label,
+                desc = actionBars[n - 1].tooltip,
+                order = 13,
+                blizzard = true
+            }
+        }
+
+        for k, v in pairs(moreOptions) do opt.args[k] = v end
+
+        opt.get = function(info)
+            local key = info[1]
+            local sub = info[2]
+
+            if sub == 'activate' then
+                return GetActionBarToggle(n - 1)
+            else
+                return getOption(info)
+            end
+        end
+
+        opt.set = function(info, value)
+            local key = info[1]
+            local sub = info[2]
+
+            if sub == 'activate' then
+                SetActionBarToggle(n - 1, value)
+            else
+                setOption(info, value)
+            end
+        end
     end
 
     return opt

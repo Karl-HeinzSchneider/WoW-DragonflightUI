@@ -15,6 +15,12 @@ function ScrollableListItemMixinDF:Init(elementData)
     -- print('init', key, data)
     self:Reset()
 
+    if data.new then
+        self.Item.NewFeature:Show()
+    elseif data.blizzard then
+        self.Item.Blizzard:Show()
+    end
+
     if data.type == 'header' then
         self:SetHeader(data.name)
     elseif data.type == 'range' then
@@ -117,6 +123,9 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Dropdown:Hide()
     self.Item.Dropdown:UnregisterCallback('OnValueChanged', self)
 
+    self.Item.NewFeature:Hide()
+    self.Item.Blizzard:Hide()
+    self.Item.Blizzard.Label:SetText('BLIZZ')
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
