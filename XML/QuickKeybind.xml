@@ -29,7 +29,7 @@ UI_shared.xsd">
 		</Layers>
 		<Frames>
 			<Frame parentKey="BG" inherits="DialogBorderTemplate" />
-			<Frame parentKey="Header" inherits="DialogHeaderTemplate">
+			<Frame parentKey="Header" inherits="DragonflightDialogHeaderTemplate">
 				<KeyValues>
 					<KeyValue key="textString" value="QUICK_KEYBIND_MODE" type="global" />
 				</KeyValues>
@@ -77,6 +77,52 @@ UI_shared.xsd">
 			<OnLeave method="OnLeave" />
 			<OnKeyDown method="OnKeyDown" />
 			<OnMouseUp method="OnMouseUp" />
+		</Scripts>
+	</Frame>
+	<Frame name="DragonflightDialogHeaderTemplate" mixin="DialogHeaderMixin" virtual="true">
+		<Size x="200" y="39" />
+		<KeyValues>
+			<!-- Override this to change how much padding is on the left & right of the text. Padding is applied evenly on the left and right (headerTextPadding / 2) on each side -->
+			<KeyValue key="headerTextPadding" value="64" type="number" />
+			<!-- Optional: Add this to inheriting frames in order to auotmatically set the text when the header loads -->
+			<!-- <KeyValue key="textString" value="MAINMENU_BUTTON" type="global"/> -->
+		</KeyValues>
+		<Anchors>
+			<Anchor point="TOP" y="11" />
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture hidden="false" parentKey="LeftBG" file="Interface\AddOns\DragonflightUI\Textures\uiframediamondmetalheader2x" texelSnappingBias="0.0" snapToPixelGrid="false">
+					<Size x="32" y="39" />
+					<Anchors>
+						<Anchor point="LEFT" />
+					</Anchors>
+					<TexCoords left="0.00390625" right="0.503906" top="0.310547" bottom="0.615234" />
+				</Texture>
+				<Texture hidden="false" parentKey="RightBG" file="Interface\AddOns\DragonflightUI\Textures\uiframediamondmetalheader2x" texelSnappingBias="0.0" snapToPixelGrid="false">
+					<Size x="32" y="39" />
+					<Anchors>
+						<Anchor point="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.00390625" right="0.503906" top="0.619141" bottom="0.923828" />
+				</Texture>
+				<Texture hidden="false" parentKey="CenterBG" file="Interface\AddOns\DragonflightUI\Textures\uiframediamondmetalheader2x" texelSnappingBias="0.0" snapToPixelGrid="false">
+					<Size x="32" y="39" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.LeftBG" relativePoint="TOPRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.RightBG" relativePoint="BOTTOMLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="0.5" top="0.00195312" bottom="0.306641" />
+				</Texture>
+				<FontString parentKey="Text" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="TOP" y="-13" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
 </Ui>

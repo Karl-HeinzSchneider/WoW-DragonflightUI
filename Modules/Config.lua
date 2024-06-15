@@ -178,7 +178,7 @@ function Module:AddConfigFrame()
     if DF.Cata then
         config:InitQuickKeybind()
     else
-        -- config:InitQuickKeybind()
+        config:InitQuickKeybind()
     end
 
     _G['DragonflightUIConfigFrame'] = config
