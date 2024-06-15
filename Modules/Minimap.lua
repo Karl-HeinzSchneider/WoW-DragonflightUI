@@ -977,7 +977,103 @@ end
 function Module.ChangeLFG()
     MiniMapLFGFrame:ClearAllPoints()
     MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
-    -- MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
+    MiniMapLFGFrameBorder:Hide()
+    MiniMapLFGFrameIcon:Hide()
+
+    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame')
+    Mixin(lfg, DragonflightUILFGButtonMixin)
+    lfg:Init()
+    lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
+end
+
+function Module.CreateLFGAnimation()
+    local lfg = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
+    lfg:SetSize(33, 33)
+    lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+
+    Module.LFG = lfg
+
+    do
+        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
+        searching:SetSize(33, 33)
+        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
+
+        local searchingTexture = searching:CreateTexture('DragonflightUILFGSearchingFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-searching')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGSearchingFlipbookAnimation')
+
+        animationGroup:SetLooping('REPEAT')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(8)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(80)
+        animation:SetDuration(2)
+
+        animationGroup:Play()
+        animationGroup:Stop()
+        searching:Hide()
+
+        searching.animation = animationGroup
+        lfg.searching = searching
+    end
+
+    do
+        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
+        searching:SetSize(33, 33)
+        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
+
+        local searchingTexture = searching:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-mouseover')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 43 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(1)
+        animation:SetFlipBookColumns(12)
+        animation:SetFlipBookFrames(12)
+        animation:SetDuration(0.4)
+
+        animationGroup:Play()
+        animationGroup:Stop()
+        searching:Hide()
+
+        searching.animation = animationGroup
+        lfg.mouseover = searching
+    end
+
+    lfg:SetScript('OnEnter', function()
+        lfg.searching.animation:Stop()
+        lfg.searching:Hide()
+        lfg.mouseover:Show()
+        lfg.mouseover.animation:Play()
+    end)
+
+    lfg:SetScript('OnLeave', function()
+        lfg.mouseover.animation:Stop()
+        lfg.mouseover:Hide()
+        lfg.searching:Show()
+        lfg.searching.animation:Play()
+    end)
+
+    lfg.searching:Show()
+    lfg.searching.animation:Play()
+
 end
 
 function Module.ChangeDifficulty()
@@ -1034,6 +1130,7 @@ function Module.Wrath()
     Module.MoveBuffs()
     Module.MoveTracker()
     Module.ChangeLFG()
+    -- Module.CreateLFGAnimation()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
