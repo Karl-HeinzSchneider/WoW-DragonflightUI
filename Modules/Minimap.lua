@@ -978,6 +978,13 @@ function Module.ChangeLFG()
     MiniMapLFGFrame:ClearAllPoints()
     MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
     -- MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
+
+    local lfg = CreateFrame('Frame', 'DragonflightUILFGButtonFrame')
+    Mixin(lfg, DragonflightUILFGButtonMixin)
+    lfg:Init()
+    lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+
+    -- lfg:StartInitialAnimation()
 end
 
 function Module.CreateLFGAnimation()
@@ -1124,7 +1131,7 @@ function Module.Wrath()
     Module.MoveBuffs()
     Module.MoveTracker()
     Module.ChangeLFG()
-    Module.CreateLFGAnimation()
+    -- Module.CreateLFGAnimation()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
