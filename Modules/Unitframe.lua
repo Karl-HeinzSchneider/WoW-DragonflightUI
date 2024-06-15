@@ -1980,6 +1980,9 @@ function Module.ChangeFocusFrame()
     FocusFrameTextureFrameLevelText:ClearAllPoints()
     FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
 
+    FocusFrameTextureFrameDeadText:ClearAllPoints()
+    FocusFrameTextureFrameDeadText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
+
     local dx = 5
     -- health vs mana bar
     local deltaSize = 132 - 125
@@ -2242,6 +2245,9 @@ function Module.ChangeFocusToT()
 
     FocusFrameToTTextureFrameName:ClearAllPoints()
     FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+
+    FocusFrameToTTextureFrameDeadText:ClearAllPoints()
+    FocusFrameToTTextureFrameDeadText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
 end
 
 function Module.UpdateFocusText()
