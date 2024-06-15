@@ -657,7 +657,7 @@ function Module:OnEnable()
         Module:RefreshOptionScreens()
     end)
 
-    Module.FixBlizzardBug()
+    -- Module.FixBlizzardBug()
 end
 
 function Module:OnDisable()
@@ -838,7 +838,12 @@ function Module:ApplySettings()
         local alpha = 1
         if obj.hideStatusbarText then alpha = 0 end
         PetFrameHealthBarText:SetAlpha(alpha)
+        PetFrameHealthBarTextLeft:SetAlpha(alpha)
+        PetFrameHealthBarTextRight:SetAlpha(alpha)
+
         PetFrameManaBarText:SetAlpha(alpha)
+        PetFrameManaBarTextLeft:SetAlpha(alpha)
+        PetFrameManaBarTextRight:SetAlpha(alpha)
     end
 
     -- party
