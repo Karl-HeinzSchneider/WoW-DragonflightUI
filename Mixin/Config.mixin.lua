@@ -102,6 +102,10 @@ function DragonFlightUIConfigMixin:InitCategorys()
         list:AddElement({name = name, cat = cat, new = new})
     end
 
+    local addSpacer = function()
+        list:AddElement({name = '*spacer*', spacer = true})
+    end
+
     do
         -- General
         local cat = 'General'
@@ -161,6 +165,8 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Player', cat)
         addSubCat('Target', cat)
     end
+
+    addSpacer()
 
     -- for i = 0, 35 do addSubCat('TEST', 'General') end
     list:RegisterCallback('OnSelectionChanged', self.OnSelectionChanged, self)

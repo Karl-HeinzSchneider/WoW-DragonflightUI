@@ -52,16 +52,15 @@ function DragonFlightUIConfigCategoryListMixin:OnElementInitialize(element, elem
     element:Init(elementData, nil)
     element.Button:SetSelected(self.selectionBehavior:IsSelected(element))
 
-    if not elementData.header then
+    if not elementData.header and not elementData.spacer then
         local _cat = self.Cats[elementData.cat]
         if _cat[elementData.name] then
             element.Button:SetEnabled(true)
         else
             element.Button:SetEnabled(false)
         end
+        element:RegisterCallback('OnClick', self.OnElementClicked, self)
     end
-
-    element:RegisterCallback('OnClick', self.OnElementClicked, self)
 end
 
 function DragonFlightUIConfigCategoryListMixin:OnElementReset(element)
@@ -165,6 +164,8 @@ function DragonFlightUIConfigCategoryListElementMixin:Init(elementData, listRef)
     if elementData.header then
         self.Header:Show()
         self.Header.Label:SetText(elementData.name)
+    elseif elementData.spacer then
+        -- do nothing
     else
         self.Button:Show()
         self.Button.Label:SetText(elementData.name)
