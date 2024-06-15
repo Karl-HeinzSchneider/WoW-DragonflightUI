@@ -982,7 +982,7 @@ function Module.ChangeLFG()
     local lfg = CreateFrame('Frame', 'DragonflightUILFGButtonFrame')
     Mixin(lfg, DragonflightUILFGButtonMixin)
     lfg:Init()
-    lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
 
     -- lfg:StartInitialAnimation()
 end

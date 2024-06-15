@@ -16,10 +16,47 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
     self.activeAnim = LFG_EYE_NONE_ANIM;
     self.isStatic = false;
 
+    local btnSize = 25
+
+    -- init
+    do
+        local f = CreateFrame('Frame')
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
+
+        local searchingTexture = f:CreateTexture()
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-initial')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGSearchingFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(5)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(52)
+        animation:SetDuration(1.5)
+
+        -- animationGroup:Play()
+        -- animationGroup:Stop()
+        -- searching:Hide()
+
+        f:Hide()
+
+        self.EyeInitial = f
+        self.EyeInitial.EyeInitialAnim = animationGroup
+    end
+
     -- searching
     do
         local f = CreateFrame('Frame')
-        f:SetSize(33, 33)
+        f:SetSize(btnSize, btnSize)
         f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
         local searchingTexture = f:CreateTexture()
@@ -47,15 +84,15 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
 
         f:Hide()
 
-        self.EyeInitial = f
-        self.EyeInitial.EyeInitialAnim = animationGroup
+        self.EyeSearchingLoop = f
+        self.EyeSearchingLoop.EyeSearchingLoopAnim = animationGroup
     end
 
     -- hover
     do
         local f = CreateFrame('Frame')
-        f:SetSize(33, 33)
-        f:SetPoint('CENTER', self, 'CENTER', 50, 0)
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
         local searchingTexture = f:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
         searchingTexture:SetAllPoints()
