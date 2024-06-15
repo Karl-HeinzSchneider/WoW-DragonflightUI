@@ -314,6 +314,52 @@ local buffsOptions = {
     }
 }
 
+-- blizz options buffs
+do
+    local moreOptions = {
+        consolidate = {
+            type = 'toggle',
+            name = CONSOLIDATE_BUFFS_TEXT,
+            desc = OPTION_TOOLTIP_CONSOLIDATE_BUFFS,
+            order = 13,
+            blizzard = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do buffsOptions.args[k] = v end
+
+    buffsOptions.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'consolidate' then
+            C_CVar.GetCVarBool("consolidateBuffs")
+        else
+            return getOption(info)
+        end
+    end
+
+    local function CVarChangedCB()
+        BuffFrame_Update();
+    end
+
+    buffsOptions.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'consolidate' then
+            if value then
+                C_CVar.SetCVar("consolidateBuffs", 1)
+            else
+                C_CVar.SetCVar("consolidateBuffs", 0)
+            end
+            CVarChangedCB()
+        else
+            setOption(info, value)
+        end
+    end
+end
+
 local trackerOptions = {
     type = 'group',
     name = 'Tracker',
