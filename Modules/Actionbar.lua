@@ -1587,6 +1587,7 @@ function Module:ApplySettings()
     Module.stancebar:SetState(db.stance)
 
     if db.bar1.range then
+        self:Unhook('ActionButton_UpdateRangeIndicator')
         self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
             DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
         end)
