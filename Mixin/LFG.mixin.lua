@@ -119,6 +119,69 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
         self.EyeMouseOver.EyeMouseOverAnim = animationGroup
     end
 
+    -- init found
+    do
+        local f = CreateFrame('Frame')
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
+
+        local searchingTexture = f:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-found-initial')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(7)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(70)
+        animation:SetDuration(2)
+
+        f:Hide()
+
+        self.EyeFoundInitial = f
+        self.EyeFoundInitial.EyeFoundInitialAnim = animationGroup
+    end
+
+    -- found
+    do
+        local f = CreateFrame('Frame')
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
+
+        local searchingTexture = f:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-found-loop')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('REPEAT')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(4)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(41)
+        animation:SetDuration(1.5)
+
+        f:Hide()
+
+        self.EyeFoundLoop = f
+        self.EyeFoundLoop.EyeFoundLoopAnim = animationGroup
+    end
+
     -- self.EyeSearchingLoop = f
     -- self.EyeSearchingLoop.EyeSearchingLoopAnim = animationGroup
 end
@@ -159,7 +222,7 @@ function DragonflightUIEyeTemplateMixin:StartFoundAnimationLoop()
     self:StopAnimating();
 
     self:PlayAnim(self.EyeFoundLoop, self.EyeFoundLoop.EyeFoundLoopAnim);
-    self:PlayAnim(self.EyeFoundLoop, self.GlowBackLoop.GlowBackLoopAnim);
+    -- self:PlayAnim(self.EyeFoundLoop, self.GlowBackLoop.GlowBackLoopAnim);
 
     self.currAnim = LFG_EYE_FOUND_LOOP_ANIM;
 end
@@ -256,11 +319,10 @@ end
 
 function DragonflightUILFGButtonMixin:OnHide()
     print('DragonflightUILFGButtonMixin:OnHide()')
-
 end
 
 function DragonflightUILFGButtonMixin:OnEnter()
-    print('DragonflightUILFGButtonMixin:OnEnter()')
+    -- print('DragonflightUILFGButtonMixin:OnEnter()')
     self.cursorOnButton = true;
 
     if (self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM or self.Eye.currAnim == LFG_EYE_NONE_ANIM) then
@@ -269,7 +331,7 @@ function DragonflightUILFGButtonMixin:OnEnter()
 end
 
 function DragonflightUILFGButtonMixin:OnLeave()
-    print('DragonflightUILFGButtonMixin:OnLeave()')
+    -- print('DragonflightUILFGButtonMixin:OnLeave()')
     self.cursorOnButton = false;
 
     if (self.Eye.currAnim == LFG_EYE_HOVER_ANIM) then self.Eye:StartSearchingAnimation(); end
