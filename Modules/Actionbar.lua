@@ -1183,6 +1183,57 @@ local bagsOptions = {
         }
     }
 }
+-- bag blizzard options
+do
+    local moreOptions = {
+        activate = {
+            type = 'toggle',
+            name = DISPLAY_FREE_BAG_SLOTS,
+            desc = OPTION_TOOLTIP_DISPLAY_FREE_BAG_SLOTS,
+            order = 13,
+            blizzard = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do bagsOptions.args[k] = v end
+
+    bagsOptions.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'activate' then
+            C_CVar.GetCVarBool("displayFreeBagSlots")
+        else
+            return getOption(info)
+        end
+    end
+
+    local function CVarChangedCB()
+        local displayFreeBagSlots = C_CVar.GetCVarBool("displayFreeBagSlots");
+        if (displayFreeBagSlots) then
+            MainMenuBarBackpackButtonCount:Show();
+        else
+            MainMenuBarBackpackButtonCount:Hide();
+        end
+        MainMenuBarBackpackButton_UpdateFreeSlots();
+    end
+
+    bagsOptions.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'activate' then
+            if value then
+                C_CVar.SetCVar("displayFreeBagSlots", 1)
+            else
+                C_CVar.SetCVar("displayFreeBagSlots", 0)
+            end
+            CVarChangedCB()
+        else
+            setOption(info, value)
+        end
+    end
+end
 
 local microOptions = {
     name = 'Micromenu',
