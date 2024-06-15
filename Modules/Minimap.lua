@@ -979,10 +979,10 @@ function Module.ChangeLFG()
     MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
     -- MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
 
-    local lfg = CreateFrame('Frame', 'DragonflightUILFGButtonFrame')
+    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame')
     Mixin(lfg, DragonflightUILFGButtonMixin)
     lfg:Init()
-    lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', -50, 0)
+    lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
 
     -- lfg:StartInitialAnimation()
 end

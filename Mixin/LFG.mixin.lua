@@ -13,7 +13,7 @@ local LFG_EYE_POKE_LOOP_ANIM = "POKE_LOOP";
 local LFG_EYE_POKE_END_ANIM = "POKE_END";
 
 function DragonflightUIEyeTemplateMixin:OnLoad()
-    print('DragonflightUIEyeTemplateMixin:OnLoad()')
+    -- print('DragonflightUIEyeTemplateMixin:OnLoad()')
     self.currActiveAnims = {};
     self.activeAnim = LFG_EYE_NONE_ANIM;
     self.isStatic = false;
@@ -273,7 +273,7 @@ local LFG_ANGER_END_VAL = 75;
 local LFG_ANGER_CAP_VAL = 90;
 
 function DragonflightUILFGButtonMixin:Init()
-    print('Init')
+    -- print('Init')
     self:SetSize(btnSize, btnSize)
 
     do
@@ -317,24 +317,45 @@ function DragonflightUILFGButtonMixin:Init()
         --  
         self:Hide()
     end)
+
+    MiniMapLFGFrame:HookScript('OnEnter', function()
+        --       
+        self:OnEnter()
+    end)
+
+    MiniMapLFGFrame:HookScript('OnLeave', function()
+        --  
+        self:OnLeave()
+    end)
+
+    --[[  QueueStatusFrame:HookScript('OnShow', function(frame)
+        frame:ClearAllPoints()
+        frame:SetPoint('TOPRIGHT', self, 'BOTTOMLEFT', 0, 6)
+    end) ]]
 end
 
 function DragonflightUILFGButtonMixin:OnLoad()
-    print('DragonflightUILFGButtonMixin:OnLoad()')
+    -- print('DragonflightUILFGButtonMixin:OnLoad()')
     -- self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
     self.glowLocks = {};
     self.angerVal = 0;
+
+    -- self:HookScript('OnClick', GenerateClosure(self.OnClick, self)) 
+
+    if MiniMapLFGFrame:IsShown() then self:Show() end
+
+    self:EnableMouse(false)
 end
 
 function DragonflightUILFGButtonMixin:OnShow()
-    print('DragonflightUILFGButtonMixin:OnShow()')
+    -- print('DragonflightUILFGButtonMixin:OnShow()')
 
     self.Eye:Show()
     self.Eye:StartInitialAnimation();
 end
 
 function DragonflightUILFGButtonMixin:OnHide()
-    print('DragonflightUILFGButtonMixin:OnHide()')
+    -- print('DragonflightUILFGButtonMixin:OnHide()')
     QueueStatusFrame:Hide();
 
     self.Eye:StopAnimating()
@@ -342,19 +363,23 @@ function DragonflightUILFGButtonMixin:OnHide()
 end
 
 function DragonflightUILFGButtonMixin:OnEnter()
-    print('DragonflightUILFGButtonMixin:OnEnter()')
+    -- print('DragonflightUILFGButtonMixin:OnEnter()')
     self.cursorOnButton = true;
 
     if (self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM or self.Eye.currAnim == LFG_EYE_NONE_ANIM) then
         self.Eye:StartHoverAnimation();
     end
+
+    QueueStatusFrame:Show();
 end
 
 function DragonflightUILFGButtonMixin:OnLeave()
-    print('DragonflightUILFGButtonMixin:OnLeave()')
+    -- print('DragonflightUILFGButtonMixin:OnLeave()')
     self.cursorOnButton = false;
 
     if (self.Eye.currAnim == LFG_EYE_HOVER_ANIM) then self.Eye:StartSearchingAnimation(); end
+
+    QueueStatusFrame:Hide();
 end
 
 function DragonflightUILFGButtonMixin:OnUpdate()
@@ -371,14 +396,22 @@ function DragonflightUILFGButtonMixin:OnUpdate()
 end
 
 function DragonflightUILFGButtonMixin:OnEvent(self, event, ...)
-    print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
+    -- print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
 
     if event == "LFG_PROPOSAL_SHOW" then
-        -- print('LFG_PROPOSAL_SHOWsss')
         self.Eye:StartFoundAnimationInit();
     elseif event == "LFG_PROPOSAL_FAILED" then
         self.Eye:StartSearchingAnimation();
     end
+end
+
+function DragonflightUILFGButtonMixin:OnClick(self, button)
+    -- print('DragonflightUILFGButtonMixin', button)
+    if (button == "RightButton") then
+        -- QueueStatusDropDown_Show(self.DropDown, self:GetName());
+    end
+    MiniMapLFGFrame_OnClick(MiniMapLFGFrame, button)
+
 end
 
 function DragonflightUILFGButtonMixin:IsInitialEyeAnimFinished()
