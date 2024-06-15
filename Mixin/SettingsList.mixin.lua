@@ -125,7 +125,6 @@ function ScrollableListItemMixinDF:Reset()
 
     self.Item.NewFeature:Hide()
     self.Item.Blizzard:Hide()
-    self.Item.Blizzard.Label:SetText('BLIZZ')
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
@@ -761,3 +760,26 @@ function SettingsListMixinDF:RemoveListItem()
     self.DataProvider:RemoveIndex(lastIndex)
 end
 
+--------
+
+DragonflightUINewFeatureLabelMixin = {};
+
+function DragonflightUINewFeatureLabelMixin:OnLoad()
+    self.BGLabel:SetText(self.label);
+    self.Label:SetText(self.label);
+    self.Label:SetJustifyH(self.justifyH);
+    self.BGLabel:SetJustifyH(self.justifyH);
+end
+
+function DragonflightUINewFeatureLabelMixin:ClearAlert()
+    -- derive
+    self:SetShown(false);
+end
+
+function DragonflightUINewFeatureLabelMixin:OnShow()
+    if self.animateGlow then self.Fade:Play(); end
+end
+
+function DragonflightUINewFeatureLabelMixin:OnHide()
+    if self.animateGlow then self.Fade:Stop(); end
+end

@@ -90,7 +90,7 @@ UI_shared.xsd">
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="NewFeature" inherits="NewFeatureLabelTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
+			<Frame parentKey="NewFeature" inherits="DragonflightUINewFeatureLabelNoAnimateTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
 				<Size x="1" y="1" />
 				<Anchors>
 					<Anchor point="RIGHT" relativeKey="$parent.Label" relativePoint="LEFT" x="-37" y="3" />
