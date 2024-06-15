@@ -18,6 +18,14 @@ local defaults = {
             locked = true,
             durability = 'BOTTOM'
         },
+        buffs = {
+            scale = 1,
+            anchorFrame = 'MinimapCluster',
+            anchor = 'TOPRIGHT',
+            anchorParent = 'TOPLEFT',
+            x = -55,
+            y = -13
+        },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
 }
@@ -229,6 +237,83 @@ local minimapOptions = {
     }
 }
 
+local buffsOptions = {
+    type = 'group',
+    name = 'Buffs',
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'buffs'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'buffs'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'buffs'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'buffs'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'buffs'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'buffs'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        }
+    }
+}
+
 local trackerOptions = {
     type = 'group',
     name = 'Tracker',
@@ -351,6 +436,15 @@ function Module:RegisterOptionScreens()
         end
     })
 
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Buffs', {
+        name = 'Buffs',
+        sub = 'buffs',
+        options = buffsOptions,
+        default = function()
+            setDefaultSubValues('buffs')
+        end
+    })
+
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
         name = 'Questtracker',
         sub = 'tracker',
@@ -375,6 +469,7 @@ function Module:ApplySettings()
 
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
+    Module.UpdateBuffState(db.buffs)
 end
 
 local frame = CreateFrame('FRAME')
@@ -911,21 +1006,18 @@ function Module.LockMinimap(locked)
     end
 end
 
-function Module.MoveBuffs()
-    local move = function(state)
-        local dx = -45 - 10
-        BuffFrame:ClearAllPoints()
-        BuffFrame:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', dx, -13)
-    end
+function Module.UpdateBuffState(state)
+    BuffFrame:SetScale(state.scale)
+    BuffFrame:ClearAllPoints()
+    BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+end
 
+function Module.MoveBuffs()
     hooksecurefunc('UIParent_UpdateTopFramePositions', function()
         -- print('UIParent_UpdateTopFramePositions')
-        move({})
+        local state = Module.db.profile.buffs
+        Module.UpdateBuffState(state)
     end)
-    -- @TODO: Taint ingame
-    --[[ BuffFrame.SetPoint = function()
-    end ]]
-    -- BuffFrame.ClearAllPoints() = function()     end
 end
 
 function Module.MoveTracker()

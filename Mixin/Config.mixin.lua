@@ -144,6 +144,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Misc
         local cat = 'Misc'
         addCat(cat)
+        addSubCat('Buffs', cat, true)
         addSubCat('Chat', cat)
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
