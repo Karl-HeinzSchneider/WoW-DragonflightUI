@@ -46,7 +46,13 @@ local modulesOptions = {
     set = setOption,
     args = {
         Actionbar = {type = 'toggle', name = 'Actionbar', desc = '' .. getDefaultStr('Actionbar', 'modules'), order = 1},
-        Bossframe = {type = 'toggle', name = 'Bossframe', desc = '' .. getDefaultStr('Bossframe', 'modules'), order = 2},
+        Bossframe = {
+            type = 'toggle',
+            name = 'Bossframe',
+            desc = '' .. getDefaultStr('Bossframe', 'modules'),
+            order = 2,
+            new = true
+        },
         Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 3},
         Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
         Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 5},
