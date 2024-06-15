@@ -591,6 +591,45 @@ function DragonflightUIActionbarMixin:StyleButtons()
     end
 end
 
+function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
+    local mask = btn.DragonflightUIMaskTexture
+    if not mask then return end
+
+    -- local normal = btn:GetNormalTexture()
+    -- normal:SetVertexColor(0.5, 0.5, 1.0, 1.0)
+
+    local isUsable, notEnoughMana = IsUsableAction(btn.action);
+
+    -- mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+    -- mask:SetDesaturated(true)
+    -- if true then return end
+
+    if (checksRange) then
+        if (inRange) then
+            if notEnoughMana or not isUsable then
+                mask:SetVertexColor(0.5, 0.5, 1.0, 1.0)
+                mask:SetDesaturated(true)
+            else
+                mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+                mask:SetDesaturated(false)
+            end
+        else
+            -- mask:SetVertexColor(1, 0.3, 0.1, 1)
+            -- mask:SetVertexColor(0.9, 0.1, 0.1, 1)
+            mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            mask:SetDesaturated(true)
+        end
+    else
+        if notEnoughMana or not isUsable then
+            mask:SetVertexColor(0.5, 0.5, 1.0, 1.0)
+            mask:SetDesaturated(true)
+        else
+            mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            mask:SetDesaturated(false)
+        end
+    end
+end
+
 -- TODO only debug for now..
 function DragonflightUIActionbarMixin:HookGrid()
 

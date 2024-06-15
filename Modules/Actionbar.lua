@@ -35,7 +35,8 @@ local defaults = {
             alwaysShow = true,
             hideArt = false,
             hideScrolling = false,
-            gryphons = 'DEFAULT'
+            gryphons = 'DEFAULT',
+            range = true
         },
         bar2 = {
             scale = 1,
@@ -555,6 +556,14 @@ local function GetBarOption(n)
                 desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
                 order = 13
+            },
+            range = {
+                type = 'toggle',
+                name = 'Icon Range Color',
+                desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
+                    getDefaultStr('range', barname),
+                order = 12.5,
+                new = true
             }
         }
 
@@ -1576,6 +1585,14 @@ function Module:ApplySettings()
     Module.xpbar:SetState(db.xp)
     Module.repbar:SetState(db.rep)
     Module.stancebar:SetState(db.stance)
+
+    if db.bar1.range then
+        self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
+            DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
+        end)
+    else
+        self:Unhook('ActionButton_UpdateRangeIndicator')
+    end
 
     if DF.Cata then Module.UpdateTotemState(db.totem) end
 

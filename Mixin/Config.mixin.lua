@@ -120,7 +120,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Actionbar
         local cat = 'Actionbar'
         addCat(cat)
-        addSubCat('Actionbar1', cat)
+        addSubCat('Actionbar1', cat, true)
         addSubCat('Actionbar2', cat)
         addSubCat('Actionbar3', cat)
         addSubCat('Actionbar4', cat)
