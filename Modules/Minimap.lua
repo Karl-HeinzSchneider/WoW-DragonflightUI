@@ -315,7 +315,7 @@ local buffsOptions = {
 }
 
 -- blizz options buffs
-do
+if DF.Cata then
     local moreOptions = {
         consolidate = {
             type = 'toggle',
