@@ -221,6 +221,83 @@ local optionsPlayer = {
         }
     }
 }
+if true then
+    local moreOptions = {
+        statusText = {
+            type = 'select',
+            name = STATUSTEXT_LABEL,
+            desc = OPTION_TOOLTIP_STATUS_TEXT_DISPLAY,
+            values = {
+                ['None'] = 'None',
+                ['Percent'] = 'Percent',
+                ['Both'] = 'Both',
+                ['Numeric Value'] = 'Numeric Value'
+            },
+            order = 10,
+            blizzard = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
+
+    local CVAR_VALUE_NUMERIC = "NUMERIC";
+    local CVAR_VALUE_PERCENT = "PERCENT";
+    local CVAR_VALUE_BOTH = "BOTH";
+    local CVAR_VALUE_NONE = "NONE";
+
+    optionsPlayer.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'statusText' then
+            local statusTextDisplay = C_CVar.GetCVar("statusTextDisplay");
+            if statusTextDisplay == CVAR_VALUE_NUMERIC then
+                return 'Numeric Value';
+            elseif statusTextDisplay == CVAR_VALUE_PERCENT then
+                return 'Percent';
+            elseif statusTextDisplay == CVAR_VALUE_BOTH then
+                return 'Both';
+            elseif statusTextDisplay == CVAR_VALUE_NONE then
+                return 'None';
+            end
+        else
+            return getOption(info)
+        end
+    end
+
+    local textStatusBars = {
+        PlayerFrameHealthBar, PlayerFrameManaBar, PetFrameHealthBar, PetFrameManaBar, TargetFrameHealthBar,
+        TargetFrameManaBar, FocusFrameHealthBar, FocusFrameManaBar
+    }
+
+    local function CVarChangedCB()
+        for k, v in ipairs(textStatusBars) do if v then TextStatusBar_UpdateTextString(v) end end
+    end
+
+    optionsPlayer.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'statusText' then
+            if value == 'Numeric Value' then
+                SetCVar("statusTextDisplay", CVAR_VALUE_NUMERIC);
+                SetCVar("statusText", "1");
+            elseif value == 'Percent' then
+                SetCVar("statusTextDisplay", CVAR_VALUE_PERCENT);
+                SetCVar("statusText", "1");
+            elseif value == 'Both' then
+                SetCVar("statusTextDisplay", CVAR_VALUE_BOTH);
+                SetCVar("statusText", "1");
+            elseif value == 'None' then
+                SetCVar("statusTextDisplay", CVAR_VALUE_NONE);
+                SetCVar("statusText", "0");
+            end
+            CVarChangedCB()
+        else
+            setOption(info, value)
+        end
+    end
+end
 
 local optionsTarget = {
     name = 'Target',
