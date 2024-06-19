@@ -895,6 +895,7 @@ function Module:ApplySettings()
 
         TargetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
+        Module.ReApplyToT()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
     end
@@ -954,6 +955,7 @@ function Module:ApplySettings()
 
             FocusFrame:SetScale(obj.scale)
             Module.ReApplyFocusFrame()
+            Module.ReApplyFocusToT()
             FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
             TextStatusBar_UpdateTextString(FocusFrameHealthBar)
         end
@@ -1447,30 +1449,7 @@ function Module.HookEnergyBar()
 
             TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
         elseif name == 'TargetFrameToTManaBar' then
-            local powerType, powerTypeString = UnitPowerType('targettarget')
-
-            if powerTypeString == 'MANA' then
-                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-            elseif powerTypeString == 'FOCUS' then
-                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
-            elseif powerTypeString == 'RAGE' then
-                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-            elseif powerTypeString == 'ENERGY' then
-                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
-            elseif powerTypeString == 'RUNIC_POWER' then
-                TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
-            end
-
-            TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-            TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
-
-            TargetFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+            Module.ReApplyToT()
         elseif name == 'FocusFrameManaBar' then
             local powerType, powerTypeString = UnitPowerType('focus')
 
@@ -1495,28 +1474,7 @@ function Module.HookEnergyBar()
 
             FocusFrameFlash:SetTexture('')
         elseif name == 'FocusFrameToTManaBar' then
-            local powerType, powerTypeString = UnitPowerType('focusTarget')
-
-            if powerTypeString == 'MANA' then
-                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-            elseif powerTypeString == 'FOCUS' then
-                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
-            elseif powerTypeString == 'RAGE' then
-                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-            elseif powerTypeString == 'ENERGY' then
-                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
-            elseif powerTypeString == 'RUNIC_POWER' then
-                FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
-            end
-
-            FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-            FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+            Module.ReApplyFocusToT()
         elseif name == 'PartyMemberFrame1ManaBar' then
             Module.UpdatePartyManaBar(1)
         elseif name == 'PartyMemberFrame2ManaBar' then
@@ -1926,6 +1884,74 @@ function Module.ReApplyTargetFrame()
     if frame.PortraitExtra then frame.PortraitExtra:UpdateStyle() end
 end
 -- frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+
+function Module.ReApplyToT()
+    if Module.db.profile.target.classcolor and UnitIsPlayer('targettarget') then
+        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
+        local localizedClass, englishClass, classIndex = UnitClass('targettarget')
+        TargetFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+        TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    end
+
+    local powerType, powerTypeString = UnitPowerType('targettarget')
+
+    if powerTypeString == 'MANA' then
+        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+    elseif powerTypeString == 'FOCUS' then
+        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+    elseif powerTypeString == 'RAGE' then
+        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+    elseif powerTypeString == 'ENERGY' then
+        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+    elseif powerTypeString == 'RUNIC_POWER' then
+        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+    end
+
+    TargetFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+end
+
+function Module.ReApplyFocusToT()
+    if Module.db.profile.focus.classcolor and UnitIsPlayer('focusTarget') then
+        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
+        local localizedClass, englishClass, classIndex = UnitClass('focusTarget')
+        FocusFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+        FocusFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    end
+
+    local powerType, powerTypeString = UnitPowerType('focusTarget')
+
+    if powerTypeString == 'MANA' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+    elseif powerTypeString == 'FOCUS' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+    elseif powerTypeString == 'RAGE' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+    elseif powerTypeString == 'ENERGY' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+    elseif powerTypeString == 'RUNIC_POWER' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+    end
+
+    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+end
 
 function Module.MoveTargetFrame(anchor, anchorOther, anchorFrame, dx, dy)
     TargetFrame:ClearAllPoints()
