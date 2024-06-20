@@ -47,6 +47,7 @@ Modules\Castbar.lua
 Modules\Chat.lua
 Modules\Minimap.lua
 Modules\Unitframe.lua
+Modules\Utility.lua
 
 #
 Compatibility.lua
