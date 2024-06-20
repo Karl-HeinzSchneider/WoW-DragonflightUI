@@ -215,7 +215,7 @@ function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     local ActionBarButtonNames = {
         "DragonflightUIMultiactionBar6Button", "DragonflightUIMultiactionBar7Button",
-        "DragonflightUIMultiactionBar7Button"
+        "DragonflightUIMultiactionBar8Button"
     }
 
     for b, actionBar in ipairs(ActionBarButtonNames) do
@@ -226,7 +226,7 @@ function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
             btn.command = 'MULTIACTIONBAR' .. (b + 4) .. 'BUTTON' .. i
             btn.commandHuman = 'Action Bar ' .. (b + 5) .. ' Button ' .. i
 
-            print(btn.command)
+            print(btn:GetName(), btn.command)
 
             btn:HookScript('OnEnter', function(selfButton)
                 if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
