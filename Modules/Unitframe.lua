@@ -212,10 +212,10 @@ local optionsPlayer = {
             bigStep = 1,
             order = 6
         },
-        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'break up large numbers',
+            name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 8
         }
@@ -374,23 +374,23 @@ local optionsTarget = {
             bigStep = 1,
             order = 6
         },
-        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'break up large numbers',
+            name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 8
         },
         enableNumericThreat = {
             type = 'toggle',
-            name = 'numeric threat',
+            name = 'Numeric Threat',
             desc = 'Enable numeric threat',
             order = 9,
             disabled = not DF.Era
         },
         enableThreatGlow = {
             type = 'toggle',
-            name = 'threat glow',
+            name = 'Threat Glow',
             desc = 'Enable threat glow',
             order = 10,
             disabled = true
@@ -519,18 +519,18 @@ local optionsPet = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'break up large numbers',
+            name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 9
         },
         enableThreatGlow = {
             type = 'toggle',
-            name = 'threat glow',
+            name = 'Threat Glow',
             desc = 'Enable threat glow',
             order = 8,
             disabled = true
         },
-        hideStatusbarText = {type = 'toggle', name = 'hide statusbar text', desc = '', order = 10}
+        hideStatusbarText = {type = 'toggle', name = 'Hide Statusbar Text', desc = '', order = 10}
     }
 }
 
@@ -609,10 +609,10 @@ local optionsFocus = {
             bigStep = 1,
             order = 6
         },
-        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'break up large numbers',
+            name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 8
         }
@@ -694,10 +694,10 @@ local optionsParty = {
             bigStep = 1,
             order = 6
         },
-        classcolor = {type = 'toggle', name = 'class color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'break up large numbers',
+            name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 8
         }
