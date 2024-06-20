@@ -174,6 +174,21 @@ function DragonflightUIActionbarMixin:Update()
     if self.numberFrame then self:UpdateNumberFrame() end
 
     -- if self.decoFrame then self.decoFrame.update(state) end
+
+    if state.activate ~= nil then
+        --
+        -- print('state.activate ~= nil', state.activate)
+        -- self:SetShown(state.activate)
+        if state.activate == false then
+
+            for i = 1, btnCount do
+                local btn = buttonTable[i]
+                btn:ClearAllPoints()
+                btn:Hide()
+                if btn.decoDF then btn.decoDF:Hide() end
+            end
+        end
+    end
 end
 
 function DragonflightUIActionbarMixin:UpdateGrid(show)
