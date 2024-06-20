@@ -82,6 +82,13 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Text:SetParent(f.Bar)
     f.Text:SetPoint('CENTER', 0, 1.5)
 
+    f.TextPercent = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
+    f.TextPercent:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
+    f.TextPercent:SetTextColor(1, 1, 1, 1)
+    f.TextPercent:SetText('69%')
+    f.TextPercent:ClearAllPoints()
+    f.TextPercent:SetParent(f.Bar)
+    f.TextPercent:SetPoint('LEFT', f.Text, 'RIGHT', 0, 0)
 end
 
 function DragonflightUIXPBarMixin:SetupTooltip()
@@ -147,8 +154,16 @@ function DragonflightUIXPBarMixin:Update()
 
     if state.alwaysShowXP then
         self.Text:SetDrawLayer('OVERLAY')
+        self.TextPercent:SetDrawLayer('OVERLAY')
     else
         self.Text:SetDrawLayer('HIGHLIGHT')
+        self.TextPercent:SetDrawLayer('HIGHLIGHT')
+    end
+
+    if state.showXPPercent then
+        self.TextPercent:Show()
+    else
+        self.TextPercent:Hide()
     end
 
     if InCombatLockdown() then
@@ -179,7 +194,11 @@ function DragonflightUIXPBarMixin:UpdateText()
     -- value
     local playerCurrXP = UnitXP('player')
     local playerMaxXP = UnitXPMax('player')
-    local restedXP = GetXPExhaustion()
+    local playerPercent = 100 * playerCurrXP / playerMaxXP
+
+    local restedXP = GetXPExhaustion() or 0
+    local restedMax = playerMaxXP * 1.5
+    local restedPercent = 100 * restedXP / restedMax
 
     if (restedXP and restedXP > 0) then
         if (playerCurrXP + restedXP > playerMaxXP) then
@@ -205,6 +224,13 @@ function DragonflightUIXPBarMixin:UpdateText()
     self.Bar:SetValue(playerCurrXP)
 
     self.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
+
+    local textPercentText = ' = ' .. string.format('%.1f', playerPercent) .. '%'
+
+    if restedPercent > 0 then
+        textPercentText = textPercentText .. ' (' .. string.format('%.1f', restedPercent) .. ' % Rested)'
+    end
+    self.TextPercent:SetText(textPercentText)
 end
 
 function DragonflightUIXPBarMixin:Collapse(collapse)

@@ -120,7 +120,8 @@ local defaults = {
             anchorParent = 'BOTTOM',
             x = 0,
             y = 5,
-            alwaysShowXP = false
+            alwaysShowXP = false,
+            showXPPercent = true
         },
         rep = {
             scale = 1,
@@ -814,6 +815,12 @@ local xpOptions = {
             name = 'Always show XP text',
             desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
             order = 12
+        },
+        showXPPercent = {
+            type = 'toggle',
+            name = 'Show XP Percent',
+            desc = '' .. getDefaultStr('showXPPercent', 'xp'),
+            order = 13
         }
     }
 }
