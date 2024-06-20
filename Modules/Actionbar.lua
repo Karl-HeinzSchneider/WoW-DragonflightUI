@@ -112,7 +112,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
-            activate = true
+            activate = false
         },
         bar7 = {
             scale = 1,
@@ -128,7 +128,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
-            activate = true
+            activate = false
         },
         bar8 = {
             scale = 1,
@@ -144,7 +144,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
-            activate = true
+            activate = false
         },
         pet = {
             scale = 1,
