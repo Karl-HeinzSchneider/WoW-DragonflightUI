@@ -274,6 +274,10 @@ local frameTable = {
     ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
     ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
     ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
+    ['DragonflightUIActionbarFrame6'] = 'Actionbar6',
+    ['DragonflightUIActionbarFrame7'] = 'Actionbar7',
+    ['DragonflightUIActionbarFrame8'] = 'Actionbar8',
+
     ['DragonflightUIXPBar'] = 'XPbar',
     ['DragonflightUIRepBar'] = 'RepBar',
     ['DragonflightUIPetBar'] = 'PetBar',
@@ -652,6 +656,7 @@ local function GetBarOption(n)
             end
         end
     else
+        print('moreOptions bar', n)
         local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
@@ -1513,9 +1518,11 @@ function Module:SetupActionbarFrames()
         bar:HookQuickbindMode()
     end
 
-    createExtra(6)
-    createExtra(7)
-    createExtra(8)
+    -- createExtra(6)
+    -- createExtra(7)
+    -- createExtra(8)
+
+    -- DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
         -- print('ActionButton_UpdateHotkeys')        
@@ -1564,7 +1571,7 @@ function Module:SetupActionbarFrames()
 end
 
 function Module:RegisterOptionScreens()
-    for i = 1, 8 do
+    for i = 1, 5 do
         local optionsBar = GetBarOption(i)
         DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
             name = 'Actionbar' .. i,
@@ -1672,9 +1679,9 @@ function Module:ApplySettings()
     Module.bar4:SetState(db.bar4)
     Module.bar5:SetState(db.bar5)
 
-    Module.bar6:SetState(db.bar6)
-    Module.bar7:SetState(db.bar7)
-    Module.bar8:SetState(db.bar8)
+    --   Module.bar6:SetState(db.bar6)
+    -- Module.bar7:SetState(db.bar7)
+    -- Module.bar8:SetState(db.bar8)
 
     Module.petbar:SetState(db.pet)
     Module.xpbar:SetState(db.xp)
