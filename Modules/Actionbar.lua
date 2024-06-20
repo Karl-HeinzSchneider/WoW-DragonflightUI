@@ -656,7 +656,6 @@ local function GetBarOption(n)
             end
         end
     else
-        print('moreOptions bar', n)
         local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
@@ -1508,6 +1507,9 @@ function Module:SetupActionbarFrames()
             _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
                 "Action Bar " .. n .. ' Button ' .. i;
 
+            btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"
+            btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
+
             btns[i] = btn
         end
 
@@ -1526,7 +1528,7 @@ function Module:SetupActionbarFrames()
     createExtra(7)
     createExtra(8)
 
-    -- DragonFlightUIQuickKeybindMixin:HookExtraButtons()
+    DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
         -- print('ActionButton_UpdateHotkeys')        

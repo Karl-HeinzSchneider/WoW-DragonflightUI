@@ -70,7 +70,7 @@ function DragonFlightUIQuickKeybindButtonOverlayMixin:UpdateTooltip()
     -- GameTooltip_AddInstructionLine(GameTooltip, 'GameTooltip_AddInstructionLine')
     -- GameTooltip_AddNormalLine(GameTooltip, 'GameTooltip_AddNormalLine')
     -- GameTooltip_AddErrorLine(GameTooltip, 'GameTooltip_AddErrorLine')
-    print('commands', self.command)
+    -- print('commands', self.command)
     local command = self.command
     local commandHuman = self.commandHuman
 
@@ -221,12 +221,6 @@ function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     for b, actionBar in ipairs(ActionBarButtonNames) do
         for i = 1, 12 do
             local btn = _G[actionBar .. i]
-            -- btn.command = 'ACTIONBUTTON' .. i
-
-            btn.command = 'MULTIACTIONBAR' .. (b + 4) .. 'BUTTON' .. i
-            btn.commandHuman = 'Action Bar ' .. (b + 5) .. ' Button ' .. i
-
-            print(btn:GetName(), btn.command)
 
             btn:HookScript('OnEnter', function(selfButton)
                 if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
