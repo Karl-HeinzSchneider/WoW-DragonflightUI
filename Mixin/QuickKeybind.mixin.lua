@@ -210,7 +210,7 @@ function DragonFlightUIQuickKeybindMixin:HookButtons()
 end
 
 function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
-    print('DragonFlightUIQuickKeybindMixin:HookExtraButtons()')
+    -- print('DragonFlightUIQuickKeybindMixin:HookExtraButtons()')
     -- "DragonflightUIMultiactionBar" .. n .. "Button" .. i
 
     local ActionBarButtonNames = {
