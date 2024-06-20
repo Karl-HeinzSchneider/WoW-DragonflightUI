@@ -12,7 +12,8 @@ local defaults = {
             ['Castbar'] = true,
             ['Chat'] = false,
             ['Minimap'] = true,
-            ['Unitframe'] = true
+            ['Unitframe'] = true,
+            ['Utility'] = false
         },
         bestnumber = 42
     }
@@ -56,7 +57,14 @@ local modulesOptions = {
         Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 3},
         Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
         Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 5},
-        Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 6}
+        Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 6},
+        Utility = {
+            type = 'toggle',
+            name = 'Utility',
+            desc = '' .. getDefaultStr('Utility', 'modules'),
+            order = 7,
+            new = true
+        }
     }
 }
 

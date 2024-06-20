@@ -152,6 +152,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Chat', cat)
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
+        addSubCat('Utility', cat, true)
     end
 
     do
