@@ -224,7 +224,8 @@ local optionsPlayer = {
             type = 'toggle',
             name = 'Bigger Healthbar',
             desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
-            order = 9
+            order = 9,
+            new = true
         }
     }
 }
