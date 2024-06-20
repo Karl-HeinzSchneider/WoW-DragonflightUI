@@ -397,6 +397,50 @@ local optionsTarget = {
         }
     }
 }
+if true then
+    local moreOptions = {
+        targetOfTarget = {
+            type = 'toggle',
+            name = SHOW_TARGET_OF_TARGET_TEXT,
+            desc = OPTION_TOOLTIP_SHOW_TARGET_OF_TARGET,
+            order = 15,
+            blizzard = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
+
+    optionsTarget.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'targetOfTarget' then
+            local tot = C_CVar.GetCVar("showTargetOfTarget");
+            if tot == '1' then
+                return true
+            else
+                return false
+            end
+        else
+            return getOption(info)
+        end
+    end
+
+    optionsTarget.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'targetOfTarget' then
+            if value then
+                SetCVar("showTargetOfTarget", "1");
+            else
+                SetCVar("showTargetOfTarget", "0");
+            end
+        else
+            setOption(info, value)
+        end
+    end
+end
 
 local optionsPet = {
     name = 'Pet',
