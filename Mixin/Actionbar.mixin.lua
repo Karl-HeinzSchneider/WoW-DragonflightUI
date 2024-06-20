@@ -145,13 +145,16 @@ function DragonflightUIActionbarMixin:Update()
             if state.alwaysShow then
                 if btn:GetAttribute("showgrid") then
                     if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
+                    -- ActionButton_Update(btn)
                 else
                     btn:SetAttribute("showgrid", 1)
                 end
+
             else
                 if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
                     btn:SetAttribute("showgrid", 0)
                 end
+                ActionButton_Update(btn)
             end
 
             if state.hideArt then
@@ -188,23 +191,6 @@ function DragonflightUIActionbarMixin:Update()
                 if btn.decoDF then btn.decoDF:Hide() end
             end
         end
-    end
-end
-
-function DragonflightUIActionbarMixin:UpdateGrid(show)
-    for k, v in pairs(self.buttonTable) do
-        -- print(k, v:GetName(), show)
-        if show then
-            v:SetAttribute('showgrid', 1)
-        else
-            v:SetAttribute('showgrid', 0)
-        end
-        ActionButton_Update(v)
-    end
-
-    for i = self.state.buttons + 1, 12 do
-        local btn = self.buttonTable[i]
-        btn:Hide()
     end
 end
 

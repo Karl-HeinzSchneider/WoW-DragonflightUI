@@ -1501,7 +1501,6 @@ function Module:SetupActionbarFrames()
             btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
             btn:SetAttribute("type", "action")
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
-            btn:UpdateAction()
 
             -- global binding
             _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
@@ -1511,6 +1510,9 @@ function Module:SetupActionbarFrames()
             btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
 
             btns[i] = btn
+            btn:Hide()
+
+            btn:UpdateAction()
         end
 
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
@@ -1662,7 +1664,7 @@ function Module:RefreshOptionScreens()
         configFrame:RefreshCatSub('Actionbar', name)
     end
 
-    for i = 1, 5 do refreshCat('Actionbar' .. i) end
+    for i = 1, 8 do refreshCat('Actionbar' .. i) end
     refreshCat('Petbar')
     refreshCat('XPbar')
     refreshCat('Repbar')
