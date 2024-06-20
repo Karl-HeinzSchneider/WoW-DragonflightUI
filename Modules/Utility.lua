@@ -146,7 +146,7 @@ function Module:HookFriendsColor(hook)
                       gameText, broadcastText, broadcastTime, canSoR, toonID, bnetIDAccount, isGameAFK, isGameBusy =
                     BNGetGameAccountInfo(bnetIDGameAccount)
 
-                -- print(accountName, characterName, class, faction)
+                -- print(accountName, characterName, class, faction, realmName, realmID)
 
                 if (characterName) then
                     local classFixed = Module.LocalClassTable[class]
@@ -161,7 +161,20 @@ function Module:HookFriendsColor(hook)
 
                     if faction ~= localizedFaction then nameText = nameText .. ' (' .. faction .. ')' end
 
+                    local gameAccountInfo = C_BattleNet.GetGameAccountInfoByID(bnetIDGameAccount);
+                    local infoText = gameAccountInfo.richPresence
+                    -- DevTools_Dump(gameAccountInfo)
+
+                    local localRealmID = GetRealmID()
+                    if realmID == localRealmID then
+                        button.info:SetTextColor(255, 255, 255)
+                    else
+                        --[[    button.info:SetTextColor(FRIENDS_WOW_NAME_COLOR.r, FRIENDS_WOW_NAME_COLOR.g,
+                                                 FRIENDS_WOW_NAME_COLOR.b) ]]
+                    end
+
                     button.name:SetText(nameText)
+                    button.info:SetText(infoText)
                 end
             end
         end)
