@@ -134,7 +134,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('XPbar', cat)
         addSubCat('Repbar', cat)
         addSubCat('Stancebar', cat)
-        addSubCat('Totembar', cat, true)
+        addSubCat('Totembar', cat)
         addSubCat('Bags', cat)
         addSubCat('Micromenu', cat)
     end
@@ -152,7 +152,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Misc
         local cat = 'Misc'
         addCat(cat)
-        addSubCat('Buffs', cat, true)
+        addSubCat('Buffs', cat)
         addSubCat('Chat', cat)
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
