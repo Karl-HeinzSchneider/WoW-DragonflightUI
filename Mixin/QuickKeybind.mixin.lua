@@ -34,7 +34,9 @@ function DragonFlightUIQuickKeybindButtonOverlayMixin:OnKeyDown(input)
     DragonflightUIQuickKeybindFrame:OnKeyDown(input)
 end
 
-function DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp()
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp(input)
+    -- print('DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp()', input)
+    -- DragonflightUIQuickKeybindFrame:OnKeyDown(input)
 end
 
 function DragonFlightUIQuickKeybindButtonOverlayMixin:SetButton(btn)
@@ -246,7 +248,7 @@ function DragonFlightUIQuickKeybindMixin:OnKeyDown(input)
     local listening = KeybindListener:IsListening();
 
     local gmkey1, gmkey2 = GetBindingKey("TOGGLEGAMEMENU");
-    if (input == gmkey1 or input == gmkey1) and not listening then
+    if (input == gmkey1 or input == gmkey2) and not listening then
         -- print('(input == gmkey1 or input == gmkey1) and not listening')
         self:CancelBinding();
     elseif input == "ESCAPE" and listening then
