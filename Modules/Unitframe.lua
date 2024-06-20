@@ -703,6 +703,50 @@ local optionsParty = {
         }
     }
 }
+if true then
+    local moreOptions = {
+        useCompactPartyFrames = {
+            type = 'toggle',
+            name = USE_RAID_STYLE_PARTY_FRAMES,
+            desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
+            order = 15,
+            blizzard = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsParty.args[k] = v end
+
+    optionsParty.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'useCompactPartyFrames' then
+            local value = C_CVar.GetCVar("useCompactPartyFrames");
+            if value == '1' then
+                return true
+            else
+                return false
+            end
+        else
+            return getOption(info)
+        end
+    end
+
+    optionsParty.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'useCompactPartyFrames' then
+            if value then
+                SetCVar("useCompactPartyFrames", "1");
+            else
+                SetCVar("useCompactPartyFrames", "0");
+            end
+        else
+            setOption(info, value)
+        end
+    end
+end
 
 local options = {
     type = 'group',
