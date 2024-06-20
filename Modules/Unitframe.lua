@@ -711,6 +711,16 @@ if true then
             desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
             order = 15,
             blizzard = true
+        },
+        raidFrameBtn = {
+            type = 'execute',
+            name = 'Open Raid Frame Settings',
+            func = function()
+                Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            end,
+            order = 16,
+            blizzard = true
         }
     }
 
