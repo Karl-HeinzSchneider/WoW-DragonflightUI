@@ -36,6 +36,7 @@ local defaults = {
         },
         target = {
             classcolor = false,
+            classicon = false,
             breakUpLargeNumbers = true,
             enableNumericThreat = true,
             enableThreatGlow = true,
@@ -383,6 +384,7 @@ local optionsTarget = {
             order = 6
         },
         classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = true},
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -1451,6 +1453,29 @@ function Module.UpdatePlayerFrameHealthBar()
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
         PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     end
+end
+
+function Module.HookClassIcon()
+    Module:Unhook('UnitFramePortrait_Update')
+    Module:SecureHook('UnitFramePortrait_Update', function(self)
+        -- print('UnitFramePortrait_Update', self:GetName())
+        if not self.portrait then return end
+
+        local icon = Module.db.profile.target.classicon
+        local unit = self.unit
+
+        if (not icon) or unit == "player" or unit == "pet" or (not UnitIsPlayer(unit)) then
+            self.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
+            SetPortraitTexture(self.portrait, unit);
+            return
+        end
+
+        local texCoords = CLASS_ICON_TCOORDS[select(2, UnitClass(unit))]
+        if texCoords then
+            self.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
+            self.portrait:SetTexCoord(unpack(texCoords))
+        end
+    end)
 end
 
 function Module.HookVertexColor()
@@ -3364,6 +3389,7 @@ function Module.Wrath()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
+    Module.HookClassIcon()
     Module.ChangePartyFrame()
 end
 
@@ -3394,6 +3420,7 @@ function Module.Era()
     Module.HookDrag()
 
     Module.ApplyPortraitMask()
+    Module.HookClassIcon()
     Module.ChangePartyFrame()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()

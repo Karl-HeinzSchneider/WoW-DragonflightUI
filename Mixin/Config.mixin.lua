@@ -163,7 +163,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Party', cat)
         addSubCat('Pet', cat)
         addSubCat('Player', cat, true)
-        addSubCat('Target', cat)
+        addSubCat('Target', cat, true)
     end
 
     addSpacer()
