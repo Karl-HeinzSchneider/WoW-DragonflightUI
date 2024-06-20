@@ -177,7 +177,7 @@ function DragonflightUIActionbarMixin:Update()
 
     if state.activate ~= nil then
         --
-        -- print('state.activate ~= nil', state.activate)
+        -- print('state.activate ~= nil', state.activate, self:GetName())
         -- self:SetShown(state.activate)
         if state.activate == false then
 

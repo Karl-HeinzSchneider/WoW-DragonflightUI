@@ -1518,9 +1518,9 @@ function Module:SetupActionbarFrames()
         bar:HookQuickbindMode()
     end
 
-    -- createExtra(6)
-    -- createExtra(7)
-    -- createExtra(8)
+    createExtra(6)
+    createExtra(7)
+    createExtra(8)
 
     -- DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
@@ -1571,7 +1571,7 @@ function Module:SetupActionbarFrames()
 end
 
 function Module:RegisterOptionScreens()
-    for i = 1, 5 do
+    for i = 1, 8 do
         local optionsBar = GetBarOption(i)
         DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
             name = 'Actionbar' .. i,
@@ -1679,9 +1679,9 @@ function Module:ApplySettings()
     Module.bar4:SetState(db.bar4)
     Module.bar5:SetState(db.bar5)
 
-    --   Module.bar6:SetState(db.bar6)
-    -- Module.bar7:SetState(db.bar7)
-    -- Module.bar8:SetState(db.bar8)
+    Module.bar6:SetState(db.bar6)
+    Module.bar7:SetState(db.bar7)
+    Module.bar8:SetState(db.bar8)
 
     Module.petbar:SetState(db.pet)
     Module.xpbar:SetState(db.xp)
