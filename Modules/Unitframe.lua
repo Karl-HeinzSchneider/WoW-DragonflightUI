@@ -31,7 +31,8 @@ local defaults = {
             anchor = 'TOPLEFT',
             anchorParent = 'TOPLEFT',
             x = -19,
-            y = -4
+            y = -4,
+            biggerHealthbar = false
         },
         target = {
             classcolor = false,
@@ -218,6 +219,12 @@ local optionsPlayer = {
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 8
+        },
+        biggerHealthbar = {
+            type = 'toggle',
+            name = 'Bigger Healthbar',
+            desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
+            order = 9
         }
     }
 }
