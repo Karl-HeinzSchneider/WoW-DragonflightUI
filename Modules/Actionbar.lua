@@ -284,6 +284,19 @@ local frameTable = {
     ['DragonflightUIStancebar'] = 'Stancebar'
 }
 
+local function frameTableWithout(own)
+    local newFrameTable = {}
+    for k, v in pairs(frameTable) do
+        --
+        if k == own then
+        else
+            newFrameTable[k] = v
+        end
+    end
+
+    return newFrameTable
+end
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -474,7 +487,7 @@ local function GetBarOption(n)
                 type = 'select',
                 name = 'Anchorframe',
                 desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
-                values = frameTable,
+                values = frameTableWithout('DragonflightUIActionbarFrame' .. n),
                 order = 4
             },
             anchor = {
@@ -586,7 +599,6 @@ local function GetBarOption(n)
             }
         }
     }
-    -- if n == 1 then opt.args.anchorFrame['DragonflightUIActionbarFrame1'] = nil end
 
     if n == 1 then
         -- print('111111')
@@ -684,7 +696,7 @@ local petOptions = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
-            values = frameTable,
+            values = frameTableWithout('DragonflightUIPetBar'),
             order = 4
         },
         anchor = {
@@ -811,7 +823,7 @@ local xpOptions = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'xp'),
-            values = frameTable,
+            values = frameTableWithout('DragonflightUIXPBar'),
             order = 4
         },
         anchor = {
@@ -901,7 +913,7 @@ local repOptions = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'rep'),
-            values = frameTable,
+            values = frameTableWithout('DragonflightUIRepBar'),
             order = 4
         },
         anchor = {
@@ -985,7 +997,7 @@ local stanceOptions = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'stance'),
-            values = frameTable,
+            values = frameTableWithout('DragonflightUIStancebar'),
             order = 4
         },
         anchor = {
