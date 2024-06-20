@@ -130,7 +130,24 @@
 			</Frame>
 			<Frame parentKey="Dropdown" inherits="SettingsDropdownTemplateDF" hidden="true" setAllPoints="false">
 			</Frame>
+			<Frame parentKey="Button" inherits="SettingButtonControlTemplateDF" hidden="true" setAllPoints="true">
+			</Frame>
 		</Frames>
+	</Frame>
+	<!-- Button -->
+	<Frame name="SettingButtonControlTemplateDF" mixin="SettingsButtonControlMixinDF" virtual="true">
+		<Size x="280" y="26" />
+		<Frames>
+			<Button parentKey="Button" inherits="UIPanelButtonTemplate" hidden="false">
+				<Size x="200" y="26" />
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="CENTER" x="-40" y="0" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
 	</Frame>
 	<!-- Checkbox -->
 	<Frame name="SettingsCheckBoxControlTemplateDF" virtual="true">

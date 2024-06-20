@@ -42,6 +42,11 @@ function ScrollableListItemMixinDF:Init(elementData)
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
 
+        self.Item.Button:Show()
+        self.Item.Button.Button:SetText(data.btnName)
+        self.Item.Button:RegisterCallback('OnClick', function(self, ...)
+            data.func()
+        end)
     elseif data.type == 'description' then
         self:SetText(data.name)
         self:SetTooltip(data.name, data.desc)
@@ -107,6 +112,11 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -85, 0);
     self.Item:Hide()
 
+    self.Item.Button:SetParent(self)
+    -- self.Item.Button:SetPoint("LEFT", self, "CENTER", -40, 0)
+    self.Item.Button:Hide()
+    self.Item.Button:UnregisterCallback('OnClick', self)
+
     self.Item.Checkbox:SetParent(self)
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -80, 0)
     self.Item.Checkbox:Hide()
@@ -159,6 +169,18 @@ end
 function ScrollableListItemMixinDF:SetDropdown(options)
     self.Item.Dropdown:Show()
     self.Item.Dropdown:SetDropdownSelectionOptions(options)
+end
+
+--- Button
+SettingsButtonControlMixinDF = CreateFromMixins(CallbackRegistryMixin);
+SettingsButtonControlMixinDF:GenerateCallbackEvents({"OnClick"});
+
+function SettingsButtonControlMixinDF:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
+
+    self.Button:SetScript("OnClick", function(button, buttonName)
+        self:TriggerEvent(SettingsButtonControlMixinDF.Event.OnClick, true)
+    end)
 end
 
 --- Checkbox
@@ -750,7 +772,7 @@ function SettingsListMixinDF:Display(data)
             elementData = {key = k, args = v, get = data.options.get, set = data.options.set, settingsList = self}
         end
 
-        if v.name ~= '' and v.name ~= 'Enable' and v.type ~= 'execute' then self.DataProvider:Insert(elementData) end
+        if v.name ~= '' and v.name ~= 'Enable' then self.DataProvider:Insert(elementData) end
         -- print(k, v.order)
     end
 end
