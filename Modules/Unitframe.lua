@@ -1679,10 +1679,60 @@ end
 -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 function Module.SetPlayerBiggerHealthbar(bigger)
-    print('SetPlayerBiggerHealthbar', bigger)
-    if bigger then
-    else
+    local border = frame.PlayerFrameBorder
+    local background = frame.PlayerFrameBackground
 
+    if not border or not background then return end
+
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    if bigger then
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn')
+        background:SetTexCoord(0, 198 / 256, 0, 71 / 128)
+        background:SetSize(198, 71)
+        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0 + 6)
+
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER-Plunder')
+        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5 + 6)
+
+        PlayerStatusTexture:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn-InCombat')
+        PlayerStatusTexture:SetSize(192, 71)
+        PlayerStatusTexture:SetTexCoord(0, 192 / 256, 0, 71 / 128)
+
+        PlayerFrameHealthBar:SetSize(125, 32)
+        PlayerFrameHealthBar:ClearAllPoints()
+        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0 - 6)
+
+        PlayerFrameManaBar:SetAlpha(0)
+        PlayerFrameManaBarText:SetAlpha(0)
+        PlayerFrameManaBarTextLeft:SetAlpha(0)
+        PlayerFrameManaBarTextRight:SetAlpha(0)
+    else
+        background:SetTexture(base)
+        background:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
+        background:SetSize(198, 71)
+        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
+
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
+        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+
+        PlayerStatusTexture:SetTexture(base)
+        PlayerStatusTexture:SetSize(192, 71)
+        PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
+
+        PlayerFrameHealthBar:SetSize(125, 20)
+        PlayerFrameHealthBar:ClearAllPoints()
+        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
+
+        PlayerFrameManaBar:SetAlpha(1)
+        PlayerFrameManaBarText:SetAlpha(1)
+        PlayerFrameManaBarTextLeft:SetAlpha(1)
+        PlayerFrameManaBarTextRight:SetAlpha(1)
     end
 end
 
@@ -1756,6 +1806,7 @@ function Module.HookPlayerArt()
     hooksecurefunc('PlayerFrame_ToPlayerArt', function()
         -- print('PlayerFrame_ToPlayerArt')
         Module.ChangePlayerframe()
+        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
     end)
 end
 
@@ -3112,6 +3163,7 @@ function frame:OnEvent(event, arg1)
         -- print('PLAYER_ENTERING_WORLD')
         Module.CreatePlayerFrameTextures()
         Module.ChangePlayerframe()
+        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
         Module.ChangeTargetFrame()
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
@@ -3132,10 +3184,13 @@ function frame:OnEvent(event, arg1)
         -- Module.ChangePlayerframe()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         Module.ChangePlayerframe()
+        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
     elseif event == 'UNIT_EXITED_VEHICLE' then
         Module.ChangePlayerframe()
+        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         Module.ChangePlayerframe()
+        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
     elseif event == 'UNIT_PORTRAIT_UPDATE' then
         Module.RefreshPortrait()
     elseif event == 'PORTRAITS_UPDATED' then
