@@ -17,4 +17,114 @@
 	</Frame>
 	<Frame name="DragonflightUIDecoFrameTemplate" inherits="ButtonFrameTemplate" virtual="true">
 	</Frame>
+	<CheckButton name="DragonflightUIMultibarButton6Template" virtual="true" inherits="MultiBarButtonTemplate">
+		<Scripts>
+			<OnLoad>
+				--self.buttonType = "MULTIACTIONBAR6BUTTON"
+				--ActionButton_OnLoad(self);
+			</OnLoad>
+		</Scripts>
+	</CheckButton>
+	<Button name="myButton" inherits="SecureActionButtonTemplate" parent="UIParent" virtual="true">
+		<Attributes>
+			<Attribute name="type" value="action" />
+			<Attribute name="action" value="1" type="number" />
+		</Attributes>
+	</Button>
+	<CheckButton name="MySecureButton" inherits="MultiBarButtonTemplate" virtual="true">
+		<Attributes>
+			<Attribute name="type" value="action" />
+			<Attribute name="action" value="69" type="number" />
+			<Attribute name="id" value="145" type="number" />
+		</Attributes>
+		<Size x="64" y="64" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<NormalTexture file="Interface\Buttons\UI-Quickslot" />
+		<Scripts>
+			<OnLoad>
+				self.buttonType = "MULTIACTIONBAR6BUTTON"
+				ActionButton_OnLoad(self);
+				print('test')
+			</OnLoad>
+		</Scripts>
+	</CheckButton>
+	<CheckButton name="DFMultiBar5ButtonTemplate" virtual="true" inherits="MultiBarButtonTemplate">
+		<Scripts>
+			<OnLoad>
+				self.buttonType = "MULTIACTIONBAR6BUTTON"
+				ActionButton_OnLoad(self);
+				self:SetAttribute("flyoutDirection", "LEFT");
+			</OnLoad>
+		</Scripts>
+	</CheckButton>
+	<Frame name="DFVerticalMultiBar6" toplevel="true" frameStrata="MEDIUM" virtual="true" hidden="true">
+		<Size x="41" y="503" />
+		<Attributes>
+			<Attribute name="actionpage" type="number" value="6" />
+		</Attributes>
+		<Frames>
+			<CheckButton name="$parentButton1" inherits="DFMultiBar5ButtonTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-2" y="-3" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton2" inherits="DFMultiBar5ButtonTemplate" id="2">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton1" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton3" inherits="DFMultiBar5ButtonTemplate" id="3">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton2" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton4" inherits="DFMultiBar5ButtonTemplate" id="4">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton3" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton5" inherits="DFMultiBar5ButtonTemplate" id="5">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton4" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton6" inherits="DFMultiBar5ButtonTemplate" id="6">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton5" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton7" inherits="DFMultiBar5ButtonTemplate" id="7">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton6" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton8" inherits="DFMultiBar5ButtonTemplate" id="8">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton7" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton9" inherits="DFMultiBar5ButtonTemplate" id="9">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton8" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton10" inherits="DFMultiBar5ButtonTemplate" id="10">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton9" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton11" inherits="DFMultiBar5ButtonTemplate" id="11">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton10" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentButton12" inherits="DFMultiBar5ButtonTemplate" id="12">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentButton11" relativePoint="BOTTOM" x="0" y="-6" />
+				</Anchors>
+			</CheckButton>
+		</Frames>
+	</Frame>
 </Ui>

@@ -126,6 +126,10 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Actionbar4', cat)
         addSubCat('Actionbar5', cat)
 
+        addSubCat('Actionbar6', cat, true)
+        addSubCat('Actionbar7', cat, true)
+        addSubCat('Actionbar8', cat, true)
+
         addSubCat('Petbar', cat)
         addSubCat('XPbar', cat)
         addSubCat('Repbar', cat)

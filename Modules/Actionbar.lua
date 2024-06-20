@@ -98,6 +98,54 @@ local defaults = {
             padding = 2,
             alwaysShow = true
         },
+        bar6 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true,
+            activate = true
+        },
+        bar7 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame6',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true,
+            activate = true
+        },
+        bar8 = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame7',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            alwaysShow = true,
+            activate = true
+        },
         pet = {
             scale = 1,
             anchorFrame = 'DragonflightUIActionbarFrame3',
@@ -226,6 +274,10 @@ local frameTable = {
     ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
     ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
     ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
+    ['DragonflightUIActionbarFrame6'] = 'Actionbar6',
+    ['DragonflightUIActionbarFrame7'] = 'Actionbar7',
+    ['DragonflightUIActionbarFrame8'] = 'Actionbar8',
+
     ['DragonflightUIXPBar'] = 'XPbar',
     ['DragonflightUIRepBar'] = 'RepBar',
     ['DragonflightUIPetBar'] = 'PetBar',
@@ -569,7 +621,7 @@ local function GetBarOption(n)
         }
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
-    else
+    elseif n <= 5 then
         local moreOptions = {
             activate = {
                 type = 'toggle',
@@ -603,6 +655,10 @@ local function GetBarOption(n)
                 setOption(info, value)
             end
         end
+    else
+        local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
+
+        for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
 
     return opt
@@ -1432,6 +1488,48 @@ function Module:SetupActionbarFrames()
     Module.bar5:StyleButtons()
     Module.bar5:HookQuickbindMode()
 
+    -- bar 6
+
+    local createExtra = function(n)
+        local btns = {}
+
+        for i = 1, 12 do
+            --
+            local btn = CreateFrame("CheckButton", "DragonflightUIMultiactionBar" .. n .. "Button" .. i, UIParent,
+                                    "ActionBarButtonTemplate")
+            btn:SetSize(64, 64)
+            btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
+            btn:SetAttribute("type", "action")
+            btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+            btn:UpdateAction()
+
+            -- global binding
+            _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
+                "Action Bar " .. n .. ' Button ' .. i;
+
+            btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"
+            btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
+
+            btns[i] = btn
+        end
+
+        local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
+                                'DragonflightUIActionbarFrameTemplate')
+
+        bar:Init()
+        bar:SetButtons(btns)
+        Module['bar' .. n] = bar
+
+        bar:StyleButtons()
+        bar:HookQuickbindMode()
+    end
+
+    createExtra(6)
+    createExtra(7)
+    createExtra(8)
+
+    DragonFlightUIQuickKeybindMixin:HookExtraButtons()
+
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
         -- print('ActionButton_UpdateHotkeys')        
         if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
@@ -1479,8 +1577,7 @@ function Module:SetupActionbarFrames()
 end
 
 function Module:RegisterOptionScreens()
-
-    for i = 1, 5 do
+    for i = 1, 8 do
         local optionsBar = GetBarOption(i)
         DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
             name = 'Actionbar' .. i,
@@ -1490,7 +1587,6 @@ function Module:RegisterOptionScreens()
                 setDefaultSubValues('bar' .. i)
             end
         })
-
     end
 
     DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Petbar', {
@@ -1588,6 +1684,11 @@ function Module:ApplySettings()
     Module.bar3:SetState(db.bar3)
     Module.bar4:SetState(db.bar4)
     Module.bar5:SetState(db.bar5)
+
+    Module.bar6:SetState(db.bar6)
+    Module.bar7:SetState(db.bar7)
+    Module.bar8:SetState(db.bar8)
+
     Module.petbar:SetState(db.pet)
     Module.xpbar:SetState(db.xp)
     Module.repbar:SetState(db.rep)
