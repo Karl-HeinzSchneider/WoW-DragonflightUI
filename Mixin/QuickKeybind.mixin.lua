@@ -36,7 +36,7 @@ end
 
 function DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp(input)
     -- print('DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp()', input)
-    -- DragonflightUIQuickKeybindFrame:OnKeyDown(input)
+    DragonflightUIQuickKeybindFrame:OnKeyDown(input)
 end
 
 function DragonFlightUIQuickKeybindButtonOverlayMixin:SetButton(btn)
