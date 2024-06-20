@@ -714,7 +714,8 @@ if true then
         },
         raidFrameBtn = {
             type = 'execute',
-            name = 'Open Raid Frame Settings',
+            name = 'Raid Frame Settings',
+            btnName = 'Open',
             func = function()
                 Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
