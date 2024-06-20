@@ -2189,13 +2189,14 @@ function Module.ChangeToT()
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
     -- TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
+    local totDelta = 1
 
     if not frame.TargetFrameToTBackground then
         local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
         background:SetDrawLayer('BACKGROUND', 1)
         background:SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
+        background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10 + totDelta)
         frame.TargetFrameToTBackground = background
     end
     TargetFrameToTBackground:Hide()
@@ -2205,22 +2206,22 @@ function Module.ChangeToT()
         border:SetDrawLayer('ARTWORK', 2)
         border:SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-        border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10)
+        border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10 + totDelta)
         frame.TargetFrameToTBorder = border
     end
 
     TargetFrameToTHealthBar:ClearAllPoints()
-    TargetFrameToTHealthBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 0)
+    TargetFrameToTHealthBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 0 + totDelta)
     TargetFrameToTHealthBar:SetFrameLevel(10)
     TargetFrameToTHealthBar:SetSize(70.5, 10)
 
     TargetFrameToTManaBar:ClearAllPoints()
-    TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
+    TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1 + totDelta)
     TargetFrameToTManaBar:SetFrameLevel(10)
     TargetFrameToTManaBar:SetSize(74, 7.5)
 
     TargetFrameToTTextureFrameName:ClearAllPoints()
-    TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+    TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1 + totDelta)
 
     TargetFrameToTTextureFrameDeadText:ClearAllPoints()
     TargetFrameToTTextureFrameDeadText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
