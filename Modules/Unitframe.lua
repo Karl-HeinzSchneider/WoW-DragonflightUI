@@ -986,6 +986,7 @@ function Module:ApplySettings()
 
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
+        Module.SetPlayerBiggerHealthbar(obj.biggerHealthbar)
         Module.ScaleRestFlipbook()
         PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
@@ -1437,23 +1438,24 @@ function Module.HookDrag()
     end
 end
 
-function Module.HookVertexColor()
-    local updatePlayerFrameHealthBar = function()
-        if Module.db.profile.player.classcolor then
-            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
+function Module.UpdatePlayerFrameHealthBar()
+    if Module.db.profile.player.classcolor then
+        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
 
-            local localizedClass, englishClass, classIndex = UnitClass('player')
-            PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-        else
-            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
-            PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-        end
+        local localizedClass, englishClass, classIndex = UnitClass('player')
+        PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
+        PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     end
-    PlayerFrameHealthBar:HookScript('OnValueChanged', updatePlayerFrameHealthBar)
+end
+
+function Module.HookVertexColor()
+    PlayerFrameHealthBar:HookScript('OnValueChanged', Module.UpdatePlayerFrameHealthBar)
     PlayerFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
-        if event == 'UNIT_MAXHEALTH' and arg1 == 'player' then updatePlayerFrameHealthBar() end
+        if event == 'UNIT_MAXHEALTH' and arg1 == 'player' then Module.UpdatePlayerFrameHealthBar() end
     end)
 
     local updateTargetFrameHealthBar = function()
@@ -1623,17 +1625,7 @@ function Module.ChangePlayerframe()
     PlayerFrameHealthBar:ClearAllPoints()
     PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
 
-    if Module.db.profile.player.classcolor then
-        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
-
-        local localizedClass, englishClass, classIndex = UnitClass('player')
-        PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-    else
-        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
-        PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-    end
+    Module.UpdatePlayerFrameHealthBar()
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
 
@@ -1685,6 +1677,14 @@ function Module.ChangePlayerframe()
 end
 -- ChangePlayerframe()
 -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+function Module.SetPlayerBiggerHealthbar(bigger)
+    print('SetPlayerBiggerHealthbar', bigger)
+    if bigger then
+    else
+
+    end
+end
 
 function Module.HookPlayerStatus()
     --[[ PlayerFrame:HookScript(
