@@ -1056,6 +1056,8 @@ function Module.UpdateBuffState(state)
     BuffFrame:SetScale(state.scale)
     BuffFrame:ClearAllPoints()
     BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    TemporaryEnchantFrame:SetScale(state.scale)
 end
 
 function Module.MoveBuffs()
