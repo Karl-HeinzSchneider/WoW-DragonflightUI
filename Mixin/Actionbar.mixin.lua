@@ -153,12 +153,12 @@ function DragonflightUIActionbarMixin:Update()
                 if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
                     btn:SetAttribute("showgrid", 0)
                 end
-            end
 
-            if btn.action then
-                ActionButton_Update(btn)
-            else
-                -- print(btn:GetName(), 'no action')
+                if btn.action then
+                    if not HasAction(btn.action) then btn:Hide() end
+                else
+                    btn:Hide()
+                end
             end
 
             if state.hideArt then
