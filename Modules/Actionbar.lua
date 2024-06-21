@@ -1444,6 +1444,7 @@ function Module:OnEnable()
     C_CVar.SetCVar("alwaysShowActionBars", 1)
 
     Module.Temp = {}
+    Module.UpdateRangeHooked = false
     if DF.Wrath then
         Module.Wrath()
     else
@@ -1709,12 +1710,20 @@ function Module:ApplySettings()
     Module.stancebar:SetState(db.stance)
 
     if db.bar1.range then
-        self:Unhook('ActionButton_UpdateRangeIndicator')
-        self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
-            DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
-        end)
+        if Module.UpdateRangeHooked then
+            -- already hooked
+        else
+            self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
+                DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
+            end)
+            Module.UpdateRangeHooked = true
+        end
     else
-        self:Unhook('ActionButton_UpdateRangeIndicator')
+        if Module.UpdateRangeHooked then
+            -- remove hook      
+            Module.UpdateRangeHooked = false
+            self:Unhook('ActionButton_UpdateRangeIndicator')
+        end
     end
 
     if DF.Cata then Module.UpdateTotemState(db.totem) end
