@@ -22,10 +22,12 @@ De-/activate any modul under InterfaceOptions/Addons/DragonflightUI (or type: '*
 Modules:
 
 - Actionbar
+- Bossframe
 - Castbar
 - Chat
 - Minimap
 - Unitframe
+- Utility
 
 ## Known Issues
 
@@ -50,24 +52,32 @@ If you want to support the development, like and share, but if you're feeling ex
 
 ## Actionbar
 
-![](Screenshots/v2/Actionbar.png)
+![](Screenshots/v0.10/Actionbar.png)
+
+## Actionbar Config
+
+![](Screenshots/v0.10/ActionbarConfig.png)
 
 ## Castbar
 
-![](Screenshots/v2/Castbar.png)
+![](Screenshots/v0.10/Castbar.png)
 
 ## Minimap
 
-![](Screenshots/v2/Minimap.png)
+![](Screenshots/v0.10/Minimap.png)
 
 ## Micromenu/Bags
 
-![](Screenshots/v2/MicroMenu-Bag.png)
+![](Screenshots/v0.10/Micromenu-Bag.png)
+
+## Quick Keybind
+
+![](Screenshots/v0.10/QuickKeybind.png)
 
 ## Unitframe
 
-![](Screenshots/v2/Unitframe.png)
+![](Screenshots/v0.10/Unitframes.png)
 
 ## Complete UI
 
-![](Screenshots/v2/CompleteUI.png)
+![](Screenshots/v0.10/Fullscreen.png)
