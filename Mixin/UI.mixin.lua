@@ -280,4 +280,146 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     local closeBtn = _G[name .. 'CloseButton']
     DragonflightUIMixin:UIPanelCloseButton(closeBtn)
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
+
+    for i = 1, 3 do
+        local tab = _G[name .. 'TabButton' .. i]
+
+        if tab then
+            --
+            DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+        end
+
+        if i > 1 then tab.changePoint = true end
+    end
 end
+
+function DragonflightUIMixin:TabResize(btn)
+    -- PanelTemplates_TabResize(btn, 35, nil, 60, 80);
+    btn:SetWidth(80)
+
+    if btn.changePoint then
+        local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
+        btn:SetPoint('LEFT', relativeTo, 'RIGHT', 4, 0)
+    end
+end
+
+function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
+    print('DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)', frame:GetName())
+
+    local name = frame:GetName()
+
+    local tex = base .. 'uiframetabs'
+
+    frame:SetSize(10, 32)
+
+    -- function PanelTemplates_TabResize(tab, padding, absoluteSize, minWidth, maxWidth, absoluteTextSize)
+    -- 100 - 150
+    -- PanelTemplates_TabResize(self, 0, nil, 36, self:GetParent().maxTabWidth or 88);
+
+    frame:HookScript('OnEvent', function()
+        DragonflightUIMixin:TabResize(frame)
+    end)
+
+    frame:HookScript('OnShow', function()
+        DragonflightUIMixin:TabResize(frame)
+    end)
+
+    -- inactive
+    do
+        local left = _G[name .. 'Left']
+        left:ClearAllPoints()
+        left:SetSize(35, 36)
+        left:SetTexture(tex)
+        left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
+        left:SetPoint('TOPLEFT', -3, 0)
+
+        local right = _G[name .. 'Right']
+        right:ClearAllPoints()
+        right:SetSize(37, 36)
+        right:SetTexture(tex)
+        right:SetTexCoord(0.015625, 0.59375, 0.667969, 0.808594)
+        right:SetPoint('TOPRIGHT', 7, 0)
+
+        local middle = _G[name .. 'Middle']
+        middle:ClearAllPoints()
+        middle:SetSize(1, 36)
+        middle:SetTexture(tex)
+        middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
+        middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+    end
+
+    -- disabled
+    do
+        local left = _G[name .. 'LeftDisabled']
+        left:SetTexture()
+        left:Hide()
+
+        -- left:ClearAllPoints()
+        -- left:SetSize(35, 42)
+        -- left:SetTexture(tex)
+        -- left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
+        -- left:SetPoint('TOPLEFT', -1, 0)
+
+        local right = _G[name .. 'RightDisabled']
+        right:SetTexture()
+        right:Hide()
+
+        -- right:ClearAllPoints()
+        -- right:SetSize(37, 42)
+        -- right:SetTexture(tex)
+        -- right:SetTexCoord(0.015625, 0.59375, 0.324219, 0.488281)
+        -- right:SetPoint('TOPRIGHT', 8, 0)
+
+        local middle = _G[name .. 'MiddleDisabled']
+        middle:SetTexture()
+        middle:Hide()
+        -- middle:ClearAllPoints()
+        -- middle:SetSize(1, 42)
+        -- middle:SetTexture(tex)
+        -- middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
+        -- middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        -- middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+    end
+
+    -- highlight
+    do
+        local highlight = frame:GetHighlightTexture()
+        highlight:SetTexture()
+
+        local left = frame:CreateTexture('DragonflightUIHighlight' .. 'Left', 'HIGHLIGHT')
+        left:SetTexture(tex)
+        left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
+        left:SetSize(35, 36)
+        left:SetPoint('TOPLEFT', -3, 0)
+        left:SetBlendMode('ADD')
+        left:SetAlpha(0.4)
+
+        local right = frame:CreateTexture('DragonflightUIHighlight' .. 'Right', 'HIGHLIGHT')
+        right:SetTexture(tex)
+        right:SetTexCoord(0.015625, 0.59375, 0.667969, 0.808594)
+        right:SetSize(37, 36)
+        right:SetPoint('TOPRIGHT', 7, 0)
+        right:SetBlendMode('ADD')
+        right:SetAlpha(0.4)
+
+        local middle = frame:CreateTexture('DragonflightUIHighlight' .. 'Middle', 'HIGHLIGHT')
+        middle:SetTexture(tex)
+        middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
+        middle:SetSize(1, 36)
+        middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+        middle:SetBlendMode('ADD')
+        middle:SetAlpha(0.4)
+    end
+end
+
+--[[ ["Interface/FrameGeneral/UIFrameTabs"]={
+    ["uiframe-activetab-left"]={35, 42, 0.015625, 0.5625, 0.496094, 0.660156, false, false, "1x"},
+    ["uiframe-activetab-right"]={37, 42, 0.015625, 0.59375, 0.324219, 0.488281, false, false, "1x"},
+    ["uiframe-tab-left"]={35, 36, 0.015625, 0.5625, 0.816406, 0.957031, false, false, "1x"},
+    ["uiframe-tab-right"]={37, 36, 0.015625, 0.59375, 0.667969, 0.808594, false, false, "1x"},
+    ["_uiframe-activetab-center"]={1, 42, 0, 0.015625, 0.00390625, 0.167969, true, false, "1x"},
+    ["_uiframe-tab-center"]={1, 36, 0, 0.015625, 0.175781, 0.316406, true, false, "1x"},
+  }, -- Interface/FrameGeneral/UIFrameTabs ]]
+
