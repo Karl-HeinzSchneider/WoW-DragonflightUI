@@ -122,7 +122,7 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
-    -- DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+    DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
 end
 
