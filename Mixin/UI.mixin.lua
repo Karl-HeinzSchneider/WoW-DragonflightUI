@@ -196,18 +196,36 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         local tex = base .. 'uiframemetal2x'
 
         local port = _G[name .. 'Portrait']
-        port:SetSize(62, 62)
-        port:ClearAllPoints()
-        port:SetPoint('TOPLEFT', -5, 7)
-        port:SetDrawLayer('OVERLAY', 6)
+        if port then
+            port:SetSize(62, 62)
+            port:ClearAllPoints()
+            port:SetPoint('TOPLEFT', -5, 7)
+            port:SetDrawLayer('OVERLAY', 6)
 
-        local pp = _G[name .. 'PortraitFrame']
-        pp:SetTexture(tex)
-        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
-        pp:SetSize(84, 84)
-        pp:ClearAllPoints()
-        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
-        pp:SetDrawLayer('OVERLAY', 7)
+            local pp = _G[name .. 'PortraitFrame']
+            pp:SetTexture(tex)
+            pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+            pp:SetSize(84, 84)
+            pp:ClearAllPoints()
+            pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+            pp:SetDrawLayer('OVERLAY', 7)
+
+            -- port:Hide()
+            -- pp:Hide()
+            -- FriendsFrameIcon:Hide()
+
+            local icon = _G[name .. 'Icon']
+
+            if icon then
+                icon:SetSize(62, 62)
+                icon:ClearAllPoints()
+                icon:SetPoint('TOPLEFT', -5, 7)
+                icon:SetDrawLayer('OVERLAY', 6)
+            end
+        else
+            --
+
+        end
     end
 
     -- corner
@@ -237,6 +255,12 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         brc:SetTexCoord(0.427734, 0.552734, 0.298828, 0.423828)
         brc:SetSize(32, 32)
         brc:SetPoint('BOTTOMRIGHT', 4, -3)
+
+        local brcFake = _G[name .. 'BtnCornerRight']
+        if brcFake then brcFake:SetAlpha(0) end
+
+        local blcFake = _G[name .. 'BtnCornerLeft']
+        if blcFake then blcFake:SetAlpha(0) end
     end
 
     -- edge bottom/top
@@ -281,6 +305,12 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     DragonflightUIMixin:UIPanelCloseButton(closeBtn)
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
 
+    do
+
+        -- local bg = _G[name .. 'Bg']
+        -- bg:SetDrawLayer('OVERLAY', 7)
+    end
+
     -- e.g. spellbook
     for i = 1, 3 do
         local tab = _G[name .. 'TabButton' .. i]
@@ -301,7 +331,11 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             --         
             DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
 
-            if i > 1 then tab.DFChangePoint = true end
+            if i == 1 then
+                tab.DFFirst = true
+            elseif i > 1 then
+                tab.DFChangePoint = true
+            end
         end
     end
 
@@ -330,7 +364,10 @@ function DragonflightUIMixin:TabResize(btn)
     -- PanelTemplates_TabResize(btn, 35, nil, 60, 80);
     btn:SetWidth(80)
 
-    if btn.DFChangePoint then
+    if btn.DFFirst then
+        local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
+        btn:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', 12, 1)
+    elseif btn.DFChangePoint then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
         btn:SetPoint('TOPLEFT', relativeTo, 'TOPRIGHT', 4, 0)
     end
@@ -356,6 +393,7 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
     frame:HookScript('OnShow', function()
         DragonflightUIMixin:TabResize(frame)
     end)
+    DragonflightUIMixin:TabResize(frame)
 
     -- inactive
     do
