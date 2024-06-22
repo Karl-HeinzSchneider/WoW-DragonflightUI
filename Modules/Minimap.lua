@@ -1117,7 +1117,8 @@ end
 
 function Module.ChangeLFG()
     MiniMapLFGFrame:ClearAllPoints()
-    MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+    -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+    MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
     MiniMapLFGFrameBorder:Hide()
     MiniMapLFGFrameIcon:Hide()
 

@@ -1,4 +1,4 @@
-local btnSize = 24
+local btnSize = 28
 
 DragonflightUIEyeTemplateMixin = {};
 
