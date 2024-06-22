@@ -358,6 +358,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             end
         end
 
+        hooksecurefunc('ToggleSpellBook', function(panel)
+            --         
+            if panel == 'spell' then
+                _G[name .. 'TabButton1']:Disable()
+            elseif panel == 'professions' then
+                _G[name .. 'TabButton2']:Disable()
+            elseif panel == 'pet' then
+                _G[name .. 'TabButton3']:Disable()
+            end
+        end)
     elseif name == 'EncounterJournal' then
         local dung = _G[name .. 'DungeonTab']
         -- dung.DFFirst = true
