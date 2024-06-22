@@ -280,6 +280,9 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         be:SetTexture(tex)
         be:SetTexCoord(0, 0.5, 0.597656, 0.847656)
         be:SetSize(16, 32)
+
+        local beFake = _G[name .. 'ButtonBottomBorder']
+        if beFake then beFake:SetAlpha(0) end
     end
 
     -- edge left/right
