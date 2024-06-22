@@ -379,6 +379,15 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 _G[name .. 'TabButton3']:Disable()
             end
         end)
+    elseif name == 'CharacterFrame' then
+        --
+        hooksecurefunc('ToggleCharacter', function(panel)
+            --
+            for i = 1, 5 do
+                local tab = _G[name .. 'Tab' .. i]
+                if tab then DragonflightUIMixin:TabResize(tab) end
+            end
+        end)
     elseif name == 'CollectionsJournal' then
         --   
     elseif name == 'CommunitiesFrame' then
