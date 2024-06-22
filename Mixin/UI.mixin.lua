@@ -285,11 +285,31 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         local tab = _G[name .. 'TabButton' .. i]
 
         if tab then
-            --
+            --         
             DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
-        end
 
-        if i > 1 then tab.changePoint = true end
+            if i > 1 then tab.DFChangePoint = true end
+        end
+    end
+
+    if name == 'SpellBookFrame' then
+        for i = 1, 8 do
+            -- SpellBookSkillLineTab1
+            local skill = _G['SpellBookSkillLineTab' .. i]
+
+            local children = {skill:GetRegions()}
+
+            for k, child in ipairs(children) do
+                if child:GetObjectType() == 'Texture' then
+                    local tex = child:GetTexture()
+                    if tex == 136831 then
+                        -- 
+                        -- child:Hide() 
+                        child:SetTexture(base .. 'spellbook-skilllinetab')
+                    end
+                end
+            end
+        end
     end
 end
 
@@ -297,14 +317,14 @@ function DragonflightUIMixin:TabResize(btn)
     -- PanelTemplates_TabResize(btn, 35, nil, 60, 80);
     btn:SetWidth(80)
 
-    if btn.changePoint then
+    if btn.DFChangePoint then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
-        btn:SetPoint('LEFT', relativeTo, 'RIGHT', 4, 0)
+        btn:SetPoint('TOPLEFT', relativeTo, 'TOPRIGHT', 4, 0)
     end
 end
 
 function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
-    print('DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)', frame:GetName())
+    -- print('DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)', frame:GetName())
 
     local name = frame:GetName()
 
@@ -347,6 +367,42 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
         middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
         middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+
+        local setNormal = function(normal)
+            if normal then
+                --   
+                frame:SetHeight(32)
+
+                left:SetSize(35, 36)
+                left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
+
+                right:SetSize(37, 36)
+                right:SetTexCoord(0.015625, 0.59375, 0.667969, 0.808594)
+
+                middle:SetSize(1, 36)
+                middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
+            else
+                --
+                frame:SetHeight(42)
+
+                left:SetSize(35, 42)
+                left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
+
+                right:SetSize(37, 42)
+                right:SetTexCoord(0.015625, 0.59375, 0.324219, 0.488281)
+
+                middle:SetSize(1, 42)
+                middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
+            end
+        end
+
+        frame:HookScript('OnEnable', function()
+            setNormal(true)
+        end)
+
+        frame:HookScript('OnDisable', function()
+            setNormal(false)
+        end)
     end
 
     -- disabled
