@@ -381,11 +381,60 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         end)
     elseif name == 'CharacterFrame' then
         --
-        hooksecurefunc('ToggleCharacter', function(panel)
-            --
+        for i = 1, 5 do
+            local tab = _G[name .. 'Tab' .. i]
+            if tab then
+                tab.DFFirst = nil
+                tab.DFChangePoint = nil
+            end
+        end
+
+        local updateTabs = function()
+            local lastElem = nil
             for i = 1, 5 do
                 local tab = _G[name .. 'Tab' .. i]
-                if tab then DragonflightUIMixin:TabResize(tab) end
+                if tab and (tab:IsShown()) then
+                    tab:SetWidth(78)
+                    tab:ClearAllPoints();
+                    if lastElem then
+                        tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
+                    else
+                        tab:SetPoint('TOPLEFT', CharacterFrame, 'BOTTOMLEFT', 12, 1)
+                    end
+                    lastElem = tab
+                end
+            end
+        end
+        hooksecurefunc('ToggleCharacter', function(panel)
+            --   
+            updateTabs()
+        end)
+        _G[name .. 'Tab' .. 2]:HookScript('OnShow', updateTabs)
+        _G[name .. 'Tab' .. 2]:HookScript('OnHide', updateTabs)
+    elseif name == 'PlayerTalentFrame' then
+        --
+        for i = 1, 5 do
+            local tab = _G[name .. 'Tab' .. i]
+            if tab then
+                tab.DFFirst = nil
+                tab.DFChangePoint = nil
+            end
+        end
+        hooksecurefunc('PlayerTalentFrame_UpdateTabs', function()
+            --  
+            local lastElem = nil
+            for i = 1, NUM_TALENT_FRAME_TABS do
+                tab = _G["PlayerTalentFrameTab" .. i];
+                if (tab:IsShown()) then
+                    tab:SetWidth(78)
+                    tab:ClearAllPoints();
+                    if lastElem then
+                        tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
+                    else
+                        tab:SetPoint('TOPLEFT', PlayerTalentFrame, 'BOTTOMLEFT', 12, 1)
+                    end
+                    lastElem = tab
+                end
             end
         end)
     elseif name == 'CollectionsJournal' then
