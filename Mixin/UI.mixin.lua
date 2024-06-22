@@ -158,8 +158,10 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 3, -18)
 
     local closeBtn = frame.ClosePanelButton
-    DragonflightUIMixin:UIPanelCloseButton(closeBtn)
-    closeBtn:SetPoint('TOPRIGHT', 1, 0)
+    if closeBtn then
+        DragonflightUIMixin:UIPanelCloseButton(closeBtn)
+        closeBtn:SetPoint('TOPRIGHT', 1, 0)
+    end
 end
 
 --[[ 

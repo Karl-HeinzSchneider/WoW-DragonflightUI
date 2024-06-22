@@ -110,6 +110,7 @@ function Module:ChangeButtons()
     end
 
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
+    -- DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['HelpFrame'])
 
     DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
