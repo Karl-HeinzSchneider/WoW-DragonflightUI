@@ -97,7 +97,18 @@ end
 
 function Module:ChangeButtons()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
-    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['DragonflightUIConfigFrame'])
+
+    -- Dragonflight Config
+    do
+        local config = _G['DragonflightUIConfigFrame']
+        DragonflightUIMixin:ButtonFrameTemplateNoPortrait(config)
+        DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(config.MinimizeButton)
+        config.MinimizeButton:ClearAllPoints()
+        config.MinimizeButton:SetPoint('RIGHT', config.ClosePanelButton, 'LEFT', 0, 0)
+
+        config.KeybindButton:SetPoint('RIGHT', config.MinimizeButton, 'LEFT', 0, 0)
+    end
+
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
 end
 

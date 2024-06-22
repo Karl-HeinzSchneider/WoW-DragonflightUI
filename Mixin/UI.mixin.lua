@@ -42,6 +42,54 @@ end
     ["RedButton-Highlight"]={36, 38, 0.449219, 0.589844, 0.0078125, 0.304688, false, false, "1x"},
 } ]]
 
+function DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(btn)
+    -- print('DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(btn)', btn:GetName())  
+    local tex = base .. 'redbutton2x'
+
+    btn:SetSize(24, 24)
+    -- maximize
+    do
+        local ref = btn.MaximizeButton
+
+        local normal = ref:GetNormalTexture()
+        normal:SetTexture(tex)
+        normal:SetTexCoord(0.300781, 0.441406, 0.0078125, 0.304688)
+
+        local disabled = ref:GetDisabledTexture()
+        disabled:SetTexture(tex)
+        disabled:SetTexCoord(0.300781, 0.441406, 0.320312, 0.617188)
+
+        local pushed = ref:GetPushedTexture()
+        pushed:SetTexture(tex)
+        pushed:SetTexCoord(0.300781, 0.441406, 0.632812, 0.929688)
+
+        local highlight = ref:GetHighlightTexture()
+        highlight:SetTexture(tex)
+        highlight:SetTexCoord(0.449219, 0.589844, 0.0078125, 0.304688)
+    end
+
+    -- minimize
+    do
+        local ref = btn.MinimizeButton
+
+        local normal = ref:GetNormalTexture()
+        normal:SetTexture(tex)
+        normal:SetTexCoord(0.00390625, 0.144531, 0.0078125, 0.304688)
+
+        local disabled = ref:GetDisabledTexture()
+        disabled:SetTexture(tex)
+        disabled:SetTexCoord(0.00390625, 0.144531, 0.320312, 0.617188)
+
+        local pushed = ref:GetPushedTexture()
+        pushed:SetTexture(tex)
+        pushed:SetTexCoord(0.00390625, 0.144531, 0.632812, 0.929688)
+
+        local highlight = ref:GetHighlightTexture()
+        highlight:SetTexture(tex)
+        highlight:SetTexCoord(0.449219, 0.589844, 0.0078125, 0.304688)
+    end
+end
+
 function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     print('DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)', frame:GetName())
 
