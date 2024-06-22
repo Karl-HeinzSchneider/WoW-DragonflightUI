@@ -185,3 +185,84 @@ end
     ["UIFrameBackground-NineSlice-CornerBottomLeft"]={16, 16, 0.015625, 0.265625, 0.03125, 0.53125, false, false, "1x"},
     ["UIFrameBackground-NineSlice-CornerBottomRight"]={16, 16, 0.296875, 0.546875, 0.03125, 0.53125, false, false, "1x"},
   ]]
+
+function DragonflightUIMixin:PortraitFrameTemplate(frame)
+    print('DragonflightUIMixin:PortraitFrameTemplate(frame)', frame:GetName())
+
+    local name = frame:GetName()
+    -- local slice = frame.NineSlice
+
+    -- corner
+    do
+        local tex = base .. 'uiframemetal2x'
+
+        local pp = _G[name .. 'PortraitFrame']
+        pp:Hide()
+
+        local tlc = frame:CreateTexture(name .. 'TopLeftCornerDF', 'OVERLAY')
+        tlc:SetTexture(tex)
+        tlc:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
+        tlc:SetSize(75, 74)
+        tlc:SetPoint('TOPLEFT', -12, 16)
+
+        local trc = _G[name .. 'TopRightCorner']
+        trc:SetTexture(tex)
+        trc:SetTexCoord(0.298828, 0.591797, 0.00195312, 0.294922)
+        trc:SetSize(75, 74)
+        trc:SetPoint('TOPRIGHT', 4, 16)
+
+        local blc = _G[name .. 'BotLeftCorner']
+        blc:SetTexture(tex)
+        blc:SetTexCoord(0.298828, 0.423828, 0.298828, 0.423828)
+        blc:SetSize(32, 32)
+        blc:SetPoint('BOTTOMLEFT', -12, -3)
+
+        local brc = _G[name .. 'BotRightCorner']
+        brc:SetTexture(tex)
+        brc:SetTexCoord(0.427734, 0.552734, 0.298828, 0.423828)
+        brc:SetSize(32, 32)
+        brc:SetPoint('BOTTOMRIGHT', 4, -3)
+    end
+
+    -- edge bottom/top
+    do
+        local tex = base .. 'UIFrameMetalHorizontal2x'
+
+        local te = _G[name .. 'TopBorder']
+        te:SetTexture(tex)
+        te:SetTexCoord(0, 1, 0.00390625, 0.589844)
+        te:SetSize(32, 74)
+        -- local point, relativeTo, relativePoint, xOfs, yOfs = te:GetPoint(1)   
+        te:ClearAllPoints()
+        te:SetPoint('TOPLEFT', _G[name .. 'TopLeftCornerDF'], 'TOPRIGHT', 0, 0)
+        te:SetPoint('TOPRIGHT', _G[name .. 'TopRightCorner'], 'TOPLEFT', 0, 0)
+
+        local be = _G[name .. 'BottomBorder']
+        be:SetTexture(tex)
+        be:SetTexCoord(0, 0.5, 0.597656, 0.847656)
+        be:SetSize(16, 32)
+    end
+
+    -- edge left/right
+    do
+        local tex = base .. 'UIFrameMetalVertical2x'
+
+        local le = _G[name .. 'LeftBorder']
+        le:SetTexture(tex)
+        le:SetTexCoord(0.00195312, 0.294922, 0, 1)
+        le:SetSize(75, 16)
+        local tlc = _G[name .. 'TopLeftCornerDF']
+        le:SetPoint('TOPLEFT', tlc, 'BOTTOMLEFT', 0, 0)
+
+        local re = _G[name .. 'RightBorder']
+        re:SetTexture(tex)
+        re:SetTexCoord(0.298828, 0.591797, 0, 1)
+        re:SetSize(75, 16)
+        re:SetPoint('TOPRIGHT', _G[name .. 'TopRightCorner'], 'BOTTOMRIGHT', 0, 0)
+        re:SetPoint('BOTTOMRIGHT', _G[name .. 'BotRightCorner'], 'TOPRIGHT', 0, 0)
+    end
+
+    local closeBtn = _G[name .. 'CloseButton']
+    DragonflightUIMixin:UIPanelCloseButton(closeBtn)
+    closeBtn:SetPoint('TOPRIGHT', 1, 0)
+end
