@@ -315,8 +315,10 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     end
 
     local closeBtn = _G[name .. 'CloseButton']
-    DragonflightUIMixin:UIPanelCloseButton(closeBtn)
-    closeBtn:SetPoint('TOPRIGHT', 1, 0)
+    if closeBtn then
+        DragonflightUIMixin:UIPanelCloseButton(closeBtn)
+        closeBtn:SetPoint('TOPRIGHT', 1, 0)
+    end
 
     do
 
@@ -340,7 +342,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     for i = 1, 5 do
         local tab = _G[name .. 'Tab' .. i]
 
-        if tab and not name == 'MacroFrame' then
+        if tab and name ~= 'MacroFrame' then
             --         
             DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
 

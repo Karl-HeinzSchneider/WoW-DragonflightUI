@@ -95,6 +95,22 @@ function Module:ApplySettings()
     local db = Module.db.profile
 end
 
+local frame = CreateFrame('FRAME')
+
+function frame:OnEvent(event, arg1, ...)
+    -- print('event', event, arg1, ...)
+    if event == 'ADDON_LOADED' then
+        -- print('ADDON_LOADED', arg1, ...)
+        if arg1 == 'Blizzard_EncounterJournal' then
+            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        end
+    elseif event == 'PLAYER_ENTERING_WORLD' then
+        Module:ChangeLateFrames()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
+frame:RegisterEvent('ADDON_LOADED')
+
 function Module:ChangeButtons()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
 
@@ -116,16 +132,20 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
     -- DragonflightUIMixin:PortraitFrameTemplate(_G['QuestLogFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
-    if not IsAddOnLoaded('Blizzard_EncounterJournal') then LoadAddOn('Blizzard_EncounterJournal') end
-    DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+end
+
+function Module:ChangeLateFrames()
+    if IsAddOnLoaded('Blizzard_EncounterJournal') then
+        DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+    end
+    if IsAddOnLoaded('Blizzard_Collections') then DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal']) end
+    if IsAddOnLoaded('Blizzard_TalentUI') then DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame']) end
+    if IsAddOnLoaded('Blizzard_Communities') then DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame']) end
+    if IsAddOnLoaded('Blizzard_MacroUI') then DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame']) end
 end
 
 function Module:HookCharacterFrame()
@@ -154,18 +174,13 @@ function Module:HookCharacterLevel()
     end)
 end
 
-local frame = CreateFrame('FRAME')
-
-function frame:OnEvent(event, arg1)
-    -- print('event', event) 
-end
-frame:SetScript('OnEvent', frame.OnEvent)
-
 -- Cata
 function Module.Cata()
     Module:ChangeButtons()
     Module:HookCharacterFrame()
     Module:HookCharacterLevel()
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
 -- Wrath
