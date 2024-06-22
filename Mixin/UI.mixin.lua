@@ -357,6 +357,33 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 end
             end
         end
+
+    elseif name == 'EncounterJournal' then
+        local dung = _G[name .. 'DungeonTab']
+        -- dung.DFFirst = true
+        -- DragonflightUIMixin:BottomEncounterTierTabTemplate(dung)
+        dung:ClearAllPoints()
+        dung:SetAlpha(0)
+        -- dung:EnableMouse(false)
+
+        local newDung = CreateFrame('BUTTON', 'DragonflightUIEncounterJournalDungeonTab', frame, 'DFDungeonTab')
+        newDung:Show()
+        newDung:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
+        newDung:GetFontString():SetText('Dungeons')
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(newDung)
+
+        local raid = _G[name .. 'RaidTab']
+        -- raid.DFChangePoint = true
+        -- DragonflightUIMixin:BottomEncounterTierTabTemplate(raid)
+        raid:ClearAllPoints()
+        raid:SetAlpha(0)
+        raid:EnableMouse(false)
+
+        local newRaid = CreateFrame('BUTTON', 'DragonflightUIEncounterJournalRaidTab', frame, 'DFRaidTab')
+        newRaid:Show()
+        newRaid:SetPoint('TOPLEFT', newDung, 'TOPRIGHT', 4, 0)
+        newRaid:GetFontString():SetText('Raids')
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(newRaid)
     end
 end
 
@@ -369,6 +396,7 @@ function DragonflightUIMixin:TabResize(btn)
         btn:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', 12, 1)
     elseif btn.DFChangePoint then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
+        btn:ClearAllPoints()
         btn:SetPoint('TOPLEFT', relativeTo, 'TOPRIGHT', 4, 0)
     end
 end
@@ -490,9 +518,9 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
     end
 
     -- highlight
-    do
+    if true then
         local highlight = frame:GetHighlightTexture()
-        highlight:SetTexture()
+        if highlight then highlight:SetTexture() end
 
         local left = frame:CreateTexture('DragonflightUIHighlight' .. 'Left', 'HIGHLIGHT')
         left:SetTexture(tex)
@@ -514,6 +542,127 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
         middle:SetTexture(tex)
         middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
         middle:SetSize(1, 36)
+        middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+        middle:SetBlendMode('ADD')
+        middle:SetAlpha(0.4)
+    end
+end
+
+function DragonflightUIMixin:BottomEncounterTierTabTemplate(frame)
+
+    frame:SetSize(80, 36)
+    do
+        local left = frame.left
+        left:ClearAllPoints()
+        left:SetSize(35, 36)
+        left:SetTexture(tex)
+        left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
+        left:SetPoint('TOPLEFT', -3, 0)
+
+        local right = frame.right
+        right:ClearAllPoints()
+        right:SetSize(37, 36)
+        right:SetTexture(tex)
+        right:SetTexCoord(0.015625, 0.59375, 0.667969, 0.808594)
+        right:SetPoint('TOPRIGHT', 7, 0)
+
+        local middle = frame.mid
+        middle:ClearAllPoints()
+        middle:SetSize(1, 36)
+        middle:SetTexture(tex)
+        middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
+        middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+
+        local setNormal = function(normal)
+            if normal then
+                --   
+                frame:SetHeight(32)
+
+                left:SetSize(35, 36)
+                left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
+
+                right:SetSize(37, 36)
+                right:SetTexCoord(0.015625, 0.59375, 0.667969, 0.808594)
+
+                middle:SetSize(1, 36)
+                middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
+            else
+                --
+                frame:SetHeight(42)
+
+                left:SetSize(35, 42)
+                left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
+
+                right:SetSize(37, 42)
+                right:SetTexCoord(0.015625, 0.59375, 0.324219, 0.488281)
+
+                middle:SetSize(1, 42)
+                middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
+            end
+        end
+
+        frame:HookScript('OnEnable', function()
+            setNormal(true)
+        end)
+
+        frame:HookScript('OnDisable', function()
+            setNormal(false)
+        end)
+    end
+
+    -- active
+    if true then
+        local left = frame.leftSelect
+        left:ClearAllPoints()
+        left:SetSize(35, 42)
+        left:SetTexture(tex)
+        left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
+        left:SetPoint('TOPLEFT', -1, 0)
+
+        local right = frame.rightSelect
+        right:ClearAllPoints()
+        right:SetSize(37, 42)
+        right:SetTexture(tex)
+        right:SetTexCoord(0.015625, 0.59375, 0.324219, 0.488281)
+        right:SetPoint('TOPRIGHT', 8, 0)
+
+        local middle = frame.midSelect
+        middle:ClearAllPoints()
+        middle:SetSize(1, 42)
+        middle:SetTexture(tex)
+        middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
+        middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+    end
+
+    -- highlight
+    if true then
+
+        local left = frame.leftHighlight
+        left:SetTexture(tex)
+        left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
+        left:SetSize(35, 36)
+        left:ClearAllPoints()
+        left:SetPoint('TOPLEFT', -3, 0)
+        left:SetBlendMode('ADD')
+        left:SetAlpha(0.4)
+
+        local right = frame.rightHighlight
+        right:SetTexture(tex)
+        right:SetTexCoord(0.015625, 0.59375, 0.667969, 0.808594)
+        right:SetSize(37, 36)
+        right:ClearAllPoints()
+        right:SetPoint('TOPRIGHT', 7, 0)
+        right:SetBlendMode('ADD')
+        right:SetAlpha(0.4)
+
+        local middle = frame.midHighlight
+        middle:SetTexture(tex)
+        middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
+        middle:SetSize(1, 36)
+        middle:ClearAllPoints()
         middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
         middle:SetBlendMode('ADD')

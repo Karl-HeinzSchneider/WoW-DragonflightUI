@@ -115,6 +115,7 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
     -- DragonflightUIMixin:PortraitFrameTemplate(_G['QuestLogFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+    DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
 
 end
 

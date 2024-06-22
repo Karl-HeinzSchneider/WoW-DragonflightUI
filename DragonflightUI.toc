@@ -9,7 +9,7 @@
 ## X-Curse-Project-ID: 819757
 ## Version: @project-version@
 ## SavedVariables: DragonflightUIDB
-## OptionalDeps: Ace3, Blizzard_TalentUI, Blizzard_TimeManager, NovaWorldBuffs
+## OptionalDeps: Ace3, Blizzard_EncounterJournal, Blizzard_TalentUI, Blizzard_TimeManager, NovaWorldBuffs
 
 # Libs
 Libs\LibStub\LibStub.lua
@@ -38,6 +38,7 @@ XML\ConfigCategoryList.xml
 XML\Config.xml
 XML\QuickKeybind.xml
 XML\SettingsList.xml
+XML\UI.xml
 
 # Config
 Modules\Config.lua

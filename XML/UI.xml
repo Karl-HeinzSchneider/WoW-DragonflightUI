@@ -1,0 +1,68 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
+	<Button name="DFDungeonTab" inherits="CharacterFrameTabButtonTemplate" virtual="true" hidden="true">
+		<Scripts>
+			<OnLoad>
+				self:SetID(1)
+			</OnLoad>
+			<OnShow>
+				if not self.DF then
+				self.DF = true
+				self:Disable()
+				end
+			</OnShow>
+			<OnClick>
+				--print('DungeonTab',self:GetID())
+				--C_EncounterJournal.SetTab(1);
+				EJ_ContentTab_Select(1);
+				--EJ_ContentTab_OnClick(self)
+				
+				if EncounterJournal.selectedTab == 1 then
+				self:Disable()
+				_G['DragonflightUIEncounterJournalRaidTab']:Enable()
+				else
+				self:Enable()
+				_G['DragonflightUIEncounterJournalRaidTab']:Disable()
+				end
+			</OnClick>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			<OnEnable>
+				self:GetFontString():SetPoint("CENTER", 0, 2);
+			</OnEnable>
+			<OnDisable>
+				self:GetFontString():SetPoint("CENTER", 0, -3);
+			</OnDisable>
+		</Scripts>
+	</Button>
+	<Button name="DFRaidTab" inherits="CharacterFrameTabButtonTemplate" virtual="true" hidden="true">
+		<Scripts>
+			<OnLoad>
+				self:SetID(2)
+			</OnLoad>
+			<OnClick>
+				--print('RaidTab',self:GetID())
+				--C_EncounterJournal.SetTab(2);
+				EJ_ContentTab_Select(2);
+				--EJ_ContentTab_OnClick(self)
+				
+				if EncounterJournal.selectedTab == 2 then
+				self:Disable()
+				_G['DragonflightUIEncounterJournalDungeonTab']:Enable()
+				else
+				self:Enable()
+				_G['DragonflightUIEncounterJournalDungeonTab']:Disable()
+				end
+			</OnClick>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			<OnEnable>
+				self:GetFontString():SetPoint("CENTER", 0, 2);
+			</OnEnable>
+			<OnDisable>
+				self:GetFontString():SetPoint("CENTER", 0, -3);
+			</OnDisable>
+		</Scripts>
+	</Button>
+</Ui>
