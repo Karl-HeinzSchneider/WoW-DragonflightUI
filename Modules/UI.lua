@@ -115,6 +115,7 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
     -- DragonflightUIMixin:PortraitFrameTemplate(_G['QuestLogFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+    if not IsAddOnLoaded('Blizzard_EncounterJournal') then LoadAddOn('Blizzard_EncounterJournal') end
     DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
