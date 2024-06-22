@@ -77,6 +77,7 @@ UI_shared.xsd">
 			<OnLeave method="OnLeave" />
 			<OnKeyDown method="OnKeyDown" />
 			<OnMouseUp method="OnMouseUp" />
+			<OnMouseWheel method="OnMouseWheel" />
 		</Scripts>
 	</Frame>
 	<Frame name="DragonflightDialogHeaderTemplate" mixin="DialogHeaderMixin" virtual="true">

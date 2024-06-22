@@ -39,6 +39,15 @@ function DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseUp(input)
     DragonflightUIQuickKeybindFrame:OnKeyDown(input)
 end
 
+function DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseWheel(delta)
+    -- print('DragonFlightUIQuickKeybindButtonOverlayMixin:OnMouseWheel()', delta)
+    if delta > 0 then
+        DragonflightUIQuickKeybindFrame:OnKeyDown('MOUSEWHEELUP')
+    else
+        DragonflightUIQuickKeybindFrame:OnKeyDown('MOUSEWHEELDOWN')
+    end
+end
+
 function DragonFlightUIQuickKeybindButtonOverlayMixin:SetButton(btn)
     self.buttonRef = btn
     self.command = btn.command
