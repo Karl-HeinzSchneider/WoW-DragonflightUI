@@ -98,6 +98,7 @@ end
 function Module:ChangeButtons()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['DragonflightUIConfigFrame'])
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
 end
 
 local frame = CreateFrame('FRAME')
