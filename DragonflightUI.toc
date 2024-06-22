@@ -48,6 +48,7 @@ Modules\Bossframe.lua
 Modules\Castbar.lua
 Modules\Chat.lua
 Modules\Minimap.lua
+Modules\UI.lua
 Modules\Unitframe.lua
 Modules\Utility.lua
 
