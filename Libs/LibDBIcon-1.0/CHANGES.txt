@@ -1,0 +1,10 @@
+------------------------------------------------------------------------
+r135 | funkehdude | 2024-04-30 17:45:27 +0000 (Tue, 30 Apr 2024) | 1 line
+Changed paths:
+   M /trunk/LibDBIcon-1.0.toc
+   A /trunk/LibDBIcon-1.0_Cata.toc
+   M /trunk/LibDBIcon-1.0_Vanilla.toc
+
+Bump toc, add Cata toc
+------------------------------------------------------------------------
+
