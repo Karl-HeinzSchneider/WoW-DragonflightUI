@@ -371,6 +371,8 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 _G[name .. 'TabButton3']:Disable()
             end
         end)
+    elseif name == 'CollectionsJournal' then
+        --   
     elseif name == 'EncounterJournal' then
         local dung = _G[name .. 'DungeonTab']
         -- dung.DFFirst = true
@@ -383,7 +385,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         newDung:Show()
         newDung:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
         newDung:GetFontString():SetText('Dungeons')
-        DragonflightUIMixin:CharacterFrameTabButtonTemplate(newDung)
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(newDung, true)
 
         local raid = _G[name .. 'RaidTab']
         -- raid.DFChangePoint = true
@@ -396,7 +398,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         newRaid:Show()
         newRaid:SetPoint('TOPLEFT', newDung, 'TOPRIGHT', 4, 0)
         newRaid:GetFontString():SetText('Raids')
-        DragonflightUIMixin:CharacterFrameTabButtonTemplate(newRaid)
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(newRaid, true)
     end
 end
 
@@ -414,7 +416,7 @@ function DragonflightUIMixin:TabResize(btn)
     end
 end
 
-function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
+function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled)
     -- print('DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)', frame:GetName())
 
     local name = frame:GetName()
@@ -500,9 +502,8 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
     -- disabled
     if true then
         local left = _G[name .. 'LeftDisabled']
-        left:SetTexture()
-        left:Hide()
-
+        -- left:SetTexture()
+        -- left:Hide()
         left:ClearAllPoints()
         left:SetSize(35, 42)
         left:SetTexture(tex)
@@ -510,9 +511,8 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
         left:SetPoint('TOPLEFT', -1, 0)
 
         local right = _G[name .. 'RightDisabled']
-        right:SetTexture()
-        right:Hide()
-
+        -- right:SetTexture()
+        -- right:Hide()
         right:ClearAllPoints()
         right:SetSize(37, 42)
         right:SetTexture(tex)
@@ -520,14 +520,20 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
         right:SetPoint('TOPRIGHT', 8, 0)
 
         local middle = _G[name .. 'MiddleDisabled']
-        middle:SetTexture()
-        middle:Hide()
+        -- middle:SetTexture()
+        -- middle:Hide()
         middle:ClearAllPoints()
         middle:SetSize(1, 42)
         middle:SetTexture(tex)
         middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
         middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+
+        if hideDisabled then
+            left:Hide()
+            right:Hide()
+            middle:Hide()
+        end
     end
 
     -- highlight
