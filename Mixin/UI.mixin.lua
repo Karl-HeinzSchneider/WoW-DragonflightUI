@@ -91,7 +91,7 @@ function DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(btn)
 end
 
 function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
-    print('DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)', frame:GetName())
+    -- print('DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)', frame:GetName())
 
     local slice = frame.NineSlice
 
@@ -187,7 +187,7 @@ end
   ]]
 
 function DragonflightUIMixin:PortraitFrameTemplate(frame)
-    print('DragonflightUIMixin:PortraitFrameTemplate(frame)', frame:GetName())
+    -- print('DragonflightUIMixin:PortraitFrameTemplate(frame)', frame:GetName())
 
     local name = frame:GetName()
 
