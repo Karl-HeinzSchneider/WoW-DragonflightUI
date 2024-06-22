@@ -117,6 +117,8 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+    DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+
 end
 
 function Module:HookCharacterFrame()

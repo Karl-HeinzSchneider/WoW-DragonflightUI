@@ -315,7 +315,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     end
 
     -- e.g. spellbook
-    for i = 1, 3 do
+    for i = 1, 5 do
         local tab = _G[name .. 'TabButton' .. i]
 
         if tab then
@@ -327,7 +327,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     end
 
     -- e.g. characterframe
-    for i = 1, 3 do
+    for i = 1, 5 do
         local tab = _G[name .. 'Tab' .. i]
 
         if tab then
@@ -402,7 +402,7 @@ end
 
 function DragonflightUIMixin:TabResize(btn)
     -- PanelTemplates_TabResize(btn, 35, nil, 60, 80);
-    btn:SetWidth(80)
+    btn:SetWidth(78)
 
     if btn.DFFirst then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
