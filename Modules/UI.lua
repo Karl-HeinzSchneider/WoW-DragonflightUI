@@ -113,6 +113,15 @@ function Module:ChangeButtons()
 
     DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+end
+
+function Module:HookCharacterFrame()
+    local expand = function()
+        CharacterFrame:Expand();
+    end
+
+    PaperDollFrame:HookScript('OnShow', expand)
+    PetPaperDollFrame:HookScript('OnShow', expand)
 
     hooksecurefunc('PaperDollFrame_SetLevel', function()
         local w = CharacterLevelText:GetWidth()
@@ -128,16 +137,6 @@ function Module:ChangeButtons()
             CharacterLevelText:SetPoint("TOP", 0, y);
         end
     end)
-
-end
-
-function Module:HookCharacterFrameExpand()
-    local expand = function()
-        CharacterFrame:Expand();
-    end
-
-    PaperDollFrame:HookScript('OnShow', expand)
-    PetPaperDollFrame:HookScript('OnShow', expand)
 end
 
 local frame = CreateFrame('FRAME')
@@ -150,7 +149,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 -- Cata
 function Module.Cata()
     Module:ChangeButtons()
-    Module:HookCharacterFrameExpand()
+    Module:HookCharacterFrame()
 end
 
 -- Wrath
