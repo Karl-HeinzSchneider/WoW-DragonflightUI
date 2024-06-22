@@ -281,8 +281,21 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     DragonflightUIMixin:UIPanelCloseButton(closeBtn)
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
 
+    -- e.g. spellbook
     for i = 1, 3 do
         local tab = _G[name .. 'TabButton' .. i]
+
+        if tab then
+            --         
+            DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+
+            if i > 1 then tab.DFChangePoint = true end
+        end
+    end
+
+    -- e.g. characterframe
+    for i = 1, 3 do
+        local tab = _G[name .. 'Tab' .. i]
 
         if tab then
             --         
@@ -406,36 +419,36 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)
     end
 
     -- disabled
-    do
+    if true then
         local left = _G[name .. 'LeftDisabled']
         left:SetTexture()
         left:Hide()
 
-        -- left:ClearAllPoints()
-        -- left:SetSize(35, 42)
-        -- left:SetTexture(tex)
-        -- left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
-        -- left:SetPoint('TOPLEFT', -1, 0)
+        left:ClearAllPoints()
+        left:SetSize(35, 42)
+        left:SetTexture(tex)
+        left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
+        left:SetPoint('TOPLEFT', -1, 0)
 
         local right = _G[name .. 'RightDisabled']
         right:SetTexture()
         right:Hide()
 
-        -- right:ClearAllPoints()
-        -- right:SetSize(37, 42)
-        -- right:SetTexture(tex)
-        -- right:SetTexCoord(0.015625, 0.59375, 0.324219, 0.488281)
-        -- right:SetPoint('TOPRIGHT', 8, 0)
+        right:ClearAllPoints()
+        right:SetSize(37, 42)
+        right:SetTexture(tex)
+        right:SetTexCoord(0.015625, 0.59375, 0.324219, 0.488281)
+        right:SetPoint('TOPRIGHT', 8, 0)
 
         local middle = _G[name .. 'MiddleDisabled']
         middle:SetTexture()
         middle:Hide()
-        -- middle:ClearAllPoints()
-        -- middle:SetSize(1, 42)
-        -- middle:SetTexture(tex)
-        -- middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
-        -- middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
-        -- middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
+        middle:ClearAllPoints()
+        middle:SetSize(1, 42)
+        middle:SetTexture(tex)
+        middle:SetTexCoord(0, 0.015625, 0.00390625, 0.167969)
+        middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
+        middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
     end
 
     -- highlight
