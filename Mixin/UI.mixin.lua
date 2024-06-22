@@ -443,6 +443,26 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         newRaid:SetPoint('TOPLEFT', newDung, 'TOPRIGHT', 4, 0)
         newRaid:GetFontString():SetText('Raids')
         DragonflightUIMixin:CharacterFrameTabButtonTemplate(newRaid, true)
+    elseif name == 'MailFrame' then
+        --
+        local children = {frame:GetRegions()}
+
+        for k, child in ipairs(children) do
+            if child:GetObjectType() == 'Texture' then
+                local tex = child:GetTexture()
+                if tex == 136382 then
+                    -- 
+                    -- child:Hide() 
+                    -- child:SetTexture(base .. 'spellbook-skilllinetab')
+                    child:SetSize(62, 62)
+                    child:ClearAllPoints()
+                    child:SetPoint('TOPLEFT', -5, 7)
+                    child:SetDrawLayer('OVERLAY', 6)
+
+                    SetPortraitToTexture(child, child:GetTexture())
+                end
+            end
+        end
     end
 end
 
