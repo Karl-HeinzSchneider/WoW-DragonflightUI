@@ -1252,21 +1252,14 @@ function Module.ChangeEra()
 end
 
 function Module.ChangeMinimapButtons()
-    print('Module.ChangeMinimapButtons()')
+    -- print('Module.ChangeMinimapButtons()')
     local libIcon = LibStub("LibDBIcon-1.0")
 
     if not libIcon then return end
 
-    local buttons = libIcon:GetButtonList()
-    -- DevTools_Dump(buttons)
-
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 
-    for k, v in ipairs(buttons) do
-        -- DevTools_Dump(v) 
-        local btn = libIcon:GetMinimapButton(v)
-        -- DevTools_Dump(btn)
-
+    local updateButton = function(btn)
         local children = {btn:GetRegions()}
 
         for i, child in ipairs(children) do
@@ -1303,6 +1296,32 @@ function Module.ChangeMinimapButtons()
             btn.icon:SetSize(20, 20)
             btn.icon:ClearAllPoints()
             btn.icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
+
+            SetPortraitToTexture(btn.icon, btn.icon:GetTexture())
+        end
+    end
+
+    hooksecurefunc(libIcon, 'Register', function(self, name, object, db, customCompartmentIcon)
+        --
+        -- print('register', name, object, db, customCompartmentIcon)
+        local btn = libIcon:GetMinimapButton(name)
+        if btn then
+            --
+            updateButton(btn)
+        end
+    end)
+
+    local buttons = libIcon:GetButtonList()
+    -- DevTools_Dump(buttons)
+
+    for k, v in ipairs(buttons) do
+        -- DevTools_Dump(v) 
+        local btn = libIcon:GetMinimapButton(v)
+        -- DevTools_Dump(btn)
+
+        if btn then
+            --
+            updateButton(btn)
         end
     end
 end
