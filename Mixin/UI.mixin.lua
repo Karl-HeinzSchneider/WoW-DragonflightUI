@@ -232,11 +232,19 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     do
         local tex = base .. 'uiframemetal2x'
 
-        local tlc = frame:CreateTexture(name .. 'TopLeftCornerDF', 'OVERLAY')
-        tlc:SetTexture(tex)
-        tlc:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
-        tlc:SetSize(75, 74)
-        tlc:SetPoint('TOPLEFT', -13, 16)
+        local tlc = _G[name .. 'TopLeftCorner']
+        if tlc then
+            tlc:SetTexture(tex)
+            tlc:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
+            tlc:SetSize(75, 74)
+            tlc:SetPoint('TOPLEFT', -12, 16)
+        end
+
+        local tlcDF = frame:CreateTexture(name .. 'TopLeftCornerDF', 'OVERLAY')
+        tlcDF:SetTexture(tex)
+        tlcDF:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
+        tlcDF:SetSize(75, 74)
+        tlcDF:SetPoint('TOPLEFT', -13, 16)
 
         local trc = _G[name .. 'TopRightCorner']
         trc:SetTexture(tex)
@@ -375,18 +383,31 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         --   
     elseif name == 'CommunitiesFrame' then
         --   
-        frame:HookScript('OnShow', function()
-            -- 
-            frame.DF = true
+        local fixTop = function()
             local te = _G[name .. 'TopBorder']
             te:ClearAllPoints()
             te:SetPoint('TOPLEFT', _G[name .. 'TopLeftCornerDF'], 'TOPRIGHT', 0, 0)
             te:SetPoint('TOPRIGHT', _G[name .. 'TopRightCorner'], 'TOPLEFT', 0, 0)
+        end
+        frame:HookScript('OnShow', function()
+            -- 
+            fixTop()
         end)
 
         local minBtn = frame.MaximizeMinimizeFrame
         DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(minBtn)
-        -- closeBtn:SetPoint('TOPRIGHT', 1, 0)
+
+        local oldMaximizedCallback = minBtn.maximizedCallback
+        minBtn:SetOnMaximizedCallback(function()
+            oldMaximizedCallback(minBtn)
+            fixTop()
+        end)
+
+        local oldminimizedCallback = minBtn.minimizedCallback
+        minBtn:SetOnMinimizedCallback(function()
+            oldminimizedCallback(minBtn)
+            fixTop()
+        end)
     elseif name == 'EncounterJournal' then
         local dung = _G[name .. 'DungeonTab']
         -- dung.DFFirst = true
