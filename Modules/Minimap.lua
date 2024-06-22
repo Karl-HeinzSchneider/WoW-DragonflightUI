@@ -1301,7 +1301,19 @@ function Module.ChangeMinimapButtons()
             btn.icon:ClearAllPoints()
             btn.icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
 
-            SetPortraitToTexture(btn.icon, btn.icon:GetTexture())
+            local tex = btn.icon:GetTexture()
+
+            local updateTex = function()
+                SetPortraitToTexture(btn.icon, btn.icon:GetTexture())
+            end
+
+            local err = function(s)
+                -- print('error!', s)
+                btn.icon:SetTexture(tex)
+            end
+
+            local status = xpcall(updateTex, err)
+            -- SetPortraitToTexture(btn.icon, btn.icon:GetTexture())
         end
     end
 
