@@ -95,6 +95,10 @@ function Module:ApplySettings()
     local db = Module.db.profile
 end
 
+function Module:ChangeButtons()
+    DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1)
@@ -104,6 +108,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 -- Cata
 function Module.Cata()
+    Module:ChangeButtons()
 end
 
 -- Wrath
