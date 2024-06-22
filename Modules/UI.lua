@@ -124,6 +124,7 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+    DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
 end
 
 function Module:HookCharacterFrame()
