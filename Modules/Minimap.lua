@@ -1324,6 +1324,8 @@ function Module.ChangeMinimapButtons()
             updateButton(btn)
         end
     end
+
+    updateButton(MiniMapBattlefieldFrame)
 end
 
 function frame:OnEvent(event, arg1)
