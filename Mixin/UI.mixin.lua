@@ -373,6 +373,20 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         end)
     elseif name == 'CollectionsJournal' then
         --   
+    elseif name == 'CommunitiesFrame' then
+        --   
+        frame:HookScript('OnShow', function()
+            -- 
+            frame.DF = true
+            local te = _G[name .. 'TopBorder']
+            te:ClearAllPoints()
+            te:SetPoint('TOPLEFT', _G[name .. 'TopLeftCornerDF'], 'TOPRIGHT', 0, 0)
+            te:SetPoint('TOPRIGHT', _G[name .. 'TopRightCorner'], 'TOPLEFT', 0, 0)
+        end)
+
+        local minBtn = frame.MaximizeMinimizeFrame
+        DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(minBtn)
+        -- closeBtn:SetPoint('TOPRIGHT', 1, 0)
     elseif name == 'EncounterJournal' then
         local dung = _G[name .. 'DungeonTab']
         -- dung.DFFirst = true
