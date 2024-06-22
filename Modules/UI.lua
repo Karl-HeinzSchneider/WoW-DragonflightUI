@@ -122,7 +122,9 @@ function Module:HookCharacterFrame()
 
     PaperDollFrame:HookScript('OnShow', expand)
     PetPaperDollFrame:HookScript('OnShow', expand)
+end
 
+function Module:HookCharacterLevel()
     hooksecurefunc('PaperDollFrame_SetLevel', function()
         local w = CharacterLevelText:GetWidth()
         local y = -32
@@ -150,6 +152,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 function Module.Cata()
     Module:ChangeButtons()
     Module:HookCharacterFrame()
+    Module:HookCharacterLevel()
 end
 
 -- Wrath
