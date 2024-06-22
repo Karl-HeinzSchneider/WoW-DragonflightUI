@@ -190,20 +190,35 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     print('DragonflightUIMixin:PortraitFrameTemplate(frame)', frame:GetName())
 
     local name = frame:GetName()
-    -- local slice = frame.NineSlice
+
+    -- portrait
+    do
+        local tex = base .. 'uiframemetal2x'
+
+        local port = _G[name .. 'Portrait']
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        local pp = _G[name .. 'PortraitFrame']
+        pp:SetTexture(tex)
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
 
     -- corner
     do
         local tex = base .. 'uiframemetal2x'
 
-        local pp = _G[name .. 'PortraitFrame']
-        pp:Hide()
-
         local tlc = frame:CreateTexture(name .. 'TopLeftCornerDF', 'OVERLAY')
         tlc:SetTexture(tex)
         tlc:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
         tlc:SetSize(75, 74)
-        tlc:SetPoint('TOPLEFT', -12, 16)
+        tlc:SetPoint('TOPLEFT', -13, 16)
 
         local trc = _G[name .. 'TopRightCorner']
         trc:SetTexture(tex)
@@ -215,7 +230,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         blc:SetTexture(tex)
         blc:SetTexCoord(0.298828, 0.423828, 0.298828, 0.423828)
         blc:SetSize(32, 32)
-        blc:SetPoint('BOTTOMLEFT', -12, -3)
+        blc:SetPoint('BOTTOMLEFT', -13, -3)
 
         local brc = _G[name .. 'BotRightCorner']
         brc:SetTexture(tex)

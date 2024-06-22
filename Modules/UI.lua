@@ -111,14 +111,7 @@ function Module:ChangeButtons()
 
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
 
-    SpellBookPage2:Hide()
-    SpellBookFrameInset:Hide()
-    SpellBookSpellIconsFrame:Hide()
-    SpellBookFramePortrait:Hide()
-    SpellBookFrameBg:Hide()
-
     DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-
 end
 
 local frame = CreateFrame('FRAME')
