@@ -628,6 +628,7 @@ function Module.UpdateMinimapState(state)
 
     local dfScale = 1.25
     Minimap:SetScale(state.scale * dfScale)
+    -- Module.LFG:SetScale(state.scale)
 
     Module.LockMinimap(state.locked)
     Module.UpdateDurabilityState(state)
@@ -1120,10 +1121,12 @@ function Module.ChangeLFG()
     MiniMapLFGFrameBorder:Hide()
     MiniMapLFGFrameIcon:Hide()
 
-    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame')
+    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', MiniMapLFGFrame)
     Mixin(lfg, DragonflightUILFGButtonMixin)
     lfg:Init()
     lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
+
+    Module.LFG = lfg
 end
 
 function Module.CreateLFGAnimation()

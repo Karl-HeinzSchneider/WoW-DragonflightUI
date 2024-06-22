@@ -20,7 +20,7 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
 
     -- init
     do
-        local f = CreateFrame('Frame')
+        local f = CreateFrame('Frame', nil, self)
         f:SetSize(btnSize, btnSize)
         f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
@@ -55,7 +55,7 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
 
     -- searching
     do
-        local f = CreateFrame('Frame')
+        local f = CreateFrame('Frame', nil, self)
         f:SetSize(btnSize, btnSize)
         f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
@@ -90,7 +90,7 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
 
     -- hover
     do
-        local f = CreateFrame('Frame')
+        local f = CreateFrame('Frame', nil, self)
         f:SetSize(btnSize, btnSize)
         f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
@@ -121,7 +121,7 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
 
     -- init found
     do
-        local f = CreateFrame('Frame')
+        local f = CreateFrame('Frame', nil, self)
         f:SetSize(btnSize, btnSize)
         f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
@@ -153,7 +153,7 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
 
     -- found
     do
-        local f = CreateFrame('Frame')
+        local f = CreateFrame('Frame', nil, self)
         f:SetSize(btnSize, btnSize)
         f:SetPoint('CENTER', self, 'CENTER', 0, 0)
 
@@ -277,7 +277,7 @@ function DragonflightUILFGButtonMixin:Init()
     self:SetSize(btnSize, btnSize)
 
     do
-        local eye = CreateFrame('Frame')
+        local eye = CreateFrame('Frame', 'DragonflightUILFGEye', self)
         eye:SetParent(self)
         eye:SetSize(btnSize, btnSize)
         eye:SetPoint('CENTER')
