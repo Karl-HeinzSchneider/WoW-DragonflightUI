@@ -1251,6 +1251,62 @@ function Module.ChangeEra()
     MinimapToggleButton:Hide()
 end
 
+function Module.ChangeMinimapButtons()
+    print('Module.ChangeMinimapButtons()')
+    local libIcon = LibStub("LibDBIcon-1.0")
+
+    if not libIcon then return end
+
+    local buttons = libIcon:GetButtonList()
+    -- DevTools_Dump(buttons)
+
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+    for k, v in ipairs(buttons) do
+        -- DevTools_Dump(v) 
+        local btn = libIcon:GetMinimapButton(v)
+        -- DevTools_Dump(btn)
+
+        local children = {btn:GetRegions()}
+
+        for i, child in ipairs(children) do
+            --            
+            if child:GetObjectType() == 'Texture' then
+                --
+                local tex = child:GetTexture()
+                -- print('child=texture', tex)
+
+                if tex == 136477 then
+                    -- highlight
+                    child:SetTexture(base .. 'ui-minimap-zoombutton-highlight')
+                elseif tex == 136430 then
+                    -- overlay
+                    ----"Interface\\Minimap\\MiniMap-TrackingBorder"                  
+                    child:SetSize(50, 50)
+                    child:SetTexture(base .. 'minimap-trackingborder')
+                    child:ClearAllPoints()
+                    child:SetPoint("TOPLEFT", btn, "TOPLEFT")
+                elseif tex == 136467 then
+                    -- background
+                    ----"Interface\\Minimap\\UI-Minimap-Background"
+                    child:SetSize(24, 24)
+                    child:SetTexture(base .. 'ui-minimap-background')
+                    child:ClearAllPoints()
+                    child:SetPoint("CENTER", btn, "CENTER")
+                else
+                    --
+                end
+            end
+        end
+        -- icon
+        if btn.icon then
+            btn.icon:SetSize(20, 20)
+            btn.icon:ClearAllPoints()
+            btn.icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
+        end
+    end
+end
+
 function frame:OnEvent(event, arg1)
     -- print('event', event) 
 end
@@ -1274,6 +1330,7 @@ function Module.Wrath()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
+    Module.ChangeMinimapButtons()
 
     Module.HookCalendar()
     Module.UpdateCalendar()
@@ -1294,6 +1351,7 @@ function Module.Era()
     Module.MoveTracker()
     Module.HookMouseWheel()
     Module.ChangeMail()
+    Module.ChangeMinimapButtons()
     Module.ChangeEra()
 
     Module.HookCalendar()
