@@ -140,6 +140,20 @@ function Module:HookFriendsColor(hook)
                       isOnline, lastOnline, isBnetAFK, isBnetDND, messageText, noteText, isRIDFriend, messageTime,
                       canSoR = BNGetFriendInfo(button.id);
 
+                if not button.DFHeart then
+                    local heart = button:CreateTexture()
+                    heart:SetTexture(135451)
+                    heart:SetPoint('RIGHT', button.gameIcon, 'LEFT', -2, 0)
+                    heart:SetSize(26, 26)
+                    button.DFHeart = heart
+                end
+
+                if string.match(noteText, "<3") then
+                    button.DFHeart:Show()
+                else
+                    button.DFHeart:Hide()
+                end
+
                 if not isOnline or client ~= BNET_CLIENT_WOW then return; end
 
                 local hasFocus, characterName, client, realmName, realmID, faction, race, class, guild, zoneName, level,
@@ -159,18 +173,34 @@ function Module:HookFriendsColor(hook)
                     nameText = accountName .. " " .. "|c" .. color.colorStr .. "(" .. characterName .. ': ' .. level ..
                                    ")" .. FONT_COLOR_CODE_CLOSE;
 
-                    if faction ~= localizedFaction then nameText = nameText .. ' (' .. faction .. ')' end
+                    if faction ~= localizedFaction then
+                        nameText = nameText .. ' (' .. faction .. ') '
+                    end
 
                     local gameAccountInfo = C_BattleNet.GetGameAccountInfoByID(bnetIDGameAccount);
                     local infoText = gameAccountInfo.richPresence
                     -- DevTools_Dump(gameAccountInfo)
 
+                    -- print(accountName, characterName, class, faction, realmName, realmID, gameAccountInfo.wowProjectID)
+
                     local localRealmID = GetRealmID()
                     if realmID == localRealmID then
-                        button.info:SetTextColor(255, 255, 255)
+                        local flavor = 'WoW'
+
+                        if gameAccountInfo.wowProjectID == 2 then
+                            flavor = 'Classic Era'
+                        elseif gameAccountInfo.wowProjectID == 14 then
+                            flavor = 'Cataclysm Classic'
+                        end
+
+                        infoText = flavor .. ' - ' .. "|cFFFFFFFF" .. gameAccountInfo.realmName .. FONT_COLOR_CODE_CLOSE
+
+                        button.info:SetText(infoText)
+                        -- button.info:SetTextColor(255, 255, 255)
+                        -- button.info:SetTextColor(FRIENDS_GRAY_COLOR.r, FRIENDS_GRAY_COLOR.g, FRIENDS_GRAY_COLOR.b)
                     else
-                        --[[    button.info:SetTextColor(FRIENDS_WOW_NAME_COLOR.r, FRIENDS_WOW_NAME_COLOR.g,
-                                                 FRIENDS_WOW_NAME_COLOR.b) ]]
+                        button.info:SetText(infoText)
+                        button.info:SetTextColor(FRIENDS_GRAY_COLOR.r, FRIENDS_GRAY_COLOR.g, FRIENDS_GRAY_COLOR.b)
                     end
 
                     button.name:SetText(nameText)
