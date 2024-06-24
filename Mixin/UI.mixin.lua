@@ -112,7 +112,19 @@ function DragonflightUIMixin:ChangeBag(frame)
     local port = _G[name .. 'Portrait']
     port:ClearAllPoints()
     port:SetAlpha(1)
-    port:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -5)
+    port:SetSize(36, 36)
+    port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -4, 1)
+    port:SetDrawLayer('OVERLAY', 6)
+
+    if frame == ContainerFrame1 then
+        local newPort = frame:CreateTexture('DFPortrait')
+        -- newPort:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\bigbag')        
+        newPort:SetTexture(133633)
+        newPort:SetSize(36, 36)
+        newPort:SetPoint('TOPLEFT', frame, 'TOPLEFT', -4, 1)
+        newPort:SetDrawLayer('OVERLAY', 6)
+        SetPortraitToTexture(newPort, newPort:GetTexture())
+    end
 
     local portBtn = _G[name .. 'PortraitButton']
     portBtn:ClearAllPoints()
@@ -122,6 +134,17 @@ function DragonflightUIMixin:ChangeBag(frame)
     frame.ClosePanelButton = _G[name .. 'CloseButton']
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+
+    frame.Bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 2, -20)
+    frame.Bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 3)
+
+    local pp = frame:CreateTexture()
+    pp:SetTexture(base .. 'ui-frame-portraitmetal-cornertopleftsmall')
+    pp:SetSize(75, 76)
+    pp:SetTexCoord(0, 150 / 256, 0, 150 / 256)
+    pp:ClearAllPoints()
+    pp:SetPoint('TOPLEFT', frame, 'TOPLEFT', -13, 16)
+    pp:SetDrawLayer('OVERLAY', 7)
 
     frame.TitleContainer = CreateFrame('FRAME', 'TitleContainer', frame)
     frame.TitleContainer:SetSize(0, 20)
@@ -156,6 +179,7 @@ function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     frame.Bg = CreateFrame('FRAME', 'Bg', frame, 'FlatPanelBackgroundTemplate')
     frame.Bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -18)
     frame.Bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -3, 3)
+    frame.Bg:SetFrameLevel(0)
 
     if portrait then frame.PortraitFrame = frame:CreateTexture('PortraitFrame') end
 end
