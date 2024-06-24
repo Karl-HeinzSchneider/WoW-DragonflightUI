@@ -65,4 +65,54 @@
 			</OnDisable>
 		</Scripts>
 	</Button>
+	<Frame name="ContainerFrameCurrencyBorderTemplate" mixin="ContainerFrameCurrencyBorderMixin" virtual="true">
+		<Size y="17" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Left">
+					<Size x="8" y="17" />
+					<Anchors>
+						<Anchor point="LEFT" />
+					</Anchors>
+				</Texture>
+				<Texture parentKey="Right">
+					<Size x="8" y="17" />
+					<Anchors>
+						<Anchor point="RIGHT" />
+					</Anchors>
+				</Texture>
+				<Texture parentKey="Middle">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Left" relativePoint="TOPRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Right" relativePoint="BOTTOMLEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<Frame name="ContainerMoneyFrameBorderTemplate" inherits="ContainerFrameCurrencyBorderTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="leftEdge" value="common-coinbox-left" type="string" />
+			<KeyValue key="rightEdge" value="common-coinbox-right" type="string" />
+			<KeyValue key="centerEdge" value="_common-coinbox-center" type="string" />
+		</KeyValues>
+		<Anchors>
+			<Anchor point="LEFT" />
+			<Anchor point="RIGHT" />
+		</Anchors>
+	</Frame>
+	<Frame name="ContainerTokenFrameBorderTemplate" inherits="ContainerFrameCurrencyBorderTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="leftEdge" value="common-currencybox-left" type="string" />
+			<KeyValue key="rightEdge" value="common-currencybox-right" type="string" />
+			<KeyValue key="centerEdge" value="_common-currencybox-center" type="string" />
+		</KeyValues>
+		<Anchors>
+			<Anchor point="LEFT" />
+			<Anchor point="RIGHT" />
+		</Anchors>
+	</Frame>
 </Ui>

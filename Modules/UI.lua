@@ -188,7 +188,7 @@ function Module:ChangeBags()
             if id == 0 then
                 return 9 + 48 + 30
             else
-                return 9 + 48
+                return 9 + 48 - 10
             end
         end
 
@@ -196,7 +196,13 @@ function Module:ChangeBags()
             if id == 0 then
                 -- ContainerFrameTokenWatcherMixin.CalculateExtraHeight(self) + self.MoneyFrame:GetHeight();
                 local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
-                return moneyFrame:GetHeight()
+                local tokenFrame = _G['BackpackTokenFrame']
+
+                if tokenFrame:IsVisible() then
+                    return moneyFrame:GetHeight() + tokenFrame:GetHeight()
+                else
+                    return moneyFrame:GetHeight()
+                end
             else
                 return 0
             end
@@ -207,8 +213,7 @@ function Module:ChangeBags()
         local ITEM_SPACING_X = 5;
         local ITEM_SPACING_Y = 5;
 
-        hooksecurefunc('ContainerFrame_GenerateFrame', function(frame, size, id)
-            --
+        local updateSize = function(frame, size, id)
             local rows = math.ceil(size / 4)
             local itemButton = _G[frame:GetName() .. "Item1"];
             local itemsHeight = (rows * itemButton:GetHeight()) + ((rows - 1) * ITEM_SPACING_Y);
@@ -218,19 +223,47 @@ function Module:ChangeBags()
             local newWidth = 4 * itemButton:GetWidth() + 3 * ITEM_SPACING_X + 2 * CONTAINER_SPACING
             frame:SetWidth(newWidth)
 
-            -- print('ContainerFrame_GenerateFrame', frame:GetName(), size, id, 'w: ' .. newWidth, 'h: ' .. newHeight)
+            --[[  print('ContainerFrame_GenerateFrame', frame:GetName(), size, id, 'w: ' .. newWidth, 'h: ' .. newHeight,
+                  '| ' .. frame:GetID()) ]]
 
             if id == 0 then
                 frame.DFPortrait:Show()
                 local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+                local tokenFrame = _G['BackpackTokenFrame']
+
                 moneyFrame:ClearAllPoints()
-                moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
-                moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+                if tokenFrame:IsVisible() then
+                    tokenFrame:ClearAllPoints()
+                    tokenFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+                    tokenFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+
+                    moneyFrame:SetPoint('BOTTOMLEFT', tokenFrame, 'TOPLEFT', 0, 3)
+                    moneyFrame:SetPoint('BOTTOMRIGHT', tokenFrame, 'TOPRIGHT', 0, 3)
+                else
+                    moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+                    moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+                end
 
                 itemButton:SetPoint('BOTTOMRIGHT', moneyFrame, 'TOPRIGHT', 0, 4)
             else
                 frame.DFPortrait:Hide()
                 itemButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 9)
+            end
+        end
+
+        hooksecurefunc('ContainerFrame_GenerateFrame', function(frame, size, id)
+            --
+            updateSize(frame, size, id)
+        end)
+
+        hooksecurefunc('ManageBackpackTokenFrame', function(backpack)
+            --   
+            local point, relativeTo, relativePoint, xOfs, yOfs = BackpackTokenFrame:GetPoint(1)
+
+            if relativeTo then
+                local id = relativeTo:GetID()
+                local size = C_Container.GetContainerNumSlots(0)
+                updateSize(relativeTo, size, id)
             end
         end)
 
@@ -242,6 +275,8 @@ function Module:ChangeBags()
             ContainerFrame1.VISIBLE_CONTAINER_SPACING_DF = 3
             ContainerFrame1.CONTAINER_SPACING_DF = 5
         end
+
+        DragonflightUIMixin:ChangeBackpackTokenFrame()
     end
 end
 

@@ -159,12 +159,19 @@ function DragonflightUIMixin:ChangeBag(frame)
     title:SetPoint('LEFT', frame.TitleContainer, 'LEFT', 0, 0)
     title:SetFontObject("GameFontNormal")
 
-    local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
-    moneyFrame:ClearAllPoints()
-    moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
-    moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
-    MoneyFrame_SetMaxDisplayWidth(moneyFrame, 178 - 2 * 8)
+    do
+        local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+        moneyFrame:ClearAllPoints()
+        moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+        moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+        MoneyFrame_SetMaxDisplayWidth(moneyFrame, 178 - 2 * 8)
+        moneyFrame:SetHeight(17)
 
+        local border = CreateFrame('FRAME', 'Border', moneyFrame, 'ContainerMoneyFrameBorderTemplate')
+        border:SetParent(moneyFrame)
+        border:SetAllPoints()
+        moneyFrame.border = border
+    end
     -- size
     do
         local CONTAINER_WIDTH = 178;
@@ -187,6 +194,40 @@ function DragonflightUIMixin:ChangeBag(frame)
         end
 
     end
+end
+
+function DragonflightUIMixin:ChangeBackpackTokenFrame()
+    local frame = BackpackTokenFrame
+
+    local regions = {frame:GetRegions()}
+
+    for k, child in ipairs(regions) do
+        --
+        if child:GetObjectType() == 'Texture' then child:SetTexture('') end
+    end
+
+    frame:SetHeight(17)
+
+    local border = CreateFrame('FRAME', 'Border', frame, 'ContainerTokenFrameBorderTemplate')
+    border:SetParent(frame)
+    border:SetAllPoints()
+    frame.border = border
+
+    local other;
+    for i = 1, 3 do
+        --
+        -- <Size x="50" y="12"/>
+        local token = _G['BackpackTokenFrameToken' .. i]
+        token:ClearAllPoints()
+
+        if other then
+            token:SetPoint('LEFT', other, 'RIGHT', 0, 0)
+        else
+            token:SetPoint('LEFT', frame, 'LEFT', 6.5, -1)
+        end
+        other = token
+    end
+
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
@@ -967,3 +1008,37 @@ end
     ["_uiframe-tab-center"]={1, 36, 0, 0.015625, 0.175781, 0.316406, true, false, "1x"},
   }, -- Interface/FrameGeneral/UIFrameTabs ]]
 
+ContainerFrameCurrencyBorderMixin = {};
+
+function ContainerFrameCurrencyBorderMixin:OnLoad()
+    self:SetupPiece(self.Left, self.leftEdge);
+    self:SetupPiece(self.Right, self.rightEdge);
+    self:SetupPiece(self.Middle, self.centerEdge);
+end
+
+local commoncoinboxTexture = base .. 'commoncoinbox'
+local commoncurrencyboxTexture = base .. 'commoncurrencybox'
+local currencyBorderAtlas = {
+    -- commoncoinboxTexture
+    ["common-coinbox-left"] = {commoncoinboxTexture, 16, 34, 0.03125, 0.53125, 0.289062, 0.554688, false, false, "1x"},
+    ["common-coinbox-right"] = {commoncoinboxTexture, 16, 34, 0.03125, 0.53125, 0.570312, 0.835938, false, false, "1x"},
+    ["_common-coinbox-center"] = {commoncoinboxTexture, 16, 34, 0, 0.5, 0.0078125, 0.273438, true, false, "1x"},
+    -- commoncurrencyboxTexture
+    ["common-currencybox-left"] = {
+        commoncurrencyboxTexture, 16, 34, 0.03125, 0.53125, 0.289062, 0.554688, false, false, "1x"
+    },
+    ["common-currencybox-right"] = {
+        commoncurrencyboxTexture, 16, 34, 0.03125, 0.53125, 0.570312, 0.835938, false, false, "1x"
+    },
+    ["_common-currencybox-center"] = {commoncurrencyboxTexture, 16, 34, 0, 0.5, 0.0078125, 0.273438, true, false, "1x"}
+}
+
+function ContainerFrameCurrencyBorderMixin:SetupPiece(piece, atlas)
+    piece:SetTexelSnappingBias(0);
+    -- piece:SetAtlas(atlas);
+
+    local data = currencyBorderAtlas[atlas]
+
+    piece:SetTexture(data[1])
+    piece:SetTexCoord(data[4], data[5], data[6], data[7])
+end
