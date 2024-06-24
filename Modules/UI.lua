@@ -294,6 +294,7 @@ function Module:ChangeBags()
 
         DragonflightUIMixin:ChangeBackpackTokenFrame()
         local searchBox = DragonflightUIMixin:CreateSearchBox()
+        local bankSearchBox = DragonflightUIMixin:CreateBankSearchBox()
 
         hooksecurefunc('ContainerFrame_Update', function(frame)
             --
