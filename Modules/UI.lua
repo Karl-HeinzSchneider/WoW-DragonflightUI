@@ -176,10 +176,63 @@ end
 
 function Module:ChangeBags()
 
-    for i = 1, 2 do
+    for i = 1, 13 do
         local name = 'ContainerFrame' .. i
         local bag = _G[name]
         DragonflightUIMixin:ChangeBag(bag)
+    end
+
+    do
+        --	@blizz: Accounts for the vertical anchor offset at the bottom and the height of the titlebar and attic.
+        local GetPaddingHeight = function(frame, id)
+            if id == 0 then
+                return 9 + 48 + 30
+            else
+                return 9 + 48
+            end
+        end
+
+        local CalculateExtraHeight = function(frame, id)
+            if id == 0 then
+                -- ContainerFrameTokenWatcherMixin.CalculateExtraHeight(self) + self.MoneyFrame:GetHeight();
+                local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+                return moneyFrame:GetHeight()
+            else
+                return 0
+            end
+        end
+
+        local CONTAINER_WIDTH = 178;
+        local CONTAINER_SPACING = 8;
+        local ITEM_SPACING_X = 5;
+        local ITEM_SPACING_Y = 5;
+
+        hooksecurefunc('ContainerFrame_GenerateFrame', function(frame, size, id)
+            --
+            local rows = math.ceil(size / 4)
+            local itemButton = _G[frame:GetName() .. "Item1"];
+            local itemsHeight = (rows * itemButton:GetHeight()) + ((rows - 1) * ITEM_SPACING_Y);
+            local newHeight = itemsHeight + GetPaddingHeight(frame, id) + CalculateExtraHeight(frame, id);
+            frame:SetHeight(newHeight)
+
+            local newWidth = 4 * itemButton:GetWidth() + 3 * ITEM_SPACING_X + 2 * CONTAINER_SPACING
+            frame:SetWidth(newWidth)
+
+            -- print('ContainerFrame_GenerateFrame', frame:GetName(), size, id, 'w: ' .. newWidth, 'h: ' .. newHeight)
+
+            if id == 0 then
+                frame.DFPortrait:Show()
+                local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+                moneyFrame:ClearAllPoints()
+                moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+                moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+
+                itemButton:SetPoint('BOTTOMRIGHT', moneyFrame, 'TOPRIGHT', 0, 4)
+            else
+                frame.DFPortrait:Hide()
+                itemButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 9)
+            end
+        end)
     end
 end
 

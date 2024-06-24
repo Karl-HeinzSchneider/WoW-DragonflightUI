@@ -114,17 +114,18 @@ function DragonflightUIMixin:ChangeBag(frame)
     port:SetAlpha(1)
     port:SetSize(36, 36)
     port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -4, 1)
-    port:SetDrawLayer('OVERLAY', 6)
+    port:SetDrawLayer('OVERLAY', 5)
 
-    if frame == ContainerFrame1 then
-        local newPort = frame:CreateTexture('DFPortrait')
-        -- newPort:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\bigbag')        
-        newPort:SetTexture(133633)
-        newPort:SetSize(36, 36)
-        newPort:SetPoint('TOPLEFT', frame, 'TOPLEFT', -4, 1)
-        newPort:SetDrawLayer('OVERLAY', 6)
-        SetPortraitToTexture(newPort, newPort:GetTexture())
-    end
+    local newPort = frame:CreateTexture('DFPortrait')
+    -- newPort:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\bigbag')        
+    newPort:SetTexture(133633)
+    newPort:SetSize(36, 36)
+    newPort:SetPoint('TOPLEFT', frame, 'TOPLEFT', -4, 1)
+    newPort:SetDrawLayer('OVERLAY', 6)
+    newPort:Hide()
+    SetPortraitToTexture(newPort, newPort:GetTexture())
+
+    frame.DFPortrait = newPort
 
     local portBtn = _G[name .. 'PortraitButton']
     portBtn:ClearAllPoints()
@@ -157,6 +158,35 @@ function DragonflightUIMixin:ChangeBag(frame)
     title:SetPoint('RIGHT', frame.TitleContainer, 'RIGHT', 0, 0)
     title:SetPoint('LEFT', frame.TitleContainer, 'LEFT', 0, 0)
     title:SetFontObject("GameFontNormal")
+
+    local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+    moneyFrame:ClearAllPoints()
+    moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+    moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+    MoneyFrame_SetMaxDisplayWidth(moneyFrame, 178 - 2 * 8)
+
+    -- size
+    do
+        local CONTAINER_WIDTH = 178;
+        local CONTAINER_SPACING = 8;
+        local ITEM_SPACING_X = 5;
+        local ITEM_SPACING_Y = 5;
+        local CONTAINER_SCALE = 0.75;
+        local BACKPACK_BASE_SIZE = 16;
+        local FRAME_THAT_OPENED_BAGS = nil;
+        local CONTAINER_HELPTIP_SYSTEM = "ContainerFrame";
+
+        frame:SetWidth(CONTAINER_WIDTH)
+
+        local bagSize = 42
+        local rows = math.ceil(bagSize / 4)
+
+        local updateSize = function(bag)
+            bag:SetWidth(CONTAINER_WIDTH)
+
+        end
+
+    end
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
