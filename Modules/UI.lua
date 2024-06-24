@@ -203,7 +203,7 @@ function Module:ChangeBags()
             if id == 0 then
                 return 9 + 48 + 18
             else
-                return 9 + 48
+                return 9 + 48 - 7
             end
         end
 
@@ -309,7 +309,7 @@ function Module:ChangeBags()
             if id == 0 then
                 --
                 searchBox:SetParent(frame)
-                searchBox:SetPoint('TOPLEFT', frame, 'TOPLEFT', 42, -37)
+                searchBox:SetPoint('TOPLEFT', frame, 'TOPLEFT', 42, -37 + 2)
                 searchBox:SetWidth(frame:GetWidth() - 2 * 42)
                 searchBox.AnchorBagRef = frame
                 searchBox:Show()
