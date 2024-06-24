@@ -239,7 +239,7 @@ function DragonflightUIMixin:ChangeBagButton(btn)
     border:SetSize(64, 64)
     border:SetPoint('CENTER', 0, -1)
     border:SetDrawLayer('BACKGROUND', 4)
-    border:SetAlpha(0.5)
+    -- border:SetAlpha(0.5)
 end
 
 function DragonflightUIMixin:ChangeBackpackTokenFrame()
