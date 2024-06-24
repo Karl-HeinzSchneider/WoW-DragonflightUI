@@ -233,6 +233,15 @@ function Module:ChangeBags()
                 itemButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 9)
             end
         end)
+
+        do
+            --    
+            ContainerFrame1.CONTAINER_OFFSET_X_DF = 5
+            ContainerFrame1.CONTAINER_OFFSET_Y_DF = 95
+
+            ContainerFrame1.VISIBLE_CONTAINER_SPACING_DF = 3
+            ContainerFrame1.CONTAINER_SPACING_DF = 5
+        end
     end
 end
 
