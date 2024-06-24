@@ -3389,8 +3389,11 @@ function Module.HookBags()
     -- from '\BlizzardInterfaceCode\Interface\FrameXML\ContainerFrame_Shared.lua'
     local UpdateContainerFrameAnchorsModified = function()
         -- CHANGE
-        local CONTAINER_OFFSET_X_DF = 0
-        local CONTAINER_OFFSET_Y_DF = 92
+        local CONTAINER_OFFSET_X_DF = ContainerFrame1.CONTAINER_OFFSET_X_DF or 0
+        local CONTAINER_OFFSET_Y_DF = ContainerFrame1.CONTAINER_OFFSET_Y_DF or 92
+
+        local VISIBLE_CONTAINER_SPACING_DF = ContainerFrame1.VISIBLE_CONTAINER_SPACING_DF or 3
+        local CONTAINER_SPACING_DF = ContainerFrame1.CONTAINER_SPACING_DF or 0
 
         if Module.db.profile.changeSides then
         else
@@ -3422,7 +3425,7 @@ function Module.HookBags()
                     leftMostPoint = screenWidth - (column * CONTAINER_WIDTH * containerScale) - xOffset
                     freeScreenHeight = screenHeight - yOffset
                 end
-                freeScreenHeight = freeScreenHeight - frameHeight - VISIBLE_CONTAINER_SPACING
+                freeScreenHeight = freeScreenHeight - frameHeight - VISIBLE_CONTAINER_SPACING_DF
             end
             if (leftMostPoint < leftLimit) then
                 containerScale = containerScale - 0.01
@@ -3454,9 +3457,9 @@ function Module.HookBags()
                                yOffset)
             else
                 -- Anchor to the previous bag
-                frame:SetPoint('BOTTOMRIGHT', ContainerFrame1.bags[index - 1], 'TOPRIGHT', 0, CONTAINER_SPACING)
+                frame:SetPoint('BOTTOMRIGHT', ContainerFrame1.bags[index - 1], 'TOPRIGHT', 0, CONTAINER_SPACING_DF)
             end
-            freeScreenHeight = freeScreenHeight - frame:GetHeight() - VISIBLE_CONTAINER_SPACING
+            freeScreenHeight = freeScreenHeight - frame:GetHeight() - VISIBLE_CONTAINER_SPACING_DF
         end
     end
 

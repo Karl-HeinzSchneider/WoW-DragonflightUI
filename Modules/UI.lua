@@ -103,6 +103,8 @@ function frame:OnEvent(event, arg1, ...)
         -- print('ADDON_LOADED', arg1, ...)
         if arg1 == 'Blizzard_EncounterJournal' then
             DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        elseif arg1 == 'Blizzard_GuildBankUI' then
+            DragonflightUIMixin:AddGuildbankSearch()
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module:ChangeLateFrames()
@@ -174,11 +176,164 @@ function Module:HookCharacterLevel()
     end)
 end
 
+function Module:ChangeBags()
+
+    for i = 1, 13 do
+        local name = 'ContainerFrame' .. i
+        local bag = _G[name]
+        DragonflightUIMixin:ChangeBag(bag)
+
+        hooksecurefunc(bag, 'SetHeight', function(frame, height)
+            --
+            -- print('SetHeight', frame:GetName(), height)
+            if bag.DFHeight then
+                --
+                if math.abs(bag:GetHeight() - bag.DFHeight) > 0.1 then
+                    --
+                    -- bag:SetHeight(bag.DFHeight)
+                    bag:SetSize(bag:GetWidth(), bag.DFHeight)
+                end
+            end
+        end)
+
+        for j = 1, 36 do DragonflightUIMixin:ChangeBagButton(_G[name .. 'Item' .. j]) end
+    end
+
+    do
+        --	@blizz: Accounts for the vertical anchor offset at the bottom and the height of the titlebar and attic.
+        local GetPaddingHeight = function(frame, id)
+            if id == 0 then
+                return 9 + 48 + 18
+            else
+                return 9 + 48 - 7
+            end
+        end
+
+        local CalculateExtraHeight = function(frame, id)
+            if id == 0 then
+                -- ContainerFrameTokenWatcherMixin.CalculateExtraHeight(self) + self.MoneyFrame:GetHeight();
+                local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+                local tokenFrame = _G['BackpackTokenFrame']
+
+                if tokenFrame:IsVisible() then
+                    -- return moneyFrame:GetHeight() + tokenFrame:GetHeight()
+                    return 17 + 17
+                else
+                    -- return moneyFrame:GetHeight()
+                    return 17
+                end
+            else
+                return 0
+            end
+        end
+
+        local CONTAINER_WIDTH = 178;
+        local CONTAINER_SPACING = 8;
+        local ITEM_SPACING_X = 5;
+        local ITEM_SPACING_Y = 5;
+
+        local updateSize = function(frame, size, id)
+            local rows = math.ceil(size / 4)
+            local itemButton = _G[frame:GetName() .. "Item1"];
+            local itemsHeight = (rows * itemButton:GetHeight()) + ((rows - 1) * ITEM_SPACING_Y);
+            local newHeight = itemsHeight + GetPaddingHeight(frame, id) + CalculateExtraHeight(frame, id);
+            frame.DFHeight = newHeight
+            frame:SetHeight(newHeight)
+
+            local newWidth = 4 * itemButton:GetWidth() + 3 * ITEM_SPACING_X + 2 * CONTAINER_SPACING
+            frame.DFWidth = newWidth
+            frame:SetWidth(newWidth)
+
+            -- print('updateSize', frame:GetName(), size, id, 'w: ' .. newWidth, 'h: ' .. newHeight, '| ' .. frame:GetID())
+
+            if id == 0 then
+                frame.DFPortrait:Show()
+                local moneyFrame = _G[frame:GetName() .. 'MoneyFrame']
+                local tokenFrame = _G['BackpackTokenFrame']
+
+                moneyFrame:ClearAllPoints()
+                if tokenFrame:IsVisible() then
+                    tokenFrame:ClearAllPoints()
+                    tokenFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+                    tokenFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+
+                    moneyFrame:SetPoint('BOTTOMLEFT', tokenFrame, 'TOPLEFT', 0, 3)
+                    moneyFrame:SetPoint('BOTTOMRIGHT', tokenFrame, 'TOPRIGHT', 0, 3)
+                else
+                    moneyFrame:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 8, 8)
+                    moneyFrame:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -8, 8)
+                end
+
+                itemButton:SetPoint('BOTTOMRIGHT', moneyFrame, 'TOPRIGHT', 0, 4)
+            else
+                frame.DFPortrait:Hide()
+                itemButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 9)
+            end
+        end
+
+        --[[   hooksecurefunc('ContainerFrame_GenerateFrame', function(frame, size, id)
+            --
+            updateSize(frame, size, id)
+        end) ]]
+
+        hooksecurefunc('ManageBackpackTokenFrame', function(backpack)
+            --   
+            local point, relativeTo, relativePoint, xOfs, yOfs = BackpackTokenFrame:GetPoint(1)
+
+            if relativeTo then
+                local id = relativeTo:GetID()
+                local size = C_Container.GetContainerNumSlots(0)
+                updateSize(relativeTo, size, id)
+            end
+        end)
+
+        do
+            --    
+            ContainerFrame1.CONTAINER_OFFSET_X_DF = 5
+            ContainerFrame1.CONTAINER_OFFSET_Y_DF = 95
+
+            ContainerFrame1.VISIBLE_CONTAINER_SPACING_DF = 3
+            ContainerFrame1.CONTAINER_SPACING_DF = 5
+        end
+
+        DragonflightUIMixin:ChangeBackpackTokenFrame()
+        local searchBox = DragonflightUIMixin:CreateSearchBox()
+        local bankSearchBox = DragonflightUIMixin:CreateBankSearchBox()
+
+        if C_AddOns.IsAddOnLoaded("Blizzard_GuildBankUI") then DragonflightUIMixin:AddGuildbankSearch() end
+
+        hooksecurefunc('ContainerFrame_Update', function(frame)
+            --
+            local id = frame:GetID()
+
+            -- print('ContainerFrame_Update', frame:GetName(), id)
+
+            if id == 0 then
+                --
+                searchBox:SetParent(frame)
+                searchBox:SetPoint('TOPLEFT', frame, 'TOPLEFT', 42, -37 + 2)
+                searchBox:SetWidth(frame:GetWidth() - 2 * 42)
+                searchBox.AnchorBagRef = frame
+                searchBox:Show()
+            elseif searchBox.AnchorBagRef == frame then
+                --
+                searchBox:ClearAllPoints()
+                searchBox:Hide()
+                searchBox.AnchorBagRef = nil
+            end
+
+            local size = C_Container.GetContainerNumSlots(id)
+            updateSize(frame, size, id)
+        end)
+    end
+end
+
 -- Cata
 function Module.Cata()
     Module:ChangeButtons()
     Module:HookCharacterFrame()
     Module:HookCharacterLevel()
+    Module:ChangeBags()
 
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
