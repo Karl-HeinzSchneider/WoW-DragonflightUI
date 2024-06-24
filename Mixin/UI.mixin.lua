@@ -91,7 +91,7 @@ function DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(btn)
 end
 
 function DragonflightUIMixin:ChangeBag(frame)
-    print('DragonflightUIMixin:ChangeBag(frame)', frame:GetName(), frame:GetID())
+    -- print('DragonflightUIMixin:ChangeBag(frame)', frame:GetName(), frame:GetID())
     local name = frame:GetName()
 
     do
@@ -194,6 +194,52 @@ function DragonflightUIMixin:ChangeBag(frame)
         end
 
     end
+end
+
+--[[ 
+["Interface/ContainerFrame/BagsItemBankSlot2x"]={
+    ["bags-item-bankslot64"]={64, 64, 0, 1, 0, 1, true, true, "1x"},
+  }, -- Interface/ContainerFrame/BagsItemBankSlot2x
+  ["Interface/ContainerFrame/BagsItemSlot2x"]={
+    ["bags-item-slot64"]={64, 64, 0, 1, 0, 1, true, true, "1x"},
+  }, -- Interface/ContainerFrame/BagsItemSlot2x
+ ]]
+
+function DragonflightUIMixin:ChangeBagButton(btn)
+    local bg = btn:CreateTexture('DragonflightUIBg')
+    bg:SetTexture(base .. 'BagsItemSlot2x')
+    bg:SetSize(37, 37)
+    bg:SetPoint('CENTER', 0, 0)
+    bg:SetDrawLayer('BACKGROUND', 3)
+
+    local normal = btn:GetNormalTexture()
+    normal:SetTexture(base .. 'BagsItemSlot2x')
+    normal:SetSize(37, 37)
+    normal:SetPoint('CENTER', 0, 0)
+    normal:SetDrawLayer('BACKGROUND', 3)
+
+    local pushed = btn:GetPushedTexture()
+    pushed:SetTexture(base .. 'ui-quickslot-depress')
+    pushed:SetSize(37, 37)
+    pushed:SetPoint('CENTER', 0, 0)
+    -- pushed:SetDrawLayer('BACKGROUND', 3)
+
+    local high = btn:GetHighlightTexture()
+    high:SetTexture(base .. 'buttonhilight-square')
+    -- high:SetTexCoord(0.408203, 0.478516, 0.679688, 0.820312)
+    high:SetSize(37, 37)
+    high:SetPoint('CENTER', 0, 0)
+    -- high:SetDrawLayer('BACKGROUND', 3)
+
+    local iconBorder = btn.IconBorder
+    iconBorder:Hide()
+
+    local border = btn:CreateTexture('DragonflightUIBorder')
+    border:SetTexture(base .. 'ui-quickslot2')
+    border:SetSize(64, 64)
+    border:SetPoint('CENTER', 0, -1)
+    border:SetDrawLayer('BACKGROUND', 4)
+    border:SetAlpha(0.5)
 end
 
 function DragonflightUIMixin:ChangeBackpackTokenFrame()

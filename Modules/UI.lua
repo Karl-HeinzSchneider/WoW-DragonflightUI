@@ -195,6 +195,8 @@ function Module:ChangeBags()
                 end
             end
         end)
+
+        for j = 1, 36 do DragonflightUIMixin:ChangeBagButton(_G[name .. 'Item' .. j]) end
     end
 
     do
