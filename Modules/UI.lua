@@ -188,7 +188,7 @@ function Module:ChangeBags()
             if id == 0 then
                 return 9 + 48 + 30
             else
-                return 9 + 48 - 10
+                return 9 + 48
             end
         end
 
