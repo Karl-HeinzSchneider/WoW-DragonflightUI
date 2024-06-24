@@ -90,6 +90,51 @@ function DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(btn)
     end
 end
 
+function DragonflightUIMixin:ChangeBag(frame)
+    local name = frame:GetName()
+
+    do
+        local alpha = 0
+        local top = _G[name .. 'BackgroundTop']
+        top:SetAlpha(alpha)
+
+        local mid1 = _G[name .. 'BackgroundMiddle1']
+        mid1:SetAlpha(alpha)
+
+        local mid2 = _G[name .. 'BackgroundMiddle2']
+        mid2:SetAlpha(alpha)
+
+        local bottom = _G[name .. 'BackgroundBottom']
+        bottom:SetAlpha(alpha)
+    end
+
+    local port = _G[name .. 'Portrait']
+    port:ClearAllPoints()
+    port:SetAlpha(1)
+    port:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -5)
+
+    local portBtn = _G[name .. 'PortraitButton']
+    portBtn:ClearAllPoints()
+    portBtn:SetAlpha(0)
+    -- portBtn:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7 - 25, -5)
+
+    frame.ClosePanelButton = _G[name .. 'CloseButton']
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+
+    frame.TitleContainer = CreateFrame('FRAME', 'TitleContainer', frame)
+    frame.TitleContainer:SetSize(0, 20)
+    frame.TitleContainer:SetPoint('TOPLEFT', 35, -1)
+    frame.TitleContainer:SetPoint('TOPRIGHT', -24, -1)
+
+    local title = _G[name .. 'Name']
+    title:ClearAllPoints()
+    title:SetPoint('TOP', frame.TitleContainer, 'TOP', 0, -5)
+    title:SetPoint('RIGHT', frame.TitleContainer, 'RIGHT', 0, 0)
+    title:SetPoint('LEFT', frame.TitleContainer, 'LEFT', 0, 0)
+    title:SetFontObject("GameFontNormal")
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 

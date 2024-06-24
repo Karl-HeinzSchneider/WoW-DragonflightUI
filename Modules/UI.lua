@@ -179,48 +179,7 @@ function Module:ChangeBags()
     for i = 1, 2 do
         local name = 'ContainerFrame' .. i
         local bag = _G[name]
-
-        do
-            local alpha = 0
-            local top = _G[name .. 'BackgroundTop']
-            top:SetAlpha(alpha)
-
-            local mid1 = _G[name .. 'BackgroundMiddle1']
-            mid1:SetAlpha(alpha)
-
-            local mid2 = _G[name .. 'BackgroundMiddle2']
-            mid2:SetAlpha(alpha)
-
-            local bottom = _G[name .. 'BackgroundBottom']
-            bottom:SetAlpha(alpha)
-        end
-
-        local port = _G[name .. 'Portrait']
-        port:ClearAllPoints()
-        port:SetAlpha(1)
-        port:SetPoint('TOPLEFT', bag, 'TOPLEFT', 7, -5)
-
-        local portBtn = _G[name .. 'PortraitButton']
-        portBtn:ClearAllPoints()
-        portBtn:SetAlpha(0)
-        -- portBtn:SetPoint('TOPLEFT', bag, 'TOPLEFT', 7 - 25, -5)
-
-        bag.ClosePanelButton = _G[name .. 'CloseButton']
-        DragonflightUIMixin:AddNineSliceTextures(bag, true)
-        DragonflightUIMixin:ButtonFrameTemplateNoPortrait(bag)
-
-        bag.TitleContainer = CreateFrame('FRAME', 'TitleContainer', bag)
-        bag.TitleContainer:SetSize(0, 20)
-        bag.TitleContainer:SetPoint('TOPLEFT', 35, -1)
-        bag.TitleContainer:SetPoint('TOPRIGHT', -24, -1)
-
-        local title = _G[name .. 'Name']
-        title:ClearAllPoints()
-        title:SetPoint('TOP', bag.TitleContainer, 'TOP', 0, -5)
-        title:SetPoint('RIGHT', bag.TitleContainer, 'RIGHT', 0, 0)
-        title:SetPoint('LEFT', bag.TitleContainer, 'LEFT', 0, 0)
-        title:SetFontObject("GameFontNormal")
-
+        DragonflightUIMixin:ChangeBag(bag)
     end
 end
 
