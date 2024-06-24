@@ -91,6 +91,7 @@ function DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(btn)
 end
 
 function DragonflightUIMixin:ChangeBag(frame)
+    print('DragonflightUIMixin:ChangeBag(frame)', frame:GetName(), frame:GetID())
     local name = frame:GetName()
 
     do
