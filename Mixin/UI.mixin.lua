@@ -250,6 +250,98 @@ function DragonflightUIMixin:CreateBankSearchBox()
     return frame
 end
 
+local DragonglightUIGuildBankSearchMixin = {}
+
+function DragonglightUIGuildBankSearchMixin:UpdateFiltered()
+    -- print('DragonglightUIGuildBankSearchMixin:UpdateFiltered()', self:GetID())
+
+    if not GuildBankFrame:IsVisible() then return end
+
+    local id = self:GetID();
+    local activeTab = GetCurrentGuildBankTab()
+
+    -- if id ~= activeTab then return end
+
+    -- print('DragonglightUIGuildBankSearchMixin:UpdateFiltered()', id)
+
+    local itemButton;
+    local buttonID;
+    local texture, itemCount, locked, isFiltered, quality;
+    local hasItem = false
+    local items = 0
+
+    if id == activeTab then
+        for c = 1, 7 do
+            local column = GuildBankFrame['Column' .. c]
+            for i = 1, 14 do
+                itemButton = column['Button' .. i]
+                buttonID = (c - 1) * 14 + i
+                texture, itemCount, locked, isFiltered, quality = GetGuildBankItemInfo(id, buttonID)
+                -- print(buttonID, '|', texture, itemCount, locked, isFiltered, quality)     
+                if not texture then
+                    -- no item
+                    itemButton.searchOverlay:Hide();
+                elseif (isFiltered) then
+                    -- filtered
+                    itemButton.searchOverlay:Show();
+                else
+                    -- searched item
+                    hasItem = true
+                    items = items + 1
+                    itemButton.searchOverlay:Hide();
+                end
+            end
+        end
+    else
+        for c = 1, 7 do
+            for i = 1, 14 do
+                buttonID = (c - 1) * 14 + i
+                texture, itemCount, locked, isFiltered, quality = GetGuildBankItemInfo(id, buttonID)
+                -- print(buttonID, '|', texture, itemCount, locked, isFiltered, quality)  
+
+                if not texture then
+                    -- no item              
+                elseif (isFiltered) then
+                    -- filtered                 
+                else
+                    -- searched item
+                    hasItem = true
+                    items = items + 1
+                end
+            end
+        end
+
+    end
+
+    -- print('hasItem', id, hasItem, items)
+    if hasItem then
+        self.SearchOverlay:Hide()
+    else
+        self.SearchOverlay:Show()
+    end
+end
+
+function DragonflightUIMixin:AddGuildbankSearch()
+    if GuildBankFrame.DFGuildbankSearch then return end
+    GuildBankFrame.DFGuildbankSearch = true
+
+    local frame = CreateFrame('EditBox', 'DragonflightUIGuildBankkSearchBox', GuildBankFrame, 'BagSearchBoxTemplate')
+    frame:SetSize(110, 20)
+    frame:SetMaxLetters(15)
+    frame:SetPoint('TOPRIGHT', GuildBankFrame, 'TOPRIGHT', -48, -40)
+
+    for i = 1, MAX_GUILDBANK_TABS do
+        --   
+        -- _G['GuildBankTab' .. i].Button:UnregisterEvent('INVENTORY_SEARCH_UPDATE')
+        local tab = _G['GuildBankTab' .. i]
+        tab.Button:SetID(i)
+        Mixin(tab.Button, DragonglightUIGuildBankSearchMixin)
+        hooksecurefunc(tab, 'OnClick', function()
+            tab.Button:UpdateFiltered()
+        end)
+    end
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 

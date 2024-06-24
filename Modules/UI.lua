@@ -103,6 +103,8 @@ function frame:OnEvent(event, arg1, ...)
         -- print('ADDON_LOADED', arg1, ...)
         if arg1 == 'Blizzard_EncounterJournal' then
             DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        elseif arg1 == 'Blizzard_GuildBankUI' then
+            DragonflightUIMixin:AddGuildbankSearch()
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module:ChangeLateFrames()
@@ -295,6 +297,8 @@ function Module:ChangeBags()
         DragonflightUIMixin:ChangeBackpackTokenFrame()
         local searchBox = DragonflightUIMixin:CreateSearchBox()
         local bankSearchBox = DragonflightUIMixin:CreateBankSearchBox()
+
+        if C_AddOns.IsAddOnLoaded("Blizzard_GuildBankUI") then DragonflightUIMixin:AddGuildbankSearch() end
 
         hooksecurefunc('ContainerFrame_Update', function(frame)
             --
