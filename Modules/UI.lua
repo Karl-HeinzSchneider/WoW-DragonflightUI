@@ -180,13 +180,26 @@ function Module:ChangeBags()
         local name = 'ContainerFrame' .. i
         local bag = _G[name]
         DragonflightUIMixin:ChangeBag(bag)
+
+        hooksecurefunc(bag, 'SetHeight', function(frame, height)
+            --
+            -- print('SetHeight', frame:GetName(), height)
+            if bag.DFHeight then
+                --
+                if math.abs(bag:GetHeight() - bag.DFHeight) > 0.1 then
+                    --
+                    -- bag:SetHeight(bag.DFHeight)
+                    bag:SetSize(bag:GetWidth(), bag.DFHeight)
+                end
+            end
+        end)
     end
 
     do
         --	@blizz: Accounts for the vertical anchor offset at the bottom and the height of the titlebar and attic.
         local GetPaddingHeight = function(frame, id)
             if id == 0 then
-                return 9 + 48 + 30
+                return 9 + 48 + 18
             else
                 return 9 + 48
             end
@@ -199,9 +212,11 @@ function Module:ChangeBags()
                 local tokenFrame = _G['BackpackTokenFrame']
 
                 if tokenFrame:IsVisible() then
-                    return moneyFrame:GetHeight() + tokenFrame:GetHeight()
+                    -- return moneyFrame:GetHeight() + tokenFrame:GetHeight()
+                    return 17 + 17
                 else
-                    return moneyFrame:GetHeight()
+                    -- return moneyFrame:GetHeight()
+                    return 17
                 end
             else
                 return 0
@@ -218,13 +233,14 @@ function Module:ChangeBags()
             local itemButton = _G[frame:GetName() .. "Item1"];
             local itemsHeight = (rows * itemButton:GetHeight()) + ((rows - 1) * ITEM_SPACING_Y);
             local newHeight = itemsHeight + GetPaddingHeight(frame, id) + CalculateExtraHeight(frame, id);
+            frame.DFHeight = newHeight
             frame:SetHeight(newHeight)
 
             local newWidth = 4 * itemButton:GetWidth() + 3 * ITEM_SPACING_X + 2 * CONTAINER_SPACING
+            frame.DFWidth = newWidth
             frame:SetWidth(newWidth)
 
-            --[[  print('ContainerFrame_GenerateFrame', frame:GetName(), size, id, 'w: ' .. newWidth, 'h: ' .. newHeight,
-                  '| ' .. frame:GetID()) ]]
+            -- print('updateSize', frame:GetName(), size, id, 'w: ' .. newWidth, 'h: ' .. newHeight, '| ' .. frame:GetID())
 
             if id == 0 then
                 frame.DFPortrait:Show()
@@ -251,10 +267,10 @@ function Module:ChangeBags()
             end
         end
 
-        hooksecurefunc('ContainerFrame_GenerateFrame', function(frame, size, id)
+        --[[   hooksecurefunc('ContainerFrame_GenerateFrame', function(frame, size, id)
             --
             updateSize(frame, size, id)
-        end)
+        end) ]]
 
         hooksecurefunc('ManageBackpackTokenFrame', function(backpack)
             --   
@@ -277,6 +293,31 @@ function Module:ChangeBags()
         end
 
         DragonflightUIMixin:ChangeBackpackTokenFrame()
+        local searchBox = DragonflightUIMixin:CreateSearchBox()
+
+        hooksecurefunc('ContainerFrame_Update', function(frame)
+            --
+            local id = frame:GetID()
+
+            -- print('ContainerFrame_Update', frame:GetName(), id)
+
+            if id == 0 then
+                --
+                searchBox:SetParent(frame)
+                searchBox:SetPoint('TOPLEFT', frame, 'TOPLEFT', 42, -37)
+                searchBox:SetWidth(frame:GetWidth() - 2 * 42)
+                searchBox.AnchorBagRef = frame
+                searchBox:Show()
+            elseif searchBox.AnchorBagRef == frame then
+                --
+                searchBox:ClearAllPoints()
+                searchBox:Hide()
+                searchBox.AnchorBagRef = nil
+            end
+
+            local size = C_Container.GetContainerNumSlots(id)
+            updateSize(frame, size, id)
+        end)
     end
 end
 

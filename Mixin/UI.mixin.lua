@@ -230,6 +230,17 @@ function DragonflightUIMixin:ChangeBackpackTokenFrame()
 
 end
 
+function DragonflightUIMixin:CreateSearchBox()
+    local frame = CreateFrame('EditBox', 'DragonflightUIBackpackSearchBox', ContainerFrame1, 'BagSearchBoxTemplate')
+    frame:SetSize(115, 18)
+    frame:SetMaxLetters(15)
+
+    frame:SetPoint("TOPLEFT", ContainerFrame1, "TOPLEFT", 42, -37)
+    frame:Show()
+
+    return frame
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 
