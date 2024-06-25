@@ -4,7 +4,7 @@ UI_shared.xsd">
 	<Frame name="DragonflightUIProfessionFrameTemplate" mixin="DragonFlightUIProfessionMixin" inherits="SettingsFrameTemplate" toplevel="true" hidden="true" movable="true" enableMouse="true" resizable="true" frameStrata="HIGH" virtual="true">
 		<Size x="942" y="658" />
 		<Anchors>
-			<Anchor point="TOPRIGHT" relativePoint="CENTER" x="460" y="362" />
+			<!-- <Anchor point="TOPRIGHT" relativePoint="CENTER" x="460" y="362" /> -->
 		</Anchors>
 		<Layers>
 			<!--
@@ -128,6 +128,7 @@ UI_shared.xsd">
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />
+			<OnShow method="OnShow" />
 		</Scripts>
 	</Frame>
 	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionsRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
@@ -150,4 +151,135 @@ UI_shared.xsd">
 			-->
 		</Scripts>
 	</Frame>
+	<Button name="ProfessionsRecipeListCategoryTemplate" mixin="DFProfessionsRecipeListCategoryMixin" virtual="true">
+		<Size y="25" />
+		<Layers>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<FontString parentKey="Label" inherits="GameFontNormal_NoShadow" justifyH="LEFT">
+					<Size y="10" />
+					<Anchors>
+						<Anchor point="LEFT" x="10" y="2" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<!--
+				<Texture parentKey="LeftPiece" atlas="Professions-recipe-header-left" useAtlasSize="true">
+				<Anchors>
+				<Anchor point="LEFT" y="2" />
+				</Anchors>
+				</Texture>
+				<Texture parentKey="RightPiece" atlas="Professions-recipe-header-right" useAtlasSize="true">
+				<Anchors>
+				<Anchor point="RIGHT" y="2" />
+				</Anchors>
+				</Texture>
+				<Texture parentKey="CenterPiece" atlas="Professions-recipe-header-middle" useAtlasSize="false">
+				<Anchors>
+				<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeKey="$parent.LeftPiece" />
+				<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" relativeKey="$parent.RightPiece" />
+				</Anchors>
+				</Texture>
+				-->
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="CollapseIcon">
+					<Anchors>
+						<Anchor point="RIGHT" x="-10" y="2" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="CollapseIconAlphaAdd" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.CollapseIcon" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Button>
+	<Button name="ProfessionsRecipeListRecipeTemplate" mixin="DFProfessionsRecipeListRecipeMixin" registerForClicks="RightButtonUp, LeftButtonUp" virtual="true">
+		<Size y="20" />
+		<Frames>
+			<Button parentKey="SkillUps">
+				<Size x="26" y="15" />
+				<Anchors>
+					<Anchor point="LEFT" x="-9" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture parentKey="Icon">
+							<Anchors>
+								<Anchor point="RIGHT" x="0" y="-1" />
+							</Anchors>
+						</Texture>
+						<FontString parentKey="Text" inherits="GameFontHighlight">
+							<Size x="0" y="13" />
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="0" y="1" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Button>
+			<Button parentKey="LockedIcon" hidden="true">
+				<Size x="17" y="16" />
+				<Layers>
+					<Layer level="OVERLAY">
+						<!--
+						<Texture file="Interface\LFGFrame\UI-LFG-ICON-LOCK">
+						<Size x="16" y="16" />
+						<Anchors>
+						<Anchor point="RIGHT" x="0" y="-1" />
+						</Anchors>
+						</Texture>
+						-->
+					</Layer>
+				</Layers>
+			</Button>
+		</Frames>
+		<Layers>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<FontString parentKey="Label" inherits="GameFontHighlight" justifyH="LEFT">
+					<Size y="12" />
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.SkillUps" relativePoint="RIGHT" x="4" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Count" inherits="GameFontHighlight" justifyH="LEFT">
+					<Size y="12" />
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="2">
+				<!--
+				<Texture parentKey="SelectedOverlay" atlas="Professions_Recipe_Active" useAtlasSize="true" hidden="true">
+				<Anchors>
+				<Anchor point="CENTER" x="0" y="-1" />
+				</Anchors>
+				</Texture>
+				-->
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<!--
+				<Texture parentKey="HighlightOverlay" atlas="Professions_Recipe_Hover" useAtlasSize="true" alpha="0.5">
+				<Anchors>
+				<Anchor point="CENTER" x="0" y="-1" />
+				</Anchors>
+				</Texture>
+				-->
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Button>
 </Ui>
