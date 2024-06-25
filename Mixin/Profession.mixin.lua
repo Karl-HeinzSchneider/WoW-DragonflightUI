@@ -331,6 +331,10 @@ function DFProfessionsRecipeListRecipeMixin:GetLabelColor()
     -- return self.learned and PROFESSION_RECIPE_COLOR or DISABLED_FONT_COLOR;
 end
 
+local PROFESSIONS_SKILL_UP_EASY = "Low chance of gaining skill"
+local PROFESSIONS_SKILL_UP_MEDIUM = "High chance of gaining skill"
+local PROFESSIONS_SKILL_UP_OPTIMAL = "Guaranteed chance of gaining %d skill ups"
+
 function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
     local elementData = node:GetData();
     local recipeInfo = elementData.recipeInfo
@@ -349,88 +353,72 @@ function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
     local function OnClick(button, buttonName, down)
         self:Click(buttonName, down);
     end
+  ]]
 
-    self.SkillUps:Hide();
-    if recipeInfo.disabled then
-        self.LockedIcon:SetScript("OnClick", OnClick);
+    --[[ 
+  ["Professions-Icon-Skill-High"]={13, 15, 0.263184, 0.269531, 0.0537109, 0.0683594, false, false, "1x"},
+  ["Professions-Icon-Skill-Low"]={13, 15, 0.255859, 0.262207, 0.0537109, 0.0683594, false, false, "1x"},
+  ["Professions-Icon-Skill-Medium"]={13, 15, 0.294922, 0.30127, 0.0537109, 0.0683594, false, false, "1x"}, ]]
 
-        self.LockedIcon:SetScript("OnEnter", function()
-            self:OnEnter();
+    -- self.SkillUps:Hide();
+    local tooltipSkillUpString = nil;
 
-            if recipeInfo.disabledReason then
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip_AddDisabledLine(GameTooltip, recipeInfo.disabledReason);
+    local tex = base .. 'professions'
+    local xOfs = -9;
+    local yOfs = 0;
+
+    local icon = self.SkillUps.Icon
+    -- icon:ClearAllPoints()
+    -- icon:SetPoint('LEFT', self, 'LEFT', -9, 1)
+    icon:Show()
+
+    local skillType = recipeInfo.skillType
+
+    if skillType == 'trivial' then
+        --       
+        icon:Hide()
+    elseif skillType == 'easy' then
+        --
+        icon:SetTexCoord(0.255859, 0.262207, 0.0537109, 0.0683594)
+        tooltipSkillUpString = PROFESSIONS_SKILL_UP_EASY
+    elseif skillType == 'medium' then
+        icon:SetTexCoord(0.294922, 0.30127, 0.0537109, 0.0683594)
+        tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM
+    elseif skillType == 'optimal' then
+        icon:SetTexCoord(0.263184, 0.269531, 0.0537109, 0.0683594)
+        tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL
+    elseif skillType == 'difficult' then
+        --
+        icon:Hide()
+    end
+
+    if tooltipSkillUpString then
+        local isDifficultyOptimal = skillType == 'optimal'
+        local numSkillUps = recipeInfo.numSkillUps and recipeInfo.numSkillUps or 1;
+        local hasMultipleSkillUps = numSkillUps > 1;
+        local hasSkillUps = numSkillUps > 0;
+        local showText = hasMultipleSkillUps and isDifficultyOptimal;
+        self.SkillUps.Text:SetShown(showText);
+        -- print('->', isDifficultyOptimal, numSkillUps, hasMultipleSkillUps, hasSkillUps, showText)
+        if hasSkillUps then
+            if showText then
+                self.SkillUps.Text:SetText(numSkillUps);
+                -- self.SkillUps.Text:SetVertexColor(DifficultyColors[recipeInfo.relativeDifficulty]:GetRGB());
+            end
+
+            self.SkillUps:SetScript("OnEnter", function()
+                self:OnEnter();
+                GameTooltip:SetOwner(self.SkillUps, "ANCHOR_RIGHT");
+                GameTooltip_AddNormalLine(GameTooltip, tooltipSkillUpString:format(numSkillUps));
                 GameTooltip:Show();
-            end
-        end);
-
-        self.LockedIcon:Show();
-        table.insert(rightFrames, self.LockedIcon);
-    elseif recipeInfo.canSkillUp and not C_TradeSkillUI.IsTradeSkillGuild() and not C_TradeSkillUI.IsNPCCrafting() and
-        not C_TradeSkillUI.IsRuneforging() then
-        local skillUpAtlas;
-        local xOfs = -9;
-        local yOfs = 0;
-
-        local isDifficultyOptimal = recipeInfo.relativeDifficulty == Enum.TradeskillRelativeDifficulty.Optimal;
-        local tooltipSkillUpString = nil;
-        if recipeInfo.relativeDifficulty == Enum.TradeskillRelativeDifficulty.Easy then
-            skillUpAtlas = "Professions-Icon-Skill-Low";
-            tooltipSkillUpString = PROFESSIONS_SKILL_UP_EASY;
-        elseif recipeInfo.relativeDifficulty == Enum.TradeskillRelativeDifficulty.Medium then
-            skillUpAtlas = "Professions-Icon-Skill-Medium";
-            tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM;
-        elseif isDifficultyOptimal then
-            skillUpAtlas = "Professions-Icon-Skill-High";
-            tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL;
-            yOfs = 1;
-        end
-
-        if skillUpAtlas then
-            self.SkillUps:ClearAllPoints();
-            self.SkillUps:SetPoint("LEFT", self, "LEFT", xOfs, yOfs);
-
-            self.SkillUps.Icon:SetAtlas(skillUpAtlas, TextureKitConstants.UseAtlasSize);
-            self.SkillUps:SetScript("OnClick", OnClick);
-            local numSkillUps = recipeInfo.numSkillUps;
-            local hasMultipleSkillUps = numSkillUps > 1;
-            local hasSkillUps = numSkillUps > 0;
-            local showText = hasMultipleSkillUps and isDifficultyOptimal;
-            self.SkillUps.Text:SetShown(showText);
-            if hasSkillUps then
-                if showText then
-                    self.SkillUps.Text:SetText(numSkillUps);
-                    self.SkillUps.Text:SetVertexColor(DifficultyColors[recipeInfo.relativeDifficulty]:GetRGB());
-                end
-
-                self.SkillUps:SetScript("OnEnter", function()
-                    self:OnEnter();
-                    GameTooltip:SetOwner(self.SkillUps, "ANCHOR_RIGHT");
-                    GameTooltip_AddNormalLine(GameTooltip, tooltipSkillUpString:format(numSkillUps));
-                    GameTooltip:Show();
-                end);
-            else
-                self.SkillUps:SetScript("OnEnter", nil);
-            end
-            self.SkillUps:Show();
-        end
-    end
-
-    local rightFramesWidth = 0;
-    local rightFrame;
-    for index, frame in ipairs(rightFrames) do
-        frame:ClearAllPoints();
-        if rightFrame then
-            frame:SetPoint("RIGHT", rightFrame, "LEFT");
+            end);
         else
-            frame:SetPoint("RIGHT");
+            self.SkillUps:SetScript("OnEnter", nil);
         end
-        rightFrame = frame;
-        rightFramesWidth = rightFramesWidth + frame:GetWidth();
+
     end
-    ]]
-    -- local count = C_TradeSkillUI.GetCraftableCount(recipeInfo.recipeID);
-    local count = recipeInfo.numAvailable + 245
+
+    local count = recipeInfo.numAvailable + 69
     local hasCount = count > 0;
     if hasCount then
         self.Count:SetFormattedText(" [%d] ", count);
