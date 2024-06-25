@@ -79,37 +79,6 @@ function DFProfessionsRecipeListMixin:OnLoad()
     print('DFProfessionsRecipeListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
-    if false then
-
-        local DataProvider = CreateTreeDataProvider()
-        local ScrollView = CreateScrollBoxListTreeListView()
-        ScrollView:SetDataProvider(DataProvider)
-
-        ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, ScrollView)
-
-        -- The 'button' argument is the frame that our data will inhabit in our list
-        -- The 'node' argument will be a node table, as explained above
-        local function Initializer(button, node)
-            local data = node:GetData() -- get our data from the node with :GetData()
-            local text = data.ButtonText
-            button:SetText(text)
-            button:SetScript("OnClick", function()
-                node:ToggleCollapsed()
-            end)
-        end
-
-        -- The first argument here can either be a frame type or frame template. We're just passing the "UIPanelButtonTemplate" template here
-        ScrollView:SetElementInitializer("UIPanelButtonTemplate", Initializer)
-
-        local topLevelData = {ButtonText = "Ghost"}
-        local GhostElement = DataProvider:Insert(topLevelData)
-
-        local nestedData = {ButtonText = "Class: Priest"}
-        GhostElement:Insert(nestedData)
-
-        if true then return end
-    end
-
     self.DataProvider = CreateTreeDataProvider()
 
     local indent = 10;
@@ -236,18 +205,35 @@ end
 
 function DFProfessionsRecipeListMixin:OnEvent(event, ...)
     print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
+    if event == 'TRADE_SKILL_UPDATE' then
+        self:Refresh()
+    elseif event == 'TRADE_SKILL_FILTER_UPDATE' then
+    elseif event == 'UPDATE_TRADESKILL_RECAST' then
+    end
 end
 
 function DFProfessionsRecipeListMixin:OnShow()
     -- print('DFProfessionsRecipeListMixin:OnShow()')
+    -- self:CreateRecipeList()
+end
+
+function DFProfessionsRecipeListMixin:Refresh()
+    print('DFProfessionsRecipeListMixin:Refresh()')
     self:CreateRecipeList()
 end
 
 function DFProfessionsRecipeListMixin:CreateRecipeList()
     print('DFProfessionsRecipeListMixin:CreateRecipeList()')
 
-    self.DataProvider = CreateTreeDataProvider()
-    self.View:SetDataProvider(self.DataProvider)
+    if not self.DataProvider then
+        -- 
+        print('no self.DataProvider')
+        return
+    end
+
+    -- self.DataProvider = CreateTreeDataProvider()
+    self.DataProvider:Flush()
+    -- view:SetDataProvider(self.DataProvider)
 
     local numSkills = GetNumTradeSkills()
     if numSkills == 0 then return end
@@ -259,7 +245,8 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
 
         if skillType == 'header' then
             -- print('Header:', skillName)
-            headerNode = self.DataProvider:Insert({categoryInfo = {name = skillName}})
+            -- print('Header:', GetTradeSkillInfo(i))
+            headerNode = self.DataProvider:Insert({categoryInfo = {name = skillName, isExpanded = isExpanded == 1}})
             -- print('-headerNode:', headerNode)
         else
             -- print('--', skillName)
@@ -297,6 +284,12 @@ function DFProfessionsRecipeListCategoryMixin:Init(node)
 
     -- local color = categoryInfo.unlearned and DISABLED_FONT_COLOR or NORMAL_FONT_COLOR;
     -- self.Label:SetVertexColor(color:GetRGB());
+
+    if categoryInfo.isExpanded then
+        node:SetCollapsed(false, true, false)
+    else
+        node:SetCollapsed(true, true, false)
+    end
 
     self:SetCollapseState(node:IsCollapsed());
 end
