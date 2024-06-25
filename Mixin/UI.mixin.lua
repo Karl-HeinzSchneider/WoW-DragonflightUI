@@ -442,14 +442,6 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
-    QuestLogFrame:HookScript('OnAttributeChanged', function(self, attr, value)
-        --
-        print('OnAttributeChanged', attr, value)
-        if attr == 'UIPanelLayout-xoffset' then
-            QuestLogFrame:SetAttributeNoHandler("UIPanelLayout-" .. "xoffset", 0)
-        end
-    end)
-
     -- default -16  @TODO: resets
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
 
