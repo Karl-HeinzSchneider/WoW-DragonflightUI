@@ -442,19 +442,10 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
-    -- default -16  @TODO: resets
+    -- default -16 
+    ShowUIPanel(frame)
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
-
-    hooksecurefunc('ShowUIPanel', function(frame, force)
-        --
-        -- print('ShowUIPanel', frame:GetName(), force)
-        if frame == QuestLogFrame and not frame.DFFirstTime then
-            frame.DFFirstTime = true
-            HideUIPanel(frame)
-            QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
-            ShowUIPanel(frame)
-        end
-    end)
+    HideUIPanel(frame)
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
