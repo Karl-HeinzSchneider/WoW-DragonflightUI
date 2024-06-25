@@ -140,7 +140,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
             factory("ProfessionsRecipeListCategoryTemplate", Initializer);
         elseif elementData.recipeInfo then
             local function Initializer(button, node)
-                button:Init(node, self.hideCraftableCount);
+                button:Init(node, false);
 
                 local selected = self.selectionBehavior:IsElementDataSelected(node);
                 button:SetSelected(selected);
@@ -340,8 +340,8 @@ function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
     -- self.learned = recipeInfo.learned;
     self:SetLabelFontColors(self:GetLabelColor());
 
-    if true then return end
-
+    -- if true then return end
+    --[[ 
     local rightFrames = {};
 
     self.LockedIcon:Hide();
@@ -428,10 +428,11 @@ function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
         rightFrame = frame;
         rightFramesWidth = rightFramesWidth + frame:GetWidth();
     end
-
-    local count = C_TradeSkillUI.GetCraftableCount(recipeInfo.recipeID);
+    ]]
+    -- local count = C_TradeSkillUI.GetCraftableCount(recipeInfo.recipeID);
+    local count = recipeInfo.numAvailable + 245
     local hasCount = count > 0;
-    if hasCount and not hideCraftableCount then
+    if hasCount then
         self.Count:SetFormattedText(" [%d] ", count);
         self.Count:Show();
     else
@@ -440,7 +441,7 @@ function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
 
     local padding = 10;
     local countWidth = hasCount and self.Count:GetStringWidth() or 0;
-    local width = self:GetWidth() - (rightFramesWidth + countWidth + padding + self.SkillUps:GetWidth());
+    local width = self:GetWidth() - (countWidth + padding + self.SkillUps:GetWidth());
     self.Label:SetWidth(self:GetWidth());
     self.Label:SetWidth(math.min(width, self.Label:GetStringWidth()));
 end
