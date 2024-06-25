@@ -253,7 +253,7 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
         if skillType == 'header' then
             -- print('Header:', skillName)
             headerNode = self.DataProvider:Insert({categoryInfo = {name = skillName}})
-            -- print('-Node:', headerNode)
+            print('-headerNode:', headerNode)
         else
             -- print('--', skillName)
             headerNode:Insert({
