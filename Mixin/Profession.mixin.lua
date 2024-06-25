@@ -98,6 +98,12 @@ function DFProfessionsRecipeListMixin:OnLoad()
                     node:ToggleCollapsed();
                     button:SetCollapseState(node:IsCollapsed());
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+
+                    if elementData.categoryInfo.isExpanded then
+                        CollapseTradeSkillSubClass(elementData.categoryInfo.id)
+                    else
+                        ExpandTradeSkillSubClass(elementData.categoryInfo.id)
+                    end
                 end);
                 --[[ 
                 button:SetScript("OnEnter", function()
@@ -218,12 +224,12 @@ function DFProfessionsRecipeListMixin:OnShow()
 end
 
 function DFProfessionsRecipeListMixin:Refresh()
-    print('DFProfessionsRecipeListMixin:Refresh()')
+    print('->DFProfessionsRecipeListMixin:Refresh()')
     self:CreateRecipeList()
 end
 
 function DFProfessionsRecipeListMixin:CreateRecipeList()
-    print('DFProfessionsRecipeListMixin:CreateRecipeList()')
+    -- print('-->DFProfessionsRecipeListMixin:CreateRecipeList()')
 
     if not self.DataProvider then
         -- 
@@ -246,7 +252,9 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
         if skillType == 'header' then
             -- print('Header:', skillName)
             -- print('Header:', GetTradeSkillInfo(i))
-            headerNode = self.DataProvider:Insert({categoryInfo = {name = skillName, isExpanded = isExpanded == 1}})
+            headerNode = self.DataProvider:Insert({
+                categoryInfo = {name = skillName, isExpanded = isExpanded == 1, id = i}
+            })
             -- print('-headerNode:', headerNode)
         else
             -- print('--', skillName)
@@ -257,7 +265,8 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
                     numAvailable = numAvailable,
                     isExpanded = isExpanded,
                     altVerb = altVerb,
-                    numSkills = numSkills
+                    numSkills = numSkills,
+                    id = i
                 }
             })
         end
