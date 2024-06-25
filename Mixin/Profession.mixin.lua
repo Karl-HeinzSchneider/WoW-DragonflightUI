@@ -45,3 +45,10 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 
 end
 
+------------------------------
+DFProfessionsRecipeListMixin = {}
+
+function DFProfessionsRecipeListMixin:OnLoad()
+    print('DFProfessionsRecipeListMixin:OnLoad()')
+end
+

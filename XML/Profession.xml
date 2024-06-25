@@ -7,14 +7,17 @@ UI_shared.xsd">
 			<Anchor point="TOPRIGHT" relativePoint="CENTER" x="460" y="362" />
 		</Anchors>
 		<Layers>
+			<!--
+			from config
 			<Layer level="OVERLAY" textureSubLevel="2">
-				<Texture parentKey="InnerFrame" atlas="Options_InnerFrame" useAtlasSize="true">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="17" y="-64" />
-						<Anchor point="BOTTOMRIGHT" x="-17" y="42" />
-					</Anchors>
-				</Texture>
+			<Texture parentKey="InnerFrame" atlas="Options_InnerFrame" useAtlasSize="true">
+			<Anchors>
+			<Anchor point="TOPLEFT" x="17" y="-64" />
+			<Anchor point="BOTTOMRIGHT" x="-17" y="42" />
+			</Anchors>
+			</Texture>
 			</Layer>
+			-->
 			<Layer level="OVERLAY" textureSubLevel="2">
 				<FontString parentKey="OutputText" inherits="GameFontWhite">
 					<Anchors>
@@ -36,12 +39,80 @@ UI_shared.xsd">
 					<Anchor point="RIGHT" relativeKey="$parent.ClosePanelButton" relativePoint="LEFT" x="10" y="0" />
 				</Anchors>
 			</Button>
+			<Frame parentKey="RecipeList" inherits="ProfessionsRecipeListTemplate">
+				<Size x="274" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="5" y="-72" />
+					<Anchor point="BOTTOMLEFT" y="5" />
+				</Anchors>
+			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<OnEvent method="OnEvent" />
 			<OnShow method="OnShow" />
 			<OnHide method="OnHide" />
+		</Scripts>
+	</Frame>
+	<Frame name="ProfessionsRecipeListTemplate" mixin="DFProfessionsRecipeListMixin" virtual="true">
+		<Size x="300" y="505" />
+		<KeyValues>
+			<KeyValue key="hideCraftableCount" value="false" type="boolean" />
+		</KeyValues>
+		<Layers>
+			<!--
+			<Layer level="BACKGROUND">
+			<Texture parentKey="Background" atlas="Professions-background-summarylist" setAllPoints="true" />
+			</Layer>
+			-->
+			<Layer level="ARTWORK">
+				<FontString parentKey="NoResultsText" inherits="GameFontNormal" text="PROFESSIONS_NO_JOURNAL_ENTRIES" hidden="true">
+					<Size x="200" y="0" />
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-60" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<!-- changed a b it -->
+			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+			</Frame>
+			<!-- inherits="UIResettableDropdownButtonTemplate" -->
+			<DropDownToggleButton parentKey="FilterButton" inherits="" text="FILTER">
+				<Size x="90" y="20" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-8" y="-8" />
+				</Anchors>
+			</DropDownToggleButton>
+			<EditBox parentKey="SearchBox" autoFocus="false" inherits="SearchBoxTemplate">
+				<Size y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
+					<Anchor point="TOPLEFT" x="13" y="-8" />
+				</Anchors>
+			</EditBox>
+			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate" />
+			<Frame parentKey="ContextMenu" inherits="UIDropDownMenuTemplate" enableMouse="true" />
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-5" y="-7" />
+					<Anchor point="BOTTOMRIGHT" x="-20" y="5" />
+				</Anchors>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="0" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+				</Anchors>
+			</EventFrame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
 </Ui>
