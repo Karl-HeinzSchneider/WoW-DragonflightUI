@@ -246,16 +246,16 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
     if numSkills == 0 then return end
 
     local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps;
-    local headerNode;
+    local headerNode = nil;
     for i = 1, numSkills do
         skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
 
         if skillType == 'header' then
-            print('Header:', skillName)
+            -- print('Header:', skillName)
             headerNode = self.DataProvider:Insert({categoryInfo = {name = skillName}})
-            print('-Node:', headerNode)
+            -- print('-Node:', headerNode)
         else
-            print('--', skillName)
+            -- print('--', skillName)
             headerNode:Insert({
                 recipeInfo = {
                     name = skillName,

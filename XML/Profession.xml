@@ -251,13 +251,13 @@ UI_shared.xsd">
 		</Frames>
 		<Layers>
 			<Layer level="OVERLAY" textureSubLevel="1">
-				<FontString parentKey="Label" inherits="GameFontHighlight" justifyH="LEFT">
+				<FontString parentKey="Label" inherits="SystemFont_Med1" justifyH="LEFT">
 					<Size y="12" />
 					<Anchors>
 						<Anchor point="LEFT" relativeKey="$parent.SkillUps" relativePoint="RIGHT" x="4" />
 					</Anchors>
 				</FontString>
-				<FontString parentKey="Count" inherits="GameFontHighlight" justifyH="LEFT">
+				<FontString parentKey="Count" inherits="SystemFont_Med1" justifyH="LEFT">
 					<Size y="12" />
 					<Anchors>
 						<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" />
