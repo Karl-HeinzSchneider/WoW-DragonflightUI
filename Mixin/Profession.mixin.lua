@@ -229,6 +229,13 @@ function DFProfessionsRecipeListMixin:OnLoad()
     self.selectionBehavior = ScrollUtil.AddSelectionBehavior(self.ScrollBox);
     self.selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, OnSelectionChanged, self);
 
+    self:RegisterEvent("TRADE_SKILL_UPDATE");
+    self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
+    self:RegisterEvent("UPDATE_TRADESKILL_RECAST");
+end
+
+function DFProfessionsRecipeListMixin:OnEvent(event, ...)
+    print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
 end
 
 function DFProfessionsRecipeListMixin:OnShow()
@@ -253,7 +260,7 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
         if skillType == 'header' then
             -- print('Header:', skillName)
             headerNode = self.DataProvider:Insert({categoryInfo = {name = skillName}})
-            print('-headerNode:', headerNode)
+            -- print('-headerNode:', headerNode)
         else
             -- print('--', skillName)
             headerNode:Insert({
