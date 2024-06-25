@@ -79,7 +79,8 @@ function DFProfessionsRecipeListMixin:OnLoad()
     print('DFProfessionsRecipeListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
-    self.selectedSkill = 2
+    self.selectedSkill = GetTradeSkillSelectionIndex() or 2
+    print('self.selectedSkill', self.selectedSkill)
     self.DataProvider = CreateTreeDataProvider()
 
     local indent = 10;
@@ -203,8 +204,9 @@ function DFProfessionsRecipeListMixin:OnLoad()
             local changed = data.id ~= self.selectedSkill
             if changed then
                 print('OnSelectionChanged-changed', data.id)
-                EventRegistry:TriggerEvent("ProfessionsRecipeListMixin.Event.OnRecipeSelected", data.recipeInfo, self);
                 self.selectedSkill = newRecipeID
+                EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", newRecipeID, self);
+                TradeSkillFrame_SetSelection(newRecipeID)
                 -- if newRecipeID then self.previousRecipeID = newRecipeID; end
             end
         end
@@ -222,28 +224,16 @@ function DFProfessionsRecipeListMixin:OnEvent(event, ...)
     print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
     if (not self:IsShown()) then return; end
 
-    if event == 'TRADE_SKILL_UPDATE' then
-        -- self:Refresh()
-    elseif event == 'TRADE_SKILL_FILTER_UPDATE' then
+    if (event == 'TRADE_SKILL_UPDATE' or event == "TRADE_SKILL_FILTER_UPDATE") then
+        -- self:Refresh()  
     elseif event == 'UPDATE_TRADESKILL_RECAST' then
     end
 end
 
 function DFProfessionsRecipeListMixin:OnShow()
-    -- print('DFProfessionsRecipeListMixin:OnShow()')
-    -- self:CreateRecipeList()
-end
-
-function DFProfessionsRecipeListMixin:HookScripts()
-    --[[  TradeSkillFrame:HookScript('TradeSkillFrame_SetSelection', function()
-        print('sss')
-    end) ]]
-    hooksecurefunc('TradeSkillFrame_SetSelection', function(id)
-        local selectedSkill = TradeSkillFrame.selectedSkill
-        print('TradeSkillFrame_SetSelection', id, selectedSkill)
-
-        self:Refresh()
-    end)
+    -- print('DFProfessionsRecipeListMixin:OnShow()')    
+    self:Refresh()
+    EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", self.selectedSkill, self);
 end
 
 function DFProfessionsRecipeListMixin:Refresh()
@@ -252,6 +242,10 @@ function DFProfessionsRecipeListMixin:Refresh()
     -- self.selectedSkill = selectedSkill
 
     self:CreateRecipeList()
+end
+
+function DFProfessionsRecipeListMixin:SetRecipe()
+
 end
 
 function DFProfessionsRecipeListMixin:CreateRecipeList()
@@ -508,18 +502,18 @@ end
 DFProfessionsRecipeSchematicFormMixin = {}
 
 function DFProfessionsRecipeSchematicFormMixin:OnLoad()
-    print('DFProfessionsRecipeSchematicFormMixin:OnLoad()')
+    -- print('DFProfessionsRecipeSchematicFormMixin:OnLoad()')
 end
 
 function DFProfessionsRecipeSchematicFormMixin:OnShow()
-    print('DFProfessionsRecipeSchematicFormMixin:OnShow()')
+    -- print('DFProfessionsRecipeSchematicFormMixin:OnShow()')
 end
 
 function DFProfessionsRecipeSchematicFormMixin:OnHide()
-    print('DFProfessionsRecipeSchematicFormMixin:OnHide()')
+    -- print('DFProfessionsRecipeSchematicFormMixin:OnHide()')
 end
 
 function DFProfessionsRecipeSchematicFormMixin:OnEvent()
-    print('DFProfessionsRecipeSchematicFormMixin:OnEvent()')
+    -- print('DFProfessionsRecipeSchematicFormMixin:OnEvent()')
 end
 

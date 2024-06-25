@@ -413,7 +413,6 @@ function DragonflightUIMixin:HookTradeSkillFrameCata()
             DFProfessions:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
             DFProfessions:Show()
             DFProfessions:AnchorButtons(self)
-            DFProfessions.RecipeList:Refresh()
         end
     end)
 end
