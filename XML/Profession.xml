@@ -264,22 +264,22 @@ UI_shared.xsd">
 				</FontString>
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="2">
-				<!--
-				<Texture parentKey="SelectedOverlay" atlas="Professions_Recipe_Active" useAtlasSize="true" hidden="true">
-				<Anchors>
-				<Anchor point="CENTER" x="0" y="-1" />
-				</Anchors>
+				<Texture parentKey="SelectedOverlay" file="Interface/AddOns/DragonflightUI/Textures/UI/professions" hidden="true">
+					<Size x="267" y="19" />
+					<TexCoords left="0.788086" right="0.918457" top="0.0380859" bottom="0.0566406" />
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-1" />
+					</Anchors>
 				</Texture>
-				-->
 			</Layer>
 			<Layer level="HIGHLIGHT">
-				<!--
-				<Texture parentKey="HighlightOverlay" atlas="Professions_Recipe_Hover" useAtlasSize="true" alpha="0.5">
-				<Anchors>
-				<Anchor point="CENTER" x="0" y="-1" />
-				</Anchors>
+				<Texture parentKey="HighlightOverlay" file="Interface/AddOns/DragonflightUI/Textures/UI/professions" alpha="0.5">
+					<Size x="309" y="21" />
+					<TexCoords left="0.622559" right="0.773438" top="0.0380859" bottom="0.0585938" />
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-1" />
+					</Anchors>
 				</Texture>
-				-->
 			</Layer>
 		</Layers>
 		<Scripts>

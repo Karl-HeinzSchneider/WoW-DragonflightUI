@@ -128,6 +128,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
                 button:SetScript("OnClick", function(button, buttonName)
                     node:ToggleCollapsed();
                     button:SetCollapseState(node:IsCollapsed());
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                 end);
                 --[[ 
                 button:SetScript("OnEnter", function()
@@ -146,30 +147,31 @@ function DFProfessionsRecipeListMixin:OnLoad()
 
                 button:SetScript("OnClick", function(button, buttonName, down)
                     --[[   EventRegistry:TriggerEvent("ProfessionsDebug.CraftingRecipeListRecipeClicked", button, buttonName,
-                                               down, elementData.recipeInfo);
+                                               down, elementData.recipeInfo);]]
 
                     if buttonName == "LeftButton" then
                         if IsModifiedClick() then
-                            local link = C_TradeSkillUI.GetRecipeLink(elementData.recipeInfo.recipeID);
+                            --[[      local link = C_TradeSkillUI.GetRecipeLink(elementData.recipeInfo.recipeID);
                             if not HandleModifiedItemClick(link) and IsModifiedClick("RECIPEWATCHTOGGLE") and
                                 Professions.CanTrackRecipe(elementData.recipeInfo) then
                                 local recrafting = false;
                                 local tracked = C_TradeSkillUI.IsRecipeTracked(elementData.recipeInfo.recipeID,
                                                                                recrafting);
                                 C_TradeSkillUI.SetRecipeTracked(elementData.recipeInfo.recipeID, not tracked, recrafting);
-                            end
+                            end ]]
                         else
                             self.selectionBehavior:Select(button);
                         end
                     elseif buttonName == "RightButton" then
                         -- If additional context menu options are added, move this
                         -- public view check to the dropdown initializer.
-                        if elementData.recipeInfo.learned and Professions.InLocalCraftingMode() then
+                        --[[      if elementData.recipeInfo.learned and Professions.InLocalCraftingMode() then
                             ToggleDropDownMenu(1, elementData.recipeInfo, self.ContextMenu, "cursor");
-                        end
-                    end ]]
+                        end ]]
+                    end
 
                     -- PlaySound(SOUNDKIT.UI_90_BLACKSMITHING_TREEITEMCLICK);
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
                 end);
 
                 --[[       button:SetScript("OnEnter", function()
@@ -322,8 +324,11 @@ function DFProfessionsRecipeListRecipeMixin:OnLoad()
     self.SkillUps:SetScript("OnLeave", OnLeave);
 end
 
+local PROFESSION_RECIPE_COLOR = CreateColor(0.88627457618713, 0.86274516582489, 0.83921575546265, 1)
+
 function DFProfessionsRecipeListRecipeMixin:GetLabelColor()
-    return self.learned and PROFESSION_RECIPE_COLOR or DISABLED_FONT_COLOR;
+    return PROFESSION_RECIPE_COLOR
+    -- return self.learned and PROFESSION_RECIPE_COLOR or DISABLED_FONT_COLOR;
 end
 
 function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
@@ -468,8 +473,8 @@ function DFProfessionsRecipeListRecipeMixin:OnLeave()
 end
 
 function DFProfessionsRecipeListRecipeMixin:SetSelected(selected)
-    --  self.SelectedOverlay:SetShown(selected);
-    -- self.HighlightOverlay:SetShown(not selected);
+    self.SelectedOverlay:SetShown(selected);
+    self.HighlightOverlay:SetShown(not selected);
 end
 
 ------------------------------
