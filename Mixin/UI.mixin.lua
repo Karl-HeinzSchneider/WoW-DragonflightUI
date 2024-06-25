@@ -399,8 +399,7 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         -- print('child:', child:GetName())
         if child:GetObjectType() == 'Texture' then
             -- child:SetTexture('')
-            print('child:', 'Texture', child:GetTexture(), child:GetSize())
-
+            -- print('child:', 'Texture', child:GetTexture(), child:GetSize())
             local tex = child:GetTexture()
 
             if tex == 136797 then
@@ -408,10 +407,12 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
                 port = child
             elseif tex == 309665 then
                 -- 	<Texture file="Interface\QuestFrame\UI-QuestLogDualPane-Left">
-                child:Hide()
+                -- child:Hide()
+                child:SetTexture(base .. 'UI-QuestLogDualPane-Left')
             elseif tex == 309666 then
                 -- <Texture file="Interface\QuestFrame\UI-QuestLogDualPane-RIGHT">
-                child:Hide()
+                -- child:Hide()          
+                child:SetTexture(base .. 'ui-questlogdualpane-right')
             end
         end
     end
@@ -441,8 +442,27 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
+    QuestLogFrame:HookScript('OnAttributeChanged', function(self, attr, value)
+        --
+        print('OnAttributeChanged', attr, value)
+        if attr == 'UIPanelLayout-xoffset' then
+            QuestLogFrame:SetAttributeNoHandler("UIPanelLayout-" .. "xoffset", 0)
+        end
+    end)
+
     -- default -16  @TODO: resets
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+
+    hooksecurefunc('ShowUIPanel', function(frame, force)
+        --
+        -- print('ShowUIPanel', frame:GetName(), force)
+        if frame == QuestLogFrame and not frame.DFFirstTime then
+            frame.DFFirstTime = true
+            HideUIPanel(frame)
+            QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+            ShowUIPanel(frame)
+        end
+    end)
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
