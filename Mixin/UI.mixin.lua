@@ -403,7 +403,7 @@ function DragonflightUIMixin:HookTradeSkillFrameCata()
     print('DragonflightUIMixin:HookTradeSkillFrameCata()')
     hooksecurefunc('TradeSkillFrame_OnShow', function(self)
         --
-        print('TradeSkillFrame_OnShow', self:GetName())
+        -- print('TradeSkillFrame_OnShow', self:GetName())
 
         if not self.DFChanged then
             self.DFChanged = true
