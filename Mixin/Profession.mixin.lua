@@ -38,6 +38,31 @@ function DragonFlightUIProfessionMixin:SetupFrameStyle()
     self.PortraitFrame = pp
 end
 
+function DragonFlightUIProfessionMixin:AnchorButtons()
+    local create = TradeSkillCreateButton
+    create:ClearAllPoints()
+    create:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
+
+    local createAll = TradeSkillCreateAllButton
+    local input = TradeSkillInputBox
+
+    local rankFrame = TradeSkillRankFrame
+    rankFrame:ClearAllPoints()
+    rankFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 280, -40)
+    -- ProfessionsRankBarTemplate
+    -- <Size x="453" y="18"/>
+    rankFrame:SetSize(453, 18)
+
+    local rankFrameBorder = TradeSkillRankFrameBorder
+    -- rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
+    rankFrameBorder:SetSize(453 + 10, 18)
+    rankFrameBorder:Hide()
+
+    local rankFrameText = TradeSkillRankFrameSkillRank
+    rankFrameText:ClearAllPoints()
+    rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
+end
+
 function DragonFlightUIProfessionMixin:UpdateHeader()
     self.NineSlice.Text:SetText('Enchanting')
     self.Icon:SetTexture(136244)
@@ -50,5 +75,24 @@ DFProfessionsRecipeListMixin = {}
 
 function DFProfessionsRecipeListMixin:OnLoad()
     print('DFProfessionsRecipeListMixin:OnLoad()')
+end
+
+------------------------------
+DFProfessionsRecipeSchematicFormMixin = {}
+
+function DFProfessionsRecipeSchematicFormMixin:OnLoad()
+    print('DFProfessionsRecipeSchematicFormMixin:OnLoad()')
+end
+
+function DFProfessionsRecipeSchematicFormMixin:OnShow()
+    print('DFProfessionsRecipeSchematicFormMixin:OnShow()')
+end
+
+function DFProfessionsRecipeSchematicFormMixin:OnHide()
+    print('DFProfessionsRecipeSchematicFormMixin:OnHide()')
+end
+
+function DFProfessionsRecipeSchematicFormMixin:OnEvent()
+    print('DFProfessionsRecipeSchematicFormMixin:OnEvent()')
 end
 

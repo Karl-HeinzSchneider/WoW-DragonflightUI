@@ -393,8 +393,8 @@ function DragonflightUIMixin:CreateProfessionFrame()
     local frame = CreateFrame('FRAME', 'DragonflightUIProfessionFrame', UIParent,
                               'DragonflightUIProfessionFrameTemplate')
 
-    frame:SetPoint('CENTER')
-    frame:Show()
+    -- frame:SetPoint('CENTER')
+    -- frame:Show()
 
     return frame
 end
@@ -407,7 +407,12 @@ function DragonflightUIMixin:HookTradeSkillFrameCata()
 
         if not self.DFChanged then
             self.DFChanged = true
-            DragonflightUIMixin:ChangeTradeskillFrameCata(self)
+            -- DragonflightUIMixin:ChangeTradeskillFrameCata(self)
+            local DFProfessions = _G['DragonflightUIProfessionFrame']
+            DFProfessions:SetParent(TradeSkillFrame)
+            DFProfessions:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
+            DFProfessions:Show()
+            DFProfessions:AnchorButtons(self)
         end
     end)
 end

@@ -27,12 +27,6 @@ UI_shared.xsd">
 			</Layer>
 		</Layers>
 		<Frames>
-			<Button parentKey="CloseButton" inherits="UIPanelButtonTemplate">
-				<Size x="96" y="22" />
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
-				</Anchors>
-			</Button>
 			<Button parentKey="MinimizeButton" inherits="MaximizeMinimizeButtonFrameTemplate">
 				<Size x="32" y="32" />
 				<Anchors>
@@ -45,6 +39,27 @@ UI_shared.xsd">
 					<Anchor point="TOPLEFT" x="5" y="-72" />
 					<Anchor point="BOTTOMLEFT" y="5" />
 				</Anchors>
+			</Frame>
+			<Frame parentKey="SchematicForm" inherits="ProfessionsRecipeSchematicFormTemplate" useParentLevel="true">
+				<!-- <Size x="793" y="553" /> -->
+				<Size x="655" y="553" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.RecipeList" relativePoint="TOPRIGHT" x="2" y="0" />
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="33" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="Background" hidden="true" />
+						<Texture parentKey="MinimalBackground" hidden="true">
+							<Anchors>
+								<Anchor point="TOPLEFT" x="-3" y="7" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="NineSlice" inherits="NineSlicePanelTemplate" />
+				</Frames>
 			</Frame>
 		</Frames>
 		<Scripts>
@@ -113,6 +128,26 @@ UI_shared.xsd">
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionsRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
+		<Frames>
+			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<!--
+			<OnHyperlinkEnter method="OnHyperlinkEnter" />
+			<OnHyperlinkLeave method="OnHyperlinkLeave" />
+			-->
 		</Scripts>
 	</Frame>
 </Ui>
