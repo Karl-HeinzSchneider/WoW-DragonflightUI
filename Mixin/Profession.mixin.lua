@@ -117,6 +117,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
     local pad = 5;
     local spacing = 1;
     local view = CreateScrollBoxListTreeListView(indent, pad, pad, padLeft, pad, spacing);
+    self.View = view
 
     view:SetElementFactory(function(factory, node)
         local elementData = node:GetData();
@@ -236,6 +237,9 @@ end
 function DFProfessionsRecipeListMixin:CreateRecipeList()
     print('DFProfessionsRecipeListMixin:CreateRecipeList()')
 
+    self.DataProvider = CreateTreeDataProvider()
+    self.View:SetDataProvider(self.DataProvider)
+
     local numSkills = GetNumTradeSkills()
     if numSkills == 0 then return end
 
@@ -289,6 +293,16 @@ function DFProfessionsRecipeListCategoryMixin:Init(node)
 end
 
 function DFProfessionsRecipeListCategoryMixin:SetCollapseState(collapsed)
+    if collapsed then
+        self.CollapseIcon:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+    else
+        self.CollapseIcon:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+    end
+
+    if true then return end
+
     local atlas = collapsed and "Professions-recipe-header-expand" or "Professions-recipe-header-collapse";
     self.CollapseIcon:SetAtlas(atlas, TextureKitConstants.UseAtlasSize);
     self.CollapseIconAlphaAdd:SetAtlas(atlas, TextureKitConstants.UseAtlasSize);
