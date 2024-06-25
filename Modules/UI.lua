@@ -334,6 +334,7 @@ function Module.Cata()
     Module:HookCharacterFrame()
     Module:HookCharacterLevel()
     Module:ChangeBags()
+    DragonflightUIMixin:ChangeQuestLogFrameCata()
 
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end

@@ -388,6 +388,63 @@ function DragonflightUIMixin:AddGuildbankSearch()
     end
 end
 
+function DragonflightUIMixin:ChangeQuestLogFrameCata()
+    frame = QuestLogFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            print('child:', 'Texture', child:GetTexture(), child:GetSize())
+
+            local tex = child:GetTexture()
+
+            if tex == 136797 then
+                -- <Texture file="Interface\QuestFrame\UI-QuestLog-BookIcon">
+                port = child
+            elseif tex == 309665 then
+                -- 	<Texture file="Interface\QuestFrame\UI-QuestLogDualPane-Left">
+                child:Hide()
+            elseif tex == 309666 then
+                -- <Texture file="Interface\QuestFrame\UI-QuestLogDualPane-RIGHT">
+                child:Hide()
+            end
+        end
+    end
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+
+    QuestLogTitleText:ClearAllPoints()
+    QuestLogTitleText:SetPoint('TOP', QuestLogFrame, 'TOP', 0, -5)
+    QuestLogTitleText:SetPoint('LEFT', QuestLogFrame, 'LEFT', 60, 0)
+    QuestLogTitleText:SetPoint('RIGHT', QuestLogFrame, 'RIGHT', -60, 0)
+    DragonflightUIMixin:UIPanelCloseButton(QuestLogFrameCloseButton)
+    QuestLogFrameCloseButton:SetPoint('TOPRIGHT', QuestLogFrame, 'TOPRIGHT', 1, 0)
+
+    do
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    -- default -16  @TODO: resets
+    QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 
