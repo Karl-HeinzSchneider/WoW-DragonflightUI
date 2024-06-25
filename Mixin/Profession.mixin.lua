@@ -117,12 +117,16 @@ function DFProfessionsRecipeListMixin:OnLoad()
             local function Initializer(button, node)
                 button:Init(node, false);
 
+                if elementData.selectionIndex == elementData.id then
+                    self.selectionBehavior:Select(button)
+                end
                 local selected = self.selectionBehavior:IsElementDataSelected(node);
                 button:SetSelected(selected);
 
                 button:SetScript("OnClick", function(button, buttonName, down)
                     --[[   EventRegistry:TriggerEvent("ProfessionsDebug.CraftingRecipeListRecipeClicked", button, buttonName,
                                                down, elementData.recipeInfo);]]
+                    -- print('OnClick', buttonName, elementData.id)
 
                     if buttonName == "LeftButton" then
                         if IsModifiedClick() then
@@ -134,6 +138,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
                                                                                recrafting);
                                 C_TradeSkillUI.SetRecipeTracked(elementData.recipeInfo.recipeID, not tracked, recrafting);
                             end ]]
+                            HandleModifiedItemClick(GetTradeSkillRecipeLink(elementData.id));
                         else
                             self.selectionBehavior:Select(button);
                         end
@@ -184,12 +189,21 @@ function DFProfessionsRecipeListMixin:OnLoad()
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
 
     local function OnSelectionChanged(o, elementData, selected)
-        print('OnSelectionChanged', o, elementData, selected)
+        -- print('OnSelectionChanged', o, elementData, selected)
         local button = self.ScrollBox:FindFrame(elementData);
         if button then button:SetSelected(selected); end
 
         if selected then
             local data = elementData:GetData();
+            -- SelectTradeSkill(data.id)
+            -- self:Refresh()
+            local test = {}
+            function test:GetID()
+                return data.id
+            end
+
+            TradeSkillSkillButton_OnClick(test, 'LeftButton')
+
             assert(data.recipeInfo);
 
             local newRecipeID = data.recipeInfo.recipeID;
@@ -267,6 +281,7 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
             -- print('--', skillName)
             headerNode:Insert({
                 id = i,
+                selectionIndex = selectionIndex,
                 recipeInfo = {
                     name = skillName,
                     skillType = skillType,
