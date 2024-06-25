@@ -79,6 +79,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
     print('DFProfessionsRecipeListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
+    self.selectedSkill = 2
     self.DataProvider = CreateTreeDataProvider()
 
     local indent = 10;
@@ -101,9 +102,9 @@ function DFProfessionsRecipeListMixin:OnLoad()
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 
                     if elementData.categoryInfo.isExpanded then
-                        CollapseTradeSkillSubClass(elementData.categoryInfo.id)
+                        -- CollapseTradeSkillSubClass(elementData.id)
                     else
-                        ExpandTradeSkillSubClass(elementData.categoryInfo.id)
+                        -- ExpandTradeSkillSubClass(elementData.id)
                     end
                 end);
                 --[[ 
@@ -195,23 +196,16 @@ function DFProfessionsRecipeListMixin:OnLoad()
 
         if selected then
             local data = elementData:GetData();
-            -- SelectTradeSkill(data.id)
-            -- self:Refresh()
-            local test = {}
-            function test:GetID()
-                return data.id
-            end
 
-            TradeSkillSkillButton_OnClick(test, 'LeftButton')
+            -- TradeSkillSkillButton_OnClick(test, 'LeftButton')
 
-            assert(data.recipeInfo);
-
-            local newRecipeID = data.recipeInfo.recipeID;
-            local changed = self.previousRecipeID ~= newRecipeID;
+            local newRecipeID = data.id
+            local changed = data.id ~= self.selectedSkill
             if changed then
+                print('OnSelectionChanged-changed', data.id)
                 EventRegistry:TriggerEvent("ProfessionsRecipeListMixin.Event.OnRecipeSelected", data.recipeInfo, self);
-
-                if newRecipeID then self.previousRecipeID = newRecipeID; end
+                self.selectedSkill = newRecipeID
+                -- if newRecipeID then self.previousRecipeID = newRecipeID; end
             end
         end
     end
@@ -219,15 +213,17 @@ function DFProfessionsRecipeListMixin:OnLoad()
     self.selectionBehavior = ScrollUtil.AddSelectionBehavior(self.ScrollBox);
     self.selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, OnSelectionChanged, self);
 
-    -- self:RegisterEvent("TRADE_SKILL_UPDATE");
-    -- self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
-    -- self:RegisterEvent("UPDATE_TRADESKILL_RECAST");
+    self:RegisterEvent("TRADE_SKILL_UPDATE");
+    self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
+    self:RegisterEvent("UPDATE_TRADESKILL_RECAST");
 end
 
 function DFProfessionsRecipeListMixin:OnEvent(event, ...)
     print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
+    if (not self:IsShown()) then return; end
+
     if event == 'TRADE_SKILL_UPDATE' then
-        self:Refresh()
+        -- self:Refresh()
     elseif event == 'TRADE_SKILL_FILTER_UPDATE' then
     elseif event == 'UPDATE_TRADESKILL_RECAST' then
     end
@@ -252,8 +248,8 @@ end
 
 function DFProfessionsRecipeListMixin:Refresh()
     print('->DFProfessionsRecipeListMixin:Refresh()')
-    local selectedSkill = TradeSkillFrame.selectedSkill
-    self.selectedSkill = selectedSkill
+    -- local selectedSkill = TradeSkillFrame.selectedSkill
+    -- self.selectedSkill = selectedSkill
 
     self:CreateRecipeList()
 end
@@ -267,9 +263,9 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
         return
     end
 
-    self.DataProvider = CreateTreeDataProvider()
-    -- self.DataProvider:Flush()
-    self.View:SetDataProvider(self.DataProvider)
+    -- self.DataProvider = CreateTreeDataProvider()
+    self.DataProvider:Flush()
+    -- self.View:SetDataProvider(self.DataProvider)
 
     local numSkills = GetNumTradeSkills()
     if numSkills == 0 then return end
@@ -284,14 +280,14 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
 
         if skillType == 'header' then
             -- print('Header:', skillName)
-            print('Header:', GetTradeSkillInfo(i))
+            -- print('Header:', GetTradeSkillInfo(i))
             headerNode = self.DataProvider:Insert({
                 id = i,
-                categoryInfo = {name = skillName, isExpanded = isExpanded == 1, id = i}
+                categoryInfo = {name = skillName, isExpanded = isExpanded == 1}
             })
             -- print('-headerNode:', headerNode)
         else
-            print('--', skillName)
+            -- print('--', skillName)
             headerNode:Insert({
                 id = i,
                 recipeInfo = {
@@ -300,8 +296,7 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
                     numAvailable = numAvailable,
                     isExpanded = isExpanded,
                     altVerb = altVerb,
-                    numSkills = numSkills,
-                    id = i
+                    numSkills = numSkills
                 }
             })
         end
