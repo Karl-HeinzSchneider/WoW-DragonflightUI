@@ -184,6 +184,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
 
     local function OnSelectionChanged(o, elementData, selected)
+        print('OnSelectionChanged', o, elementData, selected)
         local button = self.ScrollBox:FindFrame(elementData);
         if button then button:SetSelected(selected); end
 
@@ -244,8 +245,13 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
     local numSkills = GetNumTradeSkills()
     if numSkills == 0 then return end
 
+    local selectionIndex = GetTradeSkillSelectionIndex()
+    if selectionIndex >= numSkills then selectionIndex = GetFirstTradeSkill() end
+    print('->>>selectionIndex', selectionIndex)
+
     local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps;
     local headerNode = nil;
+
     for i = 1, numSkills do
         skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
 
@@ -253,12 +259,14 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
             -- print('Header:', skillName)
             -- print('Header:', GetTradeSkillInfo(i))
             headerNode = self.DataProvider:Insert({
+                id = i,
                 categoryInfo = {name = skillName, isExpanded = isExpanded == 1, id = i}
             })
             -- print('-headerNode:', headerNode)
         else
             -- print('--', skillName)
             headerNode:Insert({
+                id = i,
                 recipeInfo = {
                     name = skillName,
                     skillType = skillType,
@@ -270,7 +278,6 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
                 }
             })
         end
-
     end
 end
 ------------------------------
