@@ -388,6 +388,17 @@ function DragonflightUIMixin:AddGuildbankSearch()
     end
 end
 
+function DragonflightUIMixin:CreateProfessionFrame()
+    print('DragonflightUIMixin:CreateProfessionFrame()')
+    local frame = CreateFrame('FRAME', 'DragonflightUIProfessionFrame', UIParent,
+                              'DragonflightUIProfessionFrameTemplate')
+
+    frame:SetPoint('CENTER')
+    frame:Show()
+
+    return frame
+end
+
 function DragonflightUIMixin:HookTradeSkillFrameCata()
     print('DragonflightUIMixin:HookTradeSkillFrameCata()')
     hooksecurefunc('TradeSkillFrame_OnShow', function(self)

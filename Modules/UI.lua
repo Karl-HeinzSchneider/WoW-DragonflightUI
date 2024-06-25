@@ -338,6 +338,8 @@ function Module.Cata()
     Module:ChangeBags()
     DragonflightUIMixin:ChangeQuestLogFrameCata()
 
+    DragonflightUIMixin:CreateProfessionFrame()
+
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
