@@ -19,6 +19,8 @@ function DragonFlightUIProfessionMixin:OnShow()
 
         self:AnchorButtons()
         self:AnchorSchematics()
+
+        self.anchored = true
     end
 
     self:Refresh(true)
@@ -91,6 +93,31 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
 end
 
+function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
+    if quality == 0 then
+        -- poor
+        return 0.32959, 0.349121, 0.000976562, 0.0400391
+    elseif quality == 1 then
+        -- common
+        return 0.32959, 0.349121, 0.000976562, 0.0400391
+    elseif quality == 2 then
+        -- uncommon
+        return 0.411621, 0.431152, 0.0273438, 0.0664062
+    elseif quality == 3 then
+        -- rare
+        return 0.377441, 0.396973, 0.0273438, 0.0664062
+    elseif quality == 4 then
+        -- epic
+        return 0.579102, 0.598633, 0.0351562, 0.0742188
+    elseif quality == 5 then
+        -- legendary
+        return 0.558594, 0.578125, 0.0351562, 0.0742188
+    else
+        -- fallback
+        return 0.32959, 0.349121, 0.000976562, 0.0400391
+    end
+end
+
 function DragonFlightUIProfessionMixin:AnchorSchematics()
     local frame = self.SchematicForm
     -- frame.NineSlice:SetFrameLevel(2)
@@ -115,7 +142,8 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
     local name = TradeSkillSkillName
     name:ClearAllPoints()
     name:SetParent(frame)
-    name:SetPoint('LEFT', icon, 'RIGHT', 14, 17)
+    -- name:SetPoint('LEFT', icon, 'RIGHT', 14, 17)
+    name:SetPoint('TOPLEFT', icon, 'TOPRIGHT', 14, 0)
 
     local req = TradeSkillRequirementLabel
     req:ClearAllPoints()
@@ -160,6 +188,15 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
             overlay:SetPoint('TOPLEFT', reagentIcon, 'TOPLEFT')
             overlay:SetPoint('BOTTOMRIGHT', reagentIcon, 'BOTTOMRIGHT')
             reagent.DFOverlay = overlay
+
+            function overlay:UpdateQuality()
+                local index = GetTradeSkillSelectionIndex()
+                local link = GetTradeSkillReagentItemLink(index, i)
+
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+                overlay:SetTexCoord(select(1, DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)))
+            end
         end
 
         local reagentCountText = _G["TradeSkillReagent" .. i .. "Count"];
@@ -173,6 +210,13 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
         reagentNameText:SetSize(142, 36)
         reagentNameText:SetJustifyH("LEFT");
 
+        -- Colored Inventory Items <3
+        local quality = _G['TradeSkillReagent' .. i .. 'Quality']
+        if quality then
+            quality:ClearAllPoints()
+            quality:SetPoint('CENTER', reagentIcon, 'CENTER', 0, 0)
+        end
+
         local updateText = function()
             local index = GetTradeSkillSelectionIndex()
             local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(index, i);
@@ -182,6 +226,7 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
             local newText = playerReagentCount .. "/" .. reagentCount .. ' ' .. reagentName
 
             reagentNameText:SetText(newText)
+            reagent.DFOverlay:UpdateQuality()
         end
 
         hooksecurefunc(reagentCountText, 'SetText', function()
