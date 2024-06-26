@@ -92,6 +92,27 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     local rankFrameText = TradeSkillRankFrameSkillRank
     rankFrameText:ClearAllPoints()
     rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
+
+    local editBox = TradeSkillFrameEditBox
+    editBox:ClearAllPoints()
+    editBox:SetParent(self.RecipeList)
+    self.RecipeList.SearchBox = editBox
+    editBox:SetHeight(20)
+    editBox:SetPoint('TOPLEFT', self.RecipeList, 'TOPLEFT', 13, -8)
+    -- editBox:SetPoint('RIGHT', self.RecipeList.FilterButton, 'LEFT', -4, 0)
+
+    --[[ 
+    <Size y="20" />
+    <Anchors>
+        <Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
+        <Anchor point="TOPLEFT" x="13" y="-8" />
+    </Anchors> ]]
+
+    --[[    editBox:Show()
+    TradeSkillFrameEditBox:HookScript('OnHide', function()
+        --
+        if not IsTradeSkillLinked() then TradeSkillFrameEditBox:Show() end
+    end) ]]
 end
 
 function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
