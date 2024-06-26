@@ -16,6 +16,9 @@ function DragonFlightUIProfessionMixin:OnShow()
     if not self.anchored then
         self:SetParent(TradeSkillFrame)
         self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
+
+        self:AnchorButtons()
+        self:AnchorSchematics()
     end
 
     self:Refresh(true)
@@ -86,6 +89,109 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     local rankFrameText = TradeSkillRankFrameSkillRank
     rankFrameText:ClearAllPoints()
     rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
+end
+
+function DragonFlightUIProfessionMixin:AnchorSchematics()
+    local frame = self.SchematicForm
+    -- frame.NineSlice:SetFrameLevel(2)
+    -- frame.NineSlice:SetAlpha(0.25)
+
+    local icon = TradeSkillSkillIcon
+    icon:ClearAllPoints()
+    icon:SetParent(frame)
+    icon:SetPoint('TOPLEFT', frame, 'TOPLEFT', 28 - 400 + 400, -28)
+    -- icon:SetPoint('TOPLEFT', TradeSkillDetailScrollChildFrame, 'TOPLEFT', 28, -28)
+
+    if not icon.DFOverlay then
+        local overlay = frame:CreateTexture('DragonflightUIOverlay')
+        overlay:SetTexture(base .. 'professions')
+        overlay:SetSize(40, 40)
+        overlay:SetTexCoord(0.32959, 0.349121, 0.000976562, 0.0400391)
+        overlay:SetPoint('TOPLEFT', icon, 'TOPLEFT')
+        overlay:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT')
+        icon.DFOverlay = overlay
+    end
+
+    local name = TradeSkillSkillName
+    name:ClearAllPoints()
+    name:SetParent(frame)
+    name:SetPoint('LEFT', icon, 'RIGHT', 14, 17)
+
+    local req = TradeSkillRequirementLabel
+    req:ClearAllPoints()
+    req:SetParent(frame)
+    req:SetPoint('TOPLEFT', name, 'BOTTOMLEFT', 0, -4)
+
+    local reqText = TradeSkillRequirementText
+    reqText:ClearAllPoints()
+    reqText:SetParent(frame)
+    reqText:SetPoint('LEFT', req, 'RIGHT', 4, 0)
+
+    local descr = TradeSkillDescription
+    descr:ClearAllPoints()
+    descr:SetParent(frame)
+    descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+
+    local reagentLabel = TradeSkillReagentLabel
+    reagentLabel:ClearAllPoints()
+    reagentLabel:SetParent(frame)
+    reagentLabel:SetPoint('TOPLEFT', descr, 'BOTTOMLEFT', 0, -20)
+
+    for i = 1, MAX_TRADE_SKILL_REAGENTS do
+        --
+        local reagent = _G['TradeSkillReagent' .. i]
+        reagent:ClearAllPoints()
+        reagent:SetParent(frame)
+        reagent:SetPoint('TOPLEFT', reagentLabel, 'TOPLEFT', 1, -23 - (i - 1) * 45)
+        -- <Size x="147" y="41" />
+        -- DF: <Size x="180" y="50"/>
+        reagent:SetSize(180, 50)
+
+        local reagentIcon = _G['TradeSkillReagent' .. i .. 'IconTexture']
+        -- reagentIcon:SetSize()
+        reagentIcon:ClearAllPoints()
+        reagentIcon:SetPoint('LEFT', reagent, 'LEFT', 0, 0)
+
+        if not reagent.DFOverlay then
+            local overlay = reagent:CreateTexture('DragonflightUIOverlay')
+            overlay:SetTexture(base .. 'professions')
+            overlay:SetSize(40, 40)
+            overlay:SetTexCoord(0.32959, 0.349121, 0.000976562, 0.0400391)
+            overlay:SetPoint('TOPLEFT', reagentIcon, 'TOPLEFT')
+            overlay:SetPoint('BOTTOMRIGHT', reagentIcon, 'BOTTOMRIGHT')
+            reagent.DFOverlay = overlay
+        end
+
+        local reagentCountText = _G["TradeSkillReagent" .. i .. "Count"];
+        reagentCountText:Hide()
+        local reagentNameText = _G['TradeSkillReagent' .. i .. 'Name']
+        reagentNameText:ClearAllPoints()
+        reagentNameText:SetPoint('LEFT', reagent, 'LEFT', 46, 0)
+        -- <Size x="90" y="36" />
+        -- DF: <Size x="108" y="36" />
+        -- reagentNameText:SetSize(108, 36)
+        reagentNameText:SetSize(142, 36)
+        reagentNameText:SetJustifyH("LEFT");
+
+        local updateText = function()
+            local index = GetTradeSkillSelectionIndex()
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(index, i);
+
+            if (not reagentName or not reagentTexture) then return end
+
+            local newText = playerReagentCount .. "/" .. reagentCount .. ' ' .. reagentName
+
+            reagentNameText:SetText(newText)
+        end
+
+        hooksecurefunc(reagentCountText, 'SetText', function()
+            updateText(i)
+        end)
+        updateText(i)
+
+        local reagentNameFrame = _G['TradeSkillReagent' .. i .. 'NameFrame']
+        reagentNameFrame:Hide()
+    end
 end
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
