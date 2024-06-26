@@ -32,6 +32,7 @@ end
 
 function DragonFlightUIProfessionMixin:Refresh(force)
     self:UpdateHeader()
+    self:UpdateRecipeName()
 
     self.RecipeList:Refresh(force)
 end
@@ -225,6 +226,57 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
         local reagentNameFrame = _G['TradeSkillReagent' .. i .. 'NameFrame']
         reagentNameFrame:Hide()
     end
+
+    hooksecurefunc('TradeSkillFrame_SetSelection', function(id)
+        DragonFlightUIProfessionMixin:UpdateRecipeName()
+    end)
+end
+
+function DragonFlightUIProfessionMixin:UpdateRecipeName()
+    local index = GetTradeSkillSelectionIndex()
+
+    local quality = DragonFlightUIProfessionMixin:GetRecipeQuality(index)
+    local r, g, b, hex = GetItemQualityColor(quality)
+
+    local name = TradeSkillSkillName
+    name:SetTextColor(r, g, b)
+end
+
+function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
+    local tooltip = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
+    tooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
+
+    tooltip:SetTradeSkillItem(index)
+
+    local name, link = tooltip:GetItem()
+
+    if not link then return 1 end
+
+    local itemString = string.match(link, "item[%-?%d:]+")
+    if not itemString then return 1; end
+
+    local _, itemId = strsplit(":", itemString)
+    itemId = tonumber(itemId)
+    if not itemId or itemId == "" then return 1; end
+
+    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
+          itemTexture, itemSellPrice, classID = GetItemInfo(link)
+    if not itemLevel or not itemId then return 1 end
+
+    return itemRarity
+
+    --[[     local link = GetTradeSkillItemLink(index)
+
+    if link then
+        local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+        if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+        print('UpdateRecipeName(id)', index, skillName, quality)
+        local r, g, b, hex = GetItemQualityColor(quality)
+        name:SetTextColor(r, g, b)
+    else
+        print('no link')
+    end ]]
+
 end
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
