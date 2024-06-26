@@ -112,7 +112,7 @@ function frame:OnEvent(event, arg1, ...)
     elseif event == 'INSPECT_READY' then
         Module:HookColorInspect()
     elseif event == 'BAG_UPDATE_DELAYED' then
-        DragonflightUIItemColorMixin:UpdateBags()
+        DragonflightUIItemColorMixin:UpdateAllBags(false)
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)

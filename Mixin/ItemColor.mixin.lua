@@ -102,7 +102,7 @@ function DragonflightUIItemColorMixin:HookCharacterFrame()
 end
 
 function DragonflightUIItemColorMixin:HookInspectFrame()
-    if InspectFrame.DFHooked then return end
+    if not InspectFrame or InspectFrame.DFHooked then return end
     local ignored = {}
 
     hooksecurefunc('InspectPaperDollItemSlotButton_Update', function(self)
@@ -143,27 +143,54 @@ function DragonflightUIItemColorMixin:HookBags()
             overlay:SetPoint('CENTER')
         end
     end
+
+    hooksecurefunc('ToggleBackpack', function()
+        --   
+        -- print('ToggleBackpack')    
+
+        local containerFrame = _G['ContainerFrame1'];
+
+        if (containerFrame.allBags == true) then
+            DragonflightUIItemColorMixin:UpdateAllBags(true)
+
+        else
+            DragonflightUIItemColorMixin:UpdateAllBags(false)
+        end
+    end);
+
+    hooksecurefunc('ToggleBag', function(id)
+        --   
+        -- print('ToggleBag', id)
+        DragonflightUIItemColorMixin:UpdateBag(id)
+    end);
 end
 
-function DragonflightUIItemColorMixin:UpdateBags()
-    -- print('DragonflightUIItemColorMixin:UpdateBags()')
+function DragonflightUIItemColorMixin:UpdateAllBags(force)
+    -- print('DragonflightUIItemColorMixin:UpdateAllBags()', force)
     for bag = 0, NUM_BAG_SLOTS do
-        local frameID = IsBagOpen(bag)
+        --
+        if force then OpenBag(bag) end
+        DragonflightUIItemColorMixin:UpdateBag(bag)
+    end
+end
 
-        if frameID then
-            --
-            local numSlots = C_Container.GetContainerNumSlots(bag)
+function DragonflightUIItemColorMixin:UpdateBag(bag)
+    local frameID = IsBagOpen(bag)
+    -- print('UpdateBag()', bag, frameID)
 
-            for slot = 1, numSlots do
-                local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
+    if frameID then
+        --
+        local numSlots = C_Container.GetContainerNumSlots(bag)
 
-                local slotFrame = _G['ContainerFrame' .. frameID .. 'Item' .. (numSlots + 1 - slot)]
-                if containerInfo then
-                    local quality = containerInfo.quality or 0
-                    DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
-                else
-                    slotFrame.DFQuality:Hide()
-                end
+        for slot = 1, numSlots do
+            local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
+
+            local slotFrame = _G['ContainerFrame' .. frameID .. 'Item' .. (numSlots + 1 - slot)]
+            if containerInfo then
+                local quality = containerInfo.quality or 0
+                DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
+            else
+                slotFrame.DFQuality:Hide()
             end
         end
     end
