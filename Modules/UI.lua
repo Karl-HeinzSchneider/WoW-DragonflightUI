@@ -105,6 +105,7 @@ function frame:OnEvent(event, arg1, ...)
             DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
         elseif arg1 == 'Blizzard_GuildBankUI' then
             DragonflightUIMixin:AddGuildbankSearch()
+            DragonflightUIItemColorMixin:HookGuildbankBags()
         elseif arg1 == 'Blizzard_InspectUI' then
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
@@ -121,6 +122,9 @@ function frame:OnEvent(event, arg1, ...)
     elseif event == 'PLAYERBANKSLOTS_CHANGED' then
         -- print('PLAYERBANKSLOTS_CHANGED')
         DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'GUILDBANKBAGSLOTS_CHANGED' then
+        -- print('GUILDBANKBAGSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateGuildBankSlots()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
@@ -365,6 +369,7 @@ function Module.Cata()
     frame:RegisterEvent('BAG_UPDATE_DELAYED')
     frame:RegisterEvent('BANKFRAME_OPENED')
     frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
+    frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
 end
 
 -- Wrath

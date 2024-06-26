@@ -25,6 +25,7 @@ function DragonflightUIItemColorMixin:AddOverlayToFrame(frame)
     overlay:SetTexture(tex)
     overlay:SetSize(37, 37)
     -- overlay:SetTexCoord(0.32959, 0.349121, 0.000976562, 0.0400391)
+    overlay:Hide()
     frame.DFQuality = overlay
 
     return overlay
@@ -322,6 +323,50 @@ function DragonflightUIItemColorMixin:UpdateMerchantBuyback()
                 local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
                 if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
 
+                DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
+            end
+        end
+    end
+end
+
+function DragonflightUIItemColorMixin:HookGuildbankBags()
+    for c = 1, 7 do
+        local column = GuildBankFrame['Column' .. c]
+        for i = 1, 14 do
+            itemButton = column['Button' .. i]
+            buttonID = (c - 1) * 14 + i
+
+            local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(itemButton)
+            overlay:SetPoint('CENTER')
+
+            -- DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, 5)
+        end
+    end
+end
+
+function DragonflightUIItemColorMixin:UpdateGuildBankSlots()
+    local activeTab = GetCurrentGuildBankTab()
+
+    local itemButton;
+    local buttonID;
+    local texture, itemCount, locked, isFiltered, quality;
+
+    for c = 1, 7 do
+        local column = GuildBankFrame['Column' .. c]
+        for i = 1, 14 do
+            itemButton = column['Button' .. i]
+            buttonID = (c - 1) * 14 + i
+
+            texture, itemCount, locked, isFiltered, quality = GetGuildBankItemInfo(activeTab, buttonID)
+
+            if not texture then
+                -- no item
+                itemButton.DFQuality:Hide();
+            elseif (isFiltered) then
+                -- filtered
+                itemButton.DFQuality:Hide();
+            else
+                -- searched item
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
             end
         end
