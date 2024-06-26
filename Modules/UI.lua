@@ -363,8 +363,6 @@ function Module.Cata()
 
     DragonflightUIMixin:CreateProfessionFrame()
 
-    DragonflightUIMixin:CreateProfessionFrame()
-
     Module:HookColor()
 
     frame:RegisterEvent('ADDON_LOADED')
