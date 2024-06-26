@@ -3,18 +3,37 @@ local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 function DragonFlightUIProfessionMixin:OnLoad()
     self:SetupFrameStyle()
+
+    self:RegisterEvent("TRADE_SKILL_SHOW");
+    self:RegisterEvent("TRADE_SKILL_CLOSE");
+    self:RegisterEvent("TRADE_SKILL_UPDATE");
+    self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
+
+    self.anchored = false
 end
 
 function DragonFlightUIProfessionMixin:OnShow()
+    if not self.anchored then
+        self:SetParent(TradeSkillFrame)
+        self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
+    end
+
     self:UpdateHeader()
+
+    self.RecipeList:Refresh()
 end
 
 function DragonFlightUIProfessionMixin:OnHide()
 
 end
 
-function DragonFlightUIProfessionMixin:OnEvent()
-
+function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
+    print('ProfessionMixin', event)
+    if event == 'TRADE_SKILL_SHOW' then
+        self:Show()
+    elseif event == 'TRADE_SKILL_CLOSE' then
+        self:Hide()
+    end
 end
 
 function DragonFlightUIProfessionMixin:SetupFrameStyle()
@@ -95,7 +114,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
         if elementData.categoryInfo then
             local function Initializer(button, node)
                 button:Init(node);
-                print('initCats', elementData.id, self.selectedSkill)
+                -- print('initCats', elementData.id, self.selectedSkill)
 
                 button:SetScript("OnClick", function(button, buttonName)
                     node:ToggleCollapsed();
@@ -120,7 +139,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
             local function Initializer(button, node)
                 button:Init(node, false);
 
-                print('init', elementData.id, self.selectedSkill)
+                -- print('init', elementData.id, self.selectedSkill)
                 if elementData.id == self.selectedSkill then self.selectionBehavior:Select(button) end
                 local selected = self.selectionBehavior:IsElementDataSelected(node);
                 button:SetSelected(selected);
@@ -214,75 +233,44 @@ function DFProfessionsRecipeListMixin:OnLoad()
 
     self.selectionBehavior = ScrollUtil.AddSelectionBehavior(self.ScrollBox);
     self.selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, OnSelectionChanged, self);
-
-    self:RegisterEvent("TRADE_SKILL_UPDATE");
-    self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
-    self:RegisterEvent("UPDATE_TRADESKILL_RECAST");
 end
 
 function DFProfessionsRecipeListMixin:OnEvent(event, ...)
     print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
-    if (not self:IsShown()) then return; end
-
-    if (event == 'TRADE_SKILL_UPDATE' or event == "TRADE_SKILL_FILTER_UPDATE") then
-        -- self:Refresh()  
-    elseif event == 'UPDATE_TRADESKILL_RECAST' then
-    end
 end
 
 function DFProfessionsRecipeListMixin:OnShow()
     -- print('DFProfessionsRecipeListMixin:OnShow()')    
-    self:Refresh()
-    EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", self.selectedSkill, self);
+    -- self:Refresh()
+    -- EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", self.selectedSkill, self);
 end
 
 function DFProfessionsRecipeListMixin:Refresh()
     print('->DFProfessionsRecipeListMixin:Refresh()')
-    -- local selectedSkill = TradeSkillFrame.selectedSkill
-    -- self.selectedSkill = selectedSkill
 
-    self:CreateRecipeList()
+    self:UpdateRecipeList()
 end
 
 function DFProfessionsRecipeListMixin:SetRecipe()
-
 end
 
-function DFProfessionsRecipeListMixin:CreateRecipeList()
-    -- print('-->DFProfessionsRecipeListMixin:CreateRecipeList()')
-
-    if not self.DataProvider then
-        -- 
-        print('no self.DataProvider')
-        return
-    end
-
-    -- self.DataProvider = CreateTreeDataProvider()
-    self.DataProvider:Flush()
-    -- self.View:SetDataProvider(self.DataProvider)
+function DFProfessionsRecipeListMixin:UpdateRecipeList()
+    local dataProvider = CreateTreeDataProvider();
 
     local numSkills = GetNumTradeSkills()
-    if numSkills == 0 then return end
 
-    print('->>>selectionIndex', self.selectedSkill)
-
-    local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps;
-    local headerNode = nil;
+    local headerID = 0
 
     for i = 1, numSkills do
-        skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
+        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
 
         if skillType == 'header' then
-            -- print('Header:', skillName)
-            -- print('Header:', GetTradeSkillInfo(i))
-            headerNode = self.DataProvider:Insert({
-                id = i,
-                categoryInfo = {name = skillName, isExpanded = isExpanded == 1}
-            })
-            -- print('-headerNode:', headerNode)
+            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            dataProvider:Insert(data)
+            headerID = i
         else
             -- print('--', skillName)
-            headerNode:Insert({
+            local data = {
                 id = i,
                 recipeInfo = {
                     name = skillName,
@@ -292,10 +280,19 @@ function DFProfessionsRecipeListMixin:CreateRecipeList()
                     altVerb = altVerb,
                     numSkills = numSkills
                 }
-            })
+            }
+            dataProvider:InsertInParentByPredicate(data, function(node)
+                local nodeData = node:GetData()
+
+                return nodeData.id == headerID
+            end)
         end
     end
+
+    print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
+    self.ScrollBox:SetDataProvider(dataProvider);
 end
+
 ------------------------------
 
 DFProfessionsRecipeListCategoryMixin = {}

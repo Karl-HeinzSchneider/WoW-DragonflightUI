@@ -392,29 +392,7 @@ function DragonflightUIMixin:CreateProfessionFrame()
     print('DragonflightUIMixin:CreateProfessionFrame()')
     local frame = CreateFrame('FRAME', 'DragonflightUIProfessionFrame', UIParent,
                               'DragonflightUIProfessionFrameTemplate')
-
-    -- frame:SetPoint('CENTER')
-    -- frame:Show()
-
     return frame
-end
-
-function DragonflightUIMixin:HookTradeSkillFrameCata()
-    print('DragonflightUIMixin:HookTradeSkillFrameCata()')
-    hooksecurefunc('TradeSkillFrame_OnShow', function(self)
-        --
-        -- print('TradeSkillFrame_OnShow', self:GetName())
-
-        if not self.DFChanged then
-            self.DFChanged = true
-            -- DragonflightUIMixin:ChangeTradeskillFrameCata(self)
-            local DFProfessions = _G['DragonflightUIProfessionFrame']
-            DFProfessions:SetParent(TradeSkillFrame)
-            DFProfessions:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
-            DFProfessions:Show()
-            DFProfessions:AnchorButtons(self)
-        end
-    end)
 end
 
 function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)

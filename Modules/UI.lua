@@ -106,7 +106,6 @@ function frame:OnEvent(event, arg1, ...)
         elseif arg1 == 'Blizzard_GuildBankUI' then
             DragonflightUIMixin:AddGuildbankSearch()
         elseif arg1 == 'Blizzard_TradeSkillUI' then
-            DragonflightUIMixin:HookTradeSkillFrameCata()
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module:ChangeLateFrames()
