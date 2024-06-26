@@ -18,13 +18,17 @@ function DragonFlightUIProfessionMixin:OnShow()
         self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
     end
 
-    self:UpdateHeader()
-
-    self.RecipeList:Refresh()
+    self:Refresh(true)
 end
 
 function DragonFlightUIProfessionMixin:OnHide()
 
+end
+
+function DragonFlightUIProfessionMixin:Refresh(force)
+    self:UpdateHeader()
+
+    self.RecipeList:Refresh(force)
 end
 
 function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
@@ -33,6 +37,8 @@ function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
         self:Show()
     elseif event == 'TRADE_SKILL_CLOSE' then
         self:Hide()
+    elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
+        if self:IsShown() then self:Refresh(false) end
     end
 end
 
@@ -225,7 +231,9 @@ function DFProfessionsRecipeListMixin:OnLoad()
                 print('OnSelectionChanged-changed', data.id)
                 self.selectedSkill = newRecipeID
                 EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", newRecipeID, self);
+
                 TradeSkillFrame_SetSelection(newRecipeID)
+                self:SelectRecipe(newRecipeID, false)
                 -- if newRecipeID then self.previousRecipeID = newRecipeID; end
             end
         end
@@ -245,13 +253,43 @@ function DFProfessionsRecipeListMixin:OnShow()
     -- EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", self.selectedSkill, self);
 end
 
-function DFProfessionsRecipeListMixin:Refresh()
-    print('->DFProfessionsRecipeListMixin:Refresh()')
+function DFProfessionsRecipeListMixin:Refresh(force)
+    print('->DFProfessionsRecipeListMixin:Refresh()', force == true)
+
+    local numSkills = GetNumTradeSkills()
+    local index = GetTradeSkillSelectionIndex()
+    if index > numSkills then
+        index = GetFirstTradeSkill()
+        TradeSkillFrame_SetSelection(index)
+    end
+    local changed = self.selectedSkill ~= index
+    self.selectedSkill = index
+
+    local oldScroll = self.ScrollBox:GetScrollPercentage()
 
     self:UpdateRecipeList()
+
+    self:SelectRecipe(index, true)
+
+    if (not changed) and (not force) then
+        print('set old scroll')
+        self.ScrollBox:SetScrollPercentage(oldScroll, ScrollBoxConstants.NoScrollInterpolation)
+    end
 end
 
-function DFProfessionsRecipeListMixin:SetRecipe()
+function DFProfessionsRecipeListMixin:SelectRecipe(id, scrollToRecipe)
+    local elementData = self.selectionBehavior:SelectElementDataByPredicate(function(node)
+        local data = node:GetData();
+        return data.recipeInfo and data.id == id
+    end);
+
+    if scrollToRecipe then
+        self.ScrollBox:ScrollToElementData(elementData);
+        -- ScrollBoxConstants.AlignCenter,  ScrollBoxConstants.RetainScrollPosition
+
+    end
+
+    return elementData;
 end
 
 function DFProfessionsRecipeListMixin:UpdateRecipeList()
