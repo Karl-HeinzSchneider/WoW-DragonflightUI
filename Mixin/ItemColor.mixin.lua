@@ -105,13 +105,14 @@ function DragonflightUIItemColorMixin:HookCharacterFrame()
 end
 
 function DragonflightUIItemColorMixin:HookInspectFrame()
+    -- print(' DragonflightUIItemColorMixin:HookInspectFrame()')
     if not InspectFrame or InspectFrame.DFHooked then return end
     local ignored = {}
 
     hooksecurefunc('InspectPaperDollItemSlotButton_Update', function(self)
         if ignored[self] then return end
         if not self.DFQuality then
-            --
+            --           
             local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(self)
             overlay:SetPoint('CENTER')
         end
@@ -121,7 +122,7 @@ function DragonflightUIItemColorMixin:HookInspectFrame()
         local hasItem = textureName ~= nil;
 
         if hasItem then
-            local quality = GetInventoryItemQuality(unit, self:GetID())
+            local quality = GetInventoryItemQuality(unit, self:GetID()) or 0
             -- print('InspectPaperDollItemSlotButton_Update', self:GetName(), quality)
             DragonflightUIItemColorMixin:UpdateOverlayQuality(self, quality)
         else
