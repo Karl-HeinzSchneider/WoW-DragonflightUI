@@ -153,6 +153,9 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
     local reqText = TradeSkillRequirementText
     reqText:ClearAllPoints()
     reqText:SetParent(frame)
+    -- reqText:SetSize(180,9.9)
+    reqText:SetSize(250, 9.9)
+    -- reqText:SetJustifyH("LEFT");
     reqText:SetPoint('LEFT', req, 'RIGHT', 4, 0)
 
     local descr = TradeSkillDescription
