@@ -112,13 +112,13 @@ function frame:OnEvent(event, arg1, ...)
     elseif event == 'INSPECT_READY' then
         Module:HookColorInspect()
     elseif event == 'BAG_UPDATE_DELAYED' then
-        print('BAG_UPDATE_DELAYED')
+        -- print('BAG_UPDATE_DELAYED')
         DragonflightUIItemColorMixin:UpdateAllBags(false)
     elseif event == 'BANKFRAME_OPENED' then
-        print('BANKFRAME_OPENED')
+        -- print('BANKFRAME_OPENED')
         DragonflightUIItemColorMixin:UpdateBankSlots()
     elseif event == 'PLAYERBANKSLOTS_CHANGED' then
-        print('PLAYERBANKSLOTS_CHANGED')
+        -- print('PLAYERBANKSLOTS_CHANGED')
         DragonflightUIItemColorMixin:UpdateBankSlots()
     end
 end
