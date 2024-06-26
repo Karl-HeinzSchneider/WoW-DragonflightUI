@@ -51,7 +51,7 @@ BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_QUEST] = {r = 1.0, g = 1.0, b = 0}
 
 function DragonflightUIItemColorMixin:UpdateOverlayQuality(frame, quality)
     if not frame.DFQuality then
-        print('no frame.DFQuality')
+        print('No frame.DFQuality:', frame:GetName(), quality)
         return
     end
     frame.DFQuality:Show()
@@ -143,6 +143,7 @@ function DragonflightUIItemColorMixin:HookBags()
             --
             local ref = _G['ContainerFrame' .. bag .. 'Item' .. i]
             local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
+            overlay:SetPoint('CENTER')
         end
     end
 
@@ -179,7 +180,7 @@ function DragonflightUIItemColorMixin:HookBags()
     hooksecurefunc('ToggleBackpack', function()
         --   
         local containerFrame = _G['ContainerFrame1'];
-        print('ToggleBackpack', 'allBags: ', (containerFrame.allBags == true))
+        -- print('ToggleBackpack', 'allBags: ', (containerFrame.allBags == true))
 
         if (containerFrame.allBags == true) then
             DragonflightUIItemColorMixin:UpdateAllBags(true)
@@ -190,7 +191,7 @@ function DragonflightUIItemColorMixin:HookBags()
 
     hooksecurefunc('ToggleBag', function(id)
         --   
-        print('ToggleBag', id)
+        -- print('ToggleBag', id)
         DragonflightUIItemColorMixin:UpdateBag(id)
     end);
 
@@ -208,7 +209,7 @@ function DragonflightUIItemColorMixin:HookBags()
 end
 
 function DragonflightUIItemColorMixin:UpdateAllBags(force)
-    print('DragonflightUIItemColorMixin:UpdateAllBags()', force)
+    -- print('DragonflightUIItemColorMixin:UpdateAllBags()', force)
     for bag = 0, NUM_BAG_SLOTS do
         --
         if force then OpenBag(bag) end
@@ -226,7 +227,7 @@ end
 
 function DragonflightUIItemColorMixin:UpdateBag(bag)
     local frameID = IsBagOpen(bag)
-    print('UpdateBag()', bag, frameID)
+    -- print('UpdateBag()', bag, frameID)
 
     if frameID then
         --

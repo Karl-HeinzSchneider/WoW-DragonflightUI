@@ -110,6 +110,7 @@ function frame:OnEvent(event, arg1, ...)
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module:ChangeLateFrames()
     elseif event == 'INSPECT_READY' then
+        print('INSPECT_READY')
         Module:HookColorInspect()
     elseif event == 'BAG_UPDATE_DELAYED' then
         -- print('BAG_UPDATE_DELAYED')
