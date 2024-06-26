@@ -264,19 +264,6 @@ function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
     if not itemLevel or not itemId then return 1 end
 
     return itemRarity
-
-    --[[     local link = GetTradeSkillItemLink(index)
-
-    if link then
-        local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
-        if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
-        print('UpdateRecipeName(id)', index, skillName, quality)
-        local r, g, b, hex = GetItemQualityColor(quality)
-        name:SetTextColor(r, g, b)
-    else
-        print('no link')
-    end ]]
-
 end
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
