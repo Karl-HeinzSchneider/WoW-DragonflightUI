@@ -105,14 +105,29 @@ function frame:OnEvent(event, arg1, ...)
             DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
         elseif arg1 == 'Blizzard_GuildBankUI' then
             DragonflightUIMixin:AddGuildbankSearch()
-        elseif arg1 == 'Blizzard_TradeSkillUI' then
+            DragonflightUIItemColorMixin:HookGuildbankBags()
+        elseif arg1 == 'Blizzard_InspectUI' then
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module:ChangeLateFrames()
+    elseif event == 'INSPECT_READY' then
+        -- print('INSPECT_READY')
+        Module:HookColorInspect()
+    elseif event == 'BAG_UPDATE_DELAYED' then
+        -- print('BAG_UPDATE_DELAYED')
+        DragonflightUIItemColorMixin:UpdateAllBags(false)
+    elseif event == 'BANKFRAME_OPENED' then
+        -- print('BANKFRAME_OPENED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'PLAYERBANKSLOTS_CHANGED' then
+        -- print('PLAYERBANKSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'GUILDBANKBAGSLOTS_CHANGED' then
+        -- print('GUILDBANKBAGSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateGuildBankSlots()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
-frame:RegisterEvent('ADDON_LOADED')
 
 function Module:ChangeButtons()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
@@ -329,6 +344,15 @@ function Module:ChangeBags()
     end
 end
 
+function Module:HookColor()
+    DragonflightUIItemColorMixin:HookCharacterFrame()
+    DragonflightUIItemColorMixin:HookBags()
+end
+
+function Module:HookColorInspect()
+    DragonflightUIItemColorMixin:HookInspectFrame()
+end
+
 -- Cata
 function Module.Cata()
     Module:ChangeButtons()
@@ -339,7 +363,17 @@ function Module.Cata()
 
     DragonflightUIMixin:CreateProfessionFrame()
 
+    DragonflightUIMixin:CreateProfessionFrame()
+
+    Module:HookColor()
+
+    frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('INSPECT_READY')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('BAG_UPDATE_DELAYED')
+    frame:RegisterEvent('BANKFRAME_OPENED')
+    frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
+    frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
 end
 
 -- Wrath
