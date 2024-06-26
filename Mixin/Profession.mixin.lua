@@ -246,6 +246,11 @@ function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
     local tooltip = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
     tooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
 
+    -- local _, skillType, _, _, _ = GetTradeSkillInfo(index);
+    -- if (skillType == "header") then return 1 end
+
+    if not index or index == 0 then return 1 end
+
     tooltip:SetTradeSkillItem(index)
 
     local name, link = tooltip:GetItem()
