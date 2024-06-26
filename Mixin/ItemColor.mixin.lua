@@ -140,7 +140,6 @@ function DragonflightUIItemColorMixin:HookBags()
             --
             local ref = _G['ContainerFrame' .. bag .. 'Item' .. i]
             local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
-            overlay:SetPoint('CENTER')
         end
     end
 
@@ -151,6 +150,27 @@ function DragonflightUIItemColorMixin:HookBags()
         local ref = _G['BankFrameItem' .. slot]
         local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
         overlay:SetPoint('CENTER')
+    end
+
+    for slot = 1, 10 do
+        --
+        local ref = _G['MerchantItem' .. slot .. 'ItemButton']
+        local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
+
+        local icon = _G['MerchantItem' .. slot .. 'ItemButtonIconTexture']
+        overlay:SetPoint('CENTER', icon, 'CENTER', 0, 0)
+
+        DragonflightUIItemColorMixin:UpdateOverlayQuality(ref, 5)
+    end
+
+    do
+        local ref = _G['MerchantBuyBackItemItemButton']
+        local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
+
+        local icon = _G['MerchantBuyBackItemItemButtonIconTexture']
+        overlay:SetPoint('CENTER', icon, 'CENTER', 0, 0)
+
+        DragonflightUIItemColorMixin:UpdateOverlayQuality(ref, 5)
     end
 
     hooksecurefunc('ToggleBackpack', function()
@@ -170,6 +190,18 @@ function DragonflightUIItemColorMixin:HookBags()
         -- print('ToggleBag', id)
         DragonflightUIItemColorMixin:UpdateBag(id)
     end);
+
+    hooksecurefunc('MerchantFrame_UpdateMerchantInfo', function()
+        --        
+        -- print('MerchantFrame_UpdateMerchantInfo')
+        DragonflightUIItemColorMixin:UpdateMerchant()
+    end)
+
+    hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
+        --       
+        -- print('MerchantFrame_UpdateBuybackInfo')
+        DragonflightUIItemColorMixin:UpdateMerchantBuyback()
+    end)
 end
 
 function DragonflightUIItemColorMixin:UpdateAllBags(force)
@@ -225,6 +257,67 @@ function DragonflightUIItemColorMixin:UpdateBankSlots()
             DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
         else
             slotFrame.DFQuality:Hide()
+        end
+    end
+end
+
+function DragonflightUIItemColorMixin:UpdateMerchant()
+    local numMerchantItems = GetMerchantNumItems()
+
+    for i = 1, MERCHANT_ITEMS_PER_PAGE do
+        local index = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i);
+        local itemButton = _G["MerchantItem" .. i .. "ItemButton"];
+
+        if (index <= numMerchantItems) then
+            local link = GetMerchantItemLink(index);
+
+            if link then
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+
+                DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
+            end
+        end
+    end
+
+    do
+        local itemButton = _G['MerchantBuyBackItemItemButton']
+
+        local numBuybackItems = GetNumBuybackItems();
+        local buybackName, buybackTexture, buybackPrice, buybackQuantity, buybackNumAvailable, buybackIsUsable =
+            GetBuybackItemInfo(numBuybackItems);
+
+        if buybackName then
+            --
+            local link = GetBuybackItemLink(numBuybackItems)
+
+            if link then
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+
+                DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
+            end
+        else
+            itemButton.DFQuality:Hide()
+        end
+    end
+end
+
+function DragonflightUIItemColorMixin:UpdateMerchantBuyback()
+    local numMerchantItems = GetNumBuybackItems()
+
+    for index = 1, MERCHANT_ITEMS_PER_PAGE do
+        local itemButton = _G["MerchantItem" .. index .. "ItemButton"];
+
+        if (index <= numMerchantItems) then
+            local link = GetBuybackItemLink(index);
+
+            if link then
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+
+                DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
+            end
         end
     end
 end
