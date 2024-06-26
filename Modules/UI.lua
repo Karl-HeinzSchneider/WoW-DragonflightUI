@@ -112,7 +112,14 @@ function frame:OnEvent(event, arg1, ...)
     elseif event == 'INSPECT_READY' then
         Module:HookColorInspect()
     elseif event == 'BAG_UPDATE_DELAYED' then
+        print('BAG_UPDATE_DELAYED')
         DragonflightUIItemColorMixin:UpdateAllBags(false)
+    elseif event == 'BANKFRAME_OPENED' then
+        print('BANKFRAME_OPENED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'PLAYERBANKSLOTS_CHANGED' then
+        print('PLAYERBANKSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
@@ -355,6 +362,8 @@ function Module.Cata()
     frame:RegisterEvent('INSPECT_READY')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('BAG_UPDATE_DELAYED')
+    frame:RegisterEvent('BANKFRAME_OPENED')
+    frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
 end
 
 -- Wrath

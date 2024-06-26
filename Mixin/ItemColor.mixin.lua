@@ -134,7 +134,7 @@ end
 function DragonflightUIItemColorMixin:HookBags()
     -- print('DragonflightUIItemColorMixin:HookBags()')
 
-    for bag = 1, NUM_BAG_SLOTS + 1 do
+    for bag = 1, NUM_CONTAINER_FRAMES do
         --
         for i = 1, 36 do
             --
@@ -144,15 +144,22 @@ function DragonflightUIItemColorMixin:HookBags()
         end
     end
 
+    local bankSlots = C_Container.GetContainerNumSlots(BANK_CONTAINER)
+
+    for slot = 1, bankSlots do
+        --
+        local ref = _G['BankFrameItem' .. slot]
+        local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
+        overlay:SetPoint('CENTER')
+    end
+
     hooksecurefunc('ToggleBackpack', function()
         --   
-        -- print('ToggleBackpack')    
-
         local containerFrame = _G['ContainerFrame1'];
+        print('ToggleBackpack', 'allBags: ', (containerFrame.allBags == true))
 
         if (containerFrame.allBags == true) then
             DragonflightUIItemColorMixin:UpdateAllBags(true)
-
         else
             DragonflightUIItemColorMixin:UpdateAllBags(false)
         end
@@ -160,23 +167,31 @@ function DragonflightUIItemColorMixin:HookBags()
 
     hooksecurefunc('ToggleBag', function(id)
         --   
-        -- print('ToggleBag', id)
+        print('ToggleBag', id)
         DragonflightUIItemColorMixin:UpdateBag(id)
     end);
 end
 
 function DragonflightUIItemColorMixin:UpdateAllBags(force)
-    -- print('DragonflightUIItemColorMixin:UpdateAllBags()', force)
+    print('DragonflightUIItemColorMixin:UpdateAllBags()', force)
     for bag = 0, NUM_BAG_SLOTS do
         --
         if force then OpenBag(bag) end
         DragonflightUIItemColorMixin:UpdateBag(bag)
     end
+
+    -- local bankSlots = C_Container.GetNumBankSlots()
+
+    for bank = 5, 11 do
+        --
+        if force then OpenBag(bank) end
+        DragonflightUIItemColorMixin:UpdateBag(bank)
+    end
 end
 
 function DragonflightUIItemColorMixin:UpdateBag(bag)
     local frameID = IsBagOpen(bag)
-    -- print('UpdateBag()', bag, frameID)
+    print('UpdateBag()', bag, frameID)
 
     if frameID then
         --
@@ -192,6 +207,24 @@ function DragonflightUIItemColorMixin:UpdateBag(bag)
             else
                 slotFrame.DFQuality:Hide()
             end
+        end
+    end
+end
+
+function DragonflightUIItemColorMixin:UpdateBankSlots()
+    print('DragonflightUIItemColorMixin:UpdateBankSlots()')
+    local bankSlots = C_Container.GetContainerNumSlots(BANK_CONTAINER)
+
+    for slot = 1, bankSlots do
+        --
+        local containerInfo = C_Container.GetContainerItemInfo(BANK_CONTAINER, slot)
+
+        local slotFrame = _G['BankFrameItem' .. slot]
+        if containerInfo then
+            local quality = containerInfo.quality or 0
+            DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
+        else
+            slotFrame.DFQuality:Hide()
         end
     end
 end
