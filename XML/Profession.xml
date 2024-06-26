@@ -104,27 +104,18 @@ UI_shared.xsd">
 					<Anchor point="TOPRIGHT" x="-8" y="-8" />
 				</Anchors>
 			</DropDownToggleButton>
-			<Frame parentKey="SearchBoxFake">
+			<EditBox parentKey="SearchBox" autoFocus="false" inherits="DFProfessionearchBoxTemplate">
 				<Size y="20" />
 				<Anchors>
 					<Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
 					<Anchor point="TOPLEFT" x="13" y="-8" />
 				</Anchors>
-			</Frame>
-			<!--
-			<EditBox parentKey="SearchBox" autoFocus="false" inherits="SearchBoxTemplate">
-			<Size y="20" />
-			<Anchors>
-			<Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
-			<Anchor point="TOPLEFT" x="13" y="-8" />
-			</Anchors>
 			</EditBox>
-			-->
 			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate" />
 			<Frame parentKey="ContextMenu" inherits="UIDropDownMenuTemplate" enableMouse="true" />
 			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.SearchBoxFake" relativePoint="BOTTOMLEFT" x="-5" y="-7" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-5" y="-7" />
 					<Anchor point="BOTTOMRIGHT" x="-20" y="5" />
 				</Anchors>
 			</Frame>
@@ -141,6 +132,13 @@ UI_shared.xsd">
 			<OnEvent method="OnEvent" />
 		</Scripts>
 	</Frame>
+	<EditBox name="DFProfessionearchBoxTemplate" inherits="SearchBoxTemplate" mixin="DFProfessionSearchBoxTemplateMixin" autoFocus="false" virtual="true">
+		<Scripts>
+			<OnHide method="OnHide" />
+			<OnTextChanged method="OnTextChanged" />
+			<OnChar method="OnChar" />
+		</Scripts>
+	</EditBox>
 	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionsRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
 		<Frames>
 			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">

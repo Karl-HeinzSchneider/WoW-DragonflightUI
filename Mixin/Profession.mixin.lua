@@ -34,6 +34,15 @@ function DragonFlightUIProfessionMixin:Refresh(force)
     self:UpdateHeader()
     self:UpdateRecipeName()
 
+    do
+        local name, rank, maxRank = GetTradeSkillLine();
+        if (rank < 75) and (not IsTradeSkillLinked()) then
+            self.RecipeList.SearchBox:Disable()
+        else
+            self.RecipeList.SearchBox:Enable()
+        end
+    end
+
     self.RecipeList:Refresh(force)
 end
 
@@ -72,6 +81,7 @@ end
 function DragonFlightUIProfessionMixin:AnchorButtons()
     local create = TradeSkillCreateButton
     create:ClearAllPoints()
+    create:SetParent(self)
     create:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
 
     local createAll = TradeSkillCreateAllButton
@@ -94,11 +104,11 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
 
     local editBox = TradeSkillFrameEditBox
-    editBox:ClearAllPoints()
+    --[[ editBox:ClearAllPoints()
     editBox:SetParent(self.RecipeList)
     self.RecipeList.SearchBox = editBox
     editBox:SetHeight(20)
-    editBox:SetPoint('TOPLEFT', self.RecipeList, 'TOPLEFT', 13, -8)
+    editBox:SetPoint('TOPLEFT', self.RecipeList, 'TOPLEFT', 13, -8) ]]
     -- editBox:SetPoint('RIGHT', self.RecipeList.FilterButton, 'LEFT', -4, 0)
 
     --[[ 
@@ -689,7 +699,7 @@ function DFProfessionsRecipeListRecipeMixin:Init(node, hideCraftableCount)
 
     end
 
-    local count = recipeInfo.numAvailable + 69
+    local count = recipeInfo.numAvailable -- + 69
     local hasCount = count > 0;
     if hasCount then
         self.Count:SetFormattedText(" [%d] ", count);
@@ -756,3 +766,39 @@ function DFProfessionsRecipeSchematicFormMixin:OnEvent()
     -- print('DFProfessionsRecipeSchematicFormMixin:OnEvent()')
 end
 
+------------------------------
+DFProfessionSearchBoxTemplateMixin = {}
+
+function DFProfessionSearchBoxTemplateMixin:OnLoad()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnLoad()')
+end
+
+function DFProfessionSearchBoxTemplateMixin:OnHide()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnHide()')
+    self.clearButton:Click();
+    SearchBoxTemplate_OnTextChanged(self);
+end
+
+function DFProfessionSearchBoxTemplateMixin:OnTextChanged()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnTextChanged()')
+    SearchBoxTemplate_OnTextChanged(self);
+    TradeSkillFrameEditBox:SetText(self:GetText())
+end
+
+function DFProfessionSearchBoxTemplateMixin:OnChar()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnChar()')
+    -- clear focus if the player is repeating keys (ie - trying to move)
+    -- TODO: move into base editbox code?
+    local MIN_REPEAT_CHARACTERS = 4;
+    local searchString = self:GetText();
+    if (string.len(searchString) >= MIN_REPEAT_CHARACTERS) then
+        local repeatChar = true;
+        for i = 1, MIN_REPEAT_CHARACTERS - 1, 1 do
+            if (string.sub(searchString, (0 - i), (0 - i)) ~= string.sub(searchString, (-1 - i), (-1 - i))) then
+                repeatChar = false;
+                break
+            end
+        end
+        if (repeatChar) then self:ClearFocus(); end
+    end
+end
