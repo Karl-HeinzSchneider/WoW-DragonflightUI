@@ -105,13 +105,18 @@ function frame:OnEvent(event, arg1, ...)
             DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
         elseif arg1 == 'Blizzard_GuildBankUI' then
             DragonflightUIMixin:AddGuildbankSearch()
+        elseif arg1 == 'Blizzard_InspectUI' then
         end
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module:ChangeLateFrames()
+    elseif event == 'INSPECT_READY' then
+        Module:HookColorInspect()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 frame:RegisterEvent('ADDON_LOADED')
+frame:RegisterEvent('INSPECT_READY')
+frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 function Module:ChangeButtons()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
@@ -328,6 +333,14 @@ function Module:ChangeBags()
     end
 end
 
+function Module:HookColor()
+    DragonflightUIItemColorMixin:HookCharacterFrame()
+end
+
+function Module:HookColorInspect()
+    DragonflightUIItemColorMixin:HookInspectFrame()
+end
+
 -- Cata
 function Module.Cata()
     Module:ChangeButtons()
@@ -336,7 +349,7 @@ function Module.Cata()
     Module:ChangeBags()
     DragonflightUIMixin:ChangeQuestLogFrameCata()
 
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    Module:HookColor()
 end
 
 -- Wrath
