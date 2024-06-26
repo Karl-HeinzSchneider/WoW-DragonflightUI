@@ -111,12 +111,11 @@ function frame:OnEvent(event, arg1, ...)
         Module:ChangeLateFrames()
     elseif event == 'INSPECT_READY' then
         Module:HookColorInspect()
+    elseif event == 'BAG_UPDATE_DELAYED' then
+        DragonflightUIItemColorMixin:UpdateBags()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
-frame:RegisterEvent('ADDON_LOADED')
-frame:RegisterEvent('INSPECT_READY')
-frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 function Module:ChangeButtons()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
@@ -335,6 +334,7 @@ end
 
 function Module:HookColor()
     DragonflightUIItemColorMixin:HookCharacterFrame()
+    DragonflightUIItemColorMixin:HookBags()
 end
 
 function Module:HookColorInspect()
@@ -350,6 +350,11 @@ function Module.Cata()
     DragonflightUIMixin:ChangeQuestLogFrameCata()
 
     Module:HookColor()
+
+    frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('INSPECT_READY')
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('BAG_UPDATE_DELAYED')
 end
 
 -- Wrath

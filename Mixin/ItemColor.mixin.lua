@@ -1,5 +1,14 @@
 DragonflightUIItemColorMixin = {}
 
+local DFUpdateFrame = CreateFrame('FRAME', 'DragonflightUIItemColorMixinUpdateFrame')
+DFUpdateFrame:RegisterEvent('BAG_UPDATE_DELAYED')
+
+-- DFUpdateFrame:SetScript('OnEvent', DragonflightUIItemColorMixin.OnEvent)
+
+function DragonflightUIItemColorMixin:OnEvent(event, arg1, ...)
+    print(' DragonflightUIItemColorMixin:OnEvent', event, arg1)
+end
+
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 function DragonflightUIItemColorMixin:AddOverlayToFrame(frame)
@@ -35,11 +44,20 @@ local qualityToIconBorderAtlas = {
     [8] = {0.32959, 0.349121, 0.000976562, 0.0400391} -- wow token
 };
 
+LE_ITEM_QUALITY_QUEST = #BAG_ITEM_QUALITY_COLORS + 1;
+LE_ITEM_QUALITY_POOR = 0;
+BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_POOR] = {r = 0.1, g = 0.1, b = 0.1}
+BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_QUEST] = {r = 1.0, g = 1.0, b = 0}
+
 function DragonflightUIItemColorMixin:UpdateOverlayQuality(frame, quality)
     if not frame.DFQuality then return end
     frame.DFQuality:Show()
 
     local color = BAG_ITEM_QUALITY_COLORS[quality]
+    if not color then
+        color = BAG_ITEM_QUALITY_COLORS[1]
+        print('No Color:', frame:GetName(), quality)
+    end
     -- print('color', color)
     frame.DFQuality:SetVertexColor(color.r, color.g, color.b, color.a)
     -- frame.DFQuality:SetTexCoord(unpack(qualityToIconBorderAtlas[quality]))
@@ -112,3 +130,41 @@ end
 
 -- DragonflightUIItemColorMixin:HookCharacterFrame()
 -- DragonflightUIItemColorMixin:HookInspectFrame()
+
+function DragonflightUIItemColorMixin:HookBags()
+    -- print('DragonflightUIItemColorMixin:HookBags()')
+
+    for bag = 1, NUM_BAG_SLOTS + 1 do
+        --
+        for i = 1, 36 do
+            --
+            local ref = _G['ContainerFrame' .. bag .. 'Item' .. i]
+            local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
+            overlay:SetPoint('CENTER')
+        end
+    end
+end
+
+function DragonflightUIItemColorMixin:UpdateBags()
+    -- print('DragonflightUIItemColorMixin:UpdateBags()')
+    for bag = 0, NUM_BAG_SLOTS do
+        local frameID = IsBagOpen(bag)
+
+        if frameID then
+            --
+            local numSlots = C_Container.GetContainerNumSlots(bag)
+
+            for slot = 1, numSlots do
+                local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
+
+                local slotFrame = _G['ContainerFrame' .. frameID .. 'Item' .. (numSlots + 1 - slot)]
+                if containerInfo then
+                    local quality = containerInfo.quality or 0
+                    DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
+                else
+                    slotFrame.DFQuality:Hide()
+                end
+            end
+        end
+    end
+end
