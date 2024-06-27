@@ -528,11 +528,86 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     return menu
 end
 
+--[[ First Aid 	129										
+Blacksmithing	164	
+Leatherworking	165	
+Alchemy	171	
+Herbalism	182
+Cooking	185	
+Mining	186
+Tailoring	197	
+Engineering	202	
+Enchanting	333	
+Fishing	356
+Skinning	393	
+Jewelcrafting 	755
+Inscription 	773	
+Archeology 	794
+ ]]
+
+local professionDataTable = {}
+professionDataTable[164] = {tex = 'ProfessionBackgroundArtBlacksmithing'}
+professionDataTable[165] = {tex = 'ProfessionBackgroundArtLeatherworking'}
+professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy'}
+professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism'} -- herb
+professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking'}
+professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining'}
+professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring'}
+professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering'}
+professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting'}
+professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing'} -- fisch
+professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning'} -- skinning
+professionDataTable[755] = {tex = 'ProfessionBackgroundArtJewelcrafting'}
+professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription'}
+professionDataTable[794] = {tex = 'ProfessionBackgroundArtLeatherworking'} -- archeology
+
 function DragonFlightUIProfessionMixin:UpdateHeader()
     self.NineSlice.Text:SetText('Enchanting')
     self.Icon:SetTexture(136244)
     SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
+    local skillID, icon = DragonFlightUIProfessionMixin:GetProfessionID()
+
+    if not skillID then return end
+
+    print('skillID', skillID)
+
+    local nameLoc, rank, maxRank = GetTradeSkillLine();
+
+    self.NineSlice.Text:SetText(nameLoc)
+    self.Icon:SetTexture(icon)
+    SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
+
+    local profData = professionDataTable[skillID]
+
+    DevTools_Dump(profData)
+
+    self.SchematicForm.Background:SetTexture(base .. profData.tex)
+
+end
+
+function DragonFlightUIProfessionMixin:GetProfessionID()
+    local skillID;
+
+    -- localized...
+    local nameLoc, rank, maxRank = GetTradeSkillLine();
+
+    local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+
+    if prof1 then
+        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+              specializationIndex, specializationOffset = GetProfessionInfo(prof1)
+
+        if name == nameLoc then return skillLine, icon end
+    end
+
+    if prof2 then
+        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+              specializationIndex, specializationOffset = GetProfessionInfo(prof2)
+        if name == nameLoc then return skillLine, icon end
+    end
+
+    -- TODO: archeo, cooking
 end
 
 ------------------------------

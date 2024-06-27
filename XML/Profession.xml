@@ -49,7 +49,14 @@ UI_shared.xsd">
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture parentKey="Background" hidden="true" />
+						<Texture parentKey="Background" hidden="false" file="Interface/AddOns/DragonflightUI/Textures/UI/professionbackgroundartenchanting">
+							<Size x="675" y="548" />
+							<Anchors>
+								<Anchor point="TOPLEFT" x="0" y="0" />
+								<Anchor point="BOTTOMRIGHT" x="0" y="0" />
+							</Anchors>
+							<TexCoords left="0.000976562" right="0.660156" top="0.000976562" bottom="0.536133" />
+						</Texture>
 						<Texture parentKey="MinimalBackground" hidden="true">
 							<Anchors>
 								<Anchor point="TOPLEFT" x="-3" y="7" />
