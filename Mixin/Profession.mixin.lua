@@ -353,6 +353,12 @@ function DragonFlightUIProfessionMixin:FilterDropdownUpdate()
     -- ToggleDropDownMenu(1, nil, dropdown, frameRef.RecipeList.FilterButton, 0, 0, menuTable, nil);
 end
 
+function DragonFlightUIProfessionMixin:FilterDropdownRefresh()
+    -- TODO: find better way
+    DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+    DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+end
+
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local subClasses = {GetTradeSkillSubClasses()}
     local numSubClasses = #subClasses
@@ -386,10 +392,12 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
                     text = ALL_SUBCLASSES,
                     checked = allChecked and (selectedID == nil or selectedID == 1),
                     isNotRadio = true,
-                    keepShownOnClick = true,
+                    keepShownOnClick = false,
                     func = function(self, arg1, arg2, checked)
                         -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
+                        -- print('func', self:GetID())
                         SetTradeSkillSubClassFilter(0, checked, 1)
+                        DragonFlightUIProfessionMixin:FilterDropdownRefresh()
                     end
                 }
             }
@@ -410,7 +418,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
             text = v,
             checked = checked,
             isNotRadio = true,
-            keepShownOnClick = true,
+            keepShownOnClick = false,
             func = function(self, arg1, arg2, checked)
                 -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
                 -- print('func', k, v, checked)
@@ -420,11 +428,13 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
                 else
                     SetTradeSkillSubClassFilter(k, 0, 1)
                 end
+                -- print('func', self:GetID())
+                -- UIDropDownMenu_SetSelectedValue     
+                DragonFlightUIProfessionMixin:FilterDropdownRefresh()
             end
         }
 
         table.insert(menu[4].menuList, option)
-
     end
 
     return menu
