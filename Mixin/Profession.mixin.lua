@@ -367,7 +367,7 @@ do
         local skillType = elementData.recipeInfo.skillType
         local filter = DFFilter['DFFilter_HasSkillUp'].filter
 
-        print('DFFilter_HasSkillUp', elementData.recipeInfo.skillType, filter[skillType])
+        -- print('DFFilter_HasSkillUp', elementData.recipeInfo.skillType, filter[skillType])
 
         if filter[skillType] then
             return true
@@ -784,6 +784,30 @@ function DFProfessionsRecipeListMixin:UpdateRecipeList()
                 end)
             end
         end
+    end
+
+    -- DevTools_Dump(dataProvider)
+
+    local nodes = dataProvider:GetChildrenNodes()
+    local nodesToRemove = {}
+    -- print('NODES', #nodes)
+
+    for k, child in ipairs(nodes) do
+        --
+        local numChildNodes = #child:GetNodes()
+        -- print('numChildNodes', numChildNodes)
+        if numChildNodes < 1 then
+            --
+            -- print('remove node')
+            -- dataProvider:Remove(child)
+            table.insert(nodesToRemove, child)
+        end
+    end
+
+    for k, node in ipairs(nodesToRemove) do
+        --
+        -- print('to remove', k, node)
+        dataProvider:Remove(node)
     end
 
     print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
