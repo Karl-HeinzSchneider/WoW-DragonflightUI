@@ -493,14 +493,22 @@ function DragonflightUIActionbarMixin:StyleButtons()
         -- print(btn:GetName(), btn:GetAttribute("statehidden"))
 
         local icon = _G[btnName .. 'Icon']
-        icon:ClearAllPoints()
+        -- icon:ClearAllPoints()
         icon:SetSize(45, 45)
         -- icon:SetPoint('CENTER')
-        icon:SetAlpha(0)
+        -- icon:SetAlpha(0)
 
+        local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
+        btn.Mask = mask
+        mask:SetAllPoints(icon)
+        mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+        mask:SetSize(45, 45)
+
+        icon:AddMaskTexture(mask)
+        --[[  OLD: #hack
         -- mask
         do
-            local mask = btn:CreateTexture('DragonflightUIMaskTexture')
+              local mask = btn:CreateTexture('DragonflightUIMaskTexture')
             btn.DragonflightUIMaskTexture = mask
             mask:SetSize(45, 45)
             mask:SetPoint('CENTER', 0, 0)
@@ -515,15 +523,17 @@ function DragonflightUIActionbarMixin:StyleButtons()
                     mask:Show()
                     mask:SetTexture(tex)
                 end
-            end)
+            end) ]]
+        --[[ 
             hooksecurefunc(icon, 'Hide', function(self)
                 mask:Hide()
             end)
             hooksecurefunc(icon, 'SetVertexColor', function(self)
                 local r, g, b = self:GetVertexColor()
                 mask:SetVertexColor(r, g, b)
-            end)
+            end) 
         end
+        ]]
 
         local cd = _G[btnName .. 'Cooldown']
         cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
