@@ -317,7 +317,7 @@ function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
 end
 
 function DragonFlightUIProfessionMixin:ToggleFilterDropdown()
-    print('DragonFlightUIProfessionMixin:ToggleFilterDropdown()')
+    -- print('DragonFlightUIProfessionMixin:ToggleFilterDropdown()')
     -- hide all other
 
     local dropdown = frameRef.RecipeList.FilterDropDown
@@ -331,7 +331,7 @@ function DragonFlightUIProfessionMixin:ToggleFilterDropdown()
 end
 
 function DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
-    print('DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)')
+    -- print('DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)')
 
     -- UIDropDownMenu_Initialize(self, DragonFlightUIProfessionMixin.FilterDropdownInitialize, 'MENU');
     -- UIDropDownMenu_SetWidth(self, 120);
@@ -339,7 +339,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
 end
 
 function DragonFlightUIProfessionMixin:FilterDropdownUpdate()
-    print('DragonFlightUIProfessionMixin:FilterDropdownUpdate()')
+    -- print('DragonFlightUIProfessionMixin:FilterDropdownUpdate()')
     local dropdown = frameRef.RecipeList.FilterDropDown
     dropdown.point = 'TOPLEFT'
     dropdown.relativePoint = 'TOPRIGHT'
@@ -362,8 +362,12 @@ end
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local subClasses = {GetTradeSkillSubClasses()}
     local numSubClasses = #subClasses
-    local allChecked = GetTradeSkillSubClassFilter(0);
-    local selectedID = UIDropDownMenu_GetSelectedID(TradeSkillSubClassDropDown) or 1;
+    local allCheckedSub = GetTradeSkillSubClassFilter(0);
+    local selectedIDSub = UIDropDownMenu_GetSelectedID(TradeSkillSubClassDropDown) or 1;
+
+    local subInv = {GetTradeSkillInvSlots()}
+    local numSubClassesInv = #subInv
+    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
 
     local menu = {
         {
@@ -390,13 +394,30 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
             menuList = {
                 {
                     text = ALL_SUBCLASSES,
-                    checked = allChecked and (selectedID == nil or selectedID == 1),
+                    checked = allCheckedSub and (selectedIDSub == nil or selectedIDSub == 1),
                     isNotRadio = true,
-                    keepShownOnClick = false,
+                    keepShownOnClick = true,
                     func = function(self, arg1, arg2, checked)
                         -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
                         -- print('func', self:GetID())
                         SetTradeSkillSubClassFilter(0, checked, 1)
+                        DragonFlightUIProfessionMixin:FilterDropdownRefresh()
+                    end
+                }
+            }
+        }, {
+            text = "Slot",
+            hasArrow = true,
+            menuList = {
+                {
+                    text = ALL_INVENTORY_SLOTS,
+                    checked = allCheckedInv,
+                    isNotRadio = true,
+                    keepShownOnClick = true,
+                    func = function(self, arg1, arg2, checked)
+                        -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
+                        -- print('func', self:GetID())
+                        SetTradeSkillInvSlotFilter(0, checked, 1)
                         DragonFlightUIProfessionMixin:FilterDropdownRefresh()
                     end
                 }
@@ -408,7 +429,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
         --
         local checked
 
-        if allChecked then
+        if allCheckedSub then
             checked = nil
         else
             checked = GetTradeSkillSubClassFilter(k)
@@ -418,7 +439,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
             text = v,
             checked = checked,
             isNotRadio = true,
-            keepShownOnClick = false,
+            keepShownOnClick = true,
             func = function(self, arg1, arg2, checked)
                 -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
                 -- print('func', k, v, checked)
@@ -437,102 +458,38 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
         table.insert(menu[4].menuList, option)
     end
 
-    return menu
-end
-
-function DragonFlightUIProfessionMixin:FilterDropdownInitialize(self)
-    print('DragonFlightUIProfessionMixin:FilterDropdownInitialize(self)')
-    -- UIDropDownMenu_Initialize(self, ToyBoxFilterDropDown_Initialize, "MENU");
-
-    if false then
-        -- Note that this frame must be named for the dropdowns to work.
-        --  local menuFrame = CreateFrame("Frame", "ExampleMenuFrame", UIParent, "UIDropDownMenuTemplate")
-        local menuFrame = self
-
-        -- Make the menu appear at the cursor: 
-        EasyMenu(menu, menuFrame, "cursor", 0, 0, "MENU");
-        -- Or make the menu appear at the frame:
-        -- menuFrame:SetPoint("Center", UIParent, "Center")
-        -- EasyMenu(menu, menuFrame, menuFrame, 0, 0, "MENU");
-
-        return
-    else
-        return
-    end
-
-    local info = UIDropDownMenu_CreateInfo();
-
-    -- have Materials
-    do
-        --       
-        info.checked = false
-        info.func = function(self, arg1, arg2, checked)
-            -- print(self, arg1, arg2, checked)
-            TradeSkillOnlyShowMakeable(checked);
-        end
-        info.text = CRAFT_IS_MAKEABLE
-        info.isNotRadio = true
-        info.keepShownOnClick = true
-        UIDropDownMenu_AddButton(info);
-    end
-    -- has skill up
-    do
-        --       
-        info.checked = false
-        info.func = function(self, arg1, arg2, checked)
-            -- print(self, arg1, arg2, checked)
-            -- TradeSkillOnlyShowMakeable(checked);
-            print('Filter: Has skill up', checked)
-        end
-        info.text = 'Has skill up'
-        info.isNotRadio = true
-        info.keepShownOnClick = true
-        UIDropDownMenu_AddButton(info);
-    end
-
-    -- spacer
-
-    do
+    for k, v in ipairs(subInv) do
         --
-        info.text = ''
-        info.isTitle = true
-        UIDropDownMenu_AddButton(info);
+        local checked
 
-        info.isTitle = false
-        info.disabled = false
+        if allCheckedInv then
+            checked = nil
+        else
+            checked = GetTradeSkillInvSlotFilter(k)
+        end
 
-    end
-
-    -- sub classes
-    do
-        --
-        local subClasses = GetTradeSkillSubClasses()
-        local allChecked = GetTradeSkillSubClassFilter(0);
-        local selectedID = UIDropDownMenu_GetSelectedID(TradeSkillSubClassDropDown);
-
-        info.text = 'Subclass'
-        info.hasArrow = true
-        info.menuList = {
-            {
-                text = ALL_SUBCLASSES,
-                func = function(self, arg1, arg2, checked)
-                    print("You've chosen option" .. self);
+        local option = {
+            text = v,
+            checked = checked,
+            isNotRadio = true,
+            keepShownOnClick = true,
+            func = function(self, arg1, arg2, checked)
+                -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
+                -- print('func', k, v, checked)
+                -- print('->', k, v, checked)
+                if checked then
+                    SetTradeSkillInvSlotFilter(k, 1, 1)
+                else
+                    SetTradeSkillInvSlotFilter(k, 0, 1)
                 end
-            }
+                DragonFlightUIProfessionMixin:FilterDropdownRefresh()
+            end
         }
-        UIDropDownMenu_AddButton(info);
 
-        -- all
-        info.text = ALL_SUBCLASSES
-        info.checked = allChecked and (selectedID == nil or selectedID == 1);
-        info.func = function(self, arg1, arg2, checked)
-            -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
-            SetTradeSkillSubClassFilter(0, checked, true)
-        end
-        info.isNotRadio = true
-        info.keepShownOnClick = true
-        UIDropDownMenu_AddButton(info);
+        table.insert(menu[5].menuList, option)
     end
+
+    return menu
 end
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
