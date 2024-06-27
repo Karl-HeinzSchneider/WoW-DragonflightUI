@@ -20,13 +20,28 @@ end
 
 function DragonFlightUIProfessionMixin:OnShow()
     if not self.anchored then
+        self.anchored = true
+
         self:SetParent(TradeSkillFrame)
         self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
 
         self:AnchorButtons()
         self:AnchorSchematics()
 
-        self.anchored = true
+        local top = self.Bg.TopSection
+        top:SetTexture(base .. 'ui-background-rock')
+        top:ClearAllPoints()
+        top:SetPoint('TOPLEFT', self.Bg, 'TOPLEFT', 0, 0)
+        top:SetPoint('BOTTOMRIGHT', self.Bg.BottomRight, 'BOTTOMRIGHT', 0, 0)
+
+        --[[      local bg = _G['DragonflightUIProfessionFrameBg']
+        bg:SetTexture(base .. 'professions')
+        bg:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
+        bg:SetSize(268, 572)
+        bg:SetAlpha(1)
+        bg:ClearAllPoints()
+        bg:SetPoint('TOPLEFT', self.RecipeList, 'TOPLEFT', -100, 0)
+        bg:SetPoint('BOTTOMRIGHT', self.RecipeList, 'BOTTOMRIGHT', 0, 0) ]]
     end
 
     self:Refresh(true)

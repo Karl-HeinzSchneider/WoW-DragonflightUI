@@ -24,6 +24,14 @@ UI_shared.xsd">
 						<Anchor point="BOTTOM" x="0" y="24" />
 					</Anchors>
 				</FontString>
+				<Texture parentKey="TopTileStreak" hidden="false" file="Interface/AddOns/DragonflightUI/Textures/UI/uiframehorizontal">
+					<Size x="256" y="43" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="6" y="-21" />
+						<Anchor point="TOPRIGHT" x="-2" y="-21" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.0078125" bottom="0.34375" />
+				</Texture>
 			</Layer>
 		</Layers>
 		<Frames>
