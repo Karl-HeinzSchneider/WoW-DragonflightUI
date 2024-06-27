@@ -359,6 +359,34 @@ function DragonFlightUIProfessionMixin:FilterDropdownRefresh()
     DragonFlightUIProfessionMixin:ToggleFilterDropdown()
 end
 
+-- FILTER
+local DFFilter = {}
+
+do
+    local DFFilter_HasSkillUp = function(elementData)
+        local skillType = elementData.recipeInfo.skillType
+        local filter = DFFilter['DFFilter_HasSkillUp'].filter
+
+        print('DFFilter_HasSkillUp', elementData.recipeInfo.skillType, filter[skillType])
+
+        if filter[skillType] then
+            return true
+        else
+            return false
+        end
+    end
+
+    DFFilter['DFFilter_HasSkillUp'] = {
+        name = 'DFFilter_HasSkillUp',
+        filterDefault = {trivial = true, easy = true, medium = true, optimal = true, difficult = true},
+        filter = {},
+        func = DFFilter_HasSkillUp,
+        enabled = false
+    }
+    DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
+end
+---------
+
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local subClasses = {GetTradeSkillSubClasses()}
     local numSubClasses = #subClasses
@@ -381,12 +409,20 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
             end
         }, {
             text = 'Has skill up',
-            checked = false,
+            checked = DFFilter['DFFilter_HasSkillUp'].enabled,
             isNotRadio = true,
             keepShownOnClick = true,
             func = function(self, arg1, arg2, checked)
                 -- print(self, arg1, arg2, checked)
                 print('Filter: Has skill up', checked)
+                if checked then
+                    DFFilter['DFFilter_HasSkillUp'].enabled = true
+                    DFFilter['DFFilter_HasSkillUp'].filter = {easy = true, medium = true, optimal = true}
+                else
+                    DFFilter['DFFilter_HasSkillUp'].enabled = false
+                    DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
+                end
+                frameRef.RecipeList:Refresh(true)
             end
         }, {text = " ", isTitle = true}, {
             text = "Subclass",
@@ -699,6 +735,8 @@ end
 function DFProfessionsRecipeListMixin:UpdateRecipeList()
     local dataProvider = CreateTreeDataProvider();
 
+    local filterTable = DFFilter
+
     local numSkills = GetNumTradeSkills()
 
     local headerID = 0
@@ -723,11 +761,28 @@ function DFProfessionsRecipeListMixin:UpdateRecipeList()
                     numSkills = numSkills
                 }
             }
-            dataProvider:InsertInParentByPredicate(data, function(node)
-                local nodeData = node:GetData()
 
-                return nodeData.id == headerID
-            end)
+            local filtered = true
+
+            for k, filter in pairs(filterTable) do
+                --
+                if filter.enabled then
+                    --
+                    if not filter.func(data) then
+                        --
+                        filtered = false
+                    end
+                end
+            end
+
+            if filtered then
+                --
+                dataProvider:InsertInParentByPredicate(data, function(node)
+                    local nodeData = node:GetData()
+
+                    return nodeData.id == headerID
+                end)
+            end
         end
     end
 
