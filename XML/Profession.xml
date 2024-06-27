@@ -98,12 +98,35 @@ UI_shared.xsd">
 				</Anchors>
 			</Frame>
 			<!-- inherits="UIResettableDropdownButtonTemplate" -->
-			<DropDownToggleButton parentKey="FilterButton" inherits="" text="FILTER">
-				<Size x="90" y="20" />
+			<DropDownToggleButton parentKey="FilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER">
+				<Size x="90" y="22" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-8" y="-8" />
 				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+							<Size x="10" y="12" />
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="RIGHT" x="-5" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+						DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+					</OnClick>
+				</Scripts>
 			</DropDownToggleButton>
+			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad>
+						DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
+					</OnLoad>
+				</Scripts>
+			</Frame>
 			<EditBox parentKey="SearchBox" autoFocus="false" inherits="DFProfessionearchBoxTemplate">
 				<Size y="20" />
 				<Anchors>
@@ -111,7 +134,6 @@ UI_shared.xsd">
 					<Anchor point="TOPLEFT" x="13" y="-8" />
 				</Anchors>
 			</EditBox>
-			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate" />
 			<Frame parentKey="ContextMenu" inherits="UIDropDownMenuTemplate" enableMouse="true" />
 			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
 				<Anchors>

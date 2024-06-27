@@ -1,6 +1,9 @@
 DragonFlightUIProfessionMixin = {}
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
+--
+local frameRef = nil
+
 function DragonFlightUIProfessionMixin:OnLoad()
     self:SetupFrameStyle()
 
@@ -10,6 +13,9 @@ function DragonFlightUIProfessionMixin:OnLoad()
     self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
 
     self.anchored = false
+    self.currentTradeSkillName = ''
+
+    frameRef = self
 end
 
 function DragonFlightUIProfessionMixin:OnShow()
@@ -40,6 +46,13 @@ function DragonFlightUIProfessionMixin:Refresh(force)
             self.RecipeList.SearchBox:Disable()
         else
             self.RecipeList.SearchBox:Enable()
+        end
+
+        if self.currentTradeSkillName ~= name then
+            UIDropDownMenu_Initialize(frameRef.RecipeList.FilterDropDown,
+                                      DragonFlightUIProfessionMixin.FilterDropdownInitialize, 'MENU');
+
+            self.currentTradeSkillName = name
         end
     end
 
@@ -300,6 +313,95 @@ function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
     if not itemLevel or not itemId then return 1 end
 
     return itemRarity
+end
+
+function DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+    print('DragonFlightUIProfessionMixin:ToggleFilterDropdown()')
+    -- hide all other
+
+    if false then
+        local dropdown = self:GetChannelFrame():GetDropdown();
+        dropdown.channelFrame = self:GetChannelFrame();
+        dropdown.channelID = channel:GetChannelID();
+        dropdown.voiceChannelID = channel:ChannelSupportsVoice() and channel:GetVoiceChannelID() or nil;
+        dropdown.channel = channel;
+
+        dropdown.initialize = ChannelListDropDown_Initialize;
+        dropdown.displayMode = "MENU";
+        dropdown.onHide = function()
+            dropdown.channelID = nil;
+        end;
+        ToggleDropDownMenu(1, nil, dropdown, "cursor");
+    end
+
+    local dropdown = frameRef.RecipeList.FilterDropDown
+
+    if not dropdown:IsShown() then HideDropDownMenu(1); end
+    ToggleDropDownMenu(1, nil, dropdown, frameRef.RecipeList.FilterButton, 74, 15);
+
+    -- ToggleDropDownMenu(1, nil, ToyBoxFilterDropDown, "ToyBoxFilterButton", 74, 15);
+end
+
+function DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
+    print('DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)')
+
+    -- UIDropDownMenu_Initialize(self, DragonFlightUIProfessionMixin.FilterDropdownInitialize, 'MENU');
+    UIDropDownMenu_SetWidth(self, 120);
+    -- UIDropDownMenu_SetSelectedID(self, 1);
+end
+
+function DragonFlightUIProfessionMixin:FilterDropdownInitialize(self)
+    print('DragonFlightUIProfessionMixin:FilterDropdownInitialize(self)')
+    -- UIDropDownMenu_Initialize(self, ToyBoxFilterDropDown_Initialize, "MENU");
+
+    local info = UIDropDownMenu_CreateInfo();
+
+    -- have Materials
+    do
+        --       
+        info.checked = false
+        info.func = function(self, arg1, arg2, checked)
+            -- print(self, arg1, arg2, checked)
+            TradeSkillOnlyShowMakeable(checked);
+        end
+        info.text = CRAFT_IS_MAKEABLE
+        info.isNotRadio = true
+        info.keepShownOnClick = true
+        UIDropDownMenu_AddButton(info);
+    end
+    -- has skill up
+    do
+        --       
+        info.checked = false
+        info.func = function(self, arg1, arg2, checked)
+            -- print(self, arg1, arg2, checked)
+            -- TradeSkillOnlyShowMakeable(checked);
+            print('Filter: Has skill up', checked)
+        end
+        info.text = 'Has skill up'
+        info.isNotRadio = true
+        info.keepShownOnClick = true
+        UIDropDownMenu_AddButton(info);
+    end
+
+    -- sub classes
+    do
+        --
+        local subClasses = GetTradeSkillSubClasses()
+        local allChecked = GetTradeSkillSubClassFilter(0);
+        local selectedID = UIDropDownMenu_GetSelectedID(TradeSkillSubClassDropDown);
+
+        -- all
+        info.text = ALL_SUBCLASSES
+        info.checked = allChecked and (selectedID == nil or selectedID == 1);
+        info.func = function(self, arg1, arg2, checked)
+            -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
+            SetTradeSkillSubClassFilter(0, checked, true)
+        end
+        info.isNotRadio = true
+        info.keepShownOnClick = true
+        UIDropDownMenu_AddButton(info);
+    end
 end
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
