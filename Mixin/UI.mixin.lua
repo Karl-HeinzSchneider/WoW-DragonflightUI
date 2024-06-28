@@ -388,6 +388,43 @@ function DragonflightUIMixin:AddGuildbankSearch()
     end
 end
 
+function DragonflightUIMixin:CreateProfessionFrame()
+    -- print('DragonflightUIMixin:CreateProfessionFrame()')
+    local frame = CreateFrame('FRAME', 'DragonflightUIProfessionFrame', UIParent,
+                              'DragonflightUIProfessionFrameTemplate')
+    return frame
+end
+
+function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
+    -- print('DragonflightUIMixin:ChangeTradeskillFrameCata()')
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            print('child:', 'Texture', child:GetTexture(), child:GetSize())
+            local tex = child:GetTexture()
+
+            if tex == 136797 then
+                -- <Texture file="Interface\QuestFrame\UI-QuestLog-BookIcon">
+                -- port = child
+            elseif tex == 309665 then
+                -- 	<Texture file="Interface\QuestFrame\UI-QuestLogDualPane-Left">
+                -- child:Hide()
+                -- child:SetTexture(base .. 'UI-QuestLogDualPane-Left')
+            elseif tex == 309666 then
+                -- <Texture file="Interface\QuestFrame\UI-QuestLogDualPane-RIGHT">
+                -- child:Hide()          
+                -- child:SetTexture(base .. 'ui-questlogdualpane-right')
+            end
+        end
+    end
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 
