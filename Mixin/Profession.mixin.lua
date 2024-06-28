@@ -45,6 +45,21 @@ function DragonFlightUIProfessionMixin:OnShow()
         newBG:ClearAllPoints()
         newBG:SetPoint('TOPLEFT', self.RecipeList, 'TOPLEFT', 0, 0)
         newBG:SetPoint('BOTTOMRIGHT', self.RecipeList, 'BOTTOMRIGHT', 0, 0)
+
+        self.NineSlice.Text:SetText('tmp')
+
+        local titleFrame = CreateFrame('Frame', 'DragonflightUITitleFrame')
+        titleFrame:SetPoint('TOP', self.NineSlice, 'TOP', 0, -2)
+        titleFrame:SetPoint('LEFT', self.NineSlice, 'LEFT', 60, 0)
+        titleFrame:SetPoint('RIGHT', self.NineSlice, 'RIGHT', -60, 0)
+        titleFrame:SetHeight(self.NineSlice.Text:GetHeight())
+
+        self.NineSlice.Text:ClearAllPoints()
+        self.NineSlice.Text:SetPoint('CENTER', titleFrame, 'CENTER', 0, 0)
+
+        local linkButton = self.LinkButton
+        linkButton:ClearAllPoints()
+        linkButton:SetPoint('LEFT', self.NineSlice.Text, 'RIGHT', 5, 0)
     end
 
     self:Refresh(true)
@@ -644,7 +659,7 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
-    self.NineSlice.Text:SetText(nameLoc)
+    -- self.NineSlice.Text:SetText(nameLoc)
     self.Icon:SetTexture(icon)
     SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
@@ -653,6 +668,10 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
     if isLink then
         --
         self.NineSlice.Text:SetText(nameLoc .. ' (' .. playerName .. ')')
+        self.LinkButton:Hide()
+    else
+        self.NineSlice.Text:SetText(nameLoc)
+        self.LinkButton:Show()
     end
 
     local profData = professionDataTable[skillID]

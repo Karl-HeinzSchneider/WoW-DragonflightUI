@@ -41,6 +41,39 @@ UI_shared.xsd">
 					<Anchor point="RIGHT" relativeKey="$parent.ClosePanelButton" relativePoint="LEFT" x="10" y="0" />
 				</Anchors>
 			</Button>
+			<Button name="DFTradeSkillLinkButton" parentKey="LinkButton">
+				<Size>
+					<AbsDimension x="32" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local link=GetTradeSkillListLink();
+						if (not ChatEdit_InsertLink(link) ) then
+						ChatEdit_GetLastActiveWindow():Show();
+						ChatEdit_InsertLink(link);
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self,"ANCHOR_TOPLEFT");
+						GameTooltip:SetText(LINK_TRADESKILL_TOOLTIP, nil, nil, nil, nil, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\TradeSkillFrame\UI-TradeSkill-LinkButton">
+					<TexCoords left="0" right="1.0" top="0" bottom="0.5" />
+				</NormalTexture>
+				<HighlightTexture file="Interface\TradeSkillFrame\UI-TradeSkill-LinkButton" alphaMode="ADD">
+					<TexCoords left="0" right="1.0" top="0.5" bottom="1.0" />
+				</HighlightTexture>
+			</Button>
 			<Frame parentKey="RecipeList" inherits="ProfessionsRecipeListTemplate">
 				<Size x="274" />
 				<Anchors>
