@@ -276,6 +276,14 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
 
     local decrem = TradeSkillIncrementButton
     decrem:SetParent(self)
+
+    TradeSkillFrameEditBox:ClearAllPoints()
+    TradeSkillFrameEditBox:SetPoint('RIGHT', UIParent, 'LEFT', -500, 0)
+    --[[    -- TradeSkillFrameEditBox:Hide()
+    hooksecurefunc(TradeSkillFrameEditBox, 'Show', function()
+        -- print('TradeSkillFrameEditBox', 'OnShow')
+        -- TradeSkillFrameEditBox:Hide()
+    end) ]]
 end
 
 function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
