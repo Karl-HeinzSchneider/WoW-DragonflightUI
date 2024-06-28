@@ -262,44 +262,19 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     create:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
 
     local createAll = TradeSkillCreateAllButton
+    createAll:SetParent(self)
+
     local input = TradeSkillInputBox
-
-    --[[     local rankFrame = TradeSkillRankFrame
-    rankFrame:ClearAllPoints()
-    rankFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 280, -40)
-    -- ProfessionsRankBarTemplate
-    -- <Size x="453" y="18"/>
-    rankFrame:SetSize(453, 18)
-
-    local rankFrameBorder = TradeSkillRankFrameBorder
-    -- rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
-    rankFrameBorder:SetSize(453 + 10, 18)
-    rankFrameBorder:Hide()
-
-    local rankFrameText = TradeSkillRankFrameSkillRank
-    rankFrameText:ClearAllPoints()
-    rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0) ]]
+    input:SetParent(self)
 
     local editBox = TradeSkillFrameEditBox
-    --[[ editBox:ClearAllPoints()
-    editBox:SetParent(self.RecipeList)
-    self.RecipeList.SearchBox = editBox
-    editBox:SetHeight(20)
-    editBox:SetPoint('TOPLEFT', self.RecipeList, 'TOPLEFT', 13, -8) ]]
-    -- editBox:SetPoint('RIGHT', self.RecipeList.FilterButton, 'LEFT', -4, 0)
+    editBox:SetParent(self)
 
-    --[[ 
-    <Size y="20" />
-    <Anchors>
-        <Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
-        <Anchor point="TOPLEFT" x="13" y="-8" />
-    </Anchors> ]]
+    local increm = TradeSkillDecrementButton
+    increm:SetParent(self)
 
-    --[[    editBox:Show()
-    TradeSkillFrameEditBox:HookScript('OnHide', function()
-        --
-        if not IsTradeSkillLinked() then TradeSkillFrameEditBox:Show() end
-    end) ]]
+    local decrem = TradeSkillIncrementButton
+    decrem:SetParent(self)
 end
 
 function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
