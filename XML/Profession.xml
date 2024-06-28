@@ -98,10 +98,14 @@ UI_shared.xsd">
 							</Anchors>
 							<TexCoords left="0.000976562" right="0.660156" top="0.000976562" bottom="0.536133" />
 						</Texture>
-						<Texture parentKey="MinimalBackground" hidden="true">
+						<Texture parentKey="MinimalBackground" hidden="true" file="Interface/AddOns/DragonflightUI/Textures/UI/professionsminimizedview">
 							<Anchors>
-								<Anchor point="TOPLEFT" x="-3" y="7" />
+								<!-- <Anchor point="TOPLEFT" x="-3" y="7" /> -->
+								<Anchor point="TOPLEFT" x="-3" y="0" />
+								<Anchor point="BOTTOMRIGHT" x="2" y="-28" />
 							</Anchors>
+							<Size x="402" y="589" />
+							<TexCoords left="0.00195312" right="0.787109" top="0.000976562" bottom="0.576172" />
 						</Texture>
 					</Layer>
 				</Layers>

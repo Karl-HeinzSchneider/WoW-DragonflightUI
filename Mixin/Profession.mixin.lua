@@ -15,6 +15,17 @@ function DragonFlightUIProfessionMixin:OnLoad()
     self.anchored = false
     self.currentTradeSkillName = ''
 
+    self.MinimizeButton:SetOnMaximizedCallback(function(btn)
+        -- print('SetOnMaximizedCallback')
+        self:Minimize(false)
+    end)
+    self.MinimizeButton:SetOnMinimizedCallback(function(btn)
+        -- print('SetOnMinimizedCallback')
+        self:Minimize(true)
+    end)
+
+    self.minimized = false
+
     frameRef = self
 end
 
@@ -27,6 +38,8 @@ function DragonFlightUIProfessionMixin:OnShow()
 
         self:AnchorButtons()
         self:AnchorSchematics()
+
+        self.Bg:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 3)
 
         local top = self.Bg.TopSection
         top:SetTexture(base .. 'ui-background-rock')
@@ -91,6 +104,47 @@ function DragonFlightUIProfessionMixin:Refresh(force)
     end
 
     self.RecipeList:Refresh(force)
+end
+
+function DragonFlightUIProfessionMixin:Minimize(minimize)
+    -- print('DragonFlightUIProfessionMixin:Minimize(minimize)', minimize)
+    self.minimized = minimize
+
+    if minimize then
+        -- 
+        self:SetWidth(404)
+
+        self.RecipeList:Hide()
+        self.RecipeList:SetWidth(0.1)
+
+        self.RankFrame:Hide()
+
+        self.SchematicForm.NineSlice:Hide()
+        self.SchematicForm.BackgroundNineSlice:Hide()
+        self.SchematicForm.Background:Hide()
+        self.SchematicForm.MinimalBackground:Show()
+
+        TradeSkillCreateButton:ClearAllPoints()
+        TradeSkillCreateButton:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 13)
+    else
+        --
+        self:SetWidth(942)
+
+        self.RecipeList:Show()
+        self.RecipeList:SetWidth(274)
+
+        self.RankFrame:Show()
+
+        self.SchematicForm.NineSlice:Show()
+        self.SchematicForm.BackgroundNineSlice:Show()
+        self.SchematicForm.Background:Show()
+        self.SchematicForm.MinimalBackground:Hide()
+
+        TradeSkillCreateButton:ClearAllPoints()
+        TradeSkillCreateButton:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
+
+        self:Refresh(true)
+    end
 end
 
 function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
@@ -676,7 +730,7 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 
     local profData = professionDataTable[skillID]
 
-    DevTools_Dump(profData)
+    -- DevTools_Dump(profData)
 
     self.SchematicForm.Background:SetTexture(base .. profData.tex)
 
