@@ -107,6 +107,57 @@ function DragonFlightUIProfessionMixin:SetupFrameStyle()
     pp:SetPoint('CENTER', icon, 'CENTER', 0, 0)
     pp:SetDrawLayer('OVERLAY', 7)
     self.PortraitFrame = pp
+
+    local rankFrame = CreateFrame('Frame', 'DragonflightUIRankFrame', self)
+    rankFrame:SetSize(453, 18)
+    rankFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 280, -40)
+
+    local rankFrameBG = rankFrame:CreateTexture('DragonflightUIRankFrameBackground')
+    rankFrameBG:SetDrawLayer('BACKGROUND', 1)
+    rankFrameBG:SetTexture(base .. 'professions')
+    rankFrameBG:SetTexCoord(0.29834, 0.518555, 0.750977, 0.779297)
+    rankFrameBG:SetSize(451, 29)
+    rankFrameBG:SetPoint('TOPLEFT', rankFrame, 'TOPLEFT', 0, 0)
+
+    local rankFrameBar = CreateFrame('Statusbar', 'DragonflightUIRankFrameBar', self)
+    rankFrameBar:SetSize(441, 18)
+    rankFrameBar:SetPoint('TOPLEFT', rankFrame, 'TOPLEFT', 5, -3)
+    rankFrameBar:SetMinMaxValues(0, 100);
+    rankFrameBar:SetValue(69);
+    rankFrameBar:SetStatusBarTexture(base .. 'professionsfxalchemy')
+
+    local rankFrameMask = rankFrame:CreateMaskTexture('DragonflightUIRankFrameMask')
+    rankFrameMask:SetPoint('TOPLEFT', rankFrameBar, 'TOPLEFT', 0, 0)
+    rankFrameMask:SetPoint('BOTTOMRIGHT', rankFrameBar, 'BOTTOMRIGHT', 0, 0)
+    rankFrameMask:SetTexture(base .. 'profbarmask', "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    rankFrameBar:GetStatusBarTexture():AddMaskTexture(rankFrameMask)
+
+    -- profbarmask
+
+    local rankFrameBorder = rankFrame:CreateTexture('DragonflightUIRankFrameBorder')
+    rankFrameBorder:SetDrawLayer('OVERLAY', 1)
+    rankFrameBorder:SetTexture(base .. 'professions')
+    rankFrameBorder:SetTexCoord(0.663574, 0.883789, 0.129883, 0.158203)
+    rankFrameBorder:SetSize(451, 29)
+    rankFrameBorder:SetPoint('TOPLEFT', rankFrame, 'TOPLEFT', 0, 0)
+
+    --  ["Professions-skillbar-bg"]={451, 29, 0.29834, 0.518555, 0.750977, 0.779297, false, false, "1x"},
+    -- ["Professions-skillbar-frame"]={451, 29, 0.663574, 0.883789, 0.129883, 0.158203, false, false, "1x"},
+
+    local rankFrameText = rankFrame:CreateFontString('', 'ARTWORK', 'GameFontHighlightSmall')
+    rankFrameText:SetPoint('CENTER', rankFrameBar, 'CENTER', 0, 0)
+    rankFrameText:SetText('69/100')
+
+    function rankFrame:UpdateRankFrame(value, minValue, maxValue)
+        rankFrameBar:SetMinMaxValues(minValue, maxValue)
+        rankFrameBar:SetValue(value)
+
+        rankFrameText:SetText(value .. '/' .. maxValue)
+    end
+
+    self.RankFrame = rankFrame
+    self.RankFrameBar = rankFrameBar
+    self.RankFrameText = rankFrameText
 end
 
 function DragonFlightUIProfessionMixin:AnchorButtons()
@@ -118,7 +169,7 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     local createAll = TradeSkillCreateAllButton
     local input = TradeSkillInputBox
 
-    local rankFrame = TradeSkillRankFrame
+    --[[     local rankFrame = TradeSkillRankFrame
     rankFrame:ClearAllPoints()
     rankFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 280, -40)
     -- ProfessionsRankBarTemplate
@@ -132,7 +183,7 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
 
     local rankFrameText = TradeSkillRankFrameSkillRank
     rankFrameText:ClearAllPoints()
-    rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0)
+    rankFrameText:SetPoint('CENTER', rankFrame, 'CENTER', 0, 0) ]]
 
     local editBox = TradeSkillFrameEditBox
     --[[ editBox:ClearAllPoints()
@@ -563,21 +614,21 @@ Archeology 	794
  ]]
 
 local professionDataTable = {}
-professionDataTable[129] = {tex = 'professionbackgroundart'} -- first aid
-professionDataTable[164] = {tex = 'ProfessionBackgroundArtBlacksmithing'}
-professionDataTable[165] = {tex = 'ProfessionBackgroundArtLeatherworking'}
-professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy'}
-professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism'} -- herb
-professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking'}
-professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining'}
-professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring'}
-professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering'}
-professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting'}
-professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing'} -- fisch
-professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning'} -- skinning
-professionDataTable[755] = {tex = 'ProfessionBackgroundArtJewelcrafting'}
-professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription'}
-professionDataTable[794] = {tex = 'ProfessionBackgroundArtLeatherworking'} -- archeology
+professionDataTable[129] = {tex = 'professionbackgroundart', bar = 'professionsfxalchemy'} -- first aid
+professionDataTable[164] = {tex = 'ProfessionBackgroundArtBlacksmithing', bar = 'professionsfxblacksmithing'}
+professionDataTable[165] = {tex = 'ProfessionBackgroundArtLeatherworking', bar = 'professionsfxleatherworking'}
+professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy'}
+professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism', bar = ''} -- herb
+professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking', bar = 'professionsfxcooking'}
+professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining', bar = 'professionsfxmining'}
+professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring', bar = 'professionsfxtailoring'}
+professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering', bar = 'professionsfxengineering'}
+professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting', bar = 'professionsfxenchanting'}
+professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing', bar = ''} -- fisch
+professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning', bar = 'professionsfxskinning'} -- skinning
+professionDataTable[755] = {tex = 'ProfessionBackgroundArtJewelcrafting', bar = 'professionsfxjewelcrafting'}
+professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription', bar = 'professionsfxinscription'}
+professionDataTable[794] = {tex = 'ProfessionBackgroundArtLeatherworking', bar = 'professionsfxleatherworking'} -- archeology
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
     self.NineSlice.Text:SetText('**')
@@ -602,6 +653,9 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 
     self.SchematicForm.Background:SetTexture(base .. profData.tex)
 
+    -- RankFrame
+    self.RankFrameBar:SetStatusBarTexture(base .. profData.bar)
+    self.RankFrame:UpdateRankFrame(rank, 0, maxRank)
 end
 
 function DragonFlightUIProfessionMixin:GetProfessionID()
