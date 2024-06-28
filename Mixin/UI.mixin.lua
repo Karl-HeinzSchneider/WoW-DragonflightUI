@@ -389,14 +389,14 @@ function DragonflightUIMixin:AddGuildbankSearch()
 end
 
 function DragonflightUIMixin:CreateProfessionFrame()
-    print('DragonflightUIMixin:CreateProfessionFrame()')
+    -- print('DragonflightUIMixin:CreateProfessionFrame()')
     local frame = CreateFrame('FRAME', 'DragonflightUIProfessionFrame', UIParent,
                               'DragonflightUIProfessionFrameTemplate')
     return frame
 end
 
 function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
-    print('DragonflightUIMixin:ChangeTradeskillFrameCata()')
+    -- print('DragonflightUIMixin:ChangeTradeskillFrameCata()')
 
     local regions = {frame:GetRegions()}
     local port

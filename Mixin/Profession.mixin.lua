@@ -169,7 +169,7 @@ function DragonFlightUIProfessionMixin:UpdateUIPanelWindows(big)
 end
 
 function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
-    print('ProfessionMixin', event)
+    -- print('ProfessionMixin', event)
     if event == 'TRADE_SKILL_SHOW' then
         self:Show()
     elseif event == 'TRADE_SKILL_CLOSE' then
@@ -577,7 +577,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
             keepShownOnClick = true,
             func = function(self, arg1, arg2, checked)
                 -- print(self, arg1, arg2, checked)
-                print('Filter: Has skill up', checked)
+                -- print('Filter: Has skill up', checked)
                 if checked then
                     DFFilter['DFFilter_HasSkillUp'].enabled = true
                     DFFilter['DFFilter_HasSkillUp'].filter = {easy = true, medium = true, optimal = true}
@@ -734,7 +734,7 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 
     if not skillID then return end
 
-    print('skillID', skillID)
+    -- print('skillID', skillID)
 
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
@@ -807,11 +807,11 @@ DFProfessionsRecipeListMixin = CreateFromMixins(CallbackRegistryMixin);
 DFProfessionsRecipeListMixin:GenerateCallbackEvents({"OnRecipeSelected"});
 
 function DFProfessionsRecipeListMixin:OnLoad()
-    print('DFProfessionsRecipeListMixin:OnLoad()')
+    -- print('DFProfessionsRecipeListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
     self.selectedSkill = GetTradeSkillSelectionIndex() or 2
-    print('self.selectedSkill', self.selectedSkill)
+    -- print('self.selectedSkill', self.selectedSkill)
     self.DataProvider = CreateTreeDataProvider()
 
     local indent = 10;
@@ -934,7 +934,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
             local newRecipeID = data.id
             local changed = data.id ~= self.selectedSkill
             if changed then
-                print('OnSelectionChanged-changed', data.id)
+                -- print('OnSelectionChanged-changed', data.id)
                 self.selectedSkill = newRecipeID
                 EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", newRecipeID, self);
 
@@ -950,7 +950,7 @@ function DFProfessionsRecipeListMixin:OnLoad()
 end
 
 function DFProfessionsRecipeListMixin:OnEvent(event, ...)
-    print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
+    -- print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
 end
 
 function DFProfessionsRecipeListMixin:OnShow()
@@ -960,7 +960,7 @@ function DFProfessionsRecipeListMixin:OnShow()
 end
 
 function DFProfessionsRecipeListMixin:Refresh(force)
-    print('->DFProfessionsRecipeListMixin:Refresh()', force == true)
+    -- print('->DFProfessionsRecipeListMixin:Refresh()', force == true)
 
     local numSkills = GetNumTradeSkills()
     local index = GetTradeSkillSelectionIndex()
@@ -978,7 +978,7 @@ function DFProfessionsRecipeListMixin:Refresh(force)
     self:SelectRecipe(index, true)
 
     if (not changed) and (not force) then
-        print('set old scroll')
+        -- print('set old scroll')
         self.ScrollBox:SetScrollPercentage(oldScroll, ScrollBoxConstants.NoScrollInterpolation)
     end
 end
@@ -1076,7 +1076,7 @@ function DFProfessionsRecipeListMixin:UpdateRecipeList()
         dataProvider:Remove(node)
     end
 
-    print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
+    -- print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
     self.ScrollBox:SetDataProvider(dataProvider);
 end
 
