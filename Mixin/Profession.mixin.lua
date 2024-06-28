@@ -33,6 +33,7 @@ function DragonFlightUIProfessionMixin:OnShow()
         top:ClearAllPoints()
         top:SetPoint('TOPLEFT', self.Bg, 'TOPLEFT', 0, 0)
         top:SetPoint('BOTTOMRIGHT', self.Bg.BottomRight, 'BOTTOMRIGHT', 0, 0)
+        top:SetDrawLayer('BACKGROUND', 2)
 
         local bg = _G['DragonflightUIProfessionFrameBg']
         bg:Hide()
