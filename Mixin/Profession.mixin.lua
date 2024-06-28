@@ -14,6 +14,7 @@ function DragonFlightUIProfessionMixin:OnLoad()
 
     self.anchored = false
     self.currentTradeSkillName = ''
+    self.currentSkillID = nil
 
     self.MinimizeButton:SetOnMaximizedCallback(function(btn)
         -- print('SetOnMaximizedCallback')
@@ -735,8 +736,10 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
     self.SchematicForm.Background:SetTexture(base .. profData.tex)
 
     -- RankFrame
-    self.RankFrameBar:SetStatusBarTexture(base .. profData.bar)
+    if skillID ~= self.currentSkillID then self.RankFrameBar:SetStatusBarTexture(base .. profData.bar) end
     self.RankFrame:UpdateRankFrame(rank, 0, maxRank)
+
+    self.currentSkillID = skillID
 end
 
 function DragonFlightUIProfessionMixin:GetProfessionID()
