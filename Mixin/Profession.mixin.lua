@@ -563,6 +563,7 @@ Archeology 	794
  ]]
 
 local professionDataTable = {}
+professionDataTable[129] = {tex = 'professionbackgroundart'} -- first aid
 professionDataTable[164] = {tex = 'ProfessionBackgroundArtBlacksmithing'}
 professionDataTable[165] = {tex = 'ProfessionBackgroundArtLeatherworking'}
 professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy'}
@@ -579,8 +580,8 @@ professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription'}
 professionDataTable[794] = {tex = 'ProfessionBackgroundArtLeatherworking'} -- archeology
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
-    self.NineSlice.Text:SetText('Enchanting')
-    self.Icon:SetTexture(136244)
+    self.NineSlice.Text:SetText('**')
+    self.Icon:SetTexture('')
     SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
     local skillID, icon = DragonFlightUIProfessionMixin:GetProfessionID()
@@ -609,7 +610,7 @@ function DragonFlightUIProfessionMixin:GetProfessionID()
     -- localized...
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
-    local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+    local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
 
     if prof1 then
         local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
@@ -625,6 +626,19 @@ function DragonFlightUIProfessionMixin:GetProfessionID()
     end
 
     -- TODO: archeo, cooking
+
+    if cooking then
+        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+              specializationIndex, specializationOffset = GetProfessionInfo(cooking)
+        if name == nameLoc then return skillLine, icon end
+    end
+
+    -- first aid
+    if firstaid then
+        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+              specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
+        if name == nameLoc then return skillLine, icon end
+    end
 end
 
 ------------------------------
