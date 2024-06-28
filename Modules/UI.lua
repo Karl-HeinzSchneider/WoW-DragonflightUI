@@ -98,19 +98,8 @@ end
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, ...)
-    -- print('event', event, arg1, ...)
-    if event == 'ADDON_LOADED' then
-        -- print('ADDON_LOADED', arg1, ...)
-        if arg1 == 'Blizzard_EncounterJournal' then
-            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
-        elseif arg1 == 'Blizzard_GuildBankUI' then
-            DragonflightUIMixin:AddGuildbankSearch()
-            DragonflightUIItemColorMixin:HookGuildbankBags()
-        elseif arg1 == 'Blizzard_InspectUI' then
-        end
-    elseif event == 'PLAYER_ENTERING_WORLD' then
-        Module:ChangeLateFrames()
-    elseif event == 'INSPECT_READY' then
+    -- print('event', event, arg1, ...)   
+    if event == 'INSPECT_READY' then
         -- print('INSPECT_READY')
         Module:HookColorInspect()
     elseif event == 'BAG_UPDATE_DELAYED' then
@@ -129,7 +118,7 @@ function frame:OnEvent(event, arg1, ...)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
-function Module:ChangeButtons()
+function Module:ChangeFrames()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
 
     -- Dragonflight Config
@@ -154,16 +143,46 @@ function Module:ChangeButtons()
     DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
     DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+
+    Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+    end)
+
+    Module:FuncOrWaitframe('Blizzard_Collections', function()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+    end)
+
+    Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+    end)
+    Module:FuncOrWaitframe('Blizzard_Communities', function()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+    end)
+    Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+    end)
+
+    Module:FuncOrWaitframe('Blizzard_GuildBankUI', function()
+        DragonflightUIMixin:AddGuildbankSearch()
+        DragonflightUIItemColorMixin:HookGuildbankBags()
+    end)
 end
 
-function Module:ChangeLateFrames()
-    if IsAddOnLoaded('Blizzard_EncounterJournal') then
-        DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+function Module:FuncOrWaitframe(addon, func)
+    if C_AddOns.IsAddOnLoaded(addon) then
+        -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
+        func()
+    else
+        local waitFrame = CreateFrame("FRAME")
+        waitFrame:RegisterEvent("ADDON_LOADED")
+        waitFrame:SetScript("OnEvent", function(self, event, arg1)
+            if arg1 == addon then
+                -- print('Module:FuncOrWaitframe(addon,func)', addon, 'WAITFRAME')
+                func()
+                waitFrame:UnregisterAllEvents()
+            end
+        end)
     end
-    if IsAddOnLoaded('Blizzard_Collections') then DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal']) end
-    if IsAddOnLoaded('Blizzard_TalentUI') then DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame']) end
-    if IsAddOnLoaded('Blizzard_Communities') then DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame']) end
-    if IsAddOnLoaded('Blizzard_MacroUI') then DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame']) end
 end
 
 function Module:HookCharacterFrame()
@@ -355,7 +374,7 @@ end
 
 -- Cata
 function Module.Cata()
-    Module:ChangeButtons()
+    Module:ChangeFrames()
     Module:HookCharacterFrame()
     Module:HookCharacterLevel()
     Module:ChangeBags()
