@@ -26,6 +26,11 @@ function DragonFlightUIProfessionMixin:OnLoad()
 
     self.minimized = false
 
+    self.ClosePanelButton:SetScript("OnClick", function(btn)
+        --     
+        HideUIPanel(TradeSkillFrame)
+    end);
+
     frameRef = self
 end
 
