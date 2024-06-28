@@ -33,11 +33,16 @@ function DragonFlightUIProfessionMixin:OnShow()
     if not self.anchored then
         self.anchored = true
 
-        self:SetParent(TradeSkillFrame)
-        self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
-
         self:AnchorButtons()
         self:AnchorSchematics()
+        self:HideDefault()
+
+        self:SetParent(TradeSkillFrame)
+        -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
+        self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 12, -12)
+
+        TradeSkillFrame:SetFrameStrata('BACKGROUND')
+        self:SetFrameStrata('MEDIUM')
 
         self.Bg:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 3)
 
@@ -113,6 +118,7 @@ function DragonFlightUIProfessionMixin:Minimize(minimize)
     if minimize then
         -- 
         self:SetWidth(404)
+        self:UpdateUIPanelWindows(false)
 
         self.RecipeList:Hide()
         self.RecipeList:SetWidth(0.1)
@@ -129,6 +135,7 @@ function DragonFlightUIProfessionMixin:Minimize(minimize)
     else
         --
         self:SetWidth(942)
+        self:UpdateUIPanelWindows(true)
 
         self.RecipeList:Show()
         self.RecipeList:SetWidth(274)
@@ -147,6 +154,15 @@ function DragonFlightUIProfessionMixin:Minimize(minimize)
     end
 end
 
+function DragonFlightUIProfessionMixin:UpdateUIPanelWindows(big)
+    if big then
+        TradeSkillFrame:SetAttribute("UIPanelLayout-width", 942);
+    else
+        TradeSkillFrame:SetAttribute("UIPanelLayout-width", 404);
+    end
+    UpdateUIPanelPositions(TradeSkillFrame)
+end
+
 function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
     print('ProfessionMixin', event)
     if event == 'TRADE_SKILL_SHOW' then
@@ -156,6 +172,10 @@ function DragonFlightUIProfessionMixin:OnEvent(event, arg1, ...)
     elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
         if self:IsShown() then self:Refresh(false) end
     end
+end
+
+function DragonFlightUIProfessionMixin:HideDefault()
+    TradeSkillFrame:SetFrameStrata('BACKGROUND')
 end
 
 function DragonFlightUIProfessionMixin:SetupFrameStyle()

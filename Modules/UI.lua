@@ -185,6 +185,33 @@ function Module:FuncOrWaitframe(addon, func)
     end
 end
 
+function Module:UpdateTradeskills()
+    local DFProfessionFrame = DragonflightUIMixin:CreateProfessionFrame()
+
+    Module:FuncOrWaitframe('Blizzard_TradeSkillUI', function()
+        --[[      local default = {
+            whileDead = 1,
+            height = 424,
+            width = 353,
+            bottomClampOverride = 152,
+            xoffset = -16,
+            yoffset = 12,
+            pushable = 3,
+            area = "left"
+        } ]]
+        UIPanelWindows["TradeSkillFrame"] = {
+            whileDead = 1,
+            height = 424,
+            width = 942,
+            bottomClampOverride = 152,
+            xoffset = -16 + 4,
+            yoffset = 12,
+            pushable = 3,
+            area = "left"
+        }
+    end)
+end
+
 function Module:HookCharacterFrame()
     local expand = function()
         CharacterFrame:Expand();
@@ -380,7 +407,7 @@ function Module.Cata()
     Module:ChangeBags()
     DragonflightUIMixin:ChangeQuestLogFrameCata()
 
-    DragonflightUIMixin:CreateProfessionFrame()
+    Module:UpdateTradeskills()
 
     Module:HookColor()
 
