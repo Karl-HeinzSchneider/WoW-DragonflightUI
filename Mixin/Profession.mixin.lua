@@ -647,6 +647,13 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
     self.Icon:SetTexture(icon)
     SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
+    local isLink, playerName = IsTradeSkillLinked()
+
+    if isLink then
+        --
+        self.NineSlice.Text:SetText(nameLoc .. ' (' .. playerName .. ')')
+    end
+
     local profData = professionDataTable[skillID]
 
     DevTools_Dump(profData)
