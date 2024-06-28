@@ -51,6 +51,8 @@ function Module:OnEnable()
 
     if DF.Cata then
         Module.Cata()
+    elseif DF.Wrath then
+        Module.Wrath()
     else
         Module.Era()
     end
@@ -426,4 +428,21 @@ end
 
 -- Era
 function Module.Era()
+    -- Module:ChangeFrames()
+    -- Module:HookCharacterFrame()
+    -- Module:HookCharacterLevel()
+    Module:ChangeBags()
+    -- DragonflightUIMixin:ChangeQuestLogFrameCata()
+
+    -- Module:UpdateTradeskills()
+
+    Module:HookColor()
+
+    frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('INSPECT_READY')
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('BAG_UPDATE_DELAYED')
+    frame:RegisterEvent('BANKFRAME_OPENED')
+    frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
+    frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
 end

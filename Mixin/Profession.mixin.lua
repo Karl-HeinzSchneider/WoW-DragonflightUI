@@ -268,8 +268,7 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     local input = TradeSkillInputBox
     input:SetParent(self)
 
-    local editBox = TradeSkillFrameEditBox
-    editBox:SetParent(self)
+    if TradeSkillFrameEditBox then TradeSkillFrameEditBox:SetParent(self) end
 
     local increm = TradeSkillDecrementButton
     increm:SetParent(self)
@@ -277,13 +276,15 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     local decrem = TradeSkillIncrementButton
     decrem:SetParent(self)
 
-    TradeSkillFrameEditBox:ClearAllPoints()
-    TradeSkillFrameEditBox:SetPoint('RIGHT', UIParent, 'LEFT', -500, 0)
-    --[[    -- TradeSkillFrameEditBox:Hide()
+    if TradeSkillFrameEditBox then
+        TradeSkillFrameEditBox:ClearAllPoints()
+        TradeSkillFrameEditBox:SetPoint('RIGHT', UIParent, 'LEFT', -500, 0)
+        --[[    -- TradeSkillFrameEditBox:Hide()
     hooksecurefunc(TradeSkillFrameEditBox, 'Show', function()
         -- print('TradeSkillFrameEditBox', 'OnShow')
         -- TradeSkillFrameEditBox:Hide()
     end) ]]
+    end
 end
 
 function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
@@ -351,10 +352,12 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
     -- reqText:SetJustifyH("LEFT");
     reqText:SetPoint('LEFT', req, 'RIGHT', 4, 0)
 
-    local descr = TradeSkillDescription
-    descr:ClearAllPoints()
-    descr:SetParent(frame)
-    descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    if TradeSkillDescription then
+        local descr = TradeSkillDescription
+        descr:ClearAllPoints()
+        descr:SetParent(frame)
+        descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    end
 
     local reagentLabel = TradeSkillReagentLabel
     reagentLabel:ClearAllPoints()
