@@ -2848,7 +2848,11 @@ function Module.ChangeMicroMenuNew()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
+        if DF.EraLater then
+            Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities')
+        else
+            Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
+        end
         -- WorldMapMicroButton    
         Module.ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
         Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')

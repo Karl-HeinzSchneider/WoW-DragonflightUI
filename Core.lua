@@ -5,6 +5,7 @@ DF.InterfaceVersion = select(4, GetBuildInfo())
 DF.Cata = (DF.InterfaceVersion >= 40000)
 DF.Wrath = (DF.InterfaceVersion >= 30400)
 DF.Era = DF.InterfaceVersion <= 20000
+DF.EraLater = DF.Era and DF.InterfaceVersion >= 11503
 
 local defaults = {profile = {bestnumber = 42}}
 
