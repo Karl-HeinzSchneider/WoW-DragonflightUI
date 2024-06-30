@@ -10,7 +10,7 @@
 ## Version: @project-version@
 ## X-Date: @project-date-integer@
 ## SavedVariables: DragonflightUIDB
-## OptionalDeps: Ace3, Blizzard_Collections, Blizzard_Communities,  Blizzard_MacroUI, Blizzard_TalentUI, Blizzard_TimeManager, NovaWorldBuffs
+## OptionalDeps: Ace3, Blizzard_TalentUI, Blizzard_TimeManager, NovaWorldBuffs
 
 # Libs
 Libs\LibStub\LibStub.lua
