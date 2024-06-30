@@ -1525,7 +1525,7 @@ function Module:SetupActionbarFrames()
             btns[i] = btn
             btn:Hide()
 
-            btn:UpdateAction()
+            -- btn:UpdateAction()          
         end
 
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
