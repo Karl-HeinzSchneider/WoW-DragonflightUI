@@ -55,6 +55,29 @@ local UIOptions = {
     }
 }
 
+local frame = CreateFrame('FRAME')
+
+function frame:OnEvent(event, arg1, ...)
+    -- print('event', event, arg1, ...)   
+    if event == 'INSPECT_READY' then
+        -- print('INSPECT_READY')
+        Module:HookColorInspect()
+    elseif event == 'BAG_UPDATE_DELAYED' then
+        -- print('BAG_UPDATE_DELAYED')
+        DragonflightUIItemColorMixin:UpdateAllBags(false)
+    elseif event == 'BANKFRAME_OPENED' then
+        -- print('BANKFRAME_OPENED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'PLAYERBANKSLOTS_CHANGED' then
+        -- print('PLAYERBANKSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'GUILDBANKBAGSLOTS_CHANGED' then
+        -- print('GUILDBANKBAGSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateGuildBankSlots()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -145,29 +168,6 @@ function Module:ApplySettings()
     end
 end
 
-local frame = CreateFrame('FRAME')
-
-function frame:OnEvent(event, arg1, ...)
-    -- print('event', event, arg1, ...)   
-    if event == 'INSPECT_READY' then
-        -- print('INSPECT_READY')
-        Module:HookColorInspect()
-    elseif event == 'BAG_UPDATE_DELAYED' then
-        -- print('BAG_UPDATE_DELAYED')
-        DragonflightUIItemColorMixin:UpdateAllBags(false)
-    elseif event == 'BANKFRAME_OPENED' then
-        -- print('BANKFRAME_OPENED')
-        DragonflightUIItemColorMixin:UpdateBankSlots()
-    elseif event == 'PLAYERBANKSLOTS_CHANGED' then
-        -- print('PLAYERBANKSLOTS_CHANGED')
-        DragonflightUIItemColorMixin:UpdateBankSlots()
-    elseif event == 'GUILDBANKBAGSLOTS_CHANGED' then
-        -- print('GUILDBANKBAGSLOTS_CHANGED')
-        DragonflightUIItemColorMixin:UpdateGuildBankSlots()
-    end
-end
-frame:SetScript('OnEvent', frame.OnEvent)
-
 function Module:ChangeFrames()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
 
@@ -185,32 +185,56 @@ function Module:ChangeFrames()
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
     -- DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['HelpFrame'])
 
-    DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
-    -- DragonflightUIMixin:PortraitFrameTemplate(_G['QuestLogFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+    if DF.Cata then
+        --
+        DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
 
-    Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
-    end)
+        Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        end)
 
-    Module:FuncOrWaitframe('Blizzard_Collections', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
-    end)
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
 
-    Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
-    end)
-    Module:FuncOrWaitframe('Blizzard_Communities', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
-    end)
-    Module:FuncOrWaitframe('Blizzard_MacroUI', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
-    end)
+        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        end)
+        Module:FuncOrWaitframe('Blizzard_Communities', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        end)
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+    elseif DF.Wrath then
+        --
+    elseif DF.Era then
+        --
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+        -- DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+
+        --[[   Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        end) ]]
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+    end
 end
 
 function Module:FuncOrWaitframe(addon, func)
@@ -452,7 +476,6 @@ function Module.Cata()
     Module:ChangeFrames()
     Module:HookCharacterFrame()
     Module:HookCharacterLevel()
-    DragonflightUIMixin:ChangeQuestLogFrameCata()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -464,15 +487,12 @@ end
 
 -- Era
 function Module.Era()
-    -- Module:ChangeFrames()
+    Module:ChangeFrames()
     -- Module:HookCharacterFrame()
     -- Module:HookCharacterLevel()
-    Module:ChangeBags()
+
     -- DragonflightUIMixin:ChangeQuestLogFrameCata()
-
     -- Module:UpdateTradeskills()
-
-    Module:HookColor()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
