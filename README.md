@@ -42,8 +42,8 @@ Modules:
 ## Compatibility
 
 Developed for default Blizzard UI, but should work on any UI.\
-Official supported Game Versions: **Cata Classic** and **Era**.
-**Wotlk classic (3.4.3)** more or less works, but only gets bug report fixes.
+Official supported Game Versions: **Cata Classic** and **Era**.\
+**Wotlk classic (3.4.3)** more or less works, but only receives bug report fixes.
 
 ## Support
 
