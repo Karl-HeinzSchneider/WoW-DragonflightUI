@@ -5,7 +5,7 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, first = {}}}
+local defaults = {profile = {scale = 1, first = {changeBag = true, itemcolor = true, changeTradeskill = true}}}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -33,8 +33,50 @@ local UIOptions = {
     name = 'Utility',
     get = getOption,
     set = setOption,
-    args = {friendsHeader = {type = 'header', name = 'Friendsframe', order = 10}}
+    args = {
+        changeBag = {
+            type = 'toggle',
+            name = 'Change Bags',
+            desc = '' .. getDefaultStr('changeBag', 'first'),
+            order = 21
+        },
+        itemcolor = {
+            type = 'toggle',
+            name = 'Colored Inventory Items',
+            desc = '' .. getDefaultStr('itemcolor', 'first'),
+            order = 22
+        },
+        changeTradeskill = {
+            type = 'toggle',
+            name = 'Change Profession Window',
+            desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
+            order = 22
+        }
+    }
 }
+
+local frame = CreateFrame('FRAME')
+
+function frame:OnEvent(event, arg1, ...)
+    -- print('event', event, arg1, ...)   
+    if event == 'INSPECT_READY' then
+        -- print('INSPECT_READY')
+        Module:HookColorInspect()
+    elseif event == 'BAG_UPDATE_DELAYED' then
+        -- print('BAG_UPDATE_DELAYED')
+        DragonflightUIItemColorMixin:UpdateAllBags(false)
+    elseif event == 'BANKFRAME_OPENED' then
+        -- print('BANKFRAME_OPENED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'PLAYERBANKSLOTS_CHANGED' then
+        -- print('PLAYERBANKSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateBankSlots()
+    elseif event == 'GUILDBANKBAGSLOTS_CHANGED' then
+        -- print('GUILDBANKBAGSLOTS_CHANGED')
+        DragonflightUIItemColorMixin:UpdateGuildBankSlots()
+    end
+end
+frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -94,31 +136,40 @@ function Module:RefreshOptionScreens()
 end
 
 function Module:ApplySettings()
-    local db = Module.db.profile
-end
+    local db = Module.db.profile.first
 
-local frame = CreateFrame('FRAME')
+    if db.changeBag and not ContainerFrame1.DFHooked then
+        ContainerFrame1.DFHooked = true
 
-function frame:OnEvent(event, arg1, ...)
-    -- print('event', event, arg1, ...)   
-    if event == 'INSPECT_READY' then
-        -- print('INSPECT_READY')
-        Module:HookColorInspect()
-    elseif event == 'BAG_UPDATE_DELAYED' then
-        -- print('BAG_UPDATE_DELAYED')
-        DragonflightUIItemColorMixin:UpdateAllBags(false)
-    elseif event == 'BANKFRAME_OPENED' then
-        -- print('BANKFRAME_OPENED')
-        DragonflightUIItemColorMixin:UpdateBankSlots()
-    elseif event == 'PLAYERBANKSLOTS_CHANGED' then
-        -- print('PLAYERBANKSLOTS_CHANGED')
-        DragonflightUIItemColorMixin:UpdateBankSlots()
-    elseif event == 'GUILDBANKBAGSLOTS_CHANGED' then
-        -- print('GUILDBANKBAGSLOTS_CHANGED')
-        DragonflightUIItemColorMixin:UpdateGuildBankSlots()
+        Module:ChangeBags()
+
+        frame:RegisterEvent('BAG_UPDATE_DELAYED')
+        frame:RegisterEvent('BANKFRAME_OPENED')
+        frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
+        frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
+    elseif not db.changeBag and ContainerFrame1.DFHooked then
+        DF:Print("'Change Bags' was deactivated, but bags were already modified, please /reload.")
+    end
+
+    if db.itemcolor and not Module.ItemColorHooked then
+        Module.ItemColorHooked = true
+        Module:HookColor()
+
+        frame:RegisterEvent('INSPECT_READY')
+    elseif not db.itemcolor and Module.ItemColorHooked then
+        DF:Print("'Colored Inventory Items' was deactivated, but Icons were already modified, please /reload.")
+    end
+
+    if DF.Cata then
+        if db.changeTradeskill and not Module.TradeskillHooked then
+            Module.TradeskillHooked = true
+            Module:UpdateTradeskills()
+        elseif not db.changeTradeskill and Module.TradeskillHooked then
+            DF:Print(
+                "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
+        end
     end
 end
-frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:ChangeFrames()
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
@@ -137,37 +188,56 @@ function Module:ChangeFrames()
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
     -- DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['HelpFrame'])
 
-    DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
-    -- DragonflightUIMixin:PortraitFrameTemplate(_G['QuestLogFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
-    DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+    if DF.Cata then
+        --
+        DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
 
-    Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
-    end)
+        Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        end)
 
-    Module:FuncOrWaitframe('Blizzard_Collections', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
-    end)
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
 
-    Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
-    end)
-    Module:FuncOrWaitframe('Blizzard_Communities', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
-    end)
-    Module:FuncOrWaitframe('Blizzard_MacroUI', function()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
-    end)
+        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        end)
+        Module:FuncOrWaitframe('Blizzard_Communities', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        end)
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
 
-    Module:FuncOrWaitframe('Blizzard_GuildBankUI', function()
-        DragonflightUIMixin:AddGuildbankSearch()
-        DragonflightUIItemColorMixin:HookGuildbankBags()
-    end)
+    elseif DF.Wrath then
+        --
+    elseif DF.Era then
+        --
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+        -- DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+
+        --[[   Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        end) ]]
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+    end
 end
 
 function Module:FuncOrWaitframe(addon, func)
@@ -364,7 +434,10 @@ function Module:ChangeBags()
         local searchBox = DragonflightUIMixin:CreateSearchBox()
         local bankSearchBox = DragonflightUIMixin:CreateBankSearchBox()
 
-        if C_AddOns.IsAddOnLoaded("Blizzard_GuildBankUI") then DragonflightUIMixin:AddGuildbankSearch() end
+        Module:FuncOrWaitframe('Blizzard_GuildBankUI', function()
+            DragonflightUIMixin:AddGuildbankSearch()
+            DragonflightUIItemColorMixin:HookGuildbankBags()
+        end)
 
         hooksecurefunc('ContainerFrame_Update', function(frame)
             --
@@ -406,20 +479,9 @@ function Module.Cata()
     Module:ChangeFrames()
     Module:HookCharacterFrame()
     Module:HookCharacterLevel()
-    Module:ChangeBags()
-    DragonflightUIMixin:ChangeQuestLogFrameCata()
-
-    Module:UpdateTradeskills()
-
-    Module:HookColor()
 
     frame:RegisterEvent('ADDON_LOADED')
-    frame:RegisterEvent('INSPECT_READY')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('BAG_UPDATE_DELAYED')
-    frame:RegisterEvent('BANKFRAME_OPENED')
-    frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
-    frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
 end
 
 -- Wrath
@@ -428,21 +490,13 @@ end
 
 -- Era
 function Module.Era()
-    -- Module:ChangeFrames()
+    Module:ChangeFrames()
     -- Module:HookCharacterFrame()
     -- Module:HookCharacterLevel()
-    Module:ChangeBags()
-    -- DragonflightUIMixin:ChangeQuestLogFrameCata()
 
+    -- DragonflightUIMixin:ChangeQuestLogFrameCata()
     -- Module:UpdateTradeskills()
 
-    Module:HookColor()
-
     frame:RegisterEvent('ADDON_LOADED')
-    frame:RegisterEvent('INSPECT_READY')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('BAG_UPDATE_DELAYED')
-    frame:RegisterEvent('BANKFRAME_OPENED')
-    frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
-    frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
 end
