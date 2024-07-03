@@ -21,12 +21,16 @@ function DragonflightUIItemColorMixin:AddOverlayToFrame(frame)
     local tex = base .. 'whiteiconframeEdit'
 
     local overlay = frame:CreateTexture('DragonflightUIQuality')
-    overlay:SetDrawLayer('OVERLAY', 7)
+    overlay:SetDrawLayer('OVERLAY', 6)
     overlay:SetTexture(tex)
     overlay:SetSize(37, 37)
     -- overlay:SetTexCoord(0.32959, 0.349121, 0.000976562, 0.0400391)
     overlay:Hide()
     frame.DFQuality = overlay
+
+    local subIcon = _G[frame:GetName() .. 'SubIconTexture']
+
+    if subIcon then subIcon:SetDrawLayer('OVERLAY', 7) end
 
     return overlay
 end
