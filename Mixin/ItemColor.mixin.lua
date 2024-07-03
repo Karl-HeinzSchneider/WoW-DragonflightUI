@@ -28,7 +28,7 @@ function DragonflightUIItemColorMixin:AddOverlayToFrame(frame)
     overlay:Hide()
     frame.DFQuality = overlay
 
-    local subIcon = _G[frame:GetName() .. 'SubIconTexture']
+    local subIcon = _G[(frame:GetName() or '******') .. 'SubIconTexture']
 
     if subIcon then subIcon:SetDrawLayer('OVERLAY', 7) end
 
