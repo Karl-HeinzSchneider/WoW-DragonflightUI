@@ -120,15 +120,15 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Actionbar
         local cat = 'Actionbar'
         addCat(cat)
-        addSubCat('Actionbar1', cat, true)
+        addSubCat('Actionbar1', cat)
         addSubCat('Actionbar2', cat)
         addSubCat('Actionbar3', cat)
         addSubCat('Actionbar4', cat)
         addSubCat('Actionbar5', cat)
 
-        addSubCat('Actionbar6', cat, true)
-        addSubCat('Actionbar7', cat, true)
-        addSubCat('Actionbar8', cat, true)
+        addSubCat('Actionbar6', cat)
+        addSubCat('Actionbar7', cat)
+        addSubCat('Actionbar8', cat)
 
         addSubCat('Petbar', cat)
         addSubCat('XPbar', cat)
@@ -157,19 +157,19 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
         addSubCat('UI', cat, true)
-        addSubCat('Utility', cat, true)
+        addSubCat('Utility', cat)
     end
 
     do
         -- Unitframes
         local cat = 'Unitframes'
         addCat(cat)
-        addSubCat('Boss', cat, true)
+        addSubCat('Boss', cat)
         addSubCat('Focus', cat)
         addSubCat('Party', cat)
         addSubCat('Pet', cat)
-        addSubCat('Player', cat, true)
-        addSubCat('Target', cat, true)
+        addSubCat('Player', cat)
+        addSubCat('Target', cat)
     end
 
     addSpacer()

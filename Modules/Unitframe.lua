@@ -384,7 +384,7 @@ local optionsTarget = {
             order = 6
         },
         classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
-        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = true},
+        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = false},
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',

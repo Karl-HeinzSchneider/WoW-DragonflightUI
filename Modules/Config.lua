@@ -53,7 +53,7 @@ local modulesOptions = {
             name = 'Bossframe',
             desc = '' .. getDefaultStr('Bossframe', 'modules'),
             order = 2,
-            new = true
+            new = false
         },
         Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 3},
         Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
@@ -65,7 +65,7 @@ local modulesOptions = {
             name = 'Utility',
             desc = '' .. getDefaultStr('Utility', 'modules'),
             order = 8,
-            new = true
+            new = false
         }
     }
 }
