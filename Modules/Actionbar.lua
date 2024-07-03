@@ -2810,6 +2810,7 @@ function Module.ChangeMicroMenuNew()
         Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities')
         Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
         Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
+        Module.BetterPVPMicroButton(PVPMicroButton)
         PVPMicroButtonTexture:Hide()
         Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
         Module.ChangeMicroMenuButton(EJMicroButton, 'AdventureGuide')
@@ -2832,6 +2833,7 @@ function Module.ChangeMicroMenuNew()
         Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
         Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
         Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
+        Module.BetterPVPMicroButton(PVPMicroButton)
         PVPMicroButtonTexture:Hide()
         Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
         Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
@@ -2862,6 +2864,38 @@ function Module.ChangeMicroMenuNew()
         MainMenuBarPerformanceBarFrame:Hide()
     end
 
+end
+
+function Module.BetterPVPMicroButton(btn)
+    local tex = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\micropvp'
+
+    local englishFaction, localizedFaction = UnitFactionGroup('player')
+
+    if englishFaction == 'Alliance' then
+        btn:SetNormalTexture(tex)
+        btn:GetNormalTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
+
+        btn:SetDisabledTexture(tex)
+        btn:GetDisabledTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
+
+        btn:SetPushedTexture(tex)
+        btn:GetPushedTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
+
+        btn:SetHighlightTexture(tex)
+        btn:GetHighlightTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
+    else
+        btn:SetNormalTexture(tex)
+        btn:GetNormalTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
+
+        btn:SetDisabledTexture(tex)
+        btn:GetDisabledTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
+
+        btn:SetPushedTexture(tex)
+        btn:GetPushedTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
+
+        btn:SetHighlightTexture(tex)
+        btn:GetHighlightTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
+    end
 end
 
 function Module.HookMicromenuOverride()
