@@ -75,6 +75,18 @@ If you want to support the development, like and share, but if you're feeling ex
 
 ![](Screenshots/v0.10/QuickKeybind.png)
 
+## UI
+
+![](Screenshots/v0.11/Bags.png)
+
+![](Screenshots/v0.11/CharacterFrame.png)
+
+![](Screenshots/v0.11/Spellbook.png)
+
+![](Screenshots/v0.11/Profession.png)
+
+![](Screenshots/v0.11/Profession_small.png)
+
 ## Unitframe
 
 ![](Screenshots/v0.10/Unitframes.png)
