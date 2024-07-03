@@ -226,7 +226,7 @@ function Module:ChangeFrames()
         -- DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
 
