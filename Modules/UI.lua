@@ -49,7 +49,7 @@ local UIOptions = {
         changeTradeskill = {
             type = 'toggle',
             name = 'Change Profession Window',
-            desc = '' .. getDefaultStr('changeTradeskill', 'first'),
+            desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
             order = 22
         }
     }
@@ -160,11 +160,14 @@ function Module:ApplySettings()
         DF:Print("'Colored Inventory Items' was deactivated, but Icons were already modified, please /reload.")
     end
 
-    if db.changeTradeskill and not Module.TradeskillHooked then
-        Module.TradeskillHooked = true
-        Module:UpdateTradeskills()
-    elseif not db.changeTradeskill and Module.TradeskillHooked then
-        DF:Print("'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
+    if DF.Cata then
+        if db.changeTradeskill and not Module.TradeskillHooked then
+            Module.TradeskillHooked = true
+            Module:UpdateTradeskills()
+        elseif not db.changeTradeskill and Module.TradeskillHooked then
+            DF:Print(
+                "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
+        end
     end
 end
 
