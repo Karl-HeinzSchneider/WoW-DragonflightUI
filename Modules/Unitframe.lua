@@ -415,7 +415,8 @@ if true then
             desc = OPTION_TOOLTIP_SHOW_TARGET_OF_TARGET,
             order = 15,
             blizzard = true
-        }
+        },
+        buffsOnTop = {type = 'toggle', name = 'Buffs On Top', desc = '', order = 16, blizzard = true}
     }
 
     for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
@@ -427,6 +428,12 @@ if true then
         if sub == 'targetOfTarget' then
             local tot = C_CVar.GetCVar("showTargetOfTarget");
             if tot == '1' then
+                return true
+            else
+                return false
+            end
+        elseif sub == 'buffsOnTop' then
+            if TARGET_FRAME_BUFFS_ON_TOP then
                 return true
             else
                 return false
@@ -446,6 +453,15 @@ if true then
             else
                 SetCVar("showTargetOfTarget", "0");
             end
+        elseif sub == 'buffsOnTop' then
+            if value then
+                TARGET_FRAME_BUFFS_ON_TOP = true
+                TargetFrame.buffsOnTop = true
+            else
+                TARGET_FRAME_BUFFS_ON_TOP = false
+                TargetFrame.buffsOnTop = false
+            end
+            TargetFrame_UpdateAuras(TargetFrame)
         else
             setOption(info, value)
         end
