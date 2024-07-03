@@ -26,6 +26,7 @@ Modules:
 - Castbar
 - Chat
 - Minimap
+- UI
 - Unitframe
 - Utility
 
@@ -36,13 +37,13 @@ Modules:
 ## Possible Features coming soon
 
 - enhanced Tooltips
-- complete UI Texture overhaul
 - Era (/hardcore) specific features
 
 ## Compatibility
 
 Developed for default Blizzard UI, but should work on any UI.\
-Official supported Game Versions: **Wotlk Classic** and **Era**
+Official supported Game Versions: **Cata Classic** and **Era**.
+**Wotlk classic (3.4.3)** more or less works, but only gets bug report fixes.
 
 ## Support
 
