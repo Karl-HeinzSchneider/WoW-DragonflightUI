@@ -992,6 +992,41 @@ function Module.ChangeTracking()
     MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109375, 0.224609375, 0.5078125, 0.537109375)
 end
 
+function Module.ChangeTrackingEra()
+    --  MiniMapTrackingFrame:ClearAllPoints()
+    -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
+    -- MiniMapTrackingFrame:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
+    -- MiniMapTrackingFrame:SetScale(0.75)
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+    MiniMapTrackingFrame:Show()
+    MiniMapTrackingFrame:SetParent(Minimap)
+    MiniMapTrackingFrame:SetSize(33, 33)
+
+    MiniMapTrackingBorder:SetSize(50, 50)
+    MiniMapTrackingBorder:SetTexture(base .. 'minimap-trackingborder')
+    MiniMapTrackingBorder:ClearAllPoints()
+    MiniMapTrackingBorder:SetPoint("TOPLEFT", MiniMapTrackingFrame, "TOPLEFT")
+
+    MiniMapTrackingIcon:SetSize(20, 20)
+    MiniMapTrackingIcon:ClearAllPoints()
+    MiniMapTrackingIcon:SetPoint("CENTER", MiniMapTrackingFrame, "CENTER", 0, 0)
+
+    local tex = MiniMapTrackingIcon:GetTexture()
+
+    local updateTex = function()
+        SetPortraitToTexture(MiniMapTrackingIcon, tex)
+    end
+
+    local err = function(s)
+        -- print('error!', s)
+        MiniMapTrackingIcon:SetTexture(tex)
+    end
+
+    local status = xpcall(updateTex, err)
+
+end
+
 function Module.DrawMinimapBorder()
     local texture = Minimap:CreateTexture()
     texture:SetDrawLayer('ARTWORK', 7)
@@ -1383,6 +1418,7 @@ function Module.Era()
     Module.CreateMinimapInfoFrame()
     Module.ChangeClock()
     Module.ChangeZoneText()
+    -- Module.ChangeTrackingEra()
     Module.DrawMinimapBorder()
     Module.MoveBuffs()
     Module.MoveTracker()
