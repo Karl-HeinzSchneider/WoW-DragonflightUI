@@ -89,7 +89,7 @@ end
 function DragonflightUIBossframeMixin:UpdateState(state)
     self:UpdatePortrait(self.unit)
 
-    local deltaY = (1 - self.id) * 70
+    local deltaY = (1 - self.id) * 85
 
     local parent = _G[state.anchorFrame]
     self:ClearAllPoints()
