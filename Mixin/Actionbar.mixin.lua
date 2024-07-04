@@ -497,6 +497,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
         icon:SetSize(45, 45)
         -- icon:SetPoint('CENTER')
         -- icon:SetAlpha(0)
+        btn.Icon = icon
 
         local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
         btn.Mask = mask
@@ -607,7 +608,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
 end
 
 function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
-    local mask = btn.DragonflightUIMaskTexture
+    local mask = btn.Icon
     if not mask then return end
 
     -- local normal = btn:GetNormalTexture()
