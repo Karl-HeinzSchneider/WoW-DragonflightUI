@@ -43,7 +43,7 @@ function DragonFlightUIProfessionMixin:OnShow()
         self:AnchorSchematics()
         self:HideDefault()
 
-        self:SetParent(TradeSkillFrame)
+        -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
         self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 12, -12)
 
