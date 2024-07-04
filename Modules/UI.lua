@@ -281,6 +281,15 @@ function Module:UpdateTradeskills()
             pushable = 3,
             area = "left"
         }
+
+        if IsAddOnLoaded('Leatrix_Plus') then
+            --
+            if TradeSkillFrame:GetWidth() > 700 then
+                --
+                DF:Print(
+                    "Leatrix_Plus detected with 'Interface -> Enhance professions' activated - please deactivate or you might encounter bugs.")
+            end
+        end
     end)
 end
 
