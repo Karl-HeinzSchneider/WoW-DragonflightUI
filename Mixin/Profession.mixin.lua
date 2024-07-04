@@ -318,7 +318,7 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
     -- frame.NineSlice:SetAlpha(0.25)
 
     local icon = TradeSkillSkillIcon
-    icon:ClearAllPoints()
+    -- icon:ClearAllPoints()
     icon:SetParent(frame)
     icon:SetPoint('TOPLEFT', frame, 'TOPLEFT', 28 - 400 + 400, -28)
     -- icon:SetPoint('TOPLEFT', TradeSkillDetailScrollChildFrame, 'TOPLEFT', 28, -28)
@@ -360,9 +360,9 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
     end
 
     local reagentLabel = TradeSkillReagentLabel
-    reagentLabel:ClearAllPoints()
+    --   reagentLabel:ClearAllPoints()
     reagentLabel:SetParent(frame)
-    reagentLabel:SetPoint('TOPLEFT', descr, 'BOTTOMLEFT', 0, -20)
+    -- reagentLabel:SetPoint('TOPLEFT', TradeSkillDescription, 'BOTTOMLEFT', 0, -20)
 
     for i = 1, MAX_TRADE_SKILL_REAGENTS do
         --
