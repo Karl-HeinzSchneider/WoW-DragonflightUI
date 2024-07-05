@@ -291,6 +291,8 @@ function Module:UpdateTradeskills()
             end
         end
     end)
+
+    if IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
 end
 
 function Module:HookCharacterFrame()

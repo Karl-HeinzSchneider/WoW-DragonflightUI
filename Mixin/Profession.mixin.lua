@@ -36,6 +36,7 @@ function DragonFlightUIProfessionMixin:OnLoad()
 end
 
 function DragonFlightUIProfessionMixin:OnShow()
+    -- print('DragonFlightUIProfessionMixin:OnShow()')
     if not self.anchored then
         self.anchored = true
 
