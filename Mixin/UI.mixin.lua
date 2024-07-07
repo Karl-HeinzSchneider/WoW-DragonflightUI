@@ -425,6 +425,75 @@ function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
     end
 end
 
+function DragonflightUIMixin:ChangeDressupFrame()
+    frame = DressUpFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            if layer == 'ARTWORK' then child:Hide() end
+        end
+    end
+
+    frame:SetSize(354, 447)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+
+    DragonflightUIMixin:UIPanelCloseButton(DressUpFrameCloseButton)
+    DressUpFrameCloseButton:SetPoint('TOPRIGHT', DressUpFrame, 'TOPRIGHT', 1, 0)
+
+    DressUpFrameCancelButton:SetPoint('BOTTOMRIGHT', DressUpFrame, 'BOTTOMRIGHT', -7, 14)
+
+    DressUpFrameTitleText:ClearAllPoints()
+    DressUpFrameTitleText:SetPoint('TOP', DressUpFrame, 'TOP', 0, -5)
+    DressUpFrameTitleText:SetPoint('LEFT', DressUpFrame, 'LEFT', 60, 0)
+    DressUpFrameTitleText:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -60, 0)
+
+    DressUpModelFrame:ClearAllPoints()
+    DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
+
+    DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
+
+    do
+        local port = DressUpFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    -- default -16 
+    ShowUIPanel(frame)
+    DressUpFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    DressUpFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    HideUIPanel(frame)
+end
+
+function DragonflightUIMixin:ChangeCharacterFrameCata()
+    DragonflightUIMixin:PortraitFrameTemplate(CharacterFrame)
+
+    CharacterFrameBg:SetTexture(base .. 'ui-background-rock')
+    CharacterFrameBg:ClearAllPoints()
+    CharacterFrameBg:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 3, -18)
+    CharacterFrameBg:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0, 3)
+    CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 
@@ -479,9 +548,12 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
     -- default -16 
     ShowUIPanel(frame)
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    QuestLogFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
     HideUIPanel(frame)
 end
 
@@ -508,6 +580,32 @@ function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     frame.Bg:SetFrameLevel(0)
 
     if portrait then frame.PortraitFrame = frame:CreateTexture('PortraitFrame') end
+end
+
+function DragonflightUIMixin:FrameBackgroundSolid(frame, streak)
+    local top = frame.Bg.TopSection
+    top:SetTexture(base .. 'ui-background-rock')
+    top:ClearAllPoints()
+    top:SetPoint('TOPLEFT', frame.Bg, 'TOPLEFT', 0, 0)
+    top:SetPoint('BOTTOMRIGHT', frame.Bg.BottomRight, 'BOTTOMRIGHT', 0, 0)
+    top:SetDrawLayer('BACKGROUND', 2)
+
+    if streak then
+        --[[      <Texture parentKey="TopTileStreak" hidden="false" file="Interface/AddOns/DragonflightUI/Textures/UI/uiframehorizontal">
+        <Size x="256" y="43" />
+        <Anchors>
+            <Anchor point="TOPLEFT" x="6" y="-21" />
+            <Anchor point="TOPRIGHT" x="-2" y="-21" />
+        </Anchors>
+        <TexCoords left="0" right="1" top="0.0078125" bottom="0.34375" />
+    </Texture> ]]
+        local TopTileStreak = frame:CreateTexture()
+        TopTileStreak:SetSize(256, 43)
+        TopTileStreak:SetTexture(base .. 'uiframehorizontal')
+        TopTileStreak:SetTexCoord(0, 1, 0.0078125, 0.34375)
+        TopTileStreak:SetPoint('TOPLEFT', 6, -21)
+        TopTileStreak:SetPoint('TOPRIGHT', -2, -21)
+    end
 end
 
 function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
