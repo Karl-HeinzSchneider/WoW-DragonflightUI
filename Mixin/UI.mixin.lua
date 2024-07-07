@@ -973,6 +973,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         --   
     elseif name == 'CommunitiesFrame' then
         --   
+        local bg = _G['CommunitiesFrameBg']
+        if bg then
+            --
+            bg:SetTexture(base .. 'ui-background-rock')
+            bg:ClearAllPoints()
+            bg:SetPoint('TOPLEFT', CommunitiesFrame, 'TOPLEFT', 3, -18)
+            bg:SetPoint('BOTTOMRIGHT', CommunitiesFrame, 'BOTTOMRIGHT', 0, 3)
+            -- bg:SetDrawLayer('BACKGROUND', 2)
+        end
+
         local fixTop = function()
             local te = _G[name .. 'TopBorder']
             te:ClearAllPoints()
