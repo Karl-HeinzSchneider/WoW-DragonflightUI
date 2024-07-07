@@ -162,7 +162,7 @@ function DragonflightUIItemColorMixin:HookBags()
         overlay:SetPoint('CENTER')
     end
 
-    for slot = 1, 10 do
+    for slot = 1, MERCHANT_ITEMS_PER_PAGE do
         --
         local ref = _G['MerchantItem' .. slot .. 'ItemButton']
         local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(ref)
