@@ -3095,7 +3095,16 @@ function Module.UpdateMicromenuState(state)
     for k, v in ipairs(buttons) do
         --
         v:SetScale(state.scale)
-        v:SetShown(not state.hidden)
+        -- v:SetShown(not state.hidden)
+        if state.hidden then
+            --
+            v:SetAlpha(0)
+            v:EnableMouse(false)
+        else
+            --
+            v:SetAlpha(1)
+            v:EnableMouse(true)
+        end
     end
 
     local playerLevel = UnitLevel("player");
