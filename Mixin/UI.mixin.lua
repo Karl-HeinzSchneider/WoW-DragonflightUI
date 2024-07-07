@@ -1061,6 +1061,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 end
             end
         end
+
+        local bg = _G['FriendsFrameBg']
+        if bg then
+            --
+            bg:SetTexture(base .. 'ui-background-rock')
+            bg:ClearAllPoints()
+            bg:SetPoint('TOPLEFT', FriendsFrame, 'TOPLEFT', 3, -18)
+            bg:SetPoint('BOTTOMRIGHT', FriendsFrame, 'BOTTOMRIGHT', 0, 3)
+            -- bg:SetDrawLayer('BACKGROUND', 2)
+        end
     elseif name == 'MailFrame' then
         --
         local children = {frame:GetRegions()}
