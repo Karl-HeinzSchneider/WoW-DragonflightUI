@@ -538,9 +538,12 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
     -- default -16 
     ShowUIPanel(frame)
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    QuestLogFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
     HideUIPanel(frame)
 end
 
