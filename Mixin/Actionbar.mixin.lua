@@ -566,6 +566,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
         normal:SetPoint('TOPLEFT')
         normal:SetTexture(textureRefTwo)
         normal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        normal:SetAlpha(1)
 
         -- iconframe-down
         local pushed = btn:GetPushedTexture()
@@ -650,44 +651,9 @@ end
 
 -- TODO only debug for now..
 function DragonflightUIActionbarMixin:HookGrid()
-
     hooksecurefunc('ActionButton_ShowGrid', function(btn)
-        if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 0.69); end
+        if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 1); end
     end)
-
-    --[[    local updateButton = function(btn)
-        local mix = btn.DFMixin
-        local state = mix.state
-
-        if not state then return end
-
-        if state.alwaysShow then
-            -- btn:SetAttribute("showgrid", 1)
-            -- ActionButton_ShowGrid(btn)
-        else
-            -- btn:SetAttribute("showgrid", 0)
-            -- ActionButton_HideGrid(btn)
-        end
-    end
-
-    hooksecurefunc('ActionButton_ShowGrid', function(button)
-        if button.DFMixin then
-            -- print('ActionButton_ShowGrid', button:GetName())
-            -- updateButton(button)
-        end
-    end)
-    hooksecurefunc('ActionButton_HideGrid', function(button)
-        if button.DFMixin then
-            -- print('ActionButton_HideGrid', button:GetName())
-            -- updateButton(button)
-        end
-    end)
-
-    hooksecurefunc('ActionButton_Update', function(button)
-        print('ActionButton_Update', button:GetName(), button:GetAttribute("statehidden"),
-              button:GetAttribute("showgrid"))
-        -- button:Show()
-    end) ]]
 end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)

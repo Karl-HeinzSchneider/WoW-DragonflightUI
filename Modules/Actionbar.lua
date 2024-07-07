@@ -1492,6 +1492,7 @@ function Module:SetupActionbarFrames()
 
     Module.bar1:StyleButtons()
     Module.bar1:HookQuickbindMode()
+    Module.bar1:HookGrid()
     Module.bar2:StyleButtons()
     Module.bar2:HookQuickbindMode()
     Module.bar3:StyleButtons()
