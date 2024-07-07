@@ -425,6 +425,79 @@ function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
     end
 end
 
+function DragonflightUIMixin:ChangeDressupFrame()
+    frame = DressUpFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            if layer == 'ARTWORK' then child:Hide() end
+        end
+    end
+
+    frame:SetSize(330, 447)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+
+    DragonflightUIMixin:UIPanelCloseButton(DressUpFrameCloseButton)
+    DressUpFrameCloseButton:SetPoint('TOPRIGHT', DressUpFrame, 'TOPRIGHT', 1, 0)
+
+    DressUpFrameCancelButton:SetPoint('BOTTOMRIGHT', DressUpFrame, 'BOTTOMRIGHT', -7, 14)
+
+    DressUpFrameTitleText:ClearAllPoints()
+    DressUpFrameTitleText:SetPoint('TOP', DressUpFrame, 'TOP', 0, -5)
+    DressUpFrameTitleText:SetPoint('LEFT', DressUpFrame, 'LEFT', 60, 0)
+    DressUpFrameTitleText:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -60, 0)
+
+    DressUpModelFrame:ClearAllPoints()
+    DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 7, -75)
+
+    DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 7, -75)
+
+    do
+        local port = DressUpFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    do
+
+        local bg = frame.Bg
+        -- bg:Hide()
+        -- bg:SetTexture(base .. 'professions')
+        -- bg:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
+
+        --[[   local newBG = frame:CreateTexture('DragonflightUIRecipeListBG')
+        newBG:SetTexture(base .. 'professions')
+        newBG:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
+        -- newBG:SetSize(268, 572)
+        newBG:ClearAllPoints()
+        newBG:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
+        newBG:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 0, 0) ]]
+    end
+
+    -- default -16 
+    ShowUIPanel(frame)
+    DressUpFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    DressUpFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    HideUIPanel(frame)
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 
