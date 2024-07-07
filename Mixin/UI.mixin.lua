@@ -1,3 +1,5 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
 DragonflightUIMixin = {}
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
@@ -1042,6 +1044,23 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 end
             end
         end
+    elseif name == 'FriendsFrame' then
+        -- DFFirstOffsetX
+
+        if DF.Era then
+            --
+            for i = 1, 5 do
+                --
+                local tab = _G[name .. 'Tab' .. i]
+                tab.DFFirstOffsetX = 4
+                tab.DFTabWidth = 62.8
+
+                if i == 5 then
+                    local tabHigh = _G[name .. 'Tab' .. i .. 'HighlightTexture']
+                    tabHigh:Hide()
+                end
+            end
+        end
     elseif name == 'MailFrame' then
         --
         local children = {frame:GetRegions()}
@@ -1067,11 +1086,11 @@ end
 
 function DragonflightUIMixin:TabResize(btn)
     -- PanelTemplates_TabResize(btn, 35, nil, 60, 80);
-    btn:SetWidth(78)
+    btn:SetWidth(btn.DFTabWidth or 78)
 
     if btn.DFFirst then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
-        btn:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', 12, 1)
+        btn:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', btn.DFFirstOffsetX or 6, 1)
     elseif btn.DFChangePoint then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
         btn:ClearAllPoints()
