@@ -484,6 +484,16 @@ function DragonflightUIMixin:ChangeDressupFrame()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:ChangeCharacterFrameCata()
+    DragonflightUIMixin:PortraitFrameTemplate(CharacterFrame)
+
+    CharacterFrameBg:SetTexture(base .. 'ui-background-rock')
+    CharacterFrameBg:ClearAllPoints()
+    CharacterFrameBg:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 3, -18)
+    CharacterFrameBg:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0, 3)
+    CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 

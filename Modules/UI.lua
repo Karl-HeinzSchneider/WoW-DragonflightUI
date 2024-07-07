@@ -191,7 +191,7 @@ function Module:ChangeFrames()
     if DF.Cata then
         --
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+        DragonflightUIMixin:ChangeCharacterFrameCata()
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
