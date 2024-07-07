@@ -439,7 +439,7 @@ function DragonflightUIMixin:ChangeDressupFrame()
         end
     end
 
-    frame:SetSize(330, 447)
+    frame:SetSize(354, 447)
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
@@ -455,9 +455,9 @@ function DragonflightUIMixin:ChangeDressupFrame()
     DressUpFrameTitleText:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -60, 0)
 
     DressUpModelFrame:ClearAllPoints()
-    DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 7, -75)
+    DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
 
-    DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 7, -75)
+    DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
 
     do
         local port = DressUpFramePortrait
@@ -475,21 +475,7 @@ function DragonflightUIMixin:ChangeDressupFrame()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
-    do
-
-        local bg = frame.Bg
-        -- bg:Hide()
-        -- bg:SetTexture(base .. 'professions')
-        -- bg:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
-
-        --[[   local newBG = frame:CreateTexture('DragonflightUIRecipeListBG')
-        newBG:SetTexture(base .. 'professions')
-        newBG:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
-        -- newBG:SetSize(268, 572)
-        newBG:ClearAllPoints()
-        newBG:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
-        newBG:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 0, 0) ]]
-    end
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
 
     -- default -16 
     ShowUIPanel(frame)
@@ -581,6 +567,32 @@ function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     frame.Bg:SetFrameLevel(0)
 
     if portrait then frame.PortraitFrame = frame:CreateTexture('PortraitFrame') end
+end
+
+function DragonflightUIMixin:FrameBackgroundSolid(frame, streak)
+    local top = frame.Bg.TopSection
+    top:SetTexture(base .. 'ui-background-rock')
+    top:ClearAllPoints()
+    top:SetPoint('TOPLEFT', frame.Bg, 'TOPLEFT', 0, 0)
+    top:SetPoint('BOTTOMRIGHT', frame.Bg.BottomRight, 'BOTTOMRIGHT', 0, 0)
+    top:SetDrawLayer('BACKGROUND', 2)
+
+    if streak then
+        --[[      <Texture parentKey="TopTileStreak" hidden="false" file="Interface/AddOns/DragonflightUI/Textures/UI/uiframehorizontal">
+        <Size x="256" y="43" />
+        <Anchors>
+            <Anchor point="TOPLEFT" x="6" y="-21" />
+            <Anchor point="TOPRIGHT" x="-2" y="-21" />
+        </Anchors>
+        <TexCoords left="0" right="1" top="0.0078125" bottom="0.34375" />
+    </Texture> ]]
+        local TopTileStreak = frame:CreateTexture()
+        TopTileStreak:SetSize(256, 43)
+        TopTileStreak:SetTexture(base .. 'uiframehorizontal')
+        TopTileStreak:SetTexCoord(0, 1, 0.0078125, 0.34375)
+        TopTileStreak:SetPoint('TOPLEFT', 6, -21)
+        TopTileStreak:SetPoint('TOPRIGHT', -2, -21)
+    end
 end
 
 function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
