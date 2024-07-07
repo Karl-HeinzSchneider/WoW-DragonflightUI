@@ -493,7 +493,7 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     CharacterFrameBg:ClearAllPoints()
     CharacterFrameBg:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 3, -18)
     CharacterFrameBg:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0, 3)
-    CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
+    -- CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
 end
 
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
