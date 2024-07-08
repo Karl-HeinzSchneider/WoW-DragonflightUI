@@ -428,7 +428,7 @@ function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
 end
 
 function DragonflightUIMixin:ChangeDressupFrame()
-    frame = DressUpFrame
+    local frame = DressUpFrame
 
     local regions = {frame:GetRegions()}
     local port
