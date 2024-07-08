@@ -43,6 +43,7 @@ function DragonFlightUIProfessionMixin:OnShow()
         self:AnchorButtons()
         self:AnchorSchematics()
         self:HideDefault()
+        self:SetupFavorite()
 
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
@@ -85,31 +86,6 @@ function DragonFlightUIProfessionMixin:OnShow()
         local linkButton = self.LinkButton
         linkButton:ClearAllPoints()
         linkButton:SetPoint('LEFT', self.NineSlice.Text, 'RIGHT', 5, 0)
-
-        local fav = self.FavoriteButton
-        fav:SetPoint('LEFT', TradeSkillSkillName, 'RIGHT', 4, 1)
-        -- fav:SetPoint('LEFT', self, 'RIGHT', 20, 0)
-
-        fav:GetNormalTexture():SetTexture(base .. 'auctionhouse')
-        -- fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
-        fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
-
-        fav:GetHighlightTexture():SetTexture(base .. 'auctionhouse')
-        fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
-
-        function self.FavoriteButton:SetIsFavorite(isFavorite)
-            if isFavorite then
-                fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
-                fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
-                fav:GetHighlightTexture():SetAlpha(0.2)
-            else
-                fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
-                fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
-                fav:GetHighlightTexture():SetAlpha(0.4)
-            end
-        end
-
-        self.FavoriteButton:SetIsFavorite(false)
     end
 
     self:Refresh(true)
@@ -311,6 +287,59 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
         -- TradeSkillFrameEditBox:Hide()
     end) ]]
     end
+end
+
+function DragonFlightUIProfessionMixin:SetupFavorite()
+    local fav = self.FavoriteButton
+    fav:SetPoint('LEFT', TradeSkillSkillName, 'RIGHT', 4, 1)
+    -- fav:SetPoint('LEFT', self, 'RIGHT', 20, 0)
+
+    fav:GetNormalTexture():SetTexture(base .. 'auctionhouse')
+    -- fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+    fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+    fav:GetHighlightTexture():SetTexture(base .. 'auctionhouse')
+    fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+    function fav:SetIsFavorite(isFavorite)
+        if isFavorite then
+            fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+            fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+            fav:GetHighlightTexture():SetAlpha(0.2)
+        else
+            fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+            fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+            fav:GetHighlightTexture():SetAlpha(0.4)
+        end
+        fav.IsFavorite = isFavorite
+    end
+    fav:SetIsFavorite(false)
+
+    local function SetFavoriteTooltip(button)
+        GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+        GameTooltip_AddHighlightLine(GameTooltip, button:GetChecked() and BATTLE_PET_UNFAVORITE or BATTLE_PET_FAVORITE);
+        GameTooltip:Show();
+    end
+
+    fav:SetScript('OnClick', function(button, buttonName, down)
+        local checked = button:GetChecked();
+        -- C_TradeSkillUI.SetRecipeFavorite(currentRecipeInfo.recipeID, checked);
+        local info = {}
+        frameRef:SetRecipeFavorite(info, checked)
+        button:SetIsFavorite(checked)
+        SetFavoriteTooltip(button)
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+    end)
+
+    fav:SetScript("OnEnter", function(button)
+        SetFavoriteTooltip(button);
+    end);
+
+    fav:SetScript("OnLeave", GameTooltip_Hide);
+end
+
+function DragonFlightUIProfessionMixin:SetRecipeFavorite(info, checked)
+    print('DragonFlightUIProfessionMixin:SetRecipeFavorite(info,checked)', info, checked)
 end
 
 function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
