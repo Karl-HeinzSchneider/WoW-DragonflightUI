@@ -365,6 +365,9 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
     reagentLabel:SetParent(frame)
     -- reagentLabel:SetPoint('TOPLEFT', TradeSkillDescription, 'BOTTOMLEFT', 0, -20)
 
+    local cooldown = TradeSkillSkillCooldown
+    cooldown:SetParent(frame)
+
     for i = 1, MAX_TRADE_SKILL_REAGENTS do
         --
         local reagent = _G['TradeSkillReagent' .. i]
