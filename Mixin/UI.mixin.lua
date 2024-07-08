@@ -494,6 +494,14 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     CharacterFrameBg:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 3, -18)
     CharacterFrameBg:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0, 3)
     -- CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
+
+    do
+        -- <Anchor point="BOTTOMLEFT" x="130" y="16"/>
+        local main = _G['CharacterMainHandSlot']
+        main:ClearAllPoints()
+        local x = (328 / 2) - 1.5 * main:GetWidth() - 5
+        main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', x, 16)
+    end
 end
 
 function DragonflightUIMixin:ChangeTradeFrame()
