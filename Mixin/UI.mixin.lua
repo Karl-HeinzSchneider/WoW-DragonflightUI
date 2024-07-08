@@ -504,6 +504,110 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     end
 end
 
+function DragonflightUIMixin:ChangeGossipFrame()
+    local frame = GossipFrame
+    local greeting = frame.GreetingPanel
+
+    local regions = {greeting:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            -- print('child:', 'Texture', child:GetTexture(), child:GetWidth(), child:GetHeight())
+            local tex = child:GetTexture()
+
+            local layer = child:GetDrawLayer()
+
+            if tex == 136785 then
+                -- bottom left
+                child:Hide()
+
+            elseif tex == 136791 then
+                -- bottom left corner
+                child:Hide()
+            elseif tex == 136792 then
+                -- bottom right corner
+                child:Hide()
+            elseif tex == 136793 then
+                --
+                child:Hide()
+            elseif tex == 136794 then
+                --
+                child:Hide()
+            else
+                -- child:Hide()
+            end
+        end
+    end
+
+    frame:SetSize(338, 496)
+    greeting:SetSize(338, 496)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local header = frame.TitleContainer
+    header:ClearAllPoints()
+    header:SetPoint('TOP', GossipFrame, 'TOP', 0, -5)
+    header:SetPoint('LEFT', GossipFrame, 'LEFT', 60, 0)
+    header:SetPoint('RIGHT', GossipFrame, 'RIGHT', -60, 0)
+
+    local closeButton = frame.CloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:SetPoint('TOPRIGHT', GossipFrame, 'TOPRIGHT', 1, 0)
+
+    local gbButton = greeting.GoodbyeButton
+    gbButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4 + 2)
+
+    do
+        local scroll = greeting.ScrollBox
+        scroll:SetSize(300, 403)
+        scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
+
+        local bar = greeting.ScrollBar
+        bar:SetPoint('TOPLEFT', scroll, 'TOPRIGHT', 6 - 5, -3)
+        bar:SetPoint('BOTTOMLEFT', scroll, 'BOTTOMRIGHT', 6 - 5, 3)
+    end
+
+    do
+        local tex = base .. 'questbackgroundparchment'
+        local bg = frame:CreateTexture('DFQuestBackground')
+        bg:SetTexture(tex)
+        bg:SetTexCoord(0.0009765625, 0.29296875, 0.0009765625, 0.3984375)
+        bg:SetSize(299, 407)
+        bg:SetDrawLayer('BACKGROUND', 0)
+        bg:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 7, -62)
+    end
+
+    do
+        local port = GossipFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    -- default -16 
+    ShowUIPanel(frame)
+    frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    HideUIPanel(frame)
+end
+
 function DragonflightUIMixin:ChangeTradeFrame()
     local frame = TradeFrame
     DragonflightUIMixin:PortraitFrameTemplate(frame)
