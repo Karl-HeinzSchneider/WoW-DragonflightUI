@@ -200,6 +200,7 @@ function Module:ChangeFrames()
         DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
 
         Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
