@@ -219,6 +219,11 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
         end)
 
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
+
     elseif DF.Wrath then
         --
     elseif DF.Era then
