@@ -85,6 +85,31 @@ function DragonFlightUIProfessionMixin:OnShow()
         local linkButton = self.LinkButton
         linkButton:ClearAllPoints()
         linkButton:SetPoint('LEFT', self.NineSlice.Text, 'RIGHT', 5, 0)
+
+        local fav = self.FavoriteButton
+        fav:SetPoint('LEFT', TradeSkillSkillName, 'RIGHT', 4, 1)
+        -- fav:SetPoint('LEFT', self, 'RIGHT', 20, 0)
+
+        fav:GetNormalTexture():SetTexture(base .. 'auctionhouse')
+        -- fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+        fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+        fav:GetHighlightTexture():SetTexture(base .. 'auctionhouse')
+        fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+        function self.FavoriteButton:SetIsFavorite(isFavorite)
+            if isFavorite then
+                fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+                fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+                fav:GetHighlightTexture():SetAlpha(0.2)
+            else
+                fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+                fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+                fav:GetHighlightTexture():SetAlpha(0.4)
+            end
+        end
+
+        self.FavoriteButton:SetIsFavorite(false)
     end
 
     self:Refresh(true)
@@ -439,6 +464,9 @@ function DragonFlightUIProfessionMixin:UpdateRecipeName()
 
     local name = TradeSkillSkillName
     name:SetTextColor(r, g, b)
+
+    local stringWidth = name:GetStringWidth()
+    name:SetWidth(stringWidth)
 end
 
 function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
