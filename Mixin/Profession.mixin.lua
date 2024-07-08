@@ -3,6 +3,7 @@ local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 --
 local frameRef = nil
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 function DragonFlightUIProfessionMixin:OnLoad()
     self:SetupFrameStyle()
@@ -33,6 +34,7 @@ function DragonFlightUIProfessionMixin:OnLoad()
     end);
 
     frameRef = self
+    self:SetupFavoriteDatabase()
 end
 
 function DragonFlightUIProfessionMixin:OnShow()
@@ -43,6 +45,7 @@ function DragonFlightUIProfessionMixin:OnShow()
         self:AnchorButtons()
         self:AnchorSchematics()
         self:HideDefault()
+        self:SetupFavorite()
 
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
@@ -288,6 +291,98 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     end
 end
 
+function DragonFlightUIProfessionMixin:SetupFavorite()
+    local fav = self.FavoriteButton
+    fav:SetPoint('LEFT', TradeSkillSkillName, 'RIGHT', 4, 1)
+    -- fav:SetPoint('LEFT', self, 'RIGHT', 20, 0)
+
+    fav:GetNormalTexture():SetTexture(base .. 'auctionhouse')
+    -- fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+    fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+    fav:GetHighlightTexture():SetTexture(base .. 'auctionhouse')
+    fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+    function fav:SetIsFavorite(isFavorite)
+        if isFavorite then
+            fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+            fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+            fav:GetHighlightTexture():SetAlpha(0.2)
+        else
+            fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+            fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+            fav:GetHighlightTexture():SetAlpha(0.4)
+        end
+        fav.IsFavorite = isFavorite
+        fav:SetChecked(isFavorite)
+    end
+    -- fav:SetIsFavorite(false)  
+
+    function fav:UpdateFavoriteState()
+        local tradeSkillIndex = GetTradeSkillSelectionIndex();
+        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(tradeSkillIndex)
+        fav:SetIsFavorite(frameRef:IsRecipeFavorite(skillName))
+    end
+    fav:UpdateFavoriteState()
+
+    local function SetFavoriteTooltip(button)
+        GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+        GameTooltip_AddHighlightLine(GameTooltip, button:GetChecked() and BATTLE_PET_UNFAVORITE or BATTLE_PET_FAVORITE);
+        GameTooltip:Show();
+    end
+
+    fav:SetScript('OnClick', function(button, buttonName, down)
+        local checked = button:GetChecked();
+        -- C_TradeSkillUI.SetRecipeFavorite(currentRecipeInfo.recipeID, checked);
+        do
+            local tradeSkillIndex = GetTradeSkillSelectionIndex();
+            local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(
+                                                                                             tradeSkillIndex)
+            local info = skillName
+
+            frameRef:SetRecipeFavorite(info, checked)
+            frameRef:Refresh(false)
+        end
+        button:SetIsFavorite(checked)
+        SetFavoriteTooltip(button)
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+    end)
+
+    fav:SetScript("OnEnter", function(button)
+        SetFavoriteTooltip(button);
+    end);
+
+    fav:SetScript("OnLeave", GameTooltip_Hide);
+end
+
+function DragonFlightUIProfessionMixin:SetupFavoriteDatabase()
+    -- print('DragonFlightUIProfessionMixin:SetupFavoriteDatabase()')
+    self.db = DF.db:RegisterNamespace('RecipeFavorite', {profile = {favorite = {}}})
+
+    -- DevTools_Dump(self.db.profile)
+end
+
+function DragonFlightUIProfessionMixin:SetRecipeFavorite(info, checked)
+    -- print('DragonFlightUIProfessionMixin:SetRecipeFavorite(info,checked)', info, checked)
+    local db = frameRef.db.profile
+
+    if checked then
+        db.favorite[info] = true
+    else
+        db.favorite[info] = nil
+    end
+end
+
+function DragonFlightUIProfessionMixin:IsRecipeFavorite(info)
+    local db = frameRef.db.profile
+
+    if db.favorite[info] then
+        return true
+    else
+        return false
+    end
+end
+
 function DragonFlightUIProfessionMixin:GetIconOverlayTexCoord(quality)
     if quality == 0 then
         -- poor
@@ -439,6 +534,12 @@ function DragonFlightUIProfessionMixin:UpdateRecipeName()
 
     local name = TradeSkillSkillName
     name:SetTextColor(r, g, b)
+
+    local stringWidth = name:GetStringWidth()
+    name:SetWidth(stringWidth)
+
+    local fav = frameRef.FavoriteButton
+    fav:UpdateFavoriteState()
 end
 
 function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
@@ -969,6 +1070,7 @@ function DFProfessionsRecipeListMixin:Refresh(force)
     self:UpdateRecipeList()
 
     self:SelectRecipe(index, true)
+    frameRef.FavoriteButton:UpdateFavoriteState()
 
     if (not changed) and (not force) then
         -- print('set old scroll')
@@ -1000,6 +1102,11 @@ function DFProfessionsRecipeListMixin:UpdateRecipeList()
 
     local headerID = 0
 
+    do
+        local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
+        dataProvider:Insert(data)
+    end
+
     for i = 1, numSkills do
         local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
 
@@ -1009,8 +1116,11 @@ function DFProfessionsRecipeListMixin:UpdateRecipeList()
             headerID = i
         else
             -- print('--', skillName)
+            local isFavorite = DragonFlightUIProfessionMixin:IsRecipeFavorite(skillName)
+
             local data = {
                 id = i,
+                isFavorite = isFavorite,
                 recipeInfo = {
                     name = skillName,
                     skillType = skillType,
@@ -1039,7 +1149,11 @@ function DFProfessionsRecipeListMixin:UpdateRecipeList()
                 dataProvider:InsertInParentByPredicate(data, function(node)
                     local nodeData = node:GetData()
 
-                    return nodeData.id == headerID
+                    if data.isFavorite then
+                        return nodeData.id == 0
+                    else
+                        return nodeData.id == headerID
+                    end
                 end)
             end
         end
