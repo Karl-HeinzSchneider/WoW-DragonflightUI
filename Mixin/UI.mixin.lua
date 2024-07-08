@@ -504,6 +504,117 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     end
 end
 
+function DragonflightUIMixin:ChangeQuestFrame()
+    local frame = QuestFrame
+    local detail = QuestFrameDetailPanel
+
+    local regions = {detail:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            -- print('child:', 'Texture', child:GetTexture(), child:GetWidth(), child:GetHeight())
+            local tex = child:GetTexture()
+
+            if tex == 136785 then
+                -- bottom left
+                child:Hide()
+
+            elseif tex == 136791 then
+                -- bottom left corner
+                child:Hide()
+            elseif tex == 136792 then
+                -- bottom right corner
+                child:Hide()
+            elseif tex == 136793 then
+                --
+                child:Hide()
+            elseif tex == 136794 then
+                --
+                child:Hide()
+            else
+                -- child:Hide()
+            end
+        end
+    end
+
+    frame:SetSize(338, 496)
+    detail:SetSize(338, 496)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local header = QuestNpcNameFrame
+    header:ClearAllPoints()
+    header:SetPoint('TOP', QuestFrame, 'TOP', 0, -5)
+    header:SetPoint('LEFT', QuestFrame, 'LEFT', 60, 0)
+    header:SetPoint('RIGHT', QuestFrame, 'RIGHT', -60, 0)
+
+    local closeButton = QuestFrameCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:SetPoint('TOPRIGHT', QuestFrame, 'TOPRIGHT', 1, 0)
+
+    local decline = QuestFrameDeclineButton
+    decline:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+
+    local accept = QuestFrameAcceptButton
+    accept:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 6, 4)
+
+    do
+        local scroll = QuestDetailScrollFrame
+        scroll:SetSize(300, 403)
+        scroll:SetPoint('TOPLEFT', detail, 'TOPLEFT', 8, -65)
+
+        local deltaX = 4
+        local deltaY = 20
+        local bar = QuestDetailScrollFrameScrollBar
+        bar:SetPoint('TOPLEFT', scroll, 'TOPRIGHT', 6 - 5 + deltaX, -3 - deltaY)
+        bar:SetPoint('BOTTOMLEFT', scroll, 'BOTTOMRIGHT', 6 - 5 + deltaX, 3 + deltaY)
+
+        QuestDetailScrollFrameTop:Hide()
+        QuestDetailScrollFrameMiddle:Hide()
+        QuestDetailScrollFrameBottom:Hide()
+    end
+
+    do
+        local tex = base .. 'questbackgroundparchment'
+        local bg = frame:CreateTexture('DFQuestBackground')
+        bg:SetTexture(tex)
+        bg:SetTexCoord(0.0009765625, 0.29296875, 0.0009765625, 0.3984375)
+        bg:SetSize(299, 407)
+        bg:SetDrawLayer('BACKGROUND', 0)
+        bg:SetPoint('TOPLEFT', detail, 'TOPLEFT', 7, -62)
+    end
+
+    do
+        local port = QuestFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    -- default -16 
+    ShowUIPanel(frame)
+    frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    HideUIPanel(frame)
+end
+
 function DragonflightUIMixin:ChangeGossipFrame()
     local frame = GossipFrame
     local greeting = frame.GreetingPanel
@@ -561,7 +672,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
     closeButton:SetPoint('TOPRIGHT', GossipFrame, 'TOPRIGHT', 1, 0)
 
     local gbButton = greeting.GoodbyeButton
-    gbButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4 + 2)
+    gbButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
 
     do
         local scroll = greeting.ScrollBox
