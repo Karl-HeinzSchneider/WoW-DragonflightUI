@@ -496,6 +496,54 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     -- CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
 end
 
+function DragonflightUIMixin:ChangeTradeFrame()
+    local frame = TradeFrame
+    DragonflightUIMixin:PortraitFrameTemplate(frame)
+
+    TradeFramePlayerPortrait:SetDrawLayer('OVERLAY', 6)
+
+    do
+        --
+        local port = TradeFrameRecipientPortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPRIGHT', -180, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        local tex = base .. 'uiframemetal2x'
+
+        local pp = _G['TradeRecipientPortraitFrame']
+        pp:SetTexture(tex)
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    do
+        local tex = base .. 'UIFrameMetalVertical2x'
+
+        local left = _G['TradeRecipientLeftBorder']
+        left:SetTexture(tex)
+        left:SetTexCoord(0.00195312, 0.294922, 0, 1)
+        left:SetSize(75, 16)
+        left:SetPoint('TOPLEFT', _G['TradeRecipientPortraitFrame'], 'BOTTOMLEFT', 8, 0 + 20)
+        left:SetPoint('BOTTOMLEFT', _G['TradeRecipientBotLeftCorner'], 'TOPLEFT', 0, 0 - 20)
+
+    end
+
+    do
+        local tex = base .. 'uiframemetal2x'
+
+        local bottom = _G['TradeRecipientBotLeftCorner']
+        bottom:SetTexture(tex)
+        bottom:SetTexCoord(0.298828, 0.423828, 0.298828, 0.423828)
+        bottom:SetSize(32, 32)
+        bottom:SetPoint('BOTTOMLEFT', TradeFrame, 'BOTTOMRIGHT', -178 - 5, -3)
+    end
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 
