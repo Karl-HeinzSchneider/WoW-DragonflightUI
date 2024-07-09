@@ -572,6 +572,39 @@ function DragonflightUIMixin:ChangeTaxiFrame()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:ImproveTaxiFrame()
+    do
+        local minmax =
+            CreateFrame('Button', 'DFTaxiFrameMinMaxButton', TaxiFrame, 'MaximizeMinimizeButtonFrameTemplate')
+        minmax:SetSize(32, 32)
+        minmax:SetPoint('RIGHT', TaxiCloseButton, 'LEFT', 0, 0)
+        DragonflightUIMixin:MaximizeMinimizeButtonFrameTemplate(minmax)
+        minmax:Hide()
+    end
+
+    local scale = 1.3
+    local padding = 8
+    local deltaY = 62
+
+    -- <AbsDimension x="316" y="352"/>
+    TAXI_MAP_WIDTH = 316 * scale
+    TAXI_MAP_HEIGHT = 352 * scale
+    TaxiMap:SetWidth(TAXI_MAP_WIDTH)
+    TaxiMap:SetHeight(TAXI_MAP_HEIGHT)
+    TaxiRouteMap:SetWidth(TAXI_MAP_WIDTH)
+    TaxiRouteMap:SetHeight(TAXI_MAP_HEIGHT)
+
+    -- frame:SetSize(332, 424)
+    -- TaxiFrame:SetSize(332 * scale, 424 * scale)
+    TaxiFrame:SetWidth(TAXI_MAP_WIDTH + 2 * padding)
+    TaxiFrame:SetHeight(TAXI_MAP_HEIGHT + deltaY + padding)
+
+    TaxiFrame:HookScript('OnShow', function()
+        TaxiFrame:SetAttribute("UIPanelLayout-width", TaxiFrame:GetWidth());
+        UpdateUIPanelPositions(TaxiFrame)
+    end)
+end
+
 function DragonflightUIMixin:ChangeQuestFrame()
     local frame = QuestFrame
     local detail = QuestFrameDetailPanel
