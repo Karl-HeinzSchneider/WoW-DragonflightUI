@@ -504,6 +504,74 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     end
 end
 
+function DragonflightUIMixin:ChangeTaxiFrame()
+    local frame = TaxiFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        if child:GetObjectType() == 'Texture' then
+            --
+            child:Hide()
+        end
+    end
+    -- <AbsDimension x="316" y="352"/>
+
+    frame:SetSize(332, 424)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local header = TaxiMerchant
+    header:ClearAllPoints()
+    header:SetPoint('TOP', frame, 'TOP', 0, -5)
+    header:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    header:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+
+    local closeButton = TaxiCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    do
+        local map = TaxiRouteMap
+        map:ClearAllPoints()
+        map:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -62)
+
+        local taxi = TaxiMap
+        taxi:Show()
+        taxi:ClearAllPoints()
+        taxi:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -62)
+    end
+
+    do
+        local port = TaxiPortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    -- default -16 
+    ShowUIPanel(frame)
+    frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    HideUIPanel(frame)
+end
+
 function DragonflightUIMixin:ChangeQuestFrame()
     local frame = QuestFrame
     local detail = QuestFrameDetailPanel
@@ -604,7 +672,6 @@ function DragonflightUIMixin:ChangeQuestFrame()
         local scroll = QuestRewardScrollFrame
         scroll:SetSize(300, 403)
         scroll:SetPoint('TOPLEFT', reward, 'TOPLEFT', 8, -65)
-
     end
 
     do
