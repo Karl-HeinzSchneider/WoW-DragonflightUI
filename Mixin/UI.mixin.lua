@@ -507,6 +507,7 @@ end
 function DragonflightUIMixin:ChangeQuestFrame()
     local frame = QuestFrame
     local detail = QuestFrameDetailPanel
+    local reward = QuestFrameRewardPanel
 
     local regions = {detail:GetRegions()}
     local port
@@ -541,8 +542,21 @@ function DragonflightUIMixin:ChangeQuestFrame()
         end
     end
 
+    local regionsReward = {reward:GetRegions()}
+
+    for k, child in ipairs(regionsReward) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            -- print('child:', 'Texture', child:GetTexture(), child:GetWidth(), child:GetHeight())         
+            child:Hide()
+        end
+    end
+
     frame:SetSize(338, 496)
     detail:SetSize(338, 496)
+    reward:SetSize(338, 496)
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
@@ -561,8 +575,14 @@ function DragonflightUIMixin:ChangeQuestFrame()
     local decline = QuestFrameDeclineButton
     decline:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
 
+    local cancel = QuestFrameCancelButton
+    cancel:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+
     local accept = QuestFrameAcceptButton
     accept:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 6, 4)
+
+    local complete = QuestFrameCompleteQuestButton
+    complete:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 6, 4)
 
     do
         local scroll = QuestDetailScrollFrame
@@ -578,6 +598,13 @@ function DragonflightUIMixin:ChangeQuestFrame()
         QuestDetailScrollFrameTop:Hide()
         QuestDetailScrollFrameMiddle:Hide()
         QuestDetailScrollFrameBottom:Hide()
+    end
+
+    do
+        local scroll = QuestRewardScrollFrame
+        scroll:SetSize(300, 403)
+        scroll:SetPoint('TOPLEFT', reward, 'TOPLEFT', 8, -65)
+
     end
 
     do
