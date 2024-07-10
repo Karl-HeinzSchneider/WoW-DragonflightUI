@@ -472,9 +472,20 @@ function DragonflightUIMixin:ChangeTrainerFrame()
     trainButton:ClearAllPoints()
     trainButton:SetPoint('RIGHT', closeButton, 'LEFT', 0, 0)
 
-    local money = ClassTrainerMoneyFrame
-    money:ClearAllPoints()
-    money:SetPoint('RIGHT', trainButton, 'LEFT', 0, 0)
+    do
+        local newMoney = CreateFrame('FRAME', 'DFTrainerMoneyFrame', frame)
+        newMoney:SetSize(178 - 2 * 8, 17)
+        newMoney:SetPoint('RIGHT', ClassTrainerFrameFilterDropDown, 'LEFT', 0, 0)
+
+        local border = CreateFrame('FRAME', 'DFMoneyBorder', newMoney, 'ContainerMoneyFrameBorderTemplate')
+        border:SetParent(newMoney)
+        border:SetAllPoints()
+
+        local money = ClassTrainerMoneyFrame
+        money:ClearAllPoints()
+        -- money:SetPoint('RIGHT', trainButton, 'LEFT', 0, 0)
+        money:SetPoint('RIGHT', newMoney, 'RIGHT', 0, 0)
+    end
 
     do
         local port = ClassTrainerFramePortrait
