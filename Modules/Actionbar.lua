@@ -36,7 +36,9 @@ local defaults = {
             hideArt = false,
             hideScrolling = false,
             gryphons = 'DEFAULT',
-            range = true
+            range = true,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar2 = {
             scale = 1,
@@ -51,7 +53,9 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = true,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar3 = {
             scale = 1,
@@ -66,7 +70,9 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = true,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar4 = {
             scale = 1,
@@ -81,7 +87,9 @@ local defaults = {
             rows = 3,
             buttons = 12,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = true,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar5 = {
             scale = 1,
@@ -96,7 +104,9 @@ local defaults = {
             rows = 3,
             buttons = 12,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = true,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar6 = {
             scale = 1,
@@ -112,7 +122,9 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
-            activate = false
+            activate = false,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar7 = {
             scale = 1,
@@ -128,7 +140,9 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
-            activate = false
+            activate = false,
+            hideMacro = false,
+            hideKeybind = false
         },
         bar8 = {
             scale = 1,
@@ -144,7 +158,9 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
-            activate = false
+            activate = false,
+            hideMacro = false,
+            hideKeybind = false
         },
         pet = {
             scale = 1,
@@ -159,7 +175,9 @@ local defaults = {
             rows = 1,
             buttons = 10,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = true,
+            hideMacro = false,
+            hideKeybind = false
         },
         xp = {
             scale = 1,
@@ -596,6 +614,18 @@ local function GetBarOption(n)
                 name = 'Always show Actionbar',
                 desc = '' .. getDefaultStr('alwaysShow', barname),
                 order = 12
+            },
+            hideMacro = {
+                type = 'toggle',
+                name = 'Hide Macro Text',
+                desc = '' .. getDefaultStr('hideMacro', barname),
+                order = 16
+            },
+            hideKeybind = {
+                type = 'toggle',
+                name = 'Hide Keybind Text',
+                desc = '' .. getDefaultStr('hideKeybind', barname),
+                order = 17
             }
         }
     }
@@ -799,6 +829,18 @@ local petOptions = {
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', 'pet'),
             order = 12
+        },
+        hideMacro = {
+            type = 'toggle',
+            name = 'Hide Macro Text',
+            desc = '' .. getDefaultStr('hideMacro', 'pet'),
+            order = 16
+        },
+        hideKeybind = {
+            type = 'toggle',
+            name = 'Hide Keybind Text',
+            desc = '' .. getDefaultStr('hideKeybind', 'pet'),
+            order = 17
         }
     }
 }

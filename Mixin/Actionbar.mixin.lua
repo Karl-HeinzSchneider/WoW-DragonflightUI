@@ -167,6 +167,22 @@ function DragonflightUIActionbarMixin:Update()
                 if btn.DFDeco then btn.DFDeco:Show() end
             end
 
+            local name = btn:GetName()
+            local macroText = _G[name .. 'Name']
+            local keybindText = _G[name .. 'HotKey']
+
+            if state.hideMacro then
+                macroText:Hide()
+            else
+                macroText:Show()
+            end
+
+            if state.hideKeybind then
+                keybindText:Hide()
+            else
+                keybindText:Show()
+            end
+
             index = index + 1
         end
     end
