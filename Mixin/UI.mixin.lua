@@ -566,10 +566,10 @@ function DragonflightUIMixin:ChangeTaxiFrame()
     end
 
     -- default -16 
-    ShowUIPanel(frame)
-    frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
-    frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
-    HideUIPanel(frame)
+    -- ShowUIPanel(frame)
+    -- frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    -- frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    -- HideUIPanel(frame)
 end
 
 function DragonflightUIMixin:ImproveTaxiFrame()
@@ -601,6 +601,8 @@ function DragonflightUIMixin:ImproveTaxiFrame()
 
     TaxiFrame:HookScript('OnShow', function()
         TaxiFrame:SetAttribute("UIPanelLayout-width", TaxiFrame:GetWidth());
+        TaxiFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+        TaxiFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
         UpdateUIPanelPositions(TaxiFrame)
     end)
 end
