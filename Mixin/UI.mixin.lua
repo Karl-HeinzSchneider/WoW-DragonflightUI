@@ -635,6 +635,77 @@ function DragonflightUIMixin:ChangeTrainerFrame()
         end)
     end
 
+    do
+        local trainAll = CreateFrame('BUTTON', 'DragonflightUITrainerFrameTrainAllButton', frame,
+                                     'UIPanelButtonTemplate')
+        trainAll:SetSize(80, 22)
+        trainAll:SetText('Train All')
+
+        trainAll:SetPoint('RIGHT', trainButton, 'LEFT', -82, 0)
+
+        trainAll:SetScript('OnEnter', function(btn)
+            local count = 0
+            local cost = 0
+            local numTrainerSkills = GetNumTrainerServices()
+
+            for i = 1, numTrainerSkills do
+                --
+                local name, rank, category, expanded = GetTrainerServiceInfo(i);
+                if category and category == 'available' then
+                    --
+                    local moneyCost, talentCost, professionCost = GetTrainerServiceCost(i);
+                    count = count + 1
+                    cost = cost + moneyCost
+                end
+            end
+
+            if count > 0 then
+                local coinString = C_CurrencyInfo.GetCoinTextureString(cost)
+
+                GameTooltip:SetOwner(btn, 'ANCHOR_TOP', 0, 4)
+                GameTooltip:ClearLines()
+
+                GameTooltip:AddLine('Train ' .. count .. ' skill(s) for ' .. coinString)
+                GameTooltip:Show()
+            end
+        end)
+
+        trainAll:SetScript('OnClick', function(btn)
+            --
+            local num = GetNumTrainerServices()
+            for i = 1, num do
+                local name, rank, category, expanded = GetTrainerServiceInfo(i);
+                if category and category == 'available' then
+                    --
+                    BuyTrainerService(i)
+                end
+            end
+        end)
+
+        local skillsToBuy = function()
+            local num = GetNumTrainerServices()
+
+            for i = 1, num do
+                local name, rank, category, expanded = GetTrainerServiceInfo(i);
+                if category and category == 'available' then
+                    --
+                    return true
+                end
+            end
+
+            return false
+        end
+
+        hooksecurefunc('ClassTrainerFrame_Update', function()
+            local shouldShow = skillsToBuy()
+
+            trainAll:SetEnabled(shouldShow)
+
+            if trainAll:IsMouseOver() and shouldShow then trainAll:OnEnter(trainAll) end
+        end)
+
+    end
+
     ClassTrainerFrame:HookScript('OnShow', function()
         ClassTrainerFrame:SetAttribute("UIPanelLayout-width", ClassTrainerFrame:GetWidth());
         ClassTrainerFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
