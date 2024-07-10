@@ -563,6 +563,16 @@ function DragonflightUIMixin:ChangeTrainerFrame()
         expand:ClearAllPoints()
         expand:SetPoint('TOPLEFT', frame, 'TOPLEFT', padding, -70)
 
+        local expandRegions = {expand:GetRegions()}
+
+        -- ClassTrainerExpandTabLeft:SetAlpha(0)
+        -- ClassTrainerExpandTabMiddle:SetAlpha(0)
+
+        for k, child in ipairs(expandRegions) do
+            --     
+            if child:GetObjectType() == 'Texture' then child:Hide() end
+        end
+
         local skill1 = ClassTrainerSkill1
         skill1:ClearAllPoints()
         skill1:SetPoint('TOPLEFT', frame, 'TOPLEFT', padding + 7, -100)
@@ -580,6 +590,15 @@ function DragonflightUIMixin:ChangeTrainerFrame()
         scroll:ClearAllPoints()
         scroll:SetPoint("TOPLEFT", frame, "TOPLEFT", padding + 7, -70)
         scroll:SetSize(295, scrollH)
+
+        local scrollRegions = {scroll:GetRegions()}
+
+        for k, child in ipairs(scrollRegions) do
+            --     
+            if child:GetObjectType() == 'Texture' then child:Hide() end
+        end
+        ClassTrainerListScrollFrameScrollBar:SetPoint('TOPLEFT', scroll, 'TOPRIGHT', 6 + 4, -16)
+        ClassTrainerListScrollFrameScrollBar:SetPoint('BOTTOMLEFT', scroll, 'BOTTOMRIGHT', 6 + 4, 16 - 30)
 
         for i = 2, CLASS_TRAINER_SKILLS_DISPLAYED do
             _G["ClassTrainerSkill" .. i]:ClearAllPoints()
