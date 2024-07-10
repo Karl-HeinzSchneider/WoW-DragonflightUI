@@ -605,6 +605,28 @@ function DragonflightUIMixin:ImproveTaxiFrame()
     end)
 end
 
+function DragonflightUIMixin:ChangeLootFrame()
+    local frame = LootFrame
+    DragonflightUIMixin:PortraitFrameTemplate(frame)
+
+    local regions = {frame:GetRegions()}
+
+    for k, child in ipairs(regions) do
+        if child:GetObjectType() == 'FontString' and child:GetText() == ITEMS then
+            --             
+            child:Hide()
+        end
+    end
+
+    local header = frame:CreateFontString('DFLootFrameTitle', 'OVERLAY', 'GameFontNormal')
+    header:SetText(ITEMS)
+    header:SetPoint('TOP', frame, 'TOP', 12, -5)
+    frame.DFHeader = header
+
+    local topleft = _G[frame:GetName() .. 'TopLeftCornerDF']
+    topleft:SetDrawLayer('OVERLAY', -1)
+end
+
 function DragonflightUIMixin:ChangeQuestFrame()
     local frame = QuestFrame
     local detail = QuestFrameDetailPanel
