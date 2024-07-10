@@ -428,6 +428,15 @@ function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
 end
 
 function DragonflightUIMixin:ChangeTrainerFrame()
+    if IsAddOnLoaded('Leatrix_Plus') then
+        --
+        if ClassTrainerFrame:GetWidth() > 400 then
+            --
+            DF:Print(
+                "Leatrix_Plus detected with 'Interface -> Enhance trainers' activated - please deactivate or you might encounter bugs.")
+        end
+    end
+
     local frame = ClassTrainerFrame
 
     local regions = {frame:GetRegions()}
