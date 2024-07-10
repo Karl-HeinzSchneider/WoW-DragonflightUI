@@ -427,6 +427,302 @@ function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
     end
 end
 
+function DragonflightUIMixin:ChangeTrainerFrame()
+    if IsAddOnLoaded('Leatrix_Plus') then
+        --
+        if ClassTrainerFrame:GetWidth() > 400 then
+            --
+            DF:Print(
+                "Leatrix_Plus detected with 'Interface -> Enhance trainers' activated - please deactivate or you might encounter bugs.")
+        end
+    end
+
+    local frame = ClassTrainerFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            if layer == 'ARTWORK' then child:Hide() end
+            if layer == 'BORDER' then child:Hide() end
+        end
+    end
+
+    local frameW = 4 + 11 + 296 + 32 + 296 + 24 + 4 + 6
+    local frameH = 520 + 16
+    frame:SetSize(frameW, frameH)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    DragonflightUIMixin:UIPanelCloseButton(ClassTrainerFrameCloseButton)
+    ClassTrainerFrameCloseButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    local filterDropdown = ClassTrainerFrameFilterDropDown
+    filterDropdown:SetPoint('TOPRIGHT', ClassTrainerFrameCloseButton, 'BOTTOMRIGHT', 0, 0)
+
+    ClassTrainerNameText:ClearAllPoints()
+    ClassTrainerNameText:SetPoint('TOP', frame, 'TOP', 0, -5)
+    ClassTrainerNameText:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    ClassTrainerNameText:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+    ClassTrainerNameText:SetDrawLayer('OVERLAY', 7)
+
+    ClassTrainerGreetingText:ClearAllPoints()
+    ClassTrainerGreetingText:SetPoint('TOPLEFT', frame, 'TOPLEFT', 62, -32)
+
+    local closeButton = ClassTrainerCancelButton
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -9, 7)
+    closeButton:SetText(CLOSE)
+
+    local trainButton = ClassTrainerTrainButton
+    trainButton:ClearAllPoints()
+    trainButton:SetPoint('RIGHT', closeButton, 'LEFT', 0, 0)
+
+    local icon = ClassTrainerSkillIcon
+    icon:SetPoint('TOPLEFT', ClassTrainerDetailScrollChildFrame, 'TOPLEFT', 12, -4)
+
+    local skillName = ClassTrainerSkillName
+    skillName:SetPoint('TOPLEFT', icon, 'TOPRIGHT', 10, 0)
+
+    do
+        local newMoney = CreateFrame('FRAME', 'DFTrainerMoneyFrame', frame)
+        newMoney:SetSize(178 - 2 * 8, 17)
+        newMoney:SetPoint('RIGHT', ClassTrainerFrameFilterDropDown, 'LEFT', 0, 0)
+
+        local border = CreateFrame('FRAME', 'DFMoneyBorder', newMoney, 'ContainerMoneyFrameBorderTemplate')
+        border:SetParent(newMoney)
+        border:SetAllPoints()
+
+        local money = ClassTrainerMoneyFrame
+        money:ClearAllPoints()
+        -- money:SetPoint('RIGHT', trainButton, 'LEFT', 0, 0)
+        money:SetPoint('RIGHT', newMoney, 'RIGHT', 0, 0)
+    end
+
+    do
+        local port = ClassTrainerFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        frame.PortraitFrame = frame:CreateTexture('DFPortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    do
+        local inset = CreateFrame('Frame', 'DFTrainerInsetLeft', frame, 'InsetFrameTemplate')
+        inset:SetPoint('TOPLEFT', 6, -70 + 6)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 6 + 296 + 32 + 4, 6)
+
+        frame.InsetLeft = inset
+
+        local newBG = inset:CreateTexture('DragonflightUITrainerFrameInsetLeftBG')
+        newBG:SetTexture(base .. 'professions')
+        newBG:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
+        newBG:SetSize(268, 572)
+        newBG:ClearAllPoints()
+        newBG:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        newBG:SetPoint('BOTTOMRIGHT', inset, 'BOTTOMRIGHT', 0, 0)
+        newBG:SetDrawLayer('BACKGROUND', -4)
+
+        local oldBG = _G[inset:GetName() .. 'Bg']
+        oldBG:Hide()
+    end
+
+    do
+        -- ClassTrainerListScrollFrame
+        local inset = CreateFrame('Frame', 'DFTrainerInsetRight', frame, 'InsetFrameTemplate')
+        inset:ClearAllPoints()
+        inset:SetPoint('TOPLEFT', frame.InsetLeft, 'TOPRIGHT', 2, 0)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 32)
+
+        frame.InsetRight = inset
+
+        local newBG = inset:CreateTexture('DragonflightUITrainerFrameInsetRightBG')
+        newBG:SetTexture(base .. 'professionsminimizedview')
+        newBG:SetTexCoord(0.00195312, 0.787109, 0.000976562, 0.576172 - 24 / 589)
+        newBG:SetSize(402, 589)
+        newBG:ClearAllPoints()
+        newBG:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        newBG:SetPoint('BOTTOMRIGHT', inset, 'BOTTOMRIGHT', 0, 0)
+        newBG:SetDrawLayer('BACKGROUND', -4)
+
+        local oldBG = _G[inset:GetName() .. 'Bg']
+        oldBG:Hide()
+    end
+
+    frame.Bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 2)
+
+    do
+        local padding = 4
+
+        local expand = ClassTrainerExpandButtonFrame
+        expand:ClearAllPoints()
+        expand:SetPoint('TOPLEFT', frame, 'TOPLEFT', padding, -70)
+
+        local expandRegions = {expand:GetRegions()}
+
+        -- ClassTrainerExpandTabLeft:SetAlpha(0)
+        -- ClassTrainerExpandTabMiddle:SetAlpha(0)
+
+        for k, child in ipairs(expandRegions) do
+            --     
+            if child:GetObjectType() == 'Texture' then child:Hide() end
+        end
+
+        local skill1 = ClassTrainerSkill1
+        skill1:ClearAllPoints()
+        skill1:SetPoint('TOPLEFT', frame, 'TOPLEFT', padding + 7, -100)
+
+        -- ClassTrainerSkill1:GetSize()  [1]=323.00003051758, [2]=15.99998664856
+
+        local oldTrainerSkillsDisplayed = CLASS_TRAINER_SKILLS_DISPLAYED -- default: 11     
+        local newTrainerSkillsDisplayed = 25
+
+        local deltaY = -1
+        CLASS_TRAINER_SKILL_HEIGHT = 16 - deltaY
+
+        local scroll = ClassTrainerListScrollFrame
+        local scrollH = newTrainerSkillsDisplayed * (16 - deltaY)
+        scroll:ClearAllPoints()
+        scroll:SetPoint("TOPLEFT", frame, "TOPLEFT", padding + 7, -70)
+        scroll:SetSize(295, scrollH)
+
+        local scrollRegions = {scroll:GetRegions()}
+
+        for k, child in ipairs(scrollRegions) do
+            --     
+            if child:GetObjectType() == 'Texture' then child:Hide() end
+        end
+        ClassTrainerListScrollFrameScrollBar:SetPoint('TOPLEFT', scroll, 'TOPRIGHT', 6 + 4, -16)
+        ClassTrainerListScrollFrameScrollBar:SetPoint('BOTTOMLEFT', scroll, 'BOTTOMRIGHT', 6 + 4, 16 - 30)
+
+        for i = 2, CLASS_TRAINER_SKILLS_DISPLAYED do
+            _G["ClassTrainerSkill" .. i]:ClearAllPoints()
+            _G["ClassTrainerSkill" .. i]:SetPoint("TOPLEFT", _G["ClassTrainerSkill" .. (i - 1)], "BOTTOMLEFT", 0, deltaY)
+        end
+
+        CLASS_TRAINER_SKILLS_DISPLAYED = newTrainerSkillsDisplayed -- 25, default: 11
+
+        for i = oldTrainerSkillsDisplayed + 1, newTrainerSkillsDisplayed do
+            local btn = CreateFrame("Button", "ClassTrainerSkill" .. i, frame, "ClassTrainerSkillButtonTemplate")
+            btn:SetID(i)
+            btn:ClearAllPoints()
+            btn:SetPoint("TOPLEFT", _G["ClassTrainerSkill" .. (i - 1)], "BOTTOMLEFT", 0, deltaY)
+            btn:Hide()
+        end
+
+        ------
+        local detail = ClassTrainerDetailScrollFrame
+
+        detail:ClearAllPoints()
+        detail:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 32 + 6, 0)
+        detail:SetSize(296, scrollH)
+
+        hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", function()
+            CLASS_TRAINER_SKILLS_DISPLAYED = newTrainerSkillsDisplayed
+            ClassTrainerListScrollFrame:SetHeight(scrollH)
+            ClassTrainerDetailScrollFrame:SetHeight(scrollH)
+        end)
+
+        hooksecurefunc("ClassTrainer_SetToClassTrainer", function()
+            CLASS_TRAINER_SKILLS_DISPLAYED = newTrainerSkillsDisplayed - 1
+            ClassTrainerListScrollFrame:SetHeight(scrollH)
+            ClassTrainerDetailScrollFrame:SetHeight(scrollH)
+        end)
+    end
+
+    do
+        local trainAll = CreateFrame('BUTTON', 'DragonflightUITrainerFrameTrainAllButton', frame,
+                                     'UIPanelButtonTemplate')
+        trainAll:SetSize(80, 22)
+        trainAll:SetText('Train All')
+
+        trainAll:SetPoint('RIGHT', trainButton, 'LEFT', -82, 0)
+
+        trainAll:SetScript('OnEnter', function(btn)
+            local count = 0
+            local cost = 0
+            local numTrainerSkills = GetNumTrainerServices()
+
+            for i = 1, numTrainerSkills do
+                --
+                local name, rank, category, expanded = GetTrainerServiceInfo(i);
+                if category and category == 'available' then
+                    --
+                    local moneyCost, talentCost, professionCost = GetTrainerServiceCost(i);
+                    count = count + 1
+                    cost = cost + moneyCost
+                end
+            end
+
+            if count > 0 then
+                local coinString = C_CurrencyInfo.GetCoinTextureString(cost)
+
+                GameTooltip:SetOwner(btn, 'ANCHOR_TOP', 0, 4)
+                GameTooltip:ClearLines()
+
+                GameTooltip:AddLine('Train ' .. count .. ' skill(s) for ' .. coinString)
+                GameTooltip:Show()
+            end
+        end)
+
+        trainAll:SetScript('OnClick', function(btn)
+            --
+            local num = GetNumTrainerServices()
+            for i = 1, num do
+                local name, rank, category, expanded = GetTrainerServiceInfo(i);
+                if category and category == 'available' then
+                    --
+                    BuyTrainerService(i)
+                end
+            end
+        end)
+
+        local skillsToBuy = function()
+            local num = GetNumTrainerServices()
+
+            for i = 1, num do
+                local name, rank, category, expanded = GetTrainerServiceInfo(i);
+                if category and category == 'available' then
+                    --
+                    return true
+                end
+            end
+
+            return false
+        end
+
+        hooksecurefunc('ClassTrainerFrame_Update', function()
+            local shouldShow = skillsToBuy()
+
+            trainAll:SetEnabled(shouldShow)
+
+            if trainAll:IsMouseOver() and shouldShow then trainAll:OnEnter(trainAll) end
+        end)
+
+    end
+
+    ClassTrainerFrame:HookScript('OnShow', function()
+        ClassTrainerFrame:SetAttribute("UIPanelLayout-width", ClassTrainerFrame:GetWidth());
+        ClassTrainerFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+        ClassTrainerFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+        UpdateUIPanelPositions(ClassTrainerFrame)
+    end)
+end
+
 function DragonflightUIMixin:ChangeDressupFrame()
     local frame = DressUpFrame
 

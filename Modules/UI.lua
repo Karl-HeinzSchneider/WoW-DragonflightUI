@@ -5,7 +5,9 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, first = {changeBag = true, itemcolor = true, changeTradeskill = true}}}
+local defaults = {
+    profile = {scale = 1, first = {changeBag = true, itemcolor = true, changeTradeskill = true, changeTrainer = true}}
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -51,6 +53,12 @@ local UIOptions = {
             name = 'Change Profession Window',
             desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
             order = 22
+        },
+        changeTrainer = {
+            type = 'toggle',
+            name = 'Change Trainer Window',
+            desc = 'Only on Cata for now' .. getDefaultStr('changeTrainer', 'first'),
+            order = 24
         }
     }
 }
@@ -167,6 +175,15 @@ function Module:ApplySettings()
         elseif not db.changeTradeskill and Module.TradeskillHooked then
             DF:Print(
                 "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
+        end
+
+        if db.changeTrainer and not Module.TrainerHooked then
+            Module.TrainerHooked = true
+            Module:FuncOrWaitframe('Blizzard_TrainerUI', function()
+                DragonflightUIMixin:ChangeTrainerFrame()
+            end)
+        elseif not db.changeTrainer and Module.TrainerHooked then
+            DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
         end
     end
 end
