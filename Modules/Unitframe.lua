@@ -32,7 +32,8 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = -19,
             y = -4,
-            biggerHealthbar = false
+            biggerHealthbar = false,
+            hideRedStatus = false
         },
         target = {
             classcolor = false,
@@ -226,6 +227,13 @@ local optionsPlayer = {
             name = 'Bigger Healthbar',
             desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
             order = 9,
+            new = true
+        },
+        hideRedStatus = {
+            type = 'toggle',
+            name = 'Hide In Combat Red Statusglow',
+            desc = '' .. getDefaultStr('hideRedStatus', 'player'),
+            order = 10,
             new = true
         }
     }
@@ -1841,6 +1849,15 @@ function Module.HookPlayerStatus()
 
             frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
             frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        end
+
+        local db = Module.db.profile.player
+        if db.hideRedStatus and (PlayerFrame.onHateList or PlayerFrame.inCombat) then
+            --
+            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+            PlayerStatusTexture:SetAlpha(0)
+            PlayerStatusTexture:Hide()
         end
     end
 
