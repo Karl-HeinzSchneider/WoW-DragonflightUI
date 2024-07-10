@@ -442,7 +442,7 @@ function DragonflightUIMixin:ChangeTrainerFrame()
         end
     end
 
-    local frameW = 4 + 11 + 296 + 32 + 296 + 24 + 4
+    local frameW = 4 + 11 + 296 + 32 + 296 + 24 + 4 + 6
     local frameH = 520 + 16
     frame:SetSize(frameW, frameH)
 
@@ -466,11 +466,19 @@ function DragonflightUIMixin:ChangeTrainerFrame()
     ClassTrainerGreetingText:SetPoint('TOPLEFT', frame, 'TOPLEFT', 62, -32)
 
     local closeButton = ClassTrainerCancelButton
-    closeButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -9, 7)
+    closeButton:SetText(CLOSE)
 
     local trainButton = ClassTrainerTrainButton
     trainButton:ClearAllPoints()
     trainButton:SetPoint('RIGHT', closeButton, 'LEFT', 0, 0)
+
+    local icon = ClassTrainerSkillIcon
+    icon:SetPoint('TOPLEFT', ClassTrainerDetailScrollChildFrame, 'TOPLEFT', 12, -4)
+
+    local skillName = ClassTrainerSkillName
+    skillName:SetPoint('TOPLEFT', icon, 'TOPRIGHT', 10, 0)
 
     do
         local newMoney = CreateFrame('FRAME', 'DFTrainerMoneyFrame', frame)
@@ -505,6 +513,50 @@ function DragonflightUIMixin:ChangeTrainerFrame()
     end
 
     do
+        local inset = CreateFrame('Frame', 'DFTrainerInsetLeft', frame, 'InsetFrameTemplate')
+        inset:SetPoint('TOPLEFT', 6, -70 + 6)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 6 + 296 + 32 + 4, 6)
+
+        frame.InsetLeft = inset
+
+        local newBG = inset:CreateTexture('DragonflightUITrainerFrameInsetLeftBG')
+        newBG:SetTexture(base .. 'professions')
+        newBG:SetTexCoord(0.000488281, 0.131348, 0.0771484, 0.635742)
+        newBG:SetSize(268, 572)
+        newBG:ClearAllPoints()
+        newBG:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        newBG:SetPoint('BOTTOMRIGHT', inset, 'BOTTOMRIGHT', 0, 0)
+        newBG:SetDrawLayer('BACKGROUND', -4)
+
+        local oldBG = _G[inset:GetName() .. 'Bg']
+        oldBG:Hide()
+    end
+
+    do
+        -- ClassTrainerListScrollFrame
+        local inset = CreateFrame('Frame', 'DFTrainerInsetRight', frame, 'InsetFrameTemplate')
+        inset:ClearAllPoints()
+        inset:SetPoint('TOPLEFT', frame.InsetLeft, 'TOPRIGHT', 2, 0)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 32)
+
+        frame.InsetRight = inset
+
+        local newBG = inset:CreateTexture('DragonflightUITrainerFrameInsetRightBG')
+        newBG:SetTexture(base .. 'professionsminimizedview')
+        newBG:SetTexCoord(0.00195312, 0.787109, 0.000976562, 0.576172 - 24 / 589)
+        newBG:SetSize(402, 589)
+        newBG:ClearAllPoints()
+        newBG:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        newBG:SetPoint('BOTTOMRIGHT', inset, 'BOTTOMRIGHT', 0, 0)
+        newBG:SetDrawLayer('BACKGROUND', -4)
+
+        local oldBG = _G[inset:GetName() .. 'Bg']
+        oldBG:Hide()
+    end
+
+    frame.Bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 2)
+
+    do
         local padding = 4
 
         local expand = ClassTrainerExpandButtonFrame
@@ -521,6 +573,7 @@ function DragonflightUIMixin:ChangeTrainerFrame()
         local newTrainerSkillsDisplayed = 25
 
         local deltaY = -1
+        CLASS_TRAINER_SKILL_HEIGHT = 16 - deltaY
 
         local scroll = ClassTrainerListScrollFrame
         local scrollH = newTrainerSkillsDisplayed * (16 - deltaY)
@@ -547,7 +600,7 @@ function DragonflightUIMixin:ChangeTrainerFrame()
         local detail = ClassTrainerDetailScrollFrame
 
         detail:ClearAllPoints()
-        detail:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 32, 0)
+        detail:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 32 + 6, 0)
         detail:SetSize(296, scrollH)
 
         hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", function()
@@ -561,7 +614,6 @@ function DragonflightUIMixin:ChangeTrainerFrame()
             ClassTrainerListScrollFrame:SetHeight(scrollH)
             ClassTrainerDetailScrollFrame:SetHeight(scrollH)
         end)
-
     end
 
     ClassTrainerFrame:HookScript('OnShow', function()
