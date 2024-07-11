@@ -556,6 +556,13 @@ function Module:ChangeBags()
                 -- searchBox:SetWidth(frame:GetWidth() - 2 * 42)
                 searchBox.AnchorBagRef = frame
                 searchBox:Show()
+
+                local addSlotsButton = _G[frame:GetName() .. 'AddSlotsButton']
+                if addSlotsButton then
+                    --
+                    addSlotsButton:ClearAllPoints()
+                    addSlotsButton:SetPoint('LEFT', _G[frame:GetName() .. 'Name'], 'LEFT', 0, 0)
+                end
             elseif searchBox.AnchorBagRef == frame then
                 --
                 searchBox:ClearAllPoints()
