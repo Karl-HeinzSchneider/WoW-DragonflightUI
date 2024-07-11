@@ -251,6 +251,48 @@ function Module:ChangeFrames()
 
     elseif DF.Wrath then
         --
+        print('WRATHHHHHHH')
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        -- DragonflightUIMixin:ChangeCharacterFrameCata()
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:ChangeTradeFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
+        DragonflightUIMixin:ChangeQuestFrame()
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame']) -- pp missing
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
+
+        -- Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        -- end)
+
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
+
+        -- Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        -- end)
+
+        -- Module:FuncOrWaitframe('Blizzard_Communities', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        -- end)
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
     elseif DF.Era then
         --
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
@@ -548,6 +590,7 @@ end
 
 -- Wrath
 function Module.Wrath()
+    Module:ChangeFrames()
 end
 
 -- Era
