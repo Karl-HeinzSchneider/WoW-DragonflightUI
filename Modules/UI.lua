@@ -291,7 +291,8 @@ function Module:ChangeFrames()
 end
 
 function Module:FuncOrWaitframe(addon, func)
-    if C_AddOns.IsAddOnLoaded(addon) then
+    local checkAddonFunc = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+    if checkAddonFunc(addon) then
         -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
         func()
     else
