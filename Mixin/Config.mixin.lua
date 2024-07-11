@@ -135,7 +135,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Repbar', cat)
         addSubCat('Stancebar', cat)
         addSubCat('Totembar', cat)
-        addSubCat('Bags', cat)
+        addSubCat('Bags', cat, true)
         addSubCat('Micromenu', cat)
     end
 

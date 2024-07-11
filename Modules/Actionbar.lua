@@ -230,7 +230,10 @@ local defaults = {
             y = 26,
             expanded = true,
             hideArrow = false,
-            hidden = false
+            hidden = false,
+            overrideBagAnchor = false,
+            offsetX = 5,
+            offsetY = 95
         },
         micro = {
             scale = 1,
@@ -1308,6 +1311,33 @@ local bagsOptions = {
             name = 'Hidden',
             desc = 'Backpack hidden' .. getDefaultStr('hidden', 'bags'),
             order = 9
+        },
+        overrideBagAnchor = {
+            type = 'toggle',
+            name = 'Override BagAnchor',
+            desc = '' .. getDefaultStr('overrideBagAnchor', 'bags'),
+            order = 15,
+            new = true
+        },
+        offsetX = {
+            type = 'range',
+            name = 'BagAnchor OffsetX',
+            desc = '' .. getDefaultStr('offsetX', 'bags'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 16,
+            new = true
+        },
+        offsetY = {
+            type = 'range',
+            name = 'BagAnchor OffsetY',
+            desc = '' .. getDefaultStr('offsetY', 'bags'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 17,
+            new = true
         }
     }
 }
@@ -1700,6 +1730,7 @@ function Module:RegisterOptionScreens()
         options = bagsOptions,
         default = function()
             setDefaultSubValues('bags')
+            UpdateContainerFrameAnchors()
         end
     })
 
@@ -3487,6 +3518,12 @@ function Module.HookBags()
         local CONTAINER_OFFSET_X_DF = ContainerFrame1.CONTAINER_OFFSET_X_DF or 0
         local CONTAINER_OFFSET_Y_DF = ContainerFrame1.CONTAINER_OFFSET_Y_DF or 92
 
+        local db = Module.db.profile
+        if db.bags.overrideBagAnchor then
+            CONTAINER_OFFSET_X_DF = db.bags.offsetX
+            CONTAINER_OFFSET_Y_DF = db.bags.offsetY
+        end
+
         local VISIBLE_CONTAINER_SPACING_DF = ContainerFrame1.VISIBLE_CONTAINER_SPACING_DF or 3
         local CONTAINER_SPACING_DF = ContainerFrame1.CONTAINER_SPACING_DF or 0
 
@@ -3587,6 +3624,8 @@ function Module.UpdateBagState(state)
         toggle:Show()
         CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
     end
+
+    if state.overrideBagAnchor and ContainerFrame1:IsVisible() then UpdateContainerFrameAnchors() end
 end
 
 function Module.MoveBars()
