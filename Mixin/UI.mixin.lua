@@ -763,9 +763,6 @@ function DragonflightUIMixin:ChangeDressupFrame()
         -- inset:SetFrameLevel(1)
 
         _G[inset:GetName() .. 'Bg']:Hide()
-
-        print('DressUpModelFrame', DressUpModelFrame:GetFrameLevel())
-        print('insetss', inset:GetFrameLevel())
     end
 
     DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
