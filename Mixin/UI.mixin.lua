@@ -283,8 +283,8 @@ function DragonflightUIMixin:CreateSearchBox()
     frame:SetSize(115, 20)
     frame:SetMaxLetters(15)
 
-    frame:SetPoint("TOPLEFT", ContainerFrame1, "TOPLEFT", 42, -37)
-    frame:Show()
+    -- frame:SetPoint("TOPLEFT", ContainerFrame1, "TOPLEFT", 42, -37)
+    -- frame:Show()
 
     return frame
 end
