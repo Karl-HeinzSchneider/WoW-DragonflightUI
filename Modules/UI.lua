@@ -57,7 +57,7 @@ local UIOptions = {
         changeTrainer = {
             type = 'toggle',
             name = 'Change Trainer Window',
-            desc = 'Only on Cata for now' .. getDefaultStr('changeTrainer', 'first'),
+            desc = '' .. getDefaultStr('changeTrainer', 'first'),
             order = 24
         }
     }
@@ -176,15 +176,15 @@ function Module:ApplySettings()
             DF:Print(
                 "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
         end
+    end
 
-        if db.changeTrainer and not Module.TrainerHooked then
-            Module.TrainerHooked = true
-            Module:FuncOrWaitframe('Blizzard_TrainerUI', function()
-                DragonflightUIMixin:ChangeTrainerFrame()
-            end)
-        elseif not db.changeTrainer and Module.TrainerHooked then
-            DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
-        end
+    if db.changeTrainer and not Module.TrainerHooked then
+        Module.TrainerHooked = true
+        Module:FuncOrWaitframe('Blizzard_TrainerUI', function()
+            DragonflightUIMixin:ChangeTrainerFrame()
+        end)
+    elseif not db.changeTrainer and Module.TrainerHooked then
+        DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
     end
 end
 
@@ -254,18 +254,36 @@ function Module:ChangeFrames()
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
         -- DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:ChangeTradeFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
+
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+
         DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
 
         --[[   Module:FuncOrWaitframe('Blizzard_TalentUI', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
         end) ]]
 
+        Module:FuncOrWaitframe('Blizzard_Communities', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        end)
+
         Module:FuncOrWaitframe('Blizzard_MacroUI', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
     end
 end
