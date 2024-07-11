@@ -172,15 +172,15 @@ function DragonflightUIActionbarMixin:Update()
             local keybindText = _G[name .. 'HotKey']
 
             if state.hideMacro then
-                macroText:Hide()
+                macroText:SetAlpha(0)
             else
-                macroText:Show()
+                macroText:SetAlpha(1)
             end
 
             if state.hideKeybind then
-                keybindText:Hide()
+                keybindText:SetAlpha(0)
             else
-                keybindText:Show()
+                keybindText:SetAlpha(1)
             end
 
             index = index + 1
