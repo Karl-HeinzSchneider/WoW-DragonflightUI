@@ -248,6 +248,8 @@ local defaults = {
     }
 }
 if DF.Era then defaults.profile.micro.x = -205 end
+if DF.Wrath then defaults.profile.micro.x = -294 end
+
 Module:SetDefaults(defaults)
 
 local defaultsActionbarPROTO = {
