@@ -207,6 +207,7 @@ function DragonflightUIActionbarMixin:Update()
             for i = 1, btnCount do
                 local btn = buttonTable[i]
                 btn:ClearAllPoints()
+                btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
                 btn:Hide()
                 if btn.decoDF then btn.decoDF:Hide() end
             end

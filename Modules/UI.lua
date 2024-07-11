@@ -251,6 +251,48 @@ function Module:ChangeFrames()
 
     elseif DF.Wrath then
         --
+        print('WRATHHHHHHH')
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        -- DragonflightUIMixin:ChangeCharacterFrameCata()
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:ChangeTradeFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
+        DragonflightUIMixin:ChangeQuestFrame()
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame']) -- pp missing
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
+
+        -- Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        -- end)
+
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
+
+        -- Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        -- end)
+
+        -- Module:FuncOrWaitframe('Blizzard_Communities', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        -- end)
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
     elseif DF.Era then
         --
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
@@ -291,7 +333,8 @@ function Module:ChangeFrames()
 end
 
 function Module:FuncOrWaitframe(addon, func)
-    if C_AddOns.IsAddOnLoaded(addon) then
+    local checkAddonFunc = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+    if checkAddonFunc(addon) then
         -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
         func()
     else
@@ -513,6 +556,13 @@ function Module:ChangeBags()
                 -- searchBox:SetWidth(frame:GetWidth() - 2 * 42)
                 searchBox.AnchorBagRef = frame
                 searchBox:Show()
+
+                local addSlotsButton = _G[frame:GetName() .. 'AddSlotsButton']
+                if addSlotsButton then
+                    --
+                    addSlotsButton:ClearAllPoints()
+                    addSlotsButton:SetPoint('LEFT', _G[frame:GetName() .. 'Name'], 'LEFT', 0, 0)
+                end
             elseif searchBox.AnchorBagRef == frame then
                 --
                 searchBox:ClearAllPoints()
@@ -521,7 +571,12 @@ function Module:ChangeBags()
             end
 
             local size = C_Container.GetContainerNumSlots(id)
-            updateSize(frame, size, id)
+            if id == KEYRING_CONTAINER then
+                local keyringSize = GetKeyRingSize()
+                updateSize(frame, keyringSize, id)
+            else
+                updateSize(frame, size, id)
+            end
         end)
     end
 end
@@ -547,6 +602,7 @@ end
 
 -- Wrath
 function Module.Wrath()
+    Module:ChangeFrames()
 end
 
 -- Era
