@@ -235,9 +235,11 @@ function Module:ChangeFrames()
         Module:FuncOrWaitframe('Blizzard_TalentUI', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
         end)
+
         Module:FuncOrWaitframe('Blizzard_Communities', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
         end)
+
         Module:FuncOrWaitframe('Blizzard_MacroUI', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
         end)
