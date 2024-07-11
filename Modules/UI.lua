@@ -564,7 +564,12 @@ function Module:ChangeBags()
             end
 
             local size = C_Container.GetContainerNumSlots(id)
-            updateSize(frame, size, id)
+            if id == KEYRING_CONTAINER then
+                local keyringSize = GetKeyRingSize()
+                updateSize(frame, keyringSize, id)
+            else
+                updateSize(frame, size, id)
+            end
         end)
     end
 end
