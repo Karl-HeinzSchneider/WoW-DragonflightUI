@@ -1,6 +1,24 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 DF.Compatibility = {}
 
+function DF.Compatibility:FuncOrWaitframe(addon, func)
+    local checkAddonFunc = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+    if checkAddonFunc(addon) then
+        -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
+        func()
+    else
+        local waitFrame = CreateFrame("FRAME")
+        waitFrame:RegisterEvent("ADDON_LOADED")
+        waitFrame:SetScript("OnEvent", function(self, event, arg1)
+            if arg1 == addon then
+                -- print('Module:FuncOrWaitframe(addon,func)', addon, 'WAITFRAME')
+                func()
+                waitFrame:UnregisterAllEvents()
+            end
+        end)
+    end
+end
+
 local novaLoaded = IsAddOnLoaded('NovaWorldBuffs')
 -- print('Nova loaded: ', novaLoaded)
 if novaLoaded then if _G['MinimapLayerFrame'] then _G['MinimapLayerFrame']:SetPoint('BOTTOM', 0, 4) end end
@@ -52,4 +70,23 @@ function DF.Compatibility:AuctionatorCraftingInfoFrame()
         end)
         fixFrame()
     end)
+end
+
+if DF.Era then
+    function DF.Compatibility:ClassicCalendarEra()
+        -- print('DF.Compatibility:ClassicCalendarEra()')
+
+        local btn = _G['CalendarButtonFrame']
+        btn:ClearAllPoints()
+        btn:SetPoint('BOTTOMLEFT', UIParent, 'TOPRIGHT', 69, 69)
+        btn:Hide()
+
+        local frame = _G['CalendarFrame']
+        local DFBtn = _G['DragonflightUICalendarButton']
+
+        DFBtn:SetScript('OnClick', function()
+            -- print('override!')
+            CalendarButtonFrame_OnClick(btn)
+        end)
+    end
 end

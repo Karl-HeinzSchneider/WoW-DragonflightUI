@@ -879,7 +879,8 @@ function Module.HookCalendar()
         if DF.Wrath then
             ToggleCalendar()
         elseif DF.Era then
-            Module:Print("Era doesn't have an ingame Calendar, sorry.")
+            Module:Print(
+                "Era doesn't have an ingame Calendar, sorry. Consider using 'Classic Calendar' by 'Toxiix', and this button will magically work...")
         end
     end)
 
@@ -1432,5 +1433,8 @@ function Module.Era()
     Module.HookCalendar()
     Module.UpdateCalendar()
 
+    DF.Compatibility:FuncOrWaitframe('ClassicCalendar', function()
+        DF.Compatibility:ClassicCalendarEra()
+    end)
     -- frame:RegisterEvent('ADDON_LOADED')
 end
