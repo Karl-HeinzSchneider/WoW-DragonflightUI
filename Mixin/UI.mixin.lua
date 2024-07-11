@@ -737,7 +737,7 @@ function DragonflightUIMixin:ChangeDressupFrame()
         end
     end
 
-    frame:SetSize(354, 447)
+    frame:SetSize(354, 447 + 6)
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
@@ -754,6 +754,19 @@ function DragonflightUIMixin:ChangeDressupFrame()
 
     DressUpModelFrame:ClearAllPoints()
     DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
+
+    do
+        local inset = CreateFrame('Frame', 'DragonflightUIInset', DressUpModelFrame, 'InsetFrameTemplate')
+        inset:ClearAllPoints()
+        inset:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
+        inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 18)
+        -- inset:SetFrameLevel(1)
+
+        _G[inset:GetName() .. 'Bg']:Hide()
+
+        print('DressUpModelFrame', DressUpModelFrame:GetFrameLevel())
+        print('insetss', inset:GetFrameLevel())
+    end
 
     DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
 
