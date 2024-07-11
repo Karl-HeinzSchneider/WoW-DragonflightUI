@@ -3352,17 +3352,20 @@ function Module.ChangeBackpackNew()
             -- icon:SetTexture(135828)
             -- icon:SetTexture('Interface\\ContainerFrame\\KeyRing-Bag-Icon')
             icon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\KeyRing-Bag-Icon')
+            KeyRingButton.Icon = icon
 
             local delta = 6
             icon:SetSize(size - delta, size - delta)
             icon:SetPoint('CENTER', 0, 0)
             icon:SetDrawLayer('BORDER', 2)
 
-            local bagmask = 'Interface\\Addons\\DragonflightUI\\Textures\\bagmask'
-            icon:SetMask(bagmask)
-            KeyRingButton.Icon = icon
+            local bagmask = KeyRingButton:CreateMaskTexture('DragonflightUIKeyRingButtonMask')
+            KeyRingButton.Mask = bagmask
+            bagmask:SetAllPoints(icon)
+            bagmask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\bagmask')
+            bagmask:SetSize(size - delta, size - delta)
 
-            -- icon:Hide()
+            icon:AddMaskTexture(bagmask)
         end
 
         if not KeyRingButton.Border then
