@@ -792,6 +792,85 @@ function DragonflightUIMixin:ChangeDressupFrame()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:ChangeCharacterFrameEra()
+    local frameTable = {PaperDollFrame}
+
+    for i, f in ipairs(frameTable) do
+        local regions = {f:GetRegions()}
+
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                print(layer, layerNr, child:GetTexture())
+                if layer == 'BORDER' then child:Hide() end
+            end
+        end
+    end
+    --
+
+    local frame = CharacterFrame
+    frame:SetSize(338, 424)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local header = CharacterNameFrame
+    header:ClearAllPoints()
+    header:SetPoint('TOP', frame, 'TOP', 0, -5)
+    header:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    header:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+
+    local closeButton = CharacterFrameCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    do
+        local port = CharacterFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', frame, 'InsetFrameTemplate')
+    inset:ClearAllPoints()
+    inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
+    inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
+
+    local head = CharacterHeadSlot
+    head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -2)
+
+    local hand = CharacterHandsSlot
+    hand:ClearAllPoints()
+    hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
+
+    local model = CharacterModelFrame
+    model:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', 52, -66)
+
+    local res = CharacterResistanceFrame
+    res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
+
+    frame:HookScript('OnShow', function()
+        frame:SetAttribute("UIPanelLayout-width", frame:GetWidth());
+        frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+        frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+        UpdateUIPanelPositions(frame)
+    end)
+end
+
 function DragonflightUIMixin:ChangeCharacterFrameCata()
     DragonflightUIMixin:PortraitFrameTemplate(CharacterFrame)
 

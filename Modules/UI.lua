@@ -296,7 +296,7 @@ function Module:ChangeFrames()
     elseif DF.Era then
         --
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-        -- DragonflightUIMixin:PortraitFrameTemplate(_G['CharacterFrame'])
+        DragonflightUIMixin:ChangeCharacterFrameEra()
         -- DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
