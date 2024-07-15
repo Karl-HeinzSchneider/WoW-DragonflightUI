@@ -863,6 +863,43 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local res = CharacterResistanceFrame
     res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
 
+    -- tabs
+    do
+        for i = 1, 5 do
+            local tab = _G['CharacterFrameTab' .. i]
+
+            if tab then
+                --         
+                DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+                tab.DFFirst = nil
+                tab.DFChangePoint = nil
+            end
+        end
+
+        local updateTabs = function()
+            local lastElem = nil
+            for i = 1, 5 do
+                local tab = _G['CharacterFrameTab' .. i]
+                if tab and (tab:IsShown()) then
+                    tab:SetWidth(78)
+                    tab:ClearAllPoints();
+                    if lastElem then
+                        tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
+                    else
+                        tab:SetPoint('TOPLEFT', CharacterFrame, 'BOTTOMLEFT', 12, 1)
+                    end
+                    lastElem = tab
+                end
+            end
+        end
+        hooksecurefunc('ToggleCharacter', function(panel)
+            --   
+            updateTabs()
+        end)
+        _G['CharacterFrameTab2']:HookScript('OnShow', updateTabs)
+        _G['CharacterFrameTab2']:HookScript('OnHide', updateTabs)
+    end
+
     frame:HookScript('OnShow', function()
         frame:SetAttribute("UIPanelLayout-width", frame:GetWidth());
         frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
