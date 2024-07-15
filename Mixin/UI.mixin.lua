@@ -793,7 +793,7 @@ function DragonflightUIMixin:ChangeDressupFrame()
 end
 
 function DragonflightUIMixin:ChangeCharacterFrameEra()
-    local frameTable = {PaperDollFrame}
+    local frameTable = {PaperDollFrame, ReputationFrame, HonorFrame, SkillFrame}
 
     for i, f in ipairs(frameTable) do
         local regions = {f:GetRegions()}
@@ -804,6 +804,8 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 local layer, layerNr = child:GetDrawLayer()
                 print(layer, layerNr, child:GetTexture())
                 if layer == 'BORDER' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+
             end
         end
     end
@@ -854,6 +856,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     inset:ClearAllPoints()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
+    _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
 
     local head = CharacterHeadSlot
     head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -2)
@@ -876,11 +879,6 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
     main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
-
-    if EngravingFrame then
-        --        
-        EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 8, -75)
-    end
 
     -- tabs
     do
@@ -925,6 +923,27 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
         UpdateUIPanelPositions(frame)
     end)
+
+    -- rep
+    do
+        local rep = ReputationFrame
+
+        local factionLabel = ReputationFrameFactionLabel
+        factionLabel:SetPoint('TOPLEFT', rep, 'TOPLEFT', 70, -42)
+
+        local standingLabel = ReputationFrameStandingLabel
+        standingLabel:SetPoint('TOPLEFT', rep, 'TOPLEFT', 215, -42)
+
+        local scroll = ReputationListScrollFrame
+        scroll:ClearAllPoints()
+        scroll:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        scroll:SetWidth(300)
+
+        local first = ReputationBar1
+        first:ClearAllPoints()
+        first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
+        -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+    end
 end
 
 function DragonflightUIMixin:ChangeCharacterFrameCata()
