@@ -810,7 +810,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     --
 
     local frame = CharacterFrame
-    frame:SetSize(338, 424)
+    frame:SetSize(338 - 2, 424)
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
@@ -821,6 +821,11 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     header:SetPoint('TOP', frame, 'TOP', 0, -5)
     header:SetPoint('LEFT', frame, 'LEFT', 60, 0)
     header:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+
+    local level = CharacterLevelText
+    level:ClearAllPoints()
+    level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+    level:SetDrawLayer('ARTWORK')
 
     local closeButton = CharacterFrameCloseButton
     DragonflightUIMixin:UIPanelCloseButton(closeButton)
@@ -862,6 +867,20 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
     local res = CharacterResistanceFrame
     res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
+
+    local att = CharacterAttributesFrame
+    attX = (inset:GetWidth() - att:GetWidth()) / 2
+    att:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', attX + 4, -291 + 12)
+
+    local main = CharacterMainHandSlot
+    main:ClearAllPoints()
+    -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
+    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
+
+    if EngravingFrame then
+        --        
+        EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 8, -75)
+    end
 
     -- tabs
     do
