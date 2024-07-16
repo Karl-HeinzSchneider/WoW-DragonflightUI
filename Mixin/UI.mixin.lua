@@ -1017,6 +1017,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         local dividerLeft = SkillFrameHorizontalBarLeft
         dividerLeft:SetPoint('TOPLEFT', skills, 'TOPLEFT', 15 - 10, -290)
         dividerLeft:SetWidth(256 - 6)
+        -- dividerLeft:SetDrawLayer('OVERLAY')
 
         local detail = SkillDetailScrollFrame
         detail:SetPoint('TOPLEFT', scroll, 'BOTTOMLEFT', 0, -8 - 10)
