@@ -944,6 +944,50 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
         -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
     end
+
+    -- skills
+    do
+        local skills = SkillFrame
+
+        local scroll = SkillListScrollFrame
+        scroll:ClearAllPoints()
+        scroll:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        scroll:SetWidth(300)
+
+        local first = SkillTypeLabel1
+        first:SetPoint('LEFT', skills, 'TOPLEFT', 22 - 16, -86)
+
+        local firstSkill = SkillRankFrame1
+        -- firstSkill:ClearAllPoints()
+        --  firstSkill:SetPoint('TOPLEFT', skills, 'TOPLEFT', 38, -86)
+
+        local expand = SkillFrameExpandButtonFrame
+        expand:SetPoint('TOPLEFT', skills, 'TOPLEFT', 70 - 10, -49 + 14)
+
+        for i = 1, 15 do
+            --
+            local sr = _G['SkillRankFrame' .. i]
+            local border = _G['SkillRankFrame' .. i .. 'Border']
+            if sr then
+                --
+                sr:SetWidth(271 - 11)
+                border:SetWidth(281 - 11)
+            end
+        end
+
+        local cancel = SkillFrameCancelButton
+        cancel:ClearAllPoints()
+        cancel:SetPoint('BOTTOMRIGHT', skills, 'BOTTOMRIGHT', -9, 7)
+
+        local dividerLeft = SkillFrameHorizontalBarLeft
+        dividerLeft:SetPoint('TOPLEFT', skills, 'TOPLEFT', 15 - 10, -290)
+        dividerLeft:SetWidth(256 - 6)
+
+        local detail = SkillDetailScrollFrame
+        detail:SetPoint('TOPLEFT', scroll, 'BOTTOMLEFT', 0, -8 - 10)
+        detail:SetWidth(300)
+
+    end
 end
 
 function DragonflightUIMixin:ChangeCharacterFrameCata()
