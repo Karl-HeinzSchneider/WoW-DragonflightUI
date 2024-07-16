@@ -914,20 +914,23 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
                 tab.DFFirst = nil
                 tab.DFChangePoint = nil
+                tab.DFTabWidth = 62
             end
         end
 
         local updateTabs = function()
             local lastElem = nil
+            local width = 79
+            if _G['CharacterFrameTab2']:IsShown() then width = 62.4 end
             for i = 1, 5 do
                 local tab = _G['CharacterFrameTab' .. i]
                 if tab and (tab:IsShown()) then
-                    tab:SetWidth(78)
+                    tab:SetWidth(width)
                     tab:ClearAllPoints();
                     if lastElem then
                         tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
                     else
-                        tab:SetPoint('TOPLEFT', CharacterFrame, 'BOTTOMLEFT', 12, 1)
+                        tab:SetPoint('TOPLEFT', CharacterFrame, 'BOTTOMLEFT', 6, 1)
                     end
                     lastElem = tab
                 end
