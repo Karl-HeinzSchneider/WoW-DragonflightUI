@@ -980,6 +980,103 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
     end
 
+    -- pet
+    do
+        local regions = {PetPaperDollFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BORDER' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+
+        local model = PetModelFrame
+        model:SetPoint('TOPLEFT', PetPaperDollFrame, 'TOPLEFT', 9, -66)
+
+        local rotate = PetModelFrameRotateRightButton
+        rotate:ClearAllPoints()
+        rotate:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+
+        local res = PetResistanceFrame
+        res:ClearAllPoints()
+        res:SetPoint('TOPRIGHT', model, 'TOPRIGHT', 0, 0)
+
+        local att = PetAttributesFrame
+        attX = (inset:GetWidth() - att:GetWidth()) / 2
+        att:SetPoint('TOPLEFT', PetPaperDollFrame, 'TOPLEFT', attX + 4, -300 + 10)
+
+        local expBar = PetPaperDollFrameExpBar
+        expBar:ClearAllPoints()
+        expBar:SetPoint('BOTTOM', PetPaperDollFrame, 'BOTTOM', 0, 36)
+
+        local close = PetPaperDollCloseButton
+        close:ClearAllPoints()
+        close:SetPoint('BOTTOMRIGHT', PetPaperDollFrame, 'BOTTOMRIGHT', -9, 7)
+
+        local newMoney = CreateFrame('FRAME', 'DFPetTrainingPointsFrame', PetPaperDollFrame)
+        -- newMoney:SetSize(178 - 2 * 8, 17)
+        newMoney:SetHeight(22)
+        newMoney:SetPoint('BOTTOMLEFT', PetPaperDollFrame, 'BOTTOMLEFT', 9, 7)
+        newMoney:SetPoint('RIGHT', close, 'LEFT', 0, 0)
+
+        local border = CreateFrame('FRAME', 'DFMoneyBorder', newMoney, 'ContainerMoneyFrameBorderTemplate')
+        border:SetParent(newMoney)
+        border:SetAllPoints()
+
+        local trainingFrame = CreateFrame('FRAME', 'DFPetTrainingPointsFrameS', PetPaperDollFrame)
+        trainingFrame:SetHeight(22)
+        trainingFrame:SetWidth(newMoney:GetWidth())
+        trainingFrame:SetPoint('CENTER', newMoney, 'CENTER', 0, 0)
+        trainingFrame:SetFrameLevel(10)
+
+        local trainPoint = PetTrainingPointText
+        trainPoint:ClearAllPoints()
+        trainPoint:SetPoint('RIGHT', trainingFrame, 'RIGHT', -16, 0)
+        trainPoint:SetDrawLayer('OVERLAY', 5)
+        trainPoint:SetParent(trainingFrame)
+
+        PetTrainingPointLabel:SetDrawLayer('OVERLAY', 5)
+        PetTrainingPointLabel:SetParent(trainingFrame)
+
+        local nameFrame = CreateFrame('FRAME', 'DragonflightUIPetNameFrame', PetPaperDollFrame)
+        nameFrame:SetPoint('TOP', PetPaperDollFrame, 'TOP', 0, -5)
+        nameFrame:SetPoint('LEFT', PetPaperDollFrame, 'LEFT', 60, 0)
+        nameFrame:SetPoint('RIGHT', PetPaperDollFrame, 'RIGHT', -60, 0)
+        nameFrame:SetHeight(12)
+
+        local headerPet = PetNameText
+        headerPet:ClearAllPoints()
+        -- headerPet:SetPoint('TOP', PetPaperDollFrame, 'TOP', 0, -5)
+        -- headerPet:SetPoint('LEFT', PetPaperDollFrame, 'LEFT', 60, 0)
+        -- headerPet:SetPoint('RIGHT', PetPaperDollFrame, 'RIGHT', -60, 0)
+        headerPet:SetPoint('CENTER', nameFrame, 'CENTER', 0, 0)
+        headerPet:SetDrawLayer('ARTWORK')
+
+        local levelPet = PetLevelText
+        levelPet:ClearAllPoints()
+        levelPet:SetPoint('TOP', nameFrame, 'BOTTOM', 0, -10)
+        levelPet:SetDrawLayer('ARTWORK')
+
+        local loyal = PetLoyaltyText
+        loyal:ClearAllPoints()
+        loyal:SetPoint('TOP', levelPet, 'BOTTOM', 0, -1)
+        loyal:SetDrawLayer('ARTWORK')
+
+        --[[     local level = CharacterLevelText
+    level:ClearAllPoints()
+    level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+    level:SetDrawLayer('ARTWORK')
+
+    local honorLevel = HonorLevelText
+    honorLevel:ClearAllPoints()
+    honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+    honorLevel:SetDrawLayer('ARTWORK')
+ ]]
+    end
+
     -- skills
     do
         local skills = SkillFrame
