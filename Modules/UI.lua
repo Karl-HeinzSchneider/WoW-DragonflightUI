@@ -304,11 +304,10 @@ function Module:ChangeFrames()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
         DragonflightUIMixin:ChangeGossipFrame()
-
+        DragonflightUIMixin:ChangeQuestFrame()
         DragonflightUIMixin:ChangeTaxiFrame()
         DragonflightUIMixin:ImproveTaxiFrame()
         DragonflightUIMixin:ChangeLootFrame()
-
         DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
