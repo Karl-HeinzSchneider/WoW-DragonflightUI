@@ -793,7 +793,7 @@ function DragonflightUIMixin:ChangeDressupFrame()
 end
 
 function DragonflightUIMixin:ChangeCharacterFrameEra()
-    local frameTable = {PaperDollFrame, ReputationFrame, HonorFrame, SkillFrame}
+    local frameTable = {PaperDollFrame, ReputationFrame, SkillFrame}
 
     for i, f in ipairs(frameTable) do
         local regions = {f:GetRegions()}
@@ -802,12 +802,31 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             --     
             if child:GetObjectType() == 'Texture' then
                 local layer, layerNr = child:GetDrawLayer()
-                print(layer, layerNr, child:GetTexture())
+                -- print(layer, layerNr, child:GetTexture())
                 if layer == 'BORDER' then child:Hide() end
                 -- if layer == 'ARTWORK' then child:Hide() end
-
             end
         end
+    end
+
+    -- honor
+    do
+        local regions = {HonorFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 12
+
+        HonorFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        HonorFrame:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+
     end
     --
 
