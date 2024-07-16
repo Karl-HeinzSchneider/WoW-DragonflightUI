@@ -792,6 +792,240 @@ function DragonflightUIMixin:ChangeDressupFrame()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:ChangeCharacterFrameEra()
+    local frameTable = {PaperDollFrame, ReputationFrame, SkillFrame}
+
+    for i, f in ipairs(frameTable) do
+        local regions = {f:GetRegions()}
+
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BORDER' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+    end
+
+    -- honor
+    do
+        local regions = {HonorFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 12
+
+        HonorFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        HonorFrame:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+    end
+    --
+
+    local frame = CharacterFrame
+    frame:SetSize(338 - 2, 424)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local header = CharacterNameFrame
+    header:ClearAllPoints()
+    header:SetPoint('TOP', frame, 'TOP', 0, -5)
+    header:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    header:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+
+    local level = CharacterLevelText
+    level:ClearAllPoints()
+    level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+    level:SetDrawLayer('ARTWORK')
+
+    local honorLevel = HonorLevelText
+    honorLevel:ClearAllPoints()
+    honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+    honorLevel:SetDrawLayer('ARTWORK')
+
+    local closeButton = CharacterFrameCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    do
+        local port = CharacterFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', frame, 'InsetFrameTemplate')
+    inset:ClearAllPoints()
+    inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
+    inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
+    -- _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
+
+    local head = CharacterHeadSlot
+    head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -2)
+
+    local hand = CharacterHandsSlot
+    hand:ClearAllPoints()
+    hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
+
+    local model = CharacterModelFrame
+    model:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', 52, -66)
+
+    local res = CharacterResistanceFrame
+    res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
+
+    local att = CharacterAttributesFrame
+    attX = (inset:GetWidth() - att:GetWidth()) / 2
+    att:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', attX + 4, -291 + 12)
+
+    local main = CharacterMainHandSlot
+    main:ClearAllPoints()
+    -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
+    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
+
+    -- tabs
+    do
+        for i = 1, 5 do
+            local tab = _G['CharacterFrameTab' .. i]
+
+            if tab then
+                --         
+                DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+                tab.DFFirst = nil
+                tab.DFChangePoint = nil
+                tab.DFTabWidth = 62
+            end
+        end
+
+        local updateTabs = function()
+            local lastElem = nil
+            local width = 79
+            if _G['CharacterFrameTab2']:IsShown() then width = 62.4 end
+            for i = 1, 5 do
+                local tab = _G['CharacterFrameTab' .. i]
+                if tab and (tab:IsShown()) then
+                    tab:SetWidth(width)
+                    tab:ClearAllPoints();
+                    if lastElem then
+                        tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
+                    else
+                        tab:SetPoint('TOPLEFT', CharacterFrame, 'BOTTOMLEFT', 6, 1)
+                    end
+                    lastElem = tab
+                end
+            end
+        end
+        hooksecurefunc('ToggleCharacter', function(panel)
+            --   
+            updateTabs()
+        end)
+        _G['CharacterFrameTab2']:HookScript('OnShow', updateTabs)
+        _G['CharacterFrameTab2']:HookScript('OnHide', updateTabs)
+    end
+
+    frame:HookScript('OnShow', function()
+        frame:SetAttribute("UIPanelLayout-width", frame:GetWidth());
+        frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+        frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+        UpdateUIPanelPositions(frame)
+    end)
+
+    -- rep
+    do
+        local rep = ReputationFrame
+
+        local factionLabel = ReputationFrameFactionLabel
+        factionLabel:SetPoint('TOPLEFT', rep, 'TOPLEFT', 70, -42)
+
+        local standingLabel = ReputationFrameStandingLabel
+        standingLabel:SetPoint('TOPLEFT', rep, 'TOPLEFT', 215, -42)
+
+        local scroll = ReputationListScrollFrame
+        scroll:ClearAllPoints()
+        scroll:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        scroll:SetWidth(300)
+
+        local first = ReputationBar1
+        first:ClearAllPoints()
+        first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
+        -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+
+        local detail = ReputationDetailFrame
+        detail:SetPoint('TOPLEFT', rep, 'TOPRIGHT', 0, -13)
+
+        local btn = ReputationDetailCloseButton
+        DragonflightUIMixin:UIPanelCloseButton(btn)
+        btn:SetPoint('TOPRIGHT', detail, 'TOPRIGHT', -5, -6)
+
+    end
+
+    -- skills
+    do
+        local skills = SkillFrame
+
+        local scroll = SkillListScrollFrame
+        scroll:ClearAllPoints()
+        scroll:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
+        scroll:SetWidth(300)
+
+        local first = SkillTypeLabel1
+        first:SetPoint('LEFT', skills, 'TOPLEFT', 22 - 16, -86)
+
+        local firstSkill = SkillRankFrame1
+        -- firstSkill:ClearAllPoints()
+        --  firstSkill:SetPoint('TOPLEFT', skills, 'TOPLEFT', 38, -86)
+
+        local expand = SkillFrameExpandButtonFrame
+        expand:SetPoint('TOPLEFT', skills, 'TOPLEFT', 70 - 10, -49 + 14)
+
+        for i = 1, 15 do
+            --
+            local sr = _G['SkillRankFrame' .. i]
+            local border = _G['SkillRankFrame' .. i .. 'Border']
+            if sr then
+                --
+                sr:SetWidth(271 - 11)
+                border:SetWidth(281 - 11)
+            end
+        end
+
+        local cancel = SkillFrameCancelButton
+        cancel:ClearAllPoints()
+        cancel:SetPoint('BOTTOMRIGHT', skills, 'BOTTOMRIGHT', -9 - 26, 7)
+
+        local dividerLeft = SkillFrameHorizontalBarLeft
+        dividerLeft:SetPoint('TOPLEFT', skills, 'TOPLEFT', 15 - 10, -290)
+        dividerLeft:SetWidth(256 - 6)
+        -- dividerLeft:SetDrawLayer('OVERLAY')
+
+        local detail = SkillDetailScrollFrame
+        detail:SetPoint('TOPLEFT', scroll, 'BOTTOMLEFT', 0, -8 - 10)
+        detail:SetWidth(300)
+
+    end
+end
+
 function DragonflightUIMixin:ChangeCharacterFrameCata()
     DragonflightUIMixin:PortraitFrameTemplate(CharacterFrame)
 
