@@ -473,6 +473,7 @@ function DragonflightUIMixin:ChangeTrainerFrame()
 
     ClassTrainerGreetingText:ClearAllPoints()
     ClassTrainerGreetingText:SetPoint('TOPLEFT', frame, 'TOPLEFT', 62, -32)
+    ClassTrainerGreetingText:SetDrawLayer('ARTWORK')
 
     local closeButton = ClassTrainerCancelButton
     closeButton:ClearAllPoints()
