@@ -826,7 +826,6 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
         HonorFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 0 + dx, 0 + dy)
         HonorFrame:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
-
     end
     --
 
@@ -848,8 +847,14 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
     level:SetDrawLayer('ARTWORK')
 
+    local honorLevel = HonorLevelText
+    honorLevel:ClearAllPoints()
+    honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+    honorLevel:SetDrawLayer('ARTWORK')
+
     local closeButton = CharacterFrameCloseButton
     DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
     closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
 
     do
@@ -875,7 +880,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     inset:ClearAllPoints()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
-    _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
+    -- _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
 
     local head = CharacterHeadSlot
     head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -2)
@@ -962,6 +967,14 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         first:ClearAllPoints()
         first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
         -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+
+        local detail = ReputationDetailFrame
+        detail:SetPoint('TOPLEFT', rep, 'TOPRIGHT', 0, -13)
+
+        local btn = ReputationDetailCloseButton
+        DragonflightUIMixin:UIPanelCloseButton(btn)
+        btn:SetPoint('TOPRIGHT', detail, 'TOPRIGHT', -5, -6)
+
     end
 
     -- skills
@@ -996,7 +1009,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
         local cancel = SkillFrameCancelButton
         cancel:ClearAllPoints()
-        cancel:SetPoint('BOTTOMRIGHT', skills, 'BOTTOMRIGHT', -9, 7)
+        cancel:SetPoint('BOTTOMRIGHT', skills, 'BOTTOMRIGHT', -9 - 26, 7)
 
         local dividerLeft = SkillFrameHorizontalBarLeft
         dividerLeft:SetPoint('TOPLEFT', skills, 'TOPLEFT', 15 - 10, -290)
