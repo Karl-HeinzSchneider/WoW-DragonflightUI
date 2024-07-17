@@ -111,7 +111,7 @@ end
 
 function DragonflightUIItemColorMixin:HookInspectFrame()
     -- print(' DragonflightUIItemColorMixin:HookInspectFrame()')
-    if not InspectFrame or InspectFrame.DFHooked then return end
+    if not InspectFrame or InspectFrame.DFColorHooked then return end
     local ignored = {}
 
     hooksecurefunc('InspectPaperDollItemSlotButton_Update', function(self)
@@ -134,7 +134,7 @@ function DragonflightUIItemColorMixin:HookInspectFrame()
             self.DFQuality:Hide()
         end
     end)
-    InspectFrame.DFHooked = true
+    InspectFrame.DFColorHooked = true
 end
 
 -- DragonflightUIItemColorMixin:HookCharacterFrame()
