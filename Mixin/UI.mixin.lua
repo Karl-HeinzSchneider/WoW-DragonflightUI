@@ -809,7 +809,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
     end
 
     -- honor
-    do
+    if InspectPVPFrame then
         local regions = {InspectPVPFrame:GetRegions()}
         for k, child in ipairs(regions) do
             --     
@@ -827,8 +827,27 @@ function DragonflightUIMixin:ChangeInspectFrame()
         InspectPVPFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
     end
 
+    -- honor Era
+    if InspectHonorFrame then
+        local regions = {InspectHonorFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 14
+
+        InspectHonorFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectHonorFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+    end
+
     -- talent
-    do
+    if InspectTalentFrame then
         local regions = {InspectTalentFrame:GetRegions()}
         for k, child in ipairs(regions) do
             --     
@@ -961,12 +980,14 @@ function DragonflightUIMixin:ChangeInspectFrame()
             --
             local tab = _G['InspectFrameTab' .. i]
 
-            DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+            if tab then
+                DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
 
-            if i == 1 then
-                tab.DFFirst = true
-            elseif i > 1 then
-                tab.DFChangePoint = true
+                if i == 1 then
+                    tab.DFFirst = true
+                elseif i > 1 then
+                    tab.DFChangePoint = true
+                end
             end
         end
     end
