@@ -827,6 +827,34 @@ function DragonflightUIMixin:ChangeInspectFrame()
         InspectPVPFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
     end
 
+    -- talent
+    do
+        local regions = {InspectTalentFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BORDER' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 12
+
+        InspectTalentFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectTalentFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+
+        InspectTalentFrameCloseButton:Hide()
+
+        local pointsBar = InspectTalentFramePointsBar
+        pointsBar:ClearAllPoints()
+        pointsBar:SetPoint('BOTTOM', InspectFrame, 'BOTTOM', 0, 4)
+
+        local scroll = InspectTalentFrameScrollFrame
+        scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66)
+    end
+
     InspectFrame:SetSize(336, 424)
 
     DragonflightUIMixin:AddNineSliceTextures(InspectFrame, true)
