@@ -944,6 +944,71 @@ function DragonflightUIMixin:ChangeInspectFrame()
         inset:ClearAllPoints()
         inset:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
         inset:SetPoint('BOTTOMRIGHT', model, 'BOTTOMRIGHT', 0, 8)
+
+        local tl = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'TopLeft', 'BACKGROUND')
+        tl:SetSize(212, 245)
+        tl:SetPoint('TOPLEFT')
+        tl:SetTexCoord(0.171875, 1, 0.0392156862745098, 1)
+
+        local tr = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'TopRight', 'BACKGROUND')
+        tr:SetSize(19, 245)
+        tr:SetPoint('TOPLEFT', tl, 'TOPRIGHT')
+        tr:SetTexCoord(0, 0.296875, 0.0392156862745098, 1)
+
+        local delta = 80
+
+        local bl = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'BotLeft', 'BACKGROUND')
+        bl:SetSize(212, 128 - delta)
+        bl:SetPoint('TOPLEFT', tl, 'BOTTOMLEFT')
+        bl:SetTexCoord(0.171875, 1, 0, 1 - delta / 128)
+
+        local br = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'BotRight', 'BACKGROUND')
+        br:SetSize(19, 128 - delta)
+        br:SetPoint('TOPLEFT', tl, 'BOTTOMRIGHT')
+        br:SetTexCoord(0, 0.296875, 0, 1 - delta / 128)
+
+        local overlay = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'Overlay', 'BORDER')
+        overlay:SetPoint('TOPLEFT', tl, 'TOPLEFT', 0, 0)
+        overlay:SetPoint('BOTTOMRIGHT', br, 'BOTTOMRIGHT', 0, 0)
+        overlay:SetColorTexture(0, 0, 0)
+
+        local backgroundDesaturate = function(on)
+            tl:SetDesaturated(on);
+            tr:SetDesaturated(on);
+            bl:SetDesaturated(on);
+            br:SetDesaturated(on);
+        end
+
+        local updateBackground = function()
+            local race, fileName = UnitRace('target');
+            local texture = DressUpTexturePath(fileName);
+            tl:SetTexture(texture .. 1);
+            tr:SetTexture(texture .. 2);
+            bl:SetTexture(texture .. 3);
+            br:SetTexture(texture .. 4);
+
+            if (strupper(fileName) == "BLOODELF") then
+                overlay:SetAlpha(0.8);
+            elseif (strupper(fileName) == "NIGHTELF") then
+                overlay:SetAlpha(0.6);
+            elseif (strupper(fileName) == "SCOURGE") then
+                overlay:SetAlpha(0.3);
+            elseif (strupper(fileName) == "TROLL" or strupper(fileName) == "ORC") then
+                overlay:SetAlpha(0.6);
+            elseif (strupper(fileName) == "WORGEN") then
+                overlay:SetAlpha(0.5);
+            elseif (strupper(fileName) == "GOBLIN") then
+                overlay:SetAlpha(0.6);
+            else
+                overlay:SetAlpha(0.7);
+            end
+        end
+
+        InspectFrame:HookScript('OnShow', function()
+            --  
+            updateBackground()
+            backgroundDesaturate(true)
+        end)
     end
 
     do
