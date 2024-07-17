@@ -72,6 +72,42 @@ function DF.Compatibility:AuctionatorCraftingInfoFrame()
     end)
 end
 
+function DF.Compatibility:TacoTipCharacter()
+    local text = _G['PersonalGearScoreText']
+    text:ClearAllPoints()
+    text:SetPoint('BOTTOMLEFT', CharacterModelFrame, 'BOTTOMLEFT', 10, 30)
+
+    local score = _G['PersonalGearScore']
+    score:ClearAllPoints()
+    score:SetPoint('BOTTOMLEFT', text, 'TOPLEFT', 0, 2)
+
+    local itemlvltext = _G['PersonalAvgItemLvlText']
+    itemlvltext:ClearAllPoints()
+    itemlvltext:SetPoint('BOTTOMRIGHT', CharacterModelFrame, 'BOTTOMRIGHT', -10, 30)
+
+    local itemlvl = _G['PersonalAvgItemLvl']
+    itemlvl:ClearAllPoints()
+    itemlvl:SetPoint('BOTTOMRIGHT', itemlvltext, 'TOPRIGHT', 0, 2)
+end
+
+function DF.Compatibility:TacoTipInspect()
+    local text = _G['InspectGearScoreText']
+    text:ClearAllPoints()
+    text:SetPoint('BOTTOMLEFT', InspectModelFrame, 'BOTTOMLEFT', 10, 30)
+
+    local score = _G['InspectGearScore']
+    score:ClearAllPoints()
+    score:SetPoint('BOTTOMLEFT', text, 'TOPLEFT', 0, 2)
+
+    local itemlvltext = _G['InspectAvgItemLvlText']
+    itemlvltext:ClearAllPoints()
+    itemlvltext:SetPoint('BOTTOMRIGHT', InspectModelFrame, 'BOTTOMRIGHT', -10, 30)
+
+    local itemlvl = _G['InspectAvgItemLvl']
+    itemlvl:ClearAllPoints()
+    itemlvl:SetPoint('BOTTOMRIGHT', itemlvltext, 'TOPRIGHT', 0, 2)
+end
+
 if DF.Era then
     function DF.Compatibility:ClassicCalendarEra()
         -- print('DF.Compatibility:ClassicCalendarEra()')

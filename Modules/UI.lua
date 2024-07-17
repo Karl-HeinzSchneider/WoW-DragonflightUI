@@ -72,6 +72,13 @@ function frame:OnEvent(event, arg1, ...)
         local db = Module.db.profile.first
         if db.itemcolor then DragonflightUIItemColorMixin:HookInspectFrame() end
         DragonflightUIMixin:ChangeInspectFrame()
+        if InspectFrame and not InspectFrame.DFTacoTipHooked then
+            --    
+            Module:FuncOrWaitframe('TacoTip', function()
+                DF.Compatibility:TacoTipInspect()
+            end)
+            InspectFrame.DFTacoTipHooked = true
+        end
     elseif event == 'BAG_UPDATE_DELAYED' then
         -- print('BAG_UPDATE_DELAYED')
         DragonflightUIItemColorMixin:UpdateAllBags(false)
@@ -304,6 +311,9 @@ function Module:ChangeFrames()
         end)
         Module:FuncOrWaitframe('CharacterStatsClassic', function()
             DF.Compatibility:CharacterStatsClassic()
+        end)
+        Module:FuncOrWaitframe('TacoTip', function()
+            DF.Compatibility:TacoTipCharacter()
         end)
         -- DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
