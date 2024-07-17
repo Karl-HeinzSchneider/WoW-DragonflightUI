@@ -75,7 +75,10 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
     -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
 
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
+    local newFont = 'Fonts\\FRIZQT__.ttf'
+    if GetLocale() == "ruRU" then newFont = "Fonts\\FRIZQT___CYR.TTF" end
+
+    f.Text:SetFont(newFont, 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
@@ -83,7 +86,7 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Text:SetPoint('CENTER', 0, 1.5)
 
     f.TextPercent = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    f.TextPercent:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
+    f.TextPercent:SetFont(newFont, 10, 'THINOUTLINE')
     f.TextPercent:SetTextColor(1, 1, 1, 1)
     f.TextPercent:SetText('69%')
     f.TextPercent:ClearAllPoints()
@@ -293,10 +296,13 @@ function DragonflightUIRepBarMixin:CreateBar()
     f.Border = border
 
     -- text
+    local newFont = 'Fonts\\FRIZQT__.ttf'
+    if GetLocale() == "ruRU" then newFont = "Fonts\\FRIZQT___CYR.TTF" end
+
     f.Bar:EnableMouse(true)
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
     -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-    f.Text:SetFont('Fonts\\FRIZQT__.TTF', 10, 'THINOUTLINE')
+    f.Text:SetFont(newFont, 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
