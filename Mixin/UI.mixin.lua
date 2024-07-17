@@ -793,6 +793,208 @@ function DragonflightUIMixin:ChangeDressupFrame()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:ChangeInspectFrame()
+    if not InspectFrame or InspectFrame.DFHooked then return end
+
+    do
+        local regions = {InspectPaperDollFrame:GetRegions()}
+
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                if layer == 'BORDER' then child:Hide() end
+            end
+        end
+    end
+
+    -- honor
+    if InspectPVPFrame then
+        local regions = {InspectPVPFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -16
+        local dy = 12
+
+        InspectPVPFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectPVPFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+    end
+
+    -- honor Era
+    if InspectHonorFrame then
+        local regions = {InspectHonorFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 14
+
+        InspectHonorFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectHonorFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+    end
+
+    -- talent
+    if InspectTalentFrame then
+        local regions = {InspectTalentFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BORDER' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 12
+
+        InspectTalentFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectTalentFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+
+        InspectTalentFrameCloseButton:Hide()
+
+        local pointsBar = InspectTalentFramePointsBar
+        pointsBar:ClearAllPoints()
+        pointsBar:SetPoint('BOTTOM', InspectFrame, 'BOTTOM', 0, 4)
+
+        local scroll = InspectTalentFrameScrollFrame
+        scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66)
+
+        for i = 1, 28 do
+            --
+            local talent = _G['InspectTalentFrameTalent' .. i]
+            talent:SetScript('OnEnter', function(self)
+                -- 
+                local selectedTab = PanelTemplates_GetSelectedTab(InspectTalentFrame) or InspectTalentFrame.talentTree;
+                local talentGroup = GetActiveTalentGroup(true, false);
+                -- print(talent:GetName(), selectedTab, talentGroup)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetTalent(selectedTab, i, true, false, talentGroup, true)
+            end)
+
+        end
+    end
+
+    InspectFrame:SetSize(336, 424)
+
+    DragonflightUIMixin:AddNineSliceTextures(InspectFrame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(InspectFrame)
+
+    DragonflightUIMixin:UIPanelCloseButton(InspectFrameCloseButton)
+    InspectFrameCloseButton:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', 1, 0)
+
+    do
+        local port = InspectFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        InspectFrame.PortraitFrame = InspectFrame:CreateTexture('PortraitFrame')
+        local pp = InspectFrame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    DragonflightUIMixin:FrameBackgroundSolid(InspectFrame, true)
+
+    do
+        local name = _G['InspectNameFrame']
+        name:ClearAllPoints()
+        name:SetPoint('TOP', InspectFrame, 'TOP', 0, -5)
+        name:SetPoint('LEFT', InspectFrame, 'LEFT', 60, 0)
+        name:SetPoint('RIGHT', InspectFrame, 'RIGHT', -60, 0)
+
+        local level = InspectLevelText
+        level:ClearAllPoints()
+        level:SetPoint('TOP', name, 'BOTTOM', 0, -10)
+        level:SetDrawLayer('ARTWORK')
+    end
+
+    do
+        local head = _G['InspectHeadSlot']
+        head:ClearAllPoints()
+        head:SetPoint('TOPLEFT', InspectPaperDollItemsFrame, 'TOPLEFT', 8, -74) -- -64 = charframe
+    end
+
+    do
+        local model = _G['InspectModelFrame']
+        model:ClearAllPoints()
+        model:SetPoint('TOPLEFT', InspectPaperDollFrame, 'TOPLEFT', 52, -74)
+
+        local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', InspectPaperDollFrame,
+                                  'InsetFrameTemplate')
+        inset:ClearAllPoints()
+        inset:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        inset:SetPoint('BOTTOMRIGHT', model, 'BOTTOMRIGHT', 0, 8)
+    end
+
+    do
+        local hands = _G['InspectHandsSlot']
+        hands:ClearAllPoints()
+        hands:SetPoint('TOPRIGHT', InspectPaperDollItemsFrame, 'TOPRIGHT', -8, -74) -- -64 = charframe
+    end
+
+    do
+        -- <Anchor point="BOTTOMLEFT" x="130" y="16"/>
+        local main = _G['InspectMainHandSlot']
+        main:ClearAllPoints()
+        local x = (InspectPaperDollItemsFrame:GetWidth() / 2) - 1.5 * main:GetWidth() - 5
+        main:SetPoint('BOTTOMLEFT', InspectPaperDollItemsFrame, 'BOTTOMLEFT', x, 16)
+    end
+
+    UIPanelWindows["InspectFrame"] = {
+        whileDead = 1,
+        height = InspectFrame:GetHeight(),
+        width = InspectFrame:GetWidth(),
+        bottomClampOverride = 152,
+        xoffset = 0,
+        yoffset = 0,
+        pushable = 3,
+        area = "left"
+    }
+
+    do
+        local firstTab = _G['InspectFrameTab1']
+        firstTab:ClearAllPoints()
+        firstTab:SetPoint('TOPLEFT', InspectFrame, 'BOTTOMLEFT', 12, 1)
+
+        for i = 1, 3 do
+            --
+            local tab = _G['InspectFrameTab' .. i]
+
+            if tab then
+                DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+
+                if i == 1 then
+                    tab.DFFirst = true
+                elseif i > 1 then
+                    tab.DFChangePoint = true
+                end
+            end
+        end
+    end
+
+    InspectFrame.DFHooked = true
+end
+
 function DragonflightUIMixin:ChangeCharacterFrameEra()
     local frameTable = {PaperDollFrame, ReputationFrame, SkillFrame}
 
