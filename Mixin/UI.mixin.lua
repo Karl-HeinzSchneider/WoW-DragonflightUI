@@ -806,7 +806,25 @@ function DragonflightUIMixin:ChangeInspectFrame()
                 if layer == 'BORDER' then child:Hide() end
             end
         end
+    end
 
+    -- honor
+    do
+        local regions = {InspectPVPFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -14
+        local dy = 12
+
+        InspectPVPFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectPVPFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
     end
 
     InspectFrame:SetSize(336, 424)
