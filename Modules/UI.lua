@@ -69,7 +69,9 @@ function frame:OnEvent(event, arg1, ...)
     -- print('event', event, arg1, ...)   
     if event == 'INSPECT_READY' then
         -- print('INSPECT_READY')
-        Module:HookColorInspect()
+        local db = Module.db.profile.first
+        if db.itemcolor then DragonflightUIItemColorMixin:HookInspectFrame() end
+        DragonflightUIMixin:ChangeInspectFrame()
     elseif event == 'BAG_UPDATE_DELAYED' then
         -- print('BAG_UPDATE_DELAYED')
         DragonflightUIItemColorMixin:UpdateAllBags(false)
@@ -603,6 +605,7 @@ function Module.Cata()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('INSPECT_READY')
 end
 
 -- Wrath
