@@ -820,7 +820,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
                 -- if layer == 'ARTWORK' then child:Hide() end
             end
         end
-        local dx = -14
+        local dx = -16
         local dy = 12
 
         InspectPVPFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
