@@ -902,6 +902,11 @@ function DragonflightUIMixin:ChangeInspectFrame()
         name:SetPoint('TOP', InspectFrame, 'TOP', 0, -5)
         name:SetPoint('LEFT', InspectFrame, 'LEFT', 60, 0)
         name:SetPoint('RIGHT', InspectFrame, 'RIGHT', -60, 0)
+
+        local level = InspectLevelText
+        level:ClearAllPoints()
+        level:SetPoint('TOP', name, 'BOTTOM', 0, -10)
+        level:SetDrawLayer('ARTWORK')
     end
 
     do
@@ -914,6 +919,12 @@ function DragonflightUIMixin:ChangeInspectFrame()
         local model = _G['InspectModelFrame']
         model:ClearAllPoints()
         model:SetPoint('TOPLEFT', InspectPaperDollFrame, 'TOPLEFT', 52, -74)
+
+        local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', InspectPaperDollFrame,
+                                  'InsetFrameTemplate')
+        inset:ClearAllPoints()
+        inset:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        inset:SetPoint('BOTTOMRIGHT', model, 'BOTTOMRIGHT', 0, 8)
     end
 
     do
