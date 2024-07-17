@@ -853,6 +853,20 @@ function DragonflightUIMixin:ChangeInspectFrame()
 
         local scroll = InspectTalentFrameScrollFrame
         scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66)
+
+        for i = 1, 28 do
+            --
+            local talent = _G['InspectTalentFrameTalent' .. i]
+            talent:SetScript('OnEnter', function(self)
+                -- 
+                local selectedTab = PanelTemplates_GetSelectedTab(InspectTalentFrame) or InspectTalentFrame.talentTree;
+                local talentGroup = GetActiveTalentGroup(true, false);
+                -- print(talent:GetName(), selectedTab, talentGroup)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetTalent(selectedTab, i, true, false, talentGroup, true)
+            end)
+
+        end
     end
 
     InspectFrame:SetSize(336, 424)
