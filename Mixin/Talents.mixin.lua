@@ -2,6 +2,179 @@ DragonflightUITalentsPanelMixin = {}
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
+local TALENT_INFO = {
+    ["default"] = {
+        [1] = {color = {r = 1.0, g = 0.72, b = 0.1}},
+        [2] = {color = {r = 1.0, g = 0.0, b = 0.0}},
+        [3] = {color = {r = 0.3, g = 0.5, b = 1.0}}
+    },
+
+    ["DEATHKNIGHT"] = {
+        [1] = {
+            -- Blood
+            color = {r = 1.0, g = 0.0, b = 0.0}
+        },
+        [2] = {
+            -- Frost
+            color = {r = 0.3, g = 0.5, b = 1.0}
+        },
+        [3] = {
+            -- Unholy
+            color = {r = 0.2, g = 0.8, b = 0.2}
+        }
+    },
+
+    ["DRUID"] = {
+        [1] = {
+            -- Balance
+            color = {r = 0.8, g = 0.3, b = 0.8}
+        },
+        [2] = {
+            -- Feral
+            color = {r = 1.0, g = 0.0, b = 0.0}
+        },
+        [3] = {
+            -- Restoration
+            color = {r = 0.4, g = 0.8, b = 0.2}
+        }
+    },
+
+    ["HUNTER"] = {
+        [1] = {
+            -- Beast Mastery
+            color = {r = 1.0, g = 0.0, b = 0.3}
+        },
+        [2] = {
+            -- Marksmanship
+            color = {r = 0.3, g = 0.6, b = 1.0}
+        },
+        [3] = {
+            -- Survival
+            color = {r = 1.0, g = 0.6, b = 0.0}
+        }
+    },
+
+    ["MAGE"] = {
+        [1] = {
+            -- Arcane
+            color = {r = 0.7, g = 0.2, b = 1.0}
+        },
+        [2] = {
+            -- Fire
+            color = {r = 1.0, g = 0.5, b = 0.0}
+        },
+        [3] = {
+            -- Frost
+            color = {r = 0.3, g = 0.6, b = 1.0}
+        }
+    },
+
+    ["PALADIN"] = {
+        [1] = {
+            -- Holy
+            color = {r = 1.0, g = 0.5, b = 0.0}
+        },
+        [2] = {
+            -- Protection
+            color = {r = 0.3, g = 0.5, b = 1.0}
+        },
+        [3] = {
+            -- Retribution
+            color = {r = 1.0, g = 0.0, b = 0.0}
+        }
+    },
+
+    ["PRIEST"] = {
+        [1] = {
+            -- Discipline
+            color = {r = 1.0, g = 0.5, b = 0.0}
+        },
+        [2] = {
+            -- Holy
+            color = {r = 0.6, g = 0.6, b = 1.0}
+        },
+        [3] = {
+            -- Shadow
+            color = {r = 0.7, g = 0.4, b = 0.8}
+        }
+    },
+
+    ["ROGUE"] = {
+        [1] = {
+            -- Assassination
+            color = {r = 0.5, g = 0.8, b = 0.5}
+        },
+        [2] = {
+            -- Combat
+            color = {r = 1.0, g = 0.5, b = 0.0}
+        },
+        [3] = {
+            -- Subtlety
+            color = {r = 0.3, g = 0.5, b = 1.0}
+        }
+    },
+
+    ["SHAMAN"] = {
+        [1] = {
+            -- Elemental
+            color = {r = 0.8, g = 0.2, b = 0.8}
+        },
+        [2] = {
+            -- Enhancement
+            color = {r = 0.3, g = 0.5, b = 1.0}
+        },
+        [3] = {
+            -- Restoration
+            color = {r = 0.2, g = 0.8, b = 0.4}
+        }
+    },
+
+    ["WARLOCK"] = {
+        [1] = {
+            -- Affliction
+            color = {r = 0.0, g = 1.0, b = 0.6}
+        },
+        [2] = {
+            -- Demonology
+            color = {r = 1.0, g = 0.0, b = 0.0}
+        },
+        [3] = {
+            -- Destruction
+            color = {r = 1.0, g = 0.5, b = 0.0}
+        }
+    },
+
+    ["WARRIOR"] = {
+        [1] = {
+            -- Arms
+            color = {r = 1.0, g = 0.72, b = 0.1}
+        },
+        [2] = {
+            -- Fury
+            color = {r = 1.0, g = 0.0, b = 0.0}
+        },
+        [3] = {
+            -- Protection
+            color = {r = 0.3, g = 0.5, b = 1.0}
+        }
+    },
+
+    ["PET_409"] = {
+        -- Tenacity
+        [1] = {color = {r = 1.0, g = 0.1, b = 1.0}}
+    },
+
+    ["PET_410"] = {
+        -- Ferocity
+        [1] = {color = {r = 1.0, g = 0.0, b = 0.0}}
+    },
+
+    ["PET_411"] = {
+        -- Cunning
+        [1] = {color = {r = 0.0, g = 0.6, b = 1.0}}
+    }
+};
+
 function DragonflightUITalentsPanelMixin:OnLoad()
 end
 
@@ -101,6 +274,25 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
         local headerPointsSpent = _G[panel .. 'HeaderIconPointsSpent']
         headerPointsSpent:SetText(pointsSpent)
+    end
+
+    -- header color
+
+    do
+        local talentInfo;
+        local classDisplayName, class = UnitClass("player");
+        talentInfo = TALENT_INFO[class] or TALENT_INFO["default"];
+
+        local color = talentInfo and talentInfo[panelID] and talentInfo[panelID].color;
+        if (color) then
+            _G[panel .. 'HeaderBackground']:SetVertexColor(color.r, color.g, color.b);
+            if (_G[panel .. 'Summary']) then
+                _G[panel .. 'SummaryBorder']:SetVertexColor(color.r, color.g, color.b);
+                _G[panel .. 'SummaryIconGlow']:SetVertexColor(color.r, color.g, color.b);
+            end
+        else
+            _G[panel .. 'HeaderBackground']:SetVertexColor(1, 1, 1);
+        end
     end
 
     -- background
