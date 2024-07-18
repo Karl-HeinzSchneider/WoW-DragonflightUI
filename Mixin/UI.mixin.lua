@@ -2260,6 +2260,137 @@ function DragonflightUIMixin:AddQuestLevel()
     end
 end
 
+function DragonflightUIMixin:ChangeSpellbookEra()
+    local frame = SpellBookFrame
+
+    local regions = {frame:GetRegions()}
+
+    local port
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            -- print(layer, layerNr, child:GetTexture())
+            if layer == 'ARTWORK' then child:Hide() end
+            if layer == 'BACKGROUND' then
+                if child:GetTexture() == 136830 then
+                    -- port
+                    port = child
+                end
+            end
+        end
+    end
+
+    frame:SetSize(550, 525)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local closeButton = SpellBookCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    SpellBookTitleText:ClearAllPoints()
+    SpellBookTitleText:SetPoint('TOP', frame, 'TOP', 0, -5)
+    SpellBookTitleText:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    SpellBookTitleText:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+
+    do
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+        port:Show()
+
+        SetPortraitToTexture(port, port:GetTexture())
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    SpellBookSkillLineTab1:SetPoint('TOPLEFT', SpellBookSideTabsFrame, 'TOPRIGHT', 0, -36)
+
+    SpellBookNextPageButton:ClearAllPoints()
+    SpellBookNextPageButton:SetPoint('BOTTOMRIGHT', SpellBookPageNavigationFrame, 'BOTTOMRIGHT', -31, 26)
+
+    SpellBookPrevPageButton:ClearAllPoints()
+    SpellBookPrevPageButton:SetPoint('BOTTOMRIGHT', SpellBookPageNavigationFrame, 'BOTTOMRIGHT', -66, 26)
+
+    SpellBookPageText:ClearAllPoints()
+    SpellBookPageText:SetPoint('BOTTOMRIGHT', SpellBookPageNavigationFrame, 'BOTTOMRIGHT', -110, 38)
+
+    do
+        --
+        local inset = CreateFrame('FRAME', 'DragonflightUISpellBookInset', frame, 'InsetFrameTemplate')
+        inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -24)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+        inset:SetFrameLevel(1)
+
+        local first = frame:CreateTexture('DragonflightUISpellBookPage1', 'BACKGROUND')
+        first:SetTexture(base .. 'Spellbook-Page-1')
+        first:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -25)
+
+        local second = frame:CreateTexture('DragonflightUISpellBookPage2', 'BACKGROUND')
+        second:SetTexture(base .. 'Spellbook-Page-2')
+        second:SetPoint('TOPLEFT', first, 'TOPRIGHT', 0, 0)
+    end
+
+    do
+        --
+        for i = 1, 12 do
+            --
+            local btn = _G['SpellButton' .. i]
+            btn:ClearAllPoints()
+
+            -- modulo
+            local modulo = i - math.floor(i / 2) * 2
+
+            if i == 1 then
+                btn:SetPoint('TOPLEFT', SpellBookSpellIconsFrame, 'TOPLEFT', 100, -72)
+
+            elseif modulo == 0 then
+                btn:SetPoint('TOPLEFT', _G['SpellButton' .. (i - 1)], 'TOPLEFT', 225, 0)
+            elseif modulo == 1 then
+                btn:SetPoint('TOPLEFT', _G['SpellButton' .. (i - 2)], 'BOTTOMLEFT', 0, -29)
+            end
+        end
+    end
+
+    ShowAllSpellRanksCheckBox:ClearAllPoints()
+    ShowAllSpellRanksCheckBox:SetPoint('BOTTOMLEFT', _G['SpellButton1'], 'TOPLEFT', -4, 8)
+
+    for i = 1, 5 do
+        local tab = _G['SpellBookFrameTabButton' .. i]
+
+        if tab then
+            --         
+            -- DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+            -- if i > 1 then tab.DFChangePoint = true end
+            if i == 1 then
+                tab:ClearAllPoints()
+                tab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 19)
+            end
+        end
+    end
+
+    frame:HookScript('OnShow', function()
+        frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + 32);
+        frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+        frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+        UpdateUIPanelPositions(frame)
+    end)
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 

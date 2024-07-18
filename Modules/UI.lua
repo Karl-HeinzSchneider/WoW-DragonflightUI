@@ -320,7 +320,7 @@ function Module:ChangeFrames()
         end)
     elseif DF.Era then
         --
-        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        DragonflightUIMixin:ChangeSpellbookEra()
         DragonflightUIMixin:ChangeCharacterFrameEra()
         Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
             EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 9, -75)
