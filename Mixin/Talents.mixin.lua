@@ -106,7 +106,23 @@ function DragonflightUITalentsPanelMixin:Refresh()
     -- background
     do
         local bg = _G[panel .. 'BackgroundTopLeft']
-        -- bg:SetTexture()
+        bg:SetTexture(background)
+        bg:Show()
+
+        local bgBase = "Interface\\TalentFrame\\" .. background .. "-";
+
+        local backgroundPiece = _G[panel .. "BackgroundTopLeft"];
+        backgroundPiece:SetTexture(bgBase .. "TopLeft");
+        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        backgroundPiece = _G[panel .. "BackgroundTopRight"];
+        backgroundPiece:SetTexture(bgBase .. "TopRight");
+        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        backgroundPiece = _G[panel .. "BackgroundBottomLeft"];
+        backgroundPiece:SetTexture(bgBase .. "BottomLeft");
+        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        backgroundPiece = _G[panel .. "BackgroundBottomRight"];
+        backgroundPiece:SetTexture(bgBase .. "BottomRight");
+        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
     end
 
     -- talents
