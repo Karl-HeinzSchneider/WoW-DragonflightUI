@@ -57,6 +57,10 @@ function DragonflightUITalentsPanelMixin:Init(id)
         button:RegisterEvent("PLAYER_TALENT_UPDATE");
         button:RegisterEvent("PET_TALENT_UPDATE");
     end
+
+    self.RoleIcon = _G[panel .. 'RoleIcon']
+    self.RoleIcon2 = _G[panel .. 'RoleIcon2']
+    DragonflightUITalentsPanelMixin:UpdateRoleIcon(self, id)
 end
 
 function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
@@ -216,4 +220,54 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
         -- TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet, TalentFrame);
     end
     return requirementsMet;
+end
+
+-- 'DAMAGER', 'TANK', 'HEALER'
+local PlayerClassRoleTable = {
+    {{'DAMAGER'}, {'DAMAGER'}, {'TANK'}}, -- Warrior
+    {{'HEALER'}, {'TANK'}, {'DAMAGER'}}, -- Paladin 
+    {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Hunter 
+    {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Rogue 
+    {{'HEALER'}, {'HEALER'}, {'DAMAGER'}}, -- Priest  
+    {{'TANK'}, {'DAMAGER'}, {'DAMAGER'}}, -- DeathKnight 
+    {{'DAMAGER'}, {'DAMAGER', 'TANK'}, {'HEALER'}}, -- Shaman 
+    {{'DAMAGER', 'HEALER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Mage 
+    {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Warlock 
+    {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Monk 
+    {{'DAMAGER'}, {'DAMAGER', 'TANK'}, {'HEALER'}}, -- Druid 
+    {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}} -- Demon Hunter 
+}
+
+function DragonflightUITalentsPanelMixin:GetPlayerRole(panelID)
+    local localizedClass, englishClass, classIndex = UnitClass('player');
+
+    local roleData = PlayerClassRoleTable[classIndex][panelID]
+
+    return roleData[1], roleData[2]
+end
+
+function DragonflightUITalentsPanelMixin:UpdateRoleIcon(self, panelID)
+    -- local role1, role2 = GetTalentTreeRoles(self.talentTree, self.inspect, self.pet); 
+    -- local role1, role2 = 'TANK', 'TANK'
+    local role1, role2 = DragonflightUITalentsPanelMixin:GetPlayerRole(panelID)
+
+    -- swap roles to match order on the summary screen
+    if (role2) then role1, role2 = role2, role1; end
+
+    -- Update roles
+    if (role1 == "TANK" or role1 == "HEALER" or role1 == "DAMAGER") then
+        self.RoleIcon.Icon:SetTexCoord(GetTexCoordsForRoleSmall(role1));
+        self.RoleIcon:Show();
+        self.RoleIcon.role = role1;
+    else
+        self.RoleIcon:Hide();
+    end
+
+    if (role2 == "TANK" or role2 == "HEALER" or role2 == "DAMAGER") then
+        self.RoleIcon2.Icon:SetTexCoord(GetTexCoordsForRoleSmall(role2));
+        self.RoleIcon2:Show();
+        self.RoleIcon2.role = role2;
+    else
+        self.RoleIcon2:Hide();
+    end
 end
