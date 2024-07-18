@@ -622,6 +622,13 @@ function DragonflightUIActionbarMixin:StyleButtons()
         name:SetSize(32, 10)
         name:SetPoint('BOTTOM', 0, 2)
 
+        do
+            local count = _G[btnName .. 'Count']
+            count:ClearAllPoints()
+            count:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -5, 5)
+            local fontFile, fontHeight, flags = count:GetFont()
+            count:SetFont(fontFile, 14 + 1, flags)
+        end
     end
 end
 
