@@ -250,8 +250,13 @@ local defaults = {
         }
     }
 }
-if DF.Era then defaults.profile.micro.x = -205 end
-if DF.Wrath then defaults.profile.micro.x = -294 end
+if DF.Cata then
+    defaults.profile.micro.x = -320
+elseif DF.Wrath then
+    defaults.profile.micro.x = -294
+elseif DF.Era then
+    defaults.profile.micro.x = -205
+end
 
 Module:SetDefaults(defaults)
 
