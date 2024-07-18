@@ -40,6 +40,7 @@ XML\Config.xml
 XML\Profession.xml
 XML\QuickKeybind.xml
 XML\SettingsList.xml
+XML\Talents.xml
 XML\UI.xml
 
 # Config

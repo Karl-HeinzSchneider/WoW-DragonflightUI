@@ -2272,7 +2272,7 @@ function DragonflightUIMixin:ChangeTalentsEra()
         --     
         if child:GetObjectType() == 'Texture' then
             local layer, layerNr = child:GetDrawLayer()
-            print(layer, layerNr, child:GetTexture())
+            -- print(layer, layerNr, child:GetTexture())
             if layer == 'BORDER' then child:Hide() end
             if layer == 'BACKGROUND' then child:Hide() end
         end
@@ -2330,6 +2330,26 @@ function DragonflightUIMixin:ChangeTalentsEra()
         tab:Hide()
     end
 
+    local inset = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFrameInset', frame, 'InsetFrameTemplate')
+    inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
+    inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 26)
+    inset:SetFrameLevel(1)
+
+    for i = 1, 3 do
+        --
+        local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, frame,
+                                  'DFPlayerTalentFramePanelTemplate')
+        -- panel:SetSize(208, 376)
+
+        if i == 1 then
+            panel:SetPoint('BOTTOMLEFT', inset, 'BOTTOMLEFT', 5, 3)
+        else
+            panel:SetPoint('TOPLEFT', _G['DragonflightUIPlayerTalentFramePanel' .. (i - 1)], 'TOPRIGHT', 1, 0)
+        end
+
+    end
+
+    ----
     frame:HookScript('OnShow', function()
         frame:SetAttribute("UIPanelLayout-width", frame:GetWidth());
         frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
