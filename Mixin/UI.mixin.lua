@@ -2166,6 +2166,96 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:AddQuestLevel()
+
+    local questInfo = function(id)
+        local title, level, suggestedGroup, isHeader = GetQuestLogTitle(id)
+        if not title or not level then return nil, nil, nil, nil, nil end
+
+        local suffix = ''
+
+        if suggestedGroup then
+            if suggestedGroup == GROUP or suggestedGroup == ELITE then
+                suffix = '+'
+            elseif suggestedGroup == LFG_TYPE_DUNGEON then
+                suffix = 'D'
+            elseif suggestedGroup == RAID then
+                suffix = 'R'
+            elseif suggestedGroup == PVP then
+                suffix = 'P'
+            end
+        end
+
+        return title, level, suggestedGroup, isHeader, suffix
+    end
+    -- Details
+    hooksecurefunc('QuestLog_UpdateQuestDetails', function()
+        local id = GetQuestLogSelection()
+        if not id then return end
+
+        local title, level, suggestedGroup, isHeader, suffix = questInfo(id)
+        if not title or not level then return end
+
+        local questLogTitle = QuestLogQuestTitle or QuestInfoTitleHeader
+        questLogTitle:SetText('[' .. level .. suffix .. '] ' .. title)
+    end)
+
+    -- Log
+
+    if DF.Cata then
+        --
+        hooksecurefunc('QuestLogTitleButton_Resize', function(btn)
+            --
+            local questIndex = btn:GetID()
+
+            local title, level, suggestedGroup, isHeader, suffix = questInfo(questIndex)
+
+            if title and level and not isHeader then
+                --
+                local padding = (level > 0 and level < 10) and '0' or ''
+                local questLogText = ' [' .. padding .. level .. suffix .. '] ' .. title
+
+                local normal = btn.normalText
+                normal:SetText(questLogText)
+            end
+        end)
+    elseif DF.Era then
+        --
+        hooksecurefunc('QuestLog_Update', function()
+            --
+            local numEntries, numQuests = GetNumQuestLogEntries();
+            if numEntries == 0 then return end
+
+            local offset = FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
+
+            for i = 1, QUESTS_DISPLAYED do
+                --
+                local questIndex = i + offset
+
+                if questIndex <= numEntries then
+                    --
+
+                    local logTitle = _G['QuestLogTitle' .. i]
+                    local title, level, suggestedGroup, isHeader, suffix = questInfo(questIndex)
+
+                    if title and level and not isHeader then
+                        --
+                        local padding = (level > 0 and level < 10) and '0' or ''
+                        local questLogText = ' [' .. padding .. level .. suffix .. '] ' .. title
+                        logTitle:SetText(questLogText)
+                        QuestLogDummyText:SetText(questLogText)
+
+                        local normal = _G['QuestLogTitle' .. i .. 'NormalText']
+                        local check = _G['QuestLogTitle' .. i .. 'Check']
+                        check:ClearAllPoints()
+                        check:SetPoint('LEFT', normal, 'RIGHT', 2, 0)
+                    end
+                end
+            end
+        end)
+    end
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 

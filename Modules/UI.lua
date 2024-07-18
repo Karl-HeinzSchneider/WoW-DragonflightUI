@@ -6,7 +6,10 @@ Module.Tmp = {}
 Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {
-    profile = {scale = 1, first = {changeBag = true, itemcolor = true, changeTradeskill = true, changeTrainer = true}}
+    profile = {
+        scale = 1,
+        first = {changeBag = true, itemcolor = true, changeTradeskill = true, changeTrainer = true, questLevel = true}
+    }
 }
 Module:SetDefaults(defaults)
 
@@ -59,6 +62,12 @@ local UIOptions = {
             name = 'Change Trainer Window',
             desc = '' .. getDefaultStr('changeTrainer', 'first'),
             order = 24
+        },
+        questLevel = {
+            type = 'toggle',
+            name = 'Show Questlevel',
+            desc = '' .. getDefaultStr('questLevel', 'first'),
+            order = 25
         }
     }
 }
@@ -194,6 +203,13 @@ function Module:ApplySettings()
         end)
     elseif not db.changeTrainer and Module.TrainerHooked then
         DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
+    end
+
+    if db.questLevel and not Module.QuestLevelHooked then
+        Module.QuestLevelHooked = true
+        DragonflightUIMixin:AddQuestLevel()
+    elseif not db.questLevel and Module.QuestLevelHooked then
+        DF:Print("'Show Questlevel' was deactivated, but Questlog was already modified, please /reload.")
     end
 end
 
