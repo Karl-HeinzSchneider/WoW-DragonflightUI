@@ -1922,12 +1922,15 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
 
     local exit = QuestFrameExitButton
     exit:ClearAllPoints()
+    exit:SetSize(80, 22)
     exit:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 14)
     exit:SetText(CLOSE)
 
     QuestLogDetailScrollFrame:ClearAllPoints()
     QuestLogDetailScrollFrame:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -32, -77)
     QuestLogDetailScrollFrame:SetSize(298, 333)
+
+    QuestLogDetailScrollFrameScrollBar:SetPoint('TOPLEFT', QuestLogDetailScrollFrame, 'TOPRIGHT', 6, -13)
 
     QuestLogListScrollFrame:ClearAllPoints()
     QuestLogListScrollFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 19, -75)
@@ -2053,7 +2056,7 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
     end
 
     do
-        local count = CreateFrame('FRAME', 'DragonflightUIQuestLogCount', frame)
+        local count = CreateFrame('FRAME', 'DragonflightUIQuestLogCount', frame, 'DFQuestLogCount')
         count:SetSize(82.8, 20) -- TODO
         count:SetPoint("TOPLEFT", frame, "TOPLEFT", 80, -41);
 
@@ -2062,7 +2065,8 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
         count:SetWidth(width + hPadding);
 
         QuestLogQuestCount:ClearAllPoints()
-        QuestLogQuestCount:SetPoint('TOPRIGHT', count, 'TOPRIGHT', -8 + 1, -8 + 3)
+        QuestLogQuestCount:SetParent(count)
+        QuestLogQuestCount:SetPoint('TOPRIGHT', _G['DFQuestLogCountTopRight'], 'BOTTOMLEFT', 1, 3)
     end
 
     QuestLogExpandButtonFrame:ClearAllPoints()
