@@ -1849,6 +1849,172 @@ function DragonflightUIMixin:ChangeTradeFrame()
     end
 end
 
+function DragonflightUIMixin:ChangeQuestLogFrameEra()
+    frame = QuestLogFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            print('child:', 'Texture', child:GetTexture(), child:GetWidth(), child:GetHeight())
+            local tex = child:GetTexture()
+
+            if tex == 136797 then
+                -- <Texture file="Interface\QuestFrame\UI-QuestLog-BookIcon">
+                port = child
+            else
+                child:Hide()
+            end
+        end
+    end
+
+    do
+        local left = frame:CreateTexture('DragonflightUIQuestLogDualPane-Left')
+        left:SetSize(512, 445)
+        left:SetTexture(base .. 'UI-QuestLogDualPane-Left')
+        left:SetTexCoord(0, 0, 0, 0.86914002895355, 1, 0, 1, 0.86914002895355)
+        left:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
+
+        local right = frame:CreateTexture('DragonflightUIQuestLogDualPane-Right')
+        right:SetSize(170, 445)
+        right:SetTexture(base .. 'ui-questlogdualpane-right')
+        right:SetTexCoord(0, 0, 0, 0.86914002895355, 0.6640625, 0, 0.6640625, 0.86914002895355)
+        right:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, 0)
+    end
+
+    frame:SetSize(682, 447)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    do
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    QuestLogTitleText:ClearAllPoints()
+    QuestLogTitleText:SetPoint('TOP', QuestLogFrame, 'TOP', 0, -5)
+    QuestLogTitleText:SetPoint('LEFT', QuestLogFrame, 'LEFT', 60, 0)
+    QuestLogTitleText:SetPoint('RIGHT', QuestLogFrame, 'RIGHT', -60, 0)
+
+    local closeButton = QuestLogFrameCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    local exit = QuestFrameExitButton
+    exit:ClearAllPoints()
+    exit:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 14)
+    exit:SetText(CLOSE)
+
+    QuestLogDetailScrollFrame:ClearAllPoints()
+    QuestLogDetailScrollFrame:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -32, -77)
+    QuestLogDetailScrollFrame:SetSize(298, 333)
+
+    QuestLogListScrollFrame:ClearAllPoints()
+    QuestLogListScrollFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 19, -75)
+    QuestLogListScrollFrame:SetSize(305, 335)
+
+    local panel = CreateFrame('FRAME', 'DragonflightUIQuestLogControlPanel', frame)
+    panel:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 18, 11)
+    panel:SetSize(307, 26)
+
+    QuestLogFrameAbandonButton:ClearAllPoints()
+    QuestLogFrameAbandonButton:SetPoint('LEFT', panel, 'LEFT', 0, 1)
+    QuestLogFrameAbandonButton:SetSize(110, 21)
+    QuestLogFrameAbandonButton:SetText(ABANDON_QUEST_ABBREV)
+
+    local track = CreateFrame('BUTTON', 'DragonflightUIQuestLogFrameTrackButton', frame, 'UIPanelButtonTemplate')
+    track:SetPoint('RIGHT', panel, 'RIGHT', -3, 1)
+    track:SetSize(100, 21)
+    track:SetText(TRACK_QUEST_ABBREV)
+    track:SetEnabled(true)
+    track:SetScript('OnEnter', function(self)
+        --
+        GameTooltip_AddNewbieTip(self, TRACK_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_TRACKQUEST, 1);
+    end)
+    local DF_QuestLogTitleButton_OnClick = function(self)
+        local questIndex = GetQuestLogSelection()
+
+        -- Shift-click toggles quest-watch on this quest.
+        if (IsQuestWatched(questIndex)) then
+            local questID = GetQuestIDFromLogIndex(questIndex);
+            for index, value in ipairs(QUEST_WATCH_LIST) do
+                if (value.id == questID) then tremove(QUEST_WATCH_LIST, index); end
+            end
+            RemoveQuestWatch(questIndex);
+            QuestWatch_Update();
+        else
+            -- Set error if no objectives
+            if (GetNumQuestLeaderBoards(questIndex) == 0) then
+                UIErrorsFrame:AddMessage(QUEST_WATCH_NO_OBJECTIVES, 1.0, 0.1, 0.1, 1.0);
+                return;
+            end
+            -- Set an error message if trying to show too many quests
+            if (GetNumQuestWatches() >= MAX_WATCHABLE_QUESTS) then
+                UIErrorsFrame:AddMessage(format(QUEST_WATCH_TOO_MANY, MAX_WATCHABLE_QUESTS), 1.0, 0.1, 0.1, 1.0);
+                return;
+            end
+            AutoQuestWatch_Insert(questIndex, QUEST_WATCH_NO_EXPIRE);
+            QuestWatch_Update();
+        end
+        QuestLog_SetSelection(questIndex)
+        QuestLog_Update();
+    end
+    track:SetScript('OnClick', function(self)
+        --
+        DF_QuestLogTitleButton_OnClick()
+    end)
+
+    QuestFramePushQuestButton:ClearAllPoints()
+    QuestFramePushQuestButton:SetPoint('LEFT', QuestLogFrameAbandonButton, 'RIGHT', 0, 0)
+    QuestFramePushQuestButton:SetPoint('RIGHT', track, 'LEFT', 0, 0)
+    QuestFramePushQuestButton:SetWidth(1)
+    QuestFramePushQuestButton:SetText(SHARE_QUEST_ABBREV)
+
+    QuestLogTrack:Hide()
+
+    do
+        local count = CreateFrame('FRAME', 'DragonflightUIQuestLogCount', frame)
+        count:SetSize(82.8, 20) -- TODO
+        count:SetPoint("TOPLEFT", frame, "TOPLEFT", 80, -41);
+
+        local hPadding = 15;
+        local width = QuestLogQuestCount:GetWidth();
+        count:SetWidth(width + hPadding);
+
+        QuestLogQuestCount:ClearAllPoints()
+        QuestLogQuestCount:SetPoint('TOPRIGHT', count, 'TOPRIGHT', -8 + 1, -8 + 3)
+    end
+
+    QuestLogExpandButtonFrame:ClearAllPoints()
+    QuestLogExpandButtonFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 70 - 47, -48)
+
+    -- default -16 
+    ShowUIPanel(frame)
+    QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+    QuestLogFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+    HideUIPanel(frame)
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 
