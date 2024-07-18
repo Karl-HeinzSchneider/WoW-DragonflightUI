@@ -315,6 +315,14 @@ function Module:ChangeFrames()
         Module:FuncOrWaitframe('TacoTip', function()
             DF.Compatibility:TacoTipCharacter()
         end)
+        if IsAddOnLoaded('Leatrix_Plus') then
+            --
+            if QuestLogFrame:GetWidth() > 400 then
+                --
+                DF:Print(
+                    "Leatrix_Plus detected with 'Interface -> Enhance quest log' activated - please deactivate or you might encounter bugs.")
+            end
+        end
         DragonflightUIMixin:ChangeQuestLogFrameEra()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
