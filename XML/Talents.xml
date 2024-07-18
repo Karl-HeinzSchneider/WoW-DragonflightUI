@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
+	<Script file="Mixin/Talents.mixin.lua" />
 	<Frame name="DFPlayerTalentFrameRoleIconTemplate" virtual="true">
 		<Size x="16" y="16" />
 		<Layers>
@@ -22,7 +23,7 @@
 			</OnLeave>
 		</Scripts>
 	</Frame>
-	<Frame name="DFPlayerTalentFramePanelTemplate" inherits="InsetFrameTemplate2" virtual="true">
+	<Frame name="DFPlayerTalentFramePanelTemplate" inherits="InsetFrameTemplate2" mixin="DragonflightUITalentsPanelMixin" virtual="true">
 		<Size>
 			<AbsDimension x="208" y="376" />
 		</Size>
@@ -526,5 +527,11 @@
 			</Button>
 			-->
 		</Frames>
+		<Scripts>
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+		</Scripts>
 	</Frame>
 </Ui>

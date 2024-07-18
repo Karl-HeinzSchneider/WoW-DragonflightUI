@@ -2340,6 +2340,8 @@ function DragonflightUIMixin:ChangeTalentsEra()
         local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, frame,
                                   'DFPlayerTalentFramePanelTemplate')
         -- panel:SetSize(208, 376)
+        panel:Init(i)
+        panel:Refresh()
 
         if i == 1 then
             panel:SetPoint('BOTTOMLEFT', inset, 'BOTTOMLEFT', 5, 3)
