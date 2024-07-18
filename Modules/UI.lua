@@ -357,9 +357,9 @@ function Module:ChangeFrames()
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
 
-        --[[   Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
-        end) ]]
+        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:ChangeTalentsEra()
+        end)
 
         Module:FuncOrWaitframe('Blizzard_Communities', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
