@@ -1849,6 +1849,260 @@ function DragonflightUIMixin:ChangeTradeFrame()
     end
 end
 
+function DragonflightUIMixin:ChangeQuestLogFrameEra()
+    frame = QuestLogFrame
+
+    local regions = {frame:GetRegions()}
+    local port
+
+    for k, child in ipairs(regions) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            -- print('child:', 'Texture', child:GetTexture(), child:GetWidth(), child:GetHeight())
+            local tex = child:GetTexture()
+
+            if tex == 136797 then
+                -- <Texture file="Interface\QuestFrame\UI-QuestLog-BookIcon">
+                port = child
+            else
+                child:Hide()
+            end
+        end
+    end
+
+    do
+        local left = frame:CreateTexture('DragonflightUIQuestLogDualPane-Left')
+        left:SetSize(512, 445)
+        left:SetTexture(base .. 'UI-QuestLogDualPane-Left')
+        left:SetTexCoord(0, 0, 0, 0.86914002895355, 1, 0, 1, 0.86914002895355)
+        left:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
+
+        local right = frame:CreateTexture('DragonflightUIQuestLogDualPane-Right')
+        right:SetSize(170, 445)
+        right:SetTexture(base .. 'ui-questlogdualpane-right')
+        right:SetTexCoord(0, 0, 0, 0.86914002895355, 0.6640625, 0, 0.6640625, 0.86914002895355)
+        right:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, 0)
+    end
+
+    frame:SetSize(682, 447)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    do
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+        port:SetParent(frame)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+    end
+
+    QuestLogTitleText:ClearAllPoints()
+    QuestLogTitleText:SetPoint('TOP', QuestLogFrame, 'TOP', 0, -5)
+    QuestLogTitleText:SetPoint('LEFT', QuestLogFrame, 'LEFT', 60, 0)
+    QuestLogTitleText:SetPoint('RIGHT', QuestLogFrame, 'RIGHT', -60, 0)
+
+    local closeButton = QuestLogFrameCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    local exit = QuestFrameExitButton
+    exit:ClearAllPoints()
+    exit:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -7, 14)
+    exit:SetText(CLOSE)
+
+    QuestLogDetailScrollFrame:ClearAllPoints()
+    QuestLogDetailScrollFrame:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -32, -77)
+    QuestLogDetailScrollFrame:SetSize(298, 333)
+
+    QuestLogListScrollFrame:ClearAllPoints()
+    QuestLogListScrollFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 19, -75)
+    QuestLogListScrollFrame:SetSize(305, 335)
+
+    local QUESTS_DISPLAYED_old = QUESTS_DISPLAYED
+    QUESTS_DISPLAYED = 22
+    for i = QUESTS_DISPLAYED_old + 1, QUESTS_DISPLAYED do
+        --
+        local btn = CreateFrame('BUTTON', 'QuestLogTitle' .. i, frame, 'QuestLogTitleButtonTemplate')
+        btn:ClearAllPoints()
+        btn:SetPoint('TOPLEFT', _G['QuestLogTitle' .. (i - 1)], 'BOTTOMLEFT', 0, 1)
+        btn:SetID(i)
+        btn:Hide()
+    end
+
+    local panel = CreateFrame('FRAME', 'DragonflightUIQuestLogControlPanel', frame)
+    panel:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 18, 11)
+    panel:SetSize(307, 26)
+
+    QuestLogFrameAbandonButton:ClearAllPoints()
+    QuestLogFrameAbandonButton:SetPoint('LEFT', panel, 'LEFT', 0, 1)
+    QuestLogFrameAbandonButton:SetSize(110, 21)
+    QuestLogFrameAbandonButton:SetText(ABANDON_QUEST_ABBREV)
+
+    local track = CreateFrame('BUTTON', 'DragonflightUIQuestLogFrameTrackButton', frame, 'UIPanelButtonTemplate')
+    track:SetPoint('RIGHT', panel, 'RIGHT', -3, 1)
+    track:SetSize(100, 21)
+    track:SetText(TRACK_QUEST_ABBREV)
+    track:SetEnabled(true)
+    track:SetScript('OnEnter', function(self)
+        --
+        GameTooltip_AddNewbieTip(self, TRACK_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_TRACKQUEST, 1);
+    end)
+    local DF_QuestLogTitleButton_OnClick = function(self)
+        local questIndex = GetQuestLogSelection()
+
+        -- Shift-click toggles quest-watch on this quest.
+        if (IsQuestWatched(questIndex)) then
+            local questID = GetQuestIDFromLogIndex(questIndex);
+            for index, value in ipairs(QUEST_WATCH_LIST) do
+                if (value.id == questID) then tremove(QUEST_WATCH_LIST, index); end
+            end
+            RemoveQuestWatch(questIndex);
+            QuestWatch_Update();
+        else
+            -- Set error if no objectives
+            if (GetNumQuestLeaderBoards(questIndex) == 0) then
+                UIErrorsFrame:AddMessage(QUEST_WATCH_NO_OBJECTIVES, 1.0, 0.1, 0.1, 1.0);
+                return;
+            end
+            -- Set an error message if trying to show too many quests
+            if (GetNumQuestWatches() >= MAX_WATCHABLE_QUESTS) then
+                UIErrorsFrame:AddMessage(format(QUEST_WATCH_TOO_MANY, MAX_WATCHABLE_QUESTS), 1.0, 0.1, 0.1, 1.0);
+                return;
+            end
+            AutoQuestWatch_Insert(questIndex, QUEST_WATCH_NO_EXPIRE);
+            QuestWatch_Update();
+        end
+        QuestLog_SetSelection(questIndex)
+        QuestLog_Update();
+    end
+    track:SetScript('OnClick', function(self)
+        --
+        DF_QuestLogTitleButton_OnClick()
+    end)
+
+    QuestFramePushQuestButton:ClearAllPoints()
+    QuestFramePushQuestButton:SetPoint('LEFT', QuestLogFrameAbandonButton, 'RIGHT', 0, 0)
+    QuestFramePushQuestButton:SetPoint('RIGHT', track, 'LEFT', 0, 0)
+    QuestFramePushQuestButton:SetWidth(1)
+    QuestFramePushQuestButton:SetText(SHARE_QUEST_ABBREV)
+
+    QuestLogTrack:Hide()
+
+    do
+        EmptyQuestLogFrame:ClearAllPoints()
+        EmptyQuestLogFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 19, -73)
+        EmptyQuestLogFrame:SetSize(302, 356)
+
+        hooksecurefunc(EmptyQuestLogFrame, "Show", function()
+            EmptyQuestLogFrame:ClearAllPoints()
+            EmptyQuestLogFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 19, -73)
+            EmptyQuestLogFrame:SetSize(302, 356)
+        end)
+
+        QuestLogNoQuestsText:ClearAllPoints()
+        QuestLogNoQuestsText:SetPoint('CENTER', EmptyQuestLogFrame, 'CENTER', -6, 16)
+
+        local regionsE = {EmptyQuestLogFrame:GetRegions()}
+
+        for k, child in ipairs(regionsE) do
+            --        
+            if child:GetObjectType() == 'Texture' then child:Hide() end
+        end
+
+        local tl = EmptyQuestLogFrame:CreateTexture(nil, 'BACKGROUND')
+        tl:SetSize(256, 256)
+        tl:SetPoint('TOPLEFT', EmptyQuestLogFrame, 'TOPLEFT', 0, 0)
+        tl:SetTexture(base .. 'UI-QuestLog-Empty-TopLeft')
+        tl:SetTexCoord(0, 1.0, 0, 1.0)
+
+        local bl = EmptyQuestLogFrame:CreateTexture(nil, 'BACKGROUND')
+        bl:SetSize(256, 106)
+        bl:SetPoint('TOPRIGHT', tl, 'BOTTOMRIGHT', 0, 0)
+        bl:SetPoint('BOTTOMLEFT', EmptyQuestLogFrame, 'BOTTOMLEFT', 0, 0)
+        bl:SetTexture(base .. 'UI-QuestLog-Empty-BotLeft')
+        bl:SetTexCoord(0, 1.0, 0, 0.828125)
+
+        local tr = EmptyQuestLogFrame:CreateTexture(nil, 'BACKGROUND')
+        tr:SetSize(46, 256)
+        tr:SetPoint('TOPRIGHT', EmptyQuestLogFrame, 'TOPRIGHT', 0, 0)
+        tr:SetPoint('BOTTOMLEFT', tl, 'BOTTOMRIGHT', 0, 0)
+        tr:SetTexture(base .. 'UI-QuestLog-Empty-TopRight')
+        tr:SetTexCoord(0, 0.71875, 0, 1.0)
+
+        local br = EmptyQuestLogFrame:CreateTexture(nil, 'BACKGROUND')
+        br:SetSize(46, 256)
+        br:SetPoint('BOTTOMRIGHT', EmptyQuestLogFrame, 'BOTTOMRIGHT', 0, 0)
+        br:SetPoint('TOPLEFT', tl, 'BOTTOMRIGHT', 0, 0)
+        br:SetTexture(base .. 'UI-QuestLog-Empty-BotRight')
+        br:SetTexCoord(0, 0.71875, 0, 0.828125)
+    end
+
+    do
+        local count = CreateFrame('FRAME', 'DragonflightUIQuestLogCount', frame)
+        count:SetSize(82.8, 20) -- TODO
+        count:SetPoint("TOPLEFT", frame, "TOPLEFT", 80, -41);
+
+        local hPadding = 15;
+        local width = QuestLogQuestCount:GetWidth();
+        count:SetWidth(width + hPadding);
+
+        QuestLogQuestCount:ClearAllPoints()
+        QuestLogQuestCount:SetPoint('TOPRIGHT', count, 'TOPRIGHT', -8 + 1, -8 + 3)
+    end
+
+    QuestLogExpandButtonFrame:ClearAllPoints()
+    QuestLogExpandButtonFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 70 - 47, -48)
+
+    do
+        local map = CreateFrame('BUTTON', 'DragonflightUIQuestLogFrameShowMapButton', frame)
+        map:SetScript('OnClick', ToggleWorldMap)
+        map:SetSize(48, 32)
+        map:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', -25, -38)
+
+        map:SetNormalTexture('Interface\\QuestFrame\\UI-QuestMap_Button')
+        map:GetNormalTexture():SetTexCoord(0.125, 0.875, 0, 0.5)
+        map:SetPushedTexture('Interface\\QuestFrame\\UI-QuestMap_Button')
+        map:GetPushedTexture():SetTexCoord(0.125, 0.875, 0.5, 1.0)
+        map:SetHighlightTexture('Interface\\Buttons\\ButtonHilight-Square')
+
+        map:SetHighlightTexture('Interface\\Buttons\\ButtonHilight-Square')
+        local high = map:GetHighlightTexture()
+        high:SetSize(38, 25)
+        high:ClearAllPoints()
+        high:SetPoint('RIGHT', -7, 0)
+
+        local text = map:CreateFontString('DragonflightUIQuestLogFrameShowMapButtonText', 'ARTWORK', 'GameFontNormal')
+        text:SetText(SHOW_MAP)
+        text:SetPoint('RIGHT', map, 'LEFT', 0, 0)
+    end
+
+    UIPanelWindows["QuestLogFrame"] = {
+        area = "doublewide",
+        pushable = 0,
+        xoffset = 0,
+        yoffset = 0,
+        bottomClampOverride = 140 + 12,
+        whileDead = 1,
+        width = frame:GetWidth(),
+        height = frame:GetHeight()
+    };
+end
+
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
     frame = QuestLogFrame
 
@@ -1910,6 +2164,96 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
     HideUIPanel(frame)
+end
+
+function DragonflightUIMixin:AddQuestLevel()
+
+    local questInfo = function(id)
+        local title, level, suggestedGroup, isHeader = GetQuestLogTitle(id)
+        if not title or not level then return nil, nil, nil, nil, nil end
+
+        local suffix = ''
+
+        if suggestedGroup then
+            if suggestedGroup == GROUP or suggestedGroup == ELITE then
+                suffix = '+'
+            elseif suggestedGroup == LFG_TYPE_DUNGEON then
+                suffix = 'D'
+            elseif suggestedGroup == RAID then
+                suffix = 'R'
+            elseif suggestedGroup == PVP then
+                suffix = 'P'
+            end
+        end
+
+        return title, level, suggestedGroup, isHeader, suffix
+    end
+    -- Details
+    hooksecurefunc('QuestLog_UpdateQuestDetails', function()
+        local id = GetQuestLogSelection()
+        if not id then return end
+
+        local title, level, suggestedGroup, isHeader, suffix = questInfo(id)
+        if not title or not level then return end
+
+        local questLogTitle = QuestLogQuestTitle or QuestInfoTitleHeader
+        questLogTitle:SetText('[' .. level .. suffix .. '] ' .. title)
+    end)
+
+    -- Log
+
+    if DF.Cata then
+        --
+        hooksecurefunc('QuestLogTitleButton_Resize', function(btn)
+            --
+            local questIndex = btn:GetID()
+
+            local title, level, suggestedGroup, isHeader, suffix = questInfo(questIndex)
+
+            if title and level and not isHeader then
+                --
+                local padding = (level > 0 and level < 10) and '0' or ''
+                local questLogText = ' [' .. padding .. level .. suffix .. '] ' .. title
+
+                local normal = btn.normalText
+                normal:SetText(questLogText)
+            end
+        end)
+    elseif DF.Era then
+        --
+        hooksecurefunc('QuestLog_Update', function()
+            --
+            local numEntries, numQuests = GetNumQuestLogEntries();
+            if numEntries == 0 then return end
+
+            local offset = FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
+
+            for i = 1, QUESTS_DISPLAYED do
+                --
+                local questIndex = i + offset
+
+                if questIndex <= numEntries then
+                    --
+
+                    local logTitle = _G['QuestLogTitle' .. i]
+                    local title, level, suggestedGroup, isHeader, suffix = questInfo(questIndex)
+
+                    if title and level and not isHeader then
+                        --
+                        local padding = (level > 0 and level < 10) and '0' or ''
+                        local questLogText = ' [' .. padding .. level .. suffix .. '] ' .. title
+                        logTitle:SetText(questLogText)
+                        QuestLogDummyText:SetText(questLogText)
+
+                        local normal = _G['QuestLogTitle' .. i .. 'NormalText']
+                        local check = _G['QuestLogTitle' .. i .. 'Check']
+                        check:ClearAllPoints()
+                        check:SetPoint('LEFT', normal, 'RIGHT', 2, 0)
+                    end
+                end
+            end
+        end)
+    end
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
