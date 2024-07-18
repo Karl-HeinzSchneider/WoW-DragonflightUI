@@ -2343,6 +2343,15 @@ function DragonflightUIMixin:ChangeSpellbookEra()
         local second = frame:CreateTexture('DragonflightUISpellBookPage2', 'BACKGROUND')
         second:SetTexture(base .. 'Spellbook-Page-2')
         second:SetPoint('TOPLEFT', first, 'TOPRIGHT', 0, 0)
+
+        local bg = frame:CreateTexture('DragonflightUISpellBookBG', 'BACKGROUND')
+        bg:SetTexture(base .. 'UI-Background-RockCata')
+        bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 2, -21)
+        bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 2)
+        bg:SetDrawLayer('BACKGROUND', -6)
+        -- TODO: bugged?
+        -- bg:SetVertTile(true) 
+        -- bg:SetHorizTile(true)
     end
 
     do
@@ -2363,7 +2372,80 @@ function DragonflightUIMixin:ChangeSpellbookEra()
             elseif modulo == 1 then
                 btn:SetPoint('TOPLEFT', _G['SpellButton' .. (i - 2)], 'BOTTOMLEFT', 0, -29)
             end
+
+            local first = btn:CreateTexture('TextBackground', 'BACKGROUND')
+            first:SetTexture(base .. 'Spellbook-Parts')
+            first:SetPoint('TOPLEFT', _G['SpellButton' .. i .. 'Highlight'], 'TOPRIGHT', -4, 0 - 1)
+            first:SetSize(167, 39)
+            first:SetTexCoord(0.31250000, 0.96484375, 0.37109375, 0.52343750)
+
+            local second = btn:CreateTexture('TextBackground2', 'BACKGROUND')
+            second:SetTexture(base .. 'Spellbook-Parts')
+            second:SetPoint('TOPLEFT', _G['SpellButton' .. i .. 'Highlight'], 'TOPRIGHT', -4, 0 - 1)
+            second:SetSize(167, 39)
+            second:SetTexCoord(0.31250000, 0.96484375, 0.37109375, 0.52343750)
+
+            local spellName = _G['SpellButton' .. i .. 'SpellName']
+            spellName:SetDrawLayer('ARTWORK', 6)
+
+            local bg = _G['SpellButton' .. i .. 'Background']
+            bg:ClearAllPoints()
+            bg:SetSize(43, 43)
+            bg:SetTexture(base .. 'Spellbook-Parts')
+            bg:SetTexCoord(0.79296875, 0.96093750, 0.00390625, 0.17187500)
+            bg:SetPoint('CENTER', btn, 'CENTER', 0, 0)
+
+            local slotframe = btn:CreateTexture('DragonflightUISpellbookSlotFrame', 'OVERLAY')
+            slotframe:SetDrawLayer('OVERLAY', -1)
+            slotframe:SetTexture(base .. 'Spellbook-Parts')
+            slotframe:SetTexCoord(0.00390625, 0.27734375, 0.44140625, 0.69531250)
+            slotframe:SetSize(70, 65)
+            slotframe:SetPoint('CENTER', btn, 'CENTER', 1.5, 0)
+            btn.DFSlotFrame = slotframe
+
+            btn.ShowSlotFrame = function(show)
+                if show then
+                    btn.DFSlotFrame:Show()
+                else
+                    btn.DFSlotFrame:Hide()
+                end
+            end
         end
+
+        do
+            --
+            for i = 1, 8 do
+                -- SpellBookSkillLineTab1
+                local skill = _G['SpellBookSkillLineTab' .. i]
+
+                local children = {skill:GetRegions()}
+
+                for k, child in ipairs(children) do
+                    if child:GetObjectType() == 'Texture' then
+                        local tex = child:GetTexture()
+                        if tex == 136831 then
+                            -- 
+                            -- child:Hide() 
+                            child:SetTexture(base .. 'spellbook-skilllinetab')
+                        end
+                    end
+                end
+            end
+
+        end
+
+        hooksecurefunc('SpellButton_UpdateButton', function(self)
+            --
+            local name = self:GetName()
+
+            local spellname = _G[name .. 'SpellName']
+            spellname:ClearAllPoints()
+            spellname:SetPoint('LEFT', self, 'RIGHT', 8, 4)
+            spellname:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+
+            local icon = _G[name .. 'IconTexture']
+            self.ShowSlotFrame(icon:IsVisible())
+        end)
     end
 
     ShowAllSpellRanksCheckBox:ClearAllPoints()
