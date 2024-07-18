@@ -22,6 +22,10 @@ function DragonflightUITalentsPanelMixin:Init(id)
         local buttonName = panel .. 'Talent' .. i
         local button = _G[buttonName]
 
+        button.panelID = id
+        button:SetID(i)
+        button.talentID = i
+
         local anchorFrame = CreateFrame('FRAME', nil, self)
         anchorFrame:SetSize(30, 30)
         anchorFrame:SetPoint('CENTER', self, 'CENTER', 0, 0)
@@ -30,6 +34,46 @@ function DragonflightUITalentsPanelMixin:Init(id)
         button:SetPoint('CENTER', anchorFrame, 'CENTER', 0, 0)
 
         button.anchorFrame = anchorFrame
+
+        -- events
+
+        button:SetScript('OnEnter', function(self)
+            --                    
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+            GameTooltip:SetTalent(id, i)
+        end)
+
+        button:SetScript('OnEvent', function(self, event, ...)
+            --
+            if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+        end)
+
+        button:SetScript('OnClick', function(self, button)
+            --                    
+            DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
+        end)
+
+        button:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
+        button:RegisterEvent("PLAYER_TALENT_UPDATE");
+        button:RegisterEvent("PET_TALENT_UPDATE");
+    end
+end
+
+function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
+    -- print('DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)', self:GetName(), button)
+    local panelID = self.panelID
+    local talentID = self.talentID
+
+    if (IsModifiedClick("CHATLINK")) then
+        --
+        local link = GetTalentLink(panelID, talentID)
+        if link then ChatEdit_InsertLink(link) end
+    else
+        --
+        if button == 'LeftButton' then
+            --
+            LearnTalent(panelID, talentID)
+        end
     end
 end
 
