@@ -2349,6 +2349,9 @@ function DragonflightUIMixin:ChangeTalentsEra()
         if unspentTalentPoints > 0 then
             headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
             headerText:Show()
+        elseif GetNextTalentLevel() then
+            headerText:SetFormattedText(NEXT_TALENT_LEVEL, GetNextTalentLevel());
+            headerText:Show()
         else
             headerText:Hide()
         end
