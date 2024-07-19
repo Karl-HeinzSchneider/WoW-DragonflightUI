@@ -543,13 +543,16 @@ function DragonflightUITalentsPanelMixin:Refresh()
                     end
 
                     if (node.rightArrow ~= 0) then
-                        -- TalentFrame_SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["right"][node.rightArrow],xOffset + talentButtonSize / 2 - arrowInsetX, yOffset, TalentFrame);
+                        self:SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["right"][node.rightArrow],
+                                             xOffset + talentButtonSize / 2 - arrowInsetX, yOffset);
                     end
                     if (node.leftArrow ~= 0) then
-                        -- TalentFrame_SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["left"][node.leftArrow], xOffset - talentButtonSize / 2 + arrowInsetX, yOffset, TalentFrame);
+                        self:SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["left"][node.leftArrow],
+                                             xOffset - talentButtonSize / 2 + arrowInsetX, yOffset);
                     end
                     if (node.topArrow ~= 0) then
-                        -- TalentFrame_SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["top"][node.topArrow], xOffset, yOffset + talentButtonSize / 2 - arrowInsetY, TalentFrame);
+                        self:SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["top"][node.topArrow], xOffset,
+                                             yOffset + talentButtonSize / 2 - arrowInsetY);
                     end
                 else
                     -- No talent; draw branches
@@ -582,6 +585,14 @@ function DragonflightUITalentsPanelMixin:Refresh()
         -- Hide and unused arrowl textures
         for i = self.ArrowIndex, 30 do _G[panel .. "Arrow" .. i]:Hide(); end
     end
+end
+
+function DragonflightUITalentsPanelMixin:SetArrowTexture(tier, column, texCoords, xOffset, yOffset)
+    local talentFrameName = self:GetName();
+    local arrowTexture = self:GetArrow()
+    arrowTexture:SetTexCoord(texCoords[1], texCoords[2], texCoords[3], texCoords[4]);
+    arrowTexture:SetPoint("TOPLEFT", arrowTexture:GetParent(), "TOPLEFT", xOffset, yOffset);
+    arrowTexture:Show()
 end
 
 function DragonflightUITalentsPanelMixin:SetBranchTexture(tier, column, texCoords, xOffset, yOffset, xSize, ySize)
