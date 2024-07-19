@@ -1531,7 +1531,10 @@ function DragonflightUIMixin:ChangeLootFrame()
     frame.DFHeader = header
 
     local topleft = _G[frame:GetName() .. 'TopLeftCornerDF']
-    topleft:SetDrawLayer('OVERLAY', -1)
+    topleft:SetDrawLayer('OVERLAY', -2)
+
+    local port = _G['LootFramePortrait']
+    port:SetDrawLayer('OVERLAY', 7)
 end
 
 function DragonflightUIMixin:ChangeQuestFrame()
