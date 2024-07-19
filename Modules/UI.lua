@@ -8,7 +8,14 @@ Mixin(Module, DragonflightUIModulesMixin)
 local defaults = {
     profile = {
         scale = 1,
-        first = {changeBag = true, itemcolor = true, changeTradeskill = true, changeTrainer = true, questLevel = true}
+        first = {
+            changeBag = true,
+            itemcolor = true,
+            changeTradeskill = true,
+            changeTrainer = true,
+            changeTalents = true,
+            questLevel = true
+        }
     }
 }
 Module:SetDefaults(defaults)
@@ -63,11 +70,19 @@ local UIOptions = {
             desc = '' .. getDefaultStr('changeTrainer', 'first'),
             order = 24
         },
+        changeTalents = {
+            type = 'toggle',
+            name = 'Change Talentframe',
+            desc = '' .. getDefaultStr('changeTalents', 'first'),
+            order = 25,
+            new = true
+        },
         questLevel = {
             type = 'toggle',
             name = 'Show Questlevel',
             desc = '' .. getDefaultStr('questLevel', 'first'),
-            order = 25
+            order = 26,
+            new = true
         }
     }
 }
@@ -203,6 +218,15 @@ function Module:ApplySettings()
         end)
     elseif not db.changeTrainer and Module.TrainerHooked then
         DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
+    end
+
+    if db.changeTalents and not Module.TalentsHooked and DF.Era then
+        Module.TalentsHooked = true
+        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:ChangeTalentsEra()
+        end)
+    elseif not db.changeTalents and Module.TalentsHooked and DF.Era then
+        DF:Print("'Change Talentframe' was deactivated, but Talentframe was already modified, please /reload.")
     end
 
     if db.questLevel and not Module.QuestLevelHooked then
@@ -356,10 +380,6 @@ function Module:ChangeFrames()
         DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
-
-        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-            DragonflightUIMixin:ChangeTalentsEra()
-        end)
 
         Module:FuncOrWaitframe('Blizzard_Communities', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
