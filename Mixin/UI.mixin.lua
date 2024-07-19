@@ -3053,6 +3053,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         end)
     elseif name == 'CollectionsJournal' then
         --   
+        for i = 1, 5 do
+            local tab = _G[name .. 'Tab' .. i]
+
+            if tab then
+                --        
+                tab.DFTabWidth = 105
+                DragonflightUIMixin:TabResize(tab)
+            end
+        end
+        -- btn:SetWidth(btn.DFTabWidth or 78)
     elseif name == 'CommunitiesFrame' then
         --   
         local bg = _G['CommunitiesFrameBg']
