@@ -2456,6 +2456,19 @@ function DragonflightUIMixin:ChangeSpellbookEra()
     SpellBookPrevPageButton:ClearAllPoints()
     SpellBookPrevPageButton:SetPoint('BOTTOMRIGHT', SpellBookPageNavigationFrame, 'BOTTOMRIGHT', -66, 26)
 
+    frame:HookScript('OnMouseWheel', function(self, arg1)
+        --
+        -- print('OnMouseWheel', arg1)
+        if arg1 > 0 then
+            -- 1 for spinning up
+            SpellBookPrevPageButton:Click()
+        elseif arg1 < 0 then
+            -- -1 for spinning down
+            SpellBookNextPageButton:Click()
+        end
+    end)
+    frame:SetHitRectInsets(0, 0, 0, 0);
+
     SpellBookPageText:ClearAllPoints()
     SpellBookPageText:SetPoint('BOTTOMRIGHT', SpellBookPageNavigationFrame, 'BOTTOMRIGHT', -110, 38)
 
