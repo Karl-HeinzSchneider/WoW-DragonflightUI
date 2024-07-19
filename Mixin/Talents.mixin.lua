@@ -176,6 +176,22 @@ local TALENT_INFO = {
 };
 
 function DragonflightUITalentsPanelMixin:OnLoad()
+    self.TALENT_BRANCH_ARRAY = {};
+    for i = 1, 7 do
+        self.TALENT_BRANCH_ARRAY[i] = {};
+        for j = 1, 4 do
+            self.TALENT_BRANCH_ARRAY[i][j] = {
+                id = nil,
+                up = 0,
+                left = 0,
+                right = 0,
+                down = 0,
+                leftArrow = 0,
+                rightArrow = 0,
+                topArrow = 0
+            };
+        end
+    end
 end
 
 function DragonflightUITalentsPanelMixin:OnShow()
@@ -408,9 +424,8 @@ function DragonflightUITalentsPanelMixin:Refresh()
                                                                                         TalentFrame.inspect,
                                                                                         TalentFrame.pet,
                                                                                         TalentFrame.talentGroup)); ]]
-                    local prereqsSet = DragonflightUITalentsPanelMixin:SetPrereqs(tier, column, forceDesaturated,
-                                                                                  tierUnlocked, false,
-                                                                                  GetTalentPrereqs(panelID, i))
+                    local prereqsSet = self:SetPrereqs(tier, column, forceDesaturated, tierUnlocked, false,
+                                                       GetTalentPrereqs(panelID, i))
                     if prereqsSet then
                         SetItemButtonDesaturated(button, nil);
 
@@ -457,10 +472,159 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
         if (forceDesaturated or (preview and not isPreviewLearnable) or (not preview and not isLearnable)) then
             requirementsMet = nil;
         end
-        -- TODO
+        -- TODO        
         -- TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet, TalentFrame);
+        self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
     end
     return requirementsMet;
+end
+
+function DragonflightUITalentsPanelMixin:ResetBranches()
+    for i = 1, 7 do
+        for j = 1, 4 do
+            self.TALENT_BRANCH_ARRAY[i][j].id = nil;
+            self.TALENT_BRANCH_ARRAY[i][j].up = 0;
+            self.TALENT_BRANCH_ARRAY[i][j].down = 0;
+            self.TALENT_BRANCH_ARRAY[i][j].left = 0;
+            self.TALENT_BRANCH_ARRAY[i][j].right = 0;
+            self.TALENT_BRANCH_ARRAY[i][j].rightArrow = 0;
+            self.TALENT_BRANCH_ARRAY[i][j].leftArrow = 0;
+            self.TALENT_BRANCH_ARRAY[i][j].topArrow = 0;
+        end
+    end
+end
+
+function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
+    print('drawLine', buttonTier, buttonColumn, tier, column, requirementsMet)
+
+    if (requirementsMet) then
+        requirementsMet = 1;
+    else
+        requirementsMet = -1;
+    end
+
+    -- Check to see if are in the same column
+    if (buttonColumn == column) then
+        -- Check for blocking talents
+        if ((buttonTier - tier) > 1) then
+            -- If more than one tier difference
+            for i = tier + 1, buttonTier - 1 do
+                if (self.TALENT_BRANCH_ARRAY[i][buttonColumn].id) then
+                    -- If there's an id, there's a blocker
+                    message("Error this layout is blocked vertically " .. self.TALENT_BRANCH_ARRAY[buttonTier][i].id);
+                    return;
+                end
+            end
+        end
+
+        -- Draw the lines
+        for i = tier, buttonTier - 1 do
+            self.TALENT_BRANCH_ARRAY[i][buttonColumn].down = requirementsMet;
+            if ((i + 1) <= (buttonTier - 1)) then
+                self.TALENT_BRANCH_ARRAY[i + 1][buttonColumn].up = requirementsMet;
+            end
+        end
+
+        -- Set the arrow
+        self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].topArrow = requirementsMet;
+        return;
+    end
+    -- Check to see if they're in the same tier
+    if (buttonTier == tier) then
+        local left = min(buttonColumn, column);
+        local right = max(buttonColumn, column);
+
+        -- See if the distance is greater than one space
+        if ((right - left) > 1) then
+            -- Check for blocking talents
+            for i = left + 1, right - 1 do
+                if (self.TALENT_BRANCH_ARRAY[tier][i].id) then
+                    -- If there's an id, there's a blocker
+                    message("there's a blocker " .. tier .. " " .. i);
+                    return;
+                end
+            end
+        end
+        -- If we get here then we're in the clear
+        for i = left, right - 1 do
+            self.TALENT_BRANCH_ARRAY[tier][i].right = requirementsMet;
+            self.TALENT_BRANCH_ARRAY[tier][i + 1].left = requirementsMet;
+        end
+        -- Determine where the arrow goes
+        if (buttonColumn < column) then
+            self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].rightArrow = requirementsMet;
+        else
+            self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].leftArrow = requirementsMet;
+        end
+        return;
+    end
+    -- Now we know the prereq is diagonal from us
+    local left = min(buttonColumn, column);
+    local right = max(buttonColumn, column);
+    -- Don't check the location of the current button
+    if (left == column) then
+        left = left + 1;
+    else
+        right = right - 1;
+    end
+    -- Check for blocking talents
+    local blocked = nil;
+    for i = left, right do
+        if (self.TALENT_BRANCH_ARRAY[tier][i].id) then
+            -- If there's an id, there's a blocker
+            blocked = 1;
+        end
+    end
+    left = min(buttonColumn, column);
+    right = max(buttonColumn, column);
+    if (not blocked) then
+        self.TALENT_BRANCH_ARRAY[tier][buttonColumn].down = requirementsMet;
+        self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].up = requirementsMet;
+
+        for i = tier, buttonTier - 1 do
+            self.TALENT_BRANCH_ARRAY[i][buttonColumn].down = requirementsMet;
+            self.TALENT_BRANCH_ARRAY[i + 1][buttonColumn].up = requirementsMet;
+        end
+
+        for i = left, right - 1 do
+            self.TALENT_BRANCH_ARRAY[tier][i].right = requirementsMet;
+            self.TALENT_BRANCH_ARRAY[tier][i + 1].left = requirementsMet;
+        end
+        -- Place the arrow
+        self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].topArrow = requirementsMet;
+        return;
+    end
+    -- If we're here then we were blocked trying to go vertically first so we have to go over first, then up
+    if (left == buttonColumn) then
+        left = left + 1;
+    else
+        right = right - 1;
+    end
+    -- Check for blocking talents
+    for i = left, right do
+        if (self.TALENT_BRANCH_ARRAY[buttonTier][i].id) then
+            -- If there's an id, then throw an error
+            message("Error, this layout is undrawable " .. self.TALENT_BRANCH_ARRAY[buttonTier][i].id);
+            return;
+        end
+    end
+    -- If we're here we can draw the line
+    left = min(buttonColumn, column);
+    right = max(buttonColumn, column);
+    -- TALENT_BRANCH_ARRAY[tier][column].down = requirementsMet;
+    -- TALENT_BRANCH_ARRAY[buttonTier][column].up = requirementsMet;
+
+    for i = tier, buttonTier - 1 do
+        self.TALENT_BRANCH_ARRAY[i][column].up = requirementsMet;
+        self.TALENT_BRANCH_ARRAY[i + 1][column].down = requirementsMet;
+    end
+
+    -- Determine where the arrow goes
+    if (buttonColumn < column) then
+        self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].rightArrow = requirementsMet;
+    else
+        self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn].leftArrow = requirementsMet;
+    end
 end
 
 -- 'DAMAGER', 'TANK', 'HEALER'

@@ -23,6 +23,22 @@
 			</OnLeave>
 		</Scripts>
 	</Frame>
+	<Texture name="DFTalentBranchTemplate" file="Interface\TalentFrame\UI-TalentBranches" virtual="true">
+		<Size>
+			<AbsDimension x="30" y="30" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" />
+		</Anchors>
+	</Texture>
+	<Texture name="DFTalentArrowTemplate" file="Interface\TalentFrame\UI-TalentArrows" virtual="true">
+		<Size>
+			<AbsDimension x="30" y="30" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" />
+		</Anchors>
+	</Texture>
 	<Frame name="DFPlayerTalentFramePanelTemplate" inherits="InsetFrameTemplate2" mixin="DragonflightUITalentsPanelMixin" virtual="true">
 		<Size>
 			<AbsDimension x="208" y="376" />
@@ -200,38 +216,36 @@
 			<Frame name="$parentArrow" setAllPoints="true">
 				<Layers>
 					<Layer level="OVERLAY">
-						<!--
-						<Texture name="$parent1" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent2" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent3" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent4" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent5" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent6" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent7" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent8" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent9" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent10" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent11" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent12" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent13" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent14" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent15" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent16" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent17" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent18" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent19" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent20" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent21" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent22" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent23" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent24" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent25" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent26" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent27" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent28" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent29" inherits="PlayerTalentArrowTemplate" />
-						<Texture name="$parent30" inherits="PlayerTalentArrowTemplate" />
-						-->
+						<Texture name="$parent1" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent2" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent3" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent4" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent5" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent6" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent7" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent8" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent9" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent10" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent11" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent12" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent13" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent14" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent15" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent16" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent17" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent18" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent19" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent20" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent21" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent22" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent23" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent24" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent25" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent26" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent27" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent28" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent29" inherits="DFTalentArrowTemplate" />
+						<Texture name="$parent30" inherits="DFTalentArrowTemplate" />
 					</Layer>
 				</Layers>
 			</Frame>
