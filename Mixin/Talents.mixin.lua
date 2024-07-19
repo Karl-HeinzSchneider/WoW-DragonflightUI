@@ -214,6 +214,9 @@ function DragonflightUITalentsPanelMixin:OnLoad()
             self.BUTTON_ARRAY[i][j] = nil
         end
     end
+
+    self.ArrowIndex = 1
+    self.BranchIndex = 1
 end
 
 function DragonflightUITalentsPanelMixin:OnShow()
@@ -532,8 +535,29 @@ function DragonflightUITalentsPanelMixin:ResetBranches()
     end
 
     local panel = self:GetName()
-    for i = 1, 30 do _G[panel .. 'Arrow' .. i]:Hide() end
+    for i = 1, 30 do
+        _G[panel .. 'Arrow' .. i]:Hide()
+        _G[panel .. 'Branch' .. i]:Hide()
+    end
+
     self.ArrowIndex = 1
+    self.BranchIndex = 1
+end
+
+function DragonflightUITalentsPanelMixin:GetArrow()
+    local arrowIndex = self.ArrowIndex
+    self.ArrowIndex = arrowIndex + 1
+
+    local arrow = _G[self:GetName() .. 'Arrow' .. arrowIndex]
+    return arrow
+end
+
+function DragonflightUITalentsPanelMixin:GetBranch()
+    local branchIndex = self.BranchIndex
+    self.BranchIndex = branchIndex + 1
+
+    local branch = _G[self:GetName() .. 'Branch' .. branchIndex]
+    return branch
 end
 
 function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
@@ -547,13 +571,10 @@ function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn
         requirementsMet = -1;
     end
 
-    local arrowIndex = self.ArrowIndex
-    self.ArrowIndex = arrowIndex + 1
-
     local button = self.BUTTON_ARRAY[buttonTier][buttonColumn]
     print('button', button:GetName())
 
-    local arrow = _G[panel .. 'Arrow' .. arrowIndex]
+    local arrow = self:GetArrow()
     print('arrow', arrow:GetName())
 
     local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
@@ -565,14 +586,12 @@ function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn
         arrow:SetPoint('CENTER', button, 'LEFT', -2, 0)
         arrow:Show()
         arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['left'][requirementsMet]))
-
     elseif arrowData.rightArrow ~= 0 then
         --
         arrow:ClearAllPoints()
         arrow:SetPoint('CENTER', button, 'RIGHT', 2, 0)
         arrow:Show()
         arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['right'][requirementsMet]))
-
     elseif arrowData.topArrow ~= 0 then
         -- 
         arrow:ClearAllPoints()

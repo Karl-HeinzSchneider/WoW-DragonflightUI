@@ -119,38 +119,36 @@
 						<Anchor point="TOPLEFT" relativeTo="$parentHeaderBackground" />
 					</Anchors>
 				</Texture>
-				<!--
-				<Texture name="$parentBranch1" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch2" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch3" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch4" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch5" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch6" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch7" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch8" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch9" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch10" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch11" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch12" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch13" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch14" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch15" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch16" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch17" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch18" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch19" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch20" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch21" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch22" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch23" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch24" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch25" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch26" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch27" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch28" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch29" inherits="PlayerTalentBranchTemplate" />
-				<Texture name="$parentBranch30" inherits="PlayerTalentBranchTemplate" />
-				-->
+				<Texture name="$parentBranch1" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch2" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch3" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch4" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch5" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch6" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch7" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch8" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch9" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch10" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch11" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch12" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch13" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch14" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch15" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch16" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch17" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch18" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch19" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch20" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch21" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch22" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch23" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch24" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch25" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch26" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch27" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch28" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch29" inherits="DFTalentBranchTemplate" />
+				<Texture name="$parentBranch30" inherits="DFTalentBranchTemplate" />
 			</Layer>
 			<Layer level="BORDER">
 				<Texture name="$parentBgHighlight">
