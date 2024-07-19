@@ -291,6 +291,7 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
         if button == 'LeftButton' then
             --
             LearnTalent(panelID, talentID)
+            PlayerTalentFrame.UpdateDFHeaderText()
         end
     end
 end
@@ -327,7 +328,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         end ]]
 
         -- TODO        
-        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+      --[[   local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
         local headerText = _G['DragonflightUIPlayerTalentFrameHeaderText']
 
         if unspentTalentPoints > 0 then
@@ -335,7 +336,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
             headerText:Show()
         else
             headerText:Hide()
-        end
+        end ]]
     end
 
     -- header
