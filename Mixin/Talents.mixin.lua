@@ -296,15 +296,27 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
     end
 end
 
+function DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+    local level = UnitLevel('player')
+    local maxPoints = level - 9
+
+    for i = 1, 3 do
+        local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
+            GetTalentTabInfo(i)
+        maxPoints = maxPoints - pointsSpent
+    end
+    return maxPoints
+end
+
 function DragonflightUITalentsPanelMixin:Refresh()
-    print('DragonflightUITalentsPanelMixin:Refresh()', self.ID)
+    --   print('DragonflightUITalentsPanelMixin:Refresh()', self.ID)
 
     local panelID = self.ID
     local panel = self:GetName()
 
     local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
         GetTalentTabInfo(panelID)
-    print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked)
+    -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked)
 
     --
     do
@@ -328,7 +340,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         end ]]
 
         -- TODO        
-      --[[   local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        --[[   local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
         local headerText = _G['DragonflightUIPlayerTalentFrameHeaderText']
 
         if unspentTalentPoints > 0 then
@@ -398,7 +410,8 @@ function DragonflightUITalentsPanelMixin:Refresh()
         --
         local numTalents = GetNumTalents(panelID);
 
-        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        -- local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
 
         self:ResetBranches()
 
@@ -433,7 +446,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                         button:SetScale(30 / 37)
                     end
 
-                    if unspentTalentPoints <= 0 and rank == 0 then
+                    if unspentTalentPoints <= 0 and currentRank == 0 then
                         forceDesaturated = 1;
                     else
                         forceDesaturated = nil;

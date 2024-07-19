@@ -2261,7 +2261,7 @@ function DragonflightUIMixin:AddQuestLevel()
 end
 
 function DragonflightUIMixin:ChangeTalentsEra()
-    print('DragonflightUIMixin:ChangeTalentsEra()')
+    -- print('DragonflightUIMixin:ChangeTalentsEra()')
     local frame = PlayerTalentFrame
 
     local regions = {frame:GetRegions()}
@@ -2340,21 +2340,11 @@ function DragonflightUIMixin:ChangeTalentsEra()
     headerText:SetPoint('TOP', frame, 'TOP', 0, -36)
 
     frame.UpdateDFHeaderText = function()
-        print('UpdateDFHeaderText')
+        -- print('UpdateDFHeaderText')
 
         local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-
-        local level = UnitLevel('player')
-        local maxPoints = level - 9
-
-        for i = 1, 3 do
-            local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
-                GetTalentTabInfo(i)
-            maxPoints = maxPoints - pointsSpent
-        end
-
         -- TODO: bug?  UnitCharacterPoints("player") not updating instantly
-        unspentTalentPoints = maxPoints
+        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
 
         if unspentTalentPoints > 0 then
             headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
@@ -2384,7 +2374,7 @@ function DragonflightUIMixin:ChangeTalentsEra()
     end
 
     frame:HookScript('OnEvent', function(self, event, ...)
-        print('onEvent', event, ...)
+        -- print('onEvent', event, ...)
 
         if event == 'PLAYER_TALENT_UPDATE' then for i = 1, 3 do frame.DFPanels[i]:Refresh() end end
 
