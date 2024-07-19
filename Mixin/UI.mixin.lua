@@ -2958,6 +2958,18 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             end
         end
 
+        SpellBookFrame:HookScript('OnMouseWheel', function(self, arg1)
+            --
+            -- print('OnMouseWheel', arg1)
+            if arg1 > 0 then
+                -- 1 for spinning up
+                SpellBookPrevPageButton:Click()
+            elseif arg1 < 0 then
+                -- -1 for spinning down
+                SpellBookNextPageButton:Click()
+            end
+        end)
+
         hooksecurefunc('ToggleSpellBook', function(panel)
             --         
             if panel == 'spell' then
