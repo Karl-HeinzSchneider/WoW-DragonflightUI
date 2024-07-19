@@ -553,6 +553,26 @@ function DragonflightUITalentsPanelMixin:Refresh()
                     end
                 else
                     -- No talent; draw branches
+                    if (node.up ~= 0 and node.left ~= 0 and node.right ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["tup"][node.up], xOffset, yOffset);
+                    elseif (node.down ~= 0 and node.left ~= 0 and node.right ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["tdown"][node.down], xOffset, yOffset);
+                    elseif (node.left ~= 0 and node.down ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["topright"][node.left], xOffset, yOffset);
+                    elseif (node.left ~= 0 and node.up ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["bottomright"][node.left], xOffset,
+                                              yOffset);
+                    elseif (node.left ~= 0 and node.right ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["right"][node.right],
+                                              xOffset + talentButtonSize, yOffset);
+                    elseif (node.right ~= 0 and node.down ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["topleft"][node.right], xOffset, yOffset);
+                    elseif (node.right ~= 0 and node.up ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["bottomleft"][node.right], xOffset,
+                                              yOffset);
+                    elseif (node.up ~= 0 and node.down ~= 0) then
+                        self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["up"][node.up], xOffset, yOffset);
+                    end
                 end
             end
         end
@@ -569,8 +589,8 @@ function DragonflightUITalentsPanelMixin:SetBranchTexture(tier, column, texCoord
     local branchTexture = self:GetBranch();
     branchTexture:SetTexCoord(texCoords[1], texCoords[2], texCoords[3], texCoords[4]);
     branchTexture:SetPoint("TOPLEFT", branchTexture:GetParent(), "TOPLEFT", xOffset, yOffset);
-    branchTexture:SetWidth(xSize or self.talentButtonSize or TALENT_BUTTON_SIZE_DEFAULT);
-    branchTexture:SetHeight(ySize or self.talentButtonSize or TALENT_BUTTON_SIZE_DEFAULT);
+    branchTexture:SetWidth(xSize or 30);
+    branchTexture:SetHeight(ySize or 30);
     branchTexture:Show()
 end
 
