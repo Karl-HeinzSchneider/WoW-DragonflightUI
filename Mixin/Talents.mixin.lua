@@ -413,6 +413,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                     _G[buttonName .. 'Rank']:SetText(currentRank)
 
                     self.BUTTON_ARRAY[tier][column] = button
+                    self.TALENT_BRANCH_ARRAY[tier][column].id = i
 
                     -- position
                     do
@@ -491,7 +492,86 @@ function DragonflightUITalentsPanelMixin:Refresh()
                 button:Hide()
             end
         end
+
+        self.ArrowIndex = 1
+        self.BranchIndex = 1
+
+        local node;
+        local textureIndex = 1;
+        local xOffset, yOffset;
+        local texCoords;
+        local tempNode;
+
+        --  local offsetX = 20
+        --  local offsetY = -52
+        -- local size = 46
+        local talentButtonSize = 30
+        local initialOffsetX = 20
+        local initialOffsetY = 52
+        local buttonSpacingX = 46
+        local buttonSpacingY = 46
+
+        for i = 1, 7 do
+            for j = 1, 4 do
+                --
+                node = self.TALENT_BRANCH_ARRAY[i][j];
+
+                -- Setup offsets
+                xOffset = ((j - 1) * buttonSpacingX) + initialOffsetX + (self.branchOffsetX or 0);
+                yOffset = -((i - 1) * buttonSpacingY) - initialOffsetY + (self.branchOffsetY or 0);
+
+                -- DragonflightUITalentsPanelMixin:SetBranchTexture(tier, column, texCoords, xOffset, yOffset, xSize, ySize)
+
+                -- Always draw Right and Down branches, never draw Left and Up branches as those will be drawn by the preceeding talent
+                if (node.down ~= 0) then
+                    self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["down"][node.down], xOffset,
+                                          yOffset - talentButtonSize, talentButtonSize,
+                                          buttonSpacingY - talentButtonSize);
+                end
+                if (node.right ~= 0) then
+                    self:SetBranchTexture(i, j, TALENT_BRANCH_TEXTURECOORDS["right"][node.right],
+                                          xOffset + talentButtonSize, yOffset, buttonSpacingX - talentButtonSize,
+                                          talentButtonSize);
+                end
+
+                if (node.id) then
+                    -- There is a talent in this slot; draw arrows
+                    local arrowInsetX, arrowInsetY = (self.arrowInsetX or 0), (self.arrowInsetY or 0);
+                    if (node.goldBorder) then
+                        arrowInsetX = arrowInsetX - TALENT_GOLD_BORDER_WIDTH;
+                        arrowInsetY = arrowInsetY - TALENT_GOLD_BORDER_WIDTH;
+                    end
+
+                    if (node.rightArrow ~= 0) then
+                        -- TalentFrame_SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["right"][node.rightArrow],xOffset + talentButtonSize / 2 - arrowInsetX, yOffset, TalentFrame);
+                    end
+                    if (node.leftArrow ~= 0) then
+                        -- TalentFrame_SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["left"][node.leftArrow], xOffset - talentButtonSize / 2 + arrowInsetX, yOffset, TalentFrame);
+                    end
+                    if (node.topArrow ~= 0) then
+                        -- TalentFrame_SetArrowTexture(i, j, TALENT_ARROW_TEXTURECOORDS["top"][node.topArrow], xOffset, yOffset + talentButtonSize / 2 - arrowInsetY, TalentFrame);
+                    end
+                else
+                    -- No talent; draw branches
+                end
+            end
+        end
+
+        -- Hide any unused branch textures
+        for i = self.BranchIndex, 30 do _G[panel .. "Branch" .. i]:Hide(); end
+        -- Hide and unused arrowl textures
+        for i = self.ArrowIndex, 30 do _G[panel .. "Arrow" .. i]:Hide(); end
     end
+end
+
+function DragonflightUITalentsPanelMixin:SetBranchTexture(tier, column, texCoords, xOffset, yOffset, xSize, ySize)
+    local talentFrameName = self:GetName();
+    local branchTexture = self:GetBranch();
+    branchTexture:SetTexCoord(texCoords[1], texCoords[2], texCoords[3], texCoords[4]);
+    branchTexture:SetPoint("TOPLEFT", branchTexture:GetParent(), "TOPLEFT", xOffset, yOffset);
+    branchTexture:SetWidth(xSize or self.talentButtonSize or TALENT_BUTTON_SIZE_DEFAULT);
+    branchTexture:SetHeight(ySize or self.talentButtonSize or TALENT_BUTTON_SIZE_DEFAULT);
+    branchTexture:Show()
 end
 
 function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, forceDesaturated, tierUnlocked, preview, ...)
@@ -504,7 +584,7 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
         -- TODO        
         -- TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet, TalentFrame);
         self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
-        self:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
+        -- self:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
 
         --[[  local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
         DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn])
@@ -600,6 +680,11 @@ function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn
         arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['top'][requirementsMet]))
     end
 
+    local branch = self:GetBranch()
+    branch:ClearAllPoints()
+    branch:SetPoint('BOTTOM', button, 'TOP', 0, 2)
+    branch:Show()
+    -- branch:SetTexCoord(unpack(TALENT_BRANCH_TEXTURECOORDS['down'][requirementsMet]))
 end
 
 function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
