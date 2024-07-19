@@ -2335,6 +2335,10 @@ function DragonflightUIMixin:ChangeTalentsEra()
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 26)
     inset:SetFrameLevel(1)
 
+    local headerText = frame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
+                                              'GameFontHighlight')
+    headerText:SetPoint('TOP', frame, 'TOP', 0, -36)
+
     for i = 1, 3 do
         --
         local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, frame,

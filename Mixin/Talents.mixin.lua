@@ -264,6 +264,39 @@ function DragonflightUITalentsPanelMixin:Refresh()
         GetTalentTabInfo(panelID)
     print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked)
 
+    --
+    do
+        --[[ local headerText =  _G[panel .. 'HeaderText']
+       local headerSubText =  _G[panel .. 'HeaderSubText']
+       local headerHelpBox =  _G[panel .. 'HelpBox'] 
+
+        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+
+        if unspentTalentPoints > 0 then
+            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
+			headerText:SetFontObject("GameFontHighlight");
+			headerText:Show();
+			headerSubText:Hide();
+			headerHelpBox:Show();
+			for i = 1, 3 do				
+					_G["PlayerTalentFrameHeaderHelpBoxArrow"..i]:Show();			
+			end
+        else
+
+        end ]]
+
+        -- TODO        
+        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        local headerText = _G['DragonflightUIPlayerTalentFrameHeaderText']
+
+        if unspentTalentPoints > 0 then
+            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
+            headerText:Show()
+        else
+            headerText:Hide()
+        end
+    end
+
     -- header
     do
         local headerName = _G[panel .. 'Name']
