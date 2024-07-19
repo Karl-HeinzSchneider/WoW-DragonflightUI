@@ -292,6 +292,10 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
             --
             LearnTalent(panelID, talentID)
             PlayerTalentFrame.UpdateDFHeaderText()
+        elseif button == 'RightButton' then
+            --
+            AddPreviewTalentPoints(panelID, talentID, 1)
+            PlayerTalentFrame.UpdateDFHeaderText()
         end
     end
 end
