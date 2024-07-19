@@ -1936,6 +1936,9 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
     QuestLogListScrollFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 19, -75)
     QuestLogListScrollFrame:SetSize(305, 335)
 
+    QuestLogListScrollFrameScrollBar:SetPoint('TOPLEFT', QuestLogListScrollFrame, 'TOPRIGHT', 2, -14.5)
+    QuestLogListScrollFrameScrollBar:SetPoint('BOTTOMLEFT', QuestLogListScrollFrame, 'BOTTOMRIGHT', 2, 15.25)
+
     local QUESTS_DISPLAYED_old = QUESTS_DISPLAYED
     QUESTS_DISPLAYED = 22
     for i = QUESTS_DISPLAYED_old + 1, QUESTS_DISPLAYED do
