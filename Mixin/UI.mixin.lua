@@ -2260,6 +2260,136 @@ function DragonflightUIMixin:AddQuestLevel()
     end
 end
 
+function DragonflightUIMixin:ChangeTalentsEra()
+    -- print('DragonflightUIMixin:ChangeTalentsEra()')
+    local frame = PlayerTalentFrame
+
+    local regions = {frame:GetRegions()}
+
+    local port
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            -- print(layer, layerNr, child:GetTexture())
+            if layer == 'BORDER' then child:Hide() end
+            if layer == 'BACKGROUND' then child:Hide() end
+        end
+    end
+
+    frame:SetSize(646, 468)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local closeButton = PlayerTalentFrameCloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    PlayerTalentFrameTitleText:ClearAllPoints()
+    PlayerTalentFrameTitleText:SetPoint('TOP', frame, 'TOP', 0, -5)
+    PlayerTalentFrameTitleText:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    PlayerTalentFrameTitleText:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+
+    do
+        local port = frame:CreateTexture('DragonflightUIPlayerTalentFramePortrait')
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetParent(frame)
+        port:SetTexture(136830)
+        SetPortraitToTexture(port, port:GetTexture())
+        port:SetDrawLayer('OVERLAY', 6)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('DragonflightUIPlayerTalentFramePortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+        -- pp:SetFrameLevel(4)
+    end
+
+    local scroll = PlayerTalentFrameScrollFrame
+    scroll:ClearAllPoints()
+    scroll:Hide()
+
+    local bar = PlayerTalentFramePointsBar
+    bar:ClearAllPoints()
+    bar:Hide()
+
+    for i = 1, 3 do
+        local tab = _G['PlayerTalentFrameTab' .. i]
+        tab:ClearAllPoints()
+        tab:Hide()
+    end
+
+    local inset = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFrameInset', frame, 'InsetFrameTemplate')
+    inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
+    inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 26)
+    inset:SetFrameLevel(1)
+
+    local headerText = frame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
+                                              'GameFontHighlight')
+    headerText:SetPoint('TOP', frame, 'TOP', 0, -36)
+
+    frame.UpdateDFHeaderText = function()
+        -- print('UpdateDFHeaderText')
+
+        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        -- TODO: bug?  UnitCharacterPoints("player") not updating instantly
+        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+
+        if unspentTalentPoints > 0 then
+            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
+            headerText:Show()
+        else
+            headerText:Hide()
+        end
+    end
+
+    frame.DFPanels = {}
+
+    for i = 1, 3 do
+        --
+        local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, frame,
+                                  'DFPlayerTalentFramePanelTemplate')
+        -- panel:SetSize(208, 376)
+        panel:Init(i)
+        panel:Refresh()
+
+        frame.DFPanels[i] = panel
+
+        if i == 1 then
+            panel:SetPoint('BOTTOMLEFT', inset, 'BOTTOMLEFT', 5, 3)
+        else
+            panel:SetPoint('TOPLEFT', _G['DragonflightUIPlayerTalentFramePanel' .. (i - 1)], 'TOPRIGHT', 1, 0)
+        end
+    end
+
+    frame:HookScript('OnEvent', function(self, event, ...)
+        -- print('onEvent', event, ...)
+
+        if event == 'PLAYER_TALENT_UPDATE' then for i = 1, 3 do frame.DFPanels[i]:Refresh() end end
+
+        frame.UpdateDFHeaderText()
+    end)
+
+    ----
+    frame:HookScript('OnShow', function()
+        frame:SetAttribute("UIPanelLayout-width", frame:GetWidth());
+        frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
+        frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
+        UpdateUIPanelPositions(frame)
+    end)
+end
+
 function DragonflightUIMixin:ChangeSpellbookEra()
     local frame = SpellBookFrame
 
