@@ -1380,6 +1380,12 @@ function Module.ChangeMinimapButtons()
     end
 
     updateButton(MiniMapBattlefieldFrame)
+
+    -- compat
+    DF.Compatibility:FuncOrWaitframe('LFGBulletinBoard', function()
+        --
+        DF.Compatibility:LFGBulletinBoard(updateButton)
+    end)
 end
 
 function frame:OnEvent(event, arg1)

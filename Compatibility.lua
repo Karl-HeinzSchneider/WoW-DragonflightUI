@@ -126,6 +126,55 @@ if DF.Era then
         end)
     end
 
+    function DF.Compatibility:LFGBulletinBoard(func)
+        local btn = _G['Lib_GPI_Minimap_LFGBulletinBoard']
+        if not btn then return end
+        func(btn)
+
+        local function newOnUpdate(button)
+            local mx, my = Minimap:GetCenter()
+            local px, py = GetCursorPosition()
+            local w = ((Minimap:GetWidth() / 2) + 5)
+            local scale = Minimap:GetEffectiveScale()
+            px, py = px / scale, py / scale
+            local dx, dy = px - mx, py - my
+            local dist = math.sqrt(dx * dx + dy * dy) / w
+            if button.Lib_GPI_MinimapButton.db.lockDistance then
+                dist = 1
+            else
+                if dist < 1 then
+                    dist = 1
+                elseif dist > 2 then
+                    dist = 2
+                end
+            end
+
+            -- DF
+            dist = 0.93
+
+            button.Lib_GPI_MinimapButton.db.distance = dist
+            button.Lib_GPI_MinimapButton.db.position = math.deg(math.atan2(dy, dx)) % 360
+            button.Lib_GPI_MinimapButton.UpdatePosition()
+        end
+
+        hooksecurefunc(btn, 'SetScript', function(self, script, scriptFunction, ...)
+            --
+            -- print('SetScript', script, scriptFunction, ...)
+
+            if not script == 'OnUpdate' then return end
+
+            if not scriptFunction then return end
+            --  print('SetScript with func')
+
+            if scriptFunction ~= newOnUpdate then
+                btn:SetScript('OnUpdate', newOnUpdate)
+            else
+                -- print('same!')
+            end
+        end)
+        newOnUpdate(btn)
+    end
+
     function DF.Compatibility:CharacterStatsClassic()
         -- print('DF.Compatibility:CharacterStatsClassic()')
         local children = {CharacterFrame:GetChildren()}
