@@ -196,8 +196,10 @@ local TALENT_ARROW_TEXTURECOORDS = {
 
 function DragonflightUITalentsPanelMixin:OnLoad()
     self.TALENT_BRANCH_ARRAY = {};
+    self.BUTTON_ARRAY = {}
     for i = 1, 7 do
         self.TALENT_BRANCH_ARRAY[i] = {};
+        self.BUTTON_ARRAY[i] = {};
         for j = 1, 4 do
             self.TALENT_BRANCH_ARRAY[i][j] = {
                 id = nil,
@@ -209,6 +211,7 @@ function DragonflightUITalentsPanelMixin:OnLoad()
                 rightArrow = 0,
                 topArrow = 0
             };
+            self.BUTTON_ARRAY[i][j] = nil
         end
     end
 end
@@ -393,6 +396,8 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
         local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
 
+        self:ResetBranches()
+
         for i = 1, 28 do
             local buttonName = panel .. 'Talent' .. i
             local button = _G[buttonName]
@@ -403,6 +408,8 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
                 if name then
                     _G[buttonName .. 'Rank']:SetText(currentRank)
+
+                    self.BUTTON_ARRAY[tier][column] = button
 
                     -- position
                     do
@@ -494,6 +501,16 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
         -- TODO        
         -- TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet, TalentFrame);
         self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
+        self:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
+
+        --[[  local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
+        DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn])
+        DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier - 1][buttonColumn])
+
+        local arrowIndex = self.ArrowIndex
+        self.arrowIndex = arrowIndex + 1
+
+        self:DrawActualLine(arrowData, arrowIndex) ]]
     end
     return requirementsMet;
 end
@@ -509,12 +526,65 @@ function DragonflightUITalentsPanelMixin:ResetBranches()
             self.TALENT_BRANCH_ARRAY[i][j].rightArrow = 0;
             self.TALENT_BRANCH_ARRAY[i][j].leftArrow = 0;
             self.TALENT_BRANCH_ARRAY[i][j].topArrow = 0;
+
+            self.BUTTON_ARRAY[i][j] = nil
         end
     end
+
+    local panel = self:GetName()
+    for i = 1, 30 do _G[panel .. 'Arrow' .. i]:Hide() end
+    self.ArrowIndex = 1
+end
+
+function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
+    print('DrawActualLine', buttonTier, buttonColumn, tier, column, requirementsMet)
+    local panel = self:GetName()
+    print('panel', panel)
+
+    if (requirementsMet) then
+        requirementsMet = 1;
+    else
+        requirementsMet = -1;
+    end
+
+    local arrowIndex = self.ArrowIndex
+    self.ArrowIndex = arrowIndex + 1
+
+    local button = self.BUTTON_ARRAY[buttonTier][buttonColumn]
+    print('button', button:GetName())
+
+    local arrow = _G[panel .. 'Arrow' .. arrowIndex]
+    print('arrow', arrow:GetName())
+
+    local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
+    DevTools_Dump(arrowData)
+
+    if arrowData.leftArrow ~= 0 then
+        --   
+        arrow:ClearAllPoints()
+        arrow:SetPoint('CENTER', button, 'LEFT', -2, 0)
+        arrow:Show()
+        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['left'][requirementsMet]))
+
+    elseif arrowData.rightArrow ~= 0 then
+        --
+        arrow:ClearAllPoints()
+        arrow:SetPoint('CENTER', button, 'RIGHT', 2, 0)
+        arrow:Show()
+        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['right'][requirementsMet]))
+
+    elseif arrowData.topArrow ~= 0 then
+        -- 
+        arrow:ClearAllPoints()
+        arrow:SetPoint('CENTER', button, 'TOP', 0, 2)
+        arrow:Show()
+        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['top'][requirementsMet]))
+    end
+
 end
 
 function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
-    print('drawLine', buttonTier, buttonColumn, tier, column, requirementsMet)
+    -- print('drawLine', buttonTier, buttonColumn, tier, column, requirementsMet)
 
     if (requirementsMet) then
         requirementsMet = 1;
