@@ -2254,8 +2254,12 @@ function DragonflightUIMixin:AddQuestLevel()
 
                         local normal = _G['QuestLogTitle' .. i .. 'NormalText']
                         local check = _G['QuestLogTitle' .. i .. 'Check']
+
+                        local textW = normal:GetWrappedWidth()
+                        local dx = textW + 2
                         check:ClearAllPoints()
-                        check:SetPoint('LEFT', normal, 'RIGHT', 2, 0)
+                        -- check:SetPoint('LEFT', normal, 'RIGHT', 2, 0)
+                        check:SetPoint('LEFT', normal, 'LEFT', dx, 0)
                     end
                 end
             end
