@@ -3140,7 +3140,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
 
             if tab then
                 --        
-                tab.DFTabWidth = 105
+                tab.DFTabWidth = 120
                 DragonflightUIMixin:TabResize(tab)
             end
         end
