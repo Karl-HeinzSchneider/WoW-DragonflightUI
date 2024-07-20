@@ -2912,6 +2912,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     end
 
     if name == 'SpellBookFrame' then
+        for i = 1, 5 do
+            local tab = _G[name .. 'TabButton' .. i]
+
+            if tab then
+                --        
+                tab.DFTabWidth = 105
+                DragonflightUIMixin:TabResize(tab)
+            end
+        end
+
         for i = 1, 8 do
             -- SpellBookSkillLineTab1
             local skill = _G['SpellBookSkillLineTab' .. i]
