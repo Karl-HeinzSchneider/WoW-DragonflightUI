@@ -1830,6 +1830,18 @@ function DragonflightUIMixin:ChangeTradeFrame()
     end
 
     do
+        TradeFramePlayerNameText:SetDrawLayer('OVERLAY', 1)
+        TradeFramePlayerNameText:ClearAllPoints()
+        TradeFramePlayerNameText:SetPoint('TOPLEFT', frame, 'TOPLEFT', 65 - 6, -5)
+        TradeFramePlayerNameText:SetSize(100, 12)
+
+        TradeFrameRecipientNameText:SetDrawLayer('OVERLAY', 1)
+        TradeFrameRecipientNameText:ClearAllPoints()
+        TradeFrameRecipientNameText:SetPoint('TOPLEFT', frame, 'TOPLEFT', 230, -5)
+        TradeFrameRecipientNameText:SetSize(80 + 8, 12)
+    end
+
+    do
         local tex = base .. 'UIFrameMetalVertical2x'
 
         local left = _G['TradeRecipientLeftBorder']
