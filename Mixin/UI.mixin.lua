@@ -979,8 +979,9 @@ function DragonflightUIMixin:ChangeInspectFrame()
             br:SetDesaturated(on);
         end
 
-        local updateBackground = function()
-            local race, fileName = UnitRace('target');
+        local updateBackground = function(unit)
+            -- print('updateBackground', unit, UnitRace(unit))
+            local race, fileName = UnitRace(unit);
             local texture = DressUpTexturePath(fileName);
             tl:SetTexture(texture .. 1);
             tr:SetTexture(texture .. 2);
@@ -1004,10 +1005,13 @@ function DragonflightUIMixin:ChangeInspectFrame()
             end
         end
 
-        InspectFrame:HookScript('OnShow', function()
+        InspectFrame:HookScript('OnEvent', function(self, event, unit, ...)
             --  
-            updateBackground()
-            backgroundDesaturate(true)
+            -- print('hookEvent', self:GetName(), event, unit, ...)
+            if event == 'INSPECT_READY' then
+                if InspectFrame and InspectFrame.unit then updateBackground(InspectFrame.unit) end
+                backgroundDesaturate(true)
+            end
         end)
     end
 
