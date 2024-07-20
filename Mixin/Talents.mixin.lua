@@ -2,6 +2,9 @@ DragonflightUITalentsPanelMixin = {}
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
+TALENT_TOOLTIP_RESETTALENTGROUP = "Click to reset your preview talent points."
+TALENT_TOOLTIP_LEARNTALENTGROUP = "Click to finalize your preview talent points."
+
 local TALENT_INFO = {
     ["default"] = {
         [1] = {color = {r = 1.0, g = 0.72, b = 0.1}},
@@ -975,6 +978,29 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         check:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -5, -28)
 
         self.Checkbox = check
+
+        check:SetScript('OnClick', function(button, buttonName, down)
+            --
+            -- print('OnClick', button:GetName(), buttonName, down)
+            -- print('Click', button:GetChecked(), GetCVar('previewTalentsOption'))
+
+            self:ToggleCVar()
+        end)
+    end
+
+    do
+        --
+        PlayerTalentFramePreviewBar:ClearAllPoints()
+
+        local reset = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameResetButton', PlayerTalentFrame,
+                                  'DFPlayerTalentFrameResetButton')
+        reset:SetPoint('BOTTOMRIGHT', PlayerTalentFrame, 'BOTTOMRIGHT', -5, 4)
+        self.ResetButton = reset
+
+        local learn = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameLearnButton', PlayerTalentFrame,
+                                  'DFPlayerTalentFrameLearnButton')
+        learn:SetPoint('RIGHT', reset, 'LEFT', 0, 0)
+        self.LearnButton = learn
     end
 
     -- self:RegisterEvent("ADDON_LOADED");
@@ -987,17 +1013,73 @@ function DragonflightUITalentsFrameMixin:OnLoad()
     self:RegisterEvent("PLAYER_TALENT_UPDATE");
     -- self:RegisterEvent("PET_TALENT_UPDATE");
     self:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED");
+    self:RegisterEvent("CVAR_UPDATE")
 
     self:Refresh()
 end
 
 function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
     print('OnEvent', event, ...)
-    self:Refresh()
+    if PlayerTalentFrame:IsVisible() then self:Refresh() end
 end
 
 function DragonflightUITalentsFrameMixin:Refresh()
+    print('DragonflightUITalentsFrameMixin:Refresh()')
     for k, panel in ipairs(self.Panels) do panel:Refresh() end
 
     PlayerTalentFrame.UpdateDFHeaderText()
+    self:RefreshCheckbox()
+    self:UpdateControls()
+end
+
+function DragonflightUITalentsFrameMixin:RefreshCheckbox()
+    local check = self.Checkbox
+
+    local preCVAR = C_CVar.GetCVarBool("previewTalentsOption")
+
+    if preCVAR then
+        check:SetChecked(true)
+    else
+        check:SetChecked(false)
+    end
+end
+
+function DragonflightUITalentsFrameMixin:ToggleCVar()
+    -- print(' DragonflightUITalentsFrameMixin:ToggleCVar()')
+    local preCVAR = C_CVar.GetCVarBool("previewTalentsOption")
+
+    if preCVAR then
+        C_CVar.SetCVar('previewTalentsOption', 0)
+    else
+        C_CVar.SetCVar('previewTalentsOption', 1)
+    end
+end
+
+function DragonflightUITalentsFrameMixin:UpdateControls()
+    -- print('DragonflightUITalentsFrameMixin:UpdateControls()')
+    local preview = GetCVarBool("previewTalentsOption");
+
+    local learn = self.LearnButton
+    local reset = self.ResetButton
+
+    if preview then
+        -- print('-> SHOW')
+
+        learn:Show()
+        reset:Show()
+
+        -- enable the control bar if this is the active spec, preview is enabled, and preview points were spent
+        local talentPoints = GetUnspentTalentPoints(false, false, 1);
+        if (talentPoints > 0 and GetGroupPreviewTalentPointsSpent(false, 1) > 0) then
+            learn:Enable();
+            reset:Enable();
+        else
+            learn:Disable();
+            reset:Disable();
+        end
+    else
+        -- print('-> HIDE')
+        learn:Hide()
+        reset:Hide()
+    end
 end

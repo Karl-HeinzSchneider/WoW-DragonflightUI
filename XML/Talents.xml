@@ -559,4 +559,20 @@
 		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
 		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
 	</CheckButton>
+	<Button name="DFPlayerTalentFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET" virtual="true">
+		<Size x="80" y="22" />
+		<Scripts>
+			<OnEnter function="PlayerTalentFrameResetButton_OnEnter" />
+			<OnLeave function="GameTooltip_Hide" />
+			<OnClick function="PlayerTalentFrameResetButton_OnClick" />
+		</Scripts>
+	</Button>
+	<Button name="DFPlayerTalentFrameLearnButton" inherits="UIPanelButtonTemplate" text="LEARN" virtual="true">
+		<Size x="80" y="22" />
+		<Scripts>
+			<OnEnter function="PlayerTalentFrameLearnButton_OnEnter" />
+			<OnLeave function="GameTooltip_Hide" />
+			<OnClick function="PlayerTalentFrameLearnButton_OnClick" />
+		</Scripts>
+	</Button>
 </Ui>
