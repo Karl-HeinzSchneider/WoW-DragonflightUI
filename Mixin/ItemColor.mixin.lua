@@ -349,6 +349,7 @@ function DragonflightUIItemColorMixin:HookGuildbankBags()
 end
 
 function DragonflightUIItemColorMixin:UpdateGuildBankSlots()
+    if not GuildBankFrame then return end
     local activeTab = GetCurrentGuildBankTab()
 
     local itemButton;
