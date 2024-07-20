@@ -3135,6 +3135,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         end
     elseif name == 'MailFrame' then
         --
+        for i = 1, 5 do
+            local tab = _G[name .. 'Tab' .. i]
+
+            if tab then
+                --        
+                tab.DFTabWidth = 105
+                DragonflightUIMixin:TabResize(tab)
+            end
+        end
+
         local children = {frame:GetRegions()}
 
         for k, child in ipairs(children) do
