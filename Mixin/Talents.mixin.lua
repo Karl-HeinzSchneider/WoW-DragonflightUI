@@ -293,13 +293,20 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
         --
         if button == 'LeftButton' then
             --
-            LearnTalent(panelID, talentID)
-            PlayerTalentFrame.UpdateDFHeaderText()
+            if (GetCVarBool("previewTalentsOption")) then
+                AddPreviewTalentPoints(panelID, talentID, 1)
+            else
+                LearnTalent(panelID, talentID)
+            end
         elseif button == 'RightButton' then
-            --
-            AddPreviewTalentPoints(panelID, talentID, 1)
-            PlayerTalentFrame.UpdateDFHeaderText()
+            --          
+
+            if (GetCVarBool("previewTalentsOption")) then
+                --
+                AddPreviewTalentPoints(panelID, talentID, -1)
+            end
         end
+        PlayerTalentFrame.UpdateDFHeaderText()
     end
 end
 
@@ -310,7 +317,7 @@ function DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
     for i = 1, 3 do
         local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
             GetTalentTabInfo(i)
-        maxPoints = maxPoints - pointsSpent
+        maxPoints = maxPoints - pointsSpent - previewPointsSpent
     end
     return maxPoints
 end
@@ -320,9 +327,12 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
     local panelID = self.ID
     local panel = self:GetName()
+    local preview = GetCVarBool("previewTalentsOption");
 
     local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
         GetTalentTabInfo(panelID)
+    local tabPointsSpent = pointsSpent + previewPointsSpent
+    -- print('TalentTab', id, pointsSpent, previewPointsSpent)
     -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked)
 
     --
@@ -367,7 +377,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         headerIcon:SetTexture(iconTexture)
 
         local headerPointsSpent = _G[panel .. 'HeaderIconPointsSpent']
-        headerPointsSpent:SetText(pointsSpent)
+        headerPointsSpent:SetText(pointsSpent + previewPointsSpent)
     end
 
     -- header color
@@ -421,17 +431,24 @@ function DragonflightUITalentsPanelMixin:Refresh()
         local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
 
         self:ResetBranches()
-
+        -- tabPointsSpent
         for i = 1, 28 do
             local buttonName = panel .. 'Talent' .. i
             local button = _G[buttonName]
             local forceDesaturated, tierUnlocked;
             if i <= numTalents then
-                local name, iconPath, tier, column, currentRank, maxRank, isExceptional, meetsPrereq = GetTalentInfo(
-                                                                                                           panelID, i);
+                local name, iconPath, tier, column, currentRank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq,
+                      isExceptional, goldBorder = GetTalentInfo(panelID, i);
 
                 if name then
-                    _G[buttonName .. 'Rank']:SetText(currentRank)
+                    local displayRank;
+                    if (preview) then
+                        displayRank = previewRank;
+                    else
+                        displayRank = currentRank;
+                    end
+
+                    _G[buttonName .. 'Rank']:SetText(displayRank)
 
                     self.BUTTON_ARRAY[tier][column] = button
                     self.TALENT_BRANCH_ARRAY[tier][column].id = i
@@ -453,7 +470,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                         button:SetScale(30 / 37)
                     end
 
-                    if unspentTalentPoints <= 0 and currentRank == 0 then
+                    if unspentTalentPoints <= 0 and displayRank == 0 then
                         forceDesaturated = 1;
                     else
                         forceDesaturated = nil;
@@ -461,7 +478,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
                     local tierUnlocked;
                     -- is this talent's tier unlocked?
-                    if (((tier - 1) * (PLAYER_TALENTS_PER_TIER) <= pointsSpent)) then
+                    if (((tier - 1) * (PLAYER_TALENTS_PER_TIER) <= tabPointsSpent)) then
                         tierUnlocked = 1;
                     else
                         tierUnlocked = nil;
@@ -475,12 +492,12 @@ function DragonflightUITalentsPanelMixin:Refresh()
                                                                                         TalentFrame.inspect,
                                                                                         TalentFrame.pet,
                                                                                         TalentFrame.talentGroup)); ]]
-                    local prereqsSet = self:SetPrereqs(tier, column, forceDesaturated, tierUnlocked, false,
+                    local prereqsSet = self:SetPrereqs(tier, column, forceDesaturated, tierUnlocked, preview,
                                                        GetTalentPrereqs(panelID, i))
-                    if prereqsSet then
+                    if (prereqsSet and ((preview and meetsPreviewPrereq) or (not preview and meetsPrereq))) then
                         SetItemButtonDesaturated(button, nil);
 
-                        if (currentRank < maxRank) then
+                        if (displayRank < maxRank) then
                             -- Rank is green if not maxed out
                             _G[buttonName .. "Slot"]:SetVertexColor(0.1, 1.0, 0.1);
                             _G[buttonName .. "Rank"]:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g,
@@ -927,7 +944,7 @@ end
 DragonflightUITalentsFrameMixin = {}
 
 function DragonflightUITalentsFrameMixin:OnLoad()
-    print('DragonflightUITalentsFrameMixin:OnLoad()')
+    -- print('DragonflightUITalentsFrameMixin:OnLoad()')
 
     local headerText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
                                                           'GameFontHighlight')
@@ -1019,12 +1036,12 @@ function DragonflightUITalentsFrameMixin:OnLoad()
 end
 
 function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
-    print('OnEvent', event, ...)
+    -- print('OnEvent', event, ...)
     if PlayerTalentFrame:IsVisible() then self:Refresh() end
 end
 
 function DragonflightUITalentsFrameMixin:Refresh()
-    print('DragonflightUITalentsFrameMixin:Refresh()')
+    --  print('DragonflightUITalentsFrameMixin:Refresh()')
     for k, panel in ipairs(self.Panels) do panel:Refresh() end
 
     PlayerTalentFrame.UpdateDFHeaderText()
