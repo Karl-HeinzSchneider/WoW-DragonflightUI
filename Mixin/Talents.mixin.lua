@@ -2,6 +2,9 @@ DragonflightUITalentsPanelMixin = {}
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
+TALENT_TOOLTIP_RESETTALENTGROUP = "Click to reset your preview talent points."
+TALENT_TOOLTIP_LEARNTALENTGROUP = "Click to finalize your preview talent points."
+
 local TALENT_INFO = {
     ["default"] = {
         [1] = {color = {r = 1.0, g = 0.72, b = 0.1}},
@@ -290,9 +293,20 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
         --
         if button == 'LeftButton' then
             --
-            LearnTalent(panelID, talentID)
-            PlayerTalentFrame.UpdateDFHeaderText()
+            if (GetCVarBool("previewTalentsOption")) then
+                AddPreviewTalentPoints(panelID, talentID, 1)
+            else
+                LearnTalent(panelID, talentID)
+            end
+        elseif button == 'RightButton' then
+            --          
+
+            if (GetCVarBool("previewTalentsOption")) then
+                --
+                AddPreviewTalentPoints(panelID, talentID, -1)
+            end
         end
+        PlayerTalentFrame.UpdateDFHeaderText()
     end
 end
 
@@ -303,7 +317,7 @@ function DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
     for i = 1, 3 do
         local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
             GetTalentTabInfo(i)
-        maxPoints = maxPoints - pointsSpent
+        maxPoints = maxPoints - pointsSpent - previewPointsSpent
     end
     return maxPoints
 end
@@ -313,43 +327,13 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
     local panelID = self.ID
     local panel = self:GetName()
+    local preview = GetCVarBool("previewTalentsOption");
 
     local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
         GetTalentTabInfo(panelID)
-    -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked)
-
-    --
-    do
-        --[[ local headerText =  _G[panel .. 'HeaderText']
-       local headerSubText =  _G[panel .. 'HeaderSubText']
-       local headerHelpBox =  _G[panel .. 'HelpBox'] 
-
-        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-
-        if unspentTalentPoints > 0 then
-            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
-			headerText:SetFontObject("GameFontHighlight");
-			headerText:Show();
-			headerSubText:Hide();
-			headerHelpBox:Show();
-			for i = 1, 3 do				
-					_G["PlayerTalentFrameHeaderHelpBoxArrow"..i]:Show();			
-			end
-        else
-
-        end ]]
-
-        -- TODO        
-        --[[   local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-        local headerText = _G['DragonflightUIPlayerTalentFrameHeaderText']
-
-        if unspentTalentPoints > 0 then
-            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
-            headerText:Show()
-        else
-            headerText:Hide()
-        end ]]
-    end
+    local tabPointsSpent = pointsSpent + previewPointsSpent
+    -- print('TalentTab', id, pointsSpent, previewPointsSpent)
+    -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked) 
 
     -- header
     do
@@ -360,7 +344,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         headerIcon:SetTexture(iconTexture)
 
         local headerPointsSpent = _G[panel .. 'HeaderIconPointsSpent']
-        headerPointsSpent:SetText(pointsSpent)
+        headerPointsSpent:SetText(pointsSpent + previewPointsSpent)
     end
 
     -- header color
@@ -414,17 +398,24 @@ function DragonflightUITalentsPanelMixin:Refresh()
         local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
 
         self:ResetBranches()
-
+        -- tabPointsSpent
         for i = 1, 28 do
             local buttonName = panel .. 'Talent' .. i
             local button = _G[buttonName]
             local forceDesaturated, tierUnlocked;
             if i <= numTalents then
-                local name, iconPath, tier, column, currentRank, maxRank, isExceptional, meetsPrereq = GetTalentInfo(
-                                                                                                           panelID, i);
+                local name, iconPath, tier, column, currentRank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq,
+                      isExceptional, goldBorder = GetTalentInfo(panelID, i);
 
                 if name then
-                    _G[buttonName .. 'Rank']:SetText(currentRank)
+                    local displayRank;
+                    if (preview) then
+                        displayRank = previewRank;
+                    else
+                        displayRank = currentRank;
+                    end
+
+                    _G[buttonName .. 'Rank']:SetText(displayRank)
 
                     self.BUTTON_ARRAY[tier][column] = button
                     self.TALENT_BRANCH_ARRAY[tier][column].id = i
@@ -446,7 +437,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                         button:SetScale(30 / 37)
                     end
 
-                    if unspentTalentPoints <= 0 and currentRank == 0 then
+                    if unspentTalentPoints <= 0 and displayRank == 0 then
                         forceDesaturated = 1;
                     else
                         forceDesaturated = nil;
@@ -454,7 +445,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
                     local tierUnlocked;
                     -- is this talent's tier unlocked?
-                    if (((tier - 1) * (PLAYER_TALENTS_PER_TIER) <= pointsSpent)) then
+                    if (((tier - 1) * (PLAYER_TALENTS_PER_TIER) <= tabPointsSpent)) then
                         tierUnlocked = 1;
                     else
                         tierUnlocked = nil;
@@ -468,12 +459,12 @@ function DragonflightUITalentsPanelMixin:Refresh()
                                                                                         TalentFrame.inspect,
                                                                                         TalentFrame.pet,
                                                                                         TalentFrame.talentGroup)); ]]
-                    local prereqsSet = self:SetPrereqs(tier, column, forceDesaturated, tierUnlocked, false,
+                    local prereqsSet = self:SetPrereqs(tier, column, forceDesaturated, tierUnlocked, preview,
                                                        GetTalentPrereqs(panelID, i))
-                    if prereqsSet then
+                    if (prereqsSet and ((preview and meetsPreviewPrereq) or (not preview and meetsPrereq))) then
                         SetItemButtonDesaturated(button, nil);
 
-                        if (currentRank < maxRank) then
+                        if (displayRank < maxRank) then
                             -- Rank is green if not maxed out
                             _G[buttonName .. "Slot"]:SetVertexColor(0.1, 1.0, 0.1);
                             _G[buttonName .. "Rank"]:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g,
@@ -626,19 +617,7 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
         if (forceDesaturated or (preview and not isPreviewLearnable) or (not preview and not isLearnable)) then
             requirementsMet = nil;
         end
-        -- TODO        
-        -- TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet, TalentFrame);
         self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
-        -- self:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
-
-        --[[  local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
-        DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn])
-        DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier - 1][buttonColumn])
-
-        local arrowIndex = self.ArrowIndex
-        self.arrowIndex = arrowIndex + 1
-
-        self:DrawActualLine(arrowData, arrowIndex) ]]
     end
     return requirementsMet;
 end
@@ -683,53 +662,6 @@ function DragonflightUITalentsPanelMixin:GetBranch()
 
     local branch = _G[self:GetName() .. 'Branch' .. branchIndex]
     return branch
-end
-
-function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
-    print('DrawActualLine', buttonTier, buttonColumn, tier, column, requirementsMet)
-    local panel = self:GetName()
-    print('panel', panel)
-
-    if (requirementsMet) then
-        requirementsMet = 1;
-    else
-        requirementsMet = -1;
-    end
-
-    local button = self.BUTTON_ARRAY[buttonTier][buttonColumn]
-    print('button', button:GetName())
-
-    local arrow = self:GetArrow()
-    print('arrow', arrow:GetName())
-
-    local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
-    DevTools_Dump(arrowData)
-
-    if arrowData.leftArrow ~= 0 then
-        --   
-        arrow:ClearAllPoints()
-        arrow:SetPoint('CENTER', button, 'LEFT', -2, 0)
-        arrow:Show()
-        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['left'][requirementsMet]))
-    elseif arrowData.rightArrow ~= 0 then
-        --
-        arrow:ClearAllPoints()
-        arrow:SetPoint('CENTER', button, 'RIGHT', 2, 0)
-        arrow:Show()
-        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['right'][requirementsMet]))
-    elseif arrowData.topArrow ~= 0 then
-        -- 
-        arrow:ClearAllPoints()
-        arrow:SetPoint('CENTER', button, 'TOP', 0, 2)
-        arrow:Show()
-        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['top'][requirementsMet]))
-    end
-
-    local branch = self:GetBranch()
-    branch:ClearAllPoints()
-    branch:SetPoint('BOTTOM', button, 'TOP', 0, 2)
-    branch:Show()
-    -- branch:SetTexCoord(unpack(TALENT_BRANCH_TEXTURECOORDS['down'][requirementsMet]))
 end
 
 function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
@@ -912,5 +844,184 @@ function DragonflightUITalentsPanelMixin:UpdateRoleIcon(self, panelID)
         self.RoleIcon2.role = role2;
     else
         self.RoleIcon2:Hide();
+    end
+end
+
+-------------
+
+DragonflightUITalentsFrameMixin = {}
+
+function DragonflightUITalentsFrameMixin:OnLoad()
+    -- print('DragonflightUITalentsFrameMixin:OnLoad()')
+
+    local headerText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
+                                                          'GameFontHighlight')
+    headerText:SetPoint('TOP', PlayerTalentFrame, 'TOP', 0, -36)
+
+    PlayerTalentFrame.UpdateDFHeaderText = function()
+        -- print('UpdateDFHeaderText')
+
+        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        -- TODO: bug?  UnitCharacterPoints("player") not updating instantly
+        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+
+        if unspentTalentPoints > 0 then
+            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
+            headerText:Show()
+        elseif GetNextTalentLevel() then
+            headerText:SetFormattedText(NEXT_TALENT_LEVEL, GetNextTalentLevel());
+            headerText:Show()
+        else
+            headerText:Hide()
+        end
+    end
+
+    PlayerTalentFrame.DFPanels = {}
+    self.Panels = {}
+
+    for i = 1, 3 do
+        --
+        local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, PlayerTalentFrame,
+                                  'DFPlayerTalentFramePanelTemplate')
+        -- panel:SetSize(208, 376)
+        panel:Init(i)
+        -- panel:Refresh()
+
+        PlayerTalentFrame.DFPanels[i] = panel
+        self.Panels[i] = panel
+
+        if i == 1 then
+            panel:SetPoint('BOTTOMLEFT', PlayerTalentFrame.DFInset, 'BOTTOMLEFT', 5, 3)
+        else
+            panel:SetPoint('TOPLEFT', PlayerTalentFrame.DFPanels[i - 1], 'TOPRIGHT', 1, 0)
+        end
+    end
+
+    do
+        local check = CreateFrame('CHECKBUTTON', 'DragonflightUIPlayerTalentFrameCheckbox', PlayerTalentFrame,
+                                  'DFPlayerTalentFrameCheckboxTemplate')
+        -- check:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -5, -28)
+        check:SetSize(23, 22)
+        check:SetPoint('BOTTOMLEFT', PlayerTalentFrame, 'BOTTOMLEFT', 5, 3)
+
+        self.Checkbox = check
+
+        check:SetScript('OnClick', function(button, buttonName, down)
+            --
+            -- print('OnClick', button:GetName(), buttonName, down)
+            -- print('Click', button:GetChecked(), GetCVar('previewTalentsOption'))
+
+            self:ToggleCVar()
+        end)
+
+        check:SetScript('OnEnter', function(self)
+            --
+            GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+            -- GameTooltip:SetText(OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION)
+            GameTooltip_AddNormalLine(GameTooltip, PREVIEW_TALENT_CHANGES)
+            GameTooltip_AddHighlightLine(GameTooltip, OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION)
+            GameTooltip:Show()
+        end)
+        -- PREVIEW_TALENT_CHANGES, OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION
+
+        local checkText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameCheckboxDescription',
+                                                             'OVERLAY', 'GameFontHighlight')
+        checkText:SetPoint('LEFT', check, 'RIGHT', 4, 0)
+        checkText:SetText(PREVIEW_TALENT_CHANGES)
+    end
+
+    do
+        --
+        PlayerTalentFramePreviewBar:ClearAllPoints()
+
+        local reset = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameResetButton', PlayerTalentFrame,
+                                  'DFPlayerTalentFrameResetButton')
+        reset:SetPoint('BOTTOMRIGHT', PlayerTalentFrame, 'BOTTOMRIGHT', -5, 4)
+        self.ResetButton = reset
+
+        local learn = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameLearnButton', PlayerTalentFrame,
+                                  'DFPlayerTalentFrameLearnButton')
+        learn:SetPoint('RIGHT', reset, 'LEFT', 0, 0)
+        self.LearnButton = learn
+    end
+
+    -- self:RegisterEvent("ADDON_LOADED");
+    self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
+    -- self:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED");
+    -- self:RegisterEvent("UNIT_PET");
+    -- self:RegisterEvent("UNIT_MODEL_CHANGED");
+    self:RegisterEvent("UNIT_LEVEL");
+    self:RegisterEvent("LEARNED_SPELL_IN_TAB");
+    self:RegisterEvent("PLAYER_TALENT_UPDATE");
+    -- self:RegisterEvent("PET_TALENT_UPDATE");
+    self:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED");
+    self:RegisterEvent("CVAR_UPDATE")
+
+    self:Refresh()
+end
+
+function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
+    -- print('OnEvent', event, ...)
+    if PlayerTalentFrame:IsVisible() then self:Refresh() end
+end
+
+function DragonflightUITalentsFrameMixin:Refresh()
+    --  print('DragonflightUITalentsFrameMixin:Refresh()')
+    for k, panel in ipairs(self.Panels) do panel:Refresh() end
+
+    PlayerTalentFrame.UpdateDFHeaderText()
+    self:RefreshCheckbox()
+    self:UpdateControls()
+end
+
+function DragonflightUITalentsFrameMixin:RefreshCheckbox()
+    local check = self.Checkbox
+
+    local preCVAR = C_CVar.GetCVarBool("previewTalentsOption")
+
+    if preCVAR then
+        check:SetChecked(true)
+    else
+        check:SetChecked(false)
+    end
+end
+
+function DragonflightUITalentsFrameMixin:ToggleCVar()
+    -- print(' DragonflightUITalentsFrameMixin:ToggleCVar()')
+    local preCVAR = C_CVar.GetCVarBool("previewTalentsOption")
+
+    if preCVAR then
+        C_CVar.SetCVar('previewTalentsOption', 0)
+    else
+        C_CVar.SetCVar('previewTalentsOption', 1)
+    end
+end
+
+function DragonflightUITalentsFrameMixin:UpdateControls()
+    -- print('DragonflightUITalentsFrameMixin:UpdateControls()')
+    local preview = GetCVarBool("previewTalentsOption");
+
+    local learn = self.LearnButton
+    local reset = self.ResetButton
+
+    if preview then
+        -- print('-> SHOW')
+
+        learn:Show()
+        reset:Show()
+
+        -- enable the control bar if this is the active spec, preview is enabled, and preview points were spent
+        local talentPoints = GetUnspentTalentPoints(false, false, 1);
+        if (talentPoints > 0 and GetGroupPreviewTalentPointsSpent(false, 1) > 0) then
+            learn:Enable();
+            reset:Enable();
+        else
+            learn:Disable();
+            reset:Disable();
+        end
+    else
+        -- print('-> HIDE')
+        learn:Hide()
+        reset:Hide()
     end
 end

@@ -2344,55 +2344,12 @@ function DragonflightUIMixin:ChangeTalentsEra()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 26)
     inset:SetFrameLevel(1)
+    frame.DFInset = inset
 
-    local headerText = frame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
-                                              'GameFontHighlight')
-    headerText:SetPoint('TOP', frame, 'TOP', 0, -36)
-
-    frame.UpdateDFHeaderText = function()
-        -- print('UpdateDFHeaderText')
-
-        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-        -- TODO: bug?  UnitCharacterPoints("player") not updating instantly
-        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
-
-        if unspentTalentPoints > 0 then
-            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
-            headerText:Show()
-        elseif GetNextTalentLevel() then
-            headerText:SetFormattedText(NEXT_TALENT_LEVEL, GetNextTalentLevel());
-            headerText:Show()
-        else
-            headerText:Hide()
-        end
-    end
-
-    frame.DFPanels = {}
-
-    for i = 1, 3 do
-        --
-        local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, frame,
-                                  'DFPlayerTalentFramePanelTemplate')
-        -- panel:SetSize(208, 376)
-        panel:Init(i)
-        panel:Refresh()
-
-        frame.DFPanels[i] = panel
-
-        if i == 1 then
-            panel:SetPoint('BOTTOMLEFT', inset, 'BOTTOMLEFT', 5, 3)
-        else
-            panel:SetPoint('TOPLEFT', _G['DragonflightUIPlayerTalentFramePanel' .. (i - 1)], 'TOPRIGHT', 1, 0)
-        end
-    end
-
-    frame:HookScript('OnEvent', function(self, event, ...)
-        -- print('onEvent', event, ...)
-
-        if event == 'PLAYER_TALENT_UPDATE' then for i = 1, 3 do frame.DFPanels[i]:Refresh() end end
-
-        frame.UpdateDFHeaderText()
-    end)
+    -- DragonflightUITalentsFrameMixin
+    local DFFrame = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFrame', frame, 'DFPlayerTalentFrameTemplate')
+    DFFrame:SetSize(32, 32)
+    DFFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
 
     ----
     frame:HookScript('OnShow', function()

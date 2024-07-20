@@ -546,4 +546,36 @@
 			<OnEvent method="OnEvent" />
 		</Scripts>
 	</Frame>
+	<Frame name="DFPlayerTalentFrameTemplate" virtual="true" mixin="DragonflightUITalentsFrameMixin">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Frame>
+	<CheckButton name="DFPlayerTalentFrameCheckboxTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size x="30" y="29" />
+		<NormalTexture atlas="checkbox-minimal" useAtlasSize="true" />
+		<PushedTexture atlas="checkbox-minimal" useAtlasSize="true" />
+		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
+		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
+		<Scripts>
+			<OnLeave function="GameTooltip_Hide" />
+		</Scripts>
+	</CheckButton>
+	<Button name="DFPlayerTalentFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET" virtual="true">
+		<Size x="80" y="22" />
+		<Scripts>
+			<OnEnter function="PlayerTalentFrameResetButton_OnEnter" />
+			<OnLeave function="GameTooltip_Hide" />
+			<OnClick function="PlayerTalentFrameResetButton_OnClick" />
+		</Scripts>
+	</Button>
+	<Button name="DFPlayerTalentFrameLearnButton" inherits="UIPanelButtonTemplate" text="LEARN" virtual="true">
+		<Size x="80" y="22" />
+		<Scripts>
+			<OnEnter function="PlayerTalentFrameLearnButton_OnEnter" />
+			<OnLeave function="GameTooltip_Hide" />
+			<OnClick function="PlayerTalentFrameLearnButton_OnClick" />
+		</Scripts>
+	</Button>
 </Ui>
