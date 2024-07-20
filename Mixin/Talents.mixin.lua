@@ -918,3 +918,86 @@ function DragonflightUITalentsPanelMixin:UpdateRoleIcon(self, panelID)
         self.RoleIcon2:Hide();
     end
 end
+
+-------------
+
+DragonflightUITalentsFrameMixin = {}
+
+function DragonflightUITalentsFrameMixin:OnLoad()
+    print('DragonflightUITalentsFrameMixin:OnLoad()')
+
+    local headerText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
+                                                          'GameFontHighlight')
+    headerText:SetPoint('TOP', PlayerTalentFrame, 'TOP', 0, -36)
+
+    PlayerTalentFrame.UpdateDFHeaderText = function()
+        -- print('UpdateDFHeaderText')
+
+        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
+        -- TODO: bug?  UnitCharacterPoints("player") not updating instantly
+        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+
+        if unspentTalentPoints > 0 then
+            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
+            headerText:Show()
+        elseif GetNextTalentLevel() then
+            headerText:SetFormattedText(NEXT_TALENT_LEVEL, GetNextTalentLevel());
+            headerText:Show()
+        else
+            headerText:Hide()
+        end
+    end
+
+    PlayerTalentFrame.DFPanels = {}
+    self.Panels = {}
+
+    for i = 1, 3 do
+        --
+        local panel = CreateFrame('FRAME', 'DragonflightUIPlayerTalentFramePanel' .. i, PlayerTalentFrame,
+                                  'DFPlayerTalentFramePanelTemplate')
+        -- panel:SetSize(208, 376)
+        panel:Init(i)
+        -- panel:Refresh()
+
+        PlayerTalentFrame.DFPanels[i] = panel
+        self.Panels[i] = panel
+
+        if i == 1 then
+            panel:SetPoint('BOTTOMLEFT', PlayerTalentFrame.DFInset, 'BOTTOMLEFT', 5, 3)
+        else
+            panel:SetPoint('TOPLEFT', PlayerTalentFrame.DFPanels[i - 1], 'TOPRIGHT', 1, 0)
+        end
+    end
+
+    do
+        local check = CreateFrame('CHECKBUTTON', 'DragonflightUIPlayerTalentFrameCheckbox', PlayerTalentFrame,
+                                  'DFPlayerTalentFrameCheckboxTemplate')
+        check:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -5, -28)
+
+        self.Checkbox = check
+    end
+
+    -- self:RegisterEvent("ADDON_LOADED");
+    self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
+    -- self:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED");
+    -- self:RegisterEvent("UNIT_PET");
+    -- self:RegisterEvent("UNIT_MODEL_CHANGED");
+    self:RegisterEvent("UNIT_LEVEL");
+    self:RegisterEvent("LEARNED_SPELL_IN_TAB");
+    self:RegisterEvent("PLAYER_TALENT_UPDATE");
+    -- self:RegisterEvent("PET_TALENT_UPDATE");
+    self:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED");
+
+    self:Refresh()
+end
+
+function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
+    print('OnEvent', event, ...)
+    self:Refresh()
+end
+
+function DragonflightUITalentsFrameMixin:Refresh()
+    for k, panel in ipairs(self.Panels) do panel:Refresh() end
+
+    PlayerTalentFrame.UpdateDFHeaderText()
+end
