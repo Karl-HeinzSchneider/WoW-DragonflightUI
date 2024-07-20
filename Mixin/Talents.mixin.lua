@@ -333,40 +333,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         GetTalentTabInfo(panelID)
     local tabPointsSpent = pointsSpent + previewPointsSpent
     -- print('TalentTab', id, pointsSpent, previewPointsSpent)
-    -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked)
-
-    --
-    do
-        --[[ local headerText =  _G[panel .. 'HeaderText']
-       local headerSubText =  _G[panel .. 'HeaderSubText']
-       local headerHelpBox =  _G[panel .. 'HelpBox'] 
-
-        local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-
-        if unspentTalentPoints > 0 then
-            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
-			headerText:SetFontObject("GameFontHighlight");
-			headerText:Show();
-			headerSubText:Hide();
-			headerHelpBox:Show();
-			for i = 1, 3 do				
-					_G["PlayerTalentFrameHeaderHelpBoxArrow"..i]:Show();			
-			end
-        else
-
-        end ]]
-
-        -- TODO        
-        --[[   local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-        local headerText = _G['DragonflightUIPlayerTalentFrameHeaderText']
-
-        if unspentTalentPoints > 0 then
-            headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
-            headerText:Show()
-        else
-            headerText:Hide()
-        end ]]
-    end
+    -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked) 
 
     -- header
     do
@@ -650,19 +617,7 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
         if (forceDesaturated or (preview and not isPreviewLearnable) or (not preview and not isLearnable)) then
             requirementsMet = nil;
         end
-        -- TODO        
-        -- TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet, TalentFrame);
         self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
-        -- self:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
-
-        --[[  local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
-        DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn])
-        DevTools_Dump(self.TALENT_BRANCH_ARRAY[buttonTier - 1][buttonColumn])
-
-        local arrowIndex = self.ArrowIndex
-        self.arrowIndex = arrowIndex + 1
-
-        self:DrawActualLine(arrowData, arrowIndex) ]]
     end
     return requirementsMet;
 end
@@ -707,53 +662,6 @@ function DragonflightUITalentsPanelMixin:GetBranch()
 
     local branch = _G[self:GetName() .. 'Branch' .. branchIndex]
     return branch
-end
-
-function DragonflightUITalentsPanelMixin:DrawActualLine(buttonTier, buttonColumn, tier, column, requirementsMet)
-    print('DrawActualLine', buttonTier, buttonColumn, tier, column, requirementsMet)
-    local panel = self:GetName()
-    print('panel', panel)
-
-    if (requirementsMet) then
-        requirementsMet = 1;
-    else
-        requirementsMet = -1;
-    end
-
-    local button = self.BUTTON_ARRAY[buttonTier][buttonColumn]
-    print('button', button:GetName())
-
-    local arrow = self:GetArrow()
-    print('arrow', arrow:GetName())
-
-    local arrowData = self.TALENT_BRANCH_ARRAY[buttonTier][buttonColumn]
-    DevTools_Dump(arrowData)
-
-    if arrowData.leftArrow ~= 0 then
-        --   
-        arrow:ClearAllPoints()
-        arrow:SetPoint('CENTER', button, 'LEFT', -2, 0)
-        arrow:Show()
-        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['left'][requirementsMet]))
-    elseif arrowData.rightArrow ~= 0 then
-        --
-        arrow:ClearAllPoints()
-        arrow:SetPoint('CENTER', button, 'RIGHT', 2, 0)
-        arrow:Show()
-        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['right'][requirementsMet]))
-    elseif arrowData.topArrow ~= 0 then
-        -- 
-        arrow:ClearAllPoints()
-        arrow:SetPoint('CENTER', button, 'TOP', 0, 2)
-        arrow:Show()
-        arrow:SetTexCoord(unpack(TALENT_ARROW_TEXTURECOORDS['top'][requirementsMet]))
-    end
-
-    local branch = self:GetBranch()
-    branch:ClearAllPoints()
-    branch:SetPoint('BOTTOM', button, 'TOP', 0, 2)
-    branch:Show()
-    -- branch:SetTexCoord(unpack(TALENT_BRANCH_TEXTURECOORDS['down'][requirementsMet]))
 end
 
 function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
