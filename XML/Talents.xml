@@ -558,6 +558,9 @@
 		<PushedTexture atlas="checkbox-minimal" useAtlasSize="true" />
 		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
 		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
+		<Scripts>
+			<OnLeave function="GameTooltip_Hide" />
+		</Scripts>
 	</CheckButton>
 	<Button name="DFPlayerTalentFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET" virtual="true">
 		<Size x="80" y="22" />

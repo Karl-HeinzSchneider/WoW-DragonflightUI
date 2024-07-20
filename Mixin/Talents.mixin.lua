@@ -900,7 +900,9 @@ function DragonflightUITalentsFrameMixin:OnLoad()
     do
         local check = CreateFrame('CHECKBUTTON', 'DragonflightUIPlayerTalentFrameCheckbox', PlayerTalentFrame,
                                   'DFPlayerTalentFrameCheckboxTemplate')
-        check:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -5, -28)
+        -- check:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -5, -28)
+        check:SetSize(23, 22)
+        check:SetPoint('BOTTOMLEFT', PlayerTalentFrame, 'BOTTOMLEFT', 5, 3)
 
         self.Checkbox = check
 
@@ -911,6 +913,21 @@ function DragonflightUITalentsFrameMixin:OnLoad()
 
             self:ToggleCVar()
         end)
+
+        check:SetScript('OnEnter', function(self)
+            --
+            GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+            -- GameTooltip:SetText(OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION)
+            GameTooltip_AddNormalLine(GameTooltip, PREVIEW_TALENT_CHANGES)
+            GameTooltip_AddHighlightLine(GameTooltip, OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION)
+            GameTooltip:Show()
+        end)
+        -- PREVIEW_TALENT_CHANGES, OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION
+
+        local checkText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameCheckboxDescription',
+                                                             'OVERLAY', 'GameFontHighlight')
+        checkText:SetPoint('LEFT', check, 'RIGHT', 4, 0)
+        checkText:SetText(PREVIEW_TALENT_CHANGES)
     end
 
     do
