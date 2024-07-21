@@ -2928,15 +2928,26 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
     end
 
     if name == 'SpellBookFrame' then
-        for i = 1, 5 do
-            local tab = _G[name .. 'TabButton' .. i]
 
-            if tab then
-                --        
-                tab.DFTabWidth = 105
-                DragonflightUIMixin:TabResize(tab)
+        local setTabWidths = function()
+            for i = 1, 5 do
+                local tab = _G['SpellBookFrameTabButton' .. i]
+
+                if tab then
+                    --        
+                    local text = _G['SpellBookFrameTabButton' .. i .. 'Text']
+                    tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+                    -- DragonflightUIMixin:TabResize(tab)
+                    tab:SetWidth(tab.DFTabWidth)
+                end
             end
         end
+
+        hooksecurefunc('SpellBookFrame_Update', function()
+            --
+            --  print('SpellBookFrame_Update')
+            setTabWidths()
+        end)
 
         for i = 1, 8 do
             -- SpellBookSkillLineTab1
@@ -2994,7 +3005,8 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             for i = 1, 5 do
                 local tab = _G[name .. 'Tab' .. i]
                 if tab and (tab:IsShown()) then
-                    tab:SetWidth(78)
+                    local text = _G[name .. 'Tab' .. i .. 'Text']
+                    tab:SetWidth(math.max(text:GetWrappedWidth() + 16, 78))
                     tab:ClearAllPoints();
                     if lastElem then
                         tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
@@ -3044,7 +3056,8 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
 
             if tab then
                 --        
-                tab.DFTabWidth = 105
+                local text = _G[name .. 'Tab' .. i .. 'Text']
+                tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
                 DragonflightUIMixin:TabResize(tab)
             end
         end
@@ -3097,7 +3110,8 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         local newDung = CreateFrame('BUTTON', 'DragonflightUIEncounterJournalDungeonTab', frame, 'DFDungeonTab')
         newDung:Show()
         newDung:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
-        newDung:GetFontString():SetText('Dungeons')
+        newDung:GetFontString():SetText(DUNGEONS)
+        newDung.DFTabWidth = math.max(newDung:GetFontString():GetWrappedWidth() + 16, 78)
         DragonflightUIMixin:CharacterFrameTabButtonTemplate(newDung, true)
 
         local raid = _G[name .. 'RaidTab']
@@ -3110,7 +3124,8 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         local newRaid = CreateFrame('BUTTON', 'DragonflightUIEncounterJournalRaidTab', frame, 'DFRaidTab')
         newRaid:Show()
         newRaid:SetPoint('TOPLEFT', newDung, 'TOPRIGHT', 4, 0)
-        newRaid:GetFontString():SetText('Raids')
+        newRaid:GetFontString():SetText(RAIDS)
+        newRaid.DFTabWidth = math.max(newRaid:GetFontString():GetWrappedWidth() + 16, 78)
         DragonflightUIMixin:CharacterFrameTabButtonTemplate(newRaid, true)
     elseif name == 'MacroFrame' then
         --  
@@ -3148,6 +3163,15 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                     tabHigh:Hide()
                 end
             end
+        else
+            for i = 1, 5 do
+                --
+                local tab = _G[name .. 'Tab' .. i]
+                if tab then
+                    local text = _G['FriendsFrameTab' .. i .. 'Text']
+                    tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+                end
+            end
         end
 
         local bg = _G['FriendsFrameBg']
@@ -3165,8 +3189,9 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             local tab = _G[name .. 'Tab' .. i]
 
             if tab then
-                --        
-                tab.DFTabWidth = 120
+                --
+                local text = _G[name .. 'Tab' .. i .. 'Text']
+                tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
                 DragonflightUIMixin:TabResize(tab)
             end
         end
