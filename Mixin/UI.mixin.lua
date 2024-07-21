@@ -2596,12 +2596,17 @@ function DragonflightUIMixin:ChangeSpellbookEra()
         end
     end
 
-    frame:HookScript('OnShow', function()
-        frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + 32);
-        frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
-        frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
-        UpdateUIPanelPositions(frame)
-    end)
+    UIPanelWindows["SpellBookFrame"] = {
+        whileDead = 1,
+        height = 424,
+        width = SpellBookFrame:GetWidth() + 32,
+        bottomClampOverride = 152,
+        xoffset = 0,
+        yoffset = 0,
+        pushable = 3,
+        area = "left"
+    }
+    UpdateUIPanelPositions(SpellBookFrame)
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
