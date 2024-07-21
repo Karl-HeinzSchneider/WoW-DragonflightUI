@@ -609,6 +609,43 @@ function DragonflightUIActionbarMixin:StyleButtons()
         checked:SetTexture(textureRefTwo)
         checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
 
+        local flyoutBorder = _G[btnName .. 'FlyoutBorder']
+        if flyoutBorder then
+            flyoutBorder:ClearAllPoints()
+            --  flyoutBorder:SetSize(46, 45)
+            -- flyoutBorder:SetTexture(textureRef)
+            -- flyoutBorder:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
+            -- flyoutBorder:SetAllPoints()
+        end
+
+        local flyoutBorderShadow = _G[btnName .. 'FlyoutBorderShadow']
+        if flyoutBorderShadow then
+            flyoutBorderShadow:ClearAllPoints()
+            flyoutBorderShadow:SetSize(52, 52)
+            flyoutBorderShadow:SetTexture(textureRefTwo)
+            flyoutBorderShadow:SetTexCoord(0.701172, 0.904297, 0.163574, 0.214355)
+            flyoutBorderShadow:SetPoint('CENTER', icon, 'CENTER', -0.3, 0.6)
+            flyoutBorderShadow:SetDrawLayer('ARTWORK', -1)
+            -- ["UI-HUD-ActionBar-IconFrame-FlyoutBorderShadow"]={52, 26, 0.701172, 0.904297, 0.163574, 0.214355, false, false, "2x"},
+        end
+
+        local flyoutArrow = _G[btnName .. 'FlyoutArrow']
+        if flyoutArrow then
+            -- ["UI-HUD-ActionBar-Flyout"]={18, 3, 0.884766, 0.955078, 0.438965, 0.445801, false, false, "2x"},
+            -- ["UI-HUD-ActionBar-Flyout-Down"]={19, 4, 0.884766, 0.958984, 0.430176, 0.437988, false, false, "2x"},
+            -- ["UI-HUD-ActionBar-Flyout-Mouseover"]={18, 3, 0.884766, 0.955078, 0.446777, 0.453613, false, false, "2x"},
+
+            flyoutArrow:ClearAllPoints()
+            flyoutArrow:SetSize(18, 6)
+            flyoutArrow:SetTexture(textureRefTwo)
+            flyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
+            flyoutArrow:SetPoint('TOP', btn, 'TOP', 0, 6)
+
+        end
+
+        -- TODO: support dynamic
+        btn:SetAttribute("flyoutDirection", nil);
+
         btn.DragonflightFixHotkeyPosition = function()
             local hotkey = _G[btnName .. 'HotKey']
             hotkey:ClearAllPoints()
@@ -671,6 +708,79 @@ function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
             mask:SetDesaturated(false)
         end
     end
+end
+
+function DragonflightUIActionbarMixin:HookFlyout()
+    hooksecurefunc('ActionButton_UpdateFlyout', function(self)
+        if not self.FlyoutArrow then return; end
+
+        local actionType = GetActionInfo(self.action);
+        if not (actionType == "flyout") then return; end
+
+        -- Update border
+        local isMouseOverButton = GetMouseFocus() == self;
+        local isFlyoutShown = SpellFlyout and SpellFlyout:IsShown() and SpellFlyout:GetParent() == self;
+        if (isFlyoutShown or isMouseOverButton) then
+            self.FlyoutBorderShadow:Show();
+        else
+            self.FlyoutBorderShadow:Hide();
+        end
+        local isButtonDown = self:GetButtonState() == "PUSHED";
+        -- print('State:', self:GetButtonState())
+
+        if (isButtonDown) then
+            -- print('isButtonDown')
+            -- self.FlyoutArrow:SetSize(19, 8)
+            -- self.FlyoutArrow:SetTexCoord(0.884766, 0.958984, 0.430176, 0.437988)
+            self.FlyoutArrow:SetSize(18, 6)
+            self.FlyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
+        elseif (isMouseOverButton) then
+            -- print('isMouseOverButton')
+            self.FlyoutArrow:SetSize(18, 6)
+            self.FlyoutArrow:SetTexCoord(0.884766, 0.955078, 0.446777, 0.453613)
+        else
+            -- print('else')
+            self.FlyoutArrow:SetSize(18, 6)
+            self.FlyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
+        end
+
+        self.FlyoutArrow:Show();
+        self.FlyoutArrow:ClearAllPoints();
+
+        local arrowDirection = self:GetAttribute("flyoutDirection");
+        local arrowDistance = isFlyoutShown and 1 or 4;
+
+        -- print('arrow', arrowDirection, arrowDistance)
+
+        -- arrowDirection = 'LEFT'
+        --[[ 
+        if (arrowDirection == "LEFT") then
+            SetClampedTextureRotation(self.FlyoutArrow, 90);
+            self.FlyoutArrow:SetPoint("LEFT", self, "LEFT", -arrowDistance, 0);
+            -- self.FlyoutArrow:SetRotation(math.pi / 2, {x = 0.5, y = 0.5})
+        elseif (arrowDirection == "RIGHT") then
+            -- SetClampedTextureRotation(self.FlyoutArrow, isFlyoutShown and 270 or 90);
+            self.FlyoutArrow:SetPoint("RIGHT", self, "RIGHT", arrowDistance, 0);
+        elseif (arrowDirection == "DOWN") then
+            -- SetClampedTextureRotation(self.FlyoutArrow, isFlyoutShown and 0 or 180);
+            self.FlyoutArrow:SetPoint("BOTTOM", self, "BOTTOM", 0, -arrowDistance);
+        else
+            SetClampedTextureRotation(self.FlyoutArrow, 0);
+            self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, arrowDistance);
+        end ]]
+
+        -- TODO
+
+        if isFlyoutShown then
+            -- self.FlyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
+            -- self.FlyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)    
+            self.FlyoutArrow:SetRotation(math.pi, {x = 0.5, y = 0.5})
+            self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, 1);
+        else
+            self.FlyoutArrow:SetRotation(0, {x = 0.5, y = 0.5})
+            self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, 4);
+        end
+    end)
 end
 
 -- TODO only debug for now..
