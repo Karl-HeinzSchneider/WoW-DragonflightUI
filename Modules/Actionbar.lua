@@ -211,7 +211,8 @@ local defaults = {
             rows = 1,
             buttons = 10,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = false,
+            activate = true
         },
         totem = {
             scale = 1,
@@ -1143,7 +1144,8 @@ local stanceOptions = {
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', 'stance'),
             order = 12
-        }
+        },
+        activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
 }
 
@@ -1649,6 +1651,7 @@ function Module:SetupActionbarFrames()
         bar:SetButtons(buttons)
         bar:StyleButtons()
         bar:ReplaceNormalTexture2()
+        bar.stanceBar = true
         Module['stancebar'] = bar
     end
 

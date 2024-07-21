@@ -23,6 +23,7 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+    self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:SetScript('OnEvent', function(event, arg1)
@@ -203,13 +204,25 @@ function DragonflightUIActionbarMixin:Update()
         -- print('state.activate ~= nil', state.activate, self:GetName())
         -- self:SetShown(state.activate)
         if state.activate == false then
-
+            if self.stanceBar then self:Hide() end
             for i = 1, btnCount do
                 local btn = buttonTable[i]
                 btn:ClearAllPoints()
                 btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
                 btn:Hide()
                 if btn.decoDF then btn.decoDF:Hide() end
+            end
+        else
+            if self.stanceBar then
+                self:Show()
+                for i = 1, btnCount do
+                    local btn = buttonTable[i]
+
+                    if btn.action then
+                        --
+                        if HasAction(btn.action) then btn:Show() end
+                    end
+                end
             end
         end
     end
