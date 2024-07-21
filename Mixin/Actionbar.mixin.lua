@@ -633,6 +633,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
 end
 
 function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
+    if btn.ignoreRange then return end
     local mask = btn.Icon
     if not mask then return end
 
@@ -673,6 +674,15 @@ function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
     end
 end
 
+function DragonflightUIActionbarMixin:SetIgnoreRange(ignore)
+    local count = #(self.buttonTable)
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        btn.ignoreRange = ignore
+    end
+end
+
 -- TODO only debug for now..
 function DragonflightUIActionbarMixin:HookGrid()
     hooksecurefunc('ActionButton_ShowGrid', function(btn)
@@ -691,3 +701,42 @@ end ]]
 function DragonflightUIPetbarMixin:UpdateGrid()
 end
 
+function DragonflightUIPetbarMixin:StylePetButton()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        local normalTwo = _G[btnName .. 'NormalTexture2']
+        normalTwo:Hide()
+        normalTwo:SetTexture('')
+        normalTwo:SetAlpha(0)
+
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        newNormal:ClearAllPoints()
+        newNormal:SetSize(46, 45)
+        newNormal:SetPoint('TOPLEFT')
+        newNormal:SetTexture(textureRefTwo)
+        newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        newNormal:SetAlpha(1)
+        newNormal:SetDrawLayer('OVERLAY', 1)
+
+        local shine = _G[btnName .. 'Shine']
+        -- <Frame name="$parentShine" inherits="AutoCastShineTemplate">
+        -- <Anchor point="CENTER" x="0" y="0"/>
+        -- <Size x="28" y="28"/>
+        -- shine:SetSize(46, 46)      
+
+        local child1, child2, child3 = btn:GetChildren()
+        child1:SetSize(41, 41)
+
+        local auto = _G[btnName .. 'AutoCastable']
+        local autoSize = 80
+        auto:SetSize(autoSize, autoSize)
+        auto:SetDrawLayer('OVERLAY', 2)
+    end
+end
