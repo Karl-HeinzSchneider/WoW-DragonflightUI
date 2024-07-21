@@ -12,7 +12,7 @@ A clear and concise description of what the bug is. Add steps to reproduce the b
 If applicable, add screenshots to help explain your problem.
 
 **Error Log**
-Please provide any lua error you encounter. Make sure you have error reporting enabled ingame ('/console scriptErrors 1'). Also consider using [Bugsack](https://www.curseforge.com/wow/addons/bugsack) **and** [BugGrabber](https://www.curseforge.com/wow/addons/bug-grabber).
+Please provide any lua error you encounter. Make sure you have error reporting enabled ingame ('/console scriptErrors 1'). Also consider using [BugSack](https://www.curseforge.com/wow/addons/bugsack) **and** [BugGrabber](https://www.curseforge.com/wow/addons/bug-grabber).
 
 **Versions (please complete the following information):**
  - WoW: [e.g. Cata classic, Era/SoD, Wrath classic (chinese?)]
