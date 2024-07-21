@@ -743,6 +743,46 @@ function DragonflightUIActionbarMixin:StyleFlyout()
     end
 end
 
+function DragonflightUIActionbarMixin:StyleFlyoutButton(btn)
+    -- print(' DragonflightUIActionbarMixin:StyleFlyoutButton(btn)', btn:GetName())
+    btn.DFHooked = true
+
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    local btnName = btn:GetName()
+    local icon = _G[btnName .. 'Icon']
+
+    local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
+    btn.Mask = mask
+    mask:SetAllPoints(icon)
+    mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+    mask:SetSize(28, 28)
+
+    icon:AddMaskTexture(mask)
+
+    local border = btn:CreateTexture('border', 'OVERLAY')
+    border:SetSize(28, 28)
+    border:SetPoint('CENTER')
+    border:SetTexture(textureRefTwo)
+    border:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+    border:SetDrawLayer('OVERLAY')
+    btn.DFBorder = border
+
+    local highlight = btn:GetHighlightTexture()
+    highlight:ClearAllPoints()
+    highlight:SetSize(28, 28)
+    highlight:SetPoint('CENTER')
+    highlight:SetTexture(textureRefTwo)
+    highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+    local pushed = btn:GetPushedTexture()
+    pushed:ClearAllPoints()
+    pushed:SetSize(28, 28)
+    pushed:SetPoint('CENTER')
+    pushed:SetTexture(textureRefTwo)
+    pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+end
+
 function DragonflightUIActionbarMixin:HookFlyout()
     hooksecurefunc('ActionButton_UpdateFlyout', function(self)
         if not self.FlyoutArrow then return; end
@@ -815,9 +855,20 @@ function DragonflightUIActionbarMixin:HookFlyout()
         end
     end)
 
-    SpellFlyout:HookScript('OnShow', function()
-        -- print('shows!')
+    hooksecurefunc(SpellFlyout, 'Toggle', function(self, flyoutID, parent, direction, distance, isActionBar)
+        -- print('toggles', self, flyoutID, parent, direction, distance, isActionBar)
+
+        if not SpellFlyout:IsVisible() then return end
         DragonflightUIActionbarMixin:StyleFlyout()
+
+        for i = 1, 10 do
+            local btn = _G['SpellFlyoutButton' .. i]
+
+            if btn and not btn.DFHooked then
+                --
+                DragonflightUIActionbarMixin:StyleFlyoutButton(btn)
+            end
+        end
     end)
 end
 

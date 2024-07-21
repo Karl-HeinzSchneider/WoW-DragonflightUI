@@ -1561,6 +1561,8 @@ function Module:SetupActionbarFrames()
     end
 
     DragonflightUIActionbarMixin:HookGrid()
+    DragonflightUIActionbarMixin:HookFlyout()
+    DragonflightUIActionbarMixin:StyleFlyout()
 
     createStuff(1, 'ActionButton')
     Module.bar1:SetupMainBar()
@@ -1571,9 +1573,7 @@ function Module:SetupActionbarFrames()
 
     Module.bar1:StyleButtons()
     Module.bar1:HookQuickbindMode()
-    Module.bar1:HookGrid()
-    Module.bar1:HookFlyout()
-    Module.bar1:StyleFlyout()
+    -- Module.bar1:HookGrid()
     Module.bar2:StyleButtons()
     Module.bar2:HookQuickbindMode()
     Module.bar3:StyleButtons()
