@@ -632,6 +632,30 @@ function DragonflightUIActionbarMixin:StyleButtons()
     end
 end
 
+function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        local normal = btn:GetNormalTexture()
+        normal:Hide()
+        normal:SetTexture('')
+
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        newNormal:ClearAllPoints()
+        newNormal:SetSize(46, 45)
+        newNormal:SetPoint('TOPLEFT')
+        newNormal:SetTexture(textureRefTwo)
+        newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        newNormal:SetAlpha(1)
+    end
+end
+
 function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
     local mask = btn.Icon
     if not mask then return end

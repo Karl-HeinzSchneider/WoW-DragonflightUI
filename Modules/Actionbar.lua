@@ -201,13 +201,13 @@ local defaults = {
         stance = {
             scale = 1,
             anchorFrame = 'DragonflightUIActionbarFrame3',
-            anchor = 'BOTTOM',
-            anchorParent = 'TOP',
+            anchor = 'BOTTOMLEFT',
+            anchorParent = 'TOPLEFT',
             x = 0,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
-            buttonScale = 1,
+            buttonScale = 0.8,
             rows = 1,
             buttons = 10,
             padding = 2,
@@ -1036,15 +1036,6 @@ local stanceOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'stance'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1
-        },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
@@ -1656,6 +1647,8 @@ function Module:SetupActionbarFrames()
 
         bar:Init()
         bar:SetButtons(buttons)
+        bar:StyleButtons()
+        bar:ReplaceNormalTexture2()
         Module['stancebar'] = bar
     end
 
