@@ -710,6 +710,39 @@ function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
     end
 end
 
+function DragonflightUIActionbarMixin:StyleFlyout()
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    local bgEnd = SpellFlyout.BgEnd
+    bgEnd:ClearAllPoints()
+    bgEnd:SetSize(47, 28)
+    bgEnd:SetPoint('TOP', SpellFlyout, 'TOP', 0, 7)
+    bgEnd:SetTexture(textureRef)
+    bgEnd:SetTexCoord(0.701172, 0.884766, 0.564941, 0.593262)
+
+    local textureVert = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarvertical2x'
+
+    local vert = SpellFlyout.VertBg
+    vert:ClearAllPoints()
+    vert:SetSize(47, 32)
+    vert:SetPoint('TOP', bgEnd, 'BOTTOM', 0, 0)
+    vert:SetPoint('BOTTOM', SpellFlyout, 'BOTTOM', 0, 0)
+    vert:SetTexture(textureVert)
+    vert:SetTexCoord(0.00390625, 0.371094, 0, 1)
+
+    --     ["UI-HUD-ActionBar-IconFrame-FlyoutBottom"]={47, 2, 0.701172, 0.884766, 0.594238, 0.599121, false, false, "2x"},
+    if not SpellFlyout.Start then
+        local start = SpellFlyout:CreateTexture('DragonflightUISpellFlyoutStartTexture', 'BACKGROUND')
+        start:SetSize(47, 4)
+        -- start:SetPoint('TOP', bgEnd, 'BOTTOM', 0, 0)
+        start:SetPoint('TOP', vert, 'BOTTOM', 0, 0)
+        start:SetTexture(textureRef)
+        start:SetTexCoord(0.701172, 0.884766, 0.594238, 0.599121)
+
+        SpellFlyout.Start = start
+    end
+end
+
 function DragonflightUIActionbarMixin:HookFlyout()
     hooksecurefunc('ActionButton_UpdateFlyout', function(self)
         if not self.FlyoutArrow then return; end
@@ -780,6 +813,11 @@ function DragonflightUIActionbarMixin:HookFlyout()
             self.FlyoutArrow:SetRotation(0, {x = 0.5, y = 0.5})
             self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, 4);
         end
+    end)
+
+    SpellFlyout:HookScript('OnShow', function()
+        -- print('shows!')
+        DragonflightUIActionbarMixin:StyleFlyout()
     end)
 end
 
