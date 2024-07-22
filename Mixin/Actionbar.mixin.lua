@@ -23,6 +23,7 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+    self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:SetScript('OnEvent', function(event, arg1)
@@ -203,13 +204,25 @@ function DragonflightUIActionbarMixin:Update()
         -- print('state.activate ~= nil', state.activate, self:GetName())
         -- self:SetShown(state.activate)
         if state.activate == false then
-
+            if self.stanceBar then self:Hide() end
             for i = 1, btnCount do
                 local btn = buttonTable[i]
                 btn:ClearAllPoints()
                 btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
                 btn:Hide()
                 if btn.decoDF then btn.decoDF:Hide() end
+            end
+        else
+            if self.stanceBar then
+                self:Show()
+                for i = 1, btnCount do
+                    local btn = buttonTable[i]
+
+                    if btn.action then
+                        --
+                        if HasAction(btn.action) then btn:Show() end
+                    end
+                end
             end
         end
     end
@@ -629,6 +642,30 @@ function DragonflightUIActionbarMixin:StyleButtons()
             local fontFile, fontHeight, flags = count:GetFont()
             count:SetFont(fontFile, 14 + 2, flags)
         end
+    end
+end
+
+function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        local normal = btn:GetNormalTexture()
+        normal:Hide()
+        normal:SetTexture('')
+
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        newNormal:ClearAllPoints()
+        newNormal:SetSize(46, 45)
+        newNormal:SetPoint('TOPLEFT')
+        newNormal:SetTexture(textureRefTwo)
+        newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        newNormal:SetAlpha(1)
     end
 end
 
