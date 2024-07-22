@@ -23,6 +23,7 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+    self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:SetScript('OnEvent', function(event, arg1)
@@ -203,13 +204,25 @@ function DragonflightUIActionbarMixin:Update()
         -- print('state.activate ~= nil', state.activate, self:GetName())
         -- self:SetShown(state.activate)
         if state.activate == false then
-
+            if self.stanceBar then self:Hide() end
             for i = 1, btnCount do
                 local btn = buttonTable[i]
                 btn:ClearAllPoints()
                 btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
                 btn:Hide()
                 if btn.decoDF then btn.decoDF:Hide() end
+            end
+        else
+            if self.stanceBar then
+                self:Show()
+                for i = 1, btnCount do
+                    local btn = buttonTable[i]
+
+                    if btn.action then
+                        --
+                        if HasAction(btn.action) then btn:Show() end
+                    end
+                end
             end
         end
     end
@@ -669,7 +682,32 @@ function DragonflightUIActionbarMixin:StyleButtons()
     end
 end
 
+function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        local normal = btn:GetNormalTexture()
+        normal:Hide()
+        normal:SetTexture('')
+
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        newNormal:ClearAllPoints()
+        newNormal:SetSize(46, 45)
+        newNormal:SetPoint('TOPLEFT')
+        newNormal:SetTexture(textureRefTwo)
+        newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        newNormal:SetAlpha(1)
+    end
+end
+
 function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
+    if btn.ignoreRange then return end
     local mask = btn.Icon
     if not mask then return end
 
@@ -707,6 +745,15 @@ function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
             mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
             mask:SetDesaturated(false)
         end
+    end
+end
+
+function DragonflightUIActionbarMixin:SetIgnoreRange(ignore)
+    local count = #(self.buttonTable)
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        btn.ignoreRange = ignore
     end
 end
 
@@ -890,3 +937,42 @@ end ]]
 function DragonflightUIPetbarMixin:UpdateGrid()
 end
 
+function DragonflightUIPetbarMixin:StylePetButton()
+    local count = #(self.buttonTable)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
+
+    for i = 1, count do
+        local btn = self.buttonTable[i]
+        local btnName = btn:GetName()
+
+        local normalTwo = _G[btnName .. 'NormalTexture2']
+        normalTwo:Hide()
+        normalTwo:SetTexture('')
+        normalTwo:SetAlpha(0)
+
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        newNormal:ClearAllPoints()
+        newNormal:SetSize(46, 45)
+        newNormal:SetPoint('TOPLEFT')
+        newNormal:SetTexture(textureRefTwo)
+        newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        newNormal:SetAlpha(1)
+        newNormal:SetDrawLayer('OVERLAY', 1)
+
+        local shine = _G[btnName .. 'Shine']
+        -- <Frame name="$parentShine" inherits="AutoCastShineTemplate">
+        -- <Anchor point="CENTER" x="0" y="0"/>
+        -- <Size x="28" y="28"/>
+        -- shine:SetSize(46, 46)      
+
+        local child1, child2, child3 = btn:GetChildren()
+        child1:SetSize(41, 41)
+
+        local auto = _G[btnName .. 'AutoCastable']
+        local autoSize = 80
+        auto:SetSize(autoSize, autoSize)
+        auto:SetDrawLayer('OVERLAY', 2)
+    end
+end
