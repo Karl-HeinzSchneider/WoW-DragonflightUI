@@ -955,7 +955,12 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
         self.LinkButton:Hide()
     else
         self.NineSlice.Text:SetText(nameLoc)
-        self.LinkButton:Show()
+
+        if DF.Era then
+            self.LinkButton:Hide()
+        else
+            self.LinkButton:Show()
+        end
     end
 
     -- DevTools_Dump(profData)
