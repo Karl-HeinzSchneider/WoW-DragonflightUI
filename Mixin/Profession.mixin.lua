@@ -103,12 +103,12 @@ function DragonFlightUIProfessionMixin:Refresh(force)
 
     do
         local name, rank, maxRank = GetTradeSkillLine();
-        if (rank < 75) and (not IsTradeSkillLinked()) then
+        --[[  if (rank < 75) and (not IsTradeSkillLinked()) then
             self.RecipeList.SearchBox:Disable()
         else
             self.RecipeList.SearchBox:Enable()
         end
-
+        ]]
         if self.currentTradeSkillName ~= name then
             --[[   UIDropDownMenu_Initialize(frameRef.RecipeList.FilterDropDown,
                                       DragonFlightUIProfessionMixin.FilterDropdownInitialize, 'MENU'); ]]
@@ -659,8 +659,8 @@ if DF.Era then
     }
 end
 
--- have materials
-if DF.Era then
+-- searchbox
+do
     local match = function(str, text)
         return strfind(strupper(str), strupper(text))
     end
@@ -1511,12 +1511,7 @@ end
 function DFProfessionSearchBoxTemplateMixin:OnTextChanged()
     -- print('DFProfessionSearchBoxTemplateMixin:OnTextChanged()')
     SearchBoxTemplate_OnTextChanged(self);
-    if TradeSkillFrameEditBox then
-        TradeSkillFrameEditBox:SetText(self:GetText())
-    else
-        -- should only fire on Era
-        frameRef:OnEvent('TRADE_SKILL_FILTER_UPDATE')
-    end
+    frameRef:OnEvent('TRADE_SKILL_FILTER_UPDATE')
 end
 
 function DFProfessionSearchBoxTemplateMixin:OnChar()
