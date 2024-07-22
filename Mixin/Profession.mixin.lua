@@ -33,6 +33,12 @@ function DragonFlightUIProfessionMixin:OnLoad()
         HideUIPanel(TradeSkillFrame)
     end);
 
+    self.RecipeList.ResetButton:SetScript('OnClick', function(btn)
+        --
+        self:ResetFilter()
+        self:FilterDropdownRefresh()
+    end)
+
     frameRef = self
     self:SetupFavoriteDatabase()
 end
@@ -100,6 +106,7 @@ end
 function DragonFlightUIProfessionMixin:Refresh(force)
     self:UpdateHeader()
     self:UpdateRecipeName()
+    self:CheckFilter()
 
     do
         local name, rank, maxRank = GetTradeSkillLine();
@@ -617,6 +624,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownRefresh()
     -- TODO: find better way
     DragonFlightUIProfessionMixin:ToggleFilterDropdown()
     DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+    frameRef:CheckFilter()
 end
 
 -- FILTER
@@ -647,7 +655,7 @@ do
 end
 
 -- have materials
-if DF.Era then
+do
     local DFFilter_HaveMaterials = function(elementData)
         return elementData.recipeInfo.numAvailable > 0
     end
@@ -701,6 +709,31 @@ do
 end
 ---------
 
+function DragonFlightUIProfessionMixin:ResetFilter()
+    DFFilter['DFFilter_HasSkillUp'].enabled = false
+    DFFilter['DFFilter_HaveMaterials'].enabled = false
+    SetTradeSkillSubClassFilter(0, true, 1)
+    SetTradeSkillInvSlotFilter(0, true, 1)
+end
+
+function DragonFlightUIProfessionMixin:AreFilterDefault()
+    local allCheckedSub = GetTradeSkillSubClassFilter(0);
+    if not allCheckedSub then return false end
+    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
+    if not allCheckedInv then return false end
+
+    if DFFilter['DFFilter_HasSkillUp'].enabled then return false end
+    if DFFilter['DFFilter_HaveMaterials'].enabled then return false end
+
+    return true
+end
+
+function DragonFlightUIProfessionMixin:CheckFilter()
+    local def = self:AreFilterDefault()
+
+    self.RecipeList.ResetButton:SetShown(not def)
+end
+
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local subClasses = {GetTradeSkillSubClasses()}
     local numSubClasses = #subClasses
@@ -714,18 +747,14 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local menu = {
         {
             text = CRAFT_IS_MAKEABLE,
-            checked = DF.Era and DFFilter['DFFilter_HaveMaterials'].enabled or DF.Cata and
-                TradeSkillFrameAvailableFilterCheckButton:GetChecked(),
+            checked = DFFilter['DFFilter_HaveMaterials'].enabled,
             isNotRadio = true,
             keepShownOnClick = true,
-            func = DF.Era and function(self, arg1, arg2, checked)
+            func = function(self, arg1, arg2, checked)
                 -- print(self, arg1, arg2, checked)
                 DFFilter['DFFilter_HaveMaterials'].enabled = checked
                 frameRef.RecipeList:Refresh(true)
-            end or DF.Cata and function(self, arg1, arg2, checked)
-                -- print(self, arg1, arg2, checked)
-                TradeSkillOnlyShowMakeable(checked);
-                TradeSkillFrameAvailableFilterCheckButton:SetChecked(checked)
+                frameRef:CheckFilter()
             end
         }, {
             text = 'Has skill up',
@@ -743,6 +772,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
                     DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
                 end
                 frameRef.RecipeList:Refresh(true)
+                frameRef:CheckFilter()
             end
         }, {text = " ", isTitle = true}, {
             text = "Subclass",
