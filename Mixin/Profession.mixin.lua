@@ -658,6 +658,47 @@ if DF.Era then
         enabled = false
     }
 end
+
+-- have materials
+if DF.Era then
+    local match = function(str, text)
+        return strfind(strupper(str), strupper(text))
+    end
+
+    local DFFilter_Searchbox = function(elementData)
+        --[[     local data = {
+            id = i,
+            isFavorite = isFavorite,
+            recipeInfo = {
+                name = skillName,
+                skillType = skillType,
+                numAvailable = numAvailable,
+                isExpanded = isExpanded,
+                altVerb = altVerb,
+                numSkills = numSkills
+            }
+        } ]]
+        local searchText = strupper(frameRef.RecipeList.SearchBox:GetText())
+
+        if searchText == '' then return true end
+
+        local id = elementData.id
+        local info = elementData.recipeInfo
+
+        if match(info.name, searchText) then return true end
+
+        local numReagents = GetTradeSkillNumReagents(id);
+
+        for i = 1, numReagents do
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(id, i);
+            if reagentName and match(reagentName, searchText) then return true end
+        end
+
+        return false
+    end
+
+    DFFilter['DFFilter_Searchbox'] = {name = 'DFFilter_Searchbox', func = DFFilter_Searchbox, enabled = true}
+end
 ---------
 
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
