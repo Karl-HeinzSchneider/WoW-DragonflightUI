@@ -49,7 +49,7 @@ function DragonFlightUIProfessionMixin:OnShow()
 
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
-        self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 12, -12)
+        self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 12 + 350, -12)
 
         TradeSkillFrame:SetFrameStrata('BACKGROUND')
         self:SetFrameStrata('MEDIUM')
@@ -801,21 +801,37 @@ Archeology 	794
  ]]
 
 local professionDataTable = {}
-professionDataTable[129] = {tex = 'professionbackgroundart', bar = 'professionsfxalchemy'} -- first aid
-professionDataTable[164] = {tex = 'ProfessionBackgroundArtBlacksmithing', bar = 'professionsfxblacksmithing'}
-professionDataTable[165] = {tex = 'ProfessionBackgroundArtLeatherworking', bar = 'professionsfxleatherworking'}
-professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy'}
-professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism', bar = ''} -- herb
-professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking', bar = 'professionsfxcooking'}
-professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining', bar = 'professionsfxmining'}
-professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring', bar = 'professionsfxtailoring'}
-professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering', bar = 'professionsfxengineering'}
-professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting', bar = 'professionsfxenchanting'}
-professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing', bar = ''} -- fisch
-professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning', bar = 'professionsfxskinning'} -- skinning
-professionDataTable[755] = {tex = 'ProfessionBackgroundArtJewelcrafting', bar = 'professionsfxjewelcrafting'}
-professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription', bar = 'professionsfxinscription'}
-professionDataTable[794] = {tex = 'ProfessionBackgroundArtLeatherworking', bar = 'professionsfxleatherworking'} -- archeology
+professionDataTable[129] = {tex = 'professionbackgroundart', bar = 'professionsfxalchemy', icon = 135966} -- first aid
+professionDataTable[164] = {
+    tex = 'ProfessionBackgroundArtBlacksmithing',
+    bar = 'professionsfxblacksmithing',
+    icon = 136241
+}
+professionDataTable[165] = {
+    tex = 'ProfessionBackgroundArtLeatherworking',
+    bar = 'professionsfxleatherworking',
+    icon = 133611
+}
+professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136240}
+professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism', bar = '', icon = 136246} -- herb
+professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking', bar = 'professionsfxcooking', icon = 133971}
+professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining', bar = 'professionsfxmining', icon = 136248}
+professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring', bar = 'professionsfxtailoring', icon = 136249}
+professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering', bar = 'professionsfxengineering', icon = 136243}
+professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting', bar = 'professionsfxenchanting', icon = 136244}
+professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing', bar = '', icon = 136245} -- fisch
+professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning', bar = 'professionsfxskinning', icon = 134366} -- skinning
+professionDataTable[755] = {
+    tex = 'ProfessionBackgroundArtJewelcrafting',
+    bar = 'professionsfxjewelcrafting',
+    icon = 134071
+}
+professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription', bar = 'professionsfxinscription', icon = 237171}
+professionDataTable[794] = {
+    tex = 'ProfessionBackgroundArtLeatherworking',
+    bar = 'professionsfxleatherworking',
+    icon = 441139
+} -- archeology
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
     self.NineSlice.Text:SetText('**')
@@ -827,11 +843,13 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
     if not skillID then return end
 
     -- print('skillID', skillID)
+    local profData = professionDataTable[skillID]
 
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
-    -- self.NineSlice.Text:SetText(nameLoc)
-    self.Icon:SetTexture(icon)
+    -- print(nameLoc, skillID, icon)
+    -- self.NineSlice.Text:SetText(nameLoc) 
+    self.Icon:SetTexture(profData.icon)
     SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
     local isLink, playerName = IsTradeSkillLinked()
@@ -845,8 +863,6 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
         self.LinkButton:Show()
     end
 
-    local profData = professionDataTable[skillID]
-
     -- DevTools_Dump(profData)
 
     self.SchematicForm.Background:SetTexture(base .. profData.tex)
@@ -859,39 +875,45 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 end
 
 function DragonFlightUIProfessionMixin:GetProfessionID()
-    local skillID;
-
     -- localized...
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
-    local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
+    if DF.Era then
+        local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+        local profData = professionDataTable[skillID]
 
-    if prof1 then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(prof1)
+        return skillID, profData.icon
+    elseif DF.Cata then
 
-        if name == nameLoc then return skillLine, icon end
-    end
+        local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
 
-    if prof2 then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(prof2)
-        if name == nameLoc then return skillLine, icon end
-    end
+        if prof1 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof1)
 
-    -- TODO: archeo, cooking
+            if name == nameLoc then return skillLine, icon end
+        end
 
-    if cooking then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(cooking)
-        if name == nameLoc then return skillLine, icon end
-    end
+        if prof2 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof2)
+            if name == nameLoc then return skillLine, icon end
+        end
 
-    -- first aid
-    if firstaid then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
-        if name == nameLoc then return skillLine, icon end
+        -- TODO: archeo, cooking
+
+        if cooking then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(cooking)
+            if name == nameLoc then return skillLine, icon end
+        end
+
+        -- first aid
+        if firstaid then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
+            if name == nameLoc then return skillLine, icon end
+        end
     end
 end
 
@@ -1424,7 +1446,7 @@ end
 function DFProfessionSearchBoxTemplateMixin:OnTextChanged()
     -- print('DFProfessionSearchBoxTemplateMixin:OnTextChanged()')
     SearchBoxTemplate_OnTextChanged(self);
-    TradeSkillFrameEditBox:SetText(self:GetText())
+    if TradeSkillFrameEditBox then TradeSkillFrameEditBox:SetText(self:GetText()) end
 end
 
 function DFProfessionSearchBoxTemplateMixin:OnChar()
