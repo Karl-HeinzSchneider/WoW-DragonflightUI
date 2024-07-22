@@ -2575,7 +2575,12 @@ function DragonflightUIMixin:ChangeSpellbookEra()
             spellname:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 
             local icon = _G[name .. 'IconTexture']
-            self.ShowSlotFrame(icon:IsVisible())
+
+            if self.isPassive then
+                self.ShowSlotFrame(false)
+            else
+                self.ShowSlotFrame(icon:IsVisible())
+            end
         end)
     end
 
