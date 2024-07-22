@@ -30,6 +30,10 @@ Libs\LibDBIcon-1.0\lib.xml
 Core.lua
 Config.lua
 
+# Localization
+LocalizationData.lua
+Localization\BlizzardData\Professions.lua
+
 XML\Includes.xml
 
 # XML
