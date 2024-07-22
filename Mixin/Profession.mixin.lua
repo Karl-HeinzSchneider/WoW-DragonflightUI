@@ -453,6 +453,11 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
         descr:ClearAllPoints()
         descr:SetParent(frame)
         descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    else
+        local reagentLabel = TradeSkillReagentLabel
+        reagentLabel:ClearAllPoints()
+        reagentLabel:SetParent(frame)
+        reagentLabel:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
     end
 
     local reagentLabel = TradeSkillReagentLabel
