@@ -201,7 +201,7 @@ function Module:ApplySettings()
         DF:Print("'Colored Inventory Items' was deactivated, but Icons were already modified, please /reload.")
     end
 
-    if DF.Cata then
+    if DF.Cata or DF.Era then
         if db.changeTradeskill and not Module.TradeskillHooked then
             Module.TradeskillHooked = true
             Module:UpdateTradeskills()
