@@ -645,6 +645,19 @@ do
     }
     DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
 end
+
+-- have materials
+if DF.Era then
+    local DFFilter_HaveMaterials = function(elementData)
+        return elementData.recipeInfo.numAvailable > 0
+    end
+
+    DFFilter['DFFilter_HaveMaterials'] = {
+        name = 'DFFilter_HaveMaterials',
+        func = DFFilter_HaveMaterials,
+        enabled = false
+    }
+end
 ---------
 
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
@@ -660,12 +673,18 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local menu = {
         {
             text = CRAFT_IS_MAKEABLE,
-            checked = false,
+            checked = DF.Era and DFFilter['DFFilter_HaveMaterials'].enabled or DF.Cata and
+                TradeSkillFrameAvailableFilterCheckButton:GetChecked(),
             isNotRadio = true,
             keepShownOnClick = true,
-            func = function(self, arg1, arg2, checked)
+            func = DF.Era and function(self, arg1, arg2, checked)
+                -- print(self, arg1, arg2, checked)
+                DFFilter['DFFilter_HaveMaterials'].enabled = checked
+                frameRef.RecipeList:Refresh(true)
+            end or DF.Cata and function(self, arg1, arg2, checked)
                 -- print(self, arg1, arg2, checked)
                 TradeSkillOnlyShowMakeable(checked);
+                TradeSkillFrameAvailableFilterCheckButton:SetChecked(checked)
             end
         }, {
             text = 'Has skill up',
