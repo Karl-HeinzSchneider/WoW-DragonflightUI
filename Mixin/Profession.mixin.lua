@@ -1451,7 +1451,12 @@ end
 function DFProfessionSearchBoxTemplateMixin:OnTextChanged()
     -- print('DFProfessionSearchBoxTemplateMixin:OnTextChanged()')
     SearchBoxTemplate_OnTextChanged(self);
-    if TradeSkillFrameEditBox then TradeSkillFrameEditBox:SetText(self:GetText()) end
+    if TradeSkillFrameEditBox then
+        TradeSkillFrameEditBox:SetText(self:GetText())
+    else
+        -- should only fire on Era
+        frameRef:OnEvent('TRADE_SKILL_FILTER_UPDATE')
+    end
 end
 
 function DFProfessionSearchBoxTemplateMixin:OnChar()
