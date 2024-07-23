@@ -711,7 +711,11 @@ function DragonflightUIMixin:ChangeTrainerFrame()
 
             trainAll:SetEnabled(shouldShow)
 
-            if trainAll:IsMouseOver() and shouldShow then trainAll:OnEnter(trainAll) end
+            if trainAll:IsMouseOver() and shouldShow then
+                local func = trainAll:GetScript("OnEnter")
+                if func then func(trainAll) end
+                -- trainAll:OnEnter(trainAll)             
+            end
         end)
 
     end
