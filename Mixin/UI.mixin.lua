@@ -711,7 +711,11 @@ function DragonflightUIMixin:ChangeTrainerFrame()
 
             trainAll:SetEnabled(shouldShow)
 
-            if trainAll:IsMouseOver() and shouldShow then trainAll:OnEnter(trainAll) end
+            if trainAll:IsMouseOver() and shouldShow then
+                local func = trainAll:GetScript("OnEnter")
+                if func then func(trainAll) end
+                -- trainAll:OnEnter(trainAll)             
+            end
         end)
 
     end
@@ -2575,7 +2579,12 @@ function DragonflightUIMixin:ChangeSpellbookEra()
             spellname:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 
             local icon = _G[name .. 'IconTexture']
-            self.ShowSlotFrame(icon:IsVisible())
+
+            if self.isPassive then
+                self.ShowSlotFrame(false)
+            else
+                self.ShowSlotFrame(icon:IsVisible())
+            end
         end)
     end
 

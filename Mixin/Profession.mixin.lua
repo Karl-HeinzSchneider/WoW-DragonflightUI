@@ -33,6 +33,12 @@ function DragonFlightUIProfessionMixin:OnLoad()
         HideUIPanel(TradeSkillFrame)
     end);
 
+    self.RecipeList.ResetButton:SetScript('OnClick', function(btn)
+        --
+        self:ResetFilter()
+        self:FilterDropdownRefresh()
+    end)
+
     frameRef = self
     self:SetupFavoriteDatabase()
 end
@@ -100,15 +106,16 @@ end
 function DragonFlightUIProfessionMixin:Refresh(force)
     self:UpdateHeader()
     self:UpdateRecipeName()
+    self:CheckFilter()
 
     do
         local name, rank, maxRank = GetTradeSkillLine();
-        if (rank < 75) and (not IsTradeSkillLinked()) then
+        --[[  if (rank < 75) and (not IsTradeSkillLinked()) then
             self.RecipeList.SearchBox:Disable()
         else
             self.RecipeList.SearchBox:Enable()
         end
-
+        ]]
         if self.currentTradeSkillName ~= name then
             --[[   UIDropDownMenu_Initialize(frameRef.RecipeList.FilterDropDown,
                                       DragonFlightUIProfessionMixin.FilterDropdownInitialize, 'MENU'); ]]
@@ -453,6 +460,11 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
         descr:ClearAllPoints()
         descr:SetParent(frame)
         descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    else
+        local reagentLabel = TradeSkillReagentLabel
+        reagentLabel:ClearAllPoints()
+        reagentLabel:SetParent(frame)
+        reagentLabel:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
     end
 
     local reagentLabel = TradeSkillReagentLabel
@@ -612,6 +624,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownRefresh()
     -- TODO: find better way
     DragonFlightUIProfessionMixin:ToggleFilterDropdown()
     DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+    frameRef:CheckFilter()
 end
 
 -- FILTER
@@ -640,7 +653,86 @@ do
     }
     DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
 end
+
+-- have materials
+do
+    local DFFilter_HaveMaterials = function(elementData)
+        return elementData.recipeInfo.numAvailable > 0
+    end
+
+    DFFilter['DFFilter_HaveMaterials'] = {
+        name = 'DFFilter_HaveMaterials',
+        func = DFFilter_HaveMaterials,
+        enabled = false
+    }
+end
+
+-- searchbox
+do
+    local match = function(str, text)
+        return strfind(strupper(str), strupper(text))
+    end
+
+    local DFFilter_Searchbox = function(elementData)
+        --[[     local data = {
+            id = i,
+            isFavorite = isFavorite,
+            recipeInfo = {
+                name = skillName,
+                skillType = skillType,
+                numAvailable = numAvailable,
+                isExpanded = isExpanded,
+                altVerb = altVerb,
+                numSkills = numSkills
+            }
+        } ]]
+        local searchText = strupper(frameRef.RecipeList.SearchBox:GetText())
+
+        if searchText == '' then return true end
+
+        local id = elementData.id
+        local info = elementData.recipeInfo
+
+        if match(info.name, searchText) then return true end
+
+        local numReagents = GetTradeSkillNumReagents(id);
+
+        for i = 1, numReagents do
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(id, i);
+            if reagentName and match(reagentName, searchText) then return true end
+        end
+
+        return false
+    end
+
+    DFFilter['DFFilter_Searchbox'] = {name = 'DFFilter_Searchbox', func = DFFilter_Searchbox, enabled = true}
+end
 ---------
+
+function DragonFlightUIProfessionMixin:ResetFilter()
+    DFFilter['DFFilter_HasSkillUp'].enabled = false
+    DFFilter['DFFilter_HaveMaterials'].enabled = false
+    SetTradeSkillSubClassFilter(0, true, 1)
+    SetTradeSkillInvSlotFilter(0, true, 1)
+end
+
+function DragonFlightUIProfessionMixin:AreFilterDefault()
+    local allCheckedSub = GetTradeSkillSubClassFilter(0);
+    if not allCheckedSub then return false end
+    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
+    if not allCheckedInv then return false end
+
+    if DFFilter['DFFilter_HasSkillUp'].enabled then return false end
+    if DFFilter['DFFilter_HaveMaterials'].enabled then return false end
+
+    return true
+end
+
+function DragonFlightUIProfessionMixin:CheckFilter()
+    local def = self:AreFilterDefault()
+
+    self.RecipeList.ResetButton:SetShown(not def)
+end
 
 function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local subClasses = {GetTradeSkillSubClasses()}
@@ -655,12 +747,14 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local menu = {
         {
             text = CRAFT_IS_MAKEABLE,
-            checked = false,
+            checked = DFFilter['DFFilter_HaveMaterials'].enabled,
             isNotRadio = true,
             keepShownOnClick = true,
             func = function(self, arg1, arg2, checked)
                 -- print(self, arg1, arg2, checked)
-                TradeSkillOnlyShowMakeable(checked);
+                DFFilter['DFFilter_HaveMaterials'].enabled = checked
+                frameRef.RecipeList:Refresh(true)
+                frameRef:CheckFilter()
             end
         }, {
             text = 'Has skill up',
@@ -678,6 +772,7 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
                     DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
                 end
                 frameRef.RecipeList:Refresh(true)
+                frameRef:CheckFilter()
             end
         }, {text = " ", isTitle = true}, {
             text = "Subclass",
@@ -801,21 +896,37 @@ Archeology 	794
  ]]
 
 local professionDataTable = {}
-professionDataTable[129] = {tex = 'professionbackgroundart', bar = 'professionsfxalchemy'} -- first aid
-professionDataTable[164] = {tex = 'ProfessionBackgroundArtBlacksmithing', bar = 'professionsfxblacksmithing'}
-professionDataTable[165] = {tex = 'ProfessionBackgroundArtLeatherworking', bar = 'professionsfxleatherworking'}
-professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy'}
-professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism', bar = ''} -- herb
-professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking', bar = 'professionsfxcooking'}
-professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining', bar = 'professionsfxmining'}
-professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring', bar = 'professionsfxtailoring'}
-professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering', bar = 'professionsfxengineering'}
-professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting', bar = 'professionsfxenchanting'}
-professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing', bar = ''} -- fisch
-professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning', bar = 'professionsfxskinning'} -- skinning
-professionDataTable[755] = {tex = 'ProfessionBackgroundArtJewelcrafting', bar = 'professionsfxjewelcrafting'}
-professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription', bar = 'professionsfxinscription'}
-professionDataTable[794] = {tex = 'ProfessionBackgroundArtLeatherworking', bar = 'professionsfxleatherworking'} -- archeology
+professionDataTable[129] = {tex = 'professionbackgroundart', bar = 'professionsfxalchemy', icon = 135966} -- first aid
+professionDataTable[164] = {
+    tex = 'ProfessionBackgroundArtBlacksmithing',
+    bar = 'professionsfxblacksmithing',
+    icon = 136241
+}
+professionDataTable[165] = {
+    tex = 'ProfessionBackgroundArtLeatherworking',
+    bar = 'professionsfxleatherworking',
+    icon = 133611
+}
+professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136240}
+professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism', bar = '', icon = 136246} -- herb
+professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking', bar = 'professionsfxcooking', icon = 133971}
+professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining', bar = 'professionsfxmining', icon = 136248}
+professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring', bar = 'professionsfxtailoring', icon = 136249}
+professionDataTable[202] = {tex = 'ProfessionBackgroundArtEngineering', bar = 'professionsfxengineering', icon = 136243}
+professionDataTable[333] = {tex = 'ProfessionBackgroundArtEnchanting', bar = 'professionsfxenchanting', icon = 136244}
+professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing', bar = '', icon = 136245} -- fisch
+professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning', bar = 'professionsfxskinning', icon = 134366} -- skinning
+professionDataTable[755] = {
+    tex = 'ProfessionBackgroundArtJewelcrafting',
+    bar = 'professionsfxjewelcrafting',
+    icon = 134071
+}
+professionDataTable[773] = {tex = 'ProfessionBackgroundArtInscription', bar = 'professionsfxinscription', icon = 237171}
+professionDataTable[794] = {
+    tex = 'ProfessionBackgroundArtLeatherworking',
+    bar = 'professionsfxleatherworking',
+    icon = 441139
+} -- archeology
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
     self.NineSlice.Text:SetText('**')
@@ -827,11 +938,13 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
     if not skillID then return end
 
     -- print('skillID', skillID)
+    local profData = professionDataTable[skillID]
 
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
-    -- self.NineSlice.Text:SetText(nameLoc)
-    self.Icon:SetTexture(icon)
+    -- print(nameLoc, skillID, icon)
+    -- self.NineSlice.Text:SetText(nameLoc) 
+    self.Icon:SetTexture(profData.icon)
     SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
     local isLink, playerName = IsTradeSkillLinked()
@@ -842,10 +955,13 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
         self.LinkButton:Hide()
     else
         self.NineSlice.Text:SetText(nameLoc)
-        self.LinkButton:Show()
-    end
 
-    local profData = professionDataTable[skillID]
+        if DF.Era then
+            self.LinkButton:Hide()
+        else
+            self.LinkButton:Show()
+        end
+    end
 
     -- DevTools_Dump(profData)
 
@@ -859,39 +975,45 @@ function DragonFlightUIProfessionMixin:UpdateHeader()
 end
 
 function DragonFlightUIProfessionMixin:GetProfessionID()
-    local skillID;
-
     -- localized...
     local nameLoc, rank, maxRank = GetTradeSkillLine();
 
-    local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
+    if DF.Era then
+        local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+        local profData = professionDataTable[skillID]
 
-    if prof1 then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(prof1)
+        return skillID, profData.icon
+    elseif DF.Cata then
 
-        if name == nameLoc then return skillLine, icon end
-    end
+        local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
 
-    if prof2 then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(prof2)
-        if name == nameLoc then return skillLine, icon end
-    end
+        if prof1 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof1)
 
-    -- TODO: archeo, cooking
+            if name == nameLoc then return skillLine, icon end
+        end
 
-    if cooking then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(cooking)
-        if name == nameLoc then return skillLine, icon end
-    end
+        if prof2 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof2)
+            if name == nameLoc then return skillLine, icon end
+        end
 
-    -- first aid
-    if firstaid then
-        local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-              specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
-        if name == nameLoc then return skillLine, icon end
+        -- TODO: archeo, cooking
+
+        if cooking then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(cooking)
+            if name == nameLoc then return skillLine, icon end
+        end
+
+        -- first aid
+        if firstaid then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
+            if name == nameLoc then return skillLine, icon end
+        end
     end
 end
 
@@ -1424,7 +1546,7 @@ end
 function DFProfessionSearchBoxTemplateMixin:OnTextChanged()
     -- print('DFProfessionSearchBoxTemplateMixin:OnTextChanged()')
     SearchBoxTemplate_OnTextChanged(self);
-    TradeSkillFrameEditBox:SetText(self:GetText())
+    frameRef:OnEvent('TRADE_SKILL_FILTER_UPDATE')
 end
 
 function DFProfessionSearchBoxTemplateMixin:OnChar()

@@ -16,6 +16,7 @@
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceComm-3.0\AceComm-3.0.xml
 Libs\AceEvent-3.0\AceEvent-3.0.xml
 Libs\AceDB-3.0\AceDB-3.0.xml
 Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
@@ -29,6 +30,11 @@ Libs\LibDBIcon-1.0\lib.xml
 
 Core.lua
 Config.lua
+Version.lua
+
+# Localization
+LocalizationData.lua
+Localization\BlizzardData\Professions.lua
 
 XML\Includes.xml
 

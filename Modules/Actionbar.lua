@@ -165,13 +165,13 @@ local defaults = {
         pet = {
             scale = 1,
             anchorFrame = 'DragonflightUIActionbarFrame3',
-            anchor = 'BOTTOM',
-            anchorParent = 'TOP',
+            anchor = 'BOTTOMLEFT',
+            anchorParent = 'TOPLEFT',
             x = 0,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
-            buttonScale = 1,
+            buttonScale = 0.8,
             rows = 1,
             buttons = 10,
             padding = 2,
@@ -201,17 +201,18 @@ local defaults = {
         stance = {
             scale = 1,
             anchorFrame = 'DragonflightUIActionbarFrame3',
-            anchor = 'BOTTOM',
-            anchorParent = 'TOP',
+            anchor = 'BOTTOMLEFT',
+            anchorParent = 'TOPLEFT',
             x = 0,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
-            buttonScale = 1,
+            buttonScale = 0.8,
             rows = 1,
             buttons = 10,
             padding = 2,
-            alwaysShow = true
+            alwaysShow = false,
+            activate = true
         },
         totem = {
             scale = 1,
@@ -723,15 +724,6 @@ local petOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'pet'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1
-        },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
@@ -1036,15 +1028,6 @@ local stanceOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'stance'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1
-        },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
@@ -1152,7 +1135,8 @@ local stanceOptions = {
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', 'stance'),
             order = 12
-        }
+        },
+        activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
 }
 
@@ -1561,6 +1545,10 @@ function Module:SetupActionbarFrames()
     end
 
     DragonflightUIActionbarMixin:HookGrid()
+    if DF.Cata then
+        DragonflightUIActionbarMixin:HookFlyout()
+        DragonflightUIActionbarMixin:StyleFlyout()
+    end
 
     createStuff(1, 'ActionButton')
     Module.bar1:SetupMainBar()
@@ -1571,7 +1559,7 @@ function Module:SetupActionbarFrames()
 
     Module.bar1:StyleButtons()
     Module.bar1:HookQuickbindMode()
-    Module.bar1:HookGrid()
+    -- Module.bar1:HookGrid()
     Module.bar2:StyleButtons()
     Module.bar2:HookQuickbindMode()
     Module.bar3:StyleButtons()
@@ -1641,6 +1629,9 @@ function Module:SetupActionbarFrames()
 
         bar:Init()
         bar:SetButtons(buttons)
+        bar:StyleButtons()
+        bar:StylePetButton()
+        bar:SetIgnoreRange(true)
         Module['petbar'] = bar
     end
 
@@ -1656,6 +1647,9 @@ function Module:SetupActionbarFrames()
 
         bar:Init()
         bar:SetButtons(buttons)
+        bar:StyleButtons()
+        bar:ReplaceNormalTexture2()
+        bar.stanceBar = true
         Module['stancebar'] = bar
     end
 
