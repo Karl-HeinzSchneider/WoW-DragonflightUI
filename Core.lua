@@ -1,4 +1,4 @@
-local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceHook-3.0')
+local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceComm-3.0', 'AceHook-3.0')
 local db
 
 DF.InterfaceVersion = select(4, GetBuildInfo())
@@ -15,6 +15,7 @@ function DF:OnInitialize()
     db = self.db.profile
     self:SetupOptions()
     self:RegisterSlashCommands()
+    self:InitVersionCheck()
 end
 
 function DF:OnEnable()

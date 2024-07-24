@@ -29,6 +29,7 @@ Libs\LibDBIcon-1.0\lib.xml
 
 Core.lua
 Config.lua
+Version.lua
 
 # Localization
 LocalizationData.lua
