@@ -26,7 +26,6 @@ function DF:OnCommReceived(prefix, payload, distribution, sender)
 
     local k, v = strsplit(':', payload, 2)
     if k == 'DFTimestamp' then
-        --
         --   print('DFTimestamp', v)
         if v > DFTimestamp and not newerVersionFound then
             --
