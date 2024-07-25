@@ -316,13 +316,13 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
     end
 end
 
-function DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+function DragonflightUITalentsPanelMixin:GetUnspetTalentPoints(spec)
     local level = UnitLevel('player')
     local maxPoints = level - 9
 
     for i = 1, 3 do
         local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
-            GetTalentTabInfo(i)
+            GetTalentTabInfo(i, false, false, spec)
         maxPoints = maxPoints - pointsSpent - previewPointsSpent
     end
     return maxPoints
@@ -401,7 +401,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         local numTalents = GetNumTalents(panelID);
 
         -- local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-        local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+        local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints(activeSpec)
 
         self:ResetBranches()
         -- tabPointsSpent
@@ -865,12 +865,20 @@ function DragonflightUITalentsFrameMixin:OnLoad()
                                                           'GameFontHighlight')
     headerText:SetPoint('TOP', PlayerTalentFrame, 'TOP', 0, -36)
 
+    PlayerTalentFrameTitleText:ClearAllPoints()
+    local titleText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameTitleText', 'OVERLAY',
+                                                         'GameFontNormal')
+    titleText:SetPoint('TOP', PlayerTalentFrame, 'TOP', 0, -5)
+    titleText:SetPoint('LEFT', PlayerTalentFrame, 'LEFT', 60, 0)
+    titleText:SetPoint('RIGHT', PlayerTalentFrame, 'RIGHT', -60, 0)
+    titleText:SetText(TALENTS)
+
     PlayerTalentFrame.UpdateDFHeaderText = function()
         -- print('UpdateDFHeaderText')
 
         local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
         -- TODO: bug?  UnitCharacterPoints("player") not updating instantly
-        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints()
+        unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints(selectedSpec)
 
         if unspentTalentPoints > 0 then
             headerText:SetFormattedText(PLAYER_UNSPENT_TALENT_POINTS, unspentTalentPoints);
@@ -880,6 +888,20 @@ function DragonflightUITalentsFrameMixin:OnLoad()
             headerText:Show()
         else
             headerText:Hide()
+        end
+
+        if activeSpec == selectedSpec then
+            if selectedSpec == 1 then
+                titleText:SetText(TALENT_SPEC_PRIMARY_ACTIVE)
+            else
+                titleText:SetText(TALENT_SPEC_SECONDARY_ACTIVE)
+            end
+        else
+            if selectedSpec == 1 then
+                titleText:SetText(TALENT_SPEC_PRIMARY)
+            else
+                titleText:SetText(TALENT_SPEC_SECONDARY)
+            end
         end
     end
 
@@ -1113,7 +1135,7 @@ function DragonflightUIPlayerSpecMixin:OnClick()
     -- SetPortraitTexture(normalTexture, 'player');  
     local specIndex = self.specIndex;
 
-    activeSpec = specIndex
+    selectedSpec = specIndex
 
     frameRef:Refresh()
     self:OnEnter()
@@ -1156,7 +1178,7 @@ function DragonflightUIPlayerSpecMixin:Update()
     -- print('DragonflightUIPlayerSpecMixin:Update()')
     local specIndex = self.specIndex;
 
-    if activeSpec == specIndex then
+    if selectedSpec == specIndex then
         -- self:GetCheckedTexture():Show();
         self:SetChecked(true)
     else
