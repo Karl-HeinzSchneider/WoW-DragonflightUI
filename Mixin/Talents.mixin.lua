@@ -1028,6 +1028,9 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         -- self:Refresh()
         self:RefreshSpecTabs()
     end)
+
+    activeSpec = GetActiveTalentGroup()
+    selectedSpec = activeSpec
 end
 
 function DragonflightUITalentsFrameMixin:OnShow()
