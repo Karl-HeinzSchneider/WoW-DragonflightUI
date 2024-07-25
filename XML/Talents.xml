@@ -578,4 +578,35 @@
 			<OnClick function="PlayerTalentFrameLearnButton_OnClick" />
 		</Scripts>
 	</Button>
+	<CheckButton name="DFPlayerSpecTabTemplate" mixin="DragonflightUIPlayerSpecMixin" virtual="true" hidden="false">
+		<Size x="32" y="32" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBackground" file="Interface\SpellBook\SpellBook-SkillLineTab">
+					<Size x="64" y="64" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="-3" y="11" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick">
+				--PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
+				--PlayerSpecTab_OnClick(self, button, down);
+			</OnClick>
+			<OnEnter method="OnEnter">
+				--PlayerSpecTab_OnEnter(self, motion);
+			</OnEnter>
+			<OnLeave method="OnLeave">
+				--GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+		<NormalTexture />
+		<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+		<CheckedTexture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD" />
+	</CheckButton>
 </Ui>

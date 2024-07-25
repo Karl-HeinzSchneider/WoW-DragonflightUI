@@ -1,3 +1,8 @@
+------------
+local activeSpec = 1
+local frameRef = nil
+------------
+
 DragonflightUITalentsPanelMixin = {}
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
@@ -853,6 +858,7 @@ DragonflightUITalentsFrameMixin = {}
 
 function DragonflightUITalentsFrameMixin:OnLoad()
     -- print('DragonflightUITalentsFrameMixin:OnLoad()')
+    frameRef = self
 
     local headerText = PlayerTalentFrame:CreateFontString('DragonflightUIPlayerTalentFrameHeaderText', 'OVERLAY',
                                                           'GameFontHighlight')
@@ -945,6 +951,31 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         self.LearnButton = learn
     end
 
+    do
+        local tab1 = PlayerSpecTab1
+        tab1:ClearAllPoints()
+        tab1:SetPoint('TOPLEFT', PlayerTalentFrame, 'TOPRIGHT', 0, -36)
+
+        local tab2 = PlayerSpecTab2
+        tab2:ClearAllPoints()
+        tab2:SetPoint('TOPLEFT', tab1, 'BOTTOMLEFT', 0, -22)
+
+        PlayerSpecTab1:SetAlpha(0)
+        PlayerSpecTab1:EnableMouse(false)
+        PlayerSpecTab2:SetAlpha(0)
+        PlayerSpecTab2:EnableMouse(false)
+
+        local newTab1 = CreateFrame('CHECKBUTTON', 'DragonflightUIPlayerTalentFrameSpecButton' .. 1, PlayerTalentFrame,
+                                    'DFPlayerSpecTabTemplate')
+        newTab1:SetPoint('TOPLEFT', PlayerTalentFrame, 'TOPRIGHT', 0, -36)
+        newTab1.specIndex = 1
+
+        local newTab2 = CreateFrame('CHECKBUTTON', 'DragonflightUIPlayerTalentFrameSpecButton' .. 2, PlayerTalentFrame,
+                                    'DFPlayerSpecTabTemplate')
+        newTab2:SetPoint('TOPLEFT', newTab1, 'BOTTOMLEFT', 0, -22)
+        newTab2.specIndex = 2
+    end
+
     -- self:RegisterEvent("ADDON_LOADED");
     self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
     -- self:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED");
@@ -966,12 +997,21 @@ function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
 end
 
 function DragonflightUITalentsFrameMixin:Refresh()
-    --  print('DragonflightUITalentsFrameMixin:Refresh()')
+    print('DragonflightUITalentsFrameMixin:Refresh()')
     for k, panel in ipairs(self.Panels) do panel:Refresh() end
 
     PlayerTalentFrame.UpdateDFHeaderText()
     self:RefreshCheckbox()
+    self:RefreshSpecTabs()
     self:UpdateControls()
+end
+
+function DragonflightUITalentsFrameMixin:RefreshSpecTabs()
+    local tab1 = _G['DragonflightUIPlayerTalentFrameSpecButton1']
+    tab1:Update()
+
+    local tab2 = _G['DragonflightUIPlayerTalentFrameSpecButton2']
+    tab2:Update()
 end
 
 function DragonflightUITalentsFrameMixin:RefreshCheckbox()
@@ -1024,4 +1064,75 @@ function DragonflightUITalentsFrameMixin:UpdateControls()
         learn:Hide()
         reset:Hide()
     end
+end
+
+------
+
+DragonflightUIPlayerSpecMixin = {}
+
+function DragonflightUIPlayerSpecMixin:OnLoad()
+    print('DragonflightUIPlayerSpecMixin:OnLoad()')
+    local normalTexture = self:GetNormalTexture();
+    SetPortraitTexture(normalTexture, 'player');
+    -- DevTools_Dump(normalTexture)
+end
+
+function DragonflightUIPlayerSpecMixin:OnClick()
+    PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
+    -- local normalTexture = self:GetNormalTexture();
+    -- SetPortraitTexture(normalTexture, 'player');  
+    local specIndex = self.specIndex;
+
+    activeSpec = specIndex
+
+    frameRef:Refresh()
+    self:OnEnter()
+end
+
+function DragonflightUIPlayerSpecMixin:OnEnter()
+    -- print('DragonflightUIPlayerSpecMixin:OnEnter()')
+
+    local specIndex = self.specIndex;
+
+    GameTooltip:ClearLines()
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    if specIndex == 1 then
+        GameTooltip:AddLine(TALENT_SPEC_PRIMARY);
+    else
+        GameTooltip:AddLine(TALENT_SPEC_SECONDARY);
+    end
+
+    if activeSpec == specIndex then
+        GameTooltip:AddLine(TALENT_ACTIVE_SPEC_STATUS, GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b);
+    end
+
+    for i = 1, 3 do
+        local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
+            GetTalentTabInfo(i, false, false, specIndex)
+
+        GameTooltip:AddDoubleLine(name, pointsSpent + previewPointsSpent, HIGHLIGHT_FONT_COLOR.r,
+                                  HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r,
+                                  HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1)
+    end
+    GameTooltip:Show()
+end
+
+function DragonflightUIPlayerSpecMixin:OnLeave()
+    -- print('DragonflightUIPlayerSpecMixin:OnLeave()')
+    GameTooltip:Hide()
+end
+
+function DragonflightUIPlayerSpecMixin:Update()
+    local specIndex = self.specIndex;
+
+    if activeSpec == specIndex then
+        -- self:GetCheckedTexture():Show();
+        self:SetChecked(true)
+    else
+        -- self:GetCheckedTexture():Hide();
+        self:SetChecked(false)
+    end
+
+    local normalTexture = self:GetNormalTexture();
+    SetPortraitTexture(normalTexture, 'player');
 end
