@@ -1156,6 +1156,12 @@ function DragonflightUIPlayerSpecMixin:OnEnter()
         GameTooltip:AddLine(TALENT_SPEC_PRIMARY);
     else
         GameTooltip:AddLine(TALENT_SPEC_SECONDARY);
+
+        if GetNumTalentGroups() < 2 then
+            GameTooltip_AddErrorLine(GameTooltip, 'Dual Talent Specialization not yet learned.')
+            GameTooltip:Show()
+            return
+        end
     end
 
     if activeSpec == specIndex then
