@@ -1,6 +1,6 @@
 ------------
 local activeSpec = 1
-local selectedSpec = nil;
+local selectedSpec = 1;
 local frameRef = nil
 ------------
 
@@ -977,6 +977,15 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         newTab2.specIndex = 2
     end
 
+    do
+        PlayerTalentFrameActivateButton:ClearAllPoints()
+        PlayerTalentFrameActivateButton:Hide()
+
+        local activate = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameActivateButton', PlayerTalentFrame,
+                                     'DFPlayerTalentFrameActivateButton')
+        activate:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -10, -30)
+    end
+
     -- self:RegisterEvent("ADDON_LOADED");
     self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
     -- self:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED");
@@ -1050,6 +1059,17 @@ end
 
 function DragonflightUITalentsFrameMixin:UpdateControls()
     -- print('DragonflightUITalentsFrameMixin:UpdateControls()')
+
+    local isActiveSpec = selectedSpec == activeSpec
+    local activate = _G['DragonflightUIPlayerTalentFrameActivateButton']
+
+    if isActiveSpec then
+        activate:Hide()
+    else
+        activate:Show()
+    end
+
+    --
     local preview = GetCVarBool("previewTalentsOption");
 
     local learn = self.LearnButton
