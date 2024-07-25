@@ -1126,13 +1126,12 @@ DragonflightUIPlayerSpecMixin = {}
 function DragonflightUIPlayerSpecMixin:OnLoad()
     -- print('DragonflightUIPlayerSpecMixin:OnLoad()')
     local normalTexture = self:GetNormalTexture();
-    SetPortraitTexture(normalTexture, 'player');
+    -- SetPortraitTexture(normalTexture, 'player');
+    normalTexture:SetTexture('Interface\\Icons\\Ability_Marksmanship')
 end
 
 function DragonflightUIPlayerSpecMixin:OnClick()
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
-    -- local normalTexture = self:GetNormalTexture();
-    -- SetPortraitTexture(normalTexture, 'player');  
     local specIndex = self.specIndex;
 
     selectedSpec = specIndex
@@ -1187,7 +1186,8 @@ function DragonflightUIPlayerSpecMixin:Update()
     end
 
     local normalTexture = self:GetNormalTexture();
-    SetPortraitTexture(normalTexture, 'player');
+    -- SetPortraitTexture(normalTexture, 'player');
+    normalTexture:SetTexture('Interface\\Icons\\Ability_Marksmanship')
 end
 
 -------
