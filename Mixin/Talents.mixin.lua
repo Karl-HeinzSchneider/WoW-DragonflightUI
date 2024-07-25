@@ -989,6 +989,16 @@ function DragonflightUITalentsFrameMixin:OnLoad()
     self:RegisterEvent("CVAR_UPDATE")
 
     self:Refresh()
+
+    PlayerTalentFrame:HookScript('OnShow', function()
+        -- self:Refresh()
+        self:RefreshSpecTabs()
+    end)
+end
+
+function DragonflightUITalentsFrameMixin:OnShow()
+    print('DragonflightUITalentsFrameMixin:OnShow()')
+    self:Refresh()
 end
 
 function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
@@ -1071,10 +1081,9 @@ end
 DragonflightUIPlayerSpecMixin = {}
 
 function DragonflightUIPlayerSpecMixin:OnLoad()
-    print('DragonflightUIPlayerSpecMixin:OnLoad()')
+    -- print('DragonflightUIPlayerSpecMixin:OnLoad()')
     local normalTexture = self:GetNormalTexture();
     SetPortraitTexture(normalTexture, 'player');
-    -- DevTools_Dump(normalTexture)
 end
 
 function DragonflightUIPlayerSpecMixin:OnClick()
@@ -1123,6 +1132,7 @@ function DragonflightUIPlayerSpecMixin:OnLeave()
 end
 
 function DragonflightUIPlayerSpecMixin:Update()
+    -- print('DragonflightUIPlayerSpecMixin:Update()')
     local specIndex = self.specIndex;
 
     if activeSpec == specIndex then
