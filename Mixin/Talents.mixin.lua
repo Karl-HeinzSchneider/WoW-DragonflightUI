@@ -1,5 +1,6 @@
 ------------
 local activeSpec = 1
+local selectedSpec = nil;
 local frameRef = nil
 ------------
 
@@ -1146,3 +1147,42 @@ function DragonflightUIPlayerSpecMixin:Update()
     local normalTexture = self:GetNormalTexture();
     SetPortraitTexture(normalTexture, 'player');
 end
+
+-------
+
+DragonflightUIPlayerSpecActivateMixin = {}
+
+function DragonflightUIPlayerSpecActivateMixin:OnLoad()
+    self:SetWidth(self:GetTextWidth() + 40);
+end
+
+function DragonflightUIPlayerSpecActivateMixin:OnClick()
+    if selectedSpec then
+        --
+        SetActiveTalentGroup(selectedSpec)
+    end
+end
+
+function DragonflightUIPlayerSpecActivateMixin:OnShow()
+    self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED");
+    self:Update()
+end
+
+function DragonflightUIPlayerSpecActivateMixin:OnHide()
+    self:UnregisterEvent("CURRENT_SPELL_CAST_CHANGED");
+end
+
+function DragonflightUIPlayerSpecActivateMixin:OnEvent(event, ...)
+    self:Update()
+end
+
+function DragonflightUIPlayerSpecActivateMixin:Update()
+    if selectedSpec and self:IsShown() then
+        if (IsCurrentSpell(TALENT_ACTIVATION_SPELLS[selectedSpec])) then
+            self:Disable()
+        else
+            self:Enable()
+        end
+    end
+end
+
