@@ -562,20 +562,71 @@
 			<OnLeave function="GameTooltip_Hide" />
 		</Scripts>
 	</CheckButton>
-	<Button name="DFPlayerTalentFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET" virtual="true">
+	<Button name="DFPlayerTalentFrameResetButton" mixin="DragonflightUIPlayerSpecPreviewResetMixin" inherits="UIPanelButtonTemplate" text="RESET" virtual="true">
 		<Size x="80" y="22" />
 		<Scripts>
+			<!--
 			<OnEnter function="PlayerTalentFrameResetButton_OnEnter" />
 			<OnLeave function="GameTooltip_Hide" />
 			<OnClick function="PlayerTalentFrameResetButton_OnClick" />
+			-->
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
 		</Scripts>
 	</Button>
-	<Button name="DFPlayerTalentFrameLearnButton" inherits="UIPanelButtonTemplate" text="LEARN" virtual="true">
+	<Button name="DFPlayerTalentFrameLearnButton" mixin="DragonflightUIPlayerSpecPreviewLearnMixin" inherits="UIPanelButtonTemplate" text="LEARN" virtual="true">
 		<Size x="80" y="22" />
 		<Scripts>
+			<!--
 			<OnEnter function="PlayerTalentFrameLearnButton_OnEnter" />
 			<OnLeave function="GameTooltip_Hide" />
 			<OnClick function="PlayerTalentFrameLearnButton_OnClick" />
+			-->
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
 		</Scripts>
 	</Button>
+	<Button name="DFPlayerTalentFrameActivateButton" mixin="DragonflightUIPlayerSpecActivateMixin" inherits="UIPanelButtonTemplate" text="TALENT_SPEC_ACTIVATE" virtual="true">
+		<Size x="80" y="22" />
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Button>
+	<CheckButton name="DFPlayerSpecTabTemplate" mixin="DragonflightUIPlayerSpecMixin" virtual="true" hidden="false">
+		<Size x="32" y="32" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBackground" file="Interface/AddOns/DragonflightUI/Textures/UI/spellbook-skilllinetab">
+					<Size x="64" y="64" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="-3" y="11" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick">
+				--PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
+				--PlayerSpecTab_OnClick(self, button, down);
+			</OnClick>
+			<OnEnter method="OnEnter">
+				--PlayerSpecTab_OnEnter(self, motion);
+			</OnEnter>
+			<OnLeave method="OnLeave">
+				--GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+		<NormalTexture />
+		<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+		<CheckedTexture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD" />
+	</CheckButton>
 </Ui>
