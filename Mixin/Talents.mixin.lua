@@ -300,7 +300,7 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
         if button == 'LeftButton' then
             --
             if (GetCVarBool("previewTalentsOption")) then
-                AddPreviewTalentPoints(panelID, talentID, 1)
+                AddPreviewTalentPoints(panelID, talentID, 1, false, selectedSpec)
             else
                 LearnTalent(panelID, talentID)
             end
@@ -309,7 +309,7 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
 
             if (GetCVarBool("previewTalentsOption")) then
                 --
-                AddPreviewTalentPoints(panelID, talentID, -1)
+                AddPreviewTalentPoints(panelID, talentID, -1, false, selectedSpec)
             end
         end
         PlayerTalentFrame.UpdateDFHeaderText()
@@ -336,7 +336,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
     local preview = GetCVarBool("previewTalentsOption");
 
     local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
-        GetTalentTabInfo(panelID)
+        GetTalentTabInfo(panelID, false, false, selectedSpec)
     local tabPointsSpent = pointsSpent + previewPointsSpent
     -- print('TalentTab', id, pointsSpent, previewPointsSpent)
     -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked) 
@@ -401,7 +401,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         local numTalents = GetNumTalents(panelID);
 
         -- local unspentTalentPoints, learnedProfessions = UnitCharacterPoints("player")
-        local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints(activeSpec)
+        local unspentTalentPoints = DragonflightUITalentsPanelMixin:GetUnspetTalentPoints(selectedSpec)
 
         self:ResetBranches()
         -- tabPointsSpent
@@ -411,7 +411,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
             local forceDesaturated, tierUnlocked;
             if i <= numTalents then
                 local name, iconPath, tier, column, currentRank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq,
-                      isExceptional, goldBorder = GetTalentInfo(panelID, i);
+                      isExceptional, goldBorder = GetTalentInfo(panelID, i, false, false, selectedSpec);
 
                 if name then
                     local displayRank;
@@ -466,7 +466,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                                                                                         TalentFrame.pet,
                                                                                         TalentFrame.talentGroup)); ]]
                     local prereqsSet = self:SetPrereqs(tier, column, forceDesaturated, tierUnlocked, preview,
-                                                       GetTalentPrereqs(panelID, i))
+                                                       GetTalentPrereqs(panelID, i, false, false, selectedSpec))
                     if (prereqsSet and ((preview and meetsPreviewPrereq) or (not preview and meetsPrereq))) then
                         SetItemButtonDesaturated(button, nil);
 
