@@ -602,7 +602,7 @@
 		<Size x="32" y="32" />
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBackground" file="Interface\SpellBook\SpellBook-SkillLineTab">
+				<Texture name="$parentBackground" file="Interface/AddOns/DragonflightUI/Textures/UI/spellbook-skilllinetab">
 					<Size x="64" y="64" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
