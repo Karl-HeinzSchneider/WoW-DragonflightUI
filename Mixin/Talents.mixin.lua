@@ -1041,7 +1041,7 @@ function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
 end
 
 function DragonflightUITalentsFrameMixin:Refresh()
-    print('DragonflightUITalentsFrameMixin:Refresh()')
+    -- print('DragonflightUITalentsFrameMixin:Refresh()')
     for k, panel in ipairs(self.Panels) do panel:Refresh() end
 
     PlayerTalentFrame.UpdateDFHeaderText()
