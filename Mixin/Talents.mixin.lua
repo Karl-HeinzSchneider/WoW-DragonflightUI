@@ -341,6 +341,8 @@ function DragonflightUITalentsPanelMixin:Refresh()
     -- print('TalentTab', id, pointsSpent, previewPointsSpent)
     -- print(id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked) 
 
+    local isActiveTalentGroup = selectedSpec == activeSpec
+
     -- header
     do
         local headerName = _G[panel .. 'Name']
@@ -382,16 +384,16 @@ function DragonflightUITalentsPanelMixin:Refresh()
 
         local backgroundPiece = _G[panel .. "BackgroundTopLeft"];
         backgroundPiece:SetTexture(bgBase .. "TopLeft");
-        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        SetDesaturation(backgroundPiece, not isActiveTalentGroup);
         backgroundPiece = _G[panel .. "BackgroundTopRight"];
         backgroundPiece:SetTexture(bgBase .. "TopRight");
-        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        SetDesaturation(backgroundPiece, not isActiveTalentGroup);
         backgroundPiece = _G[panel .. "BackgroundBottomLeft"];
         backgroundPiece:SetTexture(bgBase .. "BottomLeft");
-        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        SetDesaturation(backgroundPiece, not isActiveTalentGroup);
         backgroundPiece = _G[panel .. "BackgroundBottomRight"];
         backgroundPiece:SetTexture(bgBase .. "BottomRight");
-        -- SetDesaturation(backgroundPiece, not isActiveTalentGroup);
+        SetDesaturation(backgroundPiece, not isActiveTalentGroup);
     end
 
     -- talents
@@ -443,7 +445,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                         button:SetScale(30 / 37)
                     end
 
-                    if unspentTalentPoints <= 0 and displayRank == 0 then
+                    if (unspentTalentPoints <= 0 or not isActiveTalentGroup) and displayRank == 0 then
                         forceDesaturated = 1;
                     else
                         forceDesaturated = nil;
@@ -1104,8 +1106,8 @@ function DragonflightUITalentsFrameMixin:UpdateControls()
         reset:Show()
 
         -- enable the control bar if this is the active spec, preview is enabled, and preview points were spent
-        local talentPoints = GetUnspentTalentPoints(false, false, 1);
-        if (talentPoints > 0 and GetGroupPreviewTalentPointsSpent(false, 1) > 0) then
+        local talentPoints = GetUnspentTalentPoints(false, false, selectedSpec);
+        if (talentPoints > 0 and GetGroupPreviewTalentPointsSpent(false, selectedSpec) > 0) then
             learn:Enable();
             reset:Enable();
         else
@@ -1226,5 +1228,43 @@ function DragonflightUIPlayerSpecActivateMixin:Update()
             self:Enable()
         end
     end
+end
+
+-------
+
+DragonflightUIPlayerSpecPreviewLearnMixin = {}
+
+function DragonflightUIPlayerSpecPreviewLearnMixin:OnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(TALENT_TOOLTIP_LEARNTALENTGROUP);
+end
+
+function DragonflightUIPlayerSpecPreviewLearnMixin:OnLeave()
+    GameTooltip:Hide()
+end
+
+function DragonflightUIPlayerSpecPreviewLearnMixin:OnClick()
+    if UnitIsDeadOrGhost("player") then
+        UIErrorsFrame:AddMessage(ERR_PLAYER_DEAD, 1.0, 0.1, 0.1, 1.0);
+    else
+        StaticPopup_Show("CONFIRM_LEARN_PREVIEW_TALENTS");
+    end
+end
+
+-------
+
+DragonflightUIPlayerSpecPreviewResetMixin = {}
+
+function DragonflightUIPlayerSpecPreviewResetMixin:OnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(TALENT_TOOLTIP_RESETTALENTGROUP);
+end
+
+function DragonflightUIPlayerSpecPreviewResetMixin:OnLeave()
+    GameTooltip:Hide()
+end
+
+function DragonflightUIPlayerSpecPreviewResetMixin:OnClick()
+    ResetGroupPreviewTalentPoints(false, selectedSpec)
 end
 
