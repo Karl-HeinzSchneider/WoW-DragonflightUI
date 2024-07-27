@@ -927,6 +927,7 @@ professionDataTable[794] = {
     bar = 'professionsfxleatherworking',
     icon = 441139
 } -- archeology
+professionDataTable[666] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136242} -- poison
 
 function DragonFlightUIProfessionMixin:UpdateHeader()
     self.NineSlice.Text:SetText('**')

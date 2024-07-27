@@ -27,6 +27,7 @@ if locale == 'deDE' then
 
     PROFESSIONS_COOKING = "Kochkunst";
     PROFESSIONS_FISHING = "Angeln";
+    PROFESSIONS_POISON = "Gifte"
 elseif locale == 'enUS' then
     CHARACTER_PROFESSION_ALCHEMY = "Alchemy";
     CHARACTER_PROFESSION_BLACKSMITHING = "Blacksmithing";
@@ -43,6 +44,8 @@ elseif locale == 'enUS' then
 
     PROFESSIONS_COOKING = "Cooking";
     PROFESSIONS_FISHING = "Fishing";
+
+    PROFESSIONS_POISON = "Poisons"
 elseif locale == 'esMX' or locale == 'esES' then
     CHARACTER_PROFESSION_ALCHEMY = "Alquimia";
     CHARACTER_PROFESSION_BLACKSMITHING = "Herrería";
@@ -59,6 +62,8 @@ elseif locale == 'esMX' or locale == 'esES' then
 
     PROFESSIONS_COOKING = "Cocina";
     PROFESSIONS_FISHING = "Pesca";
+
+    PROFESSIONS_POISON = "Venenos"
 elseif locale == 'frFR' then
     CHARACTER_PROFESSION_ALCHEMY = "Alchimie";
     CHARACTER_PROFESSION_BLACKSMITHING = "Forge";
@@ -75,6 +80,8 @@ elseif locale == 'frFR' then
 
     PROFESSIONS_COOKING = "Cuisine";
     PROFESSIONS_FISHING = "Pêche";
+
+    PROFESSIONS_POISON = "Poisons"
 elseif locale == 'itIT' then
     CHARACTER_PROFESSION_ALCHEMY = "Alchimia";
     CHARACTER_PROFESSION_BLACKSMITHING = "Forgiatura";
@@ -91,6 +98,8 @@ elseif locale == 'itIT' then
 
     PROFESSIONS_COOKING = "Cucina";
     PROFESSIONS_FISHING = "Pesca";
+
+    PROFESSIONS_POISON = "Poisons"
 elseif locale == 'koKR' then
     CHARACTER_PROFESSION_ALCHEMY = "연금술";
     CHARACTER_PROFESSION_BLACKSMITHING = "대장기술";
@@ -107,6 +116,8 @@ elseif locale == 'koKR' then
 
     PROFESSIONS_COOKING = "요리";
     PROFESSIONS_FISHING = "낚시";
+
+    PROFESSIONS_POISON = "독 조제"
 elseif locale == 'ptBR' then
     CHARACTER_PROFESSION_ALCHEMY = "Alquimia";
     CHARACTER_PROFESSION_BLACKSMITHING = "Ferraria";
@@ -123,6 +134,8 @@ elseif locale == 'ptBR' then
 
     PROFESSIONS_COOKING = "Culinária";
     PROFESSIONS_FISHING = "Pesca";
+
+    PROFESSIONS_POISON = "Venenos"
 elseif locale == 'ruRU' then
     CHARACTER_PROFESSION_ALCHEMY = "Алхимия";
     CHARACTER_PROFESSION_BLACKSMITHING = "Кузнечное дело";
@@ -139,6 +152,8 @@ elseif locale == 'ruRU' then
 
     PROFESSIONS_COOKING = "Кулинария";
     PROFESSIONS_FISHING = "Рыбная ловля";
+
+    PROFESSIONS_POISON = "Яды"
 elseif locale == 'zhCN' then
     CHARACTER_PROFESSION_ALCHEMY = "炼金术";
     CHARACTER_PROFESSION_BLACKSMITHING = "锻造";
@@ -155,6 +170,8 @@ elseif locale == 'zhCN' then
 
     PROFESSIONS_COOKING = "烹饪";
     PROFESSIONS_FISHING = "钓鱼";
+
+    PROFESSIONS_POISON = "毒药"
 elseif locale == 'zhTW' then
     CHARACTER_PROFESSION_ALCHEMY = "鍊金術";
     CHARACTER_PROFESSION_BLACKSMITHING = "鍛造";
@@ -171,6 +188,8 @@ elseif locale == 'zhTW' then
 
     PROFESSIONS_COOKING = "烹飪";
     PROFESSIONS_FISHING = "釣魚";
+
+    PROFESSIONS_POISON = "毒药"
 end
 
 --[[ First Aid 	129										
@@ -205,6 +224,8 @@ ProfessionNamesToSkillID[CHARACTER_PROFESSION_TAILORING] = 197
 
 ProfessionNamesToSkillID[PROFESSIONS_COOKING] = 185
 ProfessionNamesToSkillID[PROFESSIONS_FISHING] = 356
+
+ProfessionNamesToSkillID[PROFESSIONS_POISON] = 666 -- custom
 
 function DragonflightUILocalizationData:GetSkillIDFromProfessionName(name)
     return ProfessionNamesToSkillID[name]
