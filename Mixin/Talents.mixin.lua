@@ -1040,7 +1040,8 @@ end
 
 function DragonflightUITalentsFrameMixin:OnEvent(event, ...)
     -- print('OnEvent', event, ...)
-    if PlayerTalentFrame:IsVisible() then self:Refresh() end
+    -- if PlayerTalentFrame:IsVisible() then self:Refresh() end
+    self:Refresh()
 end
 
 function DragonflightUITalentsFrameMixin:Refresh()
