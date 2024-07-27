@@ -1550,6 +1550,7 @@ function DragonflightUIMixin:ChangeQuestFrame()
     local detail = QuestFrameDetailPanel
     local reward = QuestFrameRewardPanel
     local progress = QuestFrameProgressPanel
+    local greeting = QuestFrameGreetingPanel
 
     local regions = {detail:GetRegions()}
     local port
@@ -1608,10 +1609,23 @@ function DragonflightUIMixin:ChangeQuestFrame()
         end
     end
 
+    local regionsGreeting = {greeting:GetRegions()}
+
+    for k, child in ipairs(regionsGreeting) do
+        --
+        -- print('child:', child:GetName())
+        if child:GetObjectType() == 'Texture' then
+            -- child:SetTexture('')
+            -- print('child:', 'Texture', child:GetTexture(), child:GetWidth(), child:GetHeight())         
+            child:Hide()
+        end
+    end
+
     frame:SetSize(338, 496)
     detail:SetSize(338, 496)
     reward:SetSize(338, 496)
     progress:SetSize(338, 496)
+    greeting:SetSize(338, 496)
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
@@ -1642,6 +1656,9 @@ function DragonflightUIMixin:ChangeQuestFrame()
     local gb = QuestFrameGoodbyeButton
     gb:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
 
+    local greetGb = QuestFrameGreetingGoodbyeButton
+    greetGb:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+
     local completeP = QuestFrameCompleteButton
     completeP:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 6, 4)
 
@@ -1670,7 +1687,13 @@ function DragonflightUIMixin:ChangeQuestFrame()
     do
         local scroll = QuestProgressScrollFrame
         scroll:SetSize(300, 403)
-        scroll:SetPoint('TOPLEFT', reward, 'TOPLEFT', 8, -65)
+        scroll:SetPoint('TOPLEFT', progress, 'TOPLEFT', 8, -65)
+    end
+
+    do
+        local scroll = QuestGreetingScrollFrame
+        scroll:SetSize(300, 403)
+        scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
     end
 
     do
