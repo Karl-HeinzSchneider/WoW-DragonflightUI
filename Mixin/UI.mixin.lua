@@ -397,6 +397,13 @@ function DragonflightUIMixin:CreateProfessionFrame()
     return frame
 end
 
+function DragonflightUIMixin:CreateProfessionCraftFrame()
+    -- print('DragonflightUIMixin:CreateProfessionFrame()')
+    local frame = CreateFrame('FRAME', 'DragonflightUIProfessionCraftFrame', UIParent,
+                              'DragonflightUIProfessionCraftFrameTemplate')
+    return frame
+end
+
 function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
     -- print('DragonflightUIMixin:ChangeTradeskillFrameCata()')
 

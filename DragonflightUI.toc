@@ -45,6 +45,7 @@ XML\Castbar.xml
 XML\ConfigCategoryList.xml
 XML\Config.xml
 XML\Profession.xml
+XML\ProfessionTwo.xml
 XML\QuickKeybind.xml
 XML\SettingsList.xml
 XML\Talents.xml
