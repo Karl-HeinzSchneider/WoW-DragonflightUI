@@ -58,7 +58,7 @@ function DragonFlightUIProfessionCraftMixin:OnShow()
         self:AnchorButtons()
         self:AnchorSchematics()
         self:HideDefault()
-        -- self:SetupFavorite() TODO
+        self:SetupFavorite()
 
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
@@ -308,8 +308,10 @@ function DragonFlightUIProfessionCraftMixin:SetupFavorite()
     -- fav:SetIsFavorite(false)  
 
     function fav:UpdateFavoriteState()
-        local tradeSkillIndex = GetTradeSkillSelectionIndex();
-        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(tradeSkillIndex)
+        local craftIndex = GetCraftSelectionIndex();
+        -- local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(tradeSkillIndex)
+        local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
+            GetCraftInfo(craftIndex)
         fav:SetIsFavorite(frameRef:IsRecipeFavorite(skillName))
     end
     fav:UpdateFavoriteState()
@@ -324,9 +326,9 @@ function DragonFlightUIProfessionCraftMixin:SetupFavorite()
         local checked = button:GetChecked();
         -- C_TradeSkillUI.SetRecipeFavorite(currentRecipeInfo.recipeID, checked);
         do
-            local tradeSkillIndex = GetTradeSkillSelectionIndex();
-            local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(
-                                                                                             tradeSkillIndex)
+            local craftIndex = GetCraftSelectionIndex();
+            local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
+                GetCraftInfo(craftIndex)
             local info = skillName
 
             frameRef:SetRecipeFavorite(info, checked)
@@ -1142,7 +1144,7 @@ function DFProfessionsCraftRecipeListMixin:Refresh(force)
     self:UpdateRecipeList()
 
     self:SelectRecipe(index, true)
-    -- frameRef.FavoriteButton:UpdateFavoriteState() TODO
+    frameRef.FavoriteButton:UpdateFavoriteState()
 
     if (not changed) and (not force) then
         -- print('set old scroll')
@@ -1172,13 +1174,13 @@ function DFProfessionsCraftRecipeListMixin:UpdateRecipeList()
 
     local numSkills = GetNumCrafts()
 
-    local headerID = 1
+    local headerID = -1
 
     do
         local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
         dataProvider:Insert(data)
 
-        local dataTwo = {id = 1, categoryInfo = {name = 'No Category', isExpanded = true}}
+        local dataTwo = {id = -1, categoryInfo = {name = 'No Category', isExpanded = true}}
         dataProvider:Insert(dataTwo)
     end
 
@@ -1189,9 +1191,9 @@ function DFProfessionsCraftRecipeListMixin:UpdateRecipeList()
             GetCraftInfo(i)
 
         if craftType == 'header' then
-            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
-            dataProvider:Insert(data)
-            headerID = i
+            -- local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            -- dataProvider:Insert(data)
+            -- headerID = i
         else
             -- print('--', skillName)
             local isFavorite = DragonFlightUIProfessionCraftMixin:IsRecipeFavorite(skillName)
