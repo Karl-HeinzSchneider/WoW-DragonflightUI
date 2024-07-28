@@ -63,7 +63,7 @@ function DragonFlightUIProfessionCraftMixin:OnShow()
 
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
-        self:SetPoint('TOPLEFT', CraftFrame, 'TOPLEFT', 12 + 350, -12)
+        self:SetPoint('TOPLEFT', CraftFrame, 'TOPLEFT', 12, -12)
 
         CraftFrame:SetFrameStrata('BACKGROUND')
         self:SetFrameStrata('MEDIUM')
