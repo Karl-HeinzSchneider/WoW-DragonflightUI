@@ -37,6 +37,8 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Bar:SetPoint('TOPLEFT', 0, 0)
     f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
     f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
+    f.Bar:GetStatusBarTexture():SetDrawLayer('ARTWORK', 1)
+    f.Bar:SetFrameLevel(4)
 
     f.RestedBar = CreateFrame('StatusBar', nil, f)
     -- f.RestedBar:SetPoint('CENTER')
@@ -48,6 +50,9 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.RestedBar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\RestedBackground')
     f.RestedBar.Texture:SetAllPoints()
     f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
+    f.RestedBar:GetStatusBarTexture():SetDrawLayer('ARTWORK', 0)
+    f.RestedBar:SetFrameLevel(3)
+    f.RestedBar:SetAlpha(0.69)
 
     -- @TODO: needs more visibility
     local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
@@ -190,7 +195,10 @@ function DragonflightUIXPBarMixin:Update()
 end
 
 function DragonflightUIXPBarMixin:UpdateText()
-    local sizeX, sizeY = 466, 20
+    local state = self.state
+    local sizeX = state.width
+    local sizeY = state.height
+
     -- @TODO: needs more visibility
     local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
     local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
@@ -213,13 +221,14 @@ function DragonflightUIXPBarMixin:UpdateText()
     local restedPercent = 100 * restedXP / restedMax
 
     if (restedXP and restedXP > 0) then
+        self.RestedBar:Show()
+        self.RestedBar:SetMinMaxValues(0, playerMaxXP)
+
         if (playerCurrXP + restedXP > playerMaxXP) then
-            self.RestedBar:Hide()
+            self.RestedBar:SetValue(playerMaxXP)
 
             self.RestedBarMark:Hide()
         else
-            self.RestedBar:Show()
-            self.RestedBar:SetMinMaxValues(0, playerMaxXP)
             self.RestedBar:SetValue(playerCurrXP + restedXP)
 
             self.RestedBarMark:Show()
