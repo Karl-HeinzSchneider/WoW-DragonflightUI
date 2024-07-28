@@ -37,15 +37,22 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Bar:SetPoint('TOPLEFT', 0, 0)
     f.Bar:SetPoint('BOTTOMRIGHT', 0, 0)
     f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
+    f.Bar:GetStatusBarTexture():SetDrawLayer('ARTWORK', 1)
+    f.Bar:SetFrameLevel(4)
 
     f.RestedBar = CreateFrame('StatusBar', nil, f)
-    f.RestedBar:SetPoint('CENTER')
-    f.RestedBar:SetSize(sizeX, sizeY)
+    -- f.RestedBar:SetPoint('CENTER')
+    -- f.RestedBar:SetSize(sizeX, sizeY)
+    f.RestedBar:SetPoint('TOPLEFT', 0, 0)
+    f.RestedBar:SetPoint('BOTTOMRIGHT', 0, 0)
 
     f.RestedBar.Texture = f.RestedBar:CreateTexture(nil, 'BORDER', nil)
     f.RestedBar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\RestedBackground')
     f.RestedBar.Texture:SetAllPoints()
     f.RestedBar:SetStatusBarTexture(f.RestedBar.Texture)
+    f.RestedBar:GetStatusBarTexture():SetDrawLayer('ARTWORK', 0)
+    f.RestedBar:SetFrameLevel(3)
+    f.RestedBar:SetAlpha(0.69)
 
     -- @TODO: needs more visibility
     local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
@@ -64,7 +71,9 @@ function DragonflightUIXPBarMixin:CreateBar()
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
     border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
+    -- border:SetSize(sizeX, sizeY)
+    border:SetPoint('TOPLEFT', 0, 0)
+    border:SetPoint('BOTTOMRIGHT', 0, 0)
     border:SetPoint('CENTER')
     f.Border = border
 
@@ -143,6 +152,11 @@ end
 function DragonflightUIXPBarMixin:Update()
     local state = self.state
 
+    self:SetScale(state.scale)
+
+    self:SetWidth(state.width)
+    self:SetHeight(state.height)
+
     local showXP = false
     if DF.Wrath then
         showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
@@ -181,7 +195,10 @@ function DragonflightUIXPBarMixin:Update()
 end
 
 function DragonflightUIXPBarMixin:UpdateText()
-    local sizeX, sizeY = 466, 20
+    local state = self.state
+    local sizeX = state.width
+    local sizeY = state.height
+
     -- @TODO: needs more visibility
     local restedBarMarkSizeX, restedBarMarkSizeY = 14, 20
     local restedBarMarkOffsetX, restedBarMarkOffsetY = -1, 2
@@ -204,13 +221,14 @@ function DragonflightUIXPBarMixin:UpdateText()
     local restedPercent = 100 * restedXP / restedMax
 
     if (restedXP and restedXP > 0) then
+        self.RestedBar:Show()
+        self.RestedBar:SetMinMaxValues(0, playerMaxXP)
+
         if (playerCurrXP + restedXP > playerMaxXP) then
-            self.RestedBar:Hide()
+            self.RestedBar:SetValue(playerMaxXP)
 
             self.RestedBarMark:Hide()
         else
-            self.RestedBar:Show()
-            self.RestedBar:SetMinMaxValues(0, playerMaxXP)
             self.RestedBar:SetValue(playerCurrXP + restedXP)
 
             self.RestedBarMark:Show()
@@ -238,12 +256,14 @@ end
 
 function DragonflightUIXPBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
+    local state = self.state
+
     if collapse then
         self:Hide()
         self:SetHeight(0.00000001)
     else
         self:Show()
-        self:SetHeight(20)
+        self:SetHeight(state.height)
     end
 end
 
@@ -291,8 +311,10 @@ function DragonflightUIRepBarMixin:CreateBar()
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
     border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
-    border:SetPoint('CENTER')
+    -- border:SetSize(sizeX, sizeY)
+    -- border:SetPoint('CENTER')
+    border:SetPoint('TOPLEFT', 0, 0)
+    border:SetPoint('BOTTOMRIGHT', 0, 0)
     f.Border = border
 
     -- text
@@ -326,6 +348,11 @@ end
 
 function DragonflightUIRepBarMixin:Update()
     local state = self.state
+
+    self:SetScale(state.scale)
+
+    self:SetWidth(state.width)
+    self:SetHeight(state.height)
 
     local name, standing, min, max, value = GetWatchedFactionInfo()
     if name then
@@ -380,11 +407,13 @@ end
 
 function DragonflightUIRepBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
+    local state = self.state
+
     if collapse then
         self:Hide()
         self:SetHeight(0.00000001)
     else
         self:Show()
-        self:SetHeight(20)
+        self:SetHeight(state.height)
     end
 end

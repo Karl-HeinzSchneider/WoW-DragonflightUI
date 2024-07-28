@@ -190,6 +190,8 @@ local defaults = {
             anchorParent = 'BOTTOM',
             x = 0,
             y = 5,
+            width = 466,
+            height = 20,
             alwaysShowXP = false,
             showXPPercent = true
         },
@@ -200,6 +202,8 @@ local defaults = {
             anchorParent = 'TOP',
             x = 0,
             y = 0,
+            width = 466,
+            height = 20,
             alwaysShowRep = false
         },
         stance = {
@@ -936,6 +940,24 @@ local xpOptions = {
             bigStep = 1,
             order = 6
         },
+        width = {
+            type = 'range',
+            name = 'Width',
+            desc = '' .. getDefaultStr('width', 'xp'),
+            min = 1,
+            max = 2500,
+            bigStep = 1,
+            order = 7
+        },
+        height = {
+            type = 'range',
+            name = 'Height',
+            desc = '' .. getDefaultStr('height', 'xp'),
+            min = 1,
+            max = 69,
+            bigStep = 1,
+            order = 8
+        },
         alwaysShowXP = {
             type = 'toggle',
             name = 'Always show XP text',
@@ -1025,6 +1047,24 @@ local repOptions = {
             max = 2500,
             bigStep = 1,
             order = 6
+        },
+        width = {
+            type = 'range',
+            name = 'Width',
+            desc = '' .. getDefaultStr('width', 'rep'),
+            min = 1,
+            max = 2500,
+            bigStep = 1,
+            order = 7
+        },
+        height = {
+            type = 'range',
+            name = 'Height',
+            desc = '' .. getDefaultStr('height', 'rep'),
+            min = 1,
+            max = 69,
+            bigStep = 1,
+            order = 8
         },
         alwaysShowRep = {
             type = 'toggle',
