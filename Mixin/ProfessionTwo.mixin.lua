@@ -184,7 +184,7 @@ function DragonFlightUIProfessionCraftMixin:UpdateUIPanelWindows(big)
 end
 
 function DragonFlightUIProfessionCraftMixin:OnEvent(event, arg1, ...)
-    -- print('ProfessionMixin', event)
+    print('ProfessionMixin', event)
 
     if event == 'CRAFT_SHOW' then
         self:Show()
@@ -328,6 +328,10 @@ function DragonFlightUIProfessionCraftMixin:SetupFavorite()
         local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
             GetCraftInfo(craftIndex)
         fav:SetIsFavorite(frameRef:IsRecipeFavorite(skillName))
+
+        fav:ClearAllPoints()
+        local width = CraftName:GetWrappedWidth()
+        fav:SetPoint('LEFT', CraftName, 'LEFT', width + 4, 1)
     end
     fav:UpdateFavoriteState()
 
@@ -1031,6 +1035,7 @@ function DFProfessionsCraftRecipeListMixin:OnLoad()
 
                 CraftFrame_SetSelection(newRecipeID)
                 self:SelectRecipe(newRecipeID, false)
+                frameRef.FavoriteButton:UpdateFavoriteState()
                 -- if newRecipeID then self.previousRecipeID = newRecipeID; end
             end
         end
