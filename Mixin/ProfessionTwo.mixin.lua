@@ -976,7 +976,7 @@ function DFProfessionsCraftRecipeListMixin:OnLoad()
     -- print('DFProfessionsCraftRecipeListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
-    self.selectedSkill = GetTradeSkillSelectionIndex() or 2
+    self.selectedSkill = GetCraftSelectionIndex() or 2
     -- print('self.selectedSkill', self.selectedSkill)
     self.DataProvider = CreateTreeDataProvider()
 
@@ -1037,7 +1037,7 @@ function DFProfessionsCraftRecipeListMixin:OnLoad()
                                                                                recrafting);
                                 C_TradeSkillUI.SetRecipeTracked(elementData.recipeInfo.recipeID, not tracked, recrafting);
                             end ]]
-                            HandleModifiedItemClick(GetTradeSkillRecipeLink(elementData.id));
+                            -- HandleModifiedItemClick(GetTradeSkillRecipeLink(elementData.id)); TODO
                         else
                             self.selectionBehavior:Select(button);
                         end
@@ -1104,7 +1104,7 @@ function DFProfessionsCraftRecipeListMixin:OnLoad()
                 self.selectedSkill = newRecipeID
                 EventRegistry:TriggerEvent("DFProfessionsCraftRecipeListMixin.Event.OnRecipeSelected", newRecipeID, self);
 
-                TradeSkillFrame_SetSelection(newRecipeID)
+                CraftFrame_SetSelection(newRecipeID)
                 self:SelectRecipe(newRecipeID, false)
                 -- if newRecipeID then self.previousRecipeID = newRecipeID; end
             end
@@ -1128,12 +1128,12 @@ end
 function DFProfessionsCraftRecipeListMixin:Refresh(force)
     -- print('->DFProfessionsCraftRecipeListMixin:Refresh()', force == true)
 
-    local numSkills = GetNumTradeSkills()
-    local index = GetTradeSkillSelectionIndex()
-    if index > numSkills then
+    local numSkills = GetNumCrafts()
+    local index = GetCraftSelectionIndex()
+    --[[   if index > numSkills then
         index = GetFirstTradeSkill()
         TradeSkillFrame_SetSelection(index)
-    end
+    end ]]
     local changed = self.selectedSkill ~= index
     self.selectedSkill = index
 
@@ -1170,19 +1170,25 @@ function DFProfessionsCraftRecipeListMixin:UpdateRecipeList()
 
     local filterTable = DFFilter
 
-    local numSkills = GetNumTradeSkills()
+    local numSkills = GetNumCrafts()
 
-    local headerID = 0
+    local headerID = 1
 
     do
         local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
         dataProvider:Insert(data)
+
+        local dataTwo = {id = 1, categoryInfo = {name = 'No Category', isExpanded = true}}
+        dataProvider:Insert(dataTwo)
     end
 
     for i = 1, numSkills do
-        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
+        -- local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
+        -- local craftName, craftSubSpellName, craftType, numAvailable, isExpanded, trainingPointCost, requiredLevel = GetCraftInfo(i)
+        local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
+            GetCraftInfo(i)
 
-        if skillType == 'header' then
+        if craftType == 'header' then
             local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
             dataProvider:Insert(data)
             headerID = i
@@ -1197,9 +1203,7 @@ function DFProfessionsCraftRecipeListMixin:UpdateRecipeList()
                     name = skillName,
                     skillType = skillType,
                     numAvailable = numAvailable,
-                    isExpanded = isExpanded,
-                    altVerb = altVerb,
-                    numSkills = numSkills
+                    isExpanded = isExpanded
                 }
             }
 
