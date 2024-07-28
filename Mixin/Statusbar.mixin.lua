@@ -39,8 +39,10 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Bar:SetStatusBarTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Main')
 
     f.RestedBar = CreateFrame('StatusBar', nil, f)
-    f.RestedBar:SetPoint('CENTER')
-    f.RestedBar:SetSize(sizeX, sizeY)
+    -- f.RestedBar:SetPoint('CENTER')
+    -- f.RestedBar:SetSize(sizeX, sizeY)
+    f.RestedBar:SetPoint('TOPLEFT', 0, 0)
+    f.RestedBar:SetPoint('BOTTOMRIGHT', 0, 0)
 
     f.RestedBar.Texture = f.RestedBar:CreateTexture(nil, 'BORDER', nil)
     f.RestedBar.Texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\RestedBackground')
@@ -64,7 +66,9 @@ function DragonflightUIXPBarMixin:CreateBar()
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
     border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
+    -- border:SetSize(sizeX, sizeY)
+    border:SetPoint('TOPLEFT', 0, 0)
+    border:SetPoint('BOTTOMRIGHT', 0, 0)
     border:SetPoint('CENTER')
     f.Border = border
 
@@ -142,6 +146,11 @@ end
 
 function DragonflightUIXPBarMixin:Update()
     local state = self.state
+
+    self:SetScale(state.scale)
+
+    self:SetWidth(state.width)
+    self:SetHeight(state.height)
 
     local showXP = false
     if DF.Wrath then
@@ -238,12 +247,14 @@ end
 
 function DragonflightUIXPBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
+    local state = self.state
+
     if collapse then
         self:Hide()
         self:SetHeight(0.00000001)
     else
         self:Show()
-        self:SetHeight(20)
+        self:SetHeight(state.height)
     end
 end
 
