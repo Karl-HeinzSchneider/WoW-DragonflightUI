@@ -449,6 +449,22 @@ function Module:UpdateTradeskills()
         end
     end)
 
+    Module:FuncOrWaitframe('Blizzard_CraftUI', function()
+        -- print('Blizzard_CraftUI')
+        local DFProfessionCraftFrame = DragonflightUIMixin:CreateProfessionCraftFrame()
+
+        UIPanelWindows["CraftFrame"] = {
+            whileDead = 1,
+            height = 424,
+            width = 942,
+            bottomClampOverride = 152,
+            xoffset = -16 + 4,
+            yoffset = 12,
+            pushable = 3,
+            area = "left"
+        }
+    end)
+
     if IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
 end
 
