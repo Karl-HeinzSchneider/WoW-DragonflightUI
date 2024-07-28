@@ -173,14 +173,14 @@ UI_shared.xsd">
 				<Scripts>
 					<OnClick>
 						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-						DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+						DragonFlightUIProfessionCraftMixin:ToggleFilterDropdown()
 					</OnClick>
 				</Scripts>
 			</DropDownToggleButton>
 			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate">
 				<Scripts>
 					<OnLoad>
-						DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
+						DragonFlightUIProfessionCraftMixin:FilterDropdownOnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>

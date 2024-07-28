@@ -36,6 +36,7 @@ function DragonFlightUIProfessionCraftMixin:OnLoad()
         --
         self:ResetFilter()
         self:FilterDropdownRefresh()
+        self:Refresh(false)
     end)
 
     frameRef = self
@@ -116,7 +117,7 @@ function DragonFlightUIProfessionCraftMixin:Refresh(force)
     self:CheckFilter()
 
     do
-        local name, rank, maxRank = GetTradeSkillLine();
+        local name, rank, maxRank = GetCraftDisplaySkillLine();
         --[[  if (rank < 75) and (not IsTradeSkillLinked()) then
             self.RecipeList.SearchBox:Disable()
         else
@@ -126,7 +127,7 @@ function DragonFlightUIProfessionCraftMixin:Refresh(force)
         if self.currentTradeSkillName ~= name then
             --[[   UIDropDownMenu_Initialize(frameRef.RecipeList.FilterDropDown,
                                       DragonFlightUIProfessionCraftMixin.FilterDropdownInitialize, 'MENU'); ]]
-            -- DragonFlightUIProfessionCraftMixin:FilterDropdownUpdate() TODO
+            DragonFlightUIProfessionCraftMixin:FilterDropdownUpdate()
 
             self.currentTradeSkillName = name
         end
@@ -190,9 +191,11 @@ end
 function DragonFlightUIProfessionCraftMixin:OnEvent(event, arg1, ...)
     print('ProfessionMixin', event)
 
+    if self:IsShown() then self:Refresh(false) end
+    --[[ 
     if event == 'CRAFT_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
         if self:IsShown() then self:Refresh(false) end
-    end
+    end ]]
     -- SPELLS_CHANGED
     -- UNIT_PET_TRAINING_POINTS 
 end
@@ -456,7 +459,7 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
     reagentLabel:SetParent(frame)
     -- reagentLabel:SetPoint('TOPLEFT', TradeSkillDescription, 'BOTTOMLEFT', 0, -20)
 
-    --[[  local cooldown = TradeSkillSkillCooldown
+    --[[ local cooldown = CraftCooldown
     cooldown:SetParent(frame) ]]
 
     for i = 1, MAX_CRAFT_REAGENTS do
@@ -679,10 +682,10 @@ do
 
         if match(info.name, searchText) then return true end
 
-        local numReagents = GetTradeSkillNumReagents(id);
+        local numReagents = GetCraftNumReagents(id);
 
         for i = 1, numReagents do
-            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(id, i);
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetCraftReagentInfo(id, i);
             if reagentName and match(reagentName, searchText) then return true end
         end
 
@@ -696,15 +699,15 @@ end
 function DragonFlightUIProfessionCraftMixin:ResetFilter()
     DFFilter['DFFilter_HasSkillUp'].enabled = false
     DFFilter['DFFilter_HaveMaterials'].enabled = false
-    SetTradeSkillSubClassFilter(0, true, 1)
-    SetTradeSkillInvSlotFilter(0, true, 1)
+    -- SetTradeSkillSubClassFilter(0, true, 1)
+    -- SetTradeSkillInvSlotFilter(0, true, 1)
 end
 
 function DragonFlightUIProfessionCraftMixin:AreFilterDefault()
-    local allCheckedSub = GetTradeSkillSubClassFilter(0);
-    if not allCheckedSub then return false end
-    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
-    if not allCheckedInv then return false end
+    -- local allCheckedSub = GetTradeSkillSubClassFilter(0);
+    -- if not allCheckedSub then return false end
+    -- local allCheckedInv = GetTradeSkillInvSlotFilter(0);
+    -- if not allCheckedInv then return false end
 
     if DFFilter['DFFilter_HasSkillUp'].enabled then return false end
     if DFFilter['DFFilter_HaveMaterials'].enabled then return false end
@@ -719,15 +722,6 @@ function DragonFlightUIProfessionCraftMixin:CheckFilter()
 end
 
 function DragonFlightUIProfessionCraftMixin:FilterDropdownGetEasyMenuTable()
-    local subClasses = {GetTradeSkillSubClasses()}
-    local numSubClasses = #subClasses
-    local allCheckedSub = GetTradeSkillSubClassFilter(0);
-    local selectedIDSub = UIDropDownMenu_GetSelectedID(TradeSkillSubClassDropDown) or 1;
-
-    local subInv = {GetTradeSkillInvSlots()}
-    local numSubClassesInv = #subInv
-    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
-
     local menu = {
         {
             text = CRAFT_IS_MAKEABLE,
@@ -758,106 +752,8 @@ function DragonFlightUIProfessionCraftMixin:FilterDropdownGetEasyMenuTable()
                 frameRef.RecipeList:Refresh(true)
                 frameRef:CheckFilter()
             end
-        }, {text = " ", isTitle = true}, {
-            text = "Subclass",
-            hasArrow = true,
-            menuList = {
-                {
-                    text = ALL_SUBCLASSES,
-                    checked = allCheckedSub and (selectedIDSub == nil or selectedIDSub == 1),
-                    isNotRadio = true,
-                    keepShownOnClick = true,
-                    func = function(self, arg1, arg2, checked)
-                        -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
-                        -- print('func', self:GetID())
-                        SetTradeSkillSubClassFilter(0, checked, 1)
-                        DragonFlightUIProfessionCraftMixin:FilterDropdownRefresh()
-                    end
-                }
-            }
-        }, {
-            text = "Slot",
-            hasArrow = true,
-            menuList = {
-                {
-                    text = ALL_INVENTORY_SLOTS,
-                    checked = allCheckedInv,
-                    isNotRadio = true,
-                    keepShownOnClick = true,
-                    func = function(self, arg1, arg2, checked)
-                        -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
-                        -- print('func', self:GetID())
-                        SetTradeSkillInvSlotFilter(0, checked, 1)
-                        DragonFlightUIProfessionCraftMixin:FilterDropdownRefresh()
-                    end
-                }
-            }
         }
     }
-
-    for k, v in ipairs(subClasses) do
-        --
-        local checked
-
-        if allCheckedSub then
-            checked = nil
-        else
-            checked = GetTradeSkillSubClassFilter(k)
-        end
-
-        local option = {
-            text = v,
-            checked = checked,
-            isNotRadio = true,
-            keepShownOnClick = true,
-            func = function(self, arg1, arg2, checked)
-                -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
-                -- print('func', k, v, checked)
-                -- print('->', k, checked, true)
-                if checked then
-                    SetTradeSkillSubClassFilter(k, 1, 1)
-                else
-                    SetTradeSkillSubClassFilter(k, 0, 1)
-                end
-                -- print('func', self:GetID())
-                -- UIDropDownMenu_SetSelectedValue     
-                DragonFlightUIProfessionCraftMixin:FilterDropdownRefresh()
-            end
-        }
-
-        table.insert(menu[4].menuList, option)
-    end
-
-    for k, v in ipairs(subInv) do
-        --
-        local checked
-
-        if allCheckedInv then
-            checked = nil
-        else
-            checked = GetTradeSkillInvSlotFilter(k)
-        end
-
-        local option = {
-            text = v,
-            checked = checked,
-            isNotRadio = true,
-            keepShownOnClick = true,
-            func = function(self, arg1, arg2, checked)
-                -- SetTradeSkillSubClassFilter(slotIndex, onOff{, exclusive});
-                -- print('func', k, v, checked)
-                -- print('->', k, v, checked)
-                if checked then
-                    SetTradeSkillInvSlotFilter(k, 1, 1)
-                else
-                    SetTradeSkillInvSlotFilter(k, 0, 1)
-                end
-                DragonFlightUIProfessionCraftMixin:FilterDropdownRefresh()
-            end
-        }
-
-        table.insert(menu[5].menuList, option)
-    end
 
     return menu
 end
@@ -1039,7 +935,7 @@ function DFProfessionsCraftRecipeListMixin:OnLoad()
                                                                                recrafting);
                                 C_TradeSkillUI.SetRecipeTracked(elementData.recipeInfo.recipeID, not tracked, recrafting);
                             end ]]
-                            -- HandleModifiedItemClick(GetTradeSkillRecipeLink(elementData.id)); TODO
+                            HandleModifiedItemClick(GetCraftItemLink(elementData.id));
                         else
                             self.selectionBehavior:Select(button);
                         end
