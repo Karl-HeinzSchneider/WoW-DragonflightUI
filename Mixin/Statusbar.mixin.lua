@@ -302,8 +302,10 @@ function DragonflightUIRepBarMixin:CreateBar()
     local border = f.Bar:CreateTexture('Border', 'OVERLAY')
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\XP\\Overlay')
     border:SetTexCoord(0, 0.55517578, 0, 1)
-    border:SetSize(sizeX, sizeY)
-    border:SetPoint('CENTER')
+    -- border:SetSize(sizeX, sizeY)
+    -- border:SetPoint('CENTER')
+    border:SetPoint('TOPLEFT', 0, 0)
+    border:SetPoint('BOTTOMRIGHT', 0, 0)
     f.Border = border
 
     -- text
@@ -337,6 +339,11 @@ end
 
 function DragonflightUIRepBarMixin:Update()
     local state = self.state
+
+    self:SetScale(state.scale)
+
+    self:SetWidth(state.width)
+    self:SetHeight(state.height)
 
     local name, standing, min, max, value = GetWatchedFactionInfo()
     if name then
@@ -391,11 +398,13 @@ end
 
 function DragonflightUIRepBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
+    local state = self.state
+
     if collapse then
         self:Hide()
         self:SetHeight(0.00000001)
     else
         self:Show()
-        self:SetHeight(20)
+        self:SetHeight(state.height)
     end
 end
