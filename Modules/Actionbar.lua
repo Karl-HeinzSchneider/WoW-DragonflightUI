@@ -490,6 +490,16 @@ local function SetActionBarToggle(index, value)
     MultiActionBar_Update();
 end
 
+local function ActivateAllActionbars()
+    SHOW_MULTI_ACTIONBAR_1 = true
+    SHOW_MULTI_ACTIONBAR_2 = true
+    SHOW_MULTI_ACTIONBAR_3 = true
+    SHOW_MULTI_ACTIONBAR_4 = true
+    SetActionBarToggles(1, 1, 1, 1, 1)
+    SetActionBarToggles(true, true, true, true, true)
+    MultiActionBar_Update()
+end
+
 local function GetActionBarToggle(index)
     return select(index, GetActionBarToggles());
 end
@@ -1505,6 +1515,7 @@ function Module:OnEnable()
 
     -- not the best solution, override global CVAR and let DF UI handle everything
     C_CVar.SetCVar("alwaysShowActionBars", 1)
+    ActivateAllActionbars()
 
     Module.Temp = {}
     Module.UpdateRangeHooked = false
@@ -2389,7 +2400,8 @@ function Module.ChangePossessBar()
 end
 
 function frame:OnEvent(event, arg1)
-    -- print('event', event)  
+    -- print('event', event)
+    if event == 'PLAYER_ENTERING_WORLD' then ActivateAllActionbars() end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
@@ -3823,6 +3835,7 @@ function Module.Wrath()
     -- Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
@@ -3850,6 +3863,7 @@ function Module.Era()
     -- Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
