@@ -450,7 +450,7 @@ function Module:UpdateTradeskills()
     end)
 
     Module:FuncOrWaitframe('Blizzard_CraftUI', function()
-        print('Blizzard_CraftUI')
+        -- print('Blizzard_CraftUI')
         local DFProfessionCraftFrame = DragonflightUIMixin:CreateProfessionCraftFrame()
 
         UIPanelWindows["CraftFrame"] = {
