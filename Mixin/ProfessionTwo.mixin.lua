@@ -189,7 +189,7 @@ function DragonFlightUIProfessionCraftMixin:UpdateUIPanelWindows(big)
 end
 
 function DragonFlightUIProfessionCraftMixin:OnEvent(event, arg1, ...)
-    print('ProfessionMixin', event)
+    -- print('ProfessionMixin', event)
 
     if self:IsShown() then self:Refresh(false) end
     --[[ 
