@@ -112,7 +112,7 @@ end
 
 function DragonFlightUIProfessionCraftMixin:Refresh(force)
     self:UpdateHeader()
-    self:UpdateRecipeName()
+    --  self:UpdateRecipeName()
     self:CheckFilter()
 
     do
@@ -126,7 +126,7 @@ function DragonFlightUIProfessionCraftMixin:Refresh(force)
         if self.currentTradeSkillName ~= name then
             --[[   UIDropDownMenu_Initialize(frameRef.RecipeList.FilterDropDown,
                                       DragonFlightUIProfessionCraftMixin.FilterDropdownInitialize, 'MENU'); ]]
-            DragonFlightUIProfessionCraftMixin:FilterDropdownUpdate()
+            -- DragonFlightUIProfessionCraftMixin:FilterDropdownUpdate() TODO
 
             self.currentTradeSkillName = name
         end
@@ -923,7 +923,7 @@ function DragonFlightUIProfessionCraftMixin:UpdateHeader()
     -- print('skillID', skillID)
     local profData = professionDataTable[skillID]
 
-    local nameLoc, rank, maxRank = GetTradeSkillLine();
+    local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
 
     -- print(nameLoc, skillID, icon)
     -- self.NineSlice.Text:SetText(nameLoc) 
@@ -959,45 +959,12 @@ end
 
 function DragonFlightUIProfessionCraftMixin:GetProfessionID()
     -- localized...
-    local nameLoc, rank, maxRank = GetTradeSkillLine();
+    local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
 
-    if DF.Era then
-        local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
-        local profData = professionDataTable[skillID]
+    local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+    local profData = professionDataTable[skillID]
 
-        return skillID, profData.icon
-    elseif DF.Cata then
-
-        local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
-
-        if prof1 then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(prof1)
-
-            if name == nameLoc then return skillLine, icon end
-        end
-
-        if prof2 then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(prof2)
-            if name == nameLoc then return skillLine, icon end
-        end
-
-        -- TODO: archeo, cooking
-
-        if cooking then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(cooking)
-            if name == nameLoc then return skillLine, icon end
-        end
-
-        -- first aid
-        if firstaid then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
-            if name == nameLoc then return skillLine, icon end
-        end
-    end
+    return skillID, profData.icon
 end
 
 ------------------------------
@@ -1175,7 +1142,7 @@ function DFProfessionsCraftRecipeListMixin:Refresh(force)
     self:UpdateRecipeList()
 
     self:SelectRecipe(index, true)
-    frameRef.FavoriteButton:UpdateFavoriteState()
+    -- frameRef.FavoriteButton:UpdateFavoriteState() TODO
 
     if (not changed) and (not force) then
         -- print('set old scroll')
