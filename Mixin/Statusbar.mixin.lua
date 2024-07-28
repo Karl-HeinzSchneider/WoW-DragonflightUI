@@ -411,7 +411,7 @@ function DragonflightUIRepBarMixin:Collapse(collapse)
 
     if collapse then
         self:Hide()
-        self:SetHeight(0.00000001)
+        self:SetHeight(0.0000001)
     else
         self:Show()
         self:SetHeight(state.height)
