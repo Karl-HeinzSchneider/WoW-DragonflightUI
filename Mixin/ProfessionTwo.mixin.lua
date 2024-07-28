@@ -8,6 +8,8 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 function DragonFlightUIProfessionCraftMixin:OnLoad()
     self:SetupFrameStyle()
 
+    self:RegisterEvent("CRAFT_SHOW");
+    self:RegisterEvent("CRAFT_CLOSE");
     self:RegisterEvent("CRAFT_UPDATE");
     self:RegisterEvent("SPELLS_CHANGED");
     self:RegisterEvent("UNIT_PET_TRAINING_POINTS");
@@ -41,29 +43,22 @@ function DragonFlightUIProfessionCraftMixin:OnLoad()
 
     frameRef = self
     self:SetupFavoriteDatabase()
-
-    CraftFrame:HookScript('OnShow', function()
-        self:Show()
-    end)
-
-    CraftFrame:HookScript('OnHide', function()
-        self:Hide()
-    end)
 end
 
 function DragonFlightUIProfessionCraftMixin:OnShow()
     -- print('DragonFlightUIProfessionCraftMixin:OnShow()')
+    self:AnchorButtons()
     if not self.anchored then
         self.anchored = true
 
-        self:AnchorButtons()
+        -- self:AnchorButtons()
         self:AnchorSchematics()
         self:HideDefault()
         self:SetupFavorite()
 
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
-        self:SetPoint('TOPLEFT', CraftFrame, 'TOPLEFT', 12, -12)
+        self:SetPoint('TOPLEFT', CraftFrame, 'TOPLEFT', 12 + 350, -12)
 
         CraftFrame:SetFrameStrata('BACKGROUND')
         self:SetFrameStrata('MEDIUM')
@@ -191,7 +186,14 @@ end
 function DragonFlightUIProfessionCraftMixin:OnEvent(event, arg1, ...)
     -- print('ProfessionMixin', event)
 
-    if self:IsShown() then self:Refresh(false) end
+    if event == 'CRAFT_SHOW' then
+        self:Show()
+        self:Refresh(false)
+    elseif event == 'CRAFT_CLOSE' then
+        self:Hide()
+    else
+        if self:IsShown() then self:Refresh(false) end
+    end
     --[[ 
     if event == 'CRAFT_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
         if self:IsShown() then self:Refresh(false) end
@@ -281,6 +283,16 @@ function DragonFlightUIProfessionCraftMixin:AnchorButtons()
     create:ClearAllPoints()
     create:SetParent(self)
     create:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
+
+    local points = CraftFramePointsText
+    points:ClearAllPoints()
+    points:SetParent(self)
+    points:SetPoint('RIGHT', create, 'LEFT', -20, 0)
+
+    local label = CraftFramePointsLabel
+    label:ClearAllPoints()
+    label:SetParent(self)
+    label:SetPoint('RIGHT', points, 'LEFT', -5, 0)
 end
 
 function DragonFlightUIProfessionCraftMixin:SetupFavorite()
@@ -808,6 +820,7 @@ professionDataTable[794] = {
     icon = 441139
 } -- archeology
 professionDataTable[666] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136242} -- poison
+professionDataTable[667] = {tex = 'professionbackgroundart', bar = 'professionsfxskinning', icon = 132162} -- beast training
 
 function DragonFlightUIProfessionCraftMixin:UpdateHeader()
     self.NineSlice.Text:SetText('**')
@@ -822,6 +835,7 @@ function DragonFlightUIProfessionCraftMixin:UpdateHeader()
     local profData = professionDataTable[skillID]
 
     local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
+    if not nameLoc then nameLoc = GetCraftSkillLine(1) end -- beast training
 
     -- print(nameLoc, skillID, icon)
     -- self.NineSlice.Text:SetText(nameLoc) 
@@ -858,6 +872,8 @@ end
 function DragonFlightUIProfessionCraftMixin:GetProfessionID()
     -- localized...
     local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
+
+    if not nameLoc then nameLoc = GetCraftSkillLine(1) end -- beast training
 
     local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
     local profData = professionDataTable[skillID]
@@ -913,8 +929,19 @@ function DFProfessionsCraftRecipeListMixin:OnLoad()
             factory("ProfessionsRecipeListCategoryTemplate", Initializer);
         elseif elementData.recipeInfo then
             local function Initializer(button, node)
+
                 button:Init(node, false);
 
+                if elementData.recipeInfo.craftSubSpellName then
+                    button.Count:SetText(" (" .. elementData.recipeInfo.craftSubSpellName .. ")")
+                    button.Count:Show()
+
+                    local padding = 10;
+                    local countWidth = button.Count:GetStringWidth() or 0;
+                    local width = button:GetWidth() - (countWidth + padding + button.SkillUps:GetWidth());
+                    button.Label:SetWidth(button:GetWidth());
+                    button.Label:SetWidth(math.min(width, button.Label:GetStringWidth()));
+                end
                 -- print('init', elementData.id, self.selectedSkill)
                 if elementData.id == self.selectedSkill then self.selectionBehavior:Select(button) end
                 local selected = self.selectionBehavior:IsElementDataSelected(node);
@@ -1086,6 +1113,12 @@ function DFProfessionsCraftRecipeListMixin:UpdateRecipeList()
         local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
             GetCraftInfo(i)
 
+        if skillType == "none" then
+            skillType = "easy"
+        elseif skillType == "used" then
+            skillType = "trivial"
+        end
+
         if craftType == 'header' then
             -- local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
             -- dataProvider:Insert(data)
@@ -1099,6 +1132,7 @@ function DFProfessionsCraftRecipeListMixin:UpdateRecipeList()
                 isFavorite = isFavorite,
                 recipeInfo = {
                     name = skillName,
+                    craftSubSpellName = craftSubSpellName,
                     skillType = skillType,
                     numAvailable = numAvailable,
                     isExpanded = isExpanded
