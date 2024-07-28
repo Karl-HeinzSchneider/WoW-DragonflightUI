@@ -276,6 +276,19 @@ function DragonFlightUIProfessionMixin:AnchorButtons()
     local createAll = TradeSkillCreateAllButton
     createAll:SetParent(self)
 
+    if true then
+        createAll:SetScript('OnClick', function()
+            if ((not PartialPlayTime()) and (not NoPlayTime())) then
+                local index = GetTradeSkillSelectionIndex()
+                local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(index);
+
+                TradeSkillInputBox:SetNumber(numAvailable);
+                DoTradeSkill(index, numAvailable);
+                TradeSkillInputBox:ClearFocus();
+            end
+        end)
+    end
+
     local input = TradeSkillInputBox
     input:SetParent(self)
 
