@@ -54,6 +54,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
+            activate = true,
             hideMacro = false,
             hideKeybind = false
         },
@@ -71,6 +72,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
+            activate = true,
             hideMacro = false,
             hideKeybind = false
         },
@@ -88,6 +90,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
+            activate = true,
             hideMacro = false,
             hideKeybind = false
         },
@@ -105,6 +108,7 @@ local defaults = {
             buttons = 12,
             padding = 2,
             alwaysShow = true,
+            activate = true,
             hideMacro = false,
             hideKeybind = false
         },
@@ -684,7 +688,7 @@ local function GetBarOption(n)
         }
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
-    elseif n <= 5 then
+    elseif n <= 5 and false then
         local moreOptions = {
             activate = {
                 type = 'toggle',
