@@ -568,6 +568,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
 
         local cd = _G[btnName .. 'Cooldown']
         cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
+        cd:SetSize(45, 45)
         -- cd:GetSwipeTexture():SetAlpha(0.5)
 
         local floatingBG = _G[btnName .. 'FloatingBG']
