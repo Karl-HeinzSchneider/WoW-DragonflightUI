@@ -499,10 +499,12 @@ local function SetActionBarToggle(index, value)
 end
 
 local function ActivateAllActionbars()
-    SHOW_MULTI_ACTIONBAR_1 = true
-    SHOW_MULTI_ACTIONBAR_2 = true
-    SHOW_MULTI_ACTIONBAR_3 = true
-    SHOW_MULTI_ACTIONBAR_4 = true
+    -- TODO: better system, without taint
+    if true then return end
+    -- SHOW_MULTI_ACTIONBAR_1 = true
+    -- SHOW_MULTI_ACTIONBAR_2 = true
+    -- SHOW_MULTI_ACTIONBAR_3 = true
+    -- SHOW_MULTI_ACTIONBAR_4 = true
     SetActionBarToggles(1, 1, 1, 1, 1)
     SetActionBarToggles(true, true, true, true, true)
     MultiActionBar_Update()
