@@ -2806,7 +2806,7 @@ function Module.ChangePartyFrame()
         name:SetSize(57, 12)
         name:SetPoint('TOPLEFT', 46, -6)
 
-        if DF.Era then name:SetWidth(67) end
+        if DF.Era then name:SetWidth(100) end
 
         -- layer = 'ARTWORK' => Status
 
