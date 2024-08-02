@@ -236,6 +236,50 @@ local minimapOptions = {
         }
     }
 }
+do
+    local moreOptions = {
+        rotate = {
+            type = 'toggle',
+            name = ROTATE_MINIMAP,
+            desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+            order = 13,
+            blizzard = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do minimapOptions.args[k] = v end
+
+    minimapOptions.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'rotate' then
+            local value = C_CVar.GetCVarBool("rotateMinimap")
+            if value == 1 then
+                return true
+            else
+                return false
+            end
+        else
+            return getOption(info)
+        end
+    end
+
+    minimapOptions.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'rotate' then
+            if value then
+                C_CVar.SetCVar("rotateMinimap", 1)
+            else
+                C_CVar.SetCVar("rotateMinimap", 0)
+            end
+        else
+            setOption(info, value)
+        end
+    end
+end
 
 local buffsOptions = {
     type = 'group',
@@ -1031,15 +1075,31 @@ function Module.ChangeTrackingEra()
 end
 
 function Module.DrawMinimapBorder()
-    local texture = Minimap:CreateTexture()
+    local texture = Minimap:CreateTexture('DragonflightUIMinimapBorder', 'ARTWORK')
     texture:SetDrawLayer('ARTWORK', 7)
     texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     texture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
-    texture:SetPoint('CENTER', 'Minimap', 'CENTER', 1, 0)
+    texture:SetPoint('CENTER', Minimap, 'CENTER', 1, 0)
     local delta = 22
     local dx = 6
     texture:SetSize(140 + delta - dx, 140 + delta)
     -- texture:SetScale(0.88)
+
+    -- MinimapCompassTexture:SetDrawLayer('ARTWORK', 7)
+    MinimapCompassTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    MinimapCompassTexture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
+    MinimapCompassTexture:SetSize(140 + delta - dx, 140 + delta)
+    MinimapCompassTexture:SetScale(1)
+    MinimapCompassTexture:ClearAllPoints()
+    MinimapCompassTexture:SetPoint('CENTER', Minimap, 'CENTER', 1, 0)
+
+    hooksecurefunc(MinimapCompassTexture, 'Show', function()
+        texture:Hide()
+    end)
+
+    hooksecurefunc(MinimapCompassTexture, 'Hide', function()
+        texture:Show()
+    end)
 
     frame.minimap = texture
 end
