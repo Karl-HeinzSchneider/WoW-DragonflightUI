@@ -24,7 +24,8 @@ local defaults = {
             anchor = 'TOPRIGHT',
             anchorParent = 'TOPLEFT',
             x = -55,
-            y = -13
+            y = -13,
+            expanded = true
         },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
@@ -349,6 +350,13 @@ local buffsOptions = {
             max = 2500,
             bigStep = 1,
             order = 6
+        },
+        expanded = {
+            type = 'toggle',
+            name = 'Expanded',
+            desc = '' .. getDefaultStr('expanded', 'buffs'),
+            order = 10,
+            new = true
         }
     }
 }
@@ -1146,10 +1154,69 @@ function Module.LockMinimap(locked)
     end
 end
 
+function Module.CreateBuffFrame()
+    local f = CreateFrame('FRAME', 'DragonflightUIBuffFrame', UIParent)
+    f:SetSize(30 + (10 - 1) * 35, 30 + (3 - 1) * 35)
+    f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13)
+    Module.DFBuffFrame = f
+
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
+
+    local toggleFrame = CreateFrame('FRAME', 'DragonflightUIBuffFrameToggleFrame', f)
+    toggleFrame:SetSize(16, 30)
+    toggleFrame:SetPoint('TOPLEFT', f, 'TOPRIGHT', 0, 0)
+    Module.DFToggleFrame = toggleFrame
+
+    local toggle = CreateFrame('CHECKBUTTON', 'DragonflightUI', toggleFrame)
+    toggle:SetSize(16, 30)
+    toggle:SetPoint('CENTER', toggleFrame, 'CENTER', 0, 0)
+    toggle:SetScale(0.48)
+    toggle:SetHitRectInsets(-10, -10, -15, -15)
+
+    Module.DFToggleFrame.Toggle = toggle
+
+    toggle:SetNormalTexture(base)
+    toggle:SetPushedTexture(base)
+    toggle:SetHighlightTexture(base)
+    toggle:GetNormalTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    toggle:GetHighlightTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+    toggle:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
+
+    toggle:SetScript('OnClick', function()
+        setOption({'buffs', 'expanded'}, not Module.db.profile.buffs.expanded)
+    end)
+end
+
 function Module.UpdateBuffState(state)
+    local f = Module.DFBuffFrame
+    f:SetScale(state.scale)
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    -- local toggelFrame = Module.DFToggleFrame
+    -- toggleFrame:SetScale(state.scale)
+    do
+        local rotation
+
+        if (state.expanded) then
+            rotation = math.pi
+        else
+            rotation = 0
+        end
+
+        local toggle = Module.DFToggleFrame.Toggle
+
+        toggle:GetNormalTexture():SetRotation(rotation)
+        toggle:GetPushedTexture():SetRotation(rotation)
+        toggle:GetHighlightTexture():SetRotation(rotation)
+    end
+
     BuffFrame:SetScale(state.scale)
     BuffFrame:ClearAllPoints()
-    BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    -- BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    BuffFrame:SetPoint('TOPRIGHT', f, 'TOPRIGHT', 0, 0)
+
+    BuffFrame:SetShown(state.expanded)
 
     TemporaryEnchantFrame:SetScale(state.scale)
 end
@@ -1459,6 +1526,7 @@ function Module.Wrath()
     Module.ChangeZoneText()
     Module.ChangeTracking()
     Module.DrawMinimapBorder()
+    Module.CreateBuffFrame()
     Module.MoveBuffs()
     Module.MoveTracker()
     Module.ChangeLFG()
