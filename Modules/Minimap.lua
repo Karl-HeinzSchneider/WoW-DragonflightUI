@@ -33,7 +33,7 @@ local defaults = {
             anchor = 'TOPRIGHT',
             anchorParent = 'TOPLEFT',
             x = -55,
-            y = -13 - 120
+            y = -13 - 110
         },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
@@ -1693,6 +1693,8 @@ function Module.Era()
     Module.DrawMinimapBorder()
     Module.CreateBuffFrame()
     Module.MoveBuffs()
+    Module.CreateDebuffFrame()
+    Module.MoveDebuffs()
     Module.MoveTracker()
     Module.HookMouseWheel()
     Module.ChangeMail()
