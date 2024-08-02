@@ -254,12 +254,7 @@ do
         local sub = info[2]
 
         if sub == 'rotate' then
-            local value = C_CVar.GetCVarBool("rotateMinimap")
-            if value == 1 then
-                return true
-            else
-                return false
-            end
+            return C_CVar.GetCVarBool("rotateMinimap")
         else
             return getOption(info)
         end
@@ -377,7 +372,7 @@ if DF.Cata then
         local sub = info[2]
 
         if sub == 'consolidate' then
-            C_CVar.GetCVarBool("consolidateBuffs")
+            return C_CVar.GetCVarBool("consolidateBuffs")
         else
             return getOption(info)
         end
