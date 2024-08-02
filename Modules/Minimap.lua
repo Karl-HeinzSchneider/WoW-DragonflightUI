@@ -16,6 +16,8 @@ local defaults = {
             x = -10,
             y = -105,
             locked = true,
+            showPing = false,
+            showPingChat = false,
             durability = 'BOTTOM'
         },
         buffs = {
@@ -229,6 +231,20 @@ local minimapOptions = {
             desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
                 getDefaultStr('locked', 'minimap'),
             order = 10
+        },
+        showPing = {
+            type = 'toggle',
+            name = 'Show Ping',
+            desc = '(NOT YET IMPLEMENTED)' .. getDefaultStr('showPing', 'minimap'),
+            order = 11,
+            new = true
+        },
+        showPingChat = {
+            type = 'toggle',
+            name = 'Show Ping in Chat',
+            desc = '' .. getDefaultStr('showPingChat', 'minimap'),
+            order = 12,
+            new = true
         },
         durability = {
             type = 'select',
@@ -1647,8 +1663,31 @@ function Module.ChangeMinimapButtons()
     end)
 end
 
-function frame:OnEvent(event, arg1)
+function Module.HandlePing(unit, y, x)
+    -- print('HandlePing', unit, y, x, UnitIsVisible(unit))
+
+    if not UnitIsVisible(unit) then return end
+
+    local unitName = UnitName(unit)
+
+    local state = Module.db.profile.minimap
+
+    if state.showPing then
+        --
+    end
+
+    if state.showPingChat then
+        --
+        DF:Print('<Ping>', unitName)
+    end
+end
+
+function frame:OnEvent(event, arg1, arg2, arg3)
     -- print('event', event) 
+    if event == 'MINIMAP_PING' then
+        --
+        Module.HandlePing(arg1, arg2, arg3)
+    end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
@@ -1679,6 +1718,7 @@ function Module.Wrath()
     Module.UpdateCalendar()
 
     -- frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('MINIMAP_PING')
 end
 
 -- Era
@@ -1708,4 +1748,5 @@ function Module.Era()
         DF.Compatibility:ClassicCalendarEra()
     end)
     -- frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('MINIMAP_PING')
 end
