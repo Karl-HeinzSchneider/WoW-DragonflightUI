@@ -27,6 +27,14 @@ local defaults = {
             y = -13,
             expanded = true
         },
+        debuffs = {
+            scale = 1,
+            anchorFrame = 'MinimapCluster',
+            anchor = 'TOPRIGHT',
+            anchorParent = 'TOPLEFT',
+            x = -55,
+            y = -13 - 120
+        },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
 }
@@ -407,6 +415,83 @@ if DF.Cata then
     end
 end
 
+local debuffsOptions = {
+    type = 'group',
+    name = 'Debuffs',
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'debuffs'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'debuffs'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'debuffs'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'debuffs'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'debuffs'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'debuffs'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        }
+    }
+}
+
 local trackerOptions = {
     type = 'group',
     name = 'Tracker',
@@ -538,6 +623,15 @@ function Module:RegisterOptionScreens()
         end
     })
 
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Debuffs', {
+        name = 'Debuffs',
+        sub = 'debuffs',
+        options = debuffsOptions,
+        default = function()
+            setDefaultSubValues('debuffs')
+        end
+    })
+
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
         name = 'Questtracker',
         sub = 'tracker',
@@ -563,6 +657,7 @@ function Module:ApplySettings()
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
     Module.UpdateBuffState(db.buffs)
+    Module.UpdateDebuffState(db.debuffs)
 end
 
 local frame = CreateFrame('FRAME')
@@ -1229,6 +1324,48 @@ function Module.MoveBuffs()
     end)
 end
 
+function Module.CreateDebuffFrame()
+    local f = CreateFrame('FRAME', 'DragonflightUIDebuffFrame', UIParent)
+    f:SetSize(30 + (10 - 1) * 35, 30 + (2 - 1) * 35)
+    f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13 - 110)
+    Module.DFDebuffFrame = f
+end
+
+function Module.MoveDebuffs()
+    local f = Module.DFDebuffFrame
+    hooksecurefunc('DebuffButton_UpdateAnchors', function(buttonName, index)
+        -- print('update', buttonName, index)
+
+        local state = Module.db.profile.debuffs
+        local buff = _G[buttonName .. index];
+        buff:SetScale(state.scale)
+        buff:SetParent(f)
+        -- buff:Show()
+
+        if index ~= 1 then return end
+
+        -- buff:SetPoint("TOPRIGHT", BuffFrame, "BOTTOMRIGHT", 0, -DebuffButton1.offsetY);
+        buff:ClearAllPoints()
+        buff:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0);
+    end)
+end
+
+function Module.UpdateDebuffState(state)
+    local f = Module.DFDebuffFrame
+    f:SetScale(state.scale)
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+
+    for i = 1, 12 do
+        local buff = _G['DebuffButton' .. i];
+        if buff then
+            buff:SetScale(state.scale)
+            buff:SetParent(f)
+            -- buff:Show()
+        end
+    end
+end
+
 function Module.MoveTracker()
     local setting
 
@@ -1528,6 +1665,8 @@ function Module.Wrath()
     Module.DrawMinimapBorder()
     Module.CreateBuffFrame()
     Module.MoveBuffs()
+    Module.CreateDebuffFrame()
+    Module.MoveDebuffs()
     Module.MoveTracker()
     Module.ChangeLFG()
     -- Module.CreateLFGAnimation()
