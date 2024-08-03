@@ -112,7 +112,7 @@ end
 
 function DragonFlightUIProfessionCraftMixin:Refresh(force)
     self:UpdateHeader()
-    --  self:UpdateRecipeName()
+    -- self:UpdateRecipeName()
     self:CheckFilter()
 
     do
@@ -513,8 +513,8 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
         reagentNameText:SetJustifyH("LEFT");
 
         local updateText = function()
-            local index = GetTradeSkillSelectionIndex()
-            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(index, i);
+            local index = GetCraftSelectionIndex()
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetCraftReagentInfo(index, i);
 
             if (not reagentName or not reagentTexture) then return end
 
@@ -522,7 +522,7 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
 
             reagentNameText:SetText(newText)
 
-            local link = GetTradeSkillReagentItemLink(index, i)
+            local link = GetCraftReagentItemLink(index, i)
 
             if link then
                 local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
@@ -531,11 +531,11 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
             end
         end
 
-        --[[   hooksecurefunc(reagentCountText, 'SetText', function()
+        hooksecurefunc(reagentCountText, 'SetText', function()
             updateText(i)
         end)
         updateText(i)
-        ]]
+
         local reagentNameFrame = _G['CraftReagent' .. i .. 'NameFrame']
         reagentNameFrame:Hide()
     end
@@ -546,12 +546,12 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
 end
 
 function DragonFlightUIProfessionCraftMixin:UpdateRecipeName()
-    local index = GetTradeSkillSelectionIndex()
+    local index = GetCraftSelectionIndex()
 
     local quality = DragonFlightUIProfessionCraftMixin:GetRecipeQuality(index)
     local r, g, b, hex = GetItemQualityColor(quality)
 
-    local name = TradeSkillSkillName
+    local name = CraftName
     name:SetTextColor(r, g, b)
 
     local stringWidth = name:GetStringWidth()
@@ -570,7 +570,7 @@ function DragonFlightUIProfessionCraftMixin:GetRecipeQuality(index)
 
     if not index or index == 0 then return 1 end
 
-    tooltip:SetTradeSkillItem(index)
+    tooltip:SetCraftSpell(index)
 
     local name, link = tooltip:GetItem()
 
