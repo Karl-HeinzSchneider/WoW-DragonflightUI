@@ -11,6 +11,7 @@ local defaults = {
         first = {
             changeBag = true,
             itemcolor = true,
+            changeCharacterframe = true,
             changeTradeskill = true,
             changeTrainer = true,
             changeTalents = true,
@@ -58,11 +59,18 @@ local UIOptions = {
             desc = '' .. getDefaultStr('itemcolor', 'first'),
             order = 22
         },
+        changeCharacterframe = {
+            type = 'toggle',
+            name = 'Change Characterframe',
+            desc = '' .. getDefaultStr('changeCharacterframe', 'first'),
+            order = 22.1,
+            new = true
+        },
         changeTradeskill = {
             type = 'toggle',
             name = 'Change Profession Window',
             desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
-            order = 22
+            order = 22.2
         },
         changeTrainer = {
             type = 'toggle',
@@ -220,6 +228,28 @@ function Module:ApplySettings()
         DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
     end
 
+    if db.changeCharacterframe and not Module.CharacterHooked then
+        Module.CharacterHooked = true
+
+        if DF.Cata then
+            DragonflightUIMixin:ChangeCharacterFrameCata()
+            Module:HookCharacterLevel()
+        elseif DF.Era then
+            DragonflightUIMixin:ChangeCharacterFrameEra()
+            Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
+                EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 9, -75)
+            end)
+            Module:FuncOrWaitframe('CharacterStatsClassic', function()
+                DF.Compatibility:CharacterStatsClassic()
+            end)
+            Module:FuncOrWaitframe('TacoTip', function()
+                DF.Compatibility:TacoTipCharacter()
+            end)
+        end
+    elseif not db.changeCharacterframe and Module.CharacterHooked then
+        DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
+    end
+
     if db.changeTalents and not Module.TalentsHooked and DF.Era then
         Module.TalentsHooked = true
         Module:FuncOrWaitframe('Blizzard_TalentUI', function()
@@ -257,7 +287,7 @@ function Module:ChangeFrames()
     if DF.Cata then
         --
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-        DragonflightUIMixin:ChangeCharacterFrameCata()
+        -- DragonflightUIMixin:ChangeCharacterFrameCata()
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
@@ -348,16 +378,16 @@ function Module:ChangeFrames()
         Module:FuncOrWaitframe('WhatsTraining', function()
             DF.Compatibility:WhatsTraining()
         end)
-        DragonflightUIMixin:ChangeCharacterFrameEra()
+        --[[ DragonflightUIMixin:ChangeCharacterFrameEra()
         Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
             EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 9, -75)
         end)
         Module:FuncOrWaitframe('CharacterStatsClassic', function()
             DF.Compatibility:CharacterStatsClassic()
-        end)
+        end) 
         Module:FuncOrWaitframe('TacoTip', function()
             DF.Compatibility:TacoTipCharacter()
-        end)
+        end) ]]
         if IsAddOnLoaded('Leatrix_Plus') then
             --
             if QuestLogFrame:GetWidth() > 400 then
@@ -674,7 +704,7 @@ end
 function Module.Cata()
     Module:ChangeFrames()
     Module:HookCharacterFrame()
-    Module:HookCharacterLevel()
+    -- Module:HookCharacterLevel()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
