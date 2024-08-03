@@ -2978,6 +2978,7 @@ function Module.ChangeMicroMenuNew()
         MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
         MainMenuBarPerformanceBar:SetSize(19, 39)
 
+        Module.HookMicromenuOverride()
     elseif DF.Era then
         Module.ChangeCharacterMicroButton()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
@@ -2995,6 +2996,8 @@ function Module.ChangeMicroMenuNew()
         Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
 
         MainMenuBarPerformanceBarFrame:Hide()
+
+        Module.HookMicromenuOverride()
     end
 
 end
