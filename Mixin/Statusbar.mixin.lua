@@ -152,11 +152,6 @@ end
 function DragonflightUIXPBarMixin:Update()
     local state = self.state
 
-    self:SetScale(state.scale)
-
-    self:SetWidth(state.width)
-    self:SetHeight(state.height)
-
     local showXP = false
     if DF.Wrath then
         showXP = UnitLevel('player') < GetMaxPlayerLevel() and not IsXPUserDisabled()
@@ -191,6 +186,11 @@ function DragonflightUIXPBarMixin:Update()
         self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
         self:Collapse(not showXP)
+
+        self:SetScale(state.scale)
+
+        self:SetWidth(state.width)
+        self:SetHeight(state.height)
     end
 end
 
