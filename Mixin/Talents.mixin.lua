@@ -1031,10 +1031,16 @@ function DragonflightUITalentsFrameMixin:OnLoad()
 
     activeSpec = GetActiveTalentGroup()
     selectedSpec = activeSpec
+
+    hooksecurefunc('ToggleTalentFrame', function()
+        --
+        -- print('ToggleTalentFrame')
+        self:Refresh()
+    end)
 end
 
 function DragonflightUITalentsFrameMixin:OnShow()
-    print('DragonflightUITalentsFrameMixin:OnShow()')
+    -- print('DragonflightUITalentsFrameMixin:OnShow()')
     self:Refresh()
 end
 
@@ -1046,6 +1052,8 @@ end
 
 function DragonflightUITalentsFrameMixin:Refresh()
     -- print('DragonflightUITalentsFrameMixin:Refresh()')
+    activeSpec = GetActiveTalentGroup()
+
     for k, panel in ipairs(self.Panels) do panel:Refresh() end
 
     PlayerTalentFrame.UpdateDFHeaderText()
