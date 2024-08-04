@@ -1034,7 +1034,7 @@ function DragonflightUITalentsFrameMixin:OnLoad()
 end
 
 function DragonflightUITalentsFrameMixin:OnShow()
-    print('DragonflightUITalentsFrameMixin:OnShow()')
+    --print('DragonflightUITalentsFrameMixin:OnShow()')
     self:Refresh()
 end
 
