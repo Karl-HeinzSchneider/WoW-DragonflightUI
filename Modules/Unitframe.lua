@@ -2604,7 +2604,6 @@ function Module.HookFunctions()
 end
 
 function Module.ChangePetFrame()
-    frame.PetFrameChanged = true
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
@@ -3212,11 +3211,7 @@ function frame:OnEvent(event, arg1)
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
     elseif event == 'PET_BAR_UPDATE' then
-        -- print('PET_BAR_UPDATE')
-        if not frame.PetFrameChanged then
-            Module.ChangePetFrame()
-            Module.ApplySettings()
-        end
+        -- print('PET_BAR_UPDATE')      
     elseif event == 'UNIT_POWER_UPDATE' then
         -- print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
@@ -3238,9 +3233,6 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
         end
-        -- Module.ChangePetFrame()
-        -- Module.ChangePartyFrame()
-
         Module.ChangeFonts()
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
@@ -3427,6 +3419,7 @@ function Module.Wrath()
     Module.ApplyPortraitMask()
     Module.HookClassIcon()
     Module.ChangePartyFrame()
+    Module.ChangePetFrame()
 end
 
 function Module.Era()
@@ -3460,4 +3453,5 @@ function Module.Era()
     Module.ChangePartyFrame()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
+    Module.ChangePetFrame()
 end
