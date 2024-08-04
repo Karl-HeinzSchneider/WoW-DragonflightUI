@@ -1031,6 +1031,12 @@ function DragonflightUITalentsFrameMixin:OnLoad()
 
     activeSpec = GetActiveTalentGroup()
     selectedSpec = activeSpec
+
+    hooksecurefunc('ToggleTalentFrame', function()
+        --
+        -- print('ToggleTalentFrame')
+        self:Refresh()
+    end)
 end
 
 function DragonflightUITalentsFrameMixin:OnShow()
