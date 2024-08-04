@@ -230,6 +230,15 @@ local defaults = {
             x = 0,
             y = 2
         },
+        possess = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOMLEFT',
+            anchorParent = 'TOPLEFT',
+            x = -4,
+            y = 2,
+            offset = true
+        },
         bags = {
             scale = 1,
             anchorFrame = 'UIParent',
@@ -1274,6 +1283,92 @@ local totemOptions = {
     }
 }
 
+local possessOptions = {
+    name = 'Possessbar',
+    desc = 'Possessbar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'possess'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'possess'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'possess'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'possess'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'possess'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'possess'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        offset = {
+            type = 'toggle',
+            name = 'Auto adjust offset',
+            desc = 'Auto add some Y offset depending on the class, e.g. on Paladin to make room for the stance bar' ..
+                getDefaultStr('offset', 'possess'),
+            order = 11,
+            new = true
+        }
+    }
+}
+
 local bagsOptions = {
     name = 'Bags',
     desc = 'Bags',
@@ -1676,7 +1771,7 @@ function Module:SetupActionbarFrames()
     end)
 
     do
-        local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
+        local bar = CreateFrame('FRAME', 'DragonflightUIPetbar', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}
 
         for i = 1, 10 do
@@ -1693,8 +1788,7 @@ function Module:SetupActionbarFrames()
     end
 
     do
-        local bar = CreateFrame('FRAME', 'DragonflightUIStancebarFrame', UIParent,
-                                'DragonflightUIActionbarFrameTemplate')
+        local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIActionbarFrameTemplate')
         local buttons = {}
 
         for i = 1, 10 do
@@ -1759,6 +1853,15 @@ function Module:RegisterOptionScreens()
         options = repOptions,
         default = function()
             setDefaultSubValues('rep')
+        end
+    })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Possessbar', {
+        name = 'Possessbar',
+        sub = 'possess',
+        options = possessOptions,
+        default = function()
+            setDefaultSubValues('possess')
         end
     })
 
@@ -1863,7 +1966,7 @@ function Module:ApplySettings()
     Module.UpdateBagState(db.bags)
     Module.UpdateMicromenuState(db.micro)
 
-    Module.ChangePossessBar()
+    Module.UpdatePossesbarState(db.possess)
 end
 
 -- Actionbar
@@ -2434,15 +2537,17 @@ function Module.MoveTotem()
     end)
 end
 
-function Module.ChangePossessBar()
+function Module.UpdatePossesbarState(state)
     PossessBarFrame.ignoreFramePositionManager = true
 
+    local offset = (GetNumShapeshiftForms() > 0) and _G['DragonflightUIStancebar']:GetHeight() or 0
+    local offset = state.offset and offset or 0
+
     PossessBarFrame:ClearAllPoints()
-    -- PossessBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
-    local ab = _G['DragonflightUIActionbarFrame1']
-    local dy = 2 * ab:GetHeight() + 2
-    local dx = -2
-    PossessBarFrame:SetPoint('BOTTOMLEFT', ab, 'TOPLEFT', dx, dy)
+    local parent = _G[state.anchorFrame]
+    PossessBarFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y + offset)
+
+    PossessBarFrame:SetScale(state.scale)
 end
 
 function frame:OnEvent(event, arg1)
