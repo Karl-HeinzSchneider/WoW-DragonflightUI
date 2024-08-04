@@ -230,6 +230,14 @@ local defaults = {
             x = 0,
             y = 2
         },
+        possess = {
+            scale = 1,
+            anchorFrame = 'DragonflightUIActionbarFrame3',
+            anchor = 'BOTTOM',
+            anchorParent = 'TOP',
+            x = 0,
+            y = 2
+        },
         bags = {
             scale = 1,
             anchorFrame = 'UIParent',
@@ -1274,6 +1282,84 @@ local totemOptions = {
     }
 }
 
+local possessOptions = {
+    name = 'Possessbar',
+    desc = 'Possessbar',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'possess'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'possess'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'possess'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'possess'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'possess'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'possess'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        }
+    }
+}
+
 local bagsOptions = {
     name = 'Bags',
     desc = 'Bags',
@@ -1759,6 +1845,15 @@ function Module:RegisterOptionScreens()
         options = repOptions,
         default = function()
             setDefaultSubValues('rep')
+        end
+    })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Possessbar', {
+        name = 'Possessbar',
+        sub = 'possess',
+        options = possessOptions,
+        default = function()
+            setDefaultSubValues('possess')
         end
     })
 
