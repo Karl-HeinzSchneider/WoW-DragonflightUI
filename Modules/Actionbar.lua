@@ -233,10 +233,11 @@ local defaults = {
         possess = {
             scale = 1,
             anchorFrame = 'DragonflightUIActionbarFrame3',
-            anchor = 'BOTTOM',
-            anchorParent = 'TOP',
-            x = 0,
-            y = 2
+            anchor = 'BOTTOMLEFT',
+            anchorParent = 'TOPLEFT',
+            x = -4,
+            y = 2,
+            offset = true
         },
         bags = {
             scale = 1,
@@ -1356,6 +1357,14 @@ local possessOptions = {
             max = 2500,
             bigStep = 1,
             order = 6
+        },
+        offset = {
+            type = 'toggle',
+            name = 'Auto adjust offset',
+            desc = 'Auto add some Y offset depending on the class, e.g. on Paladin to make room for the stance bar' ..
+                getDefaultStr('offset', 'possess'),
+            order = 11,
+            new = true
         }
     }
 }
@@ -1762,7 +1771,7 @@ function Module:SetupActionbarFrames()
     end)
 
     do
-        local bar = CreateFrame('FRAME', 'DragonflightUIPetbarFrame', UIParent, 'DragonflightUIPetbarFrameTemplate')
+        local bar = CreateFrame('FRAME', 'DragonflightUIPetbar', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}
 
         for i = 1, 10 do
@@ -1779,8 +1788,7 @@ function Module:SetupActionbarFrames()
     end
 
     do
-        local bar = CreateFrame('FRAME', 'DragonflightUIStancebarFrame', UIParent,
-                                'DragonflightUIActionbarFrameTemplate')
+        local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIActionbarFrameTemplate')
         local buttons = {}
 
         for i = 1, 10 do
@@ -1958,7 +1966,7 @@ function Module:ApplySettings()
     Module.UpdateBagState(db.bags)
     Module.UpdateMicromenuState(db.micro)
 
-    Module.ChangePossessBar()
+    Module.UpdatePossesbarState(db.possess)
 end
 
 -- Actionbar
@@ -2529,15 +2537,17 @@ function Module.MoveTotem()
     end)
 end
 
-function Module.ChangePossessBar()
+function Module.UpdatePossesbarState(state)
     PossessBarFrame.ignoreFramePositionManager = true
 
+    local offset = (GetNumShapeshiftForms() > 0) and _G['DragonflightUIStancebar']:GetHeight() or 0
+    local offset = state.offset and offset or 0
+
     PossessBarFrame:ClearAllPoints()
-    -- PossessBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4)
-    local ab = _G['DragonflightUIActionbarFrame1']
-    local dy = 2 * ab:GetHeight() + 2
-    local dx = -2
-    PossessBarFrame:SetPoint('BOTTOMLEFT', ab, 'TOPLEFT', dx, dy)
+    local parent = _G[state.anchorFrame]
+    PossessBarFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y + offset)
+
+    PossessBarFrame:SetScale(state.scale)
 end
 
 function frame:OnEvent(event, arg1)
