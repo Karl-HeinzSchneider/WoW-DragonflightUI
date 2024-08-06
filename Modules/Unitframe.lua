@@ -59,7 +59,8 @@ local defaults = {
             anchorParent = 'BOTTOMRIGHT',
             x = 4,
             y = 28,
-            hideStatusbarText = false
+            hideStatusbarText = false,
+            offset = true
         },
         party = {
             classcolor = false,
@@ -568,6 +569,21 @@ local optionsPet = {
     }
 }
 
+if DF.Cata then
+    local moreOptions = {
+        offset = {
+            type = 'toggle',
+            name = 'Auto adjust offset',
+            desc = 'Auto add some Y offset depending on the class, e.g. on Deathknight to make room for the rune display' ..
+                getDefaultStr('offset', 'pet'),
+            order = 11,
+            new = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsPet.args[k] = v end
+end
+
 local optionsFocus = {
     name = 'Focus',
     desc = 'FocusFrameDesc',
@@ -1040,7 +1056,8 @@ function Module:ApplySettings()
         local objLocal = localSettings.pet
 
         PetFrame:ClearAllPoints()
-        PetFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
+        local offsetY = DF.Cata and Module.GetPetOffset(obj.offset) or 0
+        PetFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y + offsetY)
 
         PetFrame:SetScale(obj.scale)
         Module.ReApplyTargetFrame()
@@ -2604,7 +2621,6 @@ function Module.HookFunctions()
 end
 
 function Module.ChangePetFrame()
-    frame.PetFrameChanged = true
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
@@ -2766,6 +2782,29 @@ function Module.ChangePetFrame()
     PetFrameManaBarText:SetScale(newPetTextScale)
     PetFrameManaBarTextLeft:SetScale(newPetTextScale)
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
+end
+
+function Module.GetPetOffset(offset)
+    if not offset then return 0 end
+
+    local _, class = UnitClass("player");
+
+    -- default -60
+    if (class == "DEATHKNIGHT") then
+        return -15
+        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -75);
+    elseif (class == "SHAMAN" or class == "DRUID") then
+        return -40
+        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -100);
+    elseif (class == "WARLOCK") then
+        return -20
+        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -80);
+    elseif (class == "PALADIN") then
+        return -30
+        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -90);
+    end
+
+    return 0
 end
 
 function Module.ChangePartyFrame()
@@ -3212,11 +3251,7 @@ function frame:OnEvent(event, arg1)
         Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
     elseif event == 'PET_BAR_UPDATE' then
-        -- print('PET_BAR_UPDATE')
-        if not frame.PetFrameChanged then
-            Module.ChangePetFrame()
-            Module.ApplySettings()
-        end
+        -- print('PET_BAR_UPDATE')      
     elseif event == 'UNIT_POWER_UPDATE' then
         -- print(event, arg1)
     elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
@@ -3238,9 +3273,6 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
         end
-        -- Module.ChangePetFrame()
-        -- Module.ChangePartyFrame()
-
         Module.ChangeFonts()
         Module.ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
@@ -3427,6 +3459,7 @@ function Module.Wrath()
     Module.ApplyPortraitMask()
     Module.HookClassIcon()
     Module.ChangePartyFrame()
+    Module.ChangePetFrame()
 end
 
 function Module.Era()
@@ -3460,4 +3493,5 @@ function Module.Era()
     Module.ChangePartyFrame()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
+    Module.ChangePetFrame()
 end
