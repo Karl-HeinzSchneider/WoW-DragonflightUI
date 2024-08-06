@@ -1160,9 +1160,17 @@ function Module.ChangeTrackingEra()
     -- MiniMapTrackingFrame:SetScale(0.75)
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 
-    MiniMapTrackingFrame:Show()
-    MiniMapTrackingFrame:SetParent(Minimap)
+    local updatePos = function()
+        MiniMapTrackingFrame:ClearAllPoints()
+        -- MiniMapTrackingFrame:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, -2)
+        MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'LEFT', 15, 56)
+        MiniMapTrackingFrame:SetParent(Minimap)
+    end
+
+    updatePos()
     MiniMapTrackingFrame:SetSize(33, 33)
+    -- MiniMapTrackingFrame:SetScale(0.75)
+    MiniMapTrackingFrame:SetScale(1.15)
 
     MiniMapTrackingBorder:SetSize(50, 50)
     MiniMapTrackingBorder:SetTexture(base .. 'minimap-trackingborder')
@@ -1173,19 +1181,22 @@ function Module.ChangeTrackingEra()
     MiniMapTrackingIcon:ClearAllPoints()
     MiniMapTrackingIcon:SetPoint("CENTER", MiniMapTrackingFrame, "CENTER", 0, 0)
 
-    local tex = MiniMapTrackingIcon:GetTexture()
+    hooksecurefunc('SetLookingForGroupUIAvailable', function()
+        --
+        -- print('SetLookingForGroupUIAvailable')
+        updatePos()
+    end)
+end
 
-    local updateTex = function()
-        SetPortraitToTexture(MiniMapTrackingIcon, tex)
+function Module.UpdateTrackingEra()
+    local icon = GetTrackingTexture();
+    if (icon) then
+        -- MiniMapTrackingIcon:SetTexture(icon);
+        SetPortraitToTexture(MiniMapTrackingIcon, icon)
+        MiniMapTrackingFrame:Show();
+    else
+        MiniMapTrackingFrame:Hide();
     end
-
-    local err = function(s)
-        -- print('error!', s)
-        MiniMapTrackingIcon:SetTexture(tex)
-    end
-
-    local status = xpcall(updateTex, err)
-
 end
 
 function Module.DrawMinimapBorder()
@@ -1687,6 +1698,9 @@ function frame:OnEvent(event, arg1, arg2, arg3)
     if event == 'MINIMAP_PING' then
         --
         Module.HandlePing(arg1, arg2, arg3)
+    elseif event == 'MINIMAP_UPDATE_TRACKING' then
+        -- print('MINIMAP_UPDATE_TRACKING', GetTrackingTexture())
+        Module.UpdateTrackingEra()
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
@@ -1729,7 +1743,8 @@ function Module.Era()
     Module.CreateMinimapInfoFrame()
     Module.ChangeClock()
     Module.ChangeZoneText()
-    -- Module.ChangeTrackingEra()
+    Module.ChangeTrackingEra()
+    Module.UpdateTrackingEra()
     Module.DrawMinimapBorder()
     Module.CreateBuffFrame()
     Module.MoveBuffs()
@@ -1749,4 +1764,5 @@ function Module.Era()
     end)
     -- frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('MINIMAP_PING')
+    frame:RegisterEvent('MINIMAP_UPDATE_TRACKING')
 end
