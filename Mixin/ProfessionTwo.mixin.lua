@@ -103,7 +103,7 @@ function DragonFlightUIProfessionCraftMixin:OnShow()
         linkButton:SetPoint('LEFT', self.NineSlice.Text, 'RIGHT', 5, 0)
     end
 
-    -- self:Refresh(true)
+    self:Refresh(true)
 end
 
 function DragonFlightUIProfessionCraftMixin:OnHide()
@@ -111,6 +111,7 @@ function DragonFlightUIProfessionCraftMixin:OnHide()
 end
 
 function DragonFlightUIProfessionCraftMixin:Refresh(force)
+    self:AnchorButtons()
     self:UpdateHeader()
     -- self:UpdateRecipeName()
     self:CheckFilter()
