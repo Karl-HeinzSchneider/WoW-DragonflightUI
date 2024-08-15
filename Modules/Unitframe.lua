@@ -2084,6 +2084,38 @@ function Module.ChangeTargetFrame()
     end
 end
 
+function Module.ChangeTargetComboFrame()
+    local c = ComboFrame
+    c:SetParent(TargetFrame)
+
+    local tex = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\classoverlaycombopoints'
+
+    for i = 1, 5 do
+        --
+        local point = _G['ComboPoint' .. i]
+
+        local regions = {point:GetRegions()}
+
+        for k, v in ipairs(regions) do
+            --
+            local layer = v:GetDrawLayer()
+            -- print(k, layer)
+            v:ClearAllPoints()
+            v:SetSize(12, 12)
+            v:SetPoint('CENTER', point, 'CENTER', 0, 0)
+            v:SetTexture(tex)
+
+            if layer == 'BACKGROUND' then
+                v:SetTexCoord(0.226562, 0.382812, 0.515625, 0.671875)
+            elseif layer == 'ARTWORK' then
+                v:SetTexCoord(0.226562, 0.382812, 0.34375, 0.5)
+            elseif layer == 'OVERLAY' then
+                v:SetTexCoord(0.0078125, 0.210938, 0.164062, 0.375)
+            end
+        end
+    end
+end
+
 function Module.ReApplyTargetFrame()
     if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
@@ -3265,6 +3297,7 @@ function frame:OnEvent(event, arg1)
         Module.ChangePlayerframe()
         Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
         Module.ChangeTargetFrame()
+        Module.ChangeTargetComboFrame()
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
         Module.ChangeStatusIcons()
