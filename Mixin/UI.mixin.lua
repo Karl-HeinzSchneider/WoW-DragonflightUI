@@ -131,8 +131,9 @@ function DragonflightUIMixin:ChangeBag(frame)
 
     local portBtn = _G[name .. 'PortraitButton']
     portBtn:ClearAllPoints()
-    portBtn:SetAlpha(0)
-    -- portBtn:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7 - 25, -5)
+    -- portBtn:SetAlpha(0)
+    portBtn:SetSize(36, 36)
+    portBtn:SetPoint('TOPLEFT', frame, 'TOPLEFT', -4, 1)
 
     frame.ClosePanelButton = _G[name .. 'CloseButton']
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
@@ -141,7 +142,7 @@ function DragonflightUIMixin:ChangeBag(frame)
     frame.Bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 2, -20)
     frame.Bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 3)
 
-    local pp = frame:CreateTexture()
+    local pp = frame:CreateTexture('DFPortraitBorder')
     pp:SetTexture(base .. 'ui-frame-portraitmetal-cornertopleftsmall')
     pp:SetSize(75, 76)
     pp:SetTexCoord(0, 150 / 256, 0, 150 / 256)
