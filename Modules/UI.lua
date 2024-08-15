@@ -12,6 +12,7 @@ local defaults = {
             changeBag = true,
             itemcolor = true,
             changeCharacterframe = true,
+            changeInspect = true,
             changeTradeskill = true,
             changeTrainer = true,
             changeTalents = true,
@@ -59,38 +60,45 @@ local UIOptions = {
             desc = '' .. getDefaultStr('itemcolor', 'first'),
             order = 22
         },
+        questLevel = {
+            type = 'toggle',
+            name = 'Show Questlevel',
+            desc = '' .. getDefaultStr('questLevel', 'first'),
+            order = 23
+        },
+        headerFrames = {type = 'header', name = 'Frames', desc = '...', order = 100},
         changeCharacterframe = {
             type = 'toggle',
-            name = 'Change Characterframe',
+            name = 'Change CharacterFrame',
             desc = '' .. getDefaultStr('changeCharacterframe', 'first'),
-            order = 22.1,
+            order = 101,
             new = true
         },
         changeTradeskill = {
             type = 'toggle',
             name = 'Change Profession Window',
             desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
-            order = 22.2
+            order = 102
+        },
+        changeTalents = {
+            type = 'toggle',
+            name = 'Change TalentFrame',
+            desc = '' .. getDefaultStr('changeTalents', 'first'),
+            order = 103,
+            new = true
+        },
+        changeInspect = {
+            type = 'toggle',
+            name = 'Change InspectFrame',
+            desc = '' .. getDefaultStr('changeInspect', 'first'),
+            order = 104,
+            new = true
         },
         changeTrainer = {
             type = 'toggle',
             name = 'Change Trainer Window',
             desc = '' .. getDefaultStr('changeTrainer', 'first'),
-            order = 24
-        },
-        changeTalents = {
-            type = 'toggle',
-            name = 'Change Talentframe',
-            desc = '' .. getDefaultStr('changeTalents', 'first'),
-            order = 25,
-            new = true
-        },
-        questLevel = {
-            type = 'toggle',
-            name = 'Show Questlevel',
-            desc = '' .. getDefaultStr('questLevel', 'first'),
-            order = 26,
-            new = true
+            order = 104
         }
     }
 }
@@ -103,13 +111,21 @@ function frame:OnEvent(event, arg1, ...)
         -- print('INSPECT_READY')
         local db = Module.db.profile.first
         if db.itemcolor then DragonflightUIItemColorMixin:HookInspectFrame() end
-        DragonflightUIMixin:ChangeInspectFrame()
-        if InspectFrame and not InspectFrame.DFTacoTipHooked then
-            --    
-            Module:FuncOrWaitframe('TacoTip', function()
-                DF.Compatibility:TacoTipInspect()
-            end)
-            InspectFrame.DFTacoTipHooked = true
+        if db.changeInspect and not Module.InspectHooked then
+            Module.InspectHooked = true
+
+            DragonflightUIMixin:ChangeInspectFrame()
+
+            if InspectFrame and not InspectFrame.DFTacoTipHooked then
+                --    
+                Module:FuncOrWaitframe('TacoTip', function()
+                    DF.Compatibility:TacoTipInspect()
+                end)
+                InspectFrame.DFTacoTipHooked = true
+            end
+        elseif not db.changeInspect and Module.InspectHooked then
+            DF:Print(
+                "'Change InspectFrame Window' was deactivated, but InspectFrame was already modified, please /reload.")
         end
     elseif event == 'BAG_UPDATE_DELAYED' then
         -- print('BAG_UPDATE_DELAYED')
