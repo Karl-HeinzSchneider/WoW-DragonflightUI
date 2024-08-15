@@ -199,8 +199,8 @@ elseif locale == 'zhTW' then
     PROFESSIONS_COOKING = "烹飪";
     PROFESSIONS_FISHING = "釣魚";
 
-    PROFESSIONS_POISON = "毒药"
-    PROFESSIONS_BEAST = "训练野兽"
+    PROFESSIONS_POISON = "毒藥"
+    PROFESSIONS_BEAST = "訓練野獸"
 end
 
 --[[ First Aid 	129										
