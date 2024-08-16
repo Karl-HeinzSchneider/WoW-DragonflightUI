@@ -17,7 +17,8 @@ local defaults = {
         castTimeMaxEnabled = true,
         compactLayout = true,
         showIcon = false,
-        showTicks = false
+        showTicks = false,
+        showRank = false
     }
 }
 Module:SetDefaults(defaults)
@@ -120,9 +121,14 @@ local options = {
         compactLayout = {type = 'toggle', name = 'Compact Layout', order = 106.1},
         showIcon = {type = 'toggle', name = 'Show Icon', order = 106.2},
         showTicks = {type = 'toggle', name = 'Show Ticks', order = 107.1}
-
     }
 }
+
+if DF.Era then
+    local moreOptions = {showRank = {type = 'toggle', name = 'Show Rank', order = 108}}
+
+    for k, v in pairs(moreOptions) do options.args[k] = v end
+end
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -180,6 +186,7 @@ function Module:ApplySettings()
     Module.Castbar:SetCompactLayout(db.compactLayout)
     Module.Castbar:SetShowTicks(db.showTicks)
     Module.Castbar:SetIconShown(db.showIcon)
+    Module.Castbar:SetShowRank(db.showRank)
     Module.Castbar.Icon:SetSize(db.sizeY, db.sizeY)
 end
 
