@@ -2318,7 +2318,7 @@ function Module.ChangeFocusFrame()
     FocusFrameBackground:Hide()
 
     if not frame.FocusFrameBackground then
-        local background = FocusFrame:CreateTexture('DragonflightUITargetFrameBackground')
+        local background = FocusFrame:CreateTexture('DragonflightUIFocusFrameBackground')
         background:SetDrawLayer('BACKGROUND', 2)
         background:SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
@@ -2327,7 +2327,7 @@ function Module.ChangeFocusFrame()
     end
 
     if not frame.FocusFrameBorder then
-        local border = FocusFrame:CreateTexture('DragonflightUITargetFrameBorder')
+        local border = FocusFrame:CreateTexture('DragonflightUIFocusFrameBorder')
         border:SetDrawLayer('ARTWORK', 2)
         border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
         border:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
