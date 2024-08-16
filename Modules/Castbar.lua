@@ -125,7 +125,7 @@ local options = {
 }
 
 if DF.Era then
-    local moreOptions = {showRank = {type = 'toggle', name = 'Show Rank', order = 108}}
+    local moreOptions = {showRank = {type = 'toggle', name = 'Show Rank', order = 108, new = true}}
 
     for k, v in pairs(moreOptions) do options.args[k] = v end
 end
