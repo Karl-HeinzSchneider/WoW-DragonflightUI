@@ -33,7 +33,8 @@ local defaults = {
             x = -19,
             y = -4,
             biggerHealthbar = false,
-            hideRedStatus = false
+            hideRedStatus = false,
+            hideIndicator = false
         },
         target = {
             classcolor = false,
@@ -60,7 +61,8 @@ local defaults = {
             x = 4,
             y = 28,
             hideStatusbarText = false,
-            offset = true
+            offset = true,
+            hideIndicator = false
         },
         party = {
             classcolor = false,
@@ -235,6 +237,13 @@ local optionsPlayer = {
             name = 'Hide In Combat Red Statusglow',
             desc = '' .. getDefaultStr('hideRedStatus', 'player'),
             order = 10,
+            new = true
+        },
+        hideIndicator = {
+            type = 'toggle',
+            name = 'Hide Hit Indicator',
+            desc = '' .. getDefaultStr('hideIndicator', 'player'),
+            order = 11,
             new = true
         }
     }
@@ -565,7 +574,14 @@ local optionsPet = {
             order = 8,
             disabled = true
         },
-        hideStatusbarText = {type = 'toggle', name = 'Hide Statusbar Text', desc = '', order = 10}
+        hideStatusbarText = {type = 'toggle', name = 'Hide Statusbar Text', desc = '', order = 10},
+        hideIndicator = {
+            type = 'toggle',
+            name = 'Hide Hit Indicator',
+            desc = '' .. getDefaultStr('hideIndicator', 'pet'),
+            order = 11,
+            new = true
+        }
     }
 }
 
@@ -1033,6 +1049,12 @@ function Module:ApplySettings()
         Module.ScaleRestFlipbook()
         PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
+
+        if obj.hideIndicator then
+            PlayerHitIndicator:SetScale(0.01)
+        else
+            PlayerHitIndicator:SetScale(1)
+        end
     end
 
     -- target
@@ -1073,6 +1095,12 @@ function Module:ApplySettings()
         PetFrameManaBarText:SetAlpha(alpha)
         PetFrameManaBarTextLeft:SetAlpha(alpha)
         PetFrameManaBarTextRight:SetAlpha(alpha)
+
+        if obj.hideIndicator then
+            PetHitIndicator:SetScale(0.01)
+        else
+            PetHitIndicator:SetScale(1)
+        end
     end
 
     -- party
