@@ -16,6 +16,7 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     self:SetCastTimeTextShown(true)
     self.showTradeSkills = true
     self.showTicks = false
+    self.showRank = false
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -53,7 +54,12 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
     if (arg1 ~= unit) then return; end
 
     if (event == "UNIT_SPELLCAST_START") then
-        local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit);
+        local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellId =
+            UnitCastingInfo(unit);
+        local subText = GetSpellSubtext(spellId)
+        if not self.showRank then subText = '' end
+        if subText ~= '' then subText = ' (' .. subText .. ')' end
+
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
             -- local desiredShowFalse = false;
             -- self:UpdateShownState(desiredShowFalse);
@@ -73,8 +79,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetValue(self.value);
         -- self:UpdateCastTimeText();
         if (self.Text) then
-            self.Text:SetText(text);
-            self.TextCompact:SetText(text)
+            self.Text:SetText(text .. subText);
+            self.TextCompact:SetText(text .. subText)
         end
         if (self.Icon) then
             -- @TODO
@@ -96,8 +102,12 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:HandleInterruptOrSpellFailed(false, event, ...);
     elseif (event == "UNIT_SPELLCAST_DELAYED") then
         if (self:IsShown()) then
-            local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible =
+            local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellId =
                 UnitCastingInfo(unit);
+            local subText = GetSpellSubtext(spellId)
+            if not self.showRank then subText = '' end
+            if subText ~= '' then subText = ' (' .. subText .. ')' end
+
             if (not name or (not self.showTradeSkills and isTradeSkill)) then
                 -- if there is no name, there is no bar
                 local desiredShowFalse = false;
@@ -125,6 +135,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
     elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
         local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit);
+        local subText = GetSpellSubtext(spellId)
+        if not self.showRank then subText = '' end
+        if subText ~= '' then subText = ' (' .. subText .. ')' end
+
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
             -- if there is no name, there is no bar
             local desiredShowFalse = false;
@@ -147,8 +161,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetValue(self.value);
         self:UpdateCastTimeText();
         if (self.Text) then
-            self.Text:SetText(text);
-            self.TextCompact:SetText(text)
+            self.Text:SetText(text .. subText);
+            self.TextCompact:SetText(text .. subText)
         end
         if (self.Icon) then self.Icon:SetTexture(texture); end
 
@@ -553,4 +567,8 @@ end
 
 function DragonFlightUICastbarMixin:SetShowTicks(showTicks)
     self.showTicks = showTicks
+end
+
+function DragonFlightUICastbarMixin:SetShowRank(showRank)
+    self.showRank = showRank
 end
