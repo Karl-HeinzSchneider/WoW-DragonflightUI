@@ -6,7 +6,7 @@ local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Castin
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
-    -- print('OnLoad')
+    print('OnLoad', unit)
     self:SetUnit(unit)
     self:AddTicks(15)
     self:SetPrecision(1, 2)
@@ -86,6 +86,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self.channeling = nil;
         self.reverseChanneling = nil;
 
+        self.holdTime = 0;
+        self:SetAlpha(1.0);
+        self.fadeOut = nil;
+
         -- self:StopAnims();
         -- self:ApplyAlpha(1.0);
 
@@ -120,6 +124,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
                 self.channeling = nil;
                 self.reverseChanneling = nil;
 
+                self.flash = nil;
+                self.fadeOut = nil;
                 -- self:StopAnims();
             end
         end
@@ -155,6 +161,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self.reverseChanneling = nil;
         self.casting = nil;
         self.channeling = true;
+
+        self:SetAlpha(1.0)
+        self.holdTime = 0;
+        self.fadeOut = nil;
 
         -- self:StopAnims();
         -- self:ApplyAlpha(1.0);
@@ -209,10 +219,13 @@ end
 function DragonFlightUICastbarMixin:SetUnit(unit)
     if self.unit ~= unit then
         self.unit = unit;
+        self.showShield = false;
 
         self.casting = nil;
         self.channeling = nil;
         self.reverseChanneling = nil;
+        self.holdTime = 0;
+        self.fadeOut = nil;
 
         -- self:StopAnims();
 
@@ -285,6 +298,17 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
         self:SetValue(self.value);
         self:UpdateCastTimeText();
         -- if (self.Flash) then self.Flash:Hide(); end
+    elseif (GetTime() < self.holdTime) then
+        return;
+    elseif (self.fadeOut) then
+        local alpha = self:GetAlpha() - CASTING_BAR_ALPHA_STEP;
+        if (alpha > 0) then
+            -- CastingBarFrame_ApplyAlpha(self, alpha);
+            self:SetAlpha(alpha)
+        else
+            self.fadeOut = nil;
+            self:Hide();
+        end
     end
 
     if (self.casting or self.reverseChanneling or self.channeling) then
@@ -336,6 +360,10 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
             if (self.reverseChanneling) then self.casting = nil; end
             self.reverseChanneling = nil;
         end
+
+        self.flash = true;
+        self.fadeOut = true;
+        self.holdTime = 0;
     end
 end
 
@@ -364,6 +392,8 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
         self.channeling = nil;
         self.reverseChanneling = nil;
 
+        self.fadeOut = true;
+        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
         -- self:PlayInterruptAnims();
     end
 end
@@ -567,7 +597,7 @@ function DragonFlightUICastbarMixin:Update()
     self:SetSize(state.sizeX, state.sizeY)
 
     local parent = _G[state.anchorFrame]
-    -- self:SetParent(parent) -- TODO
+    self:SetParent(parent) -- TODO
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
