@@ -85,7 +85,17 @@ function DragonflightUIXPBarMixin:CreateBar()
     -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
 
     local newFont = 'Fonts\\FRIZQT__.ttf'
-    if GetLocale() == "ruRU" then newFont = "Fonts\\FRIZQT___CYR.TTF" end
+
+    local locale = GetLocale()
+    if locale == "ruRU" then
+        newFont = "Fonts\\FRIZQT___CYR.TTF"
+    elseif locale == "koKR" then
+        newFont = "Fonts\\2002.TTF"
+    elseif locale == "zhCN" then
+        newFont = "Fonts\\ARKai_T.TTF"
+    elseif locale == "zhTW" then
+        newFont = "Fonts\\blei00d.TTF"
+    end
 
     f.Text:SetFont(newFont, 10, 'THINOUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
