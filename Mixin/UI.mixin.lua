@@ -2707,11 +2707,11 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         inset:SetFrameLevel(1)
 
         local first = frame:CreateTexture('DragonflightUISpellBookPage1', 'BACKGROUND')
-        first:SetTexture(base .. 'Spellbook-Page-1')
+        first:SetTexture(base .. 'Professions-Book-Left')
         first:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -25)
 
         local second = frame:CreateTexture('DragonflightUISpellBookPage2', 'BACKGROUND')
-        second:SetTexture(base .. 'Spellbook-Page-2')
+        second:SetTexture(base .. 'Professions-Book-Right')
         second:SetPoint('TOPLEFT', first, 'TOPRIGHT', 0, 0)
 
         local bg = frame:CreateTexture('DragonflightUISpellBookBG', 'BACKGROUND')
