@@ -554,3 +554,28 @@ end
 function DragonFlightUICastbarMixin:SetShowTicks(showTicks)
     self.showTicks = showTicks
 end
+
+function DragonFlightUICastbarMixin:UpdateState(state)
+    self.state = state
+    self:Update()
+end
+
+function DragonFlightUICastbarMixin:Update()
+    local state = self.state
+
+    self:SetScale(state.scale)
+    self:SetSize(state.sizeX, state.sizeY)
+
+    local parent = _G[state.anchorFrame]
+    -- self:SetParent(parent) -- TODO
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    self:SetPrecision(state.preci, state.preciMax)
+    self:SetCastTimeTextShown(state.castTimeEnabled)
+    self:SetCastTimeTextMaxShown(state.castTimeMaxEnabled)
+    self:SetCompactLayout(state.compactLayout)
+    self:SetShowTicks(state.showTicks)
+    self:SetIconShown(state.showIcon)
+    self.Icon:SetSize(state.sizeY, state.sizeY)
+end
