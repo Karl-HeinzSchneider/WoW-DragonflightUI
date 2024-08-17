@@ -21,7 +21,8 @@ local defaults = {
             castTimeMaxEnabled = true,
             compactLayout = true,
             showIcon = false,
-            showTicks = false
+            showTicks = false,
+            showRank = true
         },
         target = {
             scale = 1,
@@ -37,8 +38,9 @@ local defaults = {
             castTimeEnabled = true,
             castTimeMaxEnabled = true,
             compactLayout = true,
-            showIcon = false,
-            showTicks = false
+            showIcon = true,
+            showTicks = false,
+            showRank = false
         },
         focus = {
             scale = 1,
@@ -54,8 +56,9 @@ local defaults = {
             castTimeEnabled = true,
             castTimeMaxEnabled = true,
             compactLayout = true,
-            showIcon = false,
-            showTicks = false
+            showIcon = true,
+            showTicks = false,
+            showRank = false
         }
     }
 }
@@ -223,6 +226,20 @@ local optionsPlayer = {
     }
 }
 
+if DF.Era then
+    local moreOptions = {
+        showRank = {
+            type = 'toggle',
+            name = 'Show Rank',
+            desc = '' .. getDefaultStr('showRank', 'player'),
+            order = 20,
+            new = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
+end
+
 local optionsTarget = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -361,6 +378,20 @@ local optionsTarget = {
         }
     }
 }
+
+if DF.Era then
+    local moreOptions = {
+        showRank = {
+            type = 'toggle',
+            name = 'Show Rank',
+            desc = '' .. getDefaultStr('showRank', 'target'),
+            order = 20,
+            new = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
+end
 
 local optionsFocus = {}
 
