@@ -22,25 +22,27 @@ local defaults = {
             compactLayout = true,
             showIcon = false,
             showTicks = false,
-            showRank = true
+            showRank = true,
+            autoAdjust = false
         },
         target = {
             scale = 1,
             anchorFrame = 'TargetFrame',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
-            x = -15,
-            y = -50,
+            x = -20,
+            y = 0,
             sizeX = 150,
             sizeY = 10,
             preci = 1,
             preciMax = 2,
             castTimeEnabled = true,
-            castTimeMaxEnabled = true,
+            castTimeMaxEnabled = false,
             compactLayout = true,
             showIcon = true,
             showTicks = false,
-            showRank = false
+            showRank = false,
+            autoAdjust = true
         },
         focus = {
             scale = 1,
@@ -58,7 +60,8 @@ local defaults = {
             compactLayout = true,
             showIcon = true,
             showTicks = false,
-            showRank = false
+            showRank = false,
+            autoAdjust = true
         }
     }
 }
@@ -223,6 +226,13 @@ local optionsPlayer = {
             desc = '' .. getDefaultStr('showTicks', 'player'),
             order = 18
         }
+        -- autoAdjust = {
+        --     type = 'toggle',
+        --     name = 'Auto Adjust',
+        --     desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the PlayerFrame' ..
+        --         getDefaultStr('autoAdjust', 'player'),
+        --     order = 22
+        -- }
     }
 }
 
@@ -375,6 +385,13 @@ local optionsTarget = {
             name = 'Show Ticks',
             desc = '' .. getDefaultStr('showTicks', 'target'),
             order = 18
+        },
+        autoAdjust = {
+            type = 'toggle',
+            name = 'Auto Adjust',
+            desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the TargetFrame' ..
+                getDefaultStr('autoAdjust', 'target'),
+            order = 22
         }
     }
 }
@@ -600,7 +617,14 @@ function Module.AddNewCastbar()
 
     local target = CreateFrame('StatusBar', 'DragonflightUITargetCastbar', UIParent,
                                'DragonflightUITargetCastbarTemplate')
+    TargetFrameSpellBar.DFCastbar = target
+
     Module.TargetCastbar = target
+
+    hooksecurefunc('Target_Spellbar_AdjustPosition', function(self)
+        -- print('Target_Spellbar_AdjustPosition', self:GetName())
+        if self.DFCastbar then self.DFCastbar:AdjustPosition() end
+    end)
 end
 
 function frame:OnEvent(event, arg1)

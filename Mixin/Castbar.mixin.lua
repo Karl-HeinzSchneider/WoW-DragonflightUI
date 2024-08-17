@@ -612,8 +612,10 @@ function DragonFlightUICastbarMixin:Update()
 
     local parent = _G[state.anchorFrame]
     self:SetParent(parent) -- TODO
-    self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    self:AdjustPosition()
+    -- self:ClearAllPoints()
+    -- self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y) 
 
     self:SetPrecision(state.preci, state.preciMax)
     self:SetCastTimeTextShown(state.castTimeEnabled)
@@ -623,4 +625,30 @@ function DragonFlightUICastbarMixin:Update()
     self:SetShowRank(state.showRank)
     self:SetIconShown(state.showIcon)
     self.Icon:SetSize(state.sizeY, state.sizeY)
+end
+
+function DragonFlightUICastbarMixin:AdjustPosition()
+    local state = self.state
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+
+    if state.autoAdjust then
+        --   
+        local rows = parent.auraRows
+        local auraSize = 22
+
+        local delta = (rows - 1) * (auraSize + 2)
+
+        if ((not parent.buffsOnTop) and rows > 1) then
+            --
+            self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y - delta)
+        else
+            --
+            self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        end
+    else
+        --
+        self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    end
 end
