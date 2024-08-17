@@ -6,7 +6,7 @@ local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Castin
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
-    print('OnLoad', unit)
+    -- print('OnLoad', unit)
     self:SetUnit(unit)
     self:AddTicks(15)
     self:SetPrecision(1, 2)
@@ -653,7 +653,7 @@ function DragonFlightUICastbarMixin:AdjustPosition()
 
     if state.autoAdjust then
         --   
-        local rows = parent.auraRows
+        local rows = self:GetParent().auraRows or 0
         local auraSize = 22
 
         local delta = (rows - 1) * (auraSize + 2)

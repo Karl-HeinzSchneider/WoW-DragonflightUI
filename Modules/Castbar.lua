@@ -46,17 +46,17 @@ local defaults = {
         },
         focus = {
             scale = 1,
-            anchorFrame = 'UIParent',
-            anchor = 'CENTER',
+            anchorFrame = 'FocusFrame',
+            anchor = 'TOP',
             anchorParent = 'BOTTOM',
-            x = 0,
-            y = 245,
-            sizeX = 256,
-            sizeY = 16,
+            x = -20,
+            y = 0,
+            sizeX = 150,
+            sizeY = 10,
             preci = 1,
             preciMax = 2,
             castTimeEnabled = true,
-            castTimeMaxEnabled = true,
+            castTimeMaxEnabled = false,
             compactLayout = true,
             showIcon = true,
             showTicks = false,
@@ -410,7 +410,146 @@ if DF.Era then
     for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
 end
 
-local optionsFocus = {}
+local optionsFocus = {
+    type = 'group',
+    name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'focus'),
+            min = 0.2,
+            max = 5,
+            bigStep = 0.1,
+            order = 1,
+            disabled = false
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'focus'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'focus'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x', 'focus'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y', 'focus'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        sizeX = {
+            type = 'range',
+            name = 'Width',
+            desc = getDefaultStr('sizeX', 'focus'),
+            min = 80,
+            max = 512,
+            bigStep = 1,
+            order = 10
+        },
+        sizeY = {
+            type = 'range',
+            name = 'Height',
+            desc = getDefaultStr('sizeY', 'focus'),
+            min = 10,
+            max = 64,
+            bigStep = 1,
+            order = 11
+        },
+        preci = {
+            type = 'range',
+            name = 'Precision (time left)',
+            desc = '...' .. getDefaultStr('preci', 'focus'),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            order = 12
+        },
+        preciMax = {
+            type = 'range',
+            name = 'Precision (time max)',
+            desc = '...' .. getDefaultStr('preciMax', 'focus'),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            order = 13
+        },
+        castTimeEnabled = {
+            type = 'toggle',
+            name = 'Show cast time text',
+            desc = '' .. getDefaultStr('castTimeEnabled', 'focus'),
+            order = 14
+        },
+        castTimeMaxEnabled = {
+            type = 'toggle',
+            name = 'Show cast time max text',
+            desc = '' .. getDefaultStr('castTimeMaxEnabled', 'focus'),
+            order = 15
+        },
+        compactLayout = {
+            type = 'toggle',
+            name = 'Compact Layout',
+            desc = '' .. getDefaultStr('compactLayout', 'focus'),
+            order = 16
+        },
+        showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'focus'), order = 17},
+        showTicks = {type = 'toggle', name = 'Show Ticks', desc = '' .. getDefaultStr('showTicks', 'focus'), order = 18},
+        autoAdjust = {
+            type = 'toggle',
+            name = 'Auto Adjust',
+            desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the FocusFrame' ..
+                getDefaultStr('autoAdjust', 'focus'),
+            order = 22
+        }
+    }
+}
 
 local options = {
     type = 'group',
@@ -490,6 +629,17 @@ function Module:OnEnable()
         end
     })
 
+    if DF.Wrath then
+        DF.ConfigModule:RegisterOptionScreen('Castbar', 'Focus', {
+            name = 'Focus',
+            sub = 'focus',
+            options = optionsFocus,
+            default = function()
+                setDefaultSubValues('focus')
+            end
+        })
+    end
+
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
         Module:ApplySettings()
@@ -518,6 +668,8 @@ function Module:ApplySettings()
 
     Module.PlayerCastbar:UpdateState(db.player)
     Module.TargetCastbar:UpdateState(db.target)
+
+    if DF.Wrath then Module.FocusCastbar:UpdateState(db.focus) end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -614,14 +766,19 @@ function Module.AddNewCastbar()
     local castbar = CreateFrame('StatusBar', 'DragonflightUIPlayerCastbar', UIParent,
                                 'DragonflightUIPlayerCastbarTemplate')
     castbar:AddTickTable(Module.ChannelTicks)
-
     Module.PlayerCastbar = castbar
 
     local target = CreateFrame('StatusBar', 'DragonflightUITargetCastbar', UIParent,
                                'DragonflightUITargetCastbarTemplate')
     TargetFrameSpellBar.DFCastbar = target
-
     Module.TargetCastbar = target
+
+    if DF.Wrath then
+        local focus = CreateFrame('StatusBar', 'DragonflightUIFocusCastbar', UIParent,
+                                  'DragonflightUIFocusCastbarTemplate')
+        FocusFrameSpellBar.DFCastbar = focus
+        Module.FocusCastbar = focus
+    end
 
     hooksecurefunc('Target_Spellbar_AdjustPosition', function(self)
         -- print('Target_Spellbar_AdjustPosition', self:GetName())

@@ -118,6 +118,13 @@ UI_shared.xsd">
 			</OnLoad>
 		</Scripts>
 	</StatusBar>
+	<StatusBar name="DragonflightUIFocusCastbarTemplate" inherits="DragonflightUIPlayerCastbarTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:OnLoad('focus');
+			</OnLoad>
+		</Scripts>
+	</StatusBar>
 	<Frame name="DragonflightUIPlayerCastbarFrameTemplate" mixin="DragonFlightUICastbarMixin" virtual="true">
 		<Size x="418" y="22" />
 		<Anchors>
