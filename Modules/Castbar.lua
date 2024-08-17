@@ -25,13 +25,13 @@ local defaults = {
         },
         target = {
             scale = 1,
-            anchorFrame = 'UIParent',
-            anchor = 'CENTER',
+            anchorFrame = 'TargetFrame',
+            anchor = 'TOP',
             anchorParent = 'BOTTOM',
-            x = 0,
-            y = 245,
-            sizeX = 256,
-            sizeY = 16,
+            x = -15,
+            y = -50,
+            sizeX = 150,
+            sizeY = 10,
             preci = 1,
             preciMax = 2,
             castTimeEnabled = true,
@@ -223,7 +223,144 @@ local optionsPlayer = {
     }
 }
 
-local optionsTarget = {}
+local optionsTarget = {
+    type = 'group',
+    name = 'DragonflightUI - ' .. mName,
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'target'),
+            min = 0.2,
+            max = 5,
+            bigStep = 0.1,
+            order = 1,
+            disabled = false
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
+            values = frameTable,
+            order = 4
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'target'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'target'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x', 'target'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y', 'target'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6
+        },
+        sizeX = {
+            type = 'range',
+            name = 'Width',
+            desc = getDefaultStr('sizeX', 'target'),
+            min = 80,
+            max = 512,
+            bigStep = 1,
+            order = 10
+        },
+        sizeY = {
+            type = 'range',
+            name = 'Height',
+            desc = getDefaultStr('sizeY', 'target'),
+            min = 10,
+            max = 64,
+            bigStep = 1,
+            order = 11
+        },
+        preci = {
+            type = 'range',
+            name = 'Precision (time left)',
+            desc = '...' .. getDefaultStr('preci', 'target'),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            order = 12
+        },
+        preciMax = {
+            type = 'range',
+            name = 'Precision (time max)',
+            desc = '...' .. getDefaultStr('preciMax', 'target'),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            order = 13
+        },
+        castTimeEnabled = {
+            type = 'toggle',
+            name = 'Show cast time text',
+            desc = '' .. getDefaultStr('castTimeEnabled', 'target'),
+            order = 14
+        },
+        castTimeMaxEnabled = {
+            type = 'toggle',
+            name = 'Show cast time max text',
+            desc = '' .. getDefaultStr('castTimeMaxEnabled', 'target'),
+            order = 15
+        },
+        compactLayout = {
+            type = 'toggle',
+            name = 'Compact Layout',
+            desc = '' .. getDefaultStr('compactLayout', 'target'),
+            order = 16
+        },
+        showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'target'), order = 17},
+        showTicks = {
+            type = 'toggle',
+            name = 'Show Ticks',
+            desc = '' .. getDefaultStr('showTicks', 'target'),
+            order = 18
+        }
+    }
+}
 
 local optionsFocus = {}
 
@@ -286,12 +423,22 @@ function Module:OnEnable()
         Module.Era()
     end
     Module:ApplySettings()
+
     DF.ConfigModule:RegisterOptionScreen('Castbar', 'Player', {
         name = 'Player',
         sub = 'player',
         options = optionsPlayer,
         default = function()
             setDefaultSubValues('player')
+        end
+    })
+
+    DF.ConfigModule:RegisterOptionScreen('Castbar', 'Target', {
+        name = 'Target',
+        sub = 'target',
+        options = optionsTarget,
+        default = function()
+            setDefaultSubValues('target')
         end
     })
 
@@ -315,12 +462,14 @@ function Module:RefreshOptionScreens()
     end
 
     refreshCat('Player')
+    refreshCat('Target')
 end
 
 function Module:ApplySettings()
     local db = Module.db.profile
 
     Module.PlayerCastbar:UpdateState(db.player)
+    Module.TargetCastbar:UpdateState(db.target)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
@@ -422,11 +571,15 @@ Module.ChannelTicks = DF.Cata and {
 }
 
 function Module.AddNewCastbar()
-    local castbar = CreateFrame('StatusBar', 'DragonflightUIPlayerCastbar', CastingBarFrame,
+    local castbar = CreateFrame('StatusBar', 'DragonflightUIPlayerCastbar', UIParent,
                                 'DragonflightUIPlayerCastbarTemplate')
     castbar:AddTickTable(Module.ChannelTicks)
 
     Module.PlayerCastbar = castbar
+
+    local target = CreateFrame('StatusBar', 'DragonflightUITargetCastbar', UIParent,
+                               'DragonflightUITargetCastbarTemplate')
+    Module.TargetCastbar = target
 end
 
 function frame:OnEvent(event, arg1)
