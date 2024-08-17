@@ -914,14 +914,17 @@ function Module:RegisterOptionScreens()
         return newOpts
     end
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Focus', {
-        name = 'Focus',
-        sub = 'focus',
-        options = optionsFocus,
-        default = function()
-            setDefaultSubValues('focus')
-        end
-    })
+    if DF.Wrath then
+        DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Focus', {
+            name = 'Focus',
+            sub = 'focus',
+            options = optionsFocus,
+            default = function()
+                setDefaultSubValues('focus')
+            end
+        })
+    end
+
     DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Party', {
         name = 'Party',
         sub = 'party',
@@ -965,7 +968,7 @@ function Module:RefreshOptionScreens()
         configFrame:RefreshCatSub('Unitframes', name)
     end
 
-    refreshCat('Focus')
+    if DF.Wrath then refreshCat('Focus') end
     refreshCat('Party')
     refreshCat('Pet')
     refreshCat('Player')

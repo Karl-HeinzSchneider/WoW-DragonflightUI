@@ -212,6 +212,8 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
+    if not DF.Cata then return end -- guard TODO
+
     if DF.Cata then
         Module.Cata()
     else

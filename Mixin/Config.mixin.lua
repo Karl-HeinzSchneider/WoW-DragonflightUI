@@ -168,8 +168,8 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Unitframes
         local cat = 'Unitframes'
         addCat(cat)
-        addSubCat('Boss', cat)
-        addSubCat('Focus', cat)
+        if DF.Cata then addSubCat('Boss', cat) end
+        if DF.Wrath then addSubCat('Focus', cat) end
         addSubCat('Party', cat)
         addSubCat('Pet', cat)
         addSubCat('Player', cat)

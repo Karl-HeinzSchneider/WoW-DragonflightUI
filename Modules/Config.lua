@@ -48,13 +48,6 @@ local modulesOptions = {
     set = setOption,
     args = {
         Actionbar = {type = 'toggle', name = 'Actionbar', desc = '' .. getDefaultStr('Actionbar', 'modules'), order = 1},
-        Bossframe = {
-            type = 'toggle',
-            name = 'Bossframe',
-            desc = '' .. getDefaultStr('Bossframe', 'modules'),
-            order = 2,
-            new = false
-        },
         Castbar = {
             type = 'toggle',
             name = 'Castbar',
@@ -75,6 +68,20 @@ local modulesOptions = {
         }
     }
 }
+
+if DF.Cata then
+    local moreOptions = {
+        Bossframe = {
+            type = 'toggle',
+            name = 'Bossframe',
+            desc = '' .. getDefaultStr('Bossframe', 'modules'),
+            order = 2,
+            new = false
+        }
+    }
+
+    for k, v in pairs(moreOptions) do modulesOptions.args[k] = v end
+end
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
