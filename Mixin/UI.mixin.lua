@@ -2649,6 +2649,82 @@ function DragonflightUIMixin:ChangeSpellbookEra()
     UpdateUIPanelPositions(SpellBookFrame)
 end
 
+function DragonflightUIMixin:SpellbookEraProfessions()
+    local frame = CreateFrame('FRAME', 'DragonflightUISpellBookProfessionFrame', SpellBookFrame)
+    frame:SetSize(550, 525)
+    frame:SetPoint('LEFT', SpellBookFrame, 'RIGHT', 100, 0)
+    frame:SetFrameLevel(69)
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local closeButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameCloseButton', frame,
+                                    'UIPanelCloseButton')
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:ClearAllPoints()
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    closeButton:SetScript('OnClick', function(self)
+        --
+        HideUIPanel(SpellBookFrame)
+    end)
+
+    local titleText = frame:CreateFontString('DragonflightUISpellbookProfessionFrameTitleText', 'ARTWORK',
+                                             'GameFontNormal')
+    titleText:SetPoint('TOP', frame, 'TOP', 0, -5)
+    titleText:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    titleText:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+    titleText:SetText(TRADE_SKILLS)
+
+    do
+        local port = frame:CreateTexture('DragonflightUISpellbookProfessionFramePortrait')
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetParent(frame)
+        port:SetTexture(136830)
+        SetPortraitToTexture(port, port:GetTexture())
+        port:SetDrawLayer('OVERLAY', 6)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('DragonflightUISpellbookProfessionFramePortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+        -- pp:SetFrameLevel(4)
+    end
+
+    do
+        -- TODO different color
+        local inset = CreateFrame('FRAME', 'DragonflightUISpellBookInset', frame, 'InsetFrameTemplate')
+        inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -24)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+        inset:SetFrameLevel(1)
+
+        local first = frame:CreateTexture('DragonflightUISpellBookPage1', 'BACKGROUND')
+        first:SetTexture(base .. 'Spellbook-Page-1')
+        first:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -25)
+
+        local second = frame:CreateTexture('DragonflightUISpellBookPage2', 'BACKGROUND')
+        second:SetTexture(base .. 'Spellbook-Page-2')
+        second:SetPoint('TOPLEFT', first, 'TOPRIGHT', 0, 0)
+
+        local bg = frame:CreateTexture('DragonflightUISpellBookBG', 'BACKGROUND')
+        bg:SetTexture(base .. 'UI-Background-RockCata')
+        bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 2, -21)
+        bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 2)
+        bg:SetDrawLayer('BACKGROUND', -6)
+        -- TODO: bugged?
+        -- bg:SetVertTile(true) 
+        -- bg:SetHorizTile(true)
+    end
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 
