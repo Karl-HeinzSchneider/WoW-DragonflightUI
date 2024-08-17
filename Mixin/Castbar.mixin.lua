@@ -56,7 +56,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
     if (event == "UNIT_SPELLCAST_START") then
         local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellId =
             UnitCastingInfo(unit);
-        local subText = GetSpellSubtext(spellId)
+        local subText = GetSpellSubtext(spellId) or ''
         if not self.showRank then subText = '' end
         if subText ~= '' then subText = ' (' .. subText .. ')' end
 
@@ -104,7 +104,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         if (self:IsShown()) then
             local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellId =
                 UnitCastingInfo(unit);
-            local subText = GetSpellSubtext(spellId)
+            local subText = GetSpellSubtext(spellId) or ''
             if not self.showRank then subText = '' end
             if subText ~= '' then subText = ' (' .. subText .. ')' end
 
@@ -134,8 +134,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             end
         end
     elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
-        local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit);
-        local subText = GetSpellSubtext(spellId)
+        local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(unit);
+        local subText = spell:GetSpellSubtext(spellId) or ''
         if not self.showRank then subText = '' end
         if subText ~= '' then subText = ' (' .. subText .. ')' end
 
@@ -184,7 +184,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
 
         -- local tickCount = self.tickTable[name]
-        local tickCount = self:GetTickCount(name, spellID)
+        local tickCount = self:GetTickCount(name, spellId)
         if tickCount and tickCount > 0 then
             local tickDelta = self:GetWidth() / tickCount
 
