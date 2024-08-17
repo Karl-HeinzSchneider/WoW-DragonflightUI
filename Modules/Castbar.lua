@@ -507,24 +507,14 @@ local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
 Module.frame = frame
 
 function Module.ChangeDefaultCastbar()
-    CastingBarFrame:ClearAllPoints()
-    CastingBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, -100)
+    CastingBarFrame:UnregisterAllEvents()
+    CastingBarFrame:Hide()
 
-    CastingBarFrame:GetStatusBarTexture():SetVertexColor(0, 0, 0, 0)
-    CastingBarFrame:GetStatusBarTexture():SetAlpha(0)
+    TargetFrameSpellBar:UnregisterAllEvents()
+    TargetFrameSpellBar:Hide()
 
-    -- CastingBarFrame.Border:Hide()
-    -- CastingBarFrame.BorderShield:Hide()
-    -- CastingBarFrame.Text:Hide()
-    -- CastingBarFrame.Icon:Hide()
-    -- CastingBarFrame.Spark:Hide()
-    -- CastingBarFrame.Flash:Hide()
-
-    local children = {CastingBarFrame:GetRegions()}
-    for i, child in pairs(children) do
-        -- print('child', child:GetName())
-        child:Hide()
-    end
+    FocusFrameSpellBar:UnregisterAllEvents()
+    FocusFrameSpellBar:Hide()
 end
 
 Module.ChannelTicks = DF.Cata and {
@@ -614,34 +604,12 @@ function Module.AddNewCastbar()
 end
 
 function frame:OnEvent(event, arg1)
-    -- print('event', event, arg1)
-    Module.ChangeDefaultCastbar()
-    if event == 'PLAYER_ENTERING_WORLD' then
-    elseif (event == 'UNIT_SPELLCAST_START' and arg1 == 'player') then
-        -- Module.SetBarNormal()
-        -- Module.HideAllTicks()
-        -- Module.SetCastbarNormal()
-    elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' and arg1 == 'player') then
-        -- Module.SetBarInterrupted()
-        -- Module.SetCastbarInterrupted()
-    elseif (event == 'UNIT_SPELLCAST_CHANNEL_START' and arg1 == 'player') then
-        -- Module.SetBarChannel()
-    else
-    end
+    -- print('event', event, arg1) 
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 -- Wrath
 function Module.Wrath()
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_INTERRUPTED', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_DELAYED', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_START', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_CHANNEL_STOP', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_START', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_STOP', 'player')
-    frame:RegisterUnitEvent('UNIT_SPELLCAST_FAILED', 'player')
-
     Module.ChangeDefaultCastbar()
     Module.AddNewCastbar()
 end
