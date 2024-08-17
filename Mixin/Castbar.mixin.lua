@@ -6,7 +6,7 @@ local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Castin
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
-    -- print('OnLoad')
+    -- print('OnLoad', unit)
     self:SetUnit(unit)
     self:AddTicks(15)
     self:SetPrecision(1, 2)
@@ -16,6 +16,7 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     self:SetCastTimeTextShown(true)
     self.showTradeSkills = true
     self.showTicks = false
+    self.showRank = false
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -53,7 +54,12 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
     if (arg1 ~= unit) then return; end
 
     if (event == "UNIT_SPELLCAST_START") then
-        local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit);
+        local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellId =
+            UnitCastingInfo(unit);
+        local subText = GetSpellSubtext(spellId) or ''
+        if not self.showRank then subText = '' end
+        if subText ~= '' then subText = ' (' .. subText .. ')' end
+
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
             -- local desiredShowFalse = false;
             -- self:UpdateShownState(desiredShowFalse);
@@ -73,8 +79,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetValue(self.value);
         -- self:UpdateCastTimeText();
         if (self.Text) then
-            self.Text:SetText(text);
-            self.TextCompact:SetText(text)
+            self.Text:SetText(text .. subText);
+            self.TextCompact:SetText(text .. subText)
         end
         if (self.Icon) then
             -- @TODO
@@ -85,6 +91,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self.castID = castID;
         self.channeling = nil;
         self.reverseChanneling = nil;
+
+        self.holdTime = 0;
+        self:SetAlpha(1.0);
+        self.fadeOut = nil;
 
         -- self:StopAnims();
         -- self:ApplyAlpha(1.0);
@@ -120,11 +130,17 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
                 self.channeling = nil;
                 self.reverseChanneling = nil;
 
+                self.flash = nil;
+                self.fadeOut = nil;
                 -- self:StopAnims();
             end
         end
     elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
-        local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit);
+        local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(unit);
+        local subText = GetSpellSubtext(spellId) or ''
+        if not self.showRank then subText = '' end
+        if subText ~= '' then subText = ' (' .. subText .. ')' end
+
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
             -- if there is no name, there is no bar
             local desiredShowFalse = false;
@@ -147,14 +163,18 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         self:SetValue(self.value);
         self:UpdateCastTimeText();
         if (self.Text) then
-            self.Text:SetText(text);
-            self.TextCompact:SetText(text)
+            self.Text:SetText(text .. subText);
+            self.TextCompact:SetText(text .. subText)
         end
         if (self.Icon) then self.Icon:SetTexture(texture); end
 
         self.reverseChanneling = nil;
         self.casting = nil;
         self.channeling = true;
+
+        self:SetAlpha(1.0)
+        self.holdTime = 0;
+        self.fadeOut = nil;
 
         -- self:StopAnims();
         -- self:ApplyAlpha(1.0);
@@ -170,7 +190,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
 
         -- local tickCount = self.tickTable[name]
-        local tickCount = self:GetTickCount(name, spellID)
+        local tickCount = self:GetTickCount(name, spellId)
         if tickCount and tickCount > 0 then
             local tickDelta = self:GetWidth() / tickCount
 
@@ -209,10 +229,13 @@ end
 function DragonFlightUICastbarMixin:SetUnit(unit)
     if self.unit ~= unit then
         self.unit = unit;
+        self.showShield = false;
 
         self.casting = nil;
         self.channeling = nil;
         self.reverseChanneling = nil;
+        self.holdTime = 0;
+        self.fadeOut = nil;
 
         -- self:StopAnims();
 
@@ -285,6 +308,17 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
         self:SetValue(self.value);
         self:UpdateCastTimeText();
         -- if (self.Flash) then self.Flash:Hide(); end
+    elseif (GetTime() < self.holdTime) then
+        return;
+    elseif (self.fadeOut) then
+        local alpha = self:GetAlpha() - CASTING_BAR_ALPHA_STEP;
+        if (alpha > 0) then
+            -- CastingBarFrame_ApplyAlpha(self, alpha);
+            self:SetAlpha(alpha)
+        else
+            self.fadeOut = nil;
+            self:Hide();
+        end
     end
 
     if (self.casting or self.reverseChanneling or self.channeling) then
@@ -296,6 +330,7 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
 end
 
 function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
+    -- print('HandleCastStop', event, ...)
     if (not self:IsVisible()) then
         local desiredShowFalse = false;
         self:UpdateShownState(desiredShowFalse);
@@ -336,6 +371,23 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
             if (self.reverseChanneling) then self.casting = nil; end
             self.reverseChanneling = nil;
         end
+
+        self.flash = true;
+        self.fadeOut = true;
+        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME; -- 0 on classic?
+    else
+        -- TODO should not go here but does on cast finished
+        --[[       if (event == "UNIT_SPELLCAST_STOP") then
+            self.casting = nil;
+        else
+            self.channeling = nil;
+            if (self.reverseChanneling) then self.casting = nil; end
+            self.reverseChanneling = nil;
+        end
+
+        self.flash = true;
+        self.fadeOut = true;
+        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME; ]]
     end
 end
 
@@ -364,6 +416,8 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
         self.channeling = nil;
         self.reverseChanneling = nil;
 
+        self.fadeOut = true;
+        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
         -- self:PlayInterruptAnims();
     end
 end
@@ -513,6 +567,10 @@ function DragonFlightUICastbarMixin:FinishSpell()
     self.casting = nil;
     self.channeling = nil;
     self.reverseChanneling = nil;
+
+    self.flash = true;
+    self.fadeOut = true;
+    self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
 end
 
 function DragonFlightUICastbarMixin:AddTicks(count)
@@ -553,4 +611,62 @@ end
 
 function DragonFlightUICastbarMixin:SetShowTicks(showTicks)
     self.showTicks = showTicks
+end
+
+function DragonFlightUICastbarMixin:SetShowRank(showRank)
+    self.showRank = showRank
+end
+
+function DragonFlightUICastbarMixin:UpdateState(state)
+    self.state = state
+    self:Update()
+end
+
+function DragonFlightUICastbarMixin:Update()
+    local state = self.state
+
+    self:SetScale(state.scale)
+    self:SetSize(state.sizeX, state.sizeY)
+
+    local parent = _G[state.anchorFrame]
+    self:SetParent(parent) -- TODO
+
+    -- self:ClearAllPoints()
+    -- self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y) 
+    self:AdjustPosition()
+
+    self:SetPrecision(state.preci, state.preciMax)
+    self:SetCastTimeTextShown(state.castTimeEnabled)
+    self:SetCastTimeTextMaxShown(state.castTimeMaxEnabled)
+    self:SetCompactLayout(state.compactLayout)
+    self:SetShowTicks(state.showTicks)
+    self:SetShowRank(state.showRank)
+    self:SetIconShown(state.showIcon)
+    self.Icon:SetSize(state.sizeY, state.sizeY)
+end
+
+function DragonFlightUICastbarMixin:AdjustPosition()
+    local state = self.state
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+
+    if state.autoAdjust then
+        --   
+        local rows = self:GetParent().auraRows or 0
+        local auraSize = 22
+
+        local delta = (rows - 1) * (auraSize + 2)
+
+        if ((not parent.buffsOnTop) and rows > 1) then
+            --
+            self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y - delta)
+        else
+            --
+            self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        end
+    else
+        --
+        self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    end
 end

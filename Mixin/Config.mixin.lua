@@ -1,3 +1,5 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
 DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
 
@@ -133,10 +135,10 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Petbar', cat)
         addSubCat('XPbar', cat)
         addSubCat('Repbar', cat)
-        addSubCat('Possessbar', cat, true)
+        addSubCat('Possessbar', cat)
         addSubCat('Stancebar', cat)
         addSubCat('Totembar', cat)
-        addSubCat('Bags', cat, true)
+        addSubCat('Bags', cat)
         addSubCat('Micromenu', cat)
     end
 
@@ -144,9 +146,9 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Castbar
         local cat = 'Castbar'
         addCat(cat)
-        addSubCat('Focus', cat)
-        addSubCat('Player', cat)
-        addSubCat('Target', cat)
+        if DF.Wrath then addSubCat('Focus', cat, true) end
+        addSubCat('Player', cat, true)
+        addSubCat('Target', cat, true)
     end
 
     do
@@ -155,7 +157,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addCat(cat)
         addSubCat('Buffs', cat)
         addSubCat('Chat', cat)
-        addSubCat('Debuffs', cat, true)
+        addSubCat('Debuffs', cat)
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
         addSubCat('UI', cat, true)

@@ -55,7 +55,13 @@ local modulesOptions = {
             order = 2,
             new = false
         },
-        Castbar = {type = 'toggle', name = 'Castbar', desc = '' .. getDefaultStr('Castbar', 'modules'), order = 3},
+        Castbar = {
+            type = 'toggle',
+            name = 'Castbar',
+            desc = '' .. getDefaultStr('Castbar', 'modules'),
+            order = 3,
+            new = true
+        },
         Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
         Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 5},
         UI = {type = 'toggle', name = 'UI', desc = '' .. getDefaultStr('UI', 'modules'), order = 6, new = true},
