@@ -330,6 +330,7 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
 end
 
 function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
+    -- print('HandleCastStop', event, ...)
     if (not self:IsVisible()) then
         local desiredShowFalse = false;
         self:UpdateShownState(desiredShowFalse);
@@ -373,7 +374,20 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
 
         self.flash = true;
         self.fadeOut = true;
-        self.holdTime = 0;
+        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME; -- 0 on classic?
+    else
+        -- TODO should not go here but does on cast finished
+        --[[       if (event == "UNIT_SPELLCAST_STOP") then
+            self.casting = nil;
+        else
+            self.channeling = nil;
+            if (self.reverseChanneling) then self.casting = nil; end
+            self.reverseChanneling = nil;
+        end
+
+        self.flash = true;
+        self.fadeOut = true;
+        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME; ]]
     end
 end
 
@@ -553,6 +567,10 @@ function DragonFlightUICastbarMixin:FinishSpell()
     self.casting = nil;
     self.channeling = nil;
     self.reverseChanneling = nil;
+
+    self.flash = true;
+    self.fadeOut = true;
+    self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
 end
 
 function DragonFlightUICastbarMixin:AddTicks(count)
@@ -613,9 +631,9 @@ function DragonFlightUICastbarMixin:Update()
     local parent = _G[state.anchorFrame]
     self:SetParent(parent) -- TODO
 
-    self:AdjustPosition()
     -- self:ClearAllPoints()
     -- self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y) 
+    self:AdjustPosition()
 
     self:SetPrecision(state.preci, state.preciMax)
     self:SetCastTimeTextShown(state.castTimeEnabled)

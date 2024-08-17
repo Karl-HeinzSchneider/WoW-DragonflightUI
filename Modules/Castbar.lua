@@ -530,8 +530,10 @@ function Module.ChangeDefaultCastbar()
     TargetFrameSpellBar:UnregisterAllEvents()
     TargetFrameSpellBar:Hide()
 
-    FocusFrameSpellBar:UnregisterAllEvents()
-    FocusFrameSpellBar:Hide()
+    if DF.Wrath then
+        FocusFrameSpellBar:UnregisterAllEvents()
+        FocusFrameSpellBar:Hide()
+    end
 end
 
 Module.ChannelTicks = DF.Cata and {
