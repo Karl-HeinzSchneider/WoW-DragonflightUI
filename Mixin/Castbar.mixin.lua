@@ -137,7 +137,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
     elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
         local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(unit);
-        local subText = spell:GetSpellSubtext(spellId) or ''
+        local subText = GetSpellSubtext(spellId) or ''
         if not self.showRank then subText = '' end
         if subText ~= '' then subText = ' (' .. subText .. ')' end
 
