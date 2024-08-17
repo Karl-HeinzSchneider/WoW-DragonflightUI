@@ -656,9 +656,9 @@ function DragonFlightUICastbarMixin:AdjustPosition()
         local rows = self:GetParent().auraRows or 0
         local auraSize = 22
 
-        local delta = (rows - 1) * (auraSize + 2)
+        local delta = (rows - 2) * (auraSize + 2)
 
-        if ((not parent.buffsOnTop) and rows > 1) then
+        if ((not parent.buffsOnTop) and rows > 2) then
             --
             self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y - delta)
         else
