@@ -2725,9 +2725,14 @@ function DragonflightUIMixin:SpellbookEraProfessions()
                                    "SecureHandlerClickTemplate");
     frame.buttonShow:SetAttribute("_onclick", [[      
         local frame = self:GetFrameRef("ProfessionFrame");
-        frame:Show();        
+        frame:Show();    
+        
+        -- local tabs = self:GetFrameRef("TabsFrame");
+        -- tabs:Hide();   
     ]]);
     frame.buttonShow:SetFrameRef("ProfessionFrame", frame)
+    frame.buttonShow:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
+
     frame.buttonShow:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonShow);
 
@@ -2735,9 +2740,13 @@ function DragonflightUIMixin:SpellbookEraProfessions()
                                    "SecureHandlerClickTemplate");
     frame.buttonHide:SetAttribute("_onclick", [[      
         local frame = self:GetFrameRef("ProfessionFrame");
-        frame:Hide();        
+        frame:Hide();   
+        
+        -- local tabs = self:GetFrameRef("TabsFrame");
+        -- tabs:Show();    
     ]]);
     frame.buttonHide:SetFrameRef("ProfessionFrame", frame)
+    frame.buttonHide:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
     frame.buttonHide:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonHide);
 
