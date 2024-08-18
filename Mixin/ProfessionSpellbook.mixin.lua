@@ -105,6 +105,23 @@ local function UpdateProfessionButton(self)
 
     local skillType, spellID = GetSpellBookItemInfo(data.nameLoc)
 
+    self:SetScript('PreClick', function(self, button)
+        --
+        self:SetChecked(false);
+
+        if IsShiftKeyDown() then
+            -- Call a custom function on Shift+Click
+            self:OnClick(button)
+        elseif IsControlKeyDown() then
+            -- Call a different custom function on Ctrl+Click
+            self:OnClick(button)
+        else
+            -- Default action: cast the spell
+            self:SetAttribute('type1', 'spell')
+            self:SetAttribute('spell', spellID)
+        end
+    end)
+
     self.IconTexture:SetTexture(data.icon)
 
     self.spellString:SetText(data.nameLoc);
@@ -255,15 +272,6 @@ DragonflightUISpellButtonMixin = {}
 function DragonflightUISpellButtonMixin:OnLoad()
     self:RegisterForDrag("LeftButton");
     self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-
-    if self:GetID() == 1 then
-        self:SetScript('OnClick', self.OnClick)
-    else
-        self:SetAttribute('type', 'spell')
-        self:SetAttribute('spell', 818)
-        -- self:SetAttribute('type', 'macro')
-        -- self:SetAttribute("macrotext", "/run print('test')")
-    end
 end
 
 function DragonflightUISpellButtonMixin:OnEvent(event, ...)
@@ -375,7 +383,7 @@ function DragonflightUISpellButtonMixin:OnClick(button)
         -- SpellFlyout:SetBorderColor(181/256, 162/256, 90/256);
     else
         if self.Data.skillID == 393 then return end -- TODO
-        CastSpell(slot, BOOKTYPE_SPELL);
+        -- CastSpell(slot, BOOKTYPE_SPELL); -- should never reach here, TODO
     end
     -- self:UpdateSelection();
 end

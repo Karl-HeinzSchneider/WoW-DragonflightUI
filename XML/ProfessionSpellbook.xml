@@ -179,7 +179,7 @@ UI_shared.xsd">
 					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-109" y="-3" />
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="$parentSpellButtonLeft" inherits="DFProfessionButtonTemplateLeft" parentKey="SpellButton2" id="2">
+			<CheckButton name="$parentSpellButtonLeft" inherits="DFProfessionButtonTemplate" parentKey="SpellButton2" id="2">
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentSpellButtonRight" relativePoint="TOPLEFT" x="-109" />
 				</Anchors>
@@ -230,7 +230,7 @@ UI_shared.xsd">
 			</Layer>
 		</Layers>
 	</Frame>
-	<CheckButton name="DFProfessionButtonTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellButtonMixin" virtual="true">
+	<CheckButton name="DFProfessionButtonTemplate" inherits="SecureActionButtonTemplate" mixin="DragonflightUISpellButtonMixin" virtual="true">
 		<Size x="40" y="40" />
 		<Layers>
 			<Layer level="BORDER">
@@ -273,68 +273,11 @@ UI_shared.xsd">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<OnEvent method="OnEvent" />
+			<!--
 			<PreClick>
-				self:SetChecked(false);
+			self:SetChecked(false);
 			</PreClick>
-			<!-- <OnClick method="OnClick" /> -->
-			<OnShow method="OnShow" />
-			<OnHide method="OnHide" />
-			<OnDragStart method="OnDragStart" />
-			<OnDragStop method="OnDragStop" />
-			<OnReceiveDrag method="OnReceiveDrag" />
-			<OnEnter method="OnEnter" />
-			<OnLeave method="OnLeave" />
-		</Scripts>
-		<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress" />
-		<HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" parentKey="highlightTexture" />
-		<CheckedTexture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD" />
-	</CheckButton>
-	<CheckButton name="DFProfessionButtonTemplateLeft" inherits="SecureActionButtonTemplate" mixin="DragonflightUISpellButtonMixin" virtual="true">
-		<Size x="40" y="40" />
-		<Layers>
-			<Layer level="BORDER">
-				<Texture name="$parentIconTexture" setAllPoints="true" parentKey="IconTexture" />
-				<FontString name="$parentSpellName" inherits="GameFontNormal" maxLines="2" justifyH="LEFT" parentKey="spellString">
-					<Size x="100" y="0" />
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="RIGHT" x="5" y="7" />
-					</Anchors>
-				</FontString>
-				<FontString name="$parentSubSpellName" inherits="NewSubSpellFont" justifyH="LEFT" justifyV="TOP" parentKey="subSpellString">
-					<Size x="95" y="28" />
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="$parentSpellName" relativePoint="BOTTOMLEFT" x="0" y="-1" />
-					</Anchors>
-				</FontString>
-			</Layer>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentNameFrame" file="Interface\Spellbook\ProfessionsBook">
-					<Size x="108" y="41" />
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentIconTexture" relativePoint="RIGHT" x="1" y="0" />
-					</Anchors>
-					<Color r="1.0" g="1.0" b="1.0" a="0.8" />
-					<TexCoords left="0.00390625" right="0.42578125" top="0.14843750" bottom="0.46875000" />
-				</Texture>
-			</Layer>
-			<Layer level="OVERLAY">
-				<Texture parentKey="Flash" file="Interface\Buttons\CheckButtonGlow" alphaMode="ADD" hidden="true">
-					<Size x="71" y="71" />
-					<Anchors>
-						<Anchor point="CENTER" />
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-		<Frames>
-			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate" parentKey="cooldown" />
-		</Frames>
-		<Scripts>
-			<OnLoad method="OnLoad" />
-			<OnEvent method="OnEvent" />
-			<PreClick>
-				self:SetChecked(false);
-			</PreClick>
+			-->
 			<!-- <OnClick method="OnClick" /> -->
 			<OnShow method="OnShow" />
 			<OnHide method="OnHide" />
