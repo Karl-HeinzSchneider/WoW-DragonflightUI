@@ -2731,7 +2731,7 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         -- tabs:Hide();   
     ]]);
     frame.buttonShow:SetFrameRef("ProfessionFrame", frame)
-    frame.buttonShow:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
+    -- frame.buttonShow:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
 
     frame.buttonShow:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonShow);
@@ -2746,7 +2746,7 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         -- tabs:Show();    
     ]]);
     frame.buttonHide:SetFrameRef("ProfessionFrame", frame)
-    frame.buttonHide:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
+    -- frame.buttonHide:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
     frame.buttonHide:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonHide);
 
