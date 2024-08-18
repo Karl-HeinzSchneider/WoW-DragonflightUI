@@ -12,6 +12,8 @@ local defaults = {
             changeBag = true,
             itemcolor = true,
             changeCharacterframe = true,
+            changeSpellBook = true,
+            changeSpellBookProfessions = true,
             changeInspect = true,
             changeTradeskill = true,
             changeTrainer = true,
@@ -102,6 +104,27 @@ local UIOptions = {
         }
     }
 }
+
+if DF.Era then
+    local moreOptions = {
+        changeSpellBook = {
+            type = 'toggle',
+            name = 'Change SpellBook',
+            desc = '' .. getDefaultStr('changeSpellBook', 'first'),
+            order = 101.1,
+            new = true
+        },
+        changeSpellBookProfessions = {
+            type = 'toggle',
+            name = 'Change SpellBook Professions',
+            desc = '' .. getDefaultStr('changeSpellBookProfessions', 'first'),
+            order = 101.2,
+            new = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do UIOptions.args[k] = v end
+end
 
 local frame = CreateFrame('FRAME')
 
@@ -232,6 +255,23 @@ function Module:ApplySettings()
         elseif not db.changeTradeskill and Module.TradeskillHooked then
             DF:Print(
                 "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
+        end
+    end
+    if DF.Era then
+        if db.changeSpellBook and not Module.SpellBookHooked then
+            Module.SpellBookHooked = true
+            DragonflightUIMixin:ChangeSpellbookEra()
+        elseif not db.changeSpellBook and Module.SpellBookHooked then
+            DF:Print("'Change SpellBook' was deactivated, but SpellBook was already modified, please /reload.")
+        end
+
+        if db.changeSpellBookProfessions and not Module.SpellBookProfessionsHooked then
+            Module.SpellBookProfessionsHooked = true
+            DragonflightUIMixin:SpellbookEraAddTabs()
+            DragonflightUIMixin:SpellbookEraProfessions()
+        elseif not db.changeSpellBookProfessions and Module.SpellBookProfessionsHooked then
+            DF:Print(
+                "'Change SpellBook Professions' was deactivated, but SpellBook Professions was already modified, please /reload.")
         end
     end
 
@@ -390,9 +430,9 @@ function Module:ChangeFrames()
         end)
     elseif DF.Era then
         --
-        DragonflightUIMixin:ChangeSpellbookEra()
-        DragonflightUIMixin:SpellbookEraAddTabs()
-        DragonflightUIMixin:SpellbookEraProfessions()
+        -- DragonflightUIMixin:ChangeSpellbookEra()
+        -- DragonflightUIMixin:SpellbookEraAddTabs()
+        -- DragonflightUIMixin:SpellbookEraProfessions()
         Module:FuncOrWaitframe('WhatsTraining', function()
             DF.Compatibility:WhatsTraining()
         end)
