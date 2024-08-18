@@ -304,7 +304,6 @@ function DragonflightUISpellButtonMixin:OnLeave()
 end
 
 function DragonflightUISpellButtonMixin:OnClick(button)
-
     local slot = self.Data.bookID
     local slotType, slotID = GetSpellBookItemInfo(slot, BOOKTYPE_SPELL);
 
@@ -335,6 +334,7 @@ function DragonflightUISpellButtonMixin:OnClick(button)
     end
 
     if (IsModifiedClick("SELFCAST")) then
+        if self.Data.skillID == 393 then return end -- TODO
         CastSpell(slot, BOOKTYPE_SPELL, true);
         -- self:UpdateSelection();
         -- print('SELFCAST')
@@ -346,6 +346,7 @@ function DragonflightUISpellButtonMixin:OnClick(button)
         -- SpellFlyout:Toggle(id, self, "RIGHT", 1, false, self.offSpecID, true);
         -- SpellFlyout:SetBorderColor(181/256, 162/256, 90/256);
     else
+        if self.Data.skillID == 393 then return end -- TODO
         CastSpell(slot, BOOKTYPE_SPELL);
     end
     -- self:UpdateSelection();
