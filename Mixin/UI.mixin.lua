@@ -2755,11 +2755,12 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     DragonflightUIMixin:FrameBackgroundSolid(frame, true)
 
-    local closeButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameCloseButton', frame,
-                                    'UIPanelCloseButton')
-    DragonflightUIMixin:UIPanelCloseButton(closeButton)
-    closeButton:ClearAllPoints()
-    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+    -- local closeButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameCloseButton', frame,
+    --                                 'UIPanelCloseButton')
+    -- DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    -- closeButton:ClearAllPoints()
+    -- closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+    SpellBookCloseButton:SetFrameLevel(80)
 
     -- closeButton:SetScript('OnClick', function(self)
     --     --
