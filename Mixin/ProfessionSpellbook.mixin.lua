@@ -158,9 +158,11 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
 
         if frame.UnlearnButton ~= nil then
             frame.UnlearnButton:Show();
-            -- frame.UnlearnButton:SetScript("OnClick", function() 
-            -- 	StaticPopup_Show("UNLEARN_SKILL", name, nil, skillLine);
-            -- end);
+            frame.UnlearnButton:SetScript("OnClick", function()
+                -- StaticPopup_Show("UNLEARN_SKILL", name, nil, skillLine);
+                local dialog = StaticPopup_Show("UNLEARN_SKILL", skillName);
+                if (dialog) then dialog.data = index; end
+            end);
         end
 
         local prof_title = "";
