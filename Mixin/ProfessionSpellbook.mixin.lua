@@ -283,16 +283,16 @@ function DragonflightUISpellButtonMixin:OnEvent(event, ...)
         -- Update tooltip
         if (GameTooltip:GetOwner() == self) then self:OnEnter(); end
     elseif (event == "CURRENT_SPELL_CAST_CHANGED") then
-        -- self:UpdateSelection();
+        self:UpdateSelection();
     elseif (event == "CRAFT_SHOW" or event == "CRAFT_CLOSE" or event == "TRADE_SKILL_SHOW" or event ==
         "TRADE_SKILL_CLOSE") then
-        -- self:UpdateSelection();
+        self:UpdateSelection();
     elseif (event == "PET_BAR_UPDATE") then
         -- if (SpellBookFrame.bookType == BOOKTYPE_PET) then self:UpdateButton(); end
     elseif (event == "CURSOR_CHANGED") then
         if (self.spellGrabbed) then
             -- self:UpdateButton();
-            -- self.spellGrabbed = false;
+            self.spellGrabbed = false;
         end
     end
 end
@@ -410,4 +410,13 @@ end
 
 function DragonflightUISpellButtonMixin:OnReceiveDrag()
     self:UpdateDragSpell();
+end
+
+function DragonflightUISpellButtonMixin:UpdateSelection()
+    local slot = self.Data.bookID
+    if (slot and IsSelectedSpellBookItem(slot, BOOKTYPE_SPELL)) then
+        self:SetChecked(true);
+    else
+        self:SetChecked(false);
+    end
 end
