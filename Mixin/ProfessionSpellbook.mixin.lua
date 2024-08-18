@@ -15,8 +15,28 @@ local profs = {primary = {}, poison = 666, fishing = 356, cooking = 185, firstai
 for k, v in ipairs(primary) do profs.primary[v] = true end
 -- DevTools_Dump(profs)
 
+function DragonFlightUIProfessionSpellbookMixin:InitHook()
+    self:SetScript('OnEvent', self.OnEvent)
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
+end
+
+function DragonFlightUIProfessionSpellbookMixin:OnEvent(event, arg1, ...)
+    if event == 'PLAYER_REGEN_ENABLED' then
+        --
+        -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
+        if self.ShouldUpdate then self:Update() end
+    end
+end
+
 function DragonFlightUIProfessionSpellbookMixin:Update()
     -- print('DragonFlightUIProfessionSpellbookMixin:Update()')
+
+    if InCombatLockdown() then
+        -- prevent unsecure update in combat TODO: message?
+        self.ShouldUpdate = true
+        return
+    end
+    self.ShouldUpdate = false
 
     local skillTable = {}
 

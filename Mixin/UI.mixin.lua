@@ -2662,8 +2662,19 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
     end
 
     local tabFrame = CreateFrame('FRAME', 'DragonflightUISpellbookFrameTabFrame', SpellBookFrame, 'SecureFrameTemplate')
+    function tabFrame:OnEvent(event, arg1)
+        if event == 'PLAYER_REGEN_ENABLED' then
+            --
+            -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
+            if self.ShouldUpdate then self:UpdateTabs() end
+        end
+    end
+    tabFrame:SetScript('OnEvent', tabFrame.OnEvent)
+    tabFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+
     SpellBookFrame.DFTabFrame = tabFrame
-    tabFrame.numTabs = 3
+    local numTabs = 3
+    tabFrame.numTabs = numTabs
     tabFrame.Tabs = {}
 
     for i = 1, 3 do
@@ -2678,37 +2689,75 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
         tab:SetAttribute('type', 'macro')
 
         tab:SetScript('PostClick', function(self, button, down)
-            --
-            -- PanelTemplates_Tab_OnClick(self, tabFrame)
+            --        
             DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
-            -- if i ~= 2 then SpellBookFrame.DFSpellBookProfessionFrame:Hide() end
         end)
 
         if i == 1 then
             tab:ClearAllPoints()
             tab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
             text:SetText(SPELLBOOK)
-
-            tab:SetAttribute('macrotext',
-                             "/click SpellBookFrameTabButton1\n/click DragonflightUISpellbookProfessionFrameHideButton")
         elseif i == 2 then
             tab.DFChangePoint = true
             tab:SetPoint('LEFT', _G['DragonflightUISpellBookFrameTabButton' .. (i - 1)], 'RIGHT', 0, 0)
             text:SetText(TRADE_SKILLS)
-
-            tab:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameShowButton")
         elseif i == 3 then
             tab.DFChangePoint = true
             tab:SetPoint('LEFT', _G['DragonflightUISpellBookFrameTabButton' .. (i - 1)], 'RIGHT', 0, 0)
             text:SetText(PET)
-
-            tab:SetAttribute('macrotext',
-                             "/click SpellBookFrameTabButton2\n/click DragonflightUISpellbookProfessionFrameHideButton")
         end
         DragonflightUIMixin:TabResize(tab)
     end
 
+    function tabFrame:UpdateTabs()
+        if InCombatLockdown() then
+            -- prevent unsecure update in combat TODO: message?
+            self.ShouldUpdate = true
+            return
+        end
+        self.ShouldUpdate = false
+
+        local numTabs = PetHasSpellbook() and 3 or 2
+
+        local tab1 = self.Tabs[1]
+        local tab2 = self.Tabs[2]
+        local tab3 = self.Tabs[3]
+
+        if numTabs == 2 then
+            tab3:Hide()
+
+            tab1:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameHideButton")
+            tab2:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameShowButton")
+
+            if self.selectedTab == 3 then
+                --
+                DragonflightUICharacterTabMixin:Tab_OnClick(tab1, self)
+            end
+        else
+            -- PET
+            tab3:Show()
+
+            tab1:SetAttribute('macrotext',
+                              "/click SpellBookFrameTabButton1\n/click DragonflightUISpellbookProfessionFrameHideButton")
+            tab2:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameShowButton")
+            tab3:SetAttribute('macrotext',
+                              "/click SpellBookFrameTabButton2\n/click DragonflightUISpellbookProfessionFrameHideButton")
+        end
+    end
+
     DragonflightUICharacterTabMixin:Tab_OnClick(_G['DragonflightUISpellBookFrameTabButton1'], tabFrame)
+    tabFrame:UpdateTabs()
+
+    PetFrame:HookScript('OnShow', function()
+        --
+        -- print('OnShow PETS')
+        tabFrame:UpdateTabs()
+    end)
+    PetFrame:HookScript('OnHide', function()
+        --
+        -- print('OnShow PETS')
+        tabFrame:UpdateTabs()
+    end)
 end
 
 function DragonflightUIMixin:SpellbookEraProfessions()
@@ -2831,6 +2880,7 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     end
 
     -- Mixin(frame, DragonFlightUIProfessionSpellbookMixin)
+    frame:InitHook()
     frame:Update()
 
     hooksecurefunc('SpellBookFrame_Update', function()
