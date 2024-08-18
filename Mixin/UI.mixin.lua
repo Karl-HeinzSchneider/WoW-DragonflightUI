@@ -2650,7 +2650,8 @@ function DragonflightUIMixin:ChangeSpellbookEra()
 end
 
 function DragonflightUIMixin:SpellbookEraProfessions()
-    local frame = CreateFrame('FRAME', 'DragonflightUISpellBookProfessionFrame', SpellBookFrame)
+    local frame = CreateFrame('FRAME', 'DragonflightUISpellBookProfessionFrame', SpellBookFrame,
+                              'DFSpellBookProfessionFrame')
     frame:SetSize(550, 525)
     frame:SetPoint('LEFT', SpellBookFrame, 'RIGHT', 100, 0)
     frame:SetFrameLevel(69)
@@ -2723,6 +2724,9 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         -- bg:SetVertTile(true) 
         -- bg:SetHorizTile(true)
     end
+
+    -- Mixin(frame, DragonFlightUIProfessionSpellbookMixin)
+    frame:Update()
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
