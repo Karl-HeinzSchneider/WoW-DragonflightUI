@@ -50,6 +50,16 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
                 elseif skillID == profs.fishing then
                     skillTable['fishing'] = data
                 elseif skillID == profs.cooking then
+                    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(818)
+                    local fireBookID = DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
+
+                    data['cookingFire'] = {
+                        nameLoc = name,
+                        skillID = skillID,
+                        lineID = i,
+                        icon = icon,
+                        bookID = fireBookID
+                    }
                     skillTable['cooking'] = data
                 elseif skillID == profs.firstaid then
                     skillTable['firstaid'] = data
@@ -62,6 +72,11 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
 
     self:FormatProfession(self.PrimaryProfession1, skillTable['primary1'])
     self:FormatProfession(self.PrimaryProfession2, skillTable['primary2'])
+
+    self:FormatProfession(self.SecondaryProfession1, skillTable['poison'])
+    self:FormatProfession(self.SecondaryProfession2, skillTable['fishing'])
+    self:FormatProfession(self.SecondaryProfession3, skillTable['cooking'])
+    self:FormatProfession(self.SecondaryProfession4, skillTable['firstaid'])
 end
 
 function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
@@ -86,8 +101,7 @@ local function UpdateProfessionButton(self)
     local parent = self:GetParent();
     if not parent.professionInitialized then return; end
 
-    local data = parent.data
-    self.Data = data
+    local data = self.Data
 
     local skillType, spellID = GetSpellBookItemInfo(data.nameLoc)
 
@@ -163,7 +177,7 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
             frame.statusBar.rankText:SetFormattedText(TRADESKILL_RANK, skillRank, skillMaxRank);
         end
 
-        local numSpells = 1 -- TODO
+        local numSpells = data.skillID == 185 and 2 or 1 -- TODO
 
         local hasSpell = false;
         if numSpells <= 0 then
@@ -171,15 +185,20 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
             frame.SpellButton2:Hide();
         elseif numSpells == 1 then
             hasSpell = true;
-            frame.SpellButton2:Hide();
             frame.SpellButton1:Show();
+            frame.SpellButton1.Data = data
             UpdateProfessionButton(frame.SpellButton1);
+
+            frame.SpellButton2:Hide();
         else -- if numSpells >= 2 then
             hasSpell = true;
             frame.SpellButton1:Show();
+            frame.SpellButton1.Data = data
+            UpdateProfessionButton(frame.SpellButton1);
+
             frame.SpellButton2:Show();
-            -- UpdateProfessionButton(frame.SpellButton1);
-            -- UpdateProfessionButton(frame.SpellButton2);
+            frame.SpellButton2.Data = data['cookingFire']
+            UpdateProfessionButton(frame.SpellButton2);
         end
 
         -- if hasSpell and SpellBookFrame.showProfessionSpellHighlights and C_ProfSpecs.ShouldShowPointsReminderForSkillLine(skillLine) then
@@ -236,6 +255,15 @@ DragonflightUISpellButtonMixin = {}
 function DragonflightUISpellButtonMixin:OnLoad()
     self:RegisterForDrag("LeftButton");
     self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+
+    if self:GetID() == 1 then
+        self:SetScript('OnClick', self.OnClick)
+    else
+        self:SetAttribute('type', 'spell')
+        self:SetAttribute('spell', 818)
+        -- self:SetAttribute('type', 'macro')
+        -- self:SetAttribute("macrotext", "/run print('test')")
+    end
 end
 
 function DragonflightUISpellButtonMixin:OnEvent(event, ...)
