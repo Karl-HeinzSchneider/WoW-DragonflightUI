@@ -178,6 +178,8 @@ UI_shared.xsd">
 			</OnLoad>
 		</Scripts>
 	</Frame>
+	<CheckButton name="DFProfessionButtonTemplateF" inherits="SpellButtonTemplate" virtual="true">
+	</CheckButton>
 	<CheckButton name="DFProfessionButtonTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellButtonMixin" virtual="true">
 		<Size x="40" y="40" />
 		<Layers>
@@ -219,11 +221,10 @@ UI_shared.xsd">
 			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate" parentKey="cooldown" />
 		</Frames>
 		<Scripts>
-			<!--
 			<OnLoad method="OnLoad" />
 			<OnEvent method="OnEvent" />
 			<PreClick>
-			self:SetChecked(false);
+				self:SetChecked(false);
 			</PreClick>
 			<OnClick method="OnClick" />
 			<OnShow method="OnShow" />
@@ -233,7 +234,6 @@ UI_shared.xsd">
 			<OnReceiveDrag method="OnReceiveDrag" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />
-			-->
 		</Scripts>
 		<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress" />
 		<HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" parentKey="highlightTexture" />

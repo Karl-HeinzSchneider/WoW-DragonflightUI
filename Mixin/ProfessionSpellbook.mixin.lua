@@ -29,7 +29,12 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
             --
             print(nameLoc, skillRank, skillID)
 
-            local data = {nameLoc = nameLoc, skillID = skillID, lineID = i}
+            local profDataTable = DragonFlightUIProfessionMixin.ProfessionDataTable[skillID]
+            local texture = profDataTable.icon
+
+            local bookID = DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(nameLoc)
+
+            local data = {nameLoc = nameLoc, skillID = skillID, lineID = i, icon = texture, bookID = bookID}
 
             if profs.primary[skillID] then
                 --
@@ -59,6 +64,48 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
     self:FormatProfession(self.PrimaryProfession2, skillTable['primary2'])
 end
 
+function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
+    local maxFinder = 69
+
+    for i = 1, maxFinder do
+        local spell, rank = GetSpellInfo(i, BOOKTYPE_SPELL)
+
+        if (not spell) then break end
+
+        if spell == name then
+            --
+            print('Found!', name, i)
+            return i
+        end
+    end
+
+    print('Not Found!', name)
+end
+
+local function UpdateProfessionButton(self)
+    local parent = self:GetParent();
+    if not parent.professionInitialized then return; end
+
+    local data = parent.data
+    self.Data = data
+
+    local skillType, spellID = GetSpellBookItemInfo(data.nameLoc)
+
+    self.IconTexture:SetTexture(data.icon)
+
+    self.spellString:SetText(data.nameLoc);
+    self.subSpellString:SetText("");
+
+    -- if spellID then
+    --     local spell = Spell:CreateFromSpellID(spellID);
+    --     spell:ContinueOnSpellLoad(function()
+    --         self.subSpellString:SetText(spell:GetSpellSubtext());
+    --     end);
+    -- end
+
+    -- self:UpdateSelection();
+end
+
 function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
     print('DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame,data)')
     if data then
@@ -70,6 +117,9 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
 
         local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable,
               stepCost, rankCost, minLevel, skillCostType, skillDescription = GetSkillLineInfo(index)
+
+        frame.professionInitialized = true;
+        frame.data = data
 
         print(skillName, skillRank, skillMaxRank)
         frame.statusBar:SetMinMaxValues(1, skillMaxRank);
@@ -101,9 +151,7 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
         frame.statusBar.rankText:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB());
         frame.statusBar.tooltip = nil;
 
-        local profDataTable = DragonFlightUIProfessionMixin.ProfessionDataTable[data.skillID]
-        local texture = profDataTable.icon
-
+        local texture = data.icon
         if frame.icon and texture then SetPortraitToTexture(frame.icon, texture); end
 
         frame.professionName:SetText(skillName);
@@ -125,7 +173,7 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
             hasSpell = true;
             frame.SpellButton2:Hide();
             frame.SpellButton1:Show();
-            -- UpdateProfessionButton(frame.SpellButton1);
+            UpdateProfessionButton(frame.SpellButton1);
         else -- if numSpells >= 2 then
             hasSpell = true;
             frame.SpellButton1:Show();
@@ -184,3 +232,145 @@ end
 
 --
 DragonflightUISpellButtonMixin = {}
+
+function DragonflightUISpellButtonMixin:OnLoad()
+    self:RegisterForDrag("LeftButton");
+    self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+end
+
+function DragonflightUISpellButtonMixin:OnEvent(event, ...)
+    if (event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM") then
+        -- need to listen for UPDATE_SHAPESHIFT_FORM because attack icons change when the shapeshift form changes
+        -- self:UpdateButton();
+    elseif (event == "SPELL_UPDATE_COOLDOWN") then
+        -- self:UpdateCooldown();
+        -- Update tooltip
+        if (GameTooltip:GetOwner() == self) then self:OnEnter(); end
+    elseif (event == "CURRENT_SPELL_CAST_CHANGED") then
+        -- self:UpdateSelection();
+    elseif (event == "CRAFT_SHOW" or event == "CRAFT_CLOSE" or event == "TRADE_SKILL_SHOW" or event ==
+        "TRADE_SKILL_CLOSE") then
+        -- self:UpdateSelection();
+    elseif (event == "PET_BAR_UPDATE") then
+        -- if (SpellBookFrame.bookType == BOOKTYPE_PET) then self:UpdateButton(); end
+    elseif (event == "CURSOR_CHANGED") then
+        if (self.spellGrabbed) then
+            -- self:UpdateButton();
+            -- self.spellGrabbed = false;
+        end
+    end
+end
+
+function DragonflightUISpellButtonMixin:OnShow()
+    self:RegisterEvent("SPELLS_CHANGED");
+    self:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+    self:RegisterEvent("CRAFT_SHOW");
+    self:RegisterEvent("CRAFT_CLOSE");
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
+    self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED");
+    self:RegisterEvent("TRADE_SKILL_SHOW");
+    self:RegisterEvent("TRADE_SKILL_CLOSE");
+    self:RegisterEvent("PET_BAR_UPDATE");
+    self:RegisterEvent("CURSOR_CHANGED");
+end
+
+function DragonflightUISpellButtonMixin:OnHide()
+    self:UnregisterEvent("SPELLS_CHANGED");
+    self:UnregisterEvent("SPELL_UPDATE_COOLDOWN");
+    self:UnregisterEvent("CRAFT_SHOW");
+    self:UnregisterEvent("CRAFT_CLOSE");
+    self:UnregisterEvent("UPDATE_SHAPESHIFT_FORM");
+    self:UnregisterEvent("CURRENT_SPELL_CAST_CHANGED");
+    self:UnregisterEvent("TRADE_SKILL_SHOW");
+    self:UnregisterEvent("TRADE_SKILL_CLOSE");
+    self:UnregisterEvent("PET_BAR_UPDATE");
+    self:UnregisterEvent("CURSOR_CHANGED");
+end
+
+function DragonflightUISpellButtonMixin:OnEnter()
+    local slot = self.Data.bookID
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    if (GameTooltip:SetSpellBookItem(slot, BOOKTYPE_SPELL)) then
+        self.UpdateTooltip = self.OnEnter;
+    else
+        self.UpdateTooltip = nil;
+    end
+
+    GameTooltip:Show();
+end
+
+function DragonflightUISpellButtonMixin:OnLeave()
+    GameTooltip:Hide();
+end
+
+function DragonflightUISpellButtonMixin:OnClick(button)
+
+    local slot = self.Data.bookID
+    local slotType, slotID = GetSpellBookItemInfo(slot, BOOKTYPE_SPELL);
+
+    if (IsModifiedClick("CHATLINK")) then
+        if (MacroFrameText and MacroFrameText:HasFocus()) then
+            local spellName, subSpellName = GetSpellBookItemName(slot, BOOKTYPE_SPELL);
+            if (spellName and not IsPassiveSpell(slot, BOOKTYPE_SPELL)) then
+                if (subSpellName and (strlen(subSpellName) > 0)) then
+                    ChatEdit_InsertLink(spellName .. "(" .. subSpellName .. ")");
+                else
+                    ChatEdit_InsertLink(spellName);
+                end
+            end
+            return;
+        else
+            local tradeSkillLink, tradeSkillSpellID = GetSpellTradeSkillLink(slot, BOOKTYPE_SPELL);
+            if (tradeSkillSpellID) then
+                ChatEdit_InsertLink(tradeSkillLink);
+            else
+                ChatEdit_InsertLink(GetSpellLink(slot, BOOKTYPE_SPELL));
+            end
+            return;
+        end
+    end
+    if (IsModifiedClick("PICKUPACTION")) then
+        PickupSpellBookItem(slot, BOOKTYPE_SPELL);
+        return;
+    end
+
+    if (IsModifiedClick("SELFCAST")) then
+        CastSpell(slot, BOOKTYPE_SPELL, true);
+        -- self:UpdateSelection();
+        -- print('SELFCAST')
+        return;
+    end
+
+    if (slotType == "FLYOUT") then
+        -- TODO
+        -- SpellFlyout:Toggle(id, self, "RIGHT", 1, false, self.offSpecID, true);
+        -- SpellFlyout:SetBorderColor(181/256, 162/256, 90/256);
+    else
+        CastSpell(slot, BOOKTYPE_SPELL);
+    end
+    -- self:UpdateSelection();
+end
+
+function DragonflightUISpellButtonMixin:UpdateDragSpell()
+    local slot = self.Data.bookID
+    local slotType, slotID = GetSpellBookItemInfo(slot, BOOKTYPE_SPELL);
+
+    if (not slot or slot > MAX_SPELLS or not _G[self:GetName() .. "IconTexture"]:IsShown() or
+        (slotType == "FUTURESPELL")) then return; end
+    self:SetChecked(false);
+    PickupSpellBookItem(slot, BOOKTYPE_SPELL);
+end
+
+function DragonflightUISpellButtonMixin:OnDragStart()
+    self.spellGrabbed = true;
+    self:UpdateDragSpell();
+    if self.SpellHighlightTexture then self.SpellHighlightTexture:Hide(); end
+end
+
+function DragonflightUISpellButtonMixin:OnDragStop()
+    self.dragStopped = true;
+end
+
+function DragonflightUISpellButtonMixin:OnReceiveDrag()
+    self:UpdateDragSpell();
+end
