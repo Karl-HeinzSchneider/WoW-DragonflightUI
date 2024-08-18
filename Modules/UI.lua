@@ -391,6 +391,7 @@ function Module:ChangeFrames()
     elseif DF.Era then
         --
         DragonflightUIMixin:ChangeSpellbookEra()
+        DragonflightUIMixin:SpellbookEraAddTabs()
         DragonflightUIMixin:SpellbookEraProfessions()
         Module:FuncOrWaitframe('WhatsTraining', function()
             DF.Compatibility:WhatsTraining()
