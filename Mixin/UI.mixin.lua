@@ -2649,6 +2649,247 @@ function DragonflightUIMixin:ChangeSpellbookEra()
     UpdateUIPanelPositions(SpellBookFrame)
 end
 
+function DragonflightUIMixin:SpellbookEraAddTabs()
+    local frame = SpellBookFrame
+
+    -- remove default
+    for i = 1, 5 do
+        local tab = _G['SpellBookFrameTabButton' .. i]
+        if tab then
+            tab:ClearAllPoints()
+            tab:Hide()
+        end
+    end
+
+    local tabFrame = CreateFrame('FRAME', 'DragonflightUISpellbookFrameTabFrame', SpellBookFrame, 'SecureFrameTemplate')
+    function tabFrame:OnEvent(event, arg1)
+        if event == 'PLAYER_REGEN_ENABLED' then
+            --
+            -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
+            if self.ShouldUpdate then self:UpdateTabs() end
+        end
+    end
+    tabFrame:SetScript('OnEvent', tabFrame.OnEvent)
+    tabFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+
+    SpellBookFrame.DFTabFrame = tabFrame
+    local numTabs = 3
+    tabFrame.numTabs = numTabs
+    tabFrame.Tabs = {}
+
+    for i = 1, 3 do
+        local tab = CreateFrame('BUTTON', 'DragonflightUISpellBookFrameTabButton' .. i, tabFrame,
+                                'DFCharacterFrameTabButtonTemplate', i)
+        tab:SetParent(tabFrame)
+        local text = _G[tab:GetName() .. 'Text']
+        tinsert(tabFrame.Tabs, i, tab)
+
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab, false, true)
+
+        tab:SetAttribute('type', 'macro')
+
+        tab:SetScript('PostClick', function(self, button, down)
+            --        
+            DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
+        end)
+
+        if i == 1 then
+            tab:ClearAllPoints()
+            tab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
+            text:SetText(SPELLBOOK)
+        elseif i == 2 then
+            tab.DFChangePoint = true
+            tab:SetPoint('LEFT', _G['DragonflightUISpellBookFrameTabButton' .. (i - 1)], 'RIGHT', 0, 0)
+            text:SetText(TRADE_SKILLS)
+        elseif i == 3 then
+            tab.DFChangePoint = true
+            tab:SetPoint('LEFT', _G['DragonflightUISpellBookFrameTabButton' .. (i - 1)], 'RIGHT', 0, 0)
+            text:SetText(PET)
+        end
+        DragonflightUIMixin:TabResize(tab)
+    end
+
+    function tabFrame:UpdateTabs()
+        if InCombatLockdown() then
+            -- prevent unsecure update in combat TODO: message?
+            self.ShouldUpdate = true
+            return
+        end
+        self.ShouldUpdate = false
+
+        local numTabs = PetHasSpellbook() and 3 or 2
+
+        local tab1 = self.Tabs[1]
+        local tab2 = self.Tabs[2]
+        local tab3 = self.Tabs[3]
+
+        if numTabs == 2 then
+            tab3:Hide()
+
+            tab1:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameHideButton")
+            tab2:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameShowButton")
+
+            if self.selectedTab == 3 then
+                --
+                DragonflightUICharacterTabMixin:Tab_OnClick(tab1, self)
+            end
+        else
+            -- PET
+            tab3:Show()
+
+            tab1:SetAttribute('macrotext',
+                              "/click SpellBookFrameTabButton1\n/click DragonflightUISpellbookProfessionFrameHideButton")
+            tab2:SetAttribute('macrotext', "/click DragonflightUISpellbookProfessionFrameShowButton")
+            tab3:SetAttribute('macrotext',
+                              "/click SpellBookFrameTabButton2\n/click DragonflightUISpellbookProfessionFrameHideButton")
+        end
+    end
+
+    DragonflightUICharacterTabMixin:Tab_OnClick(_G['DragonflightUISpellBookFrameTabButton1'], tabFrame)
+    tabFrame:UpdateTabs()
+
+    PetFrame:HookScript('OnShow', function()
+        --
+        -- print('OnShow PETS')
+        tabFrame:UpdateTabs()
+    end)
+    PetFrame:HookScript('OnHide', function()
+        --
+        -- print('OnShow PETS')
+        tabFrame:UpdateTabs()
+    end)
+end
+
+function DragonflightUIMixin:SpellbookEraProfessions()
+    local frame = CreateFrame('FRAME', 'DragonflightUISpellBookProfessionFrame', SpellBookFrame,
+                              'DFSpellBookProfessionFrame')
+    frame:SetSize(550, 525)
+    -- frame:SetPoint('LEFT', SpellBookFrame, 'RIGHT', 200, 0)
+    frame:SetPoint('TOPLEFT', SpellBookFrame, 'TOPLEFT', 0, 0)
+    frame:SetFrameLevel(69)
+    frame:Hide()
+    SpellBookFrame.DFSpellBookProfessionFrame = frame
+
+    frame.buttonShow = CreateFrame("Button", "DragonflightUISpellbookProfessionFrameShowButton", frame,
+                                   "SecureHandlerClickTemplate");
+    frame.buttonShow:SetAttribute("_onclick", [[      
+        local frame = self:GetFrameRef("ProfessionFrame");
+        frame:Show();    
+        
+        -- local tabs = self:GetFrameRef("TabsFrame");
+        -- tabs:Hide();   
+    ]]);
+    frame.buttonShow:SetFrameRef("ProfessionFrame", frame)
+    -- frame.buttonShow:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
+
+    frame.buttonShow:SetAllPoints(frame);
+    frame:SetAttribute("addchild", frame.buttonShow);
+
+    frame.buttonHide = CreateFrame("Button", "DragonflightUISpellbookProfessionFrameHideButton", frame,
+                                   "SecureHandlerClickTemplate");
+    frame.buttonHide:SetAttribute("_onclick", [[      
+        local frame = self:GetFrameRef("ProfessionFrame");
+        frame:Hide();   
+        
+        -- local tabs = self:GetFrameRef("TabsFrame");
+        -- tabs:Show();    
+    ]]);
+    frame.buttonHide:SetFrameRef("ProfessionFrame", frame)
+    -- frame.buttonHide:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
+    frame.buttonHide:SetAllPoints(frame);
+    frame:SetAttribute("addchild", frame.buttonHide);
+
+    -- local showButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameShowButton', SpellBookFrame,
+    --                                'SecureActionButtonTemplate')
+    -- showButton:SetAttribute('type', 'macro')
+    -- showButton:SetAttribute('macrotext', "")
+    -- showButton:SetScript('PostClick', function(self, button, down)
+    --     --
+    --     -- SpellBookFrame.DFSpellBookProfessionFrame:Show()
+    -- end)
+    -- SpellBookFrame.DFShowButton = showButton
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    -- local closeButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameCloseButton', frame,
+    --                                 'UIPanelCloseButton')
+    -- DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    -- closeButton:ClearAllPoints()
+    -- closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+    SpellBookCloseButton:SetFrameLevel(80)
+
+    -- closeButton:SetScript('OnClick', function(self)
+    --     --
+    --     HideUIPanel(SpellBookFrame)
+    -- end)
+
+    local titleText = frame:CreateFontString('DragonflightUISpellbookProfessionFrameTitleText', 'ARTWORK',
+                                             'GameFontNormal')
+    titleText:SetPoint('TOP', frame, 'TOP', 0, -5)
+    titleText:SetPoint('LEFT', frame, 'LEFT', 60, 0)
+    titleText:SetPoint('RIGHT', frame, 'RIGHT', -60, 0)
+    titleText:SetText(TRADE_SKILLS)
+
+    do
+        local port = frame:CreateTexture('DragonflightUISpellbookProfessionFramePortrait')
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+        port:SetParent(frame)
+        port:SetTexture(136830)
+        SetPortraitToTexture(port, port:GetTexture())
+        port:SetDrawLayer('OVERLAY', 6)
+        port:Show()
+
+        frame.PortraitFrame = frame:CreateTexture('DragonflightUISpellbookProfessionFramePortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+        -- pp:SetFrameLevel(4)
+    end
+
+    do
+        -- TODO different color
+        local inset = CreateFrame('FRAME', 'DragonflightUISpellBookInset', frame, 'InsetFrameTemplate')
+        inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -24)
+        inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
+        inset:SetFrameLevel(1)
+
+        local first = frame:CreateTexture('DragonflightUISpellBookPage1', 'BACKGROUND')
+        first:SetTexture(base .. 'Professions-Book-Left')
+        first:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -25)
+
+        local second = frame:CreateTexture('DragonflightUISpellBookPage2', 'BACKGROUND')
+        second:SetTexture(base .. 'Professions-Book-Right')
+        second:SetPoint('TOPLEFT', first, 'TOPRIGHT', 0, 0)
+
+        local bg = frame:CreateTexture('DragonflightUISpellBookBG', 'BACKGROUND')
+        bg:SetTexture(base .. 'UI-Background-RockCata')
+        bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 2, -21)
+        bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 2)
+        bg:SetDrawLayer('BACKGROUND', -6)
+        -- TODO: bugged?
+        -- bg:SetVertTile(true) 
+        -- bg:SetHorizTile(true)
+    end
+
+    -- Mixin(frame, DragonFlightUIProfessionSpellbookMixin)
+    frame:InitHook()
+    frame:Update()
+
+    hooksecurefunc('SpellBookFrame_Update', function()
+        --
+        -- print('SpellBookFrame_Update')
+        frame:Update()
+    end)
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 
@@ -3276,7 +3517,7 @@ function DragonflightUIMixin:TabResize(btn)
     end
 end
 
-function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled)
+function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled, dontResize)
     -- print('DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)', frame:GetName())
 
     local name = frame:GetName()
@@ -3289,14 +3530,16 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
     -- 100 - 150
     -- PanelTemplates_TabResize(self, 0, nil, 36, self:GetParent().maxTabWidth or 88);
 
-    frame:HookScript('OnEvent', function()
-        DragonflightUIMixin:TabResize(frame)
-    end)
+    if not dontResize then
+        frame:HookScript('OnEvent', function()
+            DragonflightUIMixin:TabResize(frame)
+        end)
 
-    frame:HookScript('OnShow', function()
+        frame:HookScript('OnShow', function()
+            DragonflightUIMixin:TabResize(frame)
+        end)
         DragonflightUIMixin:TabResize(frame)
-    end)
-    DragonflightUIMixin:TabResize(frame)
+    end
 
     -- inactive
     do
@@ -3322,7 +3565,7 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
         middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
 
-        local setNormal = function(normal)
+        function frame:SetNormal(normal)
             if normal then
                 --   
                 frame:SetHeight(32)
@@ -3351,11 +3594,11 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
         end
 
         frame:HookScript('OnEnable', function()
-            setNormal(true)
+            frame:SetNormal(true)
         end)
 
         frame:HookScript('OnDisable', function()
-            setNormal(false)
+            frame:SetNormal(false)
         end)
     end
 
