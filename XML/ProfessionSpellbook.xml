@@ -20,8 +20,7 @@ UI_shared.xsd">
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						--self.missingHeader:SetText(PROFESSIONS_SECOND_PROFESSION);
-						self.missingHeader:SetText('');
+						self.missingHeader:SetText(PROFESSIONS_SECOND_PROFESSION);
 						self.icon:SetAlpha(0.6)
 						SetDesaturation(self.icon, true);
 					</OnLoad>
@@ -33,8 +32,10 @@ UI_shared.xsd">
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						self.missingHeader:SetText(PROFESSIONS_ARCHAEOLOGY);
-						self.missingText:SetText(PROFESSIONS_ARCHAEOLOGY_MISSING);
+						--self.missingHeader:SetText(PROFESSIONS_ARCHAEOLOGY);
+						--self.missingText:SetText(PROFESSIONS_ARCHAEOLOGY_MISSING);
+						self.missingHeader:SetText('');
+						self.missingText:SetText('');
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -342,13 +343,11 @@ UI_shared.xsd">
 		<BarTexture name="$parentBar" file="Interface\AddOns\DragonflightUI\Textures\UI\Professions-Progress-Fill" />
 		<!-- BarColor r="1" g="1" b="1"/ -->
 		<Frames>
-			<!--
-			<Frame name="$parentCapped" parentKey="capped" inherits="ProfessionTrialCapTemplate">
-			<Anchors>
-			<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" x="14" y="2" />
-			</Anchors>
+			<Frame name="$parentCapped" parentKey="capped" inherits="DFProfessionTrialCapTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" x="14" y="2" />
+				</Anchors>
 			</Frame>
-			-->
 		</Frames>
 		<Scripts>
 			<OnEnter>
@@ -362,4 +361,23 @@ UI_shared.xsd">
 			</OnLeave>
 		</Scripts>
 	</StatusBar>
+	<Frame name="DFProfessionTrialCapTemplate" hidden="true" enableMouse="true" virtual="true">
+		<Size x="18" y="21" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentLockedIndicator" file="Interface/LFGFrame/UI-LFG-ICON-LOCK" parentKey="lockedIndicator" setAllPoints="true">
+					<TexCoords left="0" right="0.71875" top="0" bottom="0.875" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(CAP_REACHED_TRIAL, RED_FONT_COLOR.r, RED_FONT_COLOR.b, RED_FONT_COLOR.b);
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Frame>
 </Ui>

@@ -172,13 +172,13 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
         frame.rank:SetText(prof_title);
 
         frame.statusBar:Show();
-        if rank == skillMaxRank then
+        if skillRank == skillMaxRank then
             frame.statusBar.capRight:Show();
         else
             frame.statusBar.capRight:Hide();
         end
 
-        -- frame.statusBar.capped:Hide();
+        frame.statusBar.capped:Hide();
         frame.statusBar.rankText:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB());
         frame.statusBar.tooltip = nil;
 
