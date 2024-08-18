@@ -16,7 +16,7 @@ for k, v in ipairs(primary) do profs.primary[v] = true end
 -- DevTools_Dump(profs)
 
 function DragonFlightUIProfessionSpellbookMixin:Update()
-    print('DragonFlightUIProfessionSpellbookMixin:Update()')
+    -- print('DragonFlightUIProfessionSpellbookMixin:Update()')
 
     local skillTable = {}
 
@@ -27,7 +27,7 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
 
         if skillID then
             --
-            print(nameLoc, skillRank, skillID)
+            -- print(nameLoc, skillRank, skillID)
 
             local profDataTable = DragonFlightUIProfessionMixin.ProfessionDataTable[skillID]
             local texture = profDataTable.icon
@@ -68,7 +68,7 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
         end
     end
 
-    DevTools_Dump(skillTable)
+    -- DevTools_Dump(skillTable)
 
     self:FormatProfession(self.PrimaryProfession1, skillTable['primary1'])
     self:FormatProfession(self.PrimaryProfession2, skillTable['primary2'])
@@ -89,12 +89,12 @@ function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
 
         if spell == name then
             --
-            print('Found!', name, i)
+            -- print('Found!', name, i)
             return i
         end
     end
 
-    print('Not Found!', name)
+    -- print('Not Found!', name)
 end
 
 local function UpdateProfessionButton(self)
@@ -103,24 +103,45 @@ local function UpdateProfessionButton(self)
 
     local data = self.Data
 
-    local skillType, spellID = GetSpellBookItemInfo(data.nameLoc)
-
-    self:SetScript('PreClick', function(self, button)
+    if self.spellString:GetText() == data.nameLoc then
         --
-        self:SetChecked(false);
+        -- print('UpdateProfessionButton', 'no update needed')
+        return
+    end
 
-        if IsShiftKeyDown() then
-            -- Call a custom function on Shift+Click
-            self:OnClick(button)
-        elseif IsControlKeyDown() then
-            -- Call a different custom function on Ctrl+Click
-            self:OnClick(button)
-        else
-            -- Default action: cast the spell
-            self:SetAttribute('type1', 'spell')
-            self:SetAttribute('spell', spellID)
-        end
-    end)
+    if InCombatLockdown() then return end -- prevent unsecure update in combat TODO: message?
+
+    local skillType, spellID = GetSpellBookItemInfo(data.nameLoc)
+    self.DFNameLoc = data.nameLoc
+    self.DFSpellID = spellID
+
+    self:SetAttribute('type1', 'spell')
+    self:SetAttribute('spell', spellID)
+
+    -- self:SetAttribute("_onclick", [[      
+    --     print('_onclick') 
+
+    --     if (IsModifiedClick('CHATLINK')) then
+    --         ChatEdit_InsertLink(self.DFNameLoc)
+    --     end
+    -- ]]);
+
+    -- self:SetScript('PreClick', function(self, button)
+    --     --
+    --     self:SetChecked(false);
+
+    --     if IsShiftKeyDown() then
+    --         -- Call a custom function on Shift+Click
+    --         self:OnClick(button)
+    --     elseif IsControlKeyDown() then
+    --         -- Call a different custom function on Ctrl+Click
+    --         self:OnClick(button)
+    --     else
+    --         -- Default action: cast the spell
+    --         self:SetAttribute('type1', 'spell')
+    --         self:SetAttribute('spell', spellID)
+    --     end
+    -- end)
 
     self.IconTexture:SetTexture(data.icon)
 
@@ -138,10 +159,10 @@ local function UpdateProfessionButton(self)
 end
 
 function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
-    print('DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame,data)')
+    -- print('DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame,data)')
     if data then
         --
-        print('FormatProfession DATA', frame:GetName())
+        -- print('FormatProfession DATA', frame:GetName())
         local index = data.lineID
         frame.missingHeader:Hide();
         frame.missingText:Hide();
@@ -152,7 +173,7 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
         frame.professionInitialized = true;
         frame.data = data
 
-        print(skillName, skillRank, skillMaxRank)
+        -- print(skillName, skillRank, skillMaxRank)
         frame.statusBar:SetMinMaxValues(1, skillMaxRank);
         frame.statusBar:SetValue(skillRank);
 
@@ -227,7 +248,7 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
         -- end
     else
         -- 
-        print('FormatProfession ELSE', frame:GetName())
+        -- print('FormatProfession ELSE', frame:GetName())
         frame.missingHeader:Show();
         frame.missingText:Show();
 
@@ -401,6 +422,7 @@ function DragonflightUISpellButtonMixin:UpdateDragSpell()
 end
 
 function DragonflightUISpellButtonMixin:OnDragStart()
+    if InCombatLockdown() then return end -- Prevent dragging in combat
     self.spellGrabbed = true;
     self:UpdateDragSpell();
     if self.SpellHighlightTexture then self.SpellHighlightTexture:Hide(); end
@@ -411,7 +433,7 @@ function DragonflightUISpellButtonMixin:OnDragStop()
 end
 
 function DragonflightUISpellButtonMixin:OnReceiveDrag()
-    self:UpdateDragSpell();
+    -- self:UpdateDragSpell();
 end
 
 function DragonflightUISpellButtonMixin:UpdateSelection()

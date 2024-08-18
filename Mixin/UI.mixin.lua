@@ -2686,7 +2686,7 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
 
         if i == 1 then
             tab:ClearAllPoints()
-            tab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 0)
+            tab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
             text:SetText(SPELLBOOK)
 
             tab:SetAttribute('macrotext',
@@ -2832,6 +2832,12 @@ function DragonflightUIMixin:SpellbookEraProfessions()
 
     -- Mixin(frame, DragonFlightUIProfessionSpellbookMixin)
     frame:Update()
+
+    hooksecurefunc('SpellBookFrame_Update', function()
+        --
+        -- print('SpellBookFrame_Update')
+        frame:Update()
+    end)
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
