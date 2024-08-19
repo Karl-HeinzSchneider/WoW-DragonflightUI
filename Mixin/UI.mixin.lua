@@ -2697,14 +2697,31 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
             tab:ClearAllPoints()
             tab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
             text:SetText(SPELLBOOK)
+            tab:SetScript('OnEnter', function(self)
+                --
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), SpellBookFrameTabButton1.binding), 1.0, 1.0,
+                                    1.0);
+            end)
         elseif i == 2 then
             tab.DFChangePoint = true
             tab:SetPoint('LEFT', _G['DragonflightUISpellBookFrameTabButton' .. (i - 1)], 'RIGHT', 0, 0)
             text:SetText(TRADE_SKILLS)
+            tab:SetScript('OnEnter', function(self)
+                --
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), ''), 1.0, 1.0, 1.0);
+            end)
         elseif i == 3 then
             tab.DFChangePoint = true
             tab:SetPoint('LEFT', _G['DragonflightUISpellBookFrameTabButton' .. (i - 1)], 'RIGHT', 0, 0)
             text:SetText(PET)
+            tab:SetScript('OnEnter', function(self)
+                --
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), SpellBookFrameTabButton2.binding), 1.0, 1.0,
+                                    1.0);
+            end)
         end
         DragonflightUIMixin:TabResize(tab)
     end
