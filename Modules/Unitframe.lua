@@ -2118,6 +2118,7 @@ end
 function Module.ChangeTargetComboFrame()
     local c = ComboFrame
     c:SetParent(TargetFrame)
+    c:SetFrameLevel(10)
 
     local tex = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\classoverlaycombopoints'
 
