@@ -2700,8 +2700,7 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
             tab:SetScript('OnEnter', function(self)
                 --
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), SpellBookFrameTabButton1.binding), 1.0, 1.0,
-                                    1.0);
+                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), 'TOGGLESPELLBOOK'), 1.0, 1.0, 1.0);
             end)
         elseif i == 2 then
             tab.DFChangePoint = true
