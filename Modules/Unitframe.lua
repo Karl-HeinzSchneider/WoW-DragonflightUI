@@ -42,6 +42,7 @@ local defaults = {
             breakUpLargeNumbers = true,
             enableNumericThreat = true,
             enableThreatGlow = true,
+            comboPointsOnPlayerFrame = false,
             scale = 1.0,
             override = false,
             anchorFrame = 'UIParent',
@@ -422,6 +423,13 @@ local optionsTarget = {
             desc = 'Enable threat glow',
             order = 10,
             disabled = true
+        },
+        comboPointsOnPlayerFrame = {
+            type = 'toggle',
+            name = 'ComboPoints on PlayerFrame',
+            desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
+            order = 10,
+            new = true
         }
     }
 }
@@ -1073,6 +1081,7 @@ function Module:ApplySettings()
         Module.ReApplyToT()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
+        Module.UpdateComboFrameState(obj.comboPointsOnPlayerFrame)
     end
 
     -- pet
@@ -2144,6 +2153,52 @@ function Module.ChangeTargetComboFrame()
             elseif layer == 'OVERLAY' then
                 v:SetTexCoord(0.0078125, 0.210938, 0.164062, 0.375)
             end
+        end
+    end
+end
+
+function Module.UpdateComboFrameState(onPlayer)
+    local c = ComboFrame
+
+    if onPlayer then
+        c:SetParent(PlayerFrame)
+        c:SetSize(116, 20)
+        c:ClearAllPoints()
+        c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
+        -- ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1)   
+
+        for i = 1, 5 do
+            --
+            local size = 20
+            local scaling = 20 / 12
+
+            local point = _G['ComboPoint' .. i]
+            point:SetSize(20, 20)
+            point:ClearAllPoints()
+            local dx = (i - 1) * 24 / scaling
+            point:SetPoint('TOPLEFT', c, 'TOPLEFT', dx, 0)
+
+            point:SetScale(scaling)
+        end
+    else
+        -- default
+        c:SetParent(TargetFrame)
+        c:SetSize(256, 32)
+        c:ClearAllPoints()
+        c:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -44, -9)
+
+        local comboDefaults = {{0, 0}, {7, -8}, {12, -19}, {14, -30}, {12, -41}}
+
+        for i = 1, 5 do
+            --
+            local scaling = 1
+
+            local point = _G['ComboPoint' .. i]
+            point:SetSize(12, 12)
+            point:ClearAllPoints()
+            point:SetPoint('TOPRIGHT', c, 'TOPRIGHT', comboDefaults[i][1], comboDefaults[i][2])
+
+            point:SetScale(scaling)
         end
     end
 end
