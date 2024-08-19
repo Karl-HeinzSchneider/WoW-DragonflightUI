@@ -2684,7 +2684,7 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
         local text = _G[tab:GetName() .. 'Text']
         tinsert(tabFrame.Tabs, i, tab)
 
-        DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab, false, true)
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab, true, true)
 
         tab:SetAttribute('type', 'macro')
 
@@ -3565,10 +3565,10 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
         middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
 
-        function frame:SetNormal(normal)
+        function frame:SetNormal(normal, keepSize)
             if normal then
                 --   
-                frame:SetHeight(32)
+                if not keepSize then frame:SetHeight(32) end
 
                 left:SetSize(35, 36)
                 left:SetTexCoord(0.015625, 0.5625, 0.816406, 0.957031)
@@ -3580,7 +3580,7 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
                 middle:SetTexCoord(0, 0.015625, 0.175781, 0.316406)
             else
                 --
-                frame:SetHeight(42)
+                if not keepSize then frame:SetHeight(42) end
 
                 left:SetSize(35, 42)
                 left:SetTexCoord(0.015625, 0.5625, 0.496094, 0.660156)
@@ -3668,6 +3668,18 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
         middle:SetBlendMode('ADD')
         middle:SetAlpha(0.4)
+
+        function frame:DFHighlight(big)
+            if big then
+                left:SetHeight(42)
+                right:SetHeight(42)
+                middle:SetHeight(42)
+            else
+                left:SetHeight(36)
+                right:SetHeight(36)
+                middle:SetHeight(36)
+            end
+        end
     end
 end
 
@@ -3697,7 +3709,7 @@ function DragonflightUIMixin:BottomEncounterTierTabTemplate(frame)
         middle:SetPoint('TOPLEFT', left, 'TOPRIGHT', 0, 0)
         middle:SetPoint('TOPRIGHT', right, 'TOPLEFT', 0, 0)
 
-        local setNormal = function(normal)
+        local setNormal = function(normal, keepSize)
             if normal then
                 --   
                 frame:SetHeight(32)

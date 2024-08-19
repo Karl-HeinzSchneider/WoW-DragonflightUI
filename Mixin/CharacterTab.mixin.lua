@@ -44,7 +44,8 @@ function DragonflightUICharacterTabMixin:DeselectTab(tab)
     right:Show();
     -- tab:UnlockHighlight();
     -- tab:Enable();
-    -- tab:SetNormal(true)
+    tab:DFHighlight(false)
+    tab:SetNormalFontObject(GameFontNormalSmall)
     local text = tab.Text or _G[name .. "Text"];
     text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2));
 
@@ -67,8 +68,9 @@ function DragonflightUICharacterTabMixin:SelectTab(tab)
     right:Hide();
     -- tab:LockHighlight();
     -- tab:Disable();
-    -- tab:SetNormal(false)
+    tab:DFHighlight(true)
     tab:SetDisabledFontObject(GameFontHighlightSmall);
+    tab:SetNormalFontObject(GameFontHighlightSmall)
     local text = tab.Text or _G[name .. "Text"];
     text:SetPoint("CENTER", tab, "CENTER", (tab.selectedTextX or 0), (tab.selectedTextY or -3));
 
@@ -78,7 +80,6 @@ function DragonflightUICharacterTabMixin:SelectTab(tab)
     if leftDisabled then leftDisabled:Show(); end
     if middleDisabled then middleDisabled:Show(); end
     if rightDisabled then rightDisabled:Show(); end
-
     local tooltip = GetAppropriateTooltip();
     if tooltip:IsOwned(tab) then tooltip:Hide(); end
 end
