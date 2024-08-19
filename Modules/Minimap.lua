@@ -18,6 +18,7 @@ local defaults = {
             locked = true,
             showPing = false,
             showPingChat = false,
+            hideCalendar = false,
             durability = 'BOTTOM'
         },
         buffs = {
@@ -236,14 +237,19 @@ local minimapOptions = {
             type = 'toggle',
             name = 'Show Ping',
             desc = '(NOT YET IMPLEMENTED)' .. getDefaultStr('showPing', 'minimap'),
-            order = 11,
-            new = true
+            order = 11
         },
         showPingChat = {
             type = 'toggle',
             name = 'Show Ping in Chat',
             desc = '' .. getDefaultStr('showPingChat', 'minimap'),
-            order = 12,
+            order = 12
+        },
+        hideCalendar = {
+            type = 'toggle',
+            name = 'Hide Calendar',
+            desc = 'Hides the calendar button' .. getDefaultStr('hideCalendar', 'minimap'),
+            order = 13,
             new = true
         },
         durability = {
@@ -790,6 +796,12 @@ function Module.UpdateMinimapState(state)
 
     Module.LockMinimap(state.locked)
     Module.UpdateDurabilityState(state)
+
+    if state.hideCalendar then
+        frame.CalendarButton:Hide()
+    else
+        frame.CalendarButton:Show()
+    end
 end
 
 function Module.UpdateTrackerState(state)
