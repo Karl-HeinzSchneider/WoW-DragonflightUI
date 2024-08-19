@@ -38,6 +38,7 @@ LocalizationData.lua
 Localization\BlizzardData\Professions.lua
 
 XML\Includes.xml
+Bindings.xml
 
 # XML
 XML\Actionbar.xml

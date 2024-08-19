@@ -1736,8 +1736,8 @@ function Module:SetupActionbarFrames()
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
 
             -- global binding
-            _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
-                "Action Bar " .. n .. ' Button ' .. i;
+            -- _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
+            --     "Action Bar " .. n .. ' Button ' .. i;
 
             btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"
             btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
