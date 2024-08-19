@@ -139,7 +139,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(unit);
         local subText = GetSpellSubtext(spellId) or ''
         if not self.showRank then subText = '' end
-        if subText ~= '' then subText = ' (' .. subText .. ')' end
+        if subText ~= '' then
+            text = name
+            subText = ' (' .. subText .. ')'
+        end
 
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
             -- if there is no name, there is no bar
