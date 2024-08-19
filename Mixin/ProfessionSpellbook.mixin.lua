@@ -51,10 +51,30 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
 
             local profDataTable = DragonFlightUIProfessionMixin.ProfessionDataTable[skillID]
             local texture = profDataTable.icon
+            local spellIcon = texture
+
+            if skillID == 182 then
+                -- herbalism
+                local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2383)
+                nameLoc = name
+                spellIcon = icon
+            elseif skillID == 186 then
+                -- mining
+                local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2580)
+                nameLoc = name
+                spellIcon = icon
+            end
 
             local bookID = DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(nameLoc)
 
-            local data = {nameLoc = nameLoc, skillID = skillID, lineID = i, icon = texture, bookID = bookID}
+            local data = {
+                nameLoc = nameLoc,
+                skillID = skillID,
+                lineID = i,
+                icon = texture,
+                spellIcon = spellIcon,
+                bookID = bookID
+            }
 
             if profs.primary[skillID] then
                 --
@@ -78,6 +98,7 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
                         skillID = skillID,
                         lineID = i,
                         icon = icon,
+                        spellIcon = icon,
                         bookID = fireBookID
                     }
                     skillTable['cooking'] = data
@@ -104,7 +125,7 @@ function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
 
     for i = 1, maxFinder do
         local spell, rank = GetSpellInfo(i, BOOKTYPE_SPELL)
-
+        -- print(name .. ':', i, spell, rank)
         if (not spell) then break end
 
         if spell == name then
@@ -163,7 +184,7 @@ local function UpdateProfessionButton(self)
     --     end
     -- end)
 
-    self.IconTexture:SetTexture(data.icon)
+    self.IconTexture:SetTexture(data.spellIcon)
 
     self.spellString:SetText(data.nameLoc);
     self.subSpellString:SetText("");
