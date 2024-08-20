@@ -726,7 +726,7 @@ function SettingsListMixinDF:Display(data)
     -- self.Header.DefaultsButton:SetText('TEST')
 
     -- https://stackoverflow.com/a/15706820
-    function spairs(t, order)
+    local function sortedPairs(t, order)
         -- collect the keys
         local keys = {}
         for k in pairs(t) do keys[#keys + 1] = k end
@@ -749,7 +749,7 @@ function SettingsListMixinDF:Display(data)
         end
     end
 
-    for k, v in spairs(data.options.args, function(t, a, b)
+    for k, v in sortedPairs(data.options.args, function(t, a, b)
         return t[b].order > t[a].order
     end) do
         local elementData
