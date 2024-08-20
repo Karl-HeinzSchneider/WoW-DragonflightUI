@@ -2989,24 +2989,6 @@ function Module.ChangePartyFrame()
         status:SetPoint('TOPLEFT', 1, -2)
         status:SetDrawLayer('ARTWORK', 5)
 
-        if not pf.tmp and false then
-            local tmp = pf:CreateTexture('DragonflightUIPartyFrameTmp')
-            -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')          
-            tmp:SetSize(120, 49)
-            tmp:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
-            tmp:SetTexCoord(0.00390625, 0.472656, 0.453125, 0.644531)
-            tmp:ClearAllPoints()
-            tmp:SetPoint('TOPLEFT', 1, -2)
-            -- tmp:SetVertexColor(1, 0, 0, 1)
-            tmp:SetDrawLayer('ARTWORK', 5)
-
-            -- border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
-            -- border:Hide()
-            tmp:Hide()
-
-            pf.tmp = tmp
-        end
-
         -- layer = 'OVERLAY' => LeaderIcon etc
 
         local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
@@ -3078,18 +3060,21 @@ function Module.ChangePartyFrame()
         hpMask:SetSize(70 + 1, 10)
         healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
 
-        healthbar.HealthBarText = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        healthbar.HealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
-        healthbar.TextString = healthbar.HealthBarText
+        -- NO TAINT
 
-        healthbar.HealthBarTextLeft = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        healthbar.HealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
-        healthbar.LeftText = healthbar.HealthBarTextLeft
+        -- healthbar.HealthBarText = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- healthbar.HealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+        -- healthbar.TextString = healthbar.HealthBarText
 
-        healthbar.HealthBarTextRight = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        healthbar.HealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
-        healthbar.RightText = healthbar.HealthBarTextRight
+        -- healthbar.HealthBarTextLeft = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- healthbar.HealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
+        -- healthbar.LeftText = healthbar.HealthBarTextLeft
 
+        -- healthbar.HealthBarTextRight = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- healthbar.HealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
+        -- healthbar.RightText = healthbar.HealthBarTextRight
+
+        -- TAINT
         Module.UpdatePartyHPBar(i)
 
         local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
@@ -3109,17 +3094,17 @@ function Module.ChangePartyFrame()
         manaMask:SetSize(74, 7)
         manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
-        manabar.ManaBarText = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        manabar.ManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
-        manabar.TextString = manabar.ManaBarText
+        -- manabar.ManaBarText = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- manabar.ManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
+        -- manabar.TextString = manabar.ManaBarText
 
-        manabar.ManaBarTextLeft = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        manabar.ManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
-        manabar.LeftText = manabar.ManaBarTextLeft
+        -- manabar.ManaBarTextLeft = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- manabar.ManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
+        -- manabar.LeftText = manabar.ManaBarTextLeft
 
-        manabar.ManaBarTextRight = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        manabar.ManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
-        manabar.RightText = manabar.ManaBarTextRight
+        -- manabar.ManaBarTextRight = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
+        -- manabar.ManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
+        -- manabar.RightText = manabar.ManaBarTextRight
 
         Module.UpdatePartyManaBar(i)
 
@@ -3320,6 +3305,7 @@ function Module.ChangeFonts()
     end
 
     local changeFont = function(f, newsize)
+        if not f then return end
         local path, size, flags = f:GetFont()
         f:SetFont(newFont, newsize, flags)
     end
