@@ -49,10 +49,13 @@ local qualityToIconBorderAtlas = {
     [8] = {0.32959, 0.349121, 0.000976562, 0.0400391} -- wow token
 };
 
-LE_ITEM_QUALITY_QUEST = #BAG_ITEM_QUALITY_COLORS + 1;
-LE_ITEM_QUALITY_POOR = 0;
-BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_POOR] = {r = 0.1, g = 0.1, b = 0.1}
-BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_QUEST] = {r = 1.0, g = 1.0, b = 0}
+DF_LE_ITEM_QUALITY_QUEST = #BAG_ITEM_QUALITY_COLORS + 1;
+DF_LE_ITEM_QUALITY_POOR = 0;
+
+DF_BAG_ITEM_QUALITY_COLORS = {}
+for i = 1, #BAG_ITEM_QUALITY_COLORS do DF_BAG_ITEM_QUALITY_COLORS[i] = BAG_ITEM_QUALITY_COLORS[i] end
+DF_BAG_ITEM_QUALITY_COLORS[DF_LE_ITEM_QUALITY_POOR] = {r = 0.1, g = 0.1, b = 0.1}
+DF_BAG_ITEM_QUALITY_COLORS[DF_LE_ITEM_QUALITY_QUEST] = {r = 1.0, g = 1.0, b = 0}
 
 function DragonflightUIItemColorMixin:UpdateOverlayQuality(frame, quality)
     if not frame.DFQuality then
@@ -61,9 +64,9 @@ function DragonflightUIItemColorMixin:UpdateOverlayQuality(frame, quality)
     end
     frame.DFQuality:Show()
 
-    local color = BAG_ITEM_QUALITY_COLORS[quality]
+    local color = DF_BAG_ITEM_QUALITY_COLORS[quality]
     if not color then
-        color = BAG_ITEM_QUALITY_COLORS[1]
+        color = DF_BAG_ITEM_QUALITY_COLORS[1]
         print('No Color:', frame:GetName(), quality)
     end
     -- print('color', color)
@@ -284,7 +287,7 @@ function DragonflightUIItemColorMixin:UpdateMerchant()
 
             if link then
                 local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
-                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+                if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
             end
@@ -304,7 +307,7 @@ function DragonflightUIItemColorMixin:UpdateMerchant()
 
             if link then
                 local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
-                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+                if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
             end
@@ -325,7 +328,7 @@ function DragonflightUIItemColorMixin:UpdateMerchantBuyback()
 
             if link then
                 local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
-                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+                if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
             end

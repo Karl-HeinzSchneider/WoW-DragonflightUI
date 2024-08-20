@@ -527,7 +527,7 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
 
             if link then
                 local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
-                if (classId == 12) then quality = LE_ITEM_QUALITY_QUEST; end
+                if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(reagent, quality)
             end
         end
