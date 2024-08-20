@@ -2969,7 +2969,7 @@ function Module.ChangePartyFrame()
         -- layer = 'ARTWORK' => Status
 
         if not pf.PartyFrameBorder then
-            border = pf:CreateTexture('DragonflightUIPartyFrameBorder')
+            local border = pf:CreateTexture('DragonflightUIPartyFrameBorder')
             -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')
             border:SetDrawLayer('ARTWORK', 3)
             border:SetSize(120, 49)
@@ -2990,7 +2990,7 @@ function Module.ChangePartyFrame()
         status:SetDrawLayer('ARTWORK', 5)
 
         if not pf.tmp and false then
-            tmp = pf:CreateTexture('DragonflightUIPartyFrameTmp')
+            local tmp = pf:CreateTexture('DragonflightUIPartyFrameTmp')
             -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')          
             tmp:SetSize(120, 49)
             tmp:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
