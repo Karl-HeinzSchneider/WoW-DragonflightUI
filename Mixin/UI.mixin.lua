@@ -1508,8 +1508,8 @@ function DragonflightUIMixin:ImproveTaxiFrame()
     local deltaY = 62
 
     -- <AbsDimension x="316" y="352"/>
-    TAXI_MAP_WIDTH = 316 * scale
-    TAXI_MAP_HEIGHT = 352 * scale
+    local TAXI_MAP_WIDTH = 316 * scale
+    local TAXI_MAP_HEIGHT = 352 * scale
     TaxiMap:SetWidth(TAXI_MAP_WIDTH)
     TaxiMap:SetHeight(TAXI_MAP_HEIGHT)
     TaxiRouteMap:SetWidth(TAXI_MAP_WIDTH)
@@ -2165,7 +2165,7 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
 end
 
 function DragonflightUIMixin:ChangeQuestLogFrameCata()
-    frame = QuestLogFrame
+    local frame = QuestLogFrame
 
     local regions = {frame:GetRegions()}
     local port
