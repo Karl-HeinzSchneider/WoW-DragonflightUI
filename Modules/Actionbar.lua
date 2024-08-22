@@ -1868,6 +1868,7 @@ do
         end
     end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, bagsOptions, 'bags', 'Bags', getDefaultStr)
 
 local microOptions = {
     name = 'Micromenu',
@@ -1882,7 +1883,7 @@ local microOptions = {
             desc = '' .. getDefaultStr('scale', 'micro'),
             min = 0.1,
             max = 5,
-            bigStep = 0.1,
+            bigStep = 0.05,
             order = 1
         },
         anchorFrame = {
@@ -1944,12 +1945,12 @@ local microOptions = {
             bigStep = 1,
             order = 6
         },
-        hidden = {
-            type = 'toggle',
-            name = 'Hidden',
-            desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
-            order = 7
-        },
+        -- hidden = {
+        --     type = 'toggle',
+        --     name = 'Hidden',
+        --     desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
+        --     order = 7
+        -- },
         hideDefaultFPS = {
             type = 'toggle',
             name = 'HideDefaultFPS',
@@ -1976,6 +1977,7 @@ local microOptions = {
         }
     }
 }
+DragonflightUIStateHandlerMixin:AddStateTable(Module, microOptions, 'micro', 'Micromenu', getDefaultStr)
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -2002,6 +2004,7 @@ function Module:OnEnable()
         Module.Era()
     end
     Module:SetupActionbarFrames()
+    Module.AddStateUpdater()
     Module:ApplySettings()
     Module:RegisterOptionScreens()
 
@@ -2153,6 +2156,38 @@ function Module:SetupActionbarFrames()
         -- MultiBarBottomRight.ignoreFramePositionManager = true
         -- MultiBarBottomRight:ClearAllPoints()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+    end
+end
+
+function Module.AddStateUpdater()
+    Mixin(MainMenuBarBackpackButton, DragonflightUIStateHandlerMixin)
+    MainMenuBarBackpackButton:InitStateHandler()
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag0Slot, 2)
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag1Slot, 3)
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag2Slot, 4)
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag3Slot, 5)
+
+    MainMenuBarBackpackButton.DFShower:ClearAllPoints()
+    MainMenuBarBackpackButton.DFShower:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
+    MainMenuBarBackpackButton.DFShower:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
+
+    MainMenuBarBackpackButton.DFMouseHandler:ClearAllPoints()
+    MainMenuBarBackpackButton.DFMouseHandler:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
+    MainMenuBarBackpackButton.DFMouseHandler:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
+
+    ---
+    local microFrame = Module.MicroFrame
+
+    Mixin(microFrame, DragonflightUIStateHandlerMixin)
+    microFrame:InitStateHandler(4, 4)
+
+    table.insert(Module.MicroButtons, CharacterMicroButton)
+    table.insert(Module.MicroButtons, PVPMicroButton)
+
+    for k, v in ipairs(Module.MicroButtons) do
+        --
+        -- print(k, v:GetName())
+        v:SetParent(microFrame)
     end
 end
 
@@ -3057,7 +3092,10 @@ Module.MicromenuAtlas = {
     }
 }
 
+Module.MicroButtons = {}
+
 function Module.ChangeMicroMenuButton(frame, name)
+    table.insert(Module.MicroButtons, frame)
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
     if DF.Era then microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA' end
@@ -3379,6 +3417,11 @@ function Module.ChangeCharacterMicroButton()
 end
 
 function Module.ChangeMicroMenuNew()
+    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', nil, 'SecureFrameTemplate')
+    microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
+    microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
+    Module.MicroFrame = microFrame
+
     if DF.Cata then
         Module.ChangeCharacterMicroButton()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
@@ -3673,26 +3716,29 @@ function Module.UpdateMicromenuState(state)
         }
     end
 
-    for k, v in ipairs(buttons) do
-        --
-        v:SetScale(state.scale)
-        -- v:SetShown(not state.hidden)
-        if state.hidden then
-            --
-            v:SetAlpha(0)
-            v:EnableMouse(false)
-        else
-            --
-            v:SetAlpha(1)
-            v:EnableMouse(true)
-        end
-    end
+    -- for k, v in ipairs(buttons) do
+    --     --
+    --     v:SetScale(state.scale)
+    --     -- v:SetShown(not state.hidden)
+    --     if state.hidden then
+    --         --
+    --         v:SetAlpha(0)
+    --         v:EnableMouse(false)
+    --     else
+    --         --
+    --         v:SetAlpha(1)
+    --         v:EnableMouse(true)
+    --     end
+    -- end
 
-    local playerLevel = UnitLevel("player");
-    if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
+    -- local playerLevel = UnitLevel("player");
+    -- if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
 
     -- FPS
     Module.UpdateFPSState(state)
+
+    Module.MicroFrame:SetScale(state.scale * 0.75) -- compat
+    Module.MicroFrame:UpdateStateHandler(state)
 end
 
 function Module.UpdateTotemState(state)
@@ -3772,6 +3818,7 @@ function Module.ChangeBackpackNew()
 
         for i = 0, 3 do
             local slot = _G['CharacterBag' .. i .. 'Slot']
+            -- slot:SetParent(MainMenuBarBackpackButton)
             -- print(i, slot:GetSize())
             slot:SetScale(1)
             slot:SetSize(30, 30)
@@ -4131,6 +4178,8 @@ function Module.UpdateBagState(state)
     end
 
     if state.overrideBagAnchor and ContainerFrame1:IsVisible() then UpdateContainerFrameAnchors() end
+
+    MainMenuBarBackpackButton:UpdateStateHandler(state)
 end
 
 function Module.MoveBars()
@@ -4238,7 +4287,7 @@ function Module.ChangeFramerate()
     -- fps
     local Path, Size, Flags = FramerateText:GetFont()
 
-    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', UIParent)
+    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', Module.MicroFrame)
     fps:SetSize(65, 26)
     fps:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -10, 0)
 
