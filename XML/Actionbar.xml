@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
 	<Script file="Mixin/Actionbar.mixin.lua" />
 	<Script file="Mixin/Statusbar.mixin.lua" />
-	<Frame name="DragonflightUIActionbarFrameTemplate" mixin="DragonflightUIActionbarMixin" virtual="true">
+	<Frame name="DragonflightUIActionbarFrameTemplate" mixin="DragonflightUIActionbarMixin" inherits="SecureFrameTemplate" virtual="true">
 	</Frame>
 	<Frame name="DragonflightUIPetbarFrameTemplate" mixin="DragonflightUIPetbarMixin" virtual="true">
 	</Frame>

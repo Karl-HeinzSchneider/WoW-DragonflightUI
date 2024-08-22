@@ -33,7 +33,15 @@ end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
     self.buttonTable = buttons
-    -- print('DragonflightUIActionbarMixin:SetButtons(buttons)', #buttons, buttons[1]:GetName())
+
+    local handler = self.StateHandler
+    if not handler then return end
+
+    for i = 1, #buttons do
+        --
+        local btn = buttons[i]
+        handler:SetFrameRef('Btn' .. i, btn)
+    end
 end
 
 --[[ local defaultsActionbarPROTO = {
@@ -226,6 +234,100 @@ function DragonflightUIActionbarMixin:Update()
             end
         end
     end
+
+    if self.StateHandler then self:UpdateStateHandler(state) end
+end
+
+function DragonflightUIActionbarMixin:InitStateHandler()
+    -- print('DragonflightUIActionbarMixin:InitStateHandler()')
+
+    local handler = CreateFrame('FRAME', nil, nil, 'SecureHandlerStateTemplate')
+    self.StateHandler = handler
+    handler:SetFrameRef('BarFrame', self)
+
+    handler:SetAttribute('_onstate-vis', [[
+        -- if not newstate then return end
+        local frameRef = self:GetFrameRef("BarFrame")
+        if not frameRef then return end
+        -- print('_onstate-vis', newstate, frameRef:GetName())
+
+        local shouldShow = true
+
+        if newstate == "show" then
+            shouldShow = true
+        elseif newstate == "hide" then
+           shouldShow = false         
+        else 
+           shouldShow = true
+        end         
+        
+        for i=1,12 do
+            local btn = self:GetFrameRef('Btn'..i)
+            if btn then 
+                if shouldShow then 
+                    btn:Show();
+                 else
+                     btn:Hide();
+                 end             
+             end
+        end
+    ]])
+end
+
+-- hideAlways = false,
+-- hideCombat = false,
+-- hideOutOfCombat = false,
+-- hidePet = false,
+-- hideNoPet = false,
+-- hideStance = false,
+-- hideStealth = false
+
+local visConditionalTable = {}
+do
+    visConditionalTable['hideAlways'] = 'hide'
+    visConditionalTable['hideCombat'] = '[combat]hide'
+    visConditionalTable['hideOutOfCombat'] = '[nocombat]hide'
+    visConditionalTable['hidePet'] = '[pet]hide'
+    visConditionalTable['hideNoPet'] = '[nopet]hide'
+    visConditionalTable['hideStance'] = ''
+    visConditionalTable['hideStealth'] = '[stealth]hide'
+    visConditionalTable['hideNoStealth'] = '[nostealth]hide'
+end
+
+function DragonflightUIActionbarMixin:UpdateStateHandler(state)
+    -- print('DragonflightUIActionbarMixin:UpdateStateHandler(state)')
+
+    local handler = self.StateHandler
+    UnregisterStateDriver(handler, 'vis')
+
+    local driverTable = {}
+
+    if state.hideCustom then
+        table.insert(driverTable, state.hideCustomCond)
+    else
+
+        for k, v in pairs(visConditionalTable) do
+            if state[k] then
+                if k == 'hideStance' then
+                    for i = 1, 6 do table.insert(driverTable, ('[stance:%d]hide'):format(i)) end
+                else
+                    table.insert(driverTable, visConditionalTable[k])
+                end
+            end
+        end
+        table.insert(driverTable, 'show')
+    end
+
+    local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
+    -- DevTools_Dump(driver)
+    if #driverTable > 1 or state.hideCustom then
+        --
+        -- print(self:GetName(), driver)
+        -- print('result:', result)
+    end
+    RegisterStateDriver(handler, 'vis', driver)
+    handler:SetAttribute('state-vis', result)
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
