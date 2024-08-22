@@ -269,7 +269,18 @@ local defaults = {
             padding = 2,
             alwaysShow = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         xp = {
             scale = 1,
@@ -281,7 +292,18 @@ local defaults = {
             width = 466,
             height = 20,
             alwaysShowXP = false,
-            showXPPercent = true
+            showXPPercent = true,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         rep = {
             scale = 1,
@@ -292,7 +314,18 @@ local defaults = {
             y = 0,
             width = 466,
             height = 20,
-            alwaysShowRep = false
+            alwaysShowRep = false,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         stance = {
             scale = 1,
@@ -308,7 +341,18 @@ local defaults = {
             buttons = 10,
             padding = 2,
             alwaysShow = false,
-            activate = true
+            activate = true,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         totem = {
             scale = 1,
@@ -316,7 +360,18 @@ local defaults = {
             anchor = 'BOTTOM',
             anchorParent = 'TOP',
             x = 0,
-            y = 2
+            y = 2,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         possess = {
             scale = 1,
@@ -325,7 +380,18 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = -4,
             y = 2,
-            offset = true
+            offset = true,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bags = {
             scale = 1,
@@ -339,7 +405,18 @@ local defaults = {
             hidden = false,
             overrideBagAnchor = false,
             offsetX = 5,
-            offsetY = 95
+            offsetY = 95,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         micro = {
             scale = 1,
@@ -352,7 +429,18 @@ local defaults = {
             hideDefaultFPS = true,
             showFPS = true,
             alwaysShowFPS = false,
-            showPing = true
+            showPing = true,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         }
     }
 }
@@ -614,9 +702,6 @@ end
 local function AddStateTable(optionTable, barname, displayName)
     local popupName = barname .. "CustomVisCondition"
 
-    local db = Module.db.profile
-    local dbSub = db[barname]
-
     local macroOptions = [[
         This option evaluates macro conditionals, which have to return '|cff8080ffshow|r' or '|cff8080ffhide|r', e.g.:
 
@@ -633,6 +718,9 @@ local function AddStateTable(optionTable, barname, displayName)
         button1 = ACCEPT,
         button2 = CANCEL,
         OnShow = function(self, data)
+            local db = Module.db.profile
+            local dbSub = db[barname]
+
             self.editBox:SetText(dbSub.hideCustomCond)
         end,
         OnAccept = function(self, data, data2)
@@ -1077,6 +1165,7 @@ local petOptions = {
         }
     }
 }
+AddStateTable(petOptions, 'pet', 'PetBar')
 
 local xpOptions = {
     name = 'XP',
@@ -1406,6 +1495,7 @@ local stanceOptions = {
         activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
 }
+AddStateTable(stanceOptions, 'stance', 'StanceBar')
 
 local totemOptions = {
     name = 'Totembar',
@@ -1484,6 +1574,7 @@ local totemOptions = {
         }
     }
 }
+AddStateTable(totemOptions, 'totem', 'TotemBar')
 
 local possessOptions = {
     name = 'Possessbar',
@@ -1570,6 +1661,7 @@ local possessOptions = {
         }
     }
 }
+AddStateTable(possessOptions, 'possess', 'PossessBar')
 
 local bagsOptions = {
     name = 'Bags',
@@ -1894,7 +1986,6 @@ function Module:SetupActionbarFrames()
             buttons[i] = btn
         end
         bar:Init()
-        bar:InitStateHandler()
         bar:SetButtons(buttons)
         Module['bar' .. n] = bar
     end
@@ -1955,7 +2046,6 @@ function Module:SetupActionbarFrames()
                                 'DragonflightUIActionbarFrameTemplate')
 
         bar:Init()
-        bar:InitStateHandler()
         bar:SetButtons(btns)
         Module['bar' .. n] = bar
 

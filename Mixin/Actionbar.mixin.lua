@@ -23,6 +23,7 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+    self:InitStateHandler()
     self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
