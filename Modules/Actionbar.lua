@@ -2043,9 +2043,12 @@ function Module:SetupActionbarFrames()
     local createExtra = function(n)
         local btns = {}
 
+        local extraParent = CreateFrame('FRAME', 'DragonflightUIMultiactionBar' .. n .. 'VisParent', UIParent)
+        extraParent:SetFrameLevel(0)
+
         for i = 1, 12 do
             --
-            local btn = CreateFrame("CheckButton", "DragonflightUIMultiactionBar" .. n .. "Button" .. i, UIParent,
+            local btn = CreateFrame("CheckButton", "DragonflightUIMultiactionBar" .. n .. "Button" .. i, extraParent,
                                     "ActionBarButtonTemplate")
             btn:SetSize(64, 64)
             btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
@@ -2124,13 +2127,13 @@ function Module:SetupActionbarFrames()
 
     -- @TODO
     do
-        MultiBarBottomLeft.ignoreFramePositionManager = true
-        MultiBarBottomLeft:ClearAllPoints()
-        MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
+        -- MultiBarBottomLeft.ignoreFramePositionManager = true
+        -- MultiBarBottomLeft:ClearAllPoints()
+        -- MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
 
-        MultiBarBottomRight.ignoreFramePositionManager = true
-        MultiBarBottomRight:ClearAllPoints()
-        MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+        -- MultiBarBottomRight.ignoreFramePositionManager = true
+        -- MultiBarBottomRight:ClearAllPoints()
+        -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
     end
 end
 

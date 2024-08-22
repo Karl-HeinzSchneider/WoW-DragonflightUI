@@ -43,6 +43,17 @@ function DragonflightUIActionbarMixin:SetButtons(buttons)
         local btn = buttons[i]
         handler:SetFrameRef('Btn' .. i, btn)
     end
+
+    -- print(self:GetName(), self.buttonTable[1]:GetParent():GetName())
+
+    local parent = self.buttonTable[1]:GetParent()
+    parent:ClearAllPoints()
+    parent:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+    parent:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    -- parent:SetFrameLevel(0)
+    parent.ignoreFramePositionManager = true
+
+    self.VisParent = parent
 end
 
 --[[ local defaultsActionbarPROTO = {
@@ -250,8 +261,7 @@ function DragonflightUIActionbarMixin:InitStateHandler()
     handler:SetAttribute('_onstate-vis', [[
         -- if not newstate then return end
         local frameRef = self:GetFrameRef("BarFrame")
-        if not frameRef then return end
-        -- print('_onstate-vis', newstate, frameRef:GetName())
+        if not frameRef then return end  
 
         local shouldShow = true
 
@@ -261,7 +271,7 @@ function DragonflightUIActionbarMixin:InitStateHandler()
            shouldShow = false         
         else 
            shouldShow = true
-        end     
+        end          
         
         local HandlerTwo = self:GetFrameRef("HandlerTwo")
         if HandlerTwo then 
@@ -295,17 +305,18 @@ function DragonflightUIActionbarMixin:InitStateHandler()
     ]])
 
     ----------
+    local extraBorder = 5
     local handlerTwo = CreateFrame('FRAME', self:GetName() .. 'HandlerOnEnterLeave', nil,
                                    'SecureHandlerEnterLeaveTemplate')
-    handlerTwo:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
-    handlerTwo:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    handlerTwo:SetPoint('TOPLEFT', self, 'TOPLEFT', -extraBorder, extraBorder)
+    handlerTwo:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', extraBorder, -extraBorder)
     handlerTwo:SetFrameLevel(2)
 
     handlerTwo:SetFrameRef('MainHandler', handler)
     handler:SetFrameRef('HandlerTwo', handlerTwo)
 
     handlerTwo:SetAttribute('_onenter', [[
-        -- print('enter!')   
+        -- print('enter!',self:GetName())   
 
         local frameRef = self:GetFrameRef("MainHandler")
         frameRef:SetAttribute('forceShow',true)
@@ -313,7 +324,17 @@ function DragonflightUIActionbarMixin:InitStateHandler()
         local oldState = frameRef:GetAttribute('state-vis')
         frameRef:SetAttribute('state-vis', oldState)     
     ]])
-    handlerTwo:SetAttribute('_onleave', [[]])
+    handlerTwo:SetAttribute('_onleave', [[
+        -- print('leave!',self:GetName())
+        local frameRef = self:GetFrameRef("MainHandler")
+
+        if not self:IsUnderMouse() then
+            frameRef:SetAttribute('forceShow',false)
+            
+            local oldState = frameRef:GetAttribute('state-vis')
+            frameRef:SetAttribute('state-vis', oldState)  
+        end 
+    ]])
 
     -- handlerTwo:Hide()
     self.MouseHandler = handlerTwo
@@ -376,6 +397,11 @@ function DragonflightUIActionbarMixin:UpdateStateHandler(state)
     handler:SetAttribute('state-vis', result)
 
     local mouseHandler = self.MouseHandler
+    if state.showMouseover then
+        mouseHandler:Show()
+    else
+        mouseHandler:Hide()
+    end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
