@@ -163,7 +163,7 @@ local defaults = {
             hideKeybind = false,
             -- Visibility
             showMouseover = false,
-            hideAlways = false,
+            hideAlways = true,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
@@ -193,7 +193,7 @@ local defaults = {
             hideKeybind = false,
             -- Visibility
             showMouseover = false,
-            hideAlways = false,
+            hideAlways = true,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
@@ -223,7 +223,7 @@ local defaults = {
             hideKeybind = false,
             -- Visibility
             showMouseover = false,
-            hideAlways = false,
+            hideAlways = true,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
@@ -253,7 +253,7 @@ local defaults = {
             hideKeybind = false,
             -- Visibility
             showMouseover = false,
-            hideAlways = false,
+            hideAlways = true,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
