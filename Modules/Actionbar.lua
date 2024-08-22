@@ -757,68 +757,88 @@ local function AddStateTable(optionTable, barname, displayName)
         editBoxWidth = 666
     }
 
+    local function cond(str)
+        return 'macro condition: ' .. '|cff8080ff' .. str .. '|r'
+    end
+
     local extraOptions = {
         headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
         showMouseover = {
             type = 'toggle',
             name = 'Show On Mouseover',
-            desc = '' .. getDefaultStr('showMouseover', barname),
-            order = 100.5
+            desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
+                getDefaultStr('showMouseover', barname),
+            order = 100.5,
+            new = true
         },
         hideAlways = {
             type = 'toggle',
             name = 'Always Hide',
-            desc = '' .. getDefaultStr('hideAlways', barname),
-            order = 101
+            desc = '' .. cond('hide') .. getDefaultStr('hideAlways', barname),
+            order = 101,
+            new = true
         },
         hideCombat = {
             type = 'toggle',
             name = 'Hide In Combat',
-            desc = '' .. getDefaultStr('hideCombat', barname),
-            order = 102
+            desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', barname),
+            order = 102,
+            new = true
         },
         hideOutOfCombat = {
             type = 'toggle',
             name = 'Hide Out Of Combat',
-            desc = '' .. getDefaultStr('hideOutOfCombat', barname),
-            order = 103
+            desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', barname),
+            order = 103,
+            new = true
         },
-        hidePet = {type = 'toggle', name = 'Hide With Pet', desc = '' .. getDefaultStr('hidePet', barname), order = 104},
+        hidePet = {
+            type = 'toggle',
+            name = 'Hide With Pet',
+            desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', barname),
+            order = 104,
+            new = true
+        },
         hideNoPet = {
             type = 'toggle',
             name = 'Hide Without Pet',
-            desc = '' .. getDefaultStr('hideNoPet', barname),
-            order = 105
+            desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', barname),
+            order = 105,
+            new = true
         },
         hideStance = {
             type = 'toggle',
             name = 'Hide Without Stance/Form',
-            desc = '' .. getDefaultStr('hideStance', barname),
-            order = 106
+            desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', barname),
+            order = 106,
+            new = true
         },
         hideStealth = {
             type = 'toggle',
             name = 'Hide In Stealth',
-            desc = '' .. getDefaultStr('HidehideStealthNoPet', barname),
-            order = 107
+            desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', barname),
+            order = 107,
+            new = true
         },
         hideNoStealth = {
             type = 'toggle',
             name = 'Hide Outside Stealth',
-            desc = '' .. getDefaultStr('hideNoStealth', barname),
-            order = 108
+            desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', barname),
+            order = 108,
+            new = true
         },
         hideCustom = {
             type = 'toggle',
             name = 'Use Custom Condition',
             desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
                 getDefaultStr('hideCustom', barname),
-            order = 109
+            order = 109,
+            new = true
         },
         hideCustomCondButton = {
             type = 'execute',
             name = 'Set Custom Condition',
-            btnName = 'Set',
+            btnName = 'Update...',
             func = function()
                 -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
@@ -1008,8 +1028,7 @@ local function GetBarOption(n)
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
-                order = 12.5,
-                new = true
+                order = 12.5
             }
         }
 
@@ -1051,7 +1070,7 @@ local function GetBarOption(n)
     else
         local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
 
-        for k, v in pairs(moreOptions) do opt.args[k] = v end
+        -- for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
 
     AddStateTable(opt, barname, 'Actionbar' .. n)

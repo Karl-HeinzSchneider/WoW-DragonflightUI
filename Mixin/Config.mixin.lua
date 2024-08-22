@@ -122,15 +122,15 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Actionbar
         local cat = 'Actionbar'
         addCat(cat)
-        addSubCat('Actionbar1', cat)
-        addSubCat('Actionbar2', cat)
-        addSubCat('Actionbar3', cat)
-        addSubCat('Actionbar4', cat)
-        addSubCat('Actionbar5', cat)
+        addSubCat('Actionbar1', cat, true)
+        addSubCat('Actionbar2', cat, true)
+        addSubCat('Actionbar3', cat, true)
+        addSubCat('Actionbar4', cat, true)
+        addSubCat('Actionbar5', cat, true)
 
-        addSubCat('Actionbar6', cat)
-        addSubCat('Actionbar7', cat)
-        addSubCat('Actionbar8', cat)
+        addSubCat('Actionbar6', cat, true)
+        addSubCat('Actionbar7', cat, true)
+        addSubCat('Actionbar8', cat, true)
 
         addSubCat('Petbar', cat)
         addSubCat('XPbar', cat)
@@ -146,9 +146,9 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Castbar
         local cat = 'Castbar'
         addCat(cat)
-        if DF.Wrath then addSubCat('Focus', cat, true) end
-        addSubCat('Player', cat, true)
-        addSubCat('Target', cat, true)
+        if DF.Wrath then addSubCat('Focus', cat) end
+        addSubCat('Player', cat)
+        addSubCat('Target', cat)
     end
 
     do
@@ -160,7 +160,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Debuffs', cat)
         addSubCat('Minimap', cat)
         addSubCat('Questtracker', cat)
-        addSubCat('UI', cat, true)
+        addSubCat('UI', cat)
         addSubCat('Utility', cat)
     end
 

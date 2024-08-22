@@ -219,7 +219,7 @@ function DragonflightUIActionbarMixin:Update()
 
     -- if self.decoFrame then self.decoFrame.update(state) end
 
-    if state.activate ~= nil then
+    if state.activate ~= nil and false then
         --
         -- print('state.activate ~= nil', state.activate, self:GetName())
         -- self:SetShown(state.activate)
