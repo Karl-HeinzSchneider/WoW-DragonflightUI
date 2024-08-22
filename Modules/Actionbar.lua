@@ -40,6 +40,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -69,6 +70,8 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
+
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -98,6 +101,8 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
+
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -127,6 +132,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -156,6 +162,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -185,6 +192,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -214,6 +222,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -243,6 +252,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -271,6 +281,7 @@ local defaults = {
             hideMacro = false,
             hideKeybind = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -294,6 +305,7 @@ local defaults = {
             alwaysShowXP = false,
             showXPPercent = true,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -316,6 +328,7 @@ local defaults = {
             height = 20,
             alwaysShowRep = false,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -343,6 +356,7 @@ local defaults = {
             alwaysShow = false,
             activate = true,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -362,6 +376,7 @@ local defaults = {
             x = 0,
             y = 2,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -407,6 +422,7 @@ local defaults = {
             offsetX = 5,
             offsetY = 95,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -431,6 +447,7 @@ local defaults = {
             alwaysShowFPS = false,
             showPing = true,
             -- Visibility
+            showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -742,6 +759,12 @@ local function AddStateTable(optionTable, barname, displayName)
 
     local extraOptions = {
         headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
+        showMouseover = {
+            type = 'toggle',
+            name = 'Show On Mouseover',
+            desc = '' .. getDefaultStr('showMouseover', barname),
+            order = 100.5
+        },
         hideAlways = {
             type = 'toggle',
             name = 'Always Hide',
@@ -2028,6 +2051,7 @@ function Module:SetupActionbarFrames()
             btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
             btn:SetAttribute("type", "action")
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+            btn:SetFrameLevel(3)
 
             -- global binding
             -- _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
