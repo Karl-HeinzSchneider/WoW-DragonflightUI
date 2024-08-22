@@ -22,6 +22,8 @@ function DragonflightUIActionbarMixin:Init()
     self:SetPoint('BOTTOMLEFT', UIParent, 'CENTER', 0, 380)
     self:SetSize(250, 142)
 
+    self:EnableMouse(false)
+
     self:InitEditMode()
     self:InitStateHandler()
     self.stanceBar = false
@@ -46,14 +48,14 @@ function DragonflightUIActionbarMixin:SetButtons(buttons)
 
     -- print(self:GetName(), self.buttonTable[1]:GetParent():GetName())
 
-    local parent = self.buttonTable[1]:GetParent()
-    parent:ClearAllPoints()
-    parent:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
-    parent:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-    -- parent:SetFrameLevel(0)
-    parent.ignoreFramePositionManager = true
+    -- local parent = self.buttonTable[1]:GetParent()
+    -- parent:ClearAllPoints()
+    -- parent:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+    -- parent:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    -- -- parent:SetFrameLevel(0)
+    -- parent.ignoreFramePositionManager = true
 
-    self.VisParent = parent
+    -- self.VisParent = parent
 end
 
 --[[ local defaultsActionbarPROTO = {
