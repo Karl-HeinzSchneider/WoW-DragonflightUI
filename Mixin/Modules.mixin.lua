@@ -17,7 +17,7 @@ function DragonflightUIModulesMixin:GetDefaultStr(key, sub)
     end
 
     local value = obj[key]
-    return '\n' .. '(Default: ' .. tostring(value) .. ')'
+    return '\n' .. '(Default: ' .. '|cff8080ff' .. tostring(value) .. '|r' .. ')'
 end
 
 function DragonflightUIModulesMixin:SetDefaultValues()

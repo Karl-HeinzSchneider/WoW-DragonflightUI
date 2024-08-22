@@ -38,7 +38,19 @@ local defaults = {
             gryphons = 'DEFAULT',
             range = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar2 = {
             scale = 1,
@@ -56,7 +68,20 @@ local defaults = {
             alwaysShow = true,
             activate = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar3 = {
             scale = 1,
@@ -74,7 +99,20 @@ local defaults = {
             alwaysShow = true,
             activate = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar4 = {
             scale = 1,
@@ -92,7 +130,19 @@ local defaults = {
             alwaysShow = true,
             activate = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar5 = {
             scale = 1,
@@ -110,7 +160,19 @@ local defaults = {
             alwaysShow = true,
             activate = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = true,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar6 = {
             scale = 1,
@@ -128,7 +190,19 @@ local defaults = {
             alwaysShow = true,
             activate = false,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = true,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar7 = {
             scale = 1,
@@ -146,7 +220,19 @@ local defaults = {
             alwaysShow = true,
             activate = false,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = true,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bar8 = {
             scale = 1,
@@ -164,7 +250,19 @@ local defaults = {
             alwaysShow = true,
             activate = false,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = true,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         pet = {
             scale = 1,
@@ -181,7 +279,19 @@ local defaults = {
             padding = 2,
             alwaysShow = true,
             hideMacro = false,
-            hideKeybind = false
+            hideKeybind = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         xp = {
             scale = 1,
@@ -193,7 +303,19 @@ local defaults = {
             width = 466,
             height = 20,
             alwaysShowXP = false,
-            showXPPercent = true
+            showXPPercent = true,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         rep = {
             scale = 1,
@@ -204,7 +326,19 @@ local defaults = {
             y = 0,
             width = 466,
             height = 20,
-            alwaysShowRep = false
+            alwaysShowRep = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         stance = {
             scale = 1,
@@ -220,7 +354,19 @@ local defaults = {
             buttons = 10,
             padding = 2,
             alwaysShow = false,
-            activate = true
+            activate = true,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         totem = {
             scale = 1,
@@ -228,7 +374,19 @@ local defaults = {
             anchor = 'BOTTOM',
             anchorParent = 'TOP',
             x = 0,
-            y = 2
+            y = 2,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         possess = {
             scale = 1,
@@ -237,7 +395,18 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = -4,
             y = 2,
-            offset = true
+            offset = true,
+            -- Visibility
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         bags = {
             scale = 1,
@@ -251,7 +420,19 @@ local defaults = {
             hidden = false,
             overrideBagAnchor = false,
             offsetX = 5,
-            offsetY = 95
+            offsetY = 95,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         micro = {
             scale = 1,
@@ -264,7 +445,19 @@ local defaults = {
             hideDefaultFPS = true,
             showFPS = true,
             alwaysShowFPS = false,
-            showPing = true
+            showPing = true,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         }
     }
 }
@@ -523,6 +716,144 @@ local function GetActionBarToggle(index)
     return select(index, GetActionBarToggles());
 end
 
+local function AddStateTable(optionTable, barname, displayName)
+    local popupName = barname .. "CustomVisCondition"
+
+    local macroOptions = [[
+        This option evaluates macro conditionals, which have to return '|cff8080ffshow|r' or '|cff8080ffhide|r', e.g.:
+
+        1) |cff8080ff[@target,exists]show; hide|r
+        2) |cff8080ff[@target,exists,help,raid] show; hide|r
+        3) |cff8080ff[swimming] hide; show|r
+
+        For more Infos see:
+            |cff8080ff https://warcraft.wiki.gg/wiki/Macro_conditionals|r
+        ]]
+
+    StaticPopupDialogs[popupName] = {
+        text = 'Set Custom Condition for ' .. displayName .. '\n\n' .. macroOptions,
+        button1 = ACCEPT,
+        button2 = CANCEL,
+        OnShow = function(self, data)
+            local db = Module.db.profile
+            local dbSub = db[barname]
+
+            self.editBox:SetText(dbSub.hideCustomCond)
+        end,
+        OnAccept = function(self, data, data2)
+            local text = self.editBox:GetText()
+            local result, target = SecureCmdOptionParse(text)
+            if result ~= 'show' and result ~= 'hide' and result ~= '' then
+                Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
+                                 [['show' or 'hide'!|r]])
+                return
+            end
+            -- do whatever you want with it
+            setOption({barname, 'hideCustomCond'}, text)
+            Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. text .. '\'')
+            Module:Print('Current Value: ' .. result)
+        end,
+        hasEditBox = true,
+        editBoxWidth = 666
+    }
+
+    local function cond(str)
+        return 'macro condition: ' .. '|cff8080ff' .. str .. '|r'
+    end
+
+    local extraOptions = {
+        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
+        showMouseover = {
+            type = 'toggle',
+            name = 'Show On Mouseover',
+            desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
+                getDefaultStr('showMouseover', barname),
+            order = 100.5,
+            new = true
+        },
+        hideAlways = {
+            type = 'toggle',
+            name = 'Always Hide',
+            desc = '' .. cond('hide') .. getDefaultStr('hideAlways', barname),
+            order = 101,
+            new = true
+        },
+        hideCombat = {
+            type = 'toggle',
+            name = 'Hide In Combat',
+            desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', barname),
+            order = 102,
+            new = true
+        },
+        hideOutOfCombat = {
+            type = 'toggle',
+            name = 'Hide Out Of Combat',
+            desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', barname),
+            order = 103,
+            new = true
+        },
+        hidePet = {
+            type = 'toggle',
+            name = 'Hide With Pet',
+            desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', barname),
+            order = 104,
+            new = true
+        },
+        hideNoPet = {
+            type = 'toggle',
+            name = 'Hide Without Pet',
+            desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', barname),
+            order = 105,
+            new = true
+        },
+        hideStance = {
+            type = 'toggle',
+            name = 'Hide Without Stance/Form',
+            desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', barname),
+            order = 106,
+            new = true
+        },
+        hideStealth = {
+            type = 'toggle',
+            name = 'Hide In Stealth',
+            desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', barname),
+            order = 107,
+            new = true
+        },
+        hideNoStealth = {
+            type = 'toggle',
+            name = 'Hide Outside Stealth',
+            desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', barname),
+            order = 108,
+            new = true
+        },
+        hideCustom = {
+            type = 'toggle',
+            name = 'Use Custom Condition',
+            desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
+                getDefaultStr('hideCustom', barname),
+            order = 109,
+            new = true
+        },
+        hideCustomCondButton = {
+            type = 'execute',
+            name = 'Set Custom Condition',
+            btnName = 'Update...',
+            func = function()
+                -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+                StaticPopup_Show(popupName)
+            end,
+            order = 109.5
+        }
+    }
+
+    for k, v in pairs(extraOptions) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
@@ -697,8 +1028,7 @@ local function GetBarOption(n)
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
-                order = 12.5,
-                new = true
+                order = 12.5
             }
         }
 
@@ -740,8 +1070,10 @@ local function GetBarOption(n)
     else
         local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
 
-        for k, v in pairs(moreOptions) do opt.args[k] = v end
+        -- for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
+
+    AddStateTable(opt, barname, 'Actionbar' .. n)
 
     return opt
 end
@@ -875,6 +1207,7 @@ local petOptions = {
         }
     }
 }
+AddStateTable(petOptions, 'pet', 'PetBar')
 
 local xpOptions = {
     name = 'XP',
@@ -1204,6 +1537,7 @@ local stanceOptions = {
         activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
 }
+AddStateTable(stanceOptions, 'stance', 'StanceBar')
 
 local totemOptions = {
     name = 'Totembar',
@@ -1282,6 +1616,7 @@ local totemOptions = {
         }
     }
 }
+AddStateTable(totemOptions, 'totem', 'TotemBar')
 
 local possessOptions = {
     name = 'Possessbar',
@@ -1368,6 +1703,7 @@ local possessOptions = {
         }
     }
 }
+AddStateTable(possessOptions, 'possess', 'PossessBar')
 
 local bagsOptions = {
     name = 'Bags',
@@ -1726,14 +2062,18 @@ function Module:SetupActionbarFrames()
     local createExtra = function(n)
         local btns = {}
 
+        local extraParent = CreateFrame('FRAME', 'DragonflightUIMultiactionBar' .. n .. 'VisParent', UIParent)
+        extraParent:SetFrameLevel(0)
+
         for i = 1, 12 do
             --
-            local btn = CreateFrame("CheckButton", "DragonflightUIMultiactionBar" .. n .. "Button" .. i, UIParent,
+            local btn = CreateFrame("CheckButton", "DragonflightUIMultiactionBar" .. n .. "Button" .. i, extraParent,
                                     "ActionBarButtonTemplate")
             btn:SetSize(64, 64)
             btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
             btn:SetAttribute("type", "action")
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+            btn:SetFrameLevel(3)
 
             -- global binding
             -- _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
@@ -1806,13 +2146,13 @@ function Module:SetupActionbarFrames()
 
     -- @TODO
     do
-        MultiBarBottomLeft.ignoreFramePositionManager = true
-        MultiBarBottomLeft:ClearAllPoints()
-        MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
+        -- MultiBarBottomLeft.ignoreFramePositionManager = true
+        -- MultiBarBottomLeft:ClearAllPoints()
+        -- MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
 
-        MultiBarBottomRight.ignoreFramePositionManager = true
-        MultiBarBottomRight:ClearAllPoints()
-        MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+        -- MultiBarBottomRight.ignoreFramePositionManager = true
+        -- MultiBarBottomRight:ClearAllPoints()
+        -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
     end
 end
 

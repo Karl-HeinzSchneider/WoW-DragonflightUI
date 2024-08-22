@@ -23,6 +23,7 @@ function DragonflightUIActionbarMixin:Init()
     self:SetSize(250, 142)
 
     self:InitEditMode()
+    self:InitStateHandler()
     self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -33,7 +34,26 @@ end
 
 function DragonflightUIActionbarMixin:SetButtons(buttons)
     self.buttonTable = buttons
-    -- print('DragonflightUIActionbarMixin:SetButtons(buttons)', #buttons, buttons[1]:GetName())
+
+    local handler = self.StateHandler
+    if not handler then return end
+
+    for i = 1, #buttons do
+        --
+        local btn = buttons[i]
+        handler:SetFrameRef('Btn' .. i, btn)
+    end
+
+    -- print(self:GetName(), self.buttonTable[1]:GetParent():GetName())
+
+    local parent = self.buttonTable[1]:GetParent()
+    parent:ClearAllPoints()
+    parent:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+    parent:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    -- parent:SetFrameLevel(0)
+    parent.ignoreFramePositionManager = true
+
+    self.VisParent = parent
 end
 
 --[[ local defaultsActionbarPROTO = {
@@ -199,7 +219,7 @@ function DragonflightUIActionbarMixin:Update()
 
     -- if self.decoFrame then self.decoFrame.update(state) end
 
-    if state.activate ~= nil then
+    if state.activate ~= nil and false then
         --
         -- print('state.activate ~= nil', state.activate, self:GetName())
         -- self:SetShown(state.activate)
@@ -226,6 +246,206 @@ function DragonflightUIActionbarMixin:Update()
             end
         end
     end
+
+    if self.StateHandler then self:UpdateStateHandler(state) end
+end
+
+function DragonflightUIActionbarMixin:InitStateHandler()
+    -- print('DragonflightUIActionbarMixin:InitStateHandler()')
+
+    local handler = CreateFrame('FRAME', self:GetName() .. 'Handler', nil, 'SecureHandlerStateTemplate')
+    self.StateHandler = handler
+    handler:SetAttribute('forceShow', false)
+
+    handler:SetAttribute('_onstate-vis', [[
+        -- if not newstate then return end     
+        local shower = self:GetFrameRef("Shower")
+        if not shower then return end  
+        -- print(shower:GetName(),'NewState',newstate)
+        local shouldShow = true
+
+        if newstate == "show" then
+            shouldShow = true
+        elseif newstate == "hide" then
+           shouldShow = false         
+        else 
+           shouldShow = true
+        end          
+        
+        local HandlerTwo = self:GetFrameRef("HandlerTwo")     
+        local forceShow = self:GetAttribute('forceShow')
+        -- print('forceShow', forceShow)
+        -- if forceShow then      
+        --     if not shouldShow then      
+        --         shouldShow = true    
+        --         shower:RegisterAutoHide(0.1)
+        --     end
+        -- else  
+        --     shower:UnregisterAutoHide()            
+        -- end
+
+        if shouldShow then
+            self:SetAttribute('forceShow', false)
+            shower:UnregisterAutoHide()  
+        else
+            if forceShow then  
+                shouldShow = true    
+                shower:RegisterAutoHide(0.1)
+            else
+                -- TODO unnecessary?
+                shower:UnregisterAutoHide()  
+            end
+        end
+
+        if shouldShow then 
+            shower:Show();
+        else
+            shower:Hide();
+        end
+    ]])
+    ----------
+    local extraBorder = 2
+    ----------
+    local shower = CreateFrame('FRAME', self:GetName() .. 'Shower', nil, 'SecureHandlerShowHideTemplate')
+    shower:SetPoint('TOPLEFT', self, 'TOPLEFT', -extraBorder, extraBorder)
+    shower:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', extraBorder, -extraBorder)
+    -- shower:Hide()
+    shower:SetFrameRef('MainHandler', handler)
+
+    shower:SetAttribute('_onshow', [[
+        -- print('+++++onshow',self:GetName())    
+        local frameRef = self:GetFrameRef("MainHandler")
+
+        for i=1,12 do
+            local btn = frameRef:GetFrameRef('Btn'..i)
+            if btn then btn:Show() end
+        end
+
+        local mainbarFrame = frameRef:GetFrameRef('mainbarFrame')
+        if mainbarFrame then mainbarFrame:Show() end
+    ]])
+
+    shower:SetAttribute('_onhide', [[
+        -- print('-----onhide',self:GetName())   
+         local frameRef = self:GetFrameRef("MainHandler")
+
+        for i=1,12 do
+            local btn = frameRef:GetFrameRef('Btn'..i)
+            if btn then btn:Hide() end
+        end
+
+        local mainbarFrame = frameRef:GetFrameRef('mainbarFrame')
+        if mainbarFrame then mainbarFrame:Hide() end
+    ]])
+
+    handler:SetFrameRef('Shower', shower)
+
+    ----------
+    local handlerTwo = CreateFrame('FRAME', self:GetName() .. 'HandlerOnEnterLeave', nil,
+                                   'SecureHandlerEnterLeaveTemplate')
+    handlerTwo:SetPoint('TOPLEFT', self, 'TOPLEFT', -extraBorder, extraBorder)
+    handlerTwo:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', extraBorder, -extraBorder)
+    handlerTwo:SetFrameLevel(2)
+
+    handlerTwo:SetFrameRef('MainHandler', handler)
+    handlerTwo:SetFrameRef('Shower', shower)
+    handler:SetFrameRef('HandlerTwo', handlerTwo)
+    shower:SetFrameRef('HandlerTwo', handlerTwo)
+
+    handlerTwo:SetAttribute('_onenter', [[
+        -- print('enter!',self:GetName())   
+
+        local frameRef = self:GetFrameRef("MainHandler")
+        frameRef:SetAttribute('forceShow', true)
+        
+        local oldState = frameRef:GetAttribute('state-vis')
+        frameRef:SetAttribute('state-vis', oldState)    
+        
+        -- local shower = self:GetFrameRef("Shower")
+        -- shower:RegisterAutoHide(0.1)
+    ]])
+    handlerTwo:SetAttribute('_onleave', [[
+        -- print('leave!',self:GetName())
+        -- local frameRef = self:GetFrameRef("MainHandler")
+
+        -- if not self:IsUnderMouse() then
+        --     frameRef:SetAttribute('forceShow',false)
+            
+        --     local oldState = frameRef:GetAttribute('state-vis')
+        --     frameRef:SetAttribute('state-vis', oldState)  
+        -- else
+        --     print('still')           
+        -- end 
+    ]])
+
+    -- handlerTwo:Hide()
+    self.MouseHandler = handlerTwo
+
+end
+
+-- hideAlways = false,
+-- hideCombat = false,
+-- hideOutOfCombat = false,
+-- hidePet = false,
+-- hideNoPet = false,
+-- hideStance = false,
+-- hideStealth = false
+
+local visConditionalTable = {}
+do
+    visConditionalTable['hideAlways'] = 'hide'
+    visConditionalTable['hideCombat'] = '[combat]hide'
+    visConditionalTable['hideOutOfCombat'] = '[nocombat]hide'
+    visConditionalTable['hidePet'] = '[pet]hide'
+    visConditionalTable['hideNoPet'] = '[nopet]hide'
+    visConditionalTable['hideStance'] = ''
+    visConditionalTable['hideStealth'] = '[stealth]hide'
+    visConditionalTable['hideNoStealth'] = '[nostealth]hide'
+end
+
+function DragonflightUIActionbarMixin:UpdateStateHandler(state)
+    -- print('->>> DragonflightUIActionbarMixin:UpdateStateHandler(state)')
+
+    local handler = self.StateHandler
+    UnregisterStateDriver(handler, 'vis')
+
+    local driverTable = {}
+
+    if state.hideCustom then
+        table.insert(driverTable, state.hideCustomCond)
+    else
+
+        for k, v in pairs(visConditionalTable) do
+            if state[k] then
+                if k == 'hideStance' then
+                    for i = 1, 6 do table.insert(driverTable, ('[stance:%d]hide'):format(i)) end
+                else
+                    table.insert(driverTable, visConditionalTable[k])
+                end
+            end
+        end
+        table.insert(driverTable, 'show')
+    end
+
+    local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
+    -- DevTools_Dump(driver)
+    if #driverTable > 1 or state.hideCustom then
+        --
+        -- print(self:GetName(), driver)
+        -- print('result:', result)
+    end
+    RegisterStateDriver(handler, 'vis', driver)
+    handler:SetAttribute('state-vis', 'hide')
+    handler:SetAttribute('state-vis', 'show')
+    handler:SetAttribute('state-vis', result)
+
+    local mouseHandler = self.MouseHandler
+    if state.showMouseover then
+        mouseHandler:Show()
+    else
+        mouseHandler:Hide()
+    end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -243,10 +463,20 @@ function DragonflightUIActionbarMixin:OnToggleQuickKeybindMode(on)
 end
 
 function DragonflightUIActionbarMixin:SetupMainBar()
+    self.MainBarFrame = CreateFrame('FRAME', nil, nil, 'SecureFrameTemplate')
     self:AddGryphons()
     self:SetupPageNumberFrame()
     -- self:AddDeco()
     self:AddDecoNew()
+
+    -- self.gryphonLeft:SetParent(self.MainBarFrame)
+    -- self.gryphonLeft:SetScale(0.42)
+    -- self.gryphonRight:SetParent(self.MainBarFrame)
+    -- self.gryphonRight:SetScale(0.42)
+
+    local handler = self.StateHandler
+    if not handler then return end
+    handler:SetFrameRef('mainbarFrame', self.MainBarFrame)
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
@@ -254,8 +484,11 @@ function DragonflightUIActionbarMixin:AddGryphons()
     local scale = 0.42
     local dy = self.buttonTable[1]:GetHeight()
 
-    local gryphonLeft = CreateFrame('Frame', 'DragonflightUIGryphonLeft', self)
-    gryphonLeft:SetSize(200, 188)
+    local w = 104.5
+    local h = 98
+
+    local gryphonLeft = CreateFrame('Frame', 'DragonflightUIGryphonLeft', self.MainBarFrame)
+    gryphonLeft:SetSize(w, h)
     gryphonLeft:SetScale(scale)
     gryphonLeft:SetPoint('RIGHT', self, 'BOTTOMLEFT', 0, dy)
     gryphonLeft:SetFrameStrata('MEDIUM')
@@ -263,14 +496,14 @@ function DragonflightUIActionbarMixin:AddGryphons()
 
     gryphonLeft.texture = gryphonLeft:CreateTexture()
     gryphonLeft.texture:SetTexture(textureRef)
-    gryphonLeft.texture:SetSize(200, 188)
+    gryphonLeft.texture:SetSize(w, h)
     gryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.10205078125, 0.26513671875)
     gryphonLeft.texture:SetPoint('CENTER')
 
     self.gryphonLeft = gryphonLeft
 
-    local gryphonRight = CreateFrame('Frame', 'DragonflightUIGryphonRight', self)
-    gryphonRight:SetSize(200, 188)
+    local gryphonRight = CreateFrame('Frame', 'DragonflightUIGryphonRight', self.MainBarFrame)
+    gryphonRight:SetSize(w, h)
     gryphonRight:SetScale(scale)
     gryphonRight:SetPoint('LEFT', self, 'BOTTOMRIGHT', 0, dy)
     gryphonRight:SetFrameStrata('MEDIUM')
@@ -278,7 +511,7 @@ function DragonflightUIActionbarMixin:AddGryphons()
 
     gryphonRight.texture = gryphonRight:CreateTexture()
     gryphonRight.texture:SetTexture(textureRef)
-    gryphonRight.texture:SetSize(200, 188)
+    gryphonRight.texture:SetSize(w, h)
     gryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.26611328125, 0.42919921875)
     gryphonRight.texture:SetPoint('CENTER')
 
@@ -298,7 +531,7 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
     local btnScale = state.buttonScale
     local gryphonScale = btnScale * 0.42
 
-    local dx = padding + 15
+    local dx = padding + 5
     local dy = 6
 
     local rows = state.rows
@@ -306,21 +539,18 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
 
     local maxRowButtons = math.ceil(btnCount / rows)
 
+    local mainbarScale = btnScale * 1.5 -- *0.65
+    self.MainBarFrame:SetScale(mainbarScale)
+
     if state.reverse then
         self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[12], 'LEFT', dx, dy)
-        self.gryphonLeft:SetScale(gryphonScale)
-
         self.gryphonRight:SetPoint('LEFT', self.buttonTable[12 - maxRowButtons + 1], 'RIGHT', -dx, dy)
-        self.gryphonRight:SetScale(gryphonScale)
     else
         self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
-        self.gryphonLeft:SetScale(gryphonScale)
-
         self.gryphonRight:SetPoint('LEFT', self.buttonTable[maxRowButtons], 'RIGHT', -dx, dy)
-        self.gryphonRight:SetScale(gryphonScale)
     end
 
-    self.numberFrame:SetScale(btnScale)
+    -- self.numberFrame:SetScale(btnScale)
 
     if gryphons == 'DEFAULT' then
         local englishFaction, localizedFaction = UnitFactionGroup('player')
@@ -344,8 +574,8 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
 end
 
 function DragonflightUIActionbarMixin:SetupPageNumberFrame()
-    local f = CreateFrame('Frame', 'DragonflightUIPageNumberFrame', UIParent)
-    f:SetSize(25, 25)
+    local f = CreateFrame('Frame', 'DragonflightUIPageNumberFrame', self.MainBarFrame)
+    f:SetSize(25, 20)
     f:SetPoint('RIGHT', ActionButton1, 'LEFT')
     f:SetFrameStrata('MEDIUM')
     f:SetFrameLevel(6)
@@ -375,6 +605,7 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     ActionBarUpButton:SetFrameStrata('MEDIUM')
     ActionBarUpButton:SetFrameLevel(6)
     ActionBarUpButton:SetScale(buttonScale)
+    -- ActionBarUpButton:SetSize(17, 14)
 
     ActionBarDownButton:SetParent(f)
     ActionBarDownButton:ClearAllPoints()
@@ -382,11 +613,14 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     ActionBarDownButton:SetFrameStrata('MEDIUM')
     ActionBarDownButton:SetFrameLevel(6)
     ActionBarDownButton:SetScale(buttonScale)
+    -- ActionBarDownButton:SetSize(17, 14)
 
     MainMenuBarPageNumber:ClearAllPoints()
     MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', 0, 0)
     MainMenuBarPageNumber:SetParent(f)
     MainMenuBarPageNumber:SetScale(1.25)
+
+    f:SetScale((1 / 1.5) * 0.9)
 
     self.numberFrame = f
     -- f:Hide()
