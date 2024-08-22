@@ -611,16 +611,13 @@ local function GetActionBarToggle(index)
     return select(index, GetActionBarToggles());
 end
 
-local function GetBarOption(n)
-    local barname = 'bar' .. n
-
+local function AddStateTable(optionTable, barname, displayName)
     local popupName = barname .. "CustomVisCondition"
-    do
-        --
-        local db = Module.db.profile
-        local dbBar = db[barname]
 
-        local macroOptions = [[
+    local db = Module.db.profile
+    local dbSub = db[barname]
+
+    local macroOptions = [[
         This option evaluates macro conditionals, which have to return '|cff8080ffshow|r' or '|cff8080ffhide|r', e.g.:
 
         1) |cff8080ff[@target,exists]show; hide|r
@@ -631,31 +628,103 @@ local function GetBarOption(n)
             |cff8080ff https://warcraft.wiki.gg/wiki/Macro_conditionals|r
         ]]
 
-        StaticPopupDialogs[popupName] = {
-            text = 'Set Custom Condition for Actionbar' .. n .. '\n\n' .. macroOptions,
-            button1 = ACCEPT,
-            button2 = CANCEL,
-            OnShow = function(self, data)
-                self.editBox:SetText(dbBar.hideCustomCond)
-            end,
-            OnAccept = function(self, data, data2)
-                local text = self.editBox:GetText()
-                local result, target = SecureCmdOptionParse(text)
-                if result ~= 'show' and result ~= 'hide' and result ~= '' then
-                    Module:Print('|cFFFF0000Error: Custom Condition for Actionbar' .. n .. ' does not return ' ..
-                                     [['show' or 'hide'!|r]])
-                    return
-                end
-                -- do whatever you want with it
-                setOption({barname, 'hideCustomCond'}, text)
-                Module:Print('Set Custom Condition for Actionbar' .. n .. ': \'' .. text .. '\'')
-                Module:Print('Current Value: ' .. result)
-            end,
-            hasEditBox = true,
-            editBoxWidth = 666
-        }
-    end
+    StaticPopupDialogs[popupName] = {
+        text = 'Set Custom Condition for ' .. displayName .. '\n\n' .. macroOptions,
+        button1 = ACCEPT,
+        button2 = CANCEL,
+        OnShow = function(self, data)
+            self.editBox:SetText(dbSub.hideCustomCond)
+        end,
+        OnAccept = function(self, data, data2)
+            local text = self.editBox:GetText()
+            local result, target = SecureCmdOptionParse(text)
+            if result ~= 'show' and result ~= 'hide' and result ~= '' then
+                Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
+                                 [['show' or 'hide'!|r]])
+                return
+            end
+            -- do whatever you want with it
+            setOption({barname, 'hideCustomCond'}, text)
+            Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. text .. '\'')
+            Module:Print('Current Value: ' .. result)
+        end,
+        hasEditBox = true,
+        editBoxWidth = 666
+    }
 
+    local extraOptions = {
+        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
+        hideAlways = {
+            type = 'toggle',
+            name = 'Always Hide',
+            desc = '' .. getDefaultStr('hideAlways', barname),
+            order = 101
+        },
+        hideCombat = {
+            type = 'toggle',
+            name = 'Hide In Combat',
+            desc = '' .. getDefaultStr('hideCombat', barname),
+            order = 102
+        },
+        hideOutOfCombat = {
+            type = 'toggle',
+            name = 'Hide Out Of Combat',
+            desc = '' .. getDefaultStr('hideOutOfCombat', barname),
+            order = 103
+        },
+        hidePet = {type = 'toggle', name = 'Hide With Pet', desc = '' .. getDefaultStr('hidePet', barname), order = 104},
+        hideNoPet = {
+            type = 'toggle',
+            name = 'Hide Without Pet',
+            desc = '' .. getDefaultStr('hideNoPet', barname),
+            order = 105
+        },
+        hideStance = {
+            type = 'toggle',
+            name = 'Hide Without Stance/Form',
+            desc = '' .. getDefaultStr('hideStance', barname),
+            order = 106
+        },
+        hideStealth = {
+            type = 'toggle',
+            name = 'Hide In Stealth',
+            desc = '' .. getDefaultStr('HidehideStealthNoPet', barname),
+            order = 107
+        },
+        hideNoStealth = {
+            type = 'toggle',
+            name = 'Hide Outside Stealth',
+            desc = '' .. getDefaultStr('hideNoStealth', barname),
+            order = 108
+        },
+        hideCustom = {
+            type = 'toggle',
+            name = 'Use Custom Condition',
+            desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
+                getDefaultStr('hideCustom', barname),
+            order = 109
+        },
+        hideCustomCondButton = {
+            type = 'execute',
+            name = 'Set Custom Condition',
+            btnName = 'Set',
+            func = function()
+                -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+                StaticPopup_Show(popupName)
+            end,
+            order = 109.5
+        }
+    }
+
+    for k, v in pairs(extraOptions) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
+local function GetBarOption(n)
+    local barname = 'bar' .. n
     local opt = {
         name = 'Actionbar' .. n,
         desc = 'Actionbar' .. n,
@@ -797,73 +866,6 @@ local function GetBarOption(n)
                 name = 'Hide Keybind Text',
                 desc = '' .. getDefaultStr('hideKeybind', barname),
                 order = 17
-            },
-            headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
-            hideAlways = {
-                type = 'toggle',
-                name = 'Always Hide',
-                desc = '' .. getDefaultStr('hideAlways', barname),
-                order = 101
-            },
-            hideCombat = {
-                type = 'toggle',
-                name = 'Hide In Combat',
-                desc = '' .. getDefaultStr('hideCombat', barname),
-                order = 102
-            },
-            hideOutOfCombat = {
-                type = 'toggle',
-                name = 'Hide Out Of Combat',
-                desc = '' .. getDefaultStr('hideOutOfCombat', barname),
-                order = 103
-            },
-            hidePet = {
-                type = 'toggle',
-                name = 'Hide With Pet',
-                desc = '' .. getDefaultStr('hidePet', barname),
-                order = 104
-            },
-            hideNoPet = {
-                type = 'toggle',
-                name = 'Hide Without Pet',
-                desc = '' .. getDefaultStr('hideNoPet', barname),
-                order = 105
-            },
-            hideStance = {
-                type = 'toggle',
-                name = 'Hide Without Stance/Form',
-                desc = '' .. getDefaultStr('hideStance', barname),
-                order = 106
-            },
-            hideStealth = {
-                type = 'toggle',
-                name = 'Hide In Stealth',
-                desc = '' .. getDefaultStr('HidehideStealthNoPet', barname),
-                order = 107
-            },
-            hideNoStealth = {
-                type = 'toggle',
-                name = 'Hide Outside Stealth',
-                desc = '' .. getDefaultStr('hideNoStealth', barname),
-                order = 108
-            },
-            hideCustom = {
-                type = 'toggle',
-                name = 'Use Custom Condition',
-                desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
-                    getDefaultStr('hideCustom', barname),
-                order = 108
-            },
-            hideCustomCondButton = {
-                type = 'execute',
-                name = 'Set Custom Condition',
-                btnName = 'Set',
-                func = function()
-                    -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
-                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-                    StaticPopup_Show(popupName)
-                end,
-                order = 109
             }
         }
     }
@@ -940,6 +942,8 @@ local function GetBarOption(n)
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
+
+    AddStateTable(opt, barname, 'Actionbar' .. n)
 
     return opt
 end
