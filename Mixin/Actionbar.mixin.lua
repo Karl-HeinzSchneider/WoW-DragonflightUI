@@ -272,6 +272,15 @@ function DragonflightUIActionbarMixin:InitStateHandler()
                  end             
              end
         end
+
+        local mainbarFrame = self:GetFrameRef('mainbarFrame')
+        if mainbarFrame then
+            if shouldShow then
+                mainbarFrame:Show()
+            else
+                mainbarFrame:Hide()
+            end
+        end
     ]])
 end
 
@@ -346,10 +355,20 @@ function DragonflightUIActionbarMixin:OnToggleQuickKeybindMode(on)
 end
 
 function DragonflightUIActionbarMixin:SetupMainBar()
+    self.MainBarFrame = CreateFrame('FRAME', nil, nil, 'SecureFrameTemplate')
     self:AddGryphons()
     self:SetupPageNumberFrame()
     -- self:AddDeco()
     self:AddDecoNew()
+
+    -- self.gryphonLeft:SetParent(self.MainBarFrame)
+    -- self.gryphonLeft:SetScale(0.42)
+    -- self.gryphonRight:SetParent(self.MainBarFrame)
+    -- self.gryphonRight:SetScale(0.42)
+
+    local handler = self.StateHandler
+    if not handler then return end
+    handler:SetFrameRef('mainbarFrame', self.MainBarFrame)
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
@@ -357,8 +376,11 @@ function DragonflightUIActionbarMixin:AddGryphons()
     local scale = 0.42
     local dy = self.buttonTable[1]:GetHeight()
 
-    local gryphonLeft = CreateFrame('Frame', 'DragonflightUIGryphonLeft', self)
-    gryphonLeft:SetSize(200, 188)
+    local w = 104.5
+    local h = 98
+
+    local gryphonLeft = CreateFrame('Frame', 'DragonflightUIGryphonLeft', self.MainBarFrame)
+    gryphonLeft:SetSize(w, h)
     gryphonLeft:SetScale(scale)
     gryphonLeft:SetPoint('RIGHT', self, 'BOTTOMLEFT', 0, dy)
     gryphonLeft:SetFrameStrata('MEDIUM')
@@ -366,14 +388,14 @@ function DragonflightUIActionbarMixin:AddGryphons()
 
     gryphonLeft.texture = gryphonLeft:CreateTexture()
     gryphonLeft.texture:SetTexture(textureRef)
-    gryphonLeft.texture:SetSize(200, 188)
+    gryphonLeft.texture:SetSize(w, h)
     gryphonLeft.texture:SetTexCoord(0.001953125, 0.697265625, 0.10205078125, 0.26513671875)
     gryphonLeft.texture:SetPoint('CENTER')
 
     self.gryphonLeft = gryphonLeft
 
-    local gryphonRight = CreateFrame('Frame', 'DragonflightUIGryphonRight', self)
-    gryphonRight:SetSize(200, 188)
+    local gryphonRight = CreateFrame('Frame', 'DragonflightUIGryphonRight', self.MainBarFrame)
+    gryphonRight:SetSize(w, h)
     gryphonRight:SetScale(scale)
     gryphonRight:SetPoint('LEFT', self, 'BOTTOMRIGHT', 0, dy)
     gryphonRight:SetFrameStrata('MEDIUM')
@@ -381,7 +403,7 @@ function DragonflightUIActionbarMixin:AddGryphons()
 
     gryphonRight.texture = gryphonRight:CreateTexture()
     gryphonRight.texture:SetTexture(textureRef)
-    gryphonRight.texture:SetSize(200, 188)
+    gryphonRight.texture:SetSize(w, h)
     gryphonRight.texture:SetTexCoord(0.001953125, 0.697265625, 0.26611328125, 0.42919921875)
     gryphonRight.texture:SetPoint('CENTER')
 
@@ -401,7 +423,7 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
     local btnScale = state.buttonScale
     local gryphonScale = btnScale * 0.42
 
-    local dx = padding + 15
+    local dx = padding + 5
     local dy = 6
 
     local rows = state.rows
@@ -409,21 +431,18 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
 
     local maxRowButtons = math.ceil(btnCount / rows)
 
+    local mainbarScale = btnScale * 1.5 -- *0.65
+    self.MainBarFrame:SetScale(mainbarScale)
+
     if state.reverse then
         self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[12], 'LEFT', dx, dy)
-        self.gryphonLeft:SetScale(gryphonScale)
-
         self.gryphonRight:SetPoint('LEFT', self.buttonTable[12 - maxRowButtons + 1], 'RIGHT', -dx, dy)
-        self.gryphonRight:SetScale(gryphonScale)
     else
         self.gryphonLeft:SetPoint('RIGHT', self.buttonTable[1], 'LEFT', dx, dy)
-        self.gryphonLeft:SetScale(gryphonScale)
-
         self.gryphonRight:SetPoint('LEFT', self.buttonTable[maxRowButtons], 'RIGHT', -dx, dy)
-        self.gryphonRight:SetScale(gryphonScale)
     end
 
-    self.numberFrame:SetScale(btnScale)
+    -- self.numberFrame:SetScale(btnScale)
 
     if gryphons == 'DEFAULT' then
         local englishFaction, localizedFaction = UnitFactionGroup('player')
@@ -447,8 +466,8 @@ function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
 end
 
 function DragonflightUIActionbarMixin:SetupPageNumberFrame()
-    local f = CreateFrame('Frame', 'DragonflightUIPageNumberFrame', UIParent)
-    f:SetSize(25, 25)
+    local f = CreateFrame('Frame', 'DragonflightUIPageNumberFrame', self.MainBarFrame)
+    f:SetSize(25, 20)
     f:SetPoint('RIGHT', ActionButton1, 'LEFT')
     f:SetFrameStrata('MEDIUM')
     f:SetFrameLevel(6)
@@ -478,6 +497,7 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     ActionBarUpButton:SetFrameStrata('MEDIUM')
     ActionBarUpButton:SetFrameLevel(6)
     ActionBarUpButton:SetScale(buttonScale)
+    -- ActionBarUpButton:SetSize(17, 14)
 
     ActionBarDownButton:SetParent(f)
     ActionBarDownButton:ClearAllPoints()
@@ -485,11 +505,14 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     ActionBarDownButton:SetFrameStrata('MEDIUM')
     ActionBarDownButton:SetFrameLevel(6)
     ActionBarDownButton:SetScale(buttonScale)
+    -- ActionBarDownButton:SetSize(17, 14)
 
     MainMenuBarPageNumber:ClearAllPoints()
     MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', 0, 0)
     MainMenuBarPageNumber:SetParent(f)
     MainMenuBarPageNumber:SetScale(1.25)
+
+    f:SetScale((1 / 1.5) * 0.9)
 
     self.numberFrame = f
     -- f:Hide()
