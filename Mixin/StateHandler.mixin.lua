@@ -81,7 +81,7 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
                                    'SecureHandlerEnterLeaveTemplate')
     handlerTwo:SetPoint('TOPLEFT', self, 'TOPLEFT', -extraX, extraY)
     handlerTwo:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', extraX, -extraY)
-    handlerTwo:SetFrameLevel(self:GetFrameLevel() - 1)
+    handlerTwo:SetFrameLevel(math.max(self:GetFrameLevel() - 1, 0))
     handlerTwo:SetFrameStrata(self:GetFrameStrata())
 
     handlerTwo:SetFrameRef('MainHandler', handler)
