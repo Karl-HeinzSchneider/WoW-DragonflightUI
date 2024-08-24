@@ -748,7 +748,8 @@ function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
     -- mask:SetDesaturated(true)
     -- if true then return end
     if not isUsable then
-        mask:SetVertexColor(0.4, 0.4, 0.4, 1.0)
+        -- mask:SetVertexColor(0.4, 0.4, 0.4, 1.0)
+        mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         mask:SetDesaturated(true)
     elseif (checksRange) then
         if (inRange) then
