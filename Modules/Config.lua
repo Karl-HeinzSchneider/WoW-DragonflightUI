@@ -60,7 +60,7 @@ local modulesOptions = {
         Darkmode = {
             type = 'toggle',
             name = 'Darkmode',
-            desc = '' .. getDefaultStr('Darkmode', 'modules'),
+            desc = 'Work in Progress - Please give feedback!' .. getDefaultStr('Darkmode', 'modules'),
             order = 4.1,
             new = true
         },
