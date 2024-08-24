@@ -248,15 +248,13 @@ function Module:ApplySettings()
         DF:Print("'Colored Inventory Items' was deactivated, but Icons were already modified, please /reload.")
     end
 
-    if DF.Cata or DF.Era then
-        if db.changeTradeskill and not Module.TradeskillHooked then
-            Module.TradeskillHooked = true
-            Module:UpdateTradeskills()
-        elseif not db.changeTradeskill and Module.TradeskillHooked then
-            DF:Print(
-                "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
-        end
+    if db.changeTradeskill and not Module.TradeskillHooked then
+        Module.TradeskillHooked = true
+        Module:UpdateTradeskills()
+    elseif not db.changeTradeskill and Module.TradeskillHooked then
+        DF:Print("'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
     end
+
     if DF.Era or (DF.Wrath and not DF.Cata) then
         if db.changeSpellBook and not Module.SpellBookHooked then
             Module.SpellBookHooked = true
