@@ -61,6 +61,11 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
     shower:SetAttribute('_onshow', [[   
         local frameRef = self:GetFrameRef("MainHandler")
 
+        local unitRef = frameRef:GetAttribute('UnitRef')
+        if unitRef and not UnitExists(unitRef) then
+            return
+        end
+
         for i=1,12 do
             local f = frameRef:GetFrameRef('HideFrame'..i)
             if f then f:Show() end
@@ -104,6 +109,10 @@ end
 
 function DragonflightUIStateHandlerMixin:SetHideFrame(frame, index)
     self.DFStateHandler:SetFrameRef('HideFrame' .. index, frame)
+end
+
+function DragonflightUIStateHandlerMixin:SetUnit(unit)
+    self.DFStateHandler:SetAttribute('UnitRef', unit)
 end
 
 local visConditionalTable = {}
