@@ -105,7 +105,7 @@ local UIOptions = {
     }
 }
 
-if DF.Era then
+if DF.Era or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
         changeSpellBook = {
             type = 'toggle',
@@ -257,7 +257,7 @@ function Module:ApplySettings()
                 "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
         end
     end
-    if DF.Era then
+    if DF.Era or (DF.Wrath and not DF.Cata) then
         if db.changeSpellBook and not Module.SpellBookHooked then
             Module.SpellBookHooked = true
             DragonflightUIMixin:ChangeSpellbookEra()
@@ -386,7 +386,7 @@ function Module:ChangeFrames()
 
     elseif DF.Wrath then
         --
-        print('WRATHHHHHHH')
+        -- print('WRATHHHHHHH')
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
         -- DragonflightUIMixin:ChangeCharacterFrameCata()
         DragonflightUIMixin:ChangeQuestLogFrameCata()
