@@ -140,14 +140,16 @@ function Module:ApplySettings()
         -- print(k, v)
 
         local dfmod = DF:GetModule(k)
-        if dfmod and k ~= 'Darkmode' then
+        if dfmod then
             if v and not dfmod:GetWasEnabled() then
-                DF:EnableModule(k)
+                if k ~= 'Darkmode' then DF:EnableModule(k) end
             elseif not v and dfmod:GetWasEnabled() then
                 DF:Print("Already loaded module was deactivated, please '/reload' !")
             end
         end
     end
+
+    if modules['Darkmode'] then DF:EnableModule('Darkmode') end
 end
 
 function Module:GetModuleEnabled(module)
