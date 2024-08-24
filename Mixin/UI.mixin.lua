@@ -2906,6 +2906,23 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     end)
 end
 
+function DragonflightUIMixin:ChangeWrathPVPFrame()
+    local frame = _G['PVPFrame']
+
+    local regions = {frame:GetRegions()}
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            -- print(layer, layerNr, child:GetTexture())
+            if layer == 'ARTWORK' then child:Hide() end
+        end
+    end
+
+    frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 

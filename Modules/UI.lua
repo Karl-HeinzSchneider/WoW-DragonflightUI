@@ -399,6 +399,7 @@ function Module:ChangeFrames()
         DragonflightUIMixin:ChangeLootFrame()
         DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame']) -- pp missing
+        -- DragonflightUIMixin:ChangeWrathPVPFrame()
         DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
