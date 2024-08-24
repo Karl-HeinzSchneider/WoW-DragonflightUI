@@ -140,7 +140,7 @@ function Module:ApplySettings()
         -- print(k, v)
 
         local dfmod = DF:GetModule(k)
-        if dfmod then
+        if dfmod and k ~= 'Darkmode' then
             if v and not dfmod:GetWasEnabled() then
                 DF:EnableModule(k)
             elseif not v and dfmod:GetWasEnabled() then

@@ -724,6 +724,7 @@ function Module:ApplySettings()
 end
 
 local frame = CreateFrame('FRAME')
+Module.Frame = frame
 
 function Module.GetCoords(key)
     local uiunitframe = {
