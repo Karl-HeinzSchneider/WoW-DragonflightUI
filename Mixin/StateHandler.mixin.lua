@@ -66,7 +66,7 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
             return
         end
 
-        for i=1,12 do
+        for i=1,13 do
             local f = frameRef:GetFrameRef('HideFrame'..i)
             if f then f:Show() end
         end    
@@ -75,7 +75,7 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
     shower:SetAttribute('_onhide', [[     
          local frameRef = self:GetFrameRef("MainHandler")
 
-        for i=1,12 do
+        for i=1,13 do
             local f = frameRef:GetFrameRef('HideFrame'..i)
             if f then f:Hide() end
         end      
@@ -202,7 +202,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                                  [['show' or 'hide'!|r]])
                 return
             end
-            -- do whatever you want with it
+            -- do whatever you want with it      
             if sub then
                 Module:SetOption({sub, 'hideCustomCond'}, text)
             else

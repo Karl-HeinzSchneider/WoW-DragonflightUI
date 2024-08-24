@@ -716,144 +716,6 @@ local function GetActionBarToggle(index)
     return select(index, GetActionBarToggles());
 end
 
-local function AddStateTable(optionTable, barname, displayName)
-    local popupName = barname .. "CustomVisCondition"
-
-    local macroOptions = [[
-        This option evaluates macro conditionals, which have to return '|cff8080ffshow|r' or '|cff8080ffhide|r', e.g.:
-
-        1) |cff8080ff[@target,exists]show; hide|r
-        2) |cff8080ff[@target,exists,help,raid] show; hide|r
-        3) |cff8080ff[swimming] hide; show|r
-
-        For more Infos see:
-            |cff8080ff https://warcraft.wiki.gg/wiki/Macro_conditionals|r
-        ]]
-
-    StaticPopupDialogs[popupName] = {
-        text = 'Set Custom Condition for ' .. displayName .. '\n\n' .. macroOptions,
-        button1 = ACCEPT,
-        button2 = CANCEL,
-        OnShow = function(self, data)
-            local db = Module.db.profile
-            local dbSub = db[barname]
-
-            self.editBox:SetText(dbSub.hideCustomCond)
-        end,
-        OnAccept = function(self, data, data2)
-            local text = self.editBox:GetText()
-            local result, target = SecureCmdOptionParse(text)
-            if result ~= 'show' and result ~= 'hide' and result ~= '' then
-                Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
-                                 [['show' or 'hide'!|r]])
-                return
-            end
-            -- do whatever you want with it
-            setOption({barname, 'hideCustomCond'}, text)
-            Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. text .. '\'')
-            Module:Print('Current Value: ' .. result)
-        end,
-        hasEditBox = true,
-        editBoxWidth = 666
-    }
-
-    local function cond(str)
-        return 'macro condition: ' .. '|cff8080ff' .. str .. '|r'
-    end
-
-    local extraOptions = {
-        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
-        showMouseover = {
-            type = 'toggle',
-            name = 'Show On Mouseover',
-            desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
-                getDefaultStr('showMouseover', barname),
-            order = 100.5,
-            new = true
-        },
-        hideAlways = {
-            type = 'toggle',
-            name = 'Always Hide',
-            desc = '' .. cond('hide') .. getDefaultStr('hideAlways', barname),
-            order = 101,
-            new = true
-        },
-        hideCombat = {
-            type = 'toggle',
-            name = 'Hide In Combat',
-            desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', barname),
-            order = 102,
-            new = true
-        },
-        hideOutOfCombat = {
-            type = 'toggle',
-            name = 'Hide Out Of Combat',
-            desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', barname),
-            order = 103,
-            new = true
-        },
-        hidePet = {
-            type = 'toggle',
-            name = 'Hide With Pet',
-            desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', barname),
-            order = 104,
-            new = true
-        },
-        hideNoPet = {
-            type = 'toggle',
-            name = 'Hide Without Pet',
-            desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', barname),
-            order = 105,
-            new = true
-        },
-        hideStance = {
-            type = 'toggle',
-            name = 'Hide Without Stance/Form',
-            desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', barname),
-            order = 106,
-            new = true
-        },
-        hideStealth = {
-            type = 'toggle',
-            name = 'Hide In Stealth',
-            desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', barname),
-            order = 107,
-            new = true
-        },
-        hideNoStealth = {
-            type = 'toggle',
-            name = 'Hide Outside Stealth',
-            desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', barname),
-            order = 108,
-            new = true
-        },
-        hideCustom = {
-            type = 'toggle',
-            name = 'Use Custom Condition',
-            desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
-                getDefaultStr('hideCustom', barname),
-            order = 109,
-            new = true
-        },
-        hideCustomCondButton = {
-            type = 'execute',
-            name = 'Set Custom Condition',
-            btnName = 'Update...',
-            func = function()
-                -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-                StaticPopup_Show(popupName)
-            end,
-            order = 109.5
-        }
-    }
-
-    for k, v in pairs(extraOptions) do
-        --
-        optionTable.args[k] = v
-    end
-end
-
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
@@ -1073,7 +935,8 @@ local function GetBarOption(n)
         -- for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
 
-    AddStateTable(opt, barname, 'Actionbar' .. n)
+    -- AddStateTable(opt, barname, 'Actionbar' .. n)
+    DragonflightUIStateHandlerMixin:AddStateTable(Module, opt, barname, 'Actionbar' .. n, getDefaultStr)
 
     return opt
 end
@@ -1207,7 +1070,7 @@ local petOptions = {
         }
     }
 }
-AddStateTable(petOptions, 'pet', 'PetBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, petOptions, 'pet', 'PetBar', getDefaultStr)
 
 local xpOptions = {
     name = 'XP',
@@ -1537,7 +1400,7 @@ local stanceOptions = {
         activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
 }
-AddStateTable(stanceOptions, 'stance', 'StanceBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, stanceOptions, 'stance', 'StanceBar', getDefaultStr)
 
 local totemOptions = {
     name = 'Totembar',
@@ -1616,7 +1479,7 @@ local totemOptions = {
         }
     }
 }
-AddStateTable(totemOptions, 'totem', 'TotemBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, totemOptions, 'totem', 'TotemBar', getDefaultStr)
 
 local possessOptions = {
     name = 'Possessbar',
@@ -1703,7 +1566,7 @@ local possessOptions = {
         }
     }
 }
-AddStateTable(possessOptions, 'possess', 'PossessBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, possessOptions, 'possess', 'PossessBar', getDefaultStr)
 
 local bagsOptions = {
     name = 'Bags',
