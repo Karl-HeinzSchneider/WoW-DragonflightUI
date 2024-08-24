@@ -1292,9 +1292,11 @@ function Module.AddStateUpdater()
     TargetFrame:InitStateHandler()
     TargetFrame:SetUnit('target')
 
-    Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
-    FocusFrame:InitStateHandler()
-    FocusFrame:SetUnit('focus')
+    if DF.Wrath then
+        Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
+        FocusFrame:InitStateHandler()
+        FocusFrame:SetUnit('focus')
+    end
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
