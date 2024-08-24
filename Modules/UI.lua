@@ -87,15 +87,8 @@ local UIOptions = {
         changeTradeskill = {
             type = 'toggle',
             name = 'Change Profession Window',
-            desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
+            desc = '' .. getDefaultStr('changeTradeskill', 'first'),
             order = 102
-        },
-        changeTalents = {
-            type = 'toggle',
-            name = 'Change TalentFrame',
-            desc = '' .. getDefaultStr('changeTalents', 'first'),
-            order = 103,
-            new = true
         },
         changeInspect = {
             type = 'toggle',
@@ -115,6 +108,13 @@ local UIOptions = {
 
 if DF.Era or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
+        changeTalents = {
+            type = 'toggle',
+            name = 'Change TalentFrame',
+            desc = '(Not on Wrath)' .. getDefaultStr('changeTalents', 'first'),
+            order = 103,
+            new = true
+        },
         changeSpellBook = {
             type = 'toggle',
             name = 'Change SpellBook',
@@ -314,7 +314,7 @@ function Module:ApplySettings()
         DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
     end
 
-    if db.changeTalents and not Module.TalentsHooked and DF.Era then
+    if db.changeTalents and not Module.TalentsHooked and (DF.Era or (DF.Wrath and not DF.Cata and false)) then
         Module.TalentsHooked = true
         Module:FuncOrWaitframe('Blizzard_TalentUI', function()
             DragonflightUIMixin:ChangeTalentsEra()
