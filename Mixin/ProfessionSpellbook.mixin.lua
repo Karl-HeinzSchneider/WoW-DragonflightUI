@@ -161,6 +161,8 @@ local function UpdateProfessionButton(self)
     self:SetAttribute('type1', 'spell')
     self:SetAttribute('spell', spellID)
 
+    -- print('---', skillType, spellID, data.nameLoc)
+
     -- self:SetAttribute("_onclick", [[      
     --     print('_onclick') 
 
