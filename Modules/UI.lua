@@ -22,6 +22,14 @@ local defaults = {
         }
     }
 }
+
+if DF.Wrath and not DF.Cata then
+    defaults.profile.first.changeSpellBook = false
+    defaults.profile.first.changeSpellBookProfessions = false
+    defaults.profile.first.changeTradeskill = false
+    defaults.profile.first.changeTalents = false
+end
+
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -79,15 +87,8 @@ local UIOptions = {
         changeTradeskill = {
             type = 'toggle',
             name = 'Change Profession Window',
-            desc = 'Only on Cata for now' .. getDefaultStr('changeTradeskill', 'first'),
+            desc = '' .. getDefaultStr('changeTradeskill', 'first'),
             order = 102
-        },
-        changeTalents = {
-            type = 'toggle',
-            name = 'Change TalentFrame',
-            desc = '' .. getDefaultStr('changeTalents', 'first'),
-            order = 103,
-            new = true
         },
         changeInspect = {
             type = 'toggle',
@@ -105,8 +106,15 @@ local UIOptions = {
     }
 }
 
-if DF.Era then
+if DF.Era or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
+        changeTalents = {
+            type = 'toggle',
+            name = 'Change TalentFrame',
+            desc = '(Not on Wrath)' .. getDefaultStr('changeTalents', 'first'),
+            order = 103,
+            new = true
+        },
         changeSpellBook = {
             type = 'toggle',
             name = 'Change SpellBook',
@@ -248,16 +256,14 @@ function Module:ApplySettings()
         DF:Print("'Colored Inventory Items' was deactivated, but Icons were already modified, please /reload.")
     end
 
-    if DF.Cata or DF.Era then
-        if db.changeTradeskill and not Module.TradeskillHooked then
-            Module.TradeskillHooked = true
-            Module:UpdateTradeskills()
-        elseif not db.changeTradeskill and Module.TradeskillHooked then
-            DF:Print(
-                "'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
-        end
+    if db.changeTradeskill and not Module.TradeskillHooked then
+        Module.TradeskillHooked = true
+        Module:UpdateTradeskills()
+    elseif not db.changeTradeskill and Module.TradeskillHooked then
+        DF:Print("'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
     end
-    if DF.Era then
+
+    if DF.Era or (DF.Wrath and not DF.Cata) then
         if db.changeSpellBook and not Module.SpellBookHooked then
             Module.SpellBookHooked = true
             DragonflightUIMixin:ChangeSpellbookEra()
@@ -290,6 +296,8 @@ function Module:ApplySettings()
         if DF.Cata then
             DragonflightUIMixin:ChangeCharacterFrameCata()
             Module:HookCharacterLevel()
+        elseif DF.Wrath then
+            DragonflightUIMixin:ChangeCharacterFrameEra()
         elseif DF.Era then
             DragonflightUIMixin:ChangeCharacterFrameEra()
             Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
@@ -306,7 +314,7 @@ function Module:ApplySettings()
         DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
     end
 
-    if db.changeTalents and not Module.TalentsHooked and DF.Era then
+    if db.changeTalents and not Module.TalentsHooked and (DF.Era or (DF.Wrath and not DF.Cata and false)) then
         Module.TalentsHooked = true
         Module:FuncOrWaitframe('Blizzard_TalentUI', function()
             DragonflightUIMixin:ChangeTalentsEra()
@@ -386,9 +394,6 @@ function Module:ChangeFrames()
 
     elseif DF.Wrath then
         --
-        print('WRATHHHHHHH')
-        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-        -- DragonflightUIMixin:ChangeCharacterFrameCata()
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
@@ -399,6 +404,7 @@ function Module:ChangeFrames()
         DragonflightUIMixin:ChangeLootFrame()
         DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
         -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame']) -- pp missing
+        -- DragonflightUIMixin:ChangeWrathPVPFrame()
         DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
         DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])

@@ -1094,7 +1094,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     end
 
     -- honor
-    do
+    if HonorFrame then
         local regions = {HonorFrame:GetRegions()}
         for k, child in ipairs(regions) do
             --     
@@ -1110,6 +1110,11 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
         HonorFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPLEFT', 0 + dx, 0 + dy)
         HonorFrame:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+
+        local honorLevel = HonorLevelText
+        honorLevel:ClearAllPoints()
+        honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+        honorLevel:SetDrawLayer('ARTWORK')
     end
     --
 
@@ -1130,11 +1135,6 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     level:ClearAllPoints()
     level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
     level:SetDrawLayer('ARTWORK')
-
-    local honorLevel = HonorLevelText
-    honorLevel:ClearAllPoints()
-    honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
-    honorLevel:SetDrawLayer('ARTWORK')
 
     local closeButton = CharacterFrameCloseButton
     DragonflightUIMixin:UIPanelCloseButton(closeButton)
@@ -1237,6 +1237,19 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
     -- rep
     do
+        if DF.Wrath then
+            local regions = {ReputationFrame:GetRegions()}
+            for k, child in ipairs(regions) do
+                --     
+                if child:GetObjectType() == 'Texture' then
+                    local layer, layerNr = child:GetDrawLayer()
+                    -- print(layer, layerNr, child:GetTexture())
+                    if layer == 'BACKGROUND' then child:Hide() end
+                    -- if layer == 'ARTWORK' then child:Hide() end
+                end
+            end
+        end
+
         local rep = ReputationFrame
 
         local factionLabel = ReputationFrameFactionLabel
@@ -1316,14 +1329,16 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         trainingFrame:SetPoint('CENTER', newMoney, 'CENTER', 0, 0)
         trainingFrame:SetFrameLevel(10)
 
-        local trainPoint = PetTrainingPointText
-        trainPoint:ClearAllPoints()
-        trainPoint:SetPoint('RIGHT', trainingFrame, 'RIGHT', -16, 0)
-        trainPoint:SetDrawLayer('OVERLAY', 5)
-        trainPoint:SetParent(trainingFrame)
+        if PetTrainingPointText then
+            local trainPoint = PetTrainingPointText
+            trainPoint:ClearAllPoints()
+            trainPoint:SetPoint('RIGHT', trainingFrame, 'RIGHT', -16, 0)
+            trainPoint:SetDrawLayer('OVERLAY', 5)
+            trainPoint:SetParent(trainingFrame)
 
-        PetTrainingPointLabel:SetDrawLayer('OVERLAY', 5)
-        PetTrainingPointLabel:SetParent(trainingFrame)
+            PetTrainingPointLabel:SetDrawLayer('OVERLAY', 5)
+            PetTrainingPointLabel:SetParent(trainingFrame)
+        end
 
         local nameFrame = CreateFrame('FRAME', 'DragonflightUIPetNameFrame', PetPaperDollFrame)
         nameFrame:SetPoint('TOP', PetPaperDollFrame, 'TOP', 0, -5)
@@ -1344,11 +1359,12 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         levelPet:SetPoint('TOP', nameFrame, 'BOTTOM', 0, -10)
         levelPet:SetDrawLayer('ARTWORK')
 
-        local loyal = PetLoyaltyText
-        loyal:ClearAllPoints()
-        loyal:SetPoint('TOP', levelPet, 'BOTTOM', 0, -1)
-        loyal:SetDrawLayer('ARTWORK')
-
+        if PetLoyaltyText then
+            local loyal = PetLoyaltyText
+            loyal:ClearAllPoints()
+            loyal:SetPoint('TOP', levelPet, 'BOTTOM', 0, -1)
+            loyal:SetDrawLayer('ARTWORK')
+        end
         --[[     local level = CharacterLevelText
     level:ClearAllPoints()
     level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
@@ -2904,6 +2920,23 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         -- print('SpellBookFrame_Update')
         frame:Update()
     end)
+end
+
+function DragonflightUIMixin:ChangeWrathPVPFrame()
+    local frame = _G['PVPFrame']
+
+    local regions = {frame:GetRegions()}
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            -- print(layer, layerNr, child:GetTexture())
+            if layer == 'ARTWORK' then child:Hide() end
+        end
+    end
+
+    frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
