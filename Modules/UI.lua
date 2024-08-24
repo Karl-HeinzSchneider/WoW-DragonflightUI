@@ -22,6 +22,14 @@ local defaults = {
         }
     }
 }
+
+if DF.Wrath and not DF.Cata then
+    defaults.profile.first.changeSpellBook = false
+    defaults.profile.first.changeSpellBookProfessions = false
+    defaults.profile.first.changeTradeskill = false
+    defaults.profile.first.changeTalents = false
+end
+
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
