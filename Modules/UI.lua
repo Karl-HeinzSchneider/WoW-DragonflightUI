@@ -290,6 +290,8 @@ function Module:ApplySettings()
         if DF.Cata then
             DragonflightUIMixin:ChangeCharacterFrameCata()
             Module:HookCharacterLevel()
+        elseif DF.Wrath then
+            DragonflightUIMixin:ChangeCharacterFrameEra()
         elseif DF.Era then
             DragonflightUIMixin:ChangeCharacterFrameEra()
             Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
@@ -386,9 +388,6 @@ function Module:ChangeFrames()
 
     elseif DF.Wrath then
         --
-        -- print('WRATHHHHHHH')
-        -- DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-        -- DragonflightUIMixin:ChangeCharacterFrameCata()
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
