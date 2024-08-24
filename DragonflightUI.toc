@@ -67,5 +67,6 @@ Modules\UI.lua
 Modules\Unitframe.lua
 Modules\Utility.lua
 
+Modules\Darkmode.lua
 #
 Compatibility.lua

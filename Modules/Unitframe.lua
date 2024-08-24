@@ -1271,6 +1271,7 @@ function Module.MovePlayerTargetPreset(name)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
+Module.Frame = frame
 
 function Module.FixBlizzardBug()
     SetTextStatusBarText(PlayerFrameManaBar, PlayerFrameManaBarText)
@@ -1949,79 +1950,74 @@ function Module.SetPlayerBiggerHealthbar(bigger)
     end
 end
 
-function Module.HookPlayerStatus()
-    --[[ PlayerFrame:HookScript(
-        'OnUpdate',
-        function(self)
-            if PlayerStatusTexture:IsShown() and Module.onHateList == 1 and Module.inCombat ~= 1 then
-                PlayerStatusTexture:SetAlpha(1.0)
-            end
-        end
-    ) ]]
-    local UpdateStatus = function()
-        if not frame.PlayerFrameDeco then return end
+function Module.UpdatePlayerStatus()
+    if not frame.PlayerFrameDeco then return end
 
-        -- TODO: fix statusglow
-        PlayerStatusGlow:Hide()
+    -- TODO: fix statusglow
+    PlayerStatusGlow:Hide()
 
-        if UnitHasVehiclePlayerFrameUI and UnitHasVehiclePlayerFrameUI('player') then
-            -- TODO: vehicle stuff
-            -- frame.PlayerFrameDeco:Show()
-            frame.RestIcon:Hide()
-            frame.RestIconAnimation:Stop()
-            -- frame.PlayerFrameDeco:Show()
-        elseif IsResting() then
-            frame.PlayerFrameDeco:Show()
-            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+    if UnitHasVehiclePlayerFrameUI and UnitHasVehiclePlayerFrameUI('player') then
+        -- TODO: vehicle stuff
+        -- frame.PlayerFrameDeco:Show()
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
+        -- frame.PlayerFrameDeco:Show()
+    elseif IsResting() then
+        frame.PlayerFrameDeco:Show()
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
 
-            frame.RestIcon:Show()
-            frame.RestIconAnimation:Play()
+        frame.RestIcon:Show()
+        frame.RestIconAnimation:Play()
 
-            -- PlayerStatusTexture:Show()
-            -- PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
-            PlayerStatusTexture:SetAlpha(1.0)
-        elseif PlayerFrame.onHateList then
-            -- PlayerStatusTexture:Show()
-            -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-            frame.PlayerFrameDeco:Hide()
+        -- PlayerStatusTexture:Show()
+        -- PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+        PlayerStatusTexture:SetAlpha(1.0)
+    elseif PlayerFrame.onHateList then
+        -- PlayerStatusTexture:Show()
+        -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+        frame.PlayerFrameDeco:Hide()
 
-            frame.RestIcon:Hide()
-            frame.RestIconAnimation:Stop()
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
 
-            frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
-            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-        elseif PlayerFrame.inCombat then
-            frame.PlayerFrameDeco:Hide()
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+    elseif PlayerFrame.inCombat then
+        frame.PlayerFrameDeco:Hide()
 
-            frame.RestIcon:Hide()
-            frame.RestIconAnimation:Stop()
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
 
-            frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
 
-            -- PlayerStatusTexture:Show()
-            -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-            PlayerStatusTexture:SetAlpha(1.0)
-        else
-            frame.PlayerFrameDeco:Show()
+        -- PlayerStatusTexture:Show()
+        -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
+        PlayerStatusTexture:SetAlpha(1.0)
+    else
+        frame.PlayerFrameDeco:Show()
 
-            frame.RestIcon:Hide()
-            frame.RestIconAnimation:Stop()
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
 
-            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        end
-
-        local db = Module.db.profile.player
-        if db.hideRedStatus and (PlayerFrame.onHateList or PlayerFrame.inCombat) then
-            --
-            frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            PlayerStatusTexture:SetAlpha(0)
-            PlayerStatusTexture:Hide()
-        end
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
     end
 
-    hooksecurefunc('PlayerFrame_UpdateStatus', UpdateStatus)
+    local db = Module.db.profile.player
+    if db.hideRedStatus and (PlayerFrame.onHateList or PlayerFrame.inCombat) then
+        --
+        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
+        PlayerStatusTexture:SetAlpha(0)
+        PlayerStatusTexture:Hide()
+    end
+end
+
+function Module.HookPlayerStatus()
+    hooksecurefunc('PlayerFrame_UpdateStatus', function()
+        --
+        Module.UpdatePlayerStatus()
+    end)
 end
 
 function Module.HookPlayerArt()
