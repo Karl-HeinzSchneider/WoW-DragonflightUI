@@ -11,6 +11,7 @@ local defaults = {
             ['Bossframe'] = false,
             ['Castbar'] = true,
             ['Chat'] = false,
+            ['Darkmode'] = false,
             ['Minimap'] = true,
             ['UI'] = true,
             ['Unitframe'] = true,
@@ -53,11 +54,18 @@ local modulesOptions = {
             name = 'Castbar',
             desc = '' .. getDefaultStr('Castbar', 'modules'),
             order = 3,
-            new = true
+            new = false
         },
         Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
+        Darkmode = {
+            type = 'toggle',
+            name = 'Darkmode',
+            desc = '' .. getDefaultStr('Darkmode', 'modules'),
+            order = 4.1,
+            new = true
+        },
         Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 5},
-        UI = {type = 'toggle', name = 'UI', desc = '' .. getDefaultStr('UI', 'modules'), order = 6, new = true},
+        UI = {type = 'toggle', name = 'UI', desc = '' .. getDefaultStr('UI', 'modules'), order = 6, new = false},
         Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 7},
         Utility = {
             type = 'toggle',
