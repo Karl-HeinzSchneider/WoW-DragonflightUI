@@ -171,7 +171,7 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state)
 end
 
 function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
-    local popupName = sub .. "CustomVisCondition"
+    local popupName = sub and (sub .. "CustomVisCondition") or (displayName .. "CustomVisCondition")
 
     local macroOptions = [[
         This option evaluates macro conditionals, which have to return '|cff8080ffshow|r' or '|cff8080ffhide|r', e.g.:
@@ -190,7 +190,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
         button2 = CANCEL,
         OnShow = function(self, data)
             local db = Module.db.profile
-            local dbSub = db[sub]
+            local dbSub = sub and db[sub] or db
 
             self.editBox:SetText(dbSub.hideCustomCond)
         end,
@@ -203,7 +203,11 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 return
             end
             -- do whatever you want with it
-            setOption({sub, 'hideCustomCond'}, text)
+            if sub then
+                Module:SetOption({sub, 'hideCustomCond'}, text)
+            else
+                Module:SetOption({'hideCustomCond'}, text)
+            end
             Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. text .. '\'')
             Module:Print('Current Value: ' .. result)
         end,
