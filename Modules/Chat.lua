@@ -4,7 +4,27 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, x = 42, y = 35, sizeX = 460, sizeY = 207}}
+local defaults = {
+    profile = {
+        scale = 1,
+        x = 42,
+        y = 35,
+        sizeX = 460,
+        sizeY = 207,
+        -- Visibility
+        showMouseover = false,
+        hideAlways = false,
+        hideCombat = false,
+        hideOutOfCombat = false,
+        hidePet = false,
+        hideNoPet = false,
+        hideStance = false,
+        hideStealth = false,
+        hideNoStealth = false,
+        hideCustom = false,
+        hideCustomCond = ''
+    }
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -40,7 +60,7 @@ local options = {
             min = 0.2,
             max = 5,
             bigStep = 0.1,
-            order = 101,
+            order = 1,
             disabled = true
         },
         x = {
@@ -50,7 +70,7 @@ local options = {
             min = 0,
             max = 3500,
             bigStep = 1,
-            order = 102
+            order = 2
         },
         y = {
             type = 'range',
@@ -59,7 +79,7 @@ local options = {
             min = 0,
             max = 3500,
             bigStep = 1,
-            order = 102
+            order = 3
         },
         sizeX = {
             type = 'range',
@@ -68,7 +88,7 @@ local options = {
             min = 0,
             max = 1000,
             bigStep = 1,
-            order = 103
+            order = 4
         },
         sizeY = {
             type = 'range',
@@ -77,10 +97,11 @@ local options = {
             min = 0,
             max = 1000,
             bigStep = 1,
-            order = 103
+            order = 5
         }
     }
 }
+-- DragonflightUIStateHandlerMixin:AddStateTable(Module, options, nil, 'Chat', getDefaultStr, setOption)
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -100,6 +121,8 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    -- Module.AddStateUpdater()
+
     Module:ApplySettings()
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Chat', {name = 'Chat', options = options, default = setDefaultValues})
 
@@ -131,9 +154,17 @@ function Module:ApplySettings()
     ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', db.x, db.y)
     ChatFrame1:SetSize(db.sizeX, db.sizeY)
     ChatFrame1:SetUserPlaced(true)
+
+    -- ChatFrame1:UpdateStateHandler(db)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIChatFrame', UIParent)
+
+function Module.AddStateUpdater()
+    Mixin(ChatFrame1, DragonflightUIStateHandlerMixin)
+    ChatFrame1:InitStateHandler()
+    -- Minimap:SetHideFrame(frame.CalendarButton, 2)
+end
 
 function Module.ChangeSizeAndPosition()
     ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 42, 35)
