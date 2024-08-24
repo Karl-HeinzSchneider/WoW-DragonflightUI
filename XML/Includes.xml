@@ -3,4 +3,5 @@
 	<Include file="Mixin/LFG.mixin.lua" />
 	<Include file="Mixin/UI.mixin.lua" />
 	<Include file="Mixin/ItemColor.mixin.lua" />
+	<Include file="Mixin/StateHandler.mixin.lua" />
 </UI>

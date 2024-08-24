@@ -20,7 +20,19 @@ local defaults = {
             anchor = 'TOPLEFT',
             anchorParent = 'TOPLEFT',
             x = 250,
-            y = -170
+            y = -170,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         player = {
             classcolor = false,
@@ -34,7 +46,19 @@ local defaults = {
             y = -4,
             biggerHealthbar = false,
             hideRedStatus = false,
-            hideIndicator = false
+            hideIndicator = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         target = {
             classcolor = false,
@@ -49,7 +73,19 @@ local defaults = {
             anchor = 'TOPLEFT',
             anchorParent = 'TOPLEFT',
             x = 250,
-            y = -4
+            y = -4,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         pet = {
             breakUpLargeNumbers = true,
@@ -63,7 +99,19 @@ local defaults = {
             y = 28,
             hideStatusbarText = false,
             offset = true,
-            hideIndicator = false
+            hideIndicator = false,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         party = {
             classcolor = false,
@@ -74,7 +122,19 @@ local defaults = {
             anchor = 'TOPLEFT',
             anchorParent = 'TOPRIGHT',
             x = 0,
-            y = 0
+            y = 0,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         boss = {
             breakUpLargeNumbers = true,
@@ -326,6 +386,7 @@ if true then
         end
     end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
 
 local optionsTarget = {
     name = 'Target',
@@ -493,6 +554,7 @@ if true then
         end
     end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsTarget, 'target', 'Target', getDefaultStr)
 
 local optionsPet = {
     name = 'Pet',
@@ -607,6 +669,7 @@ if DF.Cata then
 
     for k, v in pairs(moreOptions) do optionsPet.args[k] = v end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr)
 
 local optionsFocus = {
     name = 'Focus',
@@ -692,6 +755,7 @@ local optionsFocus = {
         }
     }
 }
+DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr)
 
 local optionsParty = {
     name = 'Party',
@@ -832,6 +896,7 @@ if true then
         end
     end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsParty, 'party', 'Party', getDefaultStr)
 
 local options = {
     type = 'group',
@@ -893,6 +958,8 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module.AddStateUpdater()
+
     Module:SaveLocalSettings()
     Module:ApplySettings()
 
@@ -1057,7 +1124,6 @@ function Module:ApplySettings()
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
         Module.SetPlayerBiggerHealthbar(obj.biggerHealthbar)
-        Module.ScaleRestFlipbook()
         PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
 
@@ -1066,6 +1132,8 @@ function Module:ApplySettings()
         else
             PlayerHitIndicator:SetScale(1)
         end
+
+        PlayerFrame:UpdateStateHandler(obj)
     end
 
     -- target
@@ -1082,6 +1150,8 @@ function Module:ApplySettings()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
         Module.UpdateComboFrameState(obj.comboPointsOnPlayerFrame)
+
+        TargetFrame:UpdateStateHandler(obj)
     end
 
     -- pet
@@ -1113,6 +1183,8 @@ function Module:ApplySettings()
         else
             PetHitIndicator:SetScale(1)
         end
+
+        PetFrame:UpdateStateHandler(obj)
     end
 
     -- party
@@ -1132,6 +1204,8 @@ function Module:ApplySettings()
             Module.UpdatePartyHPBar(i)
             TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
             TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
+
+            pf:UpdateStateHandler(obj)
         end
     end
 
@@ -1149,6 +1223,8 @@ function Module:ApplySettings()
             Module.ReApplyFocusToT()
             FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
             TextStatusBar_UpdateTextString(FocusFrameHealthBar)
+
+            FocusFrame:UpdateStateHandler(obj)
         end
     end
 end
@@ -1201,6 +1277,31 @@ function Module.FixBlizzardBug()
     SetTextStatusBarText(PlayerFrameHealthBar, PlayerFrameHealthBarText)
     TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     TextStatusBar_UpdateTextString(PlayerFrameManaBar)
+end
+
+function Module.AddStateUpdater()
+    Mixin(PlayerFrame, DragonflightUIStateHandlerMixin)
+    PlayerFrame:InitStateHandler()
+
+    PetFrame:SetParent(UIParent)
+    Mixin(PetFrame, DragonflightUIStateHandlerMixin)
+    PetFrame:InitStateHandler()
+    PetFrame:SetUnit('pet')
+
+    Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
+    TargetFrame:InitStateHandler()
+    TargetFrame:SetUnit('target')
+
+    Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
+    FocusFrame:InitStateHandler()
+    FocusFrame:SetUnit('focus')
+
+    for i = 1, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+        Mixin(pf, DragonflightUIStateHandlerMixin)
+        pf:InitStateHandler()
+        pf:SetUnit('party' .. i)
+    end
 end
 
 function Module.GetCoords(key)
@@ -3229,9 +3330,11 @@ end
 
 function Module.CreateRestFlipbook()
     if not frame.RestIcon then
-        local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook')
+        local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook', PlayerFrame)
         rest:SetSize(20, 20)
         rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', -4, 4)
+        rest:SetFrameStrata('MEDIUM', 5)
+        rest:SetScale(1.2)
 
         local restTexture = rest:CreateTexture('DragonflightUIRestFlipbookTexture')
         restTexture:SetAllPoints()
@@ -3255,15 +3358,6 @@ function Module.CreateRestFlipbook()
         frame.RestIconAnimation = animationGroup
 
         PlayerFrame_UpdateStatus()
-    end
-end
-
-function Module.ScaleRestFlipbook()
-    if frame.RestIcon then
-        local scale = PlayerFrame:GetScale()
-        frame.RestIcon:SetScale(scale)
-    else
-        -- print('no rest')
     end
 end
 

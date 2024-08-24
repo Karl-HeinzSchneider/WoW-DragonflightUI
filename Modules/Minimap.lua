@@ -19,7 +19,19 @@ local defaults = {
             showPing = false,
             showPingChat = false,
             hideCalendar = false,
-            durability = 'BOTTOM'
+            durability = 'BOTTOM',
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         buffs = {
             scale = 1,
@@ -28,7 +40,19 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = -55,
             y = -13,
-            expanded = true
+            expanded = true,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         debuffs = {
             scale = 1,
@@ -36,7 +60,19 @@ local defaults = {
             anchor = 'TOPRIGHT',
             anchorParent = 'TOPLEFT',
             x = -55,
-            y = -13 - 110
+            y = -13 - 110,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
@@ -306,6 +342,8 @@ do
         end
     end
 end
+-- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
+DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
 
 local buffsOptions = {
     type = 'group',
@@ -436,6 +474,7 @@ if DF.Cata then
         end
     end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr)
 
 local debuffsOptions = {
     type = 'group',
@@ -513,6 +552,7 @@ local debuffsOptions = {
         }
     }
 }
+DragonflightUIStateHandlerMixin:AddStateTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr)
 
 local trackerOptions = {
     type = 'group',
@@ -612,6 +652,7 @@ function Module:OnEnable()
 
     Module.Tmp.MinimapX = 0
     Module.Tmp.MinimapY = 0
+    Module.AddStateUpdater()
 
     Module.ApplySettings()
     Module:RegisterOptionScreens()
@@ -785,6 +826,38 @@ function Module.GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
+function Module.AddStateUpdater()
+    Mixin(Minimap, DragonflightUIStateHandlerMixin)
+    Minimap:InitStateHandler()
+    Minimap:SetHideFrame(frame.CalendarButton, 2)
+
+    Minimap.DFShower:ClearAllPoints()
+    Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+    Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+
+    Minimap.DFMouseHandler:ClearAllPoints()
+    Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+    Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+
+    ---
+
+    Mixin(Module.DFBuffFrame, DragonflightUIStateHandlerMixin)
+    Module.DFBuffFrame:InitStateHandler()
+
+    Module.DFBuffFrame.DFShower:ClearAllPoints()
+    Module.DFBuffFrame.DFShower:SetPoint('TOPLEFT', Module.DFBuffFrame, 'TOPLEFT', -4, 4)
+    Module.DFBuffFrame.DFShower:SetPoint('BOTTOMRIGHT', Module.DFBuffFrame, 'BOTTOMRIGHT', 14, -4)
+
+    Module.DFBuffFrame.DFMouseHandler:ClearAllPoints()
+    Module.DFBuffFrame.DFMouseHandler:SetPoint('TOPLEFT', Module.DFBuffFrame, 'TOPLEFT', -4, 4)
+    Module.DFBuffFrame.DFMouseHandler:SetPoint('BOTTOMRIGHT', Module.DFBuffFrame, 'BOTTOMRIGHT', 14, -4)
+
+    ---
+
+    Mixin(Module.DFDebuffFrame, DragonflightUIStateHandlerMixin)
+    Module.DFDebuffFrame:InitStateHandler(4, 4)
+end
+
 function Module.UpdateMinimapState(state)
     Minimap:ClearAllPoints()
     Minimap:SetClampedToScreen(true)
@@ -802,6 +875,8 @@ function Module.UpdateMinimapState(state)
     else
         frame.CalendarButton:Show()
     end
+
+    Minimap:UpdateStateHandler(state)
 end
 
 function Module.UpdateTrackerState(state)
@@ -1351,8 +1426,12 @@ function Module.UpdateBuffState(state)
     BuffFrame:SetPoint('TOPRIGHT', f, 'TOPRIGHT', 0, 0)
 
     BuffFrame:SetShown(state.expanded)
+    BuffFrame:SetParent(f)
 
     TemporaryEnchantFrame:SetScale(state.scale)
+    TemporaryEnchantFrame:SetParent(f)
+
+    f:UpdateStateHandler(state)
 end
 
 function Module.MoveBuffs()
@@ -1403,6 +1482,8 @@ function Module.UpdateDebuffState(state)
             -- buff:Show()
         end
     end
+
+    f:UpdateStateHandler(state)
 end
 
 function Module.MoveTracker()

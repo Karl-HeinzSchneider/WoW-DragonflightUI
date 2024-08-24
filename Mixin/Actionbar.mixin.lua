@@ -25,7 +25,10 @@ function DragonflightUIActionbarMixin:Init()
     self:EnableMouse(false)
 
     self:InitEditMode()
+
+    Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
+
     self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -37,25 +40,11 @@ end
 function DragonflightUIActionbarMixin:SetButtons(buttons)
     self.buttonTable = buttons
 
-    local handler = self.StateHandler
-    if not handler then return end
-
     for i = 1, #buttons do
         --
         local btn = buttons[i]
-        handler:SetFrameRef('Btn' .. i, btn)
+        self:SetHideFrame(btn, i + 1)
     end
-
-    -- print(self:GetName(), self.buttonTable[1]:GetParent():GetName())
-
-    -- local parent = self.buttonTable[1]:GetParent()
-    -- parent:ClearAllPoints()
-    -- parent:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
-    -- parent:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-    -- -- parent:SetFrameLevel(0)
-    -- parent.ignoreFramePositionManager = true
-
-    -- self.VisParent = parent
 end
 
 --[[ local defaultsActionbarPROTO = {
@@ -249,205 +238,7 @@ function DragonflightUIActionbarMixin:Update()
         end
     end
 
-    if self.StateHandler then self:UpdateStateHandler(state) end
-end
-
-function DragonflightUIActionbarMixin:InitStateHandler()
-    -- print('DragonflightUIActionbarMixin:InitStateHandler()')
-
-    local handler = CreateFrame('FRAME', self:GetName() .. 'Handler', nil, 'SecureHandlerStateTemplate')
-    self.StateHandler = handler
-    handler:SetAttribute('forceShow', false)
-
-    handler:SetAttribute('_onstate-vis', [[
-        -- if not newstate then return end     
-        local shower = self:GetFrameRef("Shower")
-        if not shower then return end  
-        -- print(shower:GetName(),'NewState',newstate)
-        local shouldShow = true
-
-        if newstate == "show" then
-            shouldShow = true
-        elseif newstate == "hide" then
-           shouldShow = false         
-        else 
-           shouldShow = true
-        end          
-        
-        local HandlerTwo = self:GetFrameRef("HandlerTwo")     
-        local forceShow = self:GetAttribute('forceShow')
-        -- print('forceShow', forceShow)
-        -- if forceShow then      
-        --     if not shouldShow then      
-        --         shouldShow = true    
-        --         shower:RegisterAutoHide(0.1)
-        --     end
-        -- else  
-        --     shower:UnregisterAutoHide()            
-        -- end
-
-        if shouldShow then
-            self:SetAttribute('forceShow', false)
-            shower:UnregisterAutoHide()  
-        else
-            if forceShow then  
-                shouldShow = true    
-                shower:RegisterAutoHide(0.1)
-            else
-                -- TODO unnecessary?
-                shower:UnregisterAutoHide()  
-            end
-        end
-
-        if shouldShow then 
-            shower:Show();
-        else
-            shower:Hide();
-        end
-    ]])
-    ----------
-    local extraBorder = 2
-    ----------
-    local shower = CreateFrame('FRAME', self:GetName() .. 'Shower', nil, 'SecureHandlerShowHideTemplate')
-    shower:SetPoint('TOPLEFT', self, 'TOPLEFT', -extraBorder, extraBorder)
-    shower:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', extraBorder, -extraBorder)
-    -- shower:Hide()
-    shower:SetFrameRef('MainHandler', handler)
-
-    shower:SetAttribute('_onshow', [[
-        -- print('+++++onshow',self:GetName())    
-        local frameRef = self:GetFrameRef("MainHandler")
-
-        for i=1,12 do
-            local btn = frameRef:GetFrameRef('Btn'..i)
-            if btn then btn:Show() end
-        end
-
-        local mainbarFrame = frameRef:GetFrameRef('mainbarFrame')
-        if mainbarFrame then mainbarFrame:Show() end
-    ]])
-
-    shower:SetAttribute('_onhide', [[
-        -- print('-----onhide',self:GetName())   
-         local frameRef = self:GetFrameRef("MainHandler")
-
-        for i=1,12 do
-            local btn = frameRef:GetFrameRef('Btn'..i)
-            if btn then btn:Hide() end
-        end
-
-        local mainbarFrame = frameRef:GetFrameRef('mainbarFrame')
-        if mainbarFrame then mainbarFrame:Hide() end
-    ]])
-
-    handler:SetFrameRef('Shower', shower)
-
-    ----------
-    local handlerTwo = CreateFrame('FRAME', self:GetName() .. 'HandlerOnEnterLeave', nil,
-                                   'SecureHandlerEnterLeaveTemplate')
-    handlerTwo:SetPoint('TOPLEFT', self, 'TOPLEFT', -extraBorder, extraBorder)
-    handlerTwo:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', extraBorder, -extraBorder)
-    handlerTwo:SetFrameLevel(2)
-
-    handlerTwo:SetFrameRef('MainHandler', handler)
-    handlerTwo:SetFrameRef('Shower', shower)
-    handler:SetFrameRef('HandlerTwo', handlerTwo)
-    shower:SetFrameRef('HandlerTwo', handlerTwo)
-
-    handlerTwo:SetAttribute('_onenter', [[
-        -- print('enter!',self:GetName())   
-
-        local frameRef = self:GetFrameRef("MainHandler")
-        frameRef:SetAttribute('forceShow', true)
-        
-        local oldState = frameRef:GetAttribute('state-vis')
-        frameRef:SetAttribute('state-vis', oldState)    
-        
-        -- local shower = self:GetFrameRef("Shower")
-        -- shower:RegisterAutoHide(0.1)
-    ]])
-    handlerTwo:SetAttribute('_onleave', [[
-        -- print('leave!',self:GetName())
-        -- local frameRef = self:GetFrameRef("MainHandler")
-
-        -- if not self:IsUnderMouse() then
-        --     frameRef:SetAttribute('forceShow',false)
-            
-        --     local oldState = frameRef:GetAttribute('state-vis')
-        --     frameRef:SetAttribute('state-vis', oldState)  
-        -- else
-        --     print('still')           
-        -- end 
-    ]])
-
-    -- handlerTwo:Hide()
-    self.MouseHandler = handlerTwo
-
-end
-
--- hideAlways = false,
--- hideCombat = false,
--- hideOutOfCombat = false,
--- hidePet = false,
--- hideNoPet = false,
--- hideStance = false,
--- hideStealth = false
-
-local visConditionalTable = {}
-do
-    visConditionalTable['hideAlways'] = 'hide'
-    visConditionalTable['hideCombat'] = '[combat]hide'
-    visConditionalTable['hideOutOfCombat'] = '[nocombat]hide'
-    visConditionalTable['hidePet'] = '[pet]hide'
-    visConditionalTable['hideNoPet'] = '[nopet]hide'
-    visConditionalTable['hideStance'] = ''
-    visConditionalTable['hideStealth'] = '[stealth]hide'
-    visConditionalTable['hideNoStealth'] = '[nostealth]hide'
-end
-
-function DragonflightUIActionbarMixin:UpdateStateHandler(state)
-    -- print('->>> DragonflightUIActionbarMixin:UpdateStateHandler(state)')
-
-    local handler = self.StateHandler
-    UnregisterStateDriver(handler, 'vis')
-
-    local driverTable = {}
-
-    if state.hideCustom then
-        table.insert(driverTable, state.hideCustomCond)
-    else
-
-        for k, v in pairs(visConditionalTable) do
-            if state[k] then
-                if k == 'hideStance' then
-                    for i = 1, 6 do table.insert(driverTable, ('[stance:%d]hide'):format(i)) end
-                else
-                    table.insert(driverTable, visConditionalTable[k])
-                end
-            end
-        end
-        table.insert(driverTable, 'show')
-    end
-
-    local driver = table.concat(driverTable, ';')
-    local result, target = SecureCmdOptionParse(driver)
-    -- DevTools_Dump(driver)
-    if #driverTable > 1 or state.hideCustom then
-        --
-        -- print(self:GetName(), driver)
-        -- print('result:', result)
-    end
-    RegisterStateDriver(handler, 'vis', driver)
-    handler:SetAttribute('state-vis', 'hide')
-    handler:SetAttribute('state-vis', 'show')
-    handler:SetAttribute('state-vis', result)
-
-    local mouseHandler = self.MouseHandler
-    if state.showMouseover then
-        mouseHandler:Show()
-    else
-        mouseHandler:Hide()
-    end
+    self:UpdateStateHandler(state)
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()

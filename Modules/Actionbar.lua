@@ -716,144 +716,6 @@ local function GetActionBarToggle(index)
     return select(index, GetActionBarToggles());
 end
 
-local function AddStateTable(optionTable, barname, displayName)
-    local popupName = barname .. "CustomVisCondition"
-
-    local macroOptions = [[
-        This option evaluates macro conditionals, which have to return '|cff8080ffshow|r' or '|cff8080ffhide|r', e.g.:
-
-        1) |cff8080ff[@target,exists]show; hide|r
-        2) |cff8080ff[@target,exists,help,raid] show; hide|r
-        3) |cff8080ff[swimming] hide; show|r
-
-        For more Infos see:
-            |cff8080ff https://warcraft.wiki.gg/wiki/Macro_conditionals|r
-        ]]
-
-    StaticPopupDialogs[popupName] = {
-        text = 'Set Custom Condition for ' .. displayName .. '\n\n' .. macroOptions,
-        button1 = ACCEPT,
-        button2 = CANCEL,
-        OnShow = function(self, data)
-            local db = Module.db.profile
-            local dbSub = db[barname]
-
-            self.editBox:SetText(dbSub.hideCustomCond)
-        end,
-        OnAccept = function(self, data, data2)
-            local text = self.editBox:GetText()
-            local result, target = SecureCmdOptionParse(text)
-            if result ~= 'show' and result ~= 'hide' and result ~= '' then
-                Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
-                                 [['show' or 'hide'!|r]])
-                return
-            end
-            -- do whatever you want with it
-            setOption({barname, 'hideCustomCond'}, text)
-            Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. text .. '\'')
-            Module:Print('Current Value: ' .. result)
-        end,
-        hasEditBox = true,
-        editBoxWidth = 666
-    }
-
-    local function cond(str)
-        return 'macro condition: ' .. '|cff8080ff' .. str .. '|r'
-    end
-
-    local extraOptions = {
-        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
-        showMouseover = {
-            type = 'toggle',
-            name = 'Show On Mouseover',
-            desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
-                getDefaultStr('showMouseover', barname),
-            order = 100.5,
-            new = true
-        },
-        hideAlways = {
-            type = 'toggle',
-            name = 'Always Hide',
-            desc = '' .. cond('hide') .. getDefaultStr('hideAlways', barname),
-            order = 101,
-            new = true
-        },
-        hideCombat = {
-            type = 'toggle',
-            name = 'Hide In Combat',
-            desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', barname),
-            order = 102,
-            new = true
-        },
-        hideOutOfCombat = {
-            type = 'toggle',
-            name = 'Hide Out Of Combat',
-            desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', barname),
-            order = 103,
-            new = true
-        },
-        hidePet = {
-            type = 'toggle',
-            name = 'Hide With Pet',
-            desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', barname),
-            order = 104,
-            new = true
-        },
-        hideNoPet = {
-            type = 'toggle',
-            name = 'Hide Without Pet',
-            desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', barname),
-            order = 105,
-            new = true
-        },
-        hideStance = {
-            type = 'toggle',
-            name = 'Hide Without Stance/Form',
-            desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', barname),
-            order = 106,
-            new = true
-        },
-        hideStealth = {
-            type = 'toggle',
-            name = 'Hide In Stealth',
-            desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', barname),
-            order = 107,
-            new = true
-        },
-        hideNoStealth = {
-            type = 'toggle',
-            name = 'Hide Outside Stealth',
-            desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', barname),
-            order = 108,
-            new = true
-        },
-        hideCustom = {
-            type = 'toggle',
-            name = 'Use Custom Condition',
-            desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
-                getDefaultStr('hideCustom', barname),
-            order = 109,
-            new = true
-        },
-        hideCustomCondButton = {
-            type = 'execute',
-            name = 'Set Custom Condition',
-            btnName = 'Update...',
-            func = function()
-                -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-                StaticPopup_Show(popupName)
-            end,
-            order = 109.5
-        }
-    }
-
-    for k, v in pairs(extraOptions) do
-        --
-        optionTable.args[k] = v
-    end
-end
-
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
@@ -1073,7 +935,8 @@ local function GetBarOption(n)
         -- for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
 
-    AddStateTable(opt, barname, 'Actionbar' .. n)
+    -- AddStateTable(opt, barname, 'Actionbar' .. n)
+    DragonflightUIStateHandlerMixin:AddStateTable(Module, opt, barname, 'Actionbar' .. n, getDefaultStr)
 
     return opt
 end
@@ -1207,7 +1070,7 @@ local petOptions = {
         }
     }
 }
-AddStateTable(petOptions, 'pet', 'PetBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, petOptions, 'pet', 'PetBar', getDefaultStr)
 
 local xpOptions = {
     name = 'XP',
@@ -1537,7 +1400,7 @@ local stanceOptions = {
         activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
 }
-AddStateTable(stanceOptions, 'stance', 'StanceBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, stanceOptions, 'stance', 'StanceBar', getDefaultStr)
 
 local totemOptions = {
     name = 'Totembar',
@@ -1616,7 +1479,7 @@ local totemOptions = {
         }
     }
 }
-AddStateTable(totemOptions, 'totem', 'TotemBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, totemOptions, 'totem', 'TotemBar', getDefaultStr)
 
 local possessOptions = {
     name = 'Possessbar',
@@ -1703,7 +1566,7 @@ local possessOptions = {
         }
     }
 }
-AddStateTable(possessOptions, 'possess', 'PossessBar')
+DragonflightUIStateHandlerMixin:AddStateTable(Module, possessOptions, 'possess', 'PossessBar', getDefaultStr)
 
 local bagsOptions = {
     name = 'Bags',
@@ -1868,6 +1731,7 @@ do
         end
     end
 end
+DragonflightUIStateHandlerMixin:AddStateTable(Module, bagsOptions, 'bags', 'Bags', getDefaultStr)
 
 local microOptions = {
     name = 'Micromenu',
@@ -1882,7 +1746,7 @@ local microOptions = {
             desc = '' .. getDefaultStr('scale', 'micro'),
             min = 0.1,
             max = 5,
-            bigStep = 0.1,
+            bigStep = 0.05,
             order = 1
         },
         anchorFrame = {
@@ -1944,12 +1808,12 @@ local microOptions = {
             bigStep = 1,
             order = 6
         },
-        hidden = {
-            type = 'toggle',
-            name = 'Hidden',
-            desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
-            order = 7
-        },
+        -- hidden = {
+        --     type = 'toggle',
+        --     name = 'Hidden',
+        --     desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
+        --     order = 7
+        -- },
         hideDefaultFPS = {
             type = 'toggle',
             name = 'HideDefaultFPS',
@@ -1976,6 +1840,7 @@ local microOptions = {
         }
     }
 }
+DragonflightUIStateHandlerMixin:AddStateTable(Module, microOptions, 'micro', 'Micromenu', getDefaultStr)
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -2002,6 +1867,7 @@ function Module:OnEnable()
         Module.Era()
     end
     Module:SetupActionbarFrames()
+    Module.AddStateUpdater()
     Module:ApplySettings()
     Module:RegisterOptionScreens()
 
@@ -2153,6 +2019,38 @@ function Module:SetupActionbarFrames()
         -- MultiBarBottomRight.ignoreFramePositionManager = true
         -- MultiBarBottomRight:ClearAllPoints()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+    end
+end
+
+function Module.AddStateUpdater()
+    Mixin(MainMenuBarBackpackButton, DragonflightUIStateHandlerMixin)
+    MainMenuBarBackpackButton:InitStateHandler()
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag0Slot, 2)
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag1Slot, 3)
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag2Slot, 4)
+    -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag3Slot, 5)
+
+    MainMenuBarBackpackButton.DFShower:ClearAllPoints()
+    MainMenuBarBackpackButton.DFShower:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
+    MainMenuBarBackpackButton.DFShower:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
+
+    MainMenuBarBackpackButton.DFMouseHandler:ClearAllPoints()
+    MainMenuBarBackpackButton.DFMouseHandler:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
+    MainMenuBarBackpackButton.DFMouseHandler:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
+
+    ---
+    local microFrame = Module.MicroFrame
+
+    Mixin(microFrame, DragonflightUIStateHandlerMixin)
+    microFrame:InitStateHandler(4, 4)
+
+    table.insert(Module.MicroButtons, CharacterMicroButton)
+    table.insert(Module.MicroButtons, PVPMicroButton)
+
+    for k, v in ipairs(Module.MicroButtons) do
+        --
+        -- print(k, v:GetName())
+        v:SetParent(microFrame)
     end
 end
 
@@ -3057,7 +2955,10 @@ Module.MicromenuAtlas = {
     }
 }
 
+Module.MicroButtons = {}
+
 function Module.ChangeMicroMenuButton(frame, name)
+    table.insert(Module.MicroButtons, frame)
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
     if DF.Era then microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA' end
@@ -3379,6 +3280,11 @@ function Module.ChangeCharacterMicroButton()
 end
 
 function Module.ChangeMicroMenuNew()
+    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', nil, 'SecureFrameTemplate')
+    microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
+    microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
+    Module.MicroFrame = microFrame
+
     if DF.Cata then
         Module.ChangeCharacterMicroButton()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
@@ -3673,26 +3579,29 @@ function Module.UpdateMicromenuState(state)
         }
     end
 
-    for k, v in ipairs(buttons) do
-        --
-        v:SetScale(state.scale)
-        -- v:SetShown(not state.hidden)
-        if state.hidden then
-            --
-            v:SetAlpha(0)
-            v:EnableMouse(false)
-        else
-            --
-            v:SetAlpha(1)
-            v:EnableMouse(true)
-        end
-    end
+    -- for k, v in ipairs(buttons) do
+    --     --
+    --     v:SetScale(state.scale)
+    --     -- v:SetShown(not state.hidden)
+    --     if state.hidden then
+    --         --
+    --         v:SetAlpha(0)
+    --         v:EnableMouse(false)
+    --     else
+    --         --
+    --         v:SetAlpha(1)
+    --         v:EnableMouse(true)
+    --     end
+    -- end
 
-    local playerLevel = UnitLevel("player");
-    if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
+    -- local playerLevel = UnitLevel("player");
+    -- if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
 
     -- FPS
     Module.UpdateFPSState(state)
+
+    Module.MicroFrame:SetScale(state.scale * 0.75) -- compat
+    Module.MicroFrame:UpdateStateHandler(state)
 end
 
 function Module.UpdateTotemState(state)
@@ -3772,6 +3681,7 @@ function Module.ChangeBackpackNew()
 
         for i = 0, 3 do
             local slot = _G['CharacterBag' .. i .. 'Slot']
+            -- slot:SetParent(MainMenuBarBackpackButton)
             -- print(i, slot:GetSize())
             slot:SetScale(1)
             slot:SetSize(30, 30)
@@ -4131,6 +4041,8 @@ function Module.UpdateBagState(state)
     end
 
     if state.overrideBagAnchor and ContainerFrame1:IsVisible() then UpdateContainerFrameAnchors() end
+
+    MainMenuBarBackpackButton:UpdateStateHandler(state)
 end
 
 function Module.MoveBars()
@@ -4238,7 +4150,7 @@ function Module.ChangeFramerate()
     -- fps
     local Path, Size, Flags = FramerateText:GetFont()
 
-    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', UIParent)
+    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', Module.MicroFrame)
     fps:SetSize(65, 26)
     fps:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -10, 0)
 
