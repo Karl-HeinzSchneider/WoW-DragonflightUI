@@ -432,7 +432,10 @@
         "MiniMapWorldMapButton",
         "MinimapNorthTag",
         "FocusFrameFlash",
-        "MainMenuBarBackpackButton_UpdateFreeSlots"
+        "MainMenuBarBackpackButton_UpdateFreeSlots",
+        "UIParentManagedFrameMixin",
+        "PlayerCastingBarFrame",
+        "CAST_BAR_CAST_TIME"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
