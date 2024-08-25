@@ -1,10 +1,11 @@
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 local DFPrefix = 'DragonflightUI'
 local DFPlayer = UnitName('player')
 
-local DFTimestamp = C_AddOns.GetAddOnMetadata('DragonflightUI', 'X-Date') or
-                        GetAddOnMetadata('DragonflightUI', 'X-Date')
+local DFTimestamp = C_AddOns.GetAddOnMetadata('DragonflightUI', 'X-Date')
 local newerVersionFound = false
 
 function DF:InitVersionCheck()

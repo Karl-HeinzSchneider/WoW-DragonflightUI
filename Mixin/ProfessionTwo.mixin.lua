@@ -1,3 +1,4 @@
+---@diagnostic disable: need-check-nil, undefined-field, undefined-global, inject-field, param-type-mismatch
 DragonFlightUIProfessionCraftMixin = {}
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
@@ -533,9 +534,9 @@ function DragonFlightUIProfessionCraftMixin:AnchorSchematics()
         end
 
         hooksecurefunc(reagentCountText, 'SetText', function()
-            updateText(i)
+            updateText()
         end)
-        updateText(i)
+        updateText()
 
         local reagentNameFrame = _G['CraftReagent' .. i .. 'NameFrame']
         reagentNameFrame:Hide()

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 -- SettingsCategoryListMixinDF   - Blizzard_CategoryList.lua
 SettingsCategoryListMixinDF = {}
 function SettingsCategoryListMixinDF:OnLoad()

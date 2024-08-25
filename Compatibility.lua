@@ -1,8 +1,10 @@
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 DF.Compatibility = {}
 
 function DF.Compatibility:FuncOrWaitframe(addon, func)
-    local checkAddonFunc = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+    local checkAddonFunc = C_AddOns.IsAddOnLoaded
     if checkAddonFunc(addon) then
         -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
         func()
@@ -19,7 +21,7 @@ function DF.Compatibility:FuncOrWaitframe(addon, func)
     end
 end
 
-local novaLoaded = IsAddOnLoaded('NovaWorldBuffs')
+local novaLoaded = C_AddOns.IsAddOnLoaded('NovaWorldBuffs')
 -- print('Nova loaded: ', novaLoaded)
 if novaLoaded then if _G['MinimapLayerFrame'] then _G['MinimapLayerFrame']:SetPoint('BOTTOM', 0, 4) end end
 

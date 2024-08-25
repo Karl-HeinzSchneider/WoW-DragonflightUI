@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
@@ -1247,7 +1248,7 @@ function Module.MovePlayerTargetPreset(name)
         db.targetX = orig.targetX
         db.targetY = orig.targetY
 
-        Module.ApplySettings()
+        Module:ApplySettings()
     elseif name == 'CENTER' then
         local deltaX = 50
         local deltaY = 180
@@ -1266,7 +1267,7 @@ function Module.MovePlayerTargetPreset(name)
         db.targetX = 112 + deltaX
         db.targetY = -deltaY
 
-        Module.ApplySettings()
+        Module:ApplySettings()
     end
 end
 
@@ -1594,7 +1595,7 @@ end
 
 function Module.HookDrag()
     local DragStopPlayerFrame = function(self)
-        Module.SaveLocalSettings()
+        Module:SaveLocalSettings()
 
         for k, v in pairs(localSettings.player) do Module.db.profile.player[k] = v end
         Module.db.profile.player.anchorFrame = 'UIParent'
@@ -1604,7 +1605,7 @@ function Module.HookDrag()
     hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
 
     local DragStopTargetFrame = function(self)
-        Module.SaveLocalSettings()
+        Module:SaveLocalSettings()
 
         for k, v in pairs(localSettings.target) do Module.db.profile.target[k] = v end
         Module.db.profile.target.anchorFrame = 'UIParent'
@@ -1615,7 +1616,7 @@ function Module.HookDrag()
 
     if DF.Wrath then
         local DragStopFocusFrame = function(self)
-            Module.SaveLocalSettings()
+            Module:SaveLocalSettings()
 
             for k, v in pairs(localSettings.focus) do Module.db.profile.focus[k] = v end
             Module.db.profile.focus.anchorFrame = 'UIParent'
@@ -3331,6 +3332,7 @@ function Module.CreateRestFlipbook()
         local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook', PlayerFrame)
         rest:SetSize(20, 20)
         rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', -4, 4)
+---@diagnostic disable-next-line: redundant-parameter
         rest:SetFrameStrata('MEDIUM', 5)
         rest:SetScale(1.2)
 
@@ -3481,7 +3483,7 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusToT()
         end
         Module.ChangeFonts()
-        Module.ApplySettings()
+        Module:ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         -- Module.ApplySettings()
         Module.ReApplyTargetFrame()
@@ -3596,6 +3598,7 @@ function Module.CreatThreatIndicator()
 
             if enableNumeric then
                 if isTanking then
+---@diagnostic disable-next-line: cast-local-type
                     display = UnitThreatPercentageOfLead('PLAYER', 'TARGET')
                     -- print('IsTanking')
                 end
@@ -3647,6 +3650,7 @@ function Module.Wrath()
     frame:RegisterEvent('UNIT_POWER_UPDATE')
     -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
+---@diagnostic disable-next-line: redundant-parameter
     frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 

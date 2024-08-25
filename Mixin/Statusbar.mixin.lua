@@ -1,3 +1,5 @@
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 DragonflightUIXPBarMixin = {}
@@ -97,7 +99,7 @@ function DragonflightUIXPBarMixin:CreateBar()
         newFont = "Fonts\\blei00d.TTF"
     end
 
-    f.Text:SetFont(newFont, 10, 'THINOUTLINE')
+    f.Text:SetFont(newFont, 10, 'OUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
@@ -105,7 +107,7 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Text:SetPoint('CENTER', 0, 1.5)
 
     f.TextPercent = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    f.TextPercent:SetFont(newFont, 10, 'THINOUTLINE')
+    f.TextPercent:SetFont(newFont, 10, 'OUTLINE')
     f.TextPercent:SetTextColor(1, 1, 1, 1)
     f.TextPercent:SetText('69%')
     f.TextPercent:ClearAllPoints()
@@ -334,7 +336,7 @@ function DragonflightUIRepBarMixin:CreateBar()
     f.Bar:EnableMouse(true)
     f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
     -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-    f.Text:SetFont(newFont, 10, 'THINOUTLINE')
+    f.Text:SetFont(newFont, 10, 'OUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()

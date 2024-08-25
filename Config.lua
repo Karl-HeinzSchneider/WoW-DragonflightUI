@@ -1,3 +1,5 @@
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 local moduleOptions = {}
@@ -16,6 +18,7 @@ local options = {
             desc = 'Opens the Dragonflight UI config window',
             func = function()
                 -- DF:Print('Dont press me, i do nothing!')
+---@diagnostic disable-next-line: undefined-field
                 local ConfigModule = DF:GetModule('Config')
                 if ConfigModule then ConfigModule:ToggleConfigFrame() end
             end,
@@ -62,6 +65,7 @@ function DF:RefreshConfig()
     -- would do some stuff here
     -- print("RefreshConfig!")
 
+---@diagnostic disable-next-line: undefined-field
     local configFrame = DF.ConfigModule.ConfigFrame
     local refreshCat = function(name)
         -- local subCat = configFrame:GetSubCategory('General', name)

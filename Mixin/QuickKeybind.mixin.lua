@@ -240,9 +240,6 @@ function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     end
 end
 
-function DragonFlightUIQuickKeybindMixin:OnKeyDown()
-end
-
 function DragonFlightUIQuickKeybindMixin:OnMouseWheel()
 end
 

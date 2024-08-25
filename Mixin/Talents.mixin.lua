@@ -301,7 +301,8 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
             --
             if (GetCVarBool("previewTalentsOption")) then
                 AddPreviewTalentPoints(panelID, talentID, 1, false, selectedSpec)
-            else
+            else    
+            ---@diagnostic disable-next-line: redundant-parameter
                 LearnTalent(panelID, talentID)
             end
         elseif button == 'RightButton' then
@@ -413,6 +414,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
             local forceDesaturated, tierUnlocked;
             if i <= numTalents then
                 local name, iconPath, tier, column, currentRank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq,
+                ---@diagnostic disable-next-line: param-type-mismatch
                       isExceptional, goldBorder = GetTalentInfo(panelID, i, false, false, selectedSpec);
 
                 if name then
@@ -487,7 +489,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
                     else
                         SetItemButtonDesaturated(button, 1, 0.65, 0.65, 0.65);
                         _G[buttonName .. "Slot"]:SetVertexColor(0.5, 0.5, 0.5);
-                        if (rank == 0) then
+                        if (displayRank == 0) then
                             _G[buttonName .. "RankBorder"]:Hide();
                             _G[buttonName .. "Rank"]:Hide();
                         else
@@ -623,6 +625,7 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
     for i = 1, select("#", ...), 4 do
         local tier, column, isLearnable, isPreviewLearnable = select(i, ...);
         if (forceDesaturated or (preview and not isPreviewLearnable) or (not preview and not isLearnable)) then
+---@diagnostic disable-next-line: cast-local-type
             requirementsMet = nil;
         end
         self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
@@ -1150,6 +1153,7 @@ function DragonflightUIPlayerSpecMixin:OnClick()
 
     selectedSpec = specIndex
 
+---@diagnostic disable-next-line: undefined-field, need-check-nil
     frameRef:Refresh()
     self:OnEnter()
 end
@@ -1183,7 +1187,7 @@ function DragonflightUIPlayerSpecMixin:OnEnter()
 
         GameTooltip:AddDoubleLine(name, pointsSpent + previewPointsSpent, HIGHLIGHT_FONT_COLOR.r,
                                   HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r,
-                                  HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1)
+                                  HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
     end
     GameTooltip:Show()
 end

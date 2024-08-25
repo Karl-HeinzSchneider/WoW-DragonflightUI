@@ -1,3 +1,6 @@
+---@diagnostic disable: undefined-global
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 DragonflightUIMixin = {}
@@ -894,6 +897,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
                 local talentGroup = GetActiveTalentGroup(true, false);
                 -- print(talent:GetName(), selectedTab, talentGroup)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+---@diagnostic disable-next-line: redundant-parameter
                 GameTooltip:SetTalent(selectedTab, i, true, false, talentGroup, true)
             end)
 
@@ -2696,6 +2700,7 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
     for i = 1, 3 do
         local tab = CreateFrame('BUTTON', 'DragonflightUISpellBookFrameTabButton' .. i, tabFrame,
                                 'DFCharacterFrameTabButtonTemplate', i)
+---@diagnostic disable-next-line: param-type-mismatch
         tab:SetParent(tabFrame)
         local text = _G[tab:GetName() .. 'Text']
         tinsert(tabFrame.Tabs, i, tab)
@@ -2814,6 +2819,7 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     frame.buttonShow:SetFrameRef("ProfessionFrame", frame)
     -- frame.buttonShow:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
 
+---@diagnostic disable-next-line: param-type-mismatch
     frame.buttonShow:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonShow);
 
@@ -2828,6 +2834,7 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     ]]);
     frame.buttonHide:SetFrameRef("ProfessionFrame", frame)
     -- frame.buttonHide:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
+---@diagnostic disable-next-line: param-type-mismatch
     frame.buttonHide:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonHide);
 
@@ -2869,8 +2876,10 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         port:SetSize(62, 62)
         port:ClearAllPoints()
         port:SetPoint('TOPLEFT', frame, 'TOPLEFT', -5, 7)
+---@diagnostic disable-next-line: param-type-mismatch
         port:SetParent(frame)
         port:SetTexture(136830)
+---@diagnostic disable-next-line: param-type-mismatch
         SetPortraitToTexture(port, port:GetTexture())
         port:SetDrawLayer('OVERLAY', 6)
         port:Show()

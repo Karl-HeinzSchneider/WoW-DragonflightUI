@@ -1,5 +1,8 @@
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Utility'
+---@diagnostic disable-next-line: undefined-field
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
 
@@ -48,6 +51,7 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
+---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, utilityOptions)
@@ -65,6 +69,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
+---@diagnostic disable-next-line: missing-parameter
     Module.ApplySettings()
     Module:RegisterOptionScreens()
 
@@ -79,6 +84,7 @@ function Module:OnDisable()
 end
 
 function Module:RegisterOptionScreens()
+---@diagnostic disable-next-line: undefined-field
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Utility', {
         name = 'Utility',
         sub = 'first',
@@ -92,6 +98,7 @@ end
 function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
 
+---@diagnostic disable-next-line: undefined-field
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)

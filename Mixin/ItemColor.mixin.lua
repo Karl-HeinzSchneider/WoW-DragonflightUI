@@ -10,12 +10,12 @@ function DragonflightUIItemColorMixin:OnEvent(event, arg1, ...)
 end
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
-
+---@return texture 
 function DragonflightUIItemColorMixin:AddOverlayToFrame(frame)
     if frame.DFQuality then
         --
         print('already frame.DFQuality', frame:GetName())
-        return
+        return frame.DFQuality
     end
 
     local tex = base .. 'whiteiconframeEdit'
@@ -121,7 +121,7 @@ function DragonflightUIItemColorMixin:HookInspectFrame()
         if ignored[self] then return end
         if not self.DFQuality then
             --           
-            local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(self)
+            local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(self)   
             overlay:SetPoint('CENTER')
         end
 
@@ -286,7 +286,7 @@ function DragonflightUIItemColorMixin:UpdateMerchant()
             local link = GetMerchantItemLink(index);
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
                 if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
@@ -306,7 +306,7 @@ function DragonflightUIItemColorMixin:UpdateMerchant()
             local link = GetBuybackItemLink(numBuybackItems)
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
                 if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
@@ -327,7 +327,7 @@ function DragonflightUIItemColorMixin:UpdateMerchantBuyback()
             local link = GetBuybackItemLink(index);
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
                 if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
@@ -353,7 +353,8 @@ end
 
 function DragonflightUIItemColorMixin:UpdateGuildBankSlots()
     if not GuildBankFrame then return end
-    local activeTab = GetCurrentGuildBankTab()
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    local activeTab = GetCurrentGuildBankTab() ---@type number
 
     local itemButton;
     local buttonID;

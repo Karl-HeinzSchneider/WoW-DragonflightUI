@@ -1,3 +1,4 @@
+---@diagnostic disable: inject-field, undefined-field
 -- List
 local DF_selectionBehavior;
 DragonFlightUIConfigCategoryListMixin = CreateFromMixins(CallbackRegistryMixin);
@@ -19,6 +20,7 @@ function DragonFlightUIConfigCategoryListMixin:OnLoad()
     local pad = 0;
     local spacing = 2;
 
+    ---@diagnostic disable-next-line: undefined-global
     self.ScrollView = CreateScrollBoxListLinearView(verticalPad, verticalPad, padLeft, padRight, spacing);
     self.ScrollView:SetDataProvider(self.DataProvider)
 
