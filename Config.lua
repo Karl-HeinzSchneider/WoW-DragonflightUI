@@ -64,8 +64,9 @@ function DF:RefreshConfig()
 
     local configFrame = DF.ConfigModule.ConfigFrame
     local refreshCat = function(name)
-        local subCat = configFrame:GetSubCategory('General', name)
-        subCat.displayFrame:CallRefresh()
+        -- local subCat = configFrame:GetSubCategory('General', name)
+        -- subCat.displayFrame:CallRefresh()
+        configFrame:RefreshCatSub('General', name)
     end
     refreshCat('Profiles')
 end
