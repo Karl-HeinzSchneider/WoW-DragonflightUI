@@ -708,7 +708,9 @@ local function ActivateAllActionbars()
     -- SHOW_MULTI_ACTIONBAR_2 = true
     -- SHOW_MULTI_ACTIONBAR_3 = true
     -- SHOW_MULTI_ACTIONBAR_4 = true
+---@diagnostic disable-next-line: missing-parameter, param-type-mismatch
     SetActionBarToggles(1, 1, 1, 1, 1)
+---@diagnostic disable-next-line: missing-parameter
     SetActionBarToggles(true, true, true, true, true)
     MultiActionBar_Update()
 end

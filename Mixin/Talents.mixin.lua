@@ -1153,7 +1153,6 @@ function DragonflightUIPlayerSpecMixin:OnClick()
 
     selectedSpec = specIndex
 
----@diagnostic disable-next-line: undefined-field, need-check-nil
     frameRef:Refresh()
     self:OnEnter()
 end
