@@ -163,7 +163,7 @@ local defaults = {
             hideKeybind = false,
             -- Visibility
             showMouseover = false,
-            hideAlways = true,
+            hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
