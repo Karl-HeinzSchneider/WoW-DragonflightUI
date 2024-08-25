@@ -1,5 +1,8 @@
+---@class DragonflightUI
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Bossframe'
+---@diagnostic disable-next-line: undefined-field
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
 
@@ -52,9 +55,11 @@ local options = {
             type = 'toggle',
             name = 'Enable',
             get = function()
+---@diagnostic disable-next-line: undefined-field
                 return DF:GetModuleEnabled(mName)
             end,
             set = function(info, v)
+---@diagnostic disable-next-line: undefined-field
                 DF:SetModuleEnabled(mName, v)
             end,
             order = 1
@@ -203,6 +208,7 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
+---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, options)
@@ -220,6 +226,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
+---@diagnostic disable-next-line: missing-parameter
     Module.ApplySettings()
     Module:RegisterOptionScreens()
 

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global, undefined-field, need-check-nil, inject-field, param-type-mismatch
 DragonFlightUIProfessionMixin = {}
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
@@ -531,16 +532,16 @@ function DragonFlightUIProfessionMixin:AnchorSchematics()
             local link = GetTradeSkillReagentItemLink(index, i)
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
                 if (classId == 12) then quality = 0; end
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(reagent, quality)
             end
         end
 
         hooksecurefunc(reagentCountText, 'SetText', function()
-            updateText(i)
+            updateText()
         end)
-        updateText(i)
+        updateText()
 
         local reagentNameFrame = _G['TradeSkillReagent' .. i .. 'NameFrame']
         reagentNameFrame:Hide()
@@ -555,7 +556,7 @@ function DragonFlightUIProfessionMixin:UpdateRecipeName()
     local index = GetTradeSkillSelectionIndex()
 
     local quality = DragonFlightUIProfessionMixin:GetRecipeQuality(index)
-    local r, g, b, hex = GetItemQualityColor(quality)
+    local r, g, b, hex = C_Item.GetItemQualityColor(quality)
 
     local name = TradeSkillSkillName
     name:SetTextColor(r, g, b)
@@ -563,6 +564,7 @@ function DragonFlightUIProfessionMixin:UpdateRecipeName()
     local stringWidth = name:GetStringWidth()
     name:SetWidth(stringWidth)
 
+    ---@diagnostic disable-next-line: undefined-field, need-check-nil
     local fav = frameRef.FavoriteButton
     fav:UpdateFavoriteState()
 end
@@ -590,7 +592,7 @@ function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
     if not itemId or itemId == "" then return 1; end
 
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
-          itemTexture, itemSellPrice, classID = GetItemInfo(link)
+          itemTexture, itemSellPrice, classID = C_Item.GetItemInfo(link)
     if not itemLevel or not itemId then return 1 end
 
     return itemRarity

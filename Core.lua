@@ -1,3 +1,5 @@
+---@class DragonflightUI : AceAddon-3.0, AceConsole-3.0, AceComm-3.0, AceHook-3.0
+---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceComm-3.0', 'AceHook-3.0')
 local db
 
@@ -39,13 +41,7 @@ function DF:Dump(value)
 end
 
 function DF:ShowStartMessage()
-    local version = ''
-
-    if not GetAddOnMetadata then
-        version = C_AddOns.GetAddOnMetadata('DragonflightUI', 'Version')
-    else
-        version = GetAddOnMetadata('DragonflightUI', 'Version')
-    end
+    local version = C_AddOns.GetAddOnMetadata('DragonflightUI', 'Version')    
 
     self:Print(version .. " loaded! Type '/dragonflight' or '/df' to open the options menu.")
 end

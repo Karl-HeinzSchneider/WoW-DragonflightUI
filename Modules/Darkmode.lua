@@ -66,7 +66,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -274,7 +274,7 @@ function Module:HookOnEnable()
             hooksecurefunc(m, 'OnEnable', function()
                 --
                 -- print('enabless!')
-                Module.ApplySettings()
+                Module:ApplySettings()
             end)
         end
     end

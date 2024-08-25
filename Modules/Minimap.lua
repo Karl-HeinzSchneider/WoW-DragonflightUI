@@ -171,7 +171,7 @@ local options = {
         durability = {
             type = 'select',
             name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability', barname),
+            desc = 'Durability' .. getDefaultStr('durability'),
             values = {
                 ['HIDDEN'] = 'HIDDEN',
                 ['TOP'] = 'TOP',
@@ -654,7 +654,7 @@ function Module:OnEnable()
     Module.Tmp.MinimapY = 0
     Module.AddStateUpdater()
 
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -1083,6 +1083,7 @@ function Module.UpdateCalendar()
         local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime()
         local day = currentCalendarTime.monthDay
         -- print('UpdateCalendar', day, GetCoords('UI-HUD-Calendar-' .. day .. '-Up'))
+---@diagnostic disable-next-line: param-type-mismatch
         frame.CalendarButtonText:SetText(day)
 
         -- @TODO
@@ -1358,7 +1359,7 @@ function Module.LockMinimap(locked)
 
             db.x = db.x - dx
             db.y = db.y - dy
-            Module.ApplySettings()
+            Module:ApplySettings()
         end)
         Minimap:SetUserPlaced(true)
     end
@@ -1750,6 +1751,7 @@ function Module.ChangeMinimapButtons()
 
     for k, v in ipairs(buttons) do
         -- DevTools_Dump(v) 
+---@diagnostic disable-next-line: param-type-mismatch
         local btn = libIcon:GetMinimapButton(v)
         -- DevTools_Dump(btn)
 

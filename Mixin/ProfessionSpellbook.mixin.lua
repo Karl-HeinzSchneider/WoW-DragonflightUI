@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global, undefined-field, need-check-nil, inject-field, param-type-mismatch
 DragonFlightUIProfessionSpellbookMixin = {}
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
@@ -439,6 +440,7 @@ function DragonflightUISpellButtonMixin:OnClick(button)
 
     if (IsModifiedClick("SELFCAST")) then
         if self.Data.skillID == 393 then return end -- TODO
+        ---@diagnostic disable-next-line: redundant-parameter
         CastSpell(slot, BOOKTYPE_SPELL, true);
         -- self:UpdateSelection();
         -- print('SELFCAST')
@@ -483,6 +485,7 @@ end
 
 function DragonflightUISpellButtonMixin:UpdateSelection()
     local slot = self.Data.bookID
+    ---@diagnostic disable-next-line: redundant-parameter
     if (slot and IsSelectedSpellBookItem(slot, BOOKTYPE_SPELL)) then
         self:SetChecked(true);
     else

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Actionbar'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
@@ -612,7 +613,7 @@ local options = {
             desc = 'Moves the Right Bar 1 + 2 to the side of the mainbar ' .. getDefaultStr('changeSides'),
             order = 105.2
         },
-        config = {type = 'header', name = 'Config - XP/Reputation Bar', order = 200},
+        -- config = {type = 'header', name = 'Config - XP/Reputation Bar', order = 200},
         alwaysShowXP = {
             type = 'toggle',
             name = 'Always show XP Text',
@@ -627,7 +628,7 @@ local options = {
             order = 201,
             width = '4'
         },
-        config = {type = 'header', name = 'EXPERIMENTAL - Actionbar 4/5', order = 300},
+        -- config = {type = 'header', name = 'EXPERIMENTAL - Actionbar 4/5', order = 300},
         sideRows = {
             type = 'range',
             name = '# of Rows',
@@ -707,7 +708,9 @@ local function ActivateAllActionbars()
     -- SHOW_MULTI_ACTIONBAR_2 = true
     -- SHOW_MULTI_ACTIONBAR_3 = true
     -- SHOW_MULTI_ACTIONBAR_4 = true
+---@diagnostic disable-next-line: missing-parameter, param-type-mismatch
     SetActionBarToggles(1, 1, 1, 1, 1)
+---@diagnostic disable-next-line: missing-parameter
     SetActionBarToggles(true, true, true, true, true)
     MultiActionBar_Update()
 end
@@ -2348,6 +2351,7 @@ function Module.ApplyMask()
     f:SetPoint('CENTER')
     f:SetSize(64, 64)
 
+---@diagnostic disable-next-line: count-down-loop
     for i = 1, 0 do
         local tex = f:CreateTexture()
         tex:SetAllPoints(f)
