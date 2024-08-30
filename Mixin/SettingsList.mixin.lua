@@ -805,3 +805,58 @@ end
 function DragonflightUINewFeatureLabelMixin:OnHide()
     if self.animateGlow then self.Fade:Stop(); end
 end
+
+--------
+
+-- orig: SettingsSelectionPopoutDetailsMixin  removed on SoD PTR  @TODO
+SettingsSelectionPopoutDetailsMixinDF = {}
+
+--[[ function SettingsSelectionPopoutDetailsMixin:GetTooltipText()
+    if self.SelectionName:IsShown() and self.SelectionName:IsTruncated() then return self.label; end
+
+    return nil;
+end
+
+function SettingsSelectionPopoutDetailsMixin:AdjustWidth(multipleColumns, defaultWidth)
+    if multipleColumns then
+        self:SetWidth(Round(defaultWidth / 2));
+    else
+        local nameWidth = self.SelectionName:GetUnboundedStringWidth() + self.selectionNamePadding;
+        self:SetWidth(Round(math.max(nameWidth, defaultWidth)));
+        self.SelectionName:SetWidth(nameWidth);
+    end
+end
+
+function SettingsSelectionPopoutDetailsMixin:SetupDetails(selectionData, index, isSelected, hasAFailedReq,
+                                                          hasALockedChoice)
+    self.label = selectionData.label;
+
+    self.SelectionName:Show();
+    self.SelectionName:SetText(selectionData.label);
+
+    if isSelected ~= nil then
+        local fontColor = nil;
+        if isSelected then
+            fontColor = NORMAL_FONT_COLOR;
+        elseif selectionData.disabled then
+            fontColor = DISABLED_FONT_COLOR;
+        else
+            fontColor = VERY_LIGHT_GRAY_COLOR;
+        end
+        self.SelectionName:SetTextColor(fontColor:GetRGB());
+    end
+
+    local maxNameWidth = 200;
+    if self.SelectionName:GetWidth() > maxNameWidth then self.SelectionName:SetWidth(maxNameWidth); end
+end
+
+function SettingsSelectionPopoutDetailsMixin:SetupCustomDetails()
+    self.label = CUSTOM;
+
+    self.SelectionName:Show();
+    self.SelectionName:SetText(self.label);
+    self.SelectionName:SetTextColor(VERY_LIGHT_GRAY_COLOR:GetRGB());
+
+    local maxNameWidth = 200;
+    if self.SelectionName:GetWidth() > maxNameWidth then self.SelectionName:SetWidth(maxNameWidth); end
+end ]]

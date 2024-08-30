@@ -439,7 +439,8 @@
         "MainMenuBarBackpackButton_UpdateFreeSlots",
         "UIParentManagedFrameMixin",
         "PlayerCastingBarFrame",
-        "CAST_BAR_CAST_TIME"
+        "CAST_BAR_CAST_TIME",
+        "CUSTOM"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
