@@ -1242,6 +1242,8 @@ function Module.ChangeTracking()
     MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109375, 0.224609375, 0.5078125, 0.537109375)
 end
 
+local MiniMapTrackingFrame = MiniMapTrackingFrame or MiniMapTracking
+
 function Module.ChangeTrackingEra()
     --  MiniMapTrackingFrame:ClearAllPoints()
     -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
