@@ -181,7 +181,7 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, UIOptions)
@@ -199,7 +199,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
----@diagnostic disable-next-line: missing-parameter
+    ---@diagnostic disable-next-line: missing-parameter
     Module.ApplySettings()
     Module:RegisterOptionScreens()
 
@@ -214,7 +214,7 @@ function Module:OnDisable()
 end
 
 function Module:RegisterOptionScreens()
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     DF.ConfigModule:RegisterOptionScreen('Misc', 'UI', {
         name = 'UI',
         sub = 'first',
@@ -228,7 +228,7 @@ end
 function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
 
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
