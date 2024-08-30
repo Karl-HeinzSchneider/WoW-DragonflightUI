@@ -248,7 +248,11 @@ function SettingsSliderMixinDF:OnLoad()
     local options = Settings.CreateSliderOptions(0, 100, 1);
     self:Init(41, options.minValue, options.maxValue, options.steps, sliderFormat)
 
-    self:SetEnabled_(true)
+    if self.SetEnabled_ then
+        self:SetEnabled_(true)
+    else
+        self:SetEnabled(true)
+    end
 
     self.Back:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, false))
     self.Forward:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, true))
