@@ -2639,8 +2639,9 @@ function DragonflightUIMixin:ChangeSpellbookEra()
         end)
     end
 
-    ShowAllSpellRanksCheckBox:ClearAllPoints()
-    ShowAllSpellRanksCheckBox:SetPoint('BOTTOMLEFT', _G['SpellButton1'], 'TOPLEFT', -4, 8)
+    local checkbox = ShowAllSpellRanksCheckBox or ShowAllSpellRanksCheckbox
+    checkbox:ClearAllPoints()
+    checkbox:SetPoint('BOTTOMLEFT', _G['SpellButton1'], 'TOPLEFT', -4, 8)
 
     for i = 1, 5 do
         local tab = _G['SpellBookFrameTabButton' .. i]
