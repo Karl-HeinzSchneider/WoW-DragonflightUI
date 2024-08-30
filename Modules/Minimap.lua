@@ -1083,7 +1083,7 @@ function Module.UpdateCalendar()
         local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime()
         local day = currentCalendarTime.monthDay
         -- print('UpdateCalendar', day, GetCoords('UI-HUD-Calendar-' .. day .. '-Up'))
----@diagnostic disable-next-line: param-type-mismatch
+        ---@diagnostic disable-next-line: param-type-mismatch
         frame.CalendarButtonText:SetText(day)
 
         -- @TODO
@@ -1751,7 +1751,7 @@ function Module.ChangeMinimapButtons()
 
     for k, v in ipairs(buttons) do
         -- DevTools_Dump(v) 
----@diagnostic disable-next-line: param-type-mismatch
+        ---@diagnostic disable-next-line: param-type-mismatch
         local btn = libIcon:GetMinimapButton(v)
         -- DevTools_Dump(btn)
 
