@@ -9,6 +9,9 @@ function DragonflightUIXPBarMixin:OnLoad()
     self:SetupTooltip()
     -- self:Update()
 
+    Mixin(self, DragonflightUIStateHandlerMixin)
+    self:InitStateHandler()
+
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:RegisterEvent('PLAYER_XP_UPDATE')
     self:RegisterEvent('UPDATE_EXHAUSTION')
@@ -204,6 +207,8 @@ function DragonflightUIXPBarMixin:Update()
         self:SetWidth(state.width)
         self:SetHeight(state.height)
     end
+
+    self:UpdateStateHandler(state)
 end
 
 function DragonflightUIXPBarMixin:UpdateText()
@@ -287,6 +292,8 @@ function DragonflightUIRepBarMixin:OnLoad()
     self:CreateBar()
     self:SetupTooltip()
     -- self:Update()
+    Mixin(self, DragonflightUIStateHandlerMixin)
+    self:InitStateHandler()
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:RegisterEvent('UPDATE_FACTION')
@@ -349,7 +356,7 @@ end
 
 function DragonflightUIRepBarMixin:SetupTooltip()
     self.Bar:SetScript('OnMouseDown', function(self, button)
-        if button == 'LeftButton' then ToggleCharacter('ReputationFrame') end
+        if button == 'LeftButton' and not InCombatLockdown() then ToggleCharacter('ReputationFrame') end
     end)
 end
 
@@ -387,6 +394,8 @@ function DragonflightUIRepBarMixin:Update()
 
         self:Collapse(not name)
     end
+
+    self:UpdateStateHandler(state)
 end
 
 function DragonflightUIRepBarMixin:UpdateText()

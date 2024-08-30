@@ -708,9 +708,9 @@ local function ActivateAllActionbars()
     -- SHOW_MULTI_ACTIONBAR_2 = true
     -- SHOW_MULTI_ACTIONBAR_3 = true
     -- SHOW_MULTI_ACTIONBAR_4 = true
----@diagnostic disable-next-line: missing-parameter, param-type-mismatch
+    ---@diagnostic disable-next-line: missing-parameter, param-type-mismatch
     SetActionBarToggles(1, 1, 1, 1, 1)
----@diagnostic disable-next-line: missing-parameter
+    ---@diagnostic disable-next-line: missing-parameter
     SetActionBarToggles(true, true, true, true, true)
     MultiActionBar_Update()
 end
@@ -1182,6 +1182,7 @@ local xpOptions = {
         }
     }
 }
+DragonflightUIStateHandlerMixin:AddStateTable(Module, xpOptions, 'xp', 'XPBar', getDefaultStr)
 
 local repOptions = {
     name = 'Rep',
@@ -1284,6 +1285,7 @@ local repOptions = {
         }
     }
 }
+DragonflightUIStateHandlerMixin:AddStateTable(Module, repOptions, 'rep', 'RepBar', getDefaultStr)
 
 local stanceOptions = {
     name = 'StanceBar',
@@ -2351,7 +2353,7 @@ function Module.ApplyMask()
     f:SetPoint('CENTER')
     f:SetSize(64, 64)
 
----@diagnostic disable-next-line: count-down-loop
+    ---@diagnostic disable-next-line: count-down-loop
     for i = 1, 0 do
         local tex = f:CreateTexture()
         tex:SetAllPoints(f)
