@@ -206,9 +206,9 @@ function DragonflightUIXPBarMixin:Update()
 
         self:SetWidth(state.width)
         self:SetHeight(state.height)
-    end
 
-    self:UpdateStateHandler(state)
+        self:UpdateStateHandler(state)
+    end
 end
 
 function DragonflightUIXPBarMixin:UpdateText()
@@ -393,9 +393,9 @@ function DragonflightUIRepBarMixin:Update()
         self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
         self:Collapse(not name)
-    end
 
-    self:UpdateStateHandler(state)
+        self:UpdateStateHandler(state)
+    end
 end
 
 function DragonflightUIRepBarMixin:UpdateText()
