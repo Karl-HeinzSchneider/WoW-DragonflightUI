@@ -58,6 +58,8 @@ XML\UI.xml
 Modules\Config.lua
 
 # Modules
+Modules\Profiles.lua
+
 Modules\Actionbar.lua
 Modules\Bossframe.lua
 Modules\Castbar.lua
