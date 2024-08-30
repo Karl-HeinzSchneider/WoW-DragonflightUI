@@ -114,7 +114,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addCat(cat)
         addSubCat('Info', cat)
         addSubCat('Modules', cat, true)
-        addSubCat('Profiles', cat)
+        addSubCat('Profiles', cat, true)
         addSubCat('WhatsNew', cat)
     end
 
