@@ -2055,8 +2055,15 @@ function Module.AddStateUpdater()
     for k, v in ipairs(Module.MicroButtons) do
         --
         -- print(k, v:GetName())
-        v:SetParent(microFrame)
+        -- v:SetParent(microFrame)
+        microFrame:SetHideFrame(v, k)
     end
+
+    C_Timer.After(0, function()
+        local db = Module.db.profile
+        local state = db.micro
+        Module.MicroFrame:UpdateStateHandler(state)
+    end)
 end
 
 function Module:RegisterOptionScreens()
@@ -3286,7 +3293,7 @@ function Module.ChangeCharacterMicroButton()
 end
 
 function Module.ChangeMicroMenuNew()
-    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', nil, 'SecureFrameTemplate')
+    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent, 'SecureFrameTemplate')
     microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
     microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
     Module.MicroFrame = microFrame
@@ -3580,7 +3587,7 @@ function Module.UpdateMicromenuState(state)
         }
     elseif DF.Era then
         buttons = {
-            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, QuestLogMicroButton, SocialsMicroButton,
+            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, QuestLogMicroButton, GuildMicroButton,
             WorldMapMicroButton, LFGMicroButton, MainMenuMicroButton, HelpMicroButton
         }
     end
@@ -3600,13 +3607,15 @@ function Module.UpdateMicromenuState(state)
     --     end
     -- end
 
+    for k, v in ipairs(buttons) do v:SetScale(state.scale) end
+
     -- local playerLevel = UnitLevel("player");
     -- if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
 
     -- FPS
     Module.UpdateFPSState(state)
 
-    Module.MicroFrame:SetScale(state.scale * 0.75) -- compat
+    Module.MicroFrame:SetScale(state.scale) -- compat
     Module.MicroFrame:UpdateStateHandler(state)
 end
 
