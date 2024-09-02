@@ -62,6 +62,7 @@ Modules\Profiles.lua
 
 Modules\Actionbar.lua
 Modules\Bossframe.lua
+Modules\Buffs.lua
 Modules\Castbar.lua
 Modules\Chat.lua
 Modules\Minimap.lua

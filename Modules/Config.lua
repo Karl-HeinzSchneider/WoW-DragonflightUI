@@ -9,6 +9,7 @@ local defaults = {
         modules = {
             ['Actionbar'] = true,
             ['Bossframe'] = false,
+            ['Buffs'] = true,
             ['Castbar'] = true,
             ['Chat'] = false,
             ['Darkmode'] = false,
@@ -57,6 +58,13 @@ local modulesOptions = {
             new = false
         },
         Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
+        Buffs = {
+            type = 'toggle',
+            name = 'Buffs',
+            desc = '' .. getDefaultStr('Buffs', 'modules'),
+            order = 2.1,
+            new = true
+        },
         Darkmode = {
             type = 'toggle',
             name = 'Darkmode',
