@@ -8,7 +8,9 @@ local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or "Quick Keybind Mode";
 function DragonFlightUIConfigMixin:OnLoad()
     -- print('DragonFlightUIConfigMixin:OnLoad')
 
-    self.NineSlice.Text:SetText('DragonflightUI')
+    local version = C_AddOns.GetAddOnMetadata('DragonflightUI', 'Version')
+    local headerTextStr = 'DragonflightUI' .. ' |cff8080ff' .. version .. '|r'
+    self.NineSlice.Text:SetText(headerTextStr)
 
     local function closePanel()
         self:Close();
