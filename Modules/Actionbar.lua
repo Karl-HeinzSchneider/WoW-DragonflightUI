@@ -3607,7 +3607,12 @@ function Module.UpdateMicromenuState(state)
     --     end
     -- end
 
-    for k, v in ipairs(buttons) do v:SetScale(state.scale) end
+    -- for k, v in ipairs(buttons) do v:SetScale(state.scale) end
+
+    for k, v in ipairs(Module.MicroButtons) do
+        --
+        v:SetScale(state.scale)
+    end
 
     -- local playerLevel = UnitLevel("player");
     -- if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
