@@ -216,7 +216,7 @@ function Module:AddMainMenuButton()
     btn:SetScript('OnClick', function()
         ---@diagnostic disable-next-line: missing-parameter
         Module.ToggleConfigFrame()
-        HideUIPanel(GameMenuFrame)
+        -- HideUIPanel(GameMenuFrame)
     end)
 end
 
