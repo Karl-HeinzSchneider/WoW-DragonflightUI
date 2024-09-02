@@ -200,12 +200,12 @@ function DragonflightUIXPBarMixin:Update()
         self:ClearAllPoints()
         self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-        self:Collapse(not showXP)
-
         self:SetScale(state.scale)
 
         self:SetWidth(state.width)
         self:SetHeight(state.height)
+
+        self:Collapse(not showXP)
 
         self:UpdateStateHandler(state)
     end
@@ -278,9 +278,11 @@ function DragonflightUIXPBarMixin:Collapse(collapse)
     if collapse then
         self:Hide()
         self:SetHeight(0.00000001)
+        self.RestedBarMark:Hide()
     else
         self:Show()
         self:SetHeight(state.height)
+        -- self.RestedBarMark:Show()
     end
 end
 
@@ -368,11 +370,6 @@ end
 function DragonflightUIRepBarMixin:Update()
     local state = self.state
 
-    self:SetScale(state.scale)
-
-    self:SetWidth(state.width)
-    self:SetHeight(state.height)
-
     local name, standing, min, max, value = GetWatchedFactionInfo()
     if name then
         self:UpdateText()
@@ -391,6 +388,11 @@ function DragonflightUIRepBarMixin:Update()
         local parent = _G[state.anchorFrame]
         self:ClearAllPoints()
         self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+        self:SetScale(state.scale)
+
+        self:SetWidth(state.width)
+        self:SetHeight(state.height)
 
         self:Collapse(not name)
 
