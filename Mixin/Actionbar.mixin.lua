@@ -256,7 +256,7 @@ function DragonflightUIActionbarMixin:OnToggleQuickKeybindMode(on)
 end
 
 function DragonflightUIActionbarMixin:SetupMainBar()
-    self.MainBarFrame = CreateFrame('FRAME', nil, nil, 'SecureFrameTemplate')
+    self.MainBarFrame = CreateFrame('FRAME', 'DragonflightUIActionbarMainBarFrame', self, 'SecureFrameTemplate')
     self:AddGryphons()
     self:SetupPageNumberFrame()
     -- self:AddDeco()
@@ -274,7 +274,7 @@ end
 
 function DragonflightUIActionbarMixin:AddGryphons()
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-    local scale = 0.42
+    local scale = 0.60
     local dy = self.buttonTable[1]:GetHeight()
 
     local w = 104.5
@@ -396,7 +396,7 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('CENTER', f, 'TOP', 0, 0)
     ActionBarUpButton:SetFrameStrata('MEDIUM')
-    ActionBarUpButton:SetFrameLevel(6)
+    ActionBarUpButton:SetFrameLevel(7)
     ActionBarUpButton:SetScale(buttonScale)
     -- ActionBarUpButton:SetSize(17, 14)
 
@@ -404,7 +404,7 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     ActionBarDownButton:ClearAllPoints()
     ActionBarDownButton:SetPoint('CENTER', f, 'BOTTOM', 0, 0)
     ActionBarDownButton:SetFrameStrata('MEDIUM')
-    ActionBarDownButton:SetFrameLevel(6)
+    ActionBarDownButton:SetFrameLevel(7)
     ActionBarDownButton:SetScale(buttonScale)
     -- ActionBarDownButton:SetSize(17, 14)
 
@@ -413,7 +413,8 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     MainMenuBarPageNumber:SetParent(f)
     MainMenuBarPageNumber:SetScale(1.25)
 
-    f:SetScale((1 / 1.5) * 0.9)
+    -- f:SetScale((1 / 1.5) * 0.9)
+    -- f:SetScale(0.9)
 
     self.numberFrame = f
     -- f:Hide()
