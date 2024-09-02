@@ -19,6 +19,7 @@ local defaults = {
             showPing = false,
             showPingChat = false,
             hideCalendar = false,
+            hideZoom = false,
             durability = 'BOTTOM',
             -- Visibility
             showMouseover = false,
@@ -245,6 +246,13 @@ local minimapOptions = {
             name = 'Hide Calendar',
             desc = 'Hides the calendar button' .. getDefaultStr('hideCalendar', 'minimap'),
             order = 13,
+            new = false
+        },
+        hideZoom = {
+            type = 'toggle',
+            name = 'Hide Zoom Buttons',
+            desc = 'Hides the zoom buttons (+) (-)' .. getDefaultStr('hideZoom', 'minimap'),
+            order = 14,
             new = true
         },
         durability = {
@@ -587,6 +595,14 @@ function Module.UpdateMinimapState(state)
         frame.CalendarButton:Hide()
     else
         frame.CalendarButton:Show()
+    end
+
+    if state.hideZoom then
+        MinimapZoomIn:Hide()
+        MinimapZoomOut:Hide()
+    else
+        MinimapZoomIn:Show()
+        MinimapZoomOut:Show()
     end
 
     Minimap:UpdateStateHandler(state)
