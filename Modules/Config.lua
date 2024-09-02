@@ -283,8 +283,10 @@ function Module:ToggleConfigFrame()
     else
         configFrame:Show()
 
-        HideUIPanel(GameMenuFrame)
-        HideUIPanel(SettingsPanel)
+        if not InCombatLockdown() then
+            HideUIPanel(GameMenuFrame)
+            HideUIPanel(SettingsPanel)
+        end
     end
 end
 
@@ -303,8 +305,10 @@ function Module:ToggleQuickKeybindMode()
         configFrame:ShowQuickKeybind(true)
         configFrame:Hide()
 
-        HideUIPanel(GameMenuFrame)
-        HideUIPanel(SettingsPanel)
+        if not InCombatLockdown() then
+            HideUIPanel(GameMenuFrame)
+            HideUIPanel(SettingsPanel)
+        end
     end
 end
 
