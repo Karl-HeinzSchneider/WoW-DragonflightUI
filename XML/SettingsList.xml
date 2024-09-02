@@ -202,7 +202,7 @@
 				<Frames>
 					<Frame parentKey="Popout" inherits="SelectionPopoutTemplateDF" hidden="true">
 					</Frame>
-					<Frame parentKey="SelectionDetails" setAllPoints="true" mixin="SettingsSelectionPopoutDetailsMixin">
+					<Frame parentKey="SelectionDetails" setAllPoints="true" mixin="SettingsSelectionPopoutDetailsMixinDF">
 						<Size x="250" y="20" />
 						<Layers>
 							<Layer level="OVERLAY" textureSubLevel="1">

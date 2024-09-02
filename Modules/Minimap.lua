@@ -1083,7 +1083,7 @@ function Module.UpdateCalendar()
         local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime()
         local day = currentCalendarTime.monthDay
         -- print('UpdateCalendar', day, GetCoords('UI-HUD-Calendar-' .. day .. '-Up'))
----@diagnostic disable-next-line: param-type-mismatch
+        ---@diagnostic disable-next-line: param-type-mismatch
         frame.CalendarButtonText:SetText(day)
 
         -- @TODO
@@ -1241,6 +1241,8 @@ function Module.ChangeTracking()
     MiniMapTrackingButton:SetPushedTexture(base)
     MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109375, 0.224609375, 0.5078125, 0.537109375)
 end
+
+local MiniMapTrackingFrame = MiniMapTrackingFrame or MiniMapTracking
 
 function Module.ChangeTrackingEra()
     --  MiniMapTrackingFrame:ClearAllPoints()
@@ -1751,7 +1753,7 @@ function Module.ChangeMinimapButtons()
 
     for k, v in ipairs(buttons) do
         -- DevTools_Dump(v) 
----@diagnostic disable-next-line: param-type-mismatch
+        ---@diagnostic disable-next-line: param-type-mismatch
         local btn = libIcon:GetMinimapButton(v)
         -- DevTools_Dump(btn)
 
