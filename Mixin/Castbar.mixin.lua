@@ -49,6 +49,34 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         else
             self:FinishSpell();
         end
+    elseif (event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED") then
+        if not UnitExists(unit) then
+            self:FinishSpell();
+            self.unitGuid = nil
+            return;
+        end
+        local guid = UnitGUID(unit)
+
+        local differentTarget = self.unitGuid ~= guid
+        self.unitGuid = guid
+
+        local nameChannel = UnitChannelInfo(unit);
+        local nameSpell = UnitCastingInfo(unit);
+        if (nameChannel) then
+            event = "UNIT_SPELLCAST_CHANNEL_START";
+            arg1 = unit;
+        elseif (nameSpell) then
+            event = "UNIT_SPELLCAST_START";
+            arg1 = unit;
+        else
+            self:FinishSpell();
+            if differentTarget then
+                self.flash = false;
+                self.fadeOut = false;
+                self.holdTime = GetTime();
+                self:SetAlpha(0);
+            end
+        end
     end
 
     if (arg1 ~= unit) then return; end
@@ -258,6 +286,9 @@ function DragonFlightUICastbarMixin:SetUnit(unit)
             self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit);
             self:RegisterEvent("PLAYER_ENTERING_WORLD");
 
+            if unit == 'target' then self:RegisterEvent("PLAYER_TARGET_CHANGED"); end
+            if unit == 'focus' then self:RegisterEvent("PLAYER_FOCUS_CHANGED"); end
+
             self:OnEvent("PLAYER_ENTERING_WORLD")
         else
             self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED");
@@ -274,6 +305,9 @@ function DragonFlightUICastbarMixin:SetUnit(unit)
             self:UnregisterEvent("UNIT_SPELLCAST_STOP");
             self:UnregisterEvent("UNIT_SPELLCAST_FAILED");
             self:UnregisterEvent("PLAYER_ENTERING_WORLD");
+
+            self:UnregisterEvent("PLAYER_TARGET_CHANGED");
+            self:UnregisterEvent("PLAYER_FOCUS_CHANGED");
 
             local desiredShowFalse = false;
             self:UpdateShownState(desiredShowFalse);
