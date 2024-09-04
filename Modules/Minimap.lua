@@ -568,10 +568,10 @@ end
 function Module.AddStateUpdater()
     Mixin(Minimap, DragonflightUIStateHandlerMixin)
     Minimap:InitStateHandler()
-    Minimap:SetHideFrame(frame.CalendarButton, 2)
+    -- Minimap:SetHideFrame(frame.CalendarButton, 2)
 
     Minimap.DFShower:ClearAllPoints()
-    Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+    Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32 + 32)
     Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
 
     Minimap.DFMouseHandler:ClearAllPoints()
@@ -828,18 +828,18 @@ end
 function Module.HookCalendar()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar32'
 
-    local button = CreateFrame('Button', 'DragonflightUICalendarButton', UIParent)
+    local button = CreateFrame('Button', 'DragonflightUICalendarButton', Minimap)
     -- button:SetPoint('CENTER', 0, 75)
     local size = 24
     button:SetSize(size * 1.105, size)
     button:SetScale(0.8)
 
     -- button:SetParent(Minimap)
-    local relativeScale = 0.8
+    -- local relativeScale = 0.8
     -- workaround, because sometimes the button dissappears when parent = Minimap
-    hooksecurefunc(Minimap, 'SetScale', function()
-        button:SetScale(Minimap:GetScale() * relativeScale)
-    end)
+    -- hooksecurefunc(Minimap, 'SetScale', function()
+    --     -- button:SetScale(Minimap:GetScale() * relativeScale)
+    -- end)
 
     button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
 
