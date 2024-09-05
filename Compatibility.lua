@@ -3,7 +3,7 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 DF.Compatibility = {}
 
--- wrath compat
+-- wrath compat @TODO
 local IsAddOnLoaded = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 
 function DF.Compatibility:FuncOrWaitframe(addon, func)
