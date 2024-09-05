@@ -3091,29 +3091,32 @@ function Module.ChangePartyFrame()
 
         -- layer = 'OVERLAY' => LeaderIcon etc
 
-        local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
-        leaderIcon:ClearAllPoints()
-        leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+        local updateSmallIcons = function()
+            local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
+            leaderIcon:ClearAllPoints()
+            leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
 
-        local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
-        masterIcon:ClearAllPoints()
-        masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
+            local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
+            masterIcon:ClearAllPoints()
+            masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
 
-        local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
-        guideIcon:ClearAllPoints()
-        guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+            local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
+            guideIcon:ClearAllPoints()
+            guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
 
-        local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
-        pvpIcon:ClearAllPoints()
-        pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
+            local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
+            pvpIcon:ClearAllPoints()
+            pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
 
-        local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
-        readyCheck:ClearAllPoints()
-        readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
+            local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
+            readyCheck:ClearAllPoints()
+            readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
 
-        local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
-        notPresentIcon:ClearAllPoints()
-        notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+            local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
+            notPresentIcon:ClearAllPoints()
+            notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+        end
+        updateSmallIcons()
 
         if DF.Wrath then
             local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
@@ -3251,29 +3254,7 @@ function Module.ChangePartyFrame()
             texture:Hide()
             healthbar:SetStatusBarColor(1, 1, 1, 1)
 
-            local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
-            leaderIcon:ClearAllPoints()
-            leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
-
-            local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
-            masterIcon:ClearAllPoints()
-            masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
-
-            local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
-            guideIcon:ClearAllPoints()
-            guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
-
-            local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
-            pvpIcon:ClearAllPoints()
-            pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
-
-            local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
-            readyCheck:ClearAllPoints()
-            readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
-
-            local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
-            notPresentIcon:ClearAllPoints()
-            notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+            updateSmallIcons()
 
             Module.UpdatePartyHPBar(i)
         end)
