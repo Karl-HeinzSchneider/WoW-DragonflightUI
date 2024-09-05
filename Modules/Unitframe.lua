@@ -3332,7 +3332,7 @@ function Module.CreateRestFlipbook()
         local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook', PlayerFrame)
         rest:SetSize(20, 20)
         rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', -4, 4)
----@diagnostic disable-next-line: redundant-parameter
+        ---@diagnostic disable-next-line: redundant-parameter
         rest:SetFrameStrata('MEDIUM', 5)
         rest:SetScale(1.2)
 
@@ -3598,7 +3598,7 @@ function Module.CreatThreatIndicator()
 
             if enableNumeric then
                 if isTanking then
----@diagnostic disable-next-line: cast-local-type
+                    ---@diagnostic disable-next-line: cast-local-type
                     display = UnitThreatPercentageOfLead('PLAYER', 'TARGET')
                     -- print('IsTanking')
                 end
@@ -3650,7 +3650,7 @@ function Module.Wrath()
     frame:RegisterEvent('UNIT_POWER_UPDATE')
     -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
----@diagnostic disable-next-line: redundant-parameter
+    ---@diagnostic disable-next-line: redundant-parameter
     frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 
