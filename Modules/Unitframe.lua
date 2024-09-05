@@ -3178,6 +3178,20 @@ function Module.ChangePartyFrame()
         healthbar.DFHealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
         healthbar.DFRightText = healthbar.DFHealthBarTextRight
 
+        healthbar:HookScript('OnEnter', function(self)
+            if healthbar.DFHealthBarTextRight:IsVisible() or healthbar.DFTextString:IsVisible() then
+            else
+                local max_health = UnitHealthMax('party' .. i)
+                local health = UnitHealth('party' .. i)
+                healthbar.DFTextString:SetText(health .. ' / ' .. max_health)
+                healthbar.DFTextString:Show()
+            end
+        end)
+        healthbar:HookScript('OnLeave', function(self)
+            healthbar.DFTextString:Hide()
+            Module.UpdatePartyHPBar(i)
+        end)
+
         Module.UpdatePartyHPBar(i)
 
         local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
@@ -3210,6 +3224,25 @@ function Module.ChangePartyFrame()
                                                               'TextStatusBarText')
         manabar.DFManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
         manabar.DFRightText = manabar.DFManaBarTextRight
+
+        manabar:HookScript('OnEnter', function(self)
+            if manabar.DFManaBarTextRight:IsVisible() or manabar.DFTextString:IsVisible() then
+            else
+                local max_mana = UnitPowerMax('party' .. i)
+                local mana = UnitPower('party' .. i)
+
+                if max_mana == 0 then
+                    manabar.DFTextString:SetText('')
+                else
+                    manabar.DFTextString:SetText(mana .. ' / ' .. max_mana)
+                end
+                manabar.DFTextString:Show()
+            end
+        end)
+        manabar:HookScript('OnLeave', function(self)
+            manabar.DFTextString:Hide()
+            Module.UpdatePartyManaBar(i)
+        end)
 
         Module.UpdatePartyManaBar(i)
 
