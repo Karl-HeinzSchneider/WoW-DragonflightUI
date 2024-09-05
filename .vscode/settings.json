@@ -447,5 +447,6 @@
         "need-check-nil",
         "undefined-field",
         "inject-field"
-    ]
+    ],
+    "markdown.occurrencesHighlight.enabled": true
 }

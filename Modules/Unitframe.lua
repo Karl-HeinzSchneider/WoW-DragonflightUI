@@ -3091,29 +3091,32 @@ function Module.ChangePartyFrame()
 
         -- layer = 'OVERLAY' => LeaderIcon etc
 
-        local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
-        leaderIcon:ClearAllPoints()
-        leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+        local updateSmallIcons = function()
+            local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
+            leaderIcon:ClearAllPoints()
+            leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
 
-        local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
-        masterIcon:ClearAllPoints()
-        masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
+            local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
+            masterIcon:ClearAllPoints()
+            masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
 
-        local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
-        guideIcon:ClearAllPoints()
-        guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+            local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
+            guideIcon:ClearAllPoints()
+            guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
 
-        local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
-        pvpIcon:ClearAllPoints()
-        pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
+            local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
+            pvpIcon:ClearAllPoints()
+            pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
 
-        local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
-        readyCheck:ClearAllPoints()
-        readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
+            local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
+            readyCheck:ClearAllPoints()
+            readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
 
-        local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
-        notPresentIcon:ClearAllPoints()
-        notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+            local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
+            notPresentIcon:ClearAllPoints()
+            notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+        end
+        updateSmallIcons()
 
         if DF.Wrath then
             local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
@@ -3160,21 +3163,35 @@ function Module.ChangePartyFrame()
         hpMask:SetSize(70 + 1, 10)
         healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
 
-        -- NO TAINT
+        healthbar.DFHealthBarText = healthbar:CreateFontString('DragonflightUIHealthBarText', 'OVERLAY',
+                                                               'TextStatusBarText')
+        healthbar.DFHealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+        healthbar.DFTextString = healthbar.DFHealthBarText
 
-        -- healthbar.HealthBarText = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- healthbar.HealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
-        -- healthbar.TextString = healthbar.HealthBarText
+        healthbar.DFHealthBarTextLeft = healthbar:CreateFontString('DragonflightUIHealthBarTextLeft', 'OVERLAY',
+                                                                   'TextStatusBarText')
+        healthbar.DFHealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
+        healthbar.DFLeftText = healthbar.DFHealthBarTextLeft
 
-        -- healthbar.HealthBarTextLeft = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- healthbar.HealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
-        -- healthbar.LeftText = healthbar.HealthBarTextLeft
+        healthbar.DFHealthBarTextRight = healthbar:CreateFontString('DragonflightUIHealthBarTextRight', 'OVERLAY',
+                                                                    'TextStatusBarText')
+        healthbar.DFHealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
+        healthbar.DFRightText = healthbar.DFHealthBarTextRight
 
-        -- healthbar.HealthBarTextRight = healthbar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- healthbar.HealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
-        -- healthbar.RightText = healthbar.HealthBarTextRight
+        healthbar:HookScript('OnEnter', function(self)
+            if healthbar.DFHealthBarTextRight:IsVisible() or healthbar.DFTextString:IsVisible() then
+            else
+                local max_health = UnitHealthMax('party' .. i)
+                local health = UnitHealth('party' .. i)
+                healthbar.DFTextString:SetText(health .. ' / ' .. max_health)
+                healthbar.DFTextString:Show()
+            end
+        end)
+        healthbar:HookScript('OnLeave', function(self)
+            healthbar.DFTextString:Hide()
+            Module.UpdatePartyHPBar(i)
+        end)
 
-        -- TAINT
         Module.UpdatePartyHPBar(i)
 
         local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
@@ -3194,25 +3211,40 @@ function Module.ChangePartyFrame()
         manaMask:SetSize(74, 7)
         manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
-        -- manabar.ManaBarText = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- manabar.ManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
-        -- manabar.TextString = manabar.ManaBarText
+        manabar.DFManaBarText = manabar:CreateFontString('DragonflightUIManaBarText', 'OVERLAY', 'TextStatusBarText')
+        manabar.DFManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
+        manabar.DFTextString = manabar.DFManaBarText
 
-        -- manabar.ManaBarTextLeft = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- manabar.ManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
-        -- manabar.LeftText = manabar.ManaBarTextLeft
+        manabar.DFManaBarTextLeft = manabar:CreateFontString('DragonflightUIManaBarTextLeft', 'OVERLAY',
+                                                             'TextStatusBarText')
+        manabar.DFManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
+        manabar.DFLeftText = manabar.DFManaBarTextLeft
 
-        -- manabar.ManaBarTextRight = manabar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- manabar.ManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
-        -- manabar.RightText = manabar.ManaBarTextRight
+        manabar.DFManaBarTextRight = manabar:CreateFontString('DragonflightUIManaBarTextRight', 'OVERLAY',
+                                                              'TextStatusBarText')
+        manabar.DFManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
+        manabar.DFRightText = manabar.DFManaBarTextRight
+
+        manabar:HookScript('OnEnter', function(self)
+            if manabar.DFManaBarTextRight:IsVisible() or manabar.DFTextString:IsVisible() then
+            else
+                local max_mana = UnitPowerMax('party' .. i)
+                local mana = UnitPower('party' .. i)
+
+                if max_mana == 0 then
+                    manabar.DFTextString:SetText('')
+                else
+                    manabar.DFTextString:SetText(mana .. ' / ' .. max_mana)
+                end
+                manabar.DFTextString:Show()
+            end
+        end)
+        manabar:HookScript('OnLeave', function(self)
+            manabar.DFTextString:Hide()
+            Module.UpdatePartyManaBar(i)
+        end)
 
         Module.UpdatePartyManaBar(i)
-
-        -- parent.HealthBarTextLeft = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- TargetFrameHealthBar.LeftText = parent.HealthBarTextLeft
-
-        -- parent.HealthBarTextRight = parent:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
-        -- TargetFrameHealthBar.RightText = parent.HealthBarTextRight
 
         -- debuff
         local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
@@ -3251,32 +3283,113 @@ function Module.ChangePartyFrame()
             texture:Hide()
             healthbar:SetStatusBarColor(1, 1, 1, 1)
 
-            local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
-            leaderIcon:ClearAllPoints()
-            leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
-
-            local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
-            masterIcon:ClearAllPoints()
-            masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
-
-            local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
-            guideIcon:ClearAllPoints()
-            guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
-
-            local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
-            pvpIcon:ClearAllPoints()
-            pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
-
-            local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
-            readyCheck:ClearAllPoints()
-            readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
-
-            local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
-            notPresentIcon:ClearAllPoints()
-            notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+            updateSmallIcons()
 
             Module.UpdatePartyHPBar(i)
         end)
+    end
+end
+
+local function DFTextStatusBar_UpdateTextStringWithValues(statusFrame, textString, value, valueMin, valueMax)
+    if (statusFrame.DFLeftText and statusFrame.DFRightText) then
+        statusFrame.DFLeftText:SetText("");
+        statusFrame.DFRightText:SetText("");
+        statusFrame.DFLeftText:Hide();
+        statusFrame.DFRightText:Hide();
+    end
+
+    if ((tonumber(valueMax) ~= valueMax or valueMax > 0) and not (statusFrame.pauseUpdates)) then
+        statusFrame:Show();
+
+        if ((statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable) or
+            statusFrame.forceShow) then
+            textString:Show();
+        elseif (statusFrame.lockShow > 0 and (not statusFrame.forceHideText)) then
+            textString:Show();
+        else
+            textString:SetText("");
+            textString:Hide();
+            return;
+        end
+
+        local valueDisplay = value;
+        local valueMaxDisplay = valueMax;
+        -- Modern WoW always breaks up large numbers, whereas Classic never did.
+        -- We'll remove breaking-up by default for Classic, but add a flag to reenable it.
+        if (statusFrame.breakUpLargeNumbers) then
+            if (statusFrame.capNumericDisplay) then
+                valueDisplay = AbbreviateLargeNumbers(value);
+                valueMaxDisplay = AbbreviateLargeNumbers(valueMax);
+            else
+                valueDisplay = BreakUpLargeNumbers(value);
+                valueMaxDisplay = BreakUpLargeNumbers(valueMax);
+            end
+        end
+
+        local textDisplay = GetCVar("statusTextDisplay");
+        if (value and valueMax > 0 and
+            ((textDisplay ~= "NUMERIC" and textDisplay ~= "NONE") or statusFrame.showPercentage) and
+            not statusFrame.showNumeric) then
+            if (value == 0 and statusFrame.zeroText) then
+                textString:SetText(statusFrame.zeroText);
+                statusFrame.isZero = 1;
+                textString:Show();
+            elseif (textDisplay == "BOTH" and not statusFrame.showPercentage) then
+                if (statusFrame.DFLeftText and statusFrame.DFRightText) then
+                    if (not statusFrame.powerToken or statusFrame.powerToken == "MANA") then
+                        statusFrame.DFLeftText:SetText(math.ceil((value / valueMax) * 100) .. "%");
+                        statusFrame.DFLeftText:Show();
+                    end
+                    statusFrame.DFRightText:SetText(valueDisplay);
+                    statusFrame.DFRightText:Show();
+                    textString:Hide();
+                else
+                    valueDisplay = "(" .. math.ceil((value / valueMax) * 100) .. "%) " .. valueDisplay .. " / " ..
+                                       valueMaxDisplay;
+                end
+                textString:SetText(valueDisplay);
+            else
+                valueDisplay = math.ceil((value / valueMax) * 100) .. "%";
+                if (statusFrame.prefix and
+                    (statusFrame.alwaysPrefix or
+                        not (statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable))) then
+                    textString:SetText(statusFrame.prefix .. " " .. valueDisplay);
+                else
+                    textString:SetText(valueDisplay);
+                end
+            end
+        elseif (value == 0 and statusFrame.zeroText) then
+            textString:SetText(statusFrame.zeroText);
+            statusFrame.isZero = 1;
+            textString:Show();
+            return;
+        else
+            statusFrame.isZero = nil;
+            if (statusFrame.prefix and
+                (statusFrame.alwaysPrefix or
+                    not (statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable))) then
+                textString:SetText(statusFrame.prefix .. " " .. valueDisplay .. " / " .. valueMaxDisplay);
+            else
+                textString:SetText(valueDisplay .. " / " .. valueMaxDisplay);
+            end
+        end
+    else
+        textString:Hide();
+        textString:SetText("");
+        if (not statusFrame.alwaysShow) then
+            statusFrame:Hide();
+        else
+            statusFrame:SetValue(0);
+        end
+    end
+end
+
+local function DFTextStatusBar_UpdateTextString(textStatusBar)
+    local textString = textStatusBar.DFTextString;
+    if (textString) then
+        local value = textStatusBar:GetValue();
+        local valueMin, valueMax = textStatusBar:GetMinMaxValues();
+        DFTextStatusBar_UpdateTextStringWithValues(textStatusBar, textString, value, valueMin, valueMax);
     end
 end
 
@@ -3304,6 +3417,7 @@ function Module.UpdatePartyManaBar(i)
                 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-RunicPower')
         end
         manabar:SetStatusBarColor(1, 1, 1, 1)
+        DFTextStatusBar_UpdateTextString(manabar)
     else
     end
     -- print('UpdatePartyManaBar', i, powerType, powerTypeString)
@@ -3323,6 +3437,7 @@ function Module.UpdatePartyHPBar(i)
                 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
             healthbar:SetStatusBarColor(1, 1, 1, 1)
         end
+        DFTextStatusBar_UpdateTextString(healthbar)
     else
     end
 end
@@ -3332,7 +3447,7 @@ function Module.CreateRestFlipbook()
         local rest = CreateFrame('Frame', 'DragonflightUIRestFlipbook', PlayerFrame)
         rest:SetSize(20, 20)
         rest:SetPoint('CENTER', PlayerPortrait, 'TOPRIGHT', -4, 4)
----@diagnostic disable-next-line: redundant-parameter
+        ---@diagnostic disable-next-line: redundant-parameter
         rest:SetFrameStrata('MEDIUM', 5)
         rest:SetScale(1.2)
 
@@ -3432,14 +3547,14 @@ function Module.ChangeFonts()
 
     for i = 1, 4 do
         local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
-        changeFont(healthbar.HealthBarText, std)
-        changeFont(healthbar.HealthBarTextLeft, std)
-        changeFont(healthbar.HealthBarTextRight, std)
+        changeFont(healthbar.DFHealthBarText, std)
+        changeFont(healthbar.DFHealthBarTextLeft, std)
+        changeFont(healthbar.DFHealthBarTextRight, std)
 
         local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
-        changeFont(manabar.ManaBarText, std)
-        changeFont(manabar.ManaBarTextLeft, std)
-        changeFont(manabar.ManaBarTextRight, std)
+        changeFont(manabar.DFManaBarText, std)
+        changeFont(manabar.DFManaBarTextLeft, std)
+        changeFont(manabar.DFManaBarTextRight, std)
     end
 
     if DF.Wrath then
@@ -3501,6 +3616,13 @@ function frame:OnEvent(event, arg1)
         Module.RefreshPortrait()
     elseif event == 'PORTRAITS_UPDATED' then
         Module.RefreshPortrait()
+    elseif event == 'CVAR_UPDATE' then
+        if arg1 == 'statusText' or arg1 == 'statusTextDisplay' then
+            for i = 1, 4 do
+                Module.UpdatePartyHPBar(i)
+                Module.UpdatePartyManaBar(i)
+            end
+        end
     end
 end
 
@@ -3598,7 +3720,7 @@ function Module.CreatThreatIndicator()
 
             if enableNumeric then
                 if isTanking then
----@diagnostic disable-next-line: cast-local-type
+                    ---@diagnostic disable-next-line: cast-local-type
                     display = UnitThreatPercentageOfLead('PLAYER', 'TARGET')
                     -- print('IsTanking')
                 end
@@ -3650,7 +3772,7 @@ function Module.Wrath()
     frame:RegisterEvent('UNIT_POWER_UPDATE')
     -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
 
----@diagnostic disable-next-line: redundant-parameter
+    ---@diagnostic disable-next-line: redundant-parameter
     frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus', 'pet')
     frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
 
@@ -3659,6 +3781,8 @@ function Module.Wrath()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     frame:RegisterEvent('PORTRAITS_UPDATED')
+
+    frame:RegisterEvent('CVAR_UPDATE')
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
@@ -3691,6 +3815,8 @@ function Module.Era()
     frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
     frame:RegisterEvent('PORTRAITS_UPDATED')
+
+    frame:RegisterEvent('CVAR_UPDATE')
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
