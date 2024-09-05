@@ -8,7 +8,7 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, first = {friendsColor = true}}}
+local defaults = {profile = {scale = 1, first = {friendsColor = true, fastloot = true}}}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -37,6 +37,7 @@ local utilityOptions = {
     get = getOption,
     set = setOption,
     args = {
+        fastloot = {type = 'toggle', name = 'Fastloot', desc = '' .. getDefaultStr('fastloot', 'first'), order = 5},
         friendsHeader = {type = 'header', name = 'Friendsframe', order = 10},
         friendsColor = {
             type = 'toggle',
@@ -51,7 +52,7 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, utilityOptions)
@@ -69,8 +70,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
----@diagnostic disable-next-line: missing-parameter
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -84,7 +84,7 @@ function Module:OnDisable()
 end
 
 function Module:RegisterOptionScreens()
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Utility', {
         name = 'Utility',
         sub = 'first',
@@ -98,7 +98,7 @@ end
 function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
 
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
@@ -112,6 +112,7 @@ function Module:ApplySettings()
     local db = Module.db.profile
 
     Module:HookFriendsColor(db.first.friendsColor)
+    Module:HookFastloot(db.first.fastloot)
 end
 
 function Module:SetupLookupTable()
@@ -216,6 +217,11 @@ function Module:HookFriendsColor(hook)
             end
         end)
     end
+end
+
+function Module:HookFastloot(hook)
+    -- self:Unhook('FriendsFrame_UpdateFriendButton')
+    if hook then end
 end
 
 local frame = CreateFrame('FRAME')
