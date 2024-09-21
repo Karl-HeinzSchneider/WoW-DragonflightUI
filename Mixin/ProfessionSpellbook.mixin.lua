@@ -257,7 +257,7 @@ function DragonFlightUIProfessionSpellbookMixin:FormatProfession(frame, data)
         frame.professionName:SetText(skillName);
 
         if (skillModifier > 0) then
-            frame.statusBar.rankText:SetFormattedText(TRADESKILL_RANK_WITH_MODIFIER, skillRank, rankModifier,
+            frame.statusBar.rankText:SetFormattedText(TRADESKILL_RANK_WITH_MODIFIER, skillRank, skillModifier,
                                                       skillMaxRank);
         else
             frame.statusBar.rankText:SetFormattedText(TRADESKILL_RANK, skillRank, skillMaxRank);
