@@ -32,6 +32,7 @@ local DF_PROFESSIONS_BEAST
 -- https://github.com/tekkub/wow-globalstrings/blob/master/GlueStrings/deDE.lua
 if locale == 'deDE' then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alchemie";
+    if DF.Era then DF_CHARACTER_PROFESSIONALCHEMY = "Alchimie"; end -- TODO: blizzard bug?!
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Schmiedekunst";
     DF_CHARACTER_PROFESSIONENCHANTING = "Verzauberkunst";
     DF_CHARACTER_PROFESSIONENGINEERING = "Ingenieurskunst";
