@@ -84,6 +84,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
     if (event == "UNIT_SPELLCAST_START") then
         local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellId =
             UnitCastingInfo(unit);
+        -- print(name, notInterruptible)
         local subText = GetSpellSubtext(spellId) or ''
         if not self.showRank then subText = '' end
         if subText ~= '' then subText = ' (' .. subText .. ')' end
@@ -127,6 +128,16 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         -- self:StopAnims();
         -- self:ApplyAlpha(1.0);
 
+        if (self.BorderShield) then
+            if (self.showShield and notInterruptible) then
+                self.BorderShield:Show();
+                if (self.BarBorder) then self.BarBorder:Hide(); end
+            else
+                self.BorderShield:Hide();
+                if (self.BarBorder) then self.BarBorder:Show(); end
+            end
+        end
+
         self:UpdateShownState(self.showCastbar);
     elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
         self:HandleCastStop(event, ...);
@@ -136,6 +147,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         if (self:IsShown()) then
             local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible =
                 UnitCastingInfo(unit);
+            -- print(name, notInterruptible)
             if (not name or (not self.showTradeSkills and isTradeSkill)) then
                 -- if there is no name, there is no bar
                 local desiredShowFalse = false;
@@ -260,7 +272,7 @@ end
 function DragonFlightUICastbarMixin:SetUnit(unit)
     if self.unit ~= unit then
         self.unit = unit;
-        self.showShield = false;
+        self.showShield = true;
 
         self.casting = nil;
         self.channeling = nil;
@@ -679,7 +691,7 @@ function DragonFlightUICastbarMixin:Update()
     self:SetShowTicks(state.showTicks)
     self:SetShowRank(state.showRank)
     self:SetIconShown(state.showIcon)
-    self.Icon:SetSize(state.sizeY, state.sizeY)
+    -- self.Icon:SetSize(state.sizeY, state.sizeY)
 end
 
 function DragonFlightUICastbarMixin:AdjustPosition()

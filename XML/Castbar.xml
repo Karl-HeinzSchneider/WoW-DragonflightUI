@@ -34,15 +34,18 @@ UI_shared.xsd">
 					<TexCoords left="0.0009765625" right="0.4130859375" top="0.3671875" bottom="0.41796875" />
 				</Texture>
 			</Layer>
-			<Layer level="ARTWORK" textureSubLevel="4">
-				<!--
-				<Texture parentKey="BorderShield" atlas="ui-castingbar-shield" hidden="true">
-				<Size x="29" y="33" />
-				<Anchors>
-				<Anchor point="TOPLEFT" x="-27" y="4" />
-				</Anchors>
+			<Layer level="ARTWORK" textureSubLevel="3">
+				<Texture parentKey="BorderShield" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x" hidden="true">
+					<Size x="25" y="28.5" />
+					<!-- <Scale scaleX="0.37" scaleY="0.37" /> -->
+					<TexCoords left="0.000976562" right="0.0742188" top="0.796875" bottom="0.970703" />
+					<Anchors>
+						<!-- <Anchor point="TOPLEFT" x="-27" y="4" /> -->
+						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT" x="-0.19" y="-2.2" />
+					</Anchors>
 				</Texture>
-				-->
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="4">
 				<Texture parentKey="Icon" hidden="true">
 					<Size x="16" y="16" />
 					<Anchors>
