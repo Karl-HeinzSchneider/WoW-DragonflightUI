@@ -753,7 +753,8 @@ function DragonFlightUIProfessionMixin:FilterDropdownGetEasyMenuTable()
     local subClasses = {GetTradeSkillSubClasses()}
     local numSubClasses = #subClasses
     local allCheckedSub = GetTradeSkillSubClassFilter(0);
-    local selectedIDSub = UIDropDownMenu_GetSelectedID(TradeSkillSubClassDropDown) or 1;
+    local dropDown = TradeSkillSubClassDropDown or TradeSkillSubClassDropdown -- TODO: blizzard changed this in SoD for some reason..
+    local selectedIDSub = UIDropDownMenu_GetSelectedID(dropDown) or 1;
 
     local subInv = {GetTradeSkillInvSlots()}
     local numSubClassesInv = #subInv
