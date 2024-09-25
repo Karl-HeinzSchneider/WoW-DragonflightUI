@@ -1257,7 +1257,7 @@ function Module.ChangeMail()
     -- MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
     MiniMapMailFrame:SetSize(19.5, 15)
 
-    if MiniMapTracking then
+    if DF.Wrath or DF.Cata then
         MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
     else
         -- MiniMapMailFrame:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMLEFT', 2, -1)
