@@ -868,7 +868,13 @@ function DragonflightUIActionbarMixin:HookFlyout()
         if not (actionType == "flyout") then return; end
 
         -- Update border
-        local isMouseOverButton = GetMouseFocus() == self;
+        local isMouseOverButton
+        if GetMouseFocus then
+            isMouseOverButton = GetMouseFocus() == self;
+        else
+            local foci = GetMouseFoci()
+            isMouseOverButton = foci[1] == self;
+        end
         local isFlyoutShown = SpellFlyout and SpellFlyout:IsShown() and SpellFlyout:GetParent() == self;
         if (isFlyoutShown or isMouseOverButton) then
             self.FlyoutBorderShadow:Show();
