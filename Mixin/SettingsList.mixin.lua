@@ -344,15 +344,16 @@ end
 function SelectionPopoutButtonMixinDF:HidePopout()
     self.Popout:Hide();
 
-    local isMouseOverButton
-    if GetMouseFocus then
-        isMouseOverButton = GetMouseFocus() == self;
-    else
-        local foci = GetMouseFoci()
-        isMouseOverButton = foci[1] == self;
-    end
+    -- local isMouseOverButton
+    -- if GetMouseFocus then
+    --     isMouseOverButton = GetMouseFocus() == self;
+    -- else
+    --     local foci = GetMouseFoci()
+    --     isMouseOverButton = foci[1] == self;
+    -- end
+    -- print('s', self:IsMouseMotionFocus())
 
-    if isMouseOverButton then
+    if self:IsMouseMotionFocus() then
         self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox-hover");
     else
         self.NormalTexture:SetAtlas("charactercreate-customize-dropdownbox");
