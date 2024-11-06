@@ -121,7 +121,7 @@ function DragonflightUIItemColorMixin:HookInspectFrame()
         if ignored[self] then return end
         if not self.DFQuality then
             --           
-            local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(self)   
+            local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(self)
             overlay:SetPoint('CENTER')
         end
 
@@ -286,7 +286,13 @@ function DragonflightUIItemColorMixin:UpdateMerchant()
             local link = GetMerchantItemLink(index);
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                local quality, classId;
+                if C_Item.GetItemInfo then
+                    quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                else
+                    quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                end
+
                 if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
@@ -306,7 +312,13 @@ function DragonflightUIItemColorMixin:UpdateMerchant()
             local link = GetBuybackItemLink(numBuybackItems)
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                local quality, classId;
+                if C_Item.GetItemInfo then
+                    quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                else
+                    quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                end
+
                 if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
@@ -327,7 +339,13 @@ function DragonflightUIItemColorMixin:UpdateMerchantBuyback()
             local link = GetBuybackItemLink(index);
 
             if link then
-                local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                local quality, classId;
+                if C_Item.GetItemInfo then
+                    quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                else
+                    quality, _, _, _, _, _, _, _, _, classId = select(3, GetItemInfo(link));
+                end
+
                 if (classId == 12) then quality = DF_LE_ITEM_QUALITY_POOR; end
 
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(itemButton, quality)
