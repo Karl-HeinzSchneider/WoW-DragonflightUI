@@ -20,6 +20,7 @@ local defaults = {
             showPingChat = false,
             hideCalendar = false,
             hideZoom = false,
+            skinButtons = true,
             durability = 'BOTTOM',
             -- Visibility
             showMouseover = false,
@@ -253,6 +254,14 @@ local minimapOptions = {
             name = 'Hide Zoom Buttons',
             desc = 'Hides the zoom buttons (+) (-)' .. getDefaultStr('hideZoom', 'minimap'),
             order = 14,
+            new = true
+        },
+        skinButtons = {
+            type = 'toggle',
+            name = 'Skin Minimap Buttons',
+            desc = 'Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)' ..
+                getDefaultStr('skinButtons', 'minimap'),
+            order = 15,
             new = true
         },
         durability = {
@@ -606,6 +615,13 @@ function Module.UpdateMinimapState(state)
     end
 
     Minimap:UpdateStateHandler(state)
+
+    if state.skinButtons and not Module.SkinButtonsHooked then
+        Module.SkinButtonsHooked = true;
+        Module.ChangeMinimapButtons()
+    elseif not state.skinButtons and Module.SkinButtonsHooked then
+        DF:Print("'Skin Minimap Buttons' was deactivated, but Buttons were already modified, please /reload.");
+    end
 end
 
 function Module.UpdateTrackerState(state)
@@ -1425,7 +1441,7 @@ function Module.Wrath()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
-    Module.ChangeMinimapButtons()
+    -- Module.ChangeMinimapButtons()
 
     Module.HookCalendar()
     Module.UpdateCalendar()
@@ -1448,7 +1464,7 @@ function Module.Era()
     Module.MoveTracker()
     Module.HookMouseWheel()
     Module.ChangeMail()
-    Module.ChangeMinimapButtons()
+    -- Module.ChangeMinimapButtons()
     Module.ChangeEra()
 
     Module.HookCalendar()
