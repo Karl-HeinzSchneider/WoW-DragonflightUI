@@ -3500,12 +3500,14 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             for i = 1, 5 do
                 --
                 local tab = _G[name .. 'Tab' .. i]
-                tab.DFFirstOffsetX = 4
-                tab.DFTabWidth = 62.8
+                if tab then
+                    tab.DFFirstOffsetX = 4
+                    tab.DFTabWidth = 62.8
 
-                if i == 5 then
-                    local tabHigh = _G[name .. 'Tab' .. i .. 'HighlightTexture']
-                    tabHigh:Hide()
+                    if i == 5 then
+                        local tabHigh = _G[name .. 'Tab' .. i .. 'HighlightTexture']
+                        tabHigh:Hide()
+                    end
                 end
             end
         else

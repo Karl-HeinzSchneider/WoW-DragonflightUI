@@ -653,10 +653,12 @@ function Module.HideDefaultStuff()
     _G['MinimapBorderTop']:Hide()
 
     -- Hide WorldMapButton
-    MiniMapWorldMapButton:Hide()
-    hooksecurefunc(MiniMapWorldMapButton, 'Show', function()
+    if MiniMapWorldMapButton then
         MiniMapWorldMapButton:Hide()
-    end)
+        hooksecurefunc(MiniMapWorldMapButton, 'Show', function()
+            MiniMapWorldMapButton:Hide()
+        end)
+    end
     -- Hide North Tag
     hooksecurefunc(MinimapNorthTag, 'Show', function()
         MinimapNorthTag:Hide()

@@ -3355,7 +3355,11 @@ function Module.ChangeMicroMenuNew()
         end
         -- WorldMapMicroButton    
         Module.ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
-        Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
+        if LFGMicroButton then
+            Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
+        elseif SocialsMicroButton then
+            Module.ChangeMicroMenuButton(SocialsMicroButton, 'Groupfinder')
+        end
         Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
         Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
 
