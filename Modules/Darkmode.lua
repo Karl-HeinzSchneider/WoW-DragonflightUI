@@ -113,6 +113,8 @@ function Module:UpdateMinimap(dark)
 
     local minimapBorderTex = minimapModule.Frame.minimap
 
+    if not minimapBorderTex then return end -- TODO: HACK
+
     if dark then
         minimapBorderTex:SetDesaturated(true)
         minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)
