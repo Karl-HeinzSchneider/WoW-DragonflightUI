@@ -440,7 +440,8 @@
         "UIParentManagedFrameMixin",
         "PlayerCastingBarFrame",
         "CAST_BAR_CAST_TIME",
-        "CUSTOM"
+        "CUSTOM",
+        "BID"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
