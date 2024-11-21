@@ -1924,7 +1924,7 @@ function DragonflightUIMixin:ChangeTradeFrame()
 end
 
 function DragonflightUIMixin:ChangeQuestLogFrameEra()
-    frame = QuestLogFrame
+    local frame = QuestLogFrame
 
     local regions = {frame:GetRegions()}
     local port
