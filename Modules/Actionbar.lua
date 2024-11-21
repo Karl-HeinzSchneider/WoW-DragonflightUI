@@ -3348,18 +3348,19 @@ function Module.ChangeMicroMenuNew()
         Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        if DF.EraLater then
-            Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities')
-        else
-            Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
-        end
         -- WorldMapMicroButton    
         Module.ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
-        if LFGMicroButton then
-            Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
-        elseif SocialsMicroButton then
-            Module.ChangeMicroMenuButton(SocialsMicroButton, 'Groupfinder')
+
+        if LFGMicroButton then Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
+        if SocialsMicroButton then Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities') end
+        if GuildMicroButton then Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
+
+        -- TODO
+        if SocialsMicroButton and GuildMicroButton then
+            SocialsMicroButton:Hide();
+            GuildMicroButton:Hide();
         end
+
         Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
         Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
 
