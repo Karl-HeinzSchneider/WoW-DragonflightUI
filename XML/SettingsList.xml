@@ -152,8 +152,10 @@
 	<!-- Checkbox -->
 	<Frame name="SettingsCheckBoxControlTemplateDF" virtual="true">
 		<Size x="280" y="26" />
-		<CheckButton parentKey="$parent.Checkbox" inherits="SettingsCheckBoxTemplateDF" hidden="true" setAllPoints="false">
-		</CheckButton>
+		<Frames>
+			<CheckButton parentKey="$parent.Checkbox" inherits="SettingsCheckBoxTemplateDF" hidden="true" setAllPoints="false">
+			</CheckButton>
+		</Frames>
 	</Frame>
 	<CheckButton name="SettingsCheckBoxTemplateDF" mixin="SettingsCheckBoxMixinDF" motionScriptsWhileDisabled="true" virtual="true">
 		<Size x="30" y="29" />
