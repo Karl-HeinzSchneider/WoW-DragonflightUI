@@ -441,7 +441,9 @@
         "PlayerCastingBarFrame",
         "CAST_BAR_CAST_TIME",
         "CUSTOM",
-        "BID"
+        "BID",
+        "LFGMinimapFrame",
+        "MinimapBackdrop"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
