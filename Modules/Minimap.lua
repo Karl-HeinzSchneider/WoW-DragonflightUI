@@ -1294,9 +1294,38 @@ function Module.ChangeMail()
     mail:SetScale(1)
 end
 
+function Module:QueueStatusReposition(_, anchorFrame)
+    if anchorFrame ~= Module.QueueStatus then
+        --
+        self:ClearAllPoints()
+        self:SetPoint('CENTER', Module.QueueStatus, 'CENTER', 0, 0)
+    end
+end
+
 function Module.ChangeEra()
     GameTimeFrame:Hide()
     MinimapToggleButton:Hide()
+
+    DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+        --
+        local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
+        f:SetPoint('CENTER', Minimap, 'CENTER', -83, -35)
+        f:SetSize(32, 32)
+
+        Module.QueueStatus = f
+
+        local btn = _G.LFGMinimapFrame
+
+        -- hooksecurefunc(btn, 'SetParent', function()
+        --     print('SetParent')
+        -- end)
+        hooksecurefunc(btn, 'SetPoint', Module.QueueStatusReposition)
+        -- hooksecurefunc(btn, 'SetScale', function()
+        --     print('SetScale')
+        -- end)
+
+        btn:SetPoint('CENTER')
+    end)
 end
 
 function Module.ChangeMinimapButtons()
