@@ -1,41 +1,41 @@
 <Bindings>
 	<!-- Bar 6 -->
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button1:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button2:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button3:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button4:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button5:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button6:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button7:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button8:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button9:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button10:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button11:LeftButton" category="Action Bar 6" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar6Button12:LeftButton" category="Action Bar 6" runOnUp="true" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button1:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" header="BINDING_HEADER_DFACTIONBAR6_BUTTON1" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button2:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button3:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button4:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button5:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button6:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button7:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button8:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button9:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button10:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button11:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
+	<Binding name="CLICK DragonflightUIMultiactionBar6Button12:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR6" />
 	<!-- Bar 7 -->
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button1:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button2:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button3:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button4:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button5:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button6:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button7:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button8:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button9:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button10:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button11:LeftButton" category="Action Bar 7" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar7Button12:LeftButton" category="Action Bar 7" runOnUp="true" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button1:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" header="BINDING_HEADER_DFACTIONBAR7_BUTTON1" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button2:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button3:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button4:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button5:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button6:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button7:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button8:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button9:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button10:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button11:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
+	<Binding name="CLICK DragonflightUIMultiactionBar7Button12:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR7" />
 	<!-- Bar 8 -->
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button1:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button2:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button3:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button4:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button5:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button6:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button7:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button8:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button9:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button10:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button11:LeftButton" category="Action Bar 8" runOnUp="true" />
-	<Binding name="CLICK DragonflightUIMultiactionBar8Button12:LeftButton" category="Action Bar 8" runOnUp="true" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button1:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" header="BINDING_HEADER_DFACTIONBAR8_BUTTON1" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button2:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button3:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button4:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button5:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button6:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button7:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button8:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button9:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button10:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button11:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<Binding name="CLICK DragonflightUIMultiactionBar8Button12:LeftButton" category="BINDING_CATEGORY_DFACTIONBAR8" />
 </Bindings>
