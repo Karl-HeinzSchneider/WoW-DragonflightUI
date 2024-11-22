@@ -1759,6 +1759,70 @@ function DragonflightUIMixin:ChangeQuestFrame()
     HideUIPanel(frame)
 end
 
+function DragonflightUIMixin:ShowQuestXP()
+    if not QuestLogFrame.DFQuestXP then
+
+        local str = QuestLogDetailScrollChildFrame:CreateFontString('DragonflightUIQuestXPText', 'OVERLAY', 'QuestFont')
+        str:SetText(REWARD_ITEMS)
+        -- str:SetPoint('LEFT', _G["DragonflightUIQuestLogFrameTrackButton"], 'RIGHT', 10, 0)
+
+        local strXP = QuestLogDetailScrollChildFrame:CreateFontString('DragonflightUIQuestXPText2', 'OVERLAY',
+                                                                      'QuestFont')
+        strXP:SetText(FormatLargeNumber(9999999) .. ' XP')
+        strXP:SetPoint('LEFT', str, 'RIGHT', 15, 0)
+
+        QuestLogFrame.DFQuestXP = str
+        QuestLogFrame.DFQuestXP2 = strXP
+    end
+
+    local function hookFunc(questLogIndex)
+        local point, relativeTo, relativePoint, xOfs, yOfs = QuestLogSpacerFrame:GetPoint(1)
+
+        if relativeTo == QuestLogItem2 then
+            relativeTo = QuestLogItem1
+        elseif relativeTo == QuestLogItem4 then
+            relativeTo = QuestLogItem3
+        elseif relativeTo == QuestLogItem6 then
+            relativeTo = QuestLogItem5
+        elseif relativeTo == QuestLogItem8 then
+            relativeTo = QuestLogItem7
+        elseif relativeTo == QuestLogItem10 then
+            relativeTo = QuestLogItem9
+        end
+
+        local str = QuestLogFrame.DFQuestXP
+        local strXP = QuestLogFrame.DFQuestXP2
+        local rewardText = _G['QuestLogRewardTitleText']
+
+        if rewardText:IsShown() then
+            -- 'You will also receive'
+            str:SetText(REWARD_ITEMS)
+
+            str:ClearAllPoints()
+            str:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', 0, -15)
+            QuestFrame_SetAsLastShown(str, nil)
+        else
+            local material = QuestFrame_GetMaterial();
+            rewardText:Show();
+            QuestFrame_SetTitleTextColor(rewardText, material);
+            QuestFrame_SetAsLastShown(rewardText, nil);
+
+            -- 'You will receive'
+            str:SetText(REWARD_ITEMS_ONLY)
+
+            str:ClearAllPoints()
+            str:SetPoint('TOPLEFT', rewardText, 'BOTTOMLEFT', 3, -5)
+            QuestFrame_SetAsLastShown(str, nil)
+        end
+
+        local xp = GetQuestLogRewardXP()
+        ---@diagnostic disable-next-line: param-type-mismatch
+        strXP:SetText(FormatLargeNumber(xp) .. ' XP')
+    end
+
+    hooksecurefunc('QuestFrameItems_Update', hookFunc)
+end
+
 function DragonflightUIMixin:ChangeGossipFrame()
     local frame = GossipFrame
     local greeting = frame.GreetingPanel
