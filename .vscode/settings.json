@@ -443,7 +443,8 @@
         "CUSTOM",
         "BID",
         "LFGMinimapFrame",
-        "MinimapBackdrop"
+        "MinimapBackdrop",
+        "CUSTOM_CLASS_COLORS"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

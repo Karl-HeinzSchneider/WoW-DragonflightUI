@@ -41,9 +41,19 @@ function DF:Dump(value)
 end
 
 function DF:ShowStartMessage()
-    local version = C_AddOns.GetAddOnMetadata('DragonflightUI', 'Version')    
+    local version = C_AddOns.GetAddOnMetadata('DragonflightUI', 'Version')
 
     self:Print(version .. " loaded! Type '/dragonflight' or '/df' to open the options menu.")
+end
+
+-- BLIZZ:
+local function GetClassColor(classFilename)
+    local classColors = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS -- change for 'WeWantBlueShamans'
+
+    local color = classColors[classFilename];
+    if color then return color.r, color.g, color.b, color.colorStr; end
+
+    return 1, 1, 1, "ffffffff";
 end
 
 function DF:GetClassColor(class, alpha)
