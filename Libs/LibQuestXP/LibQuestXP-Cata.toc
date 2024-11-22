@@ -1,0 +1,10 @@
+## Interface: 40400
+## Title: LibQuestXP
+## Author: MrFox
+## Email: gyussz@live.com
+## Version: 4.0.15
+## Notes: Library that re-implements GetQuestLogRewardXP for Classic WoW and provides XP reward information for all quests - Cataclysm version
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+LibQuestXP-Cata.xml
