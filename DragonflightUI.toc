@@ -27,6 +27,7 @@ Libs\AceConfig-3.0\AceConfig-3.0.xml
 
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\lib.xml
+Libs\LibQuestXP\LibQuestXP-Classic.xml
 Libs\TaintLess\TaintLess.xml
 
 Core.lua
