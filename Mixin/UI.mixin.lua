@@ -473,8 +473,8 @@ function DragonflightUIMixin:ChangeTrainerFrame()
     DragonflightUIMixin:UIPanelCloseButton(ClassTrainerFrameCloseButton)
     ClassTrainerFrameCloseButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
 
-    local filterDropdown = ClassTrainerFrameFilterDropDown
-    filterDropdown:SetPoint('TOPRIGHT', ClassTrainerFrameCloseButton, 'BOTTOMRIGHT', 0, 0)
+    local filterDropdown = ClassTrainerFrameFilterDropDown or ClassTrainerFrame.FilterDropdown
+    filterDropdown:SetPoint('TOPRIGHT', ClassTrainerFrameCloseButton, 'BOTTOMRIGHT', -4, -4)
 
     ClassTrainerNameText:ClearAllPoints()
     ClassTrainerNameText:SetPoint('TOP', frame, 'TOP', 0, -5)
