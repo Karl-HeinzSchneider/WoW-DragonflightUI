@@ -274,6 +274,9 @@ function Module:ApplySettings()
         if db.changeSpellBook and not Module.SpellBookHooked then
             Module.SpellBookHooked = true
             DragonflightUIMixin:ChangeSpellbookEra()
+            Module:FuncOrWaitframe('WhatsTraining', function()
+                DF.Compatibility:WhatsTraining()
+            end)
         elseif not db.changeSpellBook and Module.SpellBookHooked then
             DF:Print("'Change SpellBook' was deactivated, but SpellBook was already modified, please /reload.")
         end
@@ -445,10 +448,7 @@ function Module:ChangeFrames()
         --
         -- DragonflightUIMixin:ChangeSpellbookEra()
         -- DragonflightUIMixin:SpellbookEraAddTabs()
-        -- DragonflightUIMixin:SpellbookEraProfessions()
-        Module:FuncOrWaitframe('WhatsTraining', function()
-            DF.Compatibility:WhatsTraining()
-        end)
+        -- DragonflightUIMixin:SpellbookEraProfessions()  
         --[[ DragonflightUIMixin:ChangeCharacterFrameEra()
         Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
             EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 9, -75)
