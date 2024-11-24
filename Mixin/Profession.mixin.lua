@@ -54,6 +54,8 @@ function DragonFlightUIProfessionMixin:OnShow()
         self:HideDefault()
         self:SetupFavorite()
 
+        self:Minimize(self.minimized)
+
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
         self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 12, -12)
@@ -129,13 +131,16 @@ function DragonFlightUIProfessionMixin:Refresh(force)
     self.RecipeList:Refresh(force)
 end
 
+local frameWidth = 942 - 164
+local frameWidthSmall = 404 - 50
+
 function DragonFlightUIProfessionMixin:Minimize(minimize)
     -- print('DragonFlightUIProfessionMixin:Minimize(minimize)', minimize)
     self.minimized = minimize
 
     if minimize then
         -- 
-        self:SetWidth(404)
+        self:SetWidth(frameWidthSmall)
         self:UpdateUIPanelWindows(false)
 
         self.RecipeList:Hide()
@@ -152,7 +157,9 @@ function DragonFlightUIProfessionMixin:Minimize(minimize)
         TradeSkillCreateButton:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 13)
     else
         --
-        self:SetWidth(942)
+        self:SetWidth(frameWidth)
+        self:SetHeight(525)
+
         self:UpdateUIPanelWindows(true)
 
         self.RecipeList:Show()
@@ -174,9 +181,9 @@ end
 
 function DragonFlightUIProfessionMixin:UpdateUIPanelWindows(big)
     if big then
-        TradeSkillFrame:SetAttribute("UIPanelLayout-width", 942);
+        TradeSkillFrame:SetAttribute("UIPanelLayout-width", frameWidth);
     else
-        TradeSkillFrame:SetAttribute("UIPanelLayout-width", 404);
+        TradeSkillFrame:SetAttribute("UIPanelLayout-width", frameWidthSmall);
     end
     UpdateUIPanelPositions(TradeSkillFrame)
 end
@@ -194,6 +201,8 @@ end
 
 function DragonFlightUIProfessionMixin:HideDefault()
     TradeSkillFrame:SetFrameStrata('BACKGROUND')
+
+    TradeSkillHighlightFrame:Hide()
 end
 
 function DragonFlightUIProfessionMixin:SetupFrameStyle()
