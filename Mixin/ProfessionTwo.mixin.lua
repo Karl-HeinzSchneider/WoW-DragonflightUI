@@ -61,6 +61,8 @@ function DragonFlightUIProfessionCraftMixin:OnShow()
         self:HideDefault()
         self:SetupFavorite()
 
+        self:Minimize(self.minimized)
+
         -- self:SetParent(TradeSkillFrame)
         -- self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, 0)
         self:SetPoint('TOPLEFT', CraftFrame, 'TOPLEFT', 12, -12)
@@ -137,13 +139,16 @@ function DragonFlightUIProfessionCraftMixin:Refresh(force)
     self.RecipeList:Refresh(force)
 end
 
+local frameWidth = 942 - 164
+local frameWidthSmall = 404 - 50
+
 function DragonFlightUIProfessionCraftMixin:Minimize(minimize)
     -- print('DragonFlightUIProfessionCraftMixin:Minimize(minimize)', minimize)
     self.minimized = minimize
 
     if minimize then
         -- 
-        self:SetWidth(404)
+        self:SetWidth(frameWidthSmall)
         self:UpdateUIPanelWindows(false)
 
         self.RecipeList:Hide()
@@ -160,7 +165,9 @@ function DragonFlightUIProfessionCraftMixin:Minimize(minimize)
         CraftCreateButton:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 13)
     else
         --
-        self:SetWidth(942)
+        self:SetWidth(frameWidth)
+        self:SetHeight(525)
+
         self:UpdateUIPanelWindows(true)
 
         self.RecipeList:Show()
@@ -182,9 +189,9 @@ end
 
 function DragonFlightUIProfessionCraftMixin:UpdateUIPanelWindows(big)
     if big then
-        CraftFrame:SetAttribute("UIPanelLayout-width", 942);
+        CraftFrame:SetAttribute("UIPanelLayout-width", frameWidth);
     else
-        CraftFrame:SetAttribute("UIPanelLayout-width", 404);
+        CraftFrame:SetAttribute("UIPanelLayout-width", frameWidthSmall);
     end
     UpdateUIPanelPositions(CraftFrame)
 end
