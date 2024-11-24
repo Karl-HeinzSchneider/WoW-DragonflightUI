@@ -693,6 +693,9 @@ function DragonflightUIActionbarMixin:StyleButtons()
             hotkey:ClearAllPoints()
             hotkey:SetSize(32, 10)
             hotkey:SetPoint('TOPRIGHT', -5, -5)
+
+            local fontFile, fontHeight, flags = hotkey:GetFont()
+            hotkey:SetFont(fontFile, 14 + 2, "OUTLINE")
         end
         btn.DragonflightFixHotkeyPosition()
 
