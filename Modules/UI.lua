@@ -339,6 +339,7 @@ function Module:ApplySettings()
 end
 
 function Module:ChangeFrames()
+    local db = Module.db.profile.first
     -- DragonflightUIMixin:UIPanelCloseButton(_G['DragonflightUIConfigFrame'].ClosePanelButton)
 
     -- Dragonflight Config
@@ -446,9 +447,11 @@ function Module:ChangeFrames()
         -- DragonflightUIMixin:ChangeSpellbookEra()
         -- DragonflightUIMixin:SpellbookEraAddTabs()
         -- DragonflightUIMixin:SpellbookEraProfessions()
-        Module:FuncOrWaitframe('WhatsTraining', function()
+        if db.changeSpellBook then 
+            Module:FuncOrWaitframe('WhatsTraining', function()
             DF.Compatibility:WhatsTraining()
-        end)
+            end)
+        end
         --[[ DragonflightUIMixin:ChangeCharacterFrameEra()
         Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
             EngravingFrame:SetPoint('TOPLEFT', CharacterFrame, 'TOPRIGHT', 9, -75)
