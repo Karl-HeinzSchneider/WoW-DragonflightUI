@@ -699,10 +699,15 @@ function DragonflightUIActionbarMixin:StyleButtons()
         end
         btn.DragonflightFixHotkeyPosition()
 
-        local name = _G[btnName .. 'Name']
-        name:ClearAllPoints()
-        name:SetSize(32, 10)
-        name:SetPoint('BOTTOM', 0, 2)
+        do
+            local name = _G[btnName .. 'Name']
+            name:ClearAllPoints()
+            name:SetSize(32, 10)
+            name:SetPoint('BOTTOM', 0, 2)
+
+            local fontFile, fontHeight, flags = name:GetFont()
+            name:SetFont(fontFile, 14, "OUTLINE")
+        end
 
         do
             local count = _G[btnName .. 'Count']
