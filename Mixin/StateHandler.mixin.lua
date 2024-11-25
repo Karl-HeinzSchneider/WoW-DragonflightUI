@@ -227,63 +227,63 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
                 getDefaultStr('showMouseover', sub),
             order = 100.5,
-            new = true
+            new = false
         },
         hideAlways = {
             type = 'toggle',
             name = 'Always Hide',
             desc = '' .. cond('hide') .. getDefaultStr('hideAlways', sub),
             order = 101,
-            new = true
+            new = false
         },
         hideCombat = {
             type = 'toggle',
             name = 'Hide In Combat',
             desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', sub),
             order = 102,
-            new = true
+            new = false
         },
         hideOutOfCombat = {
             type = 'toggle',
             name = 'Hide Out Of Combat',
             desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', sub),
             order = 103,
-            new = true
+            new = false
         },
         hidePet = {
             type = 'toggle',
             name = 'Hide With Pet',
             desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', sub),
             order = 104,
-            new = true
+            new = false
         },
         hideNoPet = {
             type = 'toggle',
             name = 'Hide Without Pet',
             desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', sub),
             order = 105,
-            new = true
+            new = false
         },
         hideStance = {
             type = 'toggle',
             name = 'Hide Without Stance/Form',
             desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', sub),
             order = 106,
-            new = true
+            new = false
         },
         hideStealth = {
             type = 'toggle',
             name = 'Hide In Stealth',
             desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', sub),
             order = 107,
-            new = true
+            new = false
         },
         hideNoStealth = {
             type = 'toggle',
             name = 'Hide Outside Stealth',
             desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', sub),
             order = 108,
-            new = true
+            new = false
         },
         hideCustom = {
             type = 'toggle',
@@ -291,7 +291,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
                 getDefaultStr('hideCustom', sub),
             order = 109,
-            new = true
+            new = false
         },
         hideCustomCondButton = {
             type = 'execute',

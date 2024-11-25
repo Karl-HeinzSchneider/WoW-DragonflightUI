@@ -33,13 +33,16 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             hideArt = false,
             hideScrolling = false,
             gryphons = 'DEFAULT',
             range = true,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -66,10 +69,13 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = true,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
 
@@ -97,10 +103,13 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = true,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
 
@@ -128,10 +137,13 @@ local defaults = {
             rows = 3,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = true,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -158,10 +170,13 @@ local defaults = {
             rows = 3,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = true,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -188,10 +203,13 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = false,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = true,
@@ -218,10 +236,13 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = false,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = true,
@@ -248,10 +269,13 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- Style
             alwaysShow = true,
             activate = false,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = true,
@@ -278,9 +302,12 @@ local defaults = {
             rows = 1,
             buttons = 10,
             padding = 2,
+            -- Style
             alwaysShow = true,
             hideMacro = false,
+            macroFontSize = 14,
             hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -354,8 +381,13 @@ local defaults = {
             rows = 1,
             buttons = 10,
             padding = 2,
+            -- Style
             alwaysShow = false,
             activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -845,24 +877,46 @@ local function GetBarOption(n)
                 bigStep = 1,
                 order = 11
             },
+            headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
             alwaysShow = {
                 type = 'toggle',
                 name = 'Always show Actionbar',
                 desc = '' .. getDefaultStr('alwaysShow', barname),
-                order = 12
+                order = 50.1
             },
             hideMacro = {
                 type = 'toggle',
                 name = 'Hide Macro Text',
                 desc = '' .. getDefaultStr('hideMacro', barname),
-                order = 16
+                order = 55
+            },
+            macroFontSize = {
+                type = 'range',
+                name = 'MacroName Font Size',
+                desc = '' .. getDefaultStr('macroFontSize', barname),
+                min = 6,
+                max = 24,
+                bigStep = 1,
+                order = 55.1,
+                new = true
             },
             hideKeybind = {
                 type = 'toggle',
                 name = 'Hide Keybind Text',
                 desc = '' .. getDefaultStr('hideKeybind', barname),
-                order = 17
+                order = 56
+            },
+            keybindFontSize = {
+                type = 'range',
+                name = 'Keybind Font Size',
+                desc = '' .. getDefaultStr('keybindFontSize', barname),
+                min = 6,
+                max = 24,
+                bigStep = 1,
+                order = 56.1,
+                new = true
             }
+
         }
     }
 
@@ -873,27 +927,27 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar art',
                 desc = '' .. getDefaultStr('hideArt', barname),
-                order = 14
+                order = 51.2
             },
             hideScrolling = {
                 type = 'toggle',
                 name = 'Hide bar scrolling',
                 desc = '' .. getDefaultStr('hideScrolling', barname),
-                order = 15
+                order = 51.3
             },
             gryphons = {
                 type = 'select',
                 name = 'Gryphons',
                 desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
-                order = 13
+                order = 51.4
             },
             range = {
                 type = 'toggle',
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
-                order = 12.5
+                order = 51.1
             }
         }
 
@@ -1396,11 +1450,44 @@ local stanceOptions = {
             bigStep = 1,
             order = 11
         },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
         alwaysShow = {
             type = 'toggle',
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', 'stance'),
-            order = 12
+            order = 50.1
+        },
+        hideMacro = {
+            type = 'toggle',
+            name = 'Hide Macro Text',
+            desc = '' .. getDefaultStr('hideMacro', 'stance'),
+            order = 55
+        },
+        macroFontSize = {
+            type = 'range',
+            name = 'MacroName Font Size',
+            desc = '' .. getDefaultStr('macroFontSize', 'stance'),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            order = 55.1,
+            new = true
+        },
+        hideKeybind = {
+            type = 'toggle',
+            name = 'Hide Keybind Text',
+            desc = '' .. getDefaultStr('hideKeybind', 'stance'),
+            order = 56
+        },
+        keybindFontSize = {
+            type = 'range',
+            name = 'Keybind Font Size',
+            desc = '' .. getDefaultStr('keybindFontSize', 'stance'),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            order = 56.1,
+            new = true
         },
         activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
     }
