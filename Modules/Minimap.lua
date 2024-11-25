@@ -633,8 +633,11 @@ function Module.UpdateTrackerState(state)
         QuestWatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
 
         -- QuestWatchFrame:SetHeight(800)
-        -- QuestWatchFrame:SetWidth(204)        
+        -- QuestWatchFrame:SetWidth(204)    
 
+        QuestTimerFrame:ClearAllPoints()
+        -- QuestTimerFrame:SetPoint('TOP', Minimap, 'BOTTOMLEFT', 0, 0)
+        QuestTimerFrame:SetPoint('BOTTOMRIGHT', QuestWatchFrame, 'TOPRIGHT', -25, 0)
     elseif DF.Cata then
         if not WatchFrame then return end
         WatchFrame:SetClampedToScreen(false)
