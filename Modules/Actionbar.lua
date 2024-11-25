@@ -845,23 +845,24 @@ local function GetBarOption(n)
                 bigStep = 1,
                 order = 11
             },
+            headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
             alwaysShow = {
                 type = 'toggle',
                 name = 'Always show Actionbar',
                 desc = '' .. getDefaultStr('alwaysShow', barname),
-                order = 12
+                order = 50.1
             },
             hideMacro = {
                 type = 'toggle',
                 name = 'Hide Macro Text',
                 desc = '' .. getDefaultStr('hideMacro', barname),
-                order = 16
+                order = 55
             },
             hideKeybind = {
                 type = 'toggle',
                 name = 'Hide Keybind Text',
                 desc = '' .. getDefaultStr('hideKeybind', barname),
-                order = 17
+                order = 56
             }
         }
     }
@@ -873,27 +874,27 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar art',
                 desc = '' .. getDefaultStr('hideArt', barname),
-                order = 14
+                order = 51.2
             },
             hideScrolling = {
                 type = 'toggle',
                 name = 'Hide bar scrolling',
                 desc = '' .. getDefaultStr('hideScrolling', barname),
-                order = 15
+                order = 51.3
             },
             gryphons = {
                 type = 'select',
                 name = 'Gryphons',
                 desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
-                order = 13
+                order = 51.4
             },
             range = {
                 type = 'toggle',
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
-                order = 12.5
+                order = 51.1
             }
         }
 
