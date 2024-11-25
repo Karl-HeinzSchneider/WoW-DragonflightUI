@@ -444,7 +444,8 @@
         "BID",
         "LFGMinimapFrame",
         "MinimapBackdrop",
-        "CUSTOM_CLASS_COLORS"
+        "CUSTOM_CLASS_COLORS",
+        "QuestTimerFrame"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
