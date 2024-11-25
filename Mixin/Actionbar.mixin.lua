@@ -189,11 +189,15 @@ function DragonflightUIActionbarMixin:Update()
                 macroText:SetAlpha(1)
             end
 
+            btn:SetMacroFontSize(state.macroFontSize)
+
             if state.hideKeybind then
                 keybindText:SetAlpha(0)
             else
                 keybindText:SetAlpha(1)
             end
+
+            btn:SetKeybindFontSize(state.keybindFontSize)
 
             index = index + 1
         end
@@ -691,22 +695,30 @@ function DragonflightUIActionbarMixin:StyleButtons()
         btn.DragonflightFixHotkeyPosition = function()
             local hotkey = _G[btnName .. 'HotKey']
             hotkey:ClearAllPoints()
-            hotkey:SetSize(32, 10)
+            hotkey:SetSize(46, 10)
             hotkey:SetPoint('TOPRIGHT', -5, -5)
 
-            local fontFile, fontHeight, flags = hotkey:GetFont()
-            hotkey:SetFont(fontFile, 14 + 2, "OUTLINE")
+            function btn:SetKeybindFontSize(newSize)
+                local fontFile, fontHeight, flags = hotkey:GetFont()
+                hotkey:SetFont(fontFile, newSize, "OUTLINE")
+            end
+
+            btn:SetKeybindFontSize(14 + 2)
         end
         btn.DragonflightFixHotkeyPosition()
 
         do
             local name = _G[btnName .. 'Name']
             name:ClearAllPoints()
-            name:SetSize(32, 10)
+            name:SetSize(46, 10)
             name:SetPoint('BOTTOM', 0, 2)
 
-            local fontFile, fontHeight, flags = name:GetFont()
-            name:SetFont(fontFile, 14, "OUTLINE")
+            function btn:SetMacroFontSize(newSize)
+                local fontFile, fontHeight, flags = name:GetFont()
+                name:SetFont(fontFile, newSize, "OUTLINE")
+            end
+
+            btn:SetMacroFontSize(14)
         end
 
         do
