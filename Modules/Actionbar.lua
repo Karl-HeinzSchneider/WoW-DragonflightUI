@@ -846,8 +846,8 @@ local function GetBarOption(n)
                 name = 'ButtonScale',
                 desc = '' .. getDefaultStr('buttonScale', barname),
                 min = 0.1,
-                max = 5,
-                bigStep = 0.1,
+                max = 3,
+                bigStep = 0.05,
                 order = 1
             },
             rows = {
@@ -1076,8 +1076,8 @@ local petOptions = {
             name = 'ButtonScale',
             desc = '' .. getDefaultStr('buttonScale', 'pet'),
             min = 0.1,
-            max = 5,
-            bigStep = 0.1,
+            max = 3,
+            bigStep = 0.05,
             order = 1
         },
         rows = {
@@ -1419,8 +1419,8 @@ local stanceOptions = {
             name = 'ButtonScale',
             desc = '' .. getDefaultStr('buttonScale', 'stance'),
             min = 0.1,
-            max = 5,
-            bigStep = 0.1,
+            max = 3,
+            bigStep = 0.05,
             order = 1
         },
         rows = {
