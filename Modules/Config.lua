@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Config'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -49,36 +50,62 @@ local modulesOptions = {
     get = getOption,
     set = setOption,
     args = {
-        Actionbar = {type = 'toggle', name = 'Actionbar', desc = '' .. getDefaultStr('Actionbar', 'modules'), order = 1},
+        Actionbar = {
+            type = 'toggle',
+            name = 'Actionbar',
+            desc = L["ModuleTooltipActionbar"] .. getDefaultStr('Actionbar', 'modules'),
+            order = 1
+        },
         Castbar = {
             type = 'toggle',
             name = 'Castbar',
-            desc = '' .. getDefaultStr('Castbar', 'modules'),
+            desc = L["ModuleTooltipCastbar"] .. getDefaultStr('Castbar', 'modules'),
             order = 3,
             new = false
         },
-        Chat = {type = 'toggle', name = 'Chat', desc = '' .. getDefaultStr('Chat', 'modules'), order = 4},
+        Chat = {
+            type = 'toggle',
+            name = 'Chat',
+            desc = L["ModuleTooltipChat"] .. getDefaultStr('Chat', 'modules'),
+            order = 4
+        },
         Buffs = {
             type = 'toggle',
             name = 'Buffs',
-            desc = '' .. getDefaultStr('Buffs', 'modules'),
+            desc = L["ModuleTooltipBuffs"] .. getDefaultStr('Buffs', 'modules'),
             order = 2.1,
-            new = true
+            new = false
         },
         Darkmode = {
             type = 'toggle',
             name = 'Darkmode',
-            desc = 'Work in Progress - Please give feedback!' .. getDefaultStr('Darkmode', 'modules'),
+            desc = L["ModuleTooltipDarkmode"] .. getDefaultStr('Darkmode', 'modules'),
             order = 4.1,
             new = true
         },
-        Minimap = {type = 'toggle', name = 'Minimap', desc = '' .. getDefaultStr('Minimap', 'modules'), order = 5},
-        UI = {type = 'toggle', name = 'UI', desc = '' .. getDefaultStr('UI', 'modules'), order = 6, new = false},
-        Unitframe = {type = 'toggle', name = 'Unitframe', desc = '' .. getDefaultStr('Unitframe', 'modules'), order = 7},
+        Minimap = {
+            type = 'toggle',
+            name = 'Minimap',
+            desc = L["ModuleTooltipMinimap"] .. getDefaultStr('Minimap', 'modules'),
+            order = 5
+        },
+        UI = {
+            type = 'toggle',
+            name = 'UI',
+            desc = L["ModuleTooltipUI"] .. getDefaultStr('UI', 'modules'),
+            order = 6,
+            new = false
+        },
+        Unitframe = {
+            type = 'toggle',
+            name = 'Unitframe',
+            desc = L["ModuleTooltipUnitframe"] .. getDefaultStr('Unitframe', 'modules'),
+            order = 7
+        },
         Utility = {
             type = 'toggle',
             name = 'Utility',
-            desc = '' .. getDefaultStr('Utility', 'modules'),
+            desc = L["ModuleTooltipUtility"] .. getDefaultStr('Utility', 'modules'),
             order = 8,
             new = false
         }
@@ -90,7 +117,7 @@ if DF.Cata then
         Bossframe = {
             type = 'toggle',
             name = 'Bossframe',
-            desc = '' .. getDefaultStr('Bossframe', 'modules'),
+            desc = L["ModuleTooltipBossframe"] .. getDefaultStr('Bossframe', 'modules'),
             order = 2,
             new = false
         }
