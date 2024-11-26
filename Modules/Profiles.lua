@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Profiles'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -110,9 +111,9 @@ function Module:RegisterOptionScreens()
         OnAccept = function(self, data, data2)
             --
             local text = self.editBox:GetText()
-            print('new profile: ' .. text)
+            print(L["ProfilesChatNewProfile"] .. text)
             if text == '' or text == ' ' then
-                Module:Print('ERROR: New profile name cant be empty!')
+                Module:Print(L["ProfilesErrorNewProfile"])
             else
                 Module:SetCurrentProfile(text)
             end
@@ -127,7 +128,7 @@ function Module:RegisterOptionScreens()
         OnShow = function(self, data)
             local toDelete = getOption({'toDelete'})
 
-            self.text:SetText(string.format('Delete profile \'%s\'?', toDelete))
+            self.text:SetText(string.format(L["ProfilesDialogueDeleteProfile"], toDelete))
         end,
         OnAccept = function(self, data, data2)
             --         
@@ -144,7 +145,7 @@ function Module:RegisterOptionScreens()
         OnShow = function(self, data)
             local toCopy = getOption({'toCopy'})
 
-            self.text:SetText(string.format('Copy profile \'%s\'?', toCopy))
+            self.text:SetText(string.format(L["ProfilesDialogueCopyProfile"], toCopy))
         end,
         OnAccept = function(self, data, data2)
             --         
@@ -163,7 +164,7 @@ function Module:RegisterOptionScreens()
             currentProfile = {
                 type = 'select',
                 name = 'Current Profile',
-                desc = 'Set active profile.',
+                desc = L["ProfilesSetActiveProfile"],
                 -- values = profilesWithDefaults,
                 valuesFunction = Module.GetProfilesWithDefaults,
                 order = 10
@@ -173,7 +174,7 @@ function Module:RegisterOptionScreens()
                 type = 'execute',
                 name = 'New Profile',
                 btnName = 'Create',
-                desc = 'Create a new profile.',
+                desc = L["ProfilesNewProfile"],
                 func = function()
                     -- print('func! *NewProfile*')
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
@@ -185,7 +186,7 @@ function Module:RegisterOptionScreens()
             toCopy = {
                 type = 'select',
                 name = 'Copy From',
-                desc = 'Copy the settings from one existing profile into the currently active profile.',
+                desc = L["ProfilesCopyFrom"],
                 -- values = profilesWithDefaults,
                 valuesFunction = Module.GetProfiles,
                 order = 31
@@ -194,7 +195,7 @@ function Module:RegisterOptionScreens()
                 type = 'execute',
                 name = 'Copy To Current Profile',
                 btnName = 'Copy',
-                desc = 'Opens copy dialogue.',
+                desc = L["ProfilesOpenCopyDialogue"],
                 func = function()
                     -- print('func! *CopyFromProfile*')
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
@@ -206,7 +207,7 @@ function Module:RegisterOptionScreens()
             toDelete = {
                 type = 'select',
                 name = 'Profile To Delete',
-                desc = 'Delete existing profile from the database.',
+                desc = L["ProfilesDeleteProfile"],
                 -- values = profilesWithDefaults,
                 valuesFunction = Module.GetProfiles,
                 order = 41
@@ -215,7 +216,7 @@ function Module:RegisterOptionScreens()
                 type = 'execute',
                 name = 'Delete Profile',
                 btnName = 'Delete',
-                desc = 'Opens delete dialogue.',
+                desc = L["ProfilesOpenDeleteDialogue"],
                 func = function()
                     -- print('func! *DeleteProfile*')
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
