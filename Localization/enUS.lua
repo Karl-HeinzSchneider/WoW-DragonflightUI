@@ -20,3 +20,16 @@ L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
+-- profiles
+L["ProfilesSetActiveProfile"] = "Set active profile."
+L["ProfilesNewProfile"] = "Create a new profile."
+L["ProfilesCopyFrom"] = "Copy the settings from one existing profile into the currently active profile."
+L["ProfilesOpenCopyDialogue"] = "Opens copy dialogue."
+L["ProfilesDeleteProfile"] = "Delete existing profile from the database."
+L["ProfilesOpenDeleteDialogue"] = "Opens delete dialogue."
+
+L["ProfilesChatNewProfile"] = "new profile: "
+L["ProfilesErrorNewProfile"] = "ERROR: New profile name cant be empty!"
+
+L["ProfilesDialogueDeleteProfile"] = "Delete profile \'%s\'?"
+L["ProfilesDialogueCopyProfile"] = "Copy profile \'%s\'?"
