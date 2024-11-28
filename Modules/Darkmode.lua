@@ -1,10 +1,27 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Darkmode'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, general = {}}}
+local defaults = {
+    profile = {
+        scale = 1,
+        general = {
+            -- Unitframes
+            unitframeDesaturate = true,
+            unitframeR = 77, -- 0.3 * 255 = 67.5
+            unitframeG = 77,
+            unitframeB = 77,
+            -- Minimap
+            minimapDesaturate = true,
+            minimapR = 0.4 * 255,
+            minimapG = 0.4 * 255,
+            minimapB = 0.4 * 255
+        }
+    }
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -41,7 +58,75 @@ local generalOptions = {
         --     max = 5,
         --     bigStep = 0.1,
         --     order = 1
-        -- }    
+        -- }   
+        headerUnitframes = {type = 'header', name = 'Unitframes', desc = '...', order = 100},
+        unitframeDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('unitframeDesaturate', 'general'),
+            order = 100.5
+        },
+        unitframeR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('unitframeR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 101
+        },
+        unitframeG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('unitframeG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 102
+        },
+        unitframeB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('unitframeB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 103
+        },
+        headerMinimap = {type = 'header', name = 'Minimap', desc = '...', order = 200},
+        minimapDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('minimapDesaturate', 'general'),
+            order = 200.5
+        },
+        minimapR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('minimapR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 201
+        },
+        minimapG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('minimapG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 202
+        },
+        minimapB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('minimapB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 203
+        }
     }
 }
 
@@ -100,31 +185,54 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
+    local state = db.general
 
-    Module:UpdateMinimap(true)
-    Module:UpdateUnitframe(true)
+    Module:UpdateMinimap(state)
+    Module:UpdateUnitframe(state)
 end
 
-function Module:UpdateMinimap(dark)
+function Module:UpdateMinimap(state)
     local moduleName = 'Minimap'
-    if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
-
     local minimapModule = DF:GetModule(moduleName)
 
-    local minimapBorderTex = minimapModule.Frame.minimap
+    if not DF.ConfigModule:GetModuleEnabled(moduleName) then
+        -- default
+        -- minimapBorderTex:SetDesaturated(false)
+        -- minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
+        return
+    end
 
+    local minimapBorderTex = minimapModule.Frame.minimap
     if not minimapBorderTex then return end -- TODO: HACK
 
-    if dark then
-        minimapBorderTex:SetDesaturated(true)
-        minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)
-    else
-        minimapBorderTex:SetDesaturated(false)
-        minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
-    end
+    -- minimapBorderTex:SetDesaturated(true)
+    -- minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)  
+
+    minimapBorderTex:SetDesaturated(state.minimapDesaturate)
+    minimapBorderTex:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+
+    MinimapZoomIn:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomIn:GetNormalTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomIn:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomIn:GetDisabledTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+
+    MinimapZoomOut:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomOut:GetNormalTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomOut:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomOut:GetDisabledTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+
+    -- TODO: minimap buttons
+
+    -- if dark then
+    --     minimapBorderTex:SetDesaturated(true)
+    --     minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)
+    -- else
+    --     minimapBorderTex:SetDesaturated(false)
+    --     minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
+    -- end
 end
 
-function Module:UpdateUnitframe(dark)
+function Module:UpdateUnitframe(state)
     local moduleName = 'Unitframe'
     if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
 
@@ -136,29 +244,25 @@ function Module:UpdateUnitframe(dark)
         f.DarkmodePlayerStatusHooked = true
         hooksecurefunc(unitModule, 'UpdatePlayerStatus', function()
             --  
-            local db = Module.db.profile.general
-            local dark = true
-
-            Module:UpdatePlayerFrame(dark)
+            local state = Module.db.profile.general
+            Module:UpdatePlayerFrame(state)
         end)
     end
-    Module:UpdatePlayerFrame(dark)
+    Module:UpdatePlayerFrame(state)
 
     -- target
     if not f.DarkmodeTargetHooked then
         f.DarkmodeTargetHooked = true
         hooksecurefunc(unitModule, 'ChangeToT', function()
             --  
-            local db = Module.db.profile.general
-            local dark = true
-
-            Module:UpdateTargetFrame(dark)
+            local state = Module.db.profile.general
+            Module:UpdateTargetFrame(state)
         end)
     end
-    Module:UpdateTargetFrame(dark)
+    Module:UpdateTargetFrame(state)
 
     -- pet
-    Module:UpdatePetFrame(dark)
+    Module:UpdatePetFrame(state)
 
     -- focus
     if DF.Wrath then
@@ -167,17 +271,15 @@ function Module:UpdateUnitframe(dark)
             f.DarkmodeFocusHooked = true
             hooksecurefunc(unitModule, 'ChangeFocusToT', function()
                 --  
-                local db = Module.db.profile.general
-                local dark = true
-
-                Module:UpdateFocusFrame(dark)
+                local state = Module.db.profile.general
+                Module:UpdateFocusFrame(state)
             end)
         end
-        Module:UpdateFocusFrame(dark)
+        Module:UpdateFocusFrame(state)
     end
 end
 
-function Module:UpdatePlayerFrame(dark)
+function Module:UpdatePlayerFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -186,18 +288,14 @@ function Module:UpdatePlayerFrame(dark)
     local playerFrameBorder = f.PlayerFrameBorder
     local playerFrameDeco = f.PlayerFrameDeco
 
-    if dark then
-        playerFrameBorder:SetDesaturated(true)
-        playerFrameBorder:SetVertexColor(0.3, 0.3, 0.3)
+    playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
+    playerFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        playerFrameDeco:SetDesaturated(true)
-        playerFrameDeco:SetVertexColor(0.3, 0.3, 0.3)
-    else
-
-    end
+    playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
+    playerFrameDeco:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 end
 
-function Module:UpdatePetFrame(dark)
+function Module:UpdatePetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -206,18 +304,14 @@ function Module:UpdatePetFrame(dark)
     local petBackground = f.PetFrameBackground
     local petBorder = f.PetFrameBorder
 
-    if dark then
-        petBackground:SetDesaturated(true)
-        petBackground:SetVertexColor(0.3, 0.3, 0.3)
+    petBackground:SetDesaturated(state.unitframeDesaturate)
+    petBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        petBorder:SetDesaturated(true)
-        petBorder:SetVertexColor(0.3, 0.3, 0.3)
-    else
-
-    end
+    petBorder:SetDesaturated(state.unitframeDesaturate)
+    petBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 end
 
-function Module:UpdateTargetFrame(dark)
+function Module:UpdateTargetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -227,20 +321,17 @@ function Module:UpdateTargetFrame(dark)
     local targetPortExtra = f.PortraitExtra
     local targetOfTargetBorder = f.TargetFrameToTBorder
 
-    if dark then
-        targetFrameBorder:SetDesaturated(true)
-        targetFrameBorder:SetVertexColor(0.3, 0.3, 0.3)
+    targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
+    targetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+    targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
+    targetOfTargetBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        targetOfTargetBorder:SetDesaturated(true)
-        targetOfTargetBorder:SetVertexColor(0.3, 0.3, 0.3)
-    else
-
-    end
+    -- TODO
+    targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 end
 
-function Module:UpdateFocusFrame(dark)
+function Module:UpdateFocusFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -250,17 +341,14 @@ function Module:UpdateFocusFrame(dark)
     local focusBackground = f.FocusFrameBackground
     local focusPortExtra = f.FocusExtra
 
-    if dark then
-        focusBorder:SetDesaturated(true)
-        focusBorder:SetVertexColor(0.3, 0.3, 0.3)
+    focusBorder:SetDesaturated(state.unitframeDesaturate)
+    focusBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        focusBackground:SetDesaturated(true)
-        focusBackground:SetVertexColor(0.3, 0.3, 0.3)
+    focusBackground:SetDesaturated(state.unitframeDesaturate)
+    focusBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
-    else
-
-    end
+    -- TODO
+    focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 end
 
 function Module:HookOnEnable()
