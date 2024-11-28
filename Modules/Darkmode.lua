@@ -188,15 +188,15 @@ function Module:UpdateMinimap(state)
     local moduleName = 'Minimap'
     local minimapModule = DF:GetModule(moduleName)
 
-    local minimapBorderTex = minimapModule.Frame.minimap
-    if not minimapBorderTex then return end -- TODO: HACK
-
     if not DF.ConfigModule:GetModuleEnabled(moduleName) then
         -- default
         -- minimapBorderTex:SetDesaturated(false)
         -- minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
         return
     end
+
+    local minimapBorderTex = minimapModule.Frame.minimap
+    if not minimapBorderTex then return end -- TODO: HACK
 
     -- minimapBorderTex:SetDesaturated(true)
     -- minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)  
