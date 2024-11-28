@@ -10,9 +10,10 @@ local defaults = {
         scale = 1,
         general = {
             -- Unitframes
-            unitframeR = 1,
-            unitframeG = 1,
-            unitframeB = 1,
+            unitframeDesaturate = true,
+            unitframeR = 77, -- 0.3 * 255 = 67.5
+            unitframeG = 77,
+            unitframeB = 77,
             -- Minimap
             minimapDesaturate = true,
             minimapR = 0.4 * 255,
@@ -59,6 +60,12 @@ local generalOptions = {
         --     order = 1
         -- }   
         headerUnitframes = {type = 'header', name = 'Unitframes', desc = '...', order = 100},
+        unitframeDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('unitframeDesaturate', 'general'),
+            order = 100.5
+        },
         unitframeR = {
             type = 'range',
             name = 'r',
@@ -181,7 +188,7 @@ function Module:ApplySettings()
     local state = db.general
 
     Module:UpdateMinimap(state)
-    Module:UpdateUnitframe(true)
+    Module:UpdateUnitframe(state)
 end
 
 function Module:UpdateMinimap(state)
@@ -225,7 +232,7 @@ function Module:UpdateMinimap(state)
     -- end
 end
 
-function Module:UpdateUnitframe(dark)
+function Module:UpdateUnitframe(state)
     local moduleName = 'Unitframe'
     if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
 
@@ -237,29 +244,25 @@ function Module:UpdateUnitframe(dark)
         f.DarkmodePlayerStatusHooked = true
         hooksecurefunc(unitModule, 'UpdatePlayerStatus', function()
             --  
-            local db = Module.db.profile.general
-            local dark = true
-
-            Module:UpdatePlayerFrame(dark)
+            local state = Module.db.profile.general
+            Module:UpdatePlayerFrame(state)
         end)
     end
-    Module:UpdatePlayerFrame(dark)
+    Module:UpdatePlayerFrame(state)
 
     -- target
     if not f.DarkmodeTargetHooked then
         f.DarkmodeTargetHooked = true
         hooksecurefunc(unitModule, 'ChangeToT', function()
             --  
-            local db = Module.db.profile.general
-            local dark = true
-
-            Module:UpdateTargetFrame(dark)
+            local state = Module.db.profile.general
+            Module:UpdateTargetFrame(state)
         end)
     end
-    Module:UpdateTargetFrame(dark)
+    Module:UpdateTargetFrame(state)
 
     -- pet
-    Module:UpdatePetFrame(dark)
+    Module:UpdatePetFrame(state)
 
     -- focus
     if DF.Wrath then
@@ -268,17 +271,15 @@ function Module:UpdateUnitframe(dark)
             f.DarkmodeFocusHooked = true
             hooksecurefunc(unitModule, 'ChangeFocusToT', function()
                 --  
-                local db = Module.db.profile.general
-                local dark = true
-
-                Module:UpdateFocusFrame(dark)
+                local state = Module.db.profile.general
+                Module:UpdateFocusFrame(state)
             end)
         end
-        Module:UpdateFocusFrame(dark)
+        Module:UpdateFocusFrame(state)
     end
 end
 
-function Module:UpdatePlayerFrame(dark)
+function Module:UpdatePlayerFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -287,18 +288,14 @@ function Module:UpdatePlayerFrame(dark)
     local playerFrameBorder = f.PlayerFrameBorder
     local playerFrameDeco = f.PlayerFrameDeco
 
-    if dark then
-        playerFrameBorder:SetDesaturated(true)
-        playerFrameBorder:SetVertexColor(0.3, 0.3, 0.3)
+    playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
+    playerFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        playerFrameDeco:SetDesaturated(true)
-        playerFrameDeco:SetVertexColor(0.3, 0.3, 0.3)
-    else
-
-    end
+    playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
+    playerFrameDeco:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 end
 
-function Module:UpdatePetFrame(dark)
+function Module:UpdatePetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -307,18 +304,14 @@ function Module:UpdatePetFrame(dark)
     local petBackground = f.PetFrameBackground
     local petBorder = f.PetFrameBorder
 
-    if dark then
-        petBackground:SetDesaturated(true)
-        petBackground:SetVertexColor(0.3, 0.3, 0.3)
+    petBackground:SetDesaturated(state.unitframeDesaturate)
+    petBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        petBorder:SetDesaturated(true)
-        petBorder:SetVertexColor(0.3, 0.3, 0.3)
-    else
-
-    end
+    petBorder:SetDesaturated(state.unitframeDesaturate)
+    petBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 end
 
-function Module:UpdateTargetFrame(dark)
+function Module:UpdateTargetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -328,20 +321,17 @@ function Module:UpdateTargetFrame(dark)
     local targetPortExtra = f.PortraitExtra
     local targetOfTargetBorder = f.TargetFrameToTBorder
 
-    if dark then
-        targetFrameBorder:SetDesaturated(true)
-        targetFrameBorder:SetVertexColor(0.3, 0.3, 0.3)
+    targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
+    targetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+    targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
+    targetOfTargetBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        targetOfTargetBorder:SetDesaturated(true)
-        targetOfTargetBorder:SetVertexColor(0.3, 0.3, 0.3)
-    else
-
-    end
+    -- TODO
+    targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 end
 
-function Module:UpdateFocusFrame(dark)
+function Module:UpdateFocusFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
 
@@ -351,17 +341,14 @@ function Module:UpdateFocusFrame(dark)
     local focusBackground = f.FocusFrameBackground
     local focusPortExtra = f.FocusExtra
 
-    if dark then
-        focusBorder:SetDesaturated(true)
-        focusBorder:SetVertexColor(0.3, 0.3, 0.3)
+    focusBorder:SetDesaturated(state.unitframeDesaturate)
+    focusBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        focusBackground:SetDesaturated(true)
-        focusBackground:SetVertexColor(0.3, 0.3, 0.3)
+    focusBackground:SetDesaturated(state.unitframeDesaturate)
+    focusBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
-        focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
-    else
-
-    end
+    -- TODO
+    focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 end
 
 function Module:HookOnEnable()
