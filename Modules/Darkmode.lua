@@ -1,10 +1,26 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Darkmode'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, general = {}}}
+local defaults = {
+    profile = {
+        scale = 1,
+        general = {
+            -- Unitframes
+            unitframeR = 1,
+            unitframeG = 1,
+            unitframeB = 1,
+            -- Minimap
+            minimapDesaturate = true,
+            minimapR = 0.4 * 255,
+            minimapG = 0.4 * 255,
+            minimapB = 0.4 * 255
+        }
+    }
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -41,7 +57,69 @@ local generalOptions = {
         --     max = 5,
         --     bigStep = 0.1,
         --     order = 1
-        -- }    
+        -- }   
+        headerUnitframes = {type = 'header', name = 'Unitframes', desc = '...', order = 100},
+        unitframeR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('unitframeR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 101
+        },
+        unitframeG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('unitframeG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 102
+        },
+        unitframeB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('unitframeB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 103
+        },
+        headerMinimap = {type = 'header', name = 'Minimap', desc = '...', order = 200},
+        minimapDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('minimapDesaturate', 'general'),
+            order = 200.5
+        },
+        minimapR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('minimapR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 201
+        },
+        minimapG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('minimapG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 202
+        },
+        minimapB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('minimapB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 203
+        }
     }
 }
 
@@ -100,28 +178,51 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
+    local state = db.general
 
-    Module:UpdateMinimap(true)
+    Module:UpdateMinimap(state)
     Module:UpdateUnitframe(true)
 end
 
-function Module:UpdateMinimap(dark)
+function Module:UpdateMinimap(state)
     local moduleName = 'Minimap'
-    if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
-
     local minimapModule = DF:GetModule(moduleName)
 
     local minimapBorderTex = minimapModule.Frame.minimap
-
     if not minimapBorderTex then return end -- TODO: HACK
 
-    if dark then
-        minimapBorderTex:SetDesaturated(true)
-        minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)
-    else
-        minimapBorderTex:SetDesaturated(false)
-        minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
+    if not DF.ConfigModule:GetModuleEnabled(moduleName) then
+        -- default
+        -- minimapBorderTex:SetDesaturated(false)
+        -- minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
+        return
     end
+
+    -- minimapBorderTex:SetDesaturated(true)
+    -- minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)  
+
+    minimapBorderTex:SetDesaturated(state.minimapDesaturate)
+    minimapBorderTex:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+
+    MinimapZoomIn:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomIn:GetNormalTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomIn:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomIn:GetDisabledTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+
+    MinimapZoomOut:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomOut:GetNormalTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomOut:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
+    MinimapZoomOut:GetDisabledTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+
+    -- TODO: minimap buttons
+
+    -- if dark then
+    --     minimapBorderTex:SetDesaturated(true)
+    --     minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)
+    -- else
+    --     minimapBorderTex:SetDesaturated(false)
+    --     minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
+    -- end
 end
 
 function Module:UpdateUnitframe(dark)
