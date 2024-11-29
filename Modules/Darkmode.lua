@@ -191,6 +191,17 @@ function Module:ApplySettings()
     Module:UpdateUnitframe(state)
 end
 
+function Module:UpdateMinimapButton(btn)
+    -- print('darkmode button:', btn:GetName())
+    local border = btn.DFTrackingBorder
+    if not border then return end
+
+    local state = Module.db.profile.general
+
+    border:SetDesaturated(state.minimapDesaturate)
+    border:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+end
+
 function Module:UpdateMinimap(state)
     local moduleName = 'Minimap'
     local minimapModule = DF:GetModule(moduleName)
@@ -230,6 +241,31 @@ function Module:UpdateMinimap(state)
     --     minimapBorderTex:SetDesaturated(false)
     --     minimapBorderTex:SetVertexColor(1.0, 1.0, 1.0)
     -- end
+
+    local libIcon = LibStub("LibDBIcon-1.0")
+
+    if not libIcon then return end
+
+    local f = minimapModule.Frame;
+    if not f.DarkmodeButtonHooked then
+        f.DarkmodeButtonHooked = true
+
+        hooksecurefunc(minimapModule, 'UpdateButton', function(btn)
+            Module:UpdateMinimapButton(btn)
+        end)
+    end
+
+    local buttons = libIcon:GetButtonList()
+
+    for k, v in ipairs(buttons) do
+        ---@diagnostic disable-next-line: param-type-mismatch
+        local btn = libIcon:GetMinimapButton(v)
+
+        if btn then
+            --
+            Module:UpdateMinimapButton(btn)
+        end
+    end
 end
 
 function Module:UpdateUnitframe(state)

@@ -1352,6 +1352,8 @@ function Module:UpdateButton(btn)
                 child:SetTexture(base .. 'minimap-trackingborder')
                 child:ClearAllPoints()
                 child:SetPoint("TOPLEFT", btn, "TOPLEFT")
+
+                btn.DFTrackingBorder = child
             elseif tex == 136467 then
                 -- background
                 ----"Interface\\Minimap\\UI-Minimap-Background"
@@ -1456,6 +1458,7 @@ function frame:OnEvent(event, arg1, arg2, arg3)
     end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
+Module.Frame = frame
 
 -- Wrath
 function Module.Wrath()
