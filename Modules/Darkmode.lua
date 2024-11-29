@@ -11,6 +11,7 @@ local defaults = {
         general = {
             -- Unitframes
             unitframeDesaturate = true,
+            -- unitframeHealthDesaturate = true,
             unitframeR = 77, -- 0.3 * 255 = 67.5
             unitframeG = 77,
             unitframeB = 77,
@@ -66,6 +67,12 @@ local generalOptions = {
             desc = '' .. getDefaultStr('unitframeDesaturate', 'general'),
             order = 100.5
         },
+        -- unitframeHealthDesaturate = {
+        --     type = 'toggle',
+        --     name = 'Desaturate Healthbar',
+        --     desc = '' .. getDefaultStr('unitframeHealthDesaturate', 'general'),
+        --     order = 100.6
+        -- },
         unitframeR = {
             type = 'range',
             name = 'r',
@@ -329,6 +336,8 @@ function Module:UpdatePlayerFrame(state)
 
     playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
     playerFrameDeco:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+
+    -- PlayerFrameHealthBar:GetStatusBarTexture():SetDesaturated(state.unitframeHealthDesaturate)
 end
 
 function Module:UpdatePetFrame(state)
