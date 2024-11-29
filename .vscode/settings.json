@@ -445,7 +445,8 @@
         "LFGMinimapFrame",
         "MinimapBackdrop",
         "CUSTOM_CLASS_COLORS",
-        "QuestTimerFrame"
+        "QuestTimerFrame",
+        "PlayerFrameHealthBar"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
