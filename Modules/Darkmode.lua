@@ -467,16 +467,17 @@ function Module:UpdateActionbar(state)
     gryphonRight:SetDesaturated(state.actionbarDesaturate)
     gryphonRight:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
 
-    for i = 1, 8 do
+    for i = 0, 8 do
         local bar = unitModule['bar' .. i]
+        if i == 0 then bar = unitModule['petbar'] end
         if bar then
             --          
             local buttonTable = bar.buttonTable
             local btnCount = #buttonTable
 
-            for i = 1, btnCount do
+            for j = 1, btnCount do
                 --
-                local btn = buttonTable[i]
+                local btn = buttonTable[j]
                 btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
                                                       state.actionbarB / 255)
             end
