@@ -1685,7 +1685,13 @@ end
 function Module.HookVertexColor()
     PlayerFrameHealthBar:HookScript('OnValueChanged', Module.UpdatePlayerFrameHealthBar)
     PlayerFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
-        if event == 'UNIT_MAXHEALTH' and arg1 == 'player' then Module.UpdatePlayerFrameHealthBar() end
+        -- if event == 'UNIT_MAXHEALTH' and arg1 == 'player' then Module.UpdatePlayerFrameHealthBar() end
+        Module.UpdatePlayerFrameHealthBar()
+    end)
+
+    PlayerFrame:HookScript('OnEvent', function(self, event, arg1)
+        -- print('onevent playerframe')
+        Module.UpdatePlayerFrameHealthBar()
     end)
 
     local updateTargetFrameHealthBar = function()
