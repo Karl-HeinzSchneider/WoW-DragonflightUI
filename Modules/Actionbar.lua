@@ -2738,9 +2738,22 @@ end
 
 function frame:OnEvent(event, arg1)
     -- print('event', event)
-    if event == 'PLAYER_ENTERING_WORLD' then ActivateAllActionbars() end
+    if event == 'PLAYER_ENTERING_WORLD' then
+        -- ActivateAllActionbars()
+    elseif event == 'PLAYER_REGEN_ENABLED' then
+        --
+        -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
+        if frame.ShouldUpdate then
+            local db = Module.db.profile
+            local state = db.micro
+            Module.MicroFrame:UpdateStateHandler(state)
+
+            frame.ShouldUpdate = false
+        end
+    end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
+frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 local atlasActionbar = {
     ['UI-HUD-ActionBar-Gryphon-Left'] = {200, 188, 0.001953125, 0.697265625, 0.10205078125, 0.26513671875, false, false},
@@ -3304,6 +3317,22 @@ function Module.ChangeMicroMenu()
         Module.HookMicromenuOverride()
     end
 
+    -- TalentMicroButton getting updated from UpdateMicroButtons() when open/closeing talentframe
+    hooksecurefunc('UpdateMicroButtons', function()
+        --
+        -- print('UpdateMicroButtons')
+
+        if InCombatLockdown() then
+            -- prevent unsecure update in combat TODO: message?
+            frame.ShouldUpdate = true
+            return
+        end
+        frame.ShouldUpdate = false
+
+        local db = Module.db.profile
+        local state = db.micro
+        Module.MicroFrame:UpdateStateHandler(state)
+    end)
 end
 
 function Module.BetterPVPMicroButton(btn)
