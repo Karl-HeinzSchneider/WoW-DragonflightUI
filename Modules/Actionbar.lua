@@ -3379,7 +3379,7 @@ function Module.ChangeCharacterMicroButton()
     end
 end
 
-function Module.ChangeMicroMenuNew()
+function Module.ChangeMicroMenu()
     local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent, 'SecureFrameTemplate')
     microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
     microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
@@ -3504,157 +3504,6 @@ function Module.HookMicromenuOverride()
             Module.UpdateMicromenuState(db.micro)
         end
     end)
-end
-
-function Module.ChangeMicroMenu()
-    -- from https://www.townlong-yak.com/framexml/live/Helix/AtlasInfo.lua
-    local Atlas = {
-        ['UI-HUD-MicroMenu-Achievements-Disabled'] = {
-            38, 52, 0.78515625, 0.93359375, 0.212890625, 0.314453125, false, false
-        },
-        ['UI-HUD-MicroMenu-Achievements-Down'] = {
-            38, 52, 0.62890625, 0.77734375, 0.107421875, 0.208984375, false, false
-        },
-        ['UI-HUD-MicroMenu-Achievements-Mouseover'] = {
-            38, 52, 0.78515625, 0.93359375, 0.107421875, 0.208984375, false, false
-        },
-        ['UI-HUD-MicroMenu-Achievements-Up'] = {38, 52, 0.62890625, 0.77734375, 0.212890625, 0.314453125, false, false},
-        ['UI-HUD-MicroMenu-AdventureGuide-Disabled'] = {
-            38, 52, 0.31640625, 0.46484375, 0.318359375, 0.419921875, false, false
-        },
-        ['UI-HUD-MicroMenu-AdventureGuide-Down'] = {
-            38, 52, 0.78515625, 0.93359375, 0.318359375, 0.419921875, false, false
-        },
-        ['UI-HUD-MicroMenu-AdventureGuide-Mouseover'] = {
-            38, 52, 0.62890625, 0.77734375, 0.318359375, 0.419921875, false, false
-        },
-        ['UI-HUD-MicroMenu-AdventureGuide-Up'] = {
-            38, 52, 0.00390625, 0.15234375, 0.529296875, 0.630859375, false, false
-        },
-        ['UI-HUD-MicroMenu-CharacterInfo-Disabled'] = {
-            38, 52, 0.00390625, 0.15234375, 0.423828125, 0.525390625, false, false
-        },
-        ['UI-HUD-MicroMenu-CharacterInfo-Down'] = {
-            38, 52, 0.47265625, 0.62109375, 0.318359375, 0.419921875, false, false
-        },
-        ['UI-HUD-MicroMenu-CharacterInfo-Mouseover'] = {
-            38, 52, 0.31640625, 0.46484375, 0.423828125, 0.525390625, false, false
-        },
-        ['UI-HUD-MicroMenu-CharacterInfo-Up'] = {38, 52, 0.00390625, 0.15234375, 0.634765625, 0.736328125, false, false},
-        ['UI-HUD-MicroMenu-Collections-Disabled'] = {
-            38, 52, 0.47265625, 0.62109375, 0.001953125, 0.103515625, false, false
-        },
-        ['UI-HUD-MicroMenu-Collections-Down'] = {38, 52, 0.00390625, 0.15234375, 0.740234375, 0.841796875, false, false},
-        ['UI-HUD-MicroMenu-Collections-Mouseover'] = {
-            38, 52, 0.00390625, 0.15234375, 0.845703125, 0.947265625, false, false
-        },
-        ['UI-HUD-MicroMenu-Collections-Up'] = {38, 52, 0.16015625, 0.30859375, 0.318359375, 0.419921875, false, false},
-        ['UI-HUD-MicroMenu-Communities-Icon-Notification'] = {
-            20, 22, 0.00390625, 0.08203125, 0.951171875, 0.994140625, false, false
-        },
-        ['UI-HUD-MicroMenu-GameMenu-Disabled'] = {
-            38, 52, 0.16015625, 0.30859375, 0.423828125, 0.525390625, false, false
-        },
-        ['UI-HUD-MicroMenu-GameMenu-Down'] = {38, 52, 0.47265625, 0.62109375, 0.423828125, 0.525390625, false, false},
-        ['UI-HUD-MicroMenu-GameMenu-Mouseover'] = {
-            38, 52, 0.62890625, 0.77734375, 0.423828125, 0.525390625, false, false
-        },
-        ['UI-HUD-MicroMenu-GameMenu-Up'] = {38, 52, 0.78515625, 0.93359375, 0.423828125, 0.525390625, false, false},
-        ['UI-HUD-MicroMenu-Groupfinder-Disabled'] = {
-            38, 52, 0.16015625, 0.30859375, 0.529296875, 0.630859375, false, false
-        },
-        ['UI-HUD-MicroMenu-Groupfinder-Down'] = {38, 52, 0.31640625, 0.46484375, 0.212890625, 0.314453125, false, false},
-        ['UI-HUD-MicroMenu-Groupfinder-Mouseover'] = {
-            38, 52, 0.16015625, 0.30859375, 0.212890625, 0.314453125, false, false
-        },
-        ['UI-HUD-MicroMenu-Groupfinder-Up'] = {38, 52, 0.00390625, 0.15234375, 0.318359375, 0.419921875, false, false},
-        ['UI-HUD-MicroMenu-GuildCommunities-Disabled'] = {
-            38, 52, 0.78515625, 0.93359375, 0.001953125, 0.103515625, false, false
-        },
-        ['UI-HUD-MicroMenu-GuildCommunities-Down'] = {
-            38, 52, 0.00390625, 0.15234375, 0.001953125, 0.103515625, false, false
-        },
-        ['UI-HUD-MicroMenu-GuildCommunities-Mouseover'] = {
-            38, 52, 0.16015625, 0.30859375, 0.001953125, 0.103515625, false, false
-        },
-        ['UI-HUD-MicroMenu-GuildCommunities-Up'] = {
-            38, 52, 0.16015625, 0.30859375, 0.107421875, 0.208984375, false, false
-        },
-        ['UI-HUD-MicroMenu-Highlightalert'] = {66, 80, 0.47265625, 0.73046875, 0.740234375, 0.896484375, false, false},
-        ['UI-HUD-MicroMenu-Questlog-Disabled'] = {
-            38, 52, 0.16015625, 0.30859375, 0.740234375, 0.841796875, false, false
-        },
-        ['UI-HUD-MicroMenu-Questlog-Down'] = {38, 52, 0.47265625, 0.62109375, 0.529296875, 0.630859375, false, false},
-        ['UI-HUD-MicroMenu-Questlog-Mouseover'] = {
-            38, 52, 0.16015625, 0.30859375, 0.845703125, 0.947265625, false, false
-        },
-        ['UI-HUD-MicroMenu-Questlog-Up'] = {38, 52, 0.78515625, 0.93359375, 0.529296875, 0.630859375, false, false},
-        ['UI-HUD-MicroMenu-Shop-Disabled'] = {38, 52, 0.16015625, 0.30859375, 0.634765625, 0.736328125, false, false},
-        ['UI-HUD-MicroMenu-Shop-Down'] = {38, 52, 0.62890625, 0.77734375, 0.529296875, 0.630859375, false, false},
-        ['UI-HUD-MicroMenu-Shop-Mouseover'] = {38, 52, 0.47265625, 0.62109375, 0.634765625, 0.736328125, false, false},
-        ['UI-HUD-MicroMenu-Shop-Up'] = {38, 52, 0.00390625, 0.15234375, 0.212890625, 0.314453125, false, false},
-        ['UI-HUD-MicroMenu-SpecTalents-Disabled'] = {
-            38, 52, 0.31640625, 0.46484375, 0.107421875, 0.208984375, false, false
-        },
-        ['UI-HUD-MicroMenu-SpecTalents-Down'] = {38, 52, 0.31640625, 0.46484375, 0.529296875, 0.630859375, false, false},
-        ['UI-HUD-MicroMenu-SpecTalents-Mouseover'] = {
-            38, 52, 0.31640625, 0.46484375, 0.001953125, 0.103515625, false, false
-        },
-        ['UI-HUD-MicroMenu-SpecTalents-Up'] = {38, 52, 0.62890625, 0.77734375, 0.001953125, 0.103515625, false, false},
-        ['UI-HUD-MicroMenu-SpellbookAbilities-Disabled'] = {
-            38, 52, 0.00390625, 0.15234375, 0.107421875, 0.208984375, false, false
-        },
-        ['UI-HUD-MicroMenu-SpellbookAbilities-Down'] = {
-            38, 52, 0.31640625, 0.46484375, 0.845703125, 0.947265625, false, false
-        },
-        ['UI-HUD-MicroMenu-SpellbookAbilities-Mouseover'] = {
-            38, 52, 0.73828125, 0.88671875, 0.845703125, 0.947265625, false, false
-        },
-        ['UI-HUD-MicroMenu-SpellbookAbilities-Up'] = {
-            38, 52, 0.47265625, 0.62109375, 0.107421875, 0.208984375, false, false
-        },
-        ['UI-HUD-MicroMenu-StreamDLGreen-Down'] = {
-            38, 52, 0.31640625, 0.46484375, 0.634765625, 0.736328125, false, false
-        },
-        ['UI-HUD-MicroMenu-StreamDLGreen-Up'] = {38, 52, 0.47265625, 0.62109375, 0.212890625, 0.314453125, false, false},
-        ['UI-HUD-MicroMenu-StreamDLRed-Down'] = {38, 52, 0.31640625, 0.46484375, 0.740234375, 0.841796875, false, false},
-        ['UI-HUD-MicroMenu-StreamDLRed-Up'] = {38, 52, 0.62890625, 0.77734375, 0.634765625, 0.736328125, false, false},
-        ['UI-HUD-MicroMenu-StreamDLYellow-Down'] = {
-            38, 52, 0.73828125, 0.88671875, 0.740234375, 0.841796875, false, false
-        },
-        ['UI-HUD-MicroMenu-StreamDLYellow-Up'] = {
-            38, 52, 0.78515625, 0.93359375, 0.634765625, 0.736328125, false, false
-        }
-    }
-    local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uimicromenu2x'
-    Module.SetButtonFromAtlas(CharacterMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'CharacterInfo')
-    MicroButtonPortrait:Hide()
-    Module.SetButtonFromAtlas(SpellbookMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'SpellbookAbilities')
-    Module.SetButtonFromAtlas(TalentMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'SpecTalents')
-    Module.SetButtonFromAtlas(QuestLogMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Questlog')
-    Module.SetButtonFromAtlas(SocialsMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'GuildCommunities')
-
-    Module.SetButtonFromAtlas(HelpMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'GameMenu')
-
-    if DF.Wrath then
-        Module.SetButtonFromAtlas(AchievementMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Achievements')
-        Module.SetButtonFromAtlas(PVPMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'AdventureGuide')
-        PVPMicroButtonTexture:Hide()
-        Module.SetButtonFromAtlas(LFGMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Groupfinder')
-        Module.SetButtonFromAtlas(MainMenuMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Shop')
-
-        Module.SetButtonFromAtlas(CollectionsMicroButton, Atlas, microTexture, 'UI-HUD-MicroMenu-', 'Collections')
-        MainMenuBarTextureExtender:Hide()
-
-        local deltaX, deltaY = 6, 18
-        MainMenuBarPerformanceBar:ClearAllPoints()
-        MainMenuBarPerformanceBar:SetPoint('LEFT', MainMenuMicroButton, 'LEFT', deltaX, -deltaY)
-        MainMenuBarPerformanceBar:SetPoint('RIGHT', MainMenuMicroButton, 'RIGHT', -deltaX, -deltaY)
-        MainMenuBarPerformanceBar:SetPoint('RIGHT', MainMenuMicroButton, 'RIGHT',
-                                           MainMenuBarPerformanceBar:GetWidth() / 2 - deltaX, -15)
-    else
-        MainMenuBarPerformanceBarFrame:Hide()
-    end
 end
 
 function Module.UpdateMicromenuState(state)
@@ -4276,7 +4125,7 @@ function Module.Wrath()
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
 
-    Module.ChangeMicroMenuNew()
+    Module.ChangeMicroMenu()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()
@@ -4304,7 +4153,7 @@ function Module.Era()
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
 
-    Module.ChangeMicroMenuNew()
+    Module.ChangeMicroMenu()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()
