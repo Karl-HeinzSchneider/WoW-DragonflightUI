@@ -2376,69 +2376,6 @@ function Module.CreateNewRepBar()
     Module.repbar = newRep
 end
 
-function Module.ApplyMask()
-    local buttonTable = {
-        'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton', 'MultiBarLeftButton',
-        'MultiBarRightButton'
-    }
-    frame.ButtonMask = frame:CreateMaskTexture()
-    frame.ButtonMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\ui-chaticon-hots')
-    frame.ButtonMask:SetTexture('Interface/ChatFrame/UI-ChatIcon-HotS')
-
-    local f = CreateFrame('Frame', nil, UIParent)
-    f:SetPoint('CENTER')
-    f:SetSize(64, 64)
-
-    ---@diagnostic disable-next-line: count-down-loop
-    for i = 1, 0 do
-        local tex = f:CreateTexture()
-        tex:SetAllPoints(f)
-        tex:SetTexture('Interface/Icons/spell_shadow_antishadow')
-        tex:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
-        tex:SetPoint('CENTER', f, 'CENTER', i, i)
-
-        f['tex' .. i] = tex
-    end
-
-    for k, v in pairs(buttonTable) do
-        for i = 1, 12 do
-            -- MultiBarBottomRightButton1NormalTexture
-            local name = v .. i
-
-            -- Mask
-            local btn = _G[name]
-            local icon = _G[name .. 'Icon']
-            if icon then
-                icon:SetAlpha(0.1)
-                local tex = btn:CreateTexture()
-                tex:SetPoint('CENTER', btn)
-                local size = 36
-                tex:SetSize(size, size)
-                tex:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\mask3')
-                tex:SetDrawLayer('BACKGROUND')
-                btn.DragonflightUIMaskTexture = tex
-
-                hooksecurefunc(icon, 'Show', function(self)
-                    local tex = self:GetTexture()
-                    if tex then
-                        btn.DragonflightUIMaskTexture:Show()
-                        btn.DragonflightUIMaskTexture:SetTexture(tex)
-                    end
-                end)
-                hooksecurefunc(icon, 'Hide', function(self)
-                    btn.DragonflightUIMaskTexture:Hide()
-                end)
-
-                hooksecurefunc(icon, 'SetVertexColor', function(self)
-                    -- print('vertex')
-                    local r, g, b = self:GetVertexColor()
-                    btn.DragonflightUIMaskTexture:SetVertexColor(r, g, b)
-                end)
-            end
-        end
-    end
-end
-
 function Module.HookAlwaysShowActionbar()
     local updateGrids = function()
         print('updateGrids')
