@@ -19,7 +19,12 @@ local defaults = {
             minimapDesaturate = true,
             minimapR = 0.4 * 255,
             minimapG = 0.4 * 255,
-            minimapB = 0.4 * 255
+            minimapB = 0.4 * 255,
+            -- Actionbar
+            actionbarDesaturate = true,
+            actionbarR = 0.4 * 255,
+            actionbarG = 0.4 * 255,
+            actionbarB = 0.4 * 255
         }
     }
 }
@@ -133,6 +138,40 @@ local generalOptions = {
             max = 255,
             bigStep = 1,
             order = 203
+        },
+        headerActionbar = {type = 'header', name = 'Actionbar', desc = '...', order = 300},
+        actionbarDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('actionbarDesaturate', 'general'),
+            order = 300.5
+        },
+        actionbarR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('actionbarR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 301
+        },
+        actionbarG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('actionbarG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 302
+        },
+        actionbarB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('actionbarB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 303
         }
     }
 }
@@ -160,6 +199,14 @@ function Module:OnEnable()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
+
+    -- TODO: hack, bar 2-5 gets overriden
+    C_Timer.After(0, function()
+        --
+        local db = Module.db.profile
+        local state = db.general
+        Module:UpdateActionbar(state)
+    end)
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -196,6 +243,7 @@ function Module:ApplySettings()
 
     Module:UpdateMinimap(state)
     Module:UpdateUnitframe(state)
+    Module:UpdateActionbar(state)
 end
 
 function Module:UpdateMinimapButton(btn)
@@ -394,6 +442,42 @@ function Module:UpdateFocusFrame(state)
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+end
+
+function Module:UpdateActionbar(state)
+    local moduleName = 'Actionbar'
+    if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
+
+    local unitModule = DF:GetModule(moduleName)
+    local f = unitModule.Frame
+
+    local mainbar = unitModule.bar1
+    if not mainbar then return end
+
+    local gryphonLeft = mainbar.gryphonLeft.texture
+    local gryphonRight = mainbar.gryphonRight.texture
+
+    gryphonLeft:SetDesaturated(state.actionbarDesaturate)
+    gryphonLeft:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+
+    gryphonRight:SetDesaturated(state.actionbarDesaturate)
+    gryphonRight:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+
+    for i = 1, 8 do
+        local bar = unitModule['bar' .. i]
+        if bar then
+            --          
+            local buttonTable = bar.buttonTable
+            local btnCount = #buttonTable
+
+            for i = 1, btnCount do
+                --
+                local btn = buttonTable[i]
+                btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                      state.actionbarB / 255)
+            end
+        end
+    end
 end
 
 function Module:HookOnEnable()
