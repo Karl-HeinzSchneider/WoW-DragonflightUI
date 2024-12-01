@@ -3764,7 +3764,7 @@ function Module.GetBagSlots(id)
     end
 end
 
-function Module.ChangeBackpackNew()
+function Module.ChangeBackpack()
     local bagAtlas = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
     -- MainMenuBarBackpackButton
     do
@@ -3954,88 +3954,6 @@ function Module.UpdateBagSlotIcons()
             iconTexture:SetDrawLayer('BORDER', 2)
         end
     end
-end
-
-function Module.ChangeBackpack()
-    -- MainMenuBarBackpackButton MainMenuBarBackpackButtonIconTexture
-    local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbag'
-    local highlight = 'Interface\\Addons\\DragonflightUI\\Textures\\bigbagHighlight'
-
-    MainMenuBarBackpackButton:SetScale(1.5)
-
-    SetItemButtonTexture(MainMenuBarBackpackButton, texture)
-    MainMenuBarBackpackButton:SetHighlightTexture(highlight)
-    MainMenuBarBackpackButton:SetPushedTexture(highlight)
-    MainMenuBarBackpackButton:SetCheckedTexture(highlight)
-
-    MainMenuBarBackpackButtonNormalTexture:Hide()
-    MainMenuBarBackpackButtonNormalTexture:SetTexture()
-    -- MainMenuBarBackpackButton.IconBorder:Hide()
-
-    local slot = 'Interface\\Addons\\DragonflightUI\\Textures\\bagborder2'
-    local slothighlight = 'Interface\\Addons\\DragonflightUI\\Textures\\baghighlight2'
-
-    local bagtexture = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
-    local bagmask = 'Interface\\Addons\\DragonflightUI\\Textures\\bagmask'
-    -- dx/dy => better center
-    local dy = 0.015
-    local dx = -0.001
-
-    for i = 0, 3 do
-        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexture(bagtexture)
-        --  _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625) -- empty
-
-        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx,
-                                                                         0.0078125 + dy, 0.484375 + dy)
-        _G['CharacterBag' .. i .. 'Slot']:GetNormalTexture():SetSize(35, 35)
-
-        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetTexture(bagtexture)
-        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture()
-            :SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
-        _G['CharacterBag' .. i .. 'Slot']:GetHighlightTexture():SetSize(35, 35)
-
-        _G['CharacterBag' .. i .. 'Slot']:GetCheckedTexture():SetTexture()
-        _G['CharacterBag' .. i .. 'Slot']:GetPushedTexture():SetTexture()
-
-        _G['CharacterBag' .. i .. 'SlotIconTexture']:SetMask(bagmask)
-
-        -- Note:
-        -- bagID = 4 3 2 1 0  , 0 = backpack
-        -- texture bag id = 3 2 1 0  , backpack seperate
-        local slothook = function(self, id)
-            local slots = Module.GetBagSlots(id)
-            local name = 'CharacterBag' .. (id - 1) .. 'Slot'
-            if slots == 0 then
-                _G[name]:GetNormalTexture():SetTexCoord(0.576171875, 0.6953125, 0.5, 0.9765625)
-            else
-                _G[name]:GetNormalTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx, 0.0078125 + dy, 0.484375 + dy)
-            end
-        end
-
-        hooksecurefunc(_G['CharacterBag' .. i .. 'SlotIconTexture'], 'SetTexture', function(args)
-            slothook(args, i + 1)
-        end)
-    end
-
-    CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
-
-    -- keyring
-    KeyRingButton:SetSize(34.5, 34.5)
-    KeyRingButton:SetPoint('RIGHT', CharacterBag3Slot, 'LEFT', -6 + 3, 0 - 2 + 2)
-
-    KeyRingButton:GetNormalTexture():SetTexture(bagtexture)
-    KeyRingButton:GetNormalTexture():SetSize(35, 35)
-    KeyRingButton:GetNormalTexture():SetTexCoord(0.576171875 + dx, 0.6953125 + dx, 0.0078125 + dy, 0.484375 + dy)
-    KeyRingButton:GetNormalTexture():SetTexCoord(0.822265625, 0.94140625, 0.0078125, 0.484375)
-
-    KeyRingButton:GetHighlightTexture():SetTexture(bagtexture)
-    KeyRingButton:GetHighlightTexture():SetSize(35, 35)
-    KeyRingButton:GetHighlightTexture():SetTexCoord(0.69921875, 0.818359375, 0.0078125, 0.484375)
-
-    -- KeyRingButton:GetPushedTexture():SetTexture(bagtexture)
-    KeyRingButton:GetPushedTexture():SetSize(35, 35)
-    -- KeyRingButton:GetPushedTexture():SetTexture(0.69921875, 0.818359375, 0.0078125, 0.484375)
-    -- KeyRingButton:GetCheckedTexture():SetTexture()
 end
 
 function Module.HookBags()
@@ -4359,7 +4277,7 @@ function Module.Wrath()
     -- Module.DrawActionbarDeco()
 
     Module.ChangeMicroMenuNew()
-    Module.ChangeBackpackNew()
+    Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
@@ -4387,7 +4305,7 @@ function Module.Era()
     -- Module.DrawActionbarDeco()
 
     Module.ChangeMicroMenuNew()
-    Module.ChangeBackpackNew()
+    Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
