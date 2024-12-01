@@ -2376,64 +2376,6 @@ function Module.CreateNewRepBar()
     Module.repbar = newRep
 end
 
-function Module.StyleButtons()
-    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-
-    local buttonTable = {
-        'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton', 'MultiBarLeftButton',
-        'MultiBarRightButton'
-    }
-    for k, v in pairs(buttonTable) do
-        for i = 1, 12 do
-            -- MultiBarBottomRightButton1NormalTexture
-            local name = v .. i
-
-            _G[name .. 'NormalTexture']:SetTexture(textureRef)
-            _G[name .. 'NormalTexture']:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
-            _G[name .. 'NormalTexture']:SetSize(38, 38)
-            _G[name .. 'NormalTexture']:SetPoint('CENTER', 0.5, -0.5)
-            _G[name .. 'NormalTexture']:SetAlpha(1)
-
-            -- Border
-            -- _G[name .. 'Border']:SetTexture()
-            -- _G[name .. 'Border']:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
-            -- _G[name .. 'Border']:SetSize(45, 45)
-
-            -- Highlight
-            _G[name]:SetHighlightTexture(textureRef)
-            _G[name]:GetHighlightTexture():SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
-            -- _G[name]:GetHighlightTexture():SetSize(55, 25)
-
-            -- Pressed
-            _G[name]:SetPushedTexture(textureRef)
-            _G[name]:GetPushedTexture():SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
-
-            -- Background
-            if _G[name .. 'FloatingBG'] then
-                _G[name .. 'FloatingBG']:SetTexture()
-                _G[name .. 'FloatingBG']:SetTexCoord(0, 0, 0, 0)
-                _G[name .. 'FloatingBG']:SetSize(45, 45)
-            end
-        end
-    end
-
-    for i = 1, 10 do
-        local btn = _G['StanceButton' .. i]
-        local tex = _G['StanceButton' .. i .. 'NormalTexture2']
-        tex:SetSize(52, 52)
-
-        -- TODO can maybe break
-        hooksecurefunc(tex, 'SetWidth', function()
-            -- print(tex:GetName(), 'SetSize')
-            tex:SetSize(52, 52)
-        end)
-        hooksecurefunc(tex, 'SetHeight', function()
-            -- print(tex:GetName(), 'SetSize')
-            tex:SetSize(52, 52)
-        end)
-    end
-end
-
 function Module.ApplyMask()
     local buttonTable = {
         'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton', 'MultiBarLeftButton',
@@ -2531,37 +2473,6 @@ function Module.ChangeButtonSpacing()
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
     for k, v in pairs(buttonTable) do
         for i = 2, 12 do _G[v .. i]:SetPoint('LEFT', _G[v .. (i - 1)], 'RIGHT', spacing, 0) end
-    end
-end
-
--- @TODO: better system
-function Module.SetNumBars()
-    local inLockdown = InCombatLockdown()
-    if true then return end
-    if inLockdown then
-        -- return
-        -- print('[DragonflightUI] changing Frames after combat ends..')
-    else
-        local dy = 20
-        local dRep, dButtons = 0, 0
-
-        if frame.XPBar.valid then
-            frame.XPBar:Show()
-        else
-            frame.XPBar:Hide()
-            dRep = dRep + dy
-            dButtons = dButtons + dy
-        end
-        if frame.RepBar.valid then
-            frame.RepBar:Show()
-        else
-            frame.RepBar:Hide()
-            dButtons = dButtons + dy
-        end
-
-        ActionButton1:SetPoint('CENTER', MainMenuBar, 'CENTER', -230 + 3 * 5.5, 30 + 18 - dButtons)
-        frame.XPBar:SetPoint('BOTTOM', 0, 5)
-        frame.RepBar:SetPoint('BOTTOM', 0, 5 + 20 - dRep)
     end
 end
 
@@ -4111,10 +4022,7 @@ function Module.Wrath()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
-    -- Module.StyleButtons()
-    -- Module.ApplyMask()
 
-    Module.SetNumBars()
     Module.HookPetBar()
     Module.MoveTotem()
     -- Module.ChangePossessBar()
@@ -4139,10 +4047,7 @@ function Module.Era()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
-    -- Module.StyleButtons()
-    -- Module.ApplyMask()
 
-    Module.SetNumBars()
     Module.HookPetBar()
     -- Module.MoveTotem()
     -- Module.ChangePossessBar()
