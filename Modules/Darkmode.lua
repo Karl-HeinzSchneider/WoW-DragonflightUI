@@ -433,12 +433,16 @@ function Module:UpdateFocusFrame(state)
     local focusBorder = f.FocusFrameBorder
     local focusBackground = f.FocusFrameBackground
     local focusPortExtra = f.FocusExtra
+    local focusToTBorder = f.FocusFrameToTBorder
 
     focusBorder:SetDesaturated(state.unitframeDesaturate)
     focusBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
     focusBackground:SetDesaturated(state.unitframeDesaturate)
     focusBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+
+    focusToTBorder:SetDesaturated(state.unitframeDesaturate)
+    focusToTBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
