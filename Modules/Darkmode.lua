@@ -471,16 +471,28 @@ function Module:UpdateActionbar(state)
         local bar = unitModule['bar' .. i]
         if i == 0 then bar = unitModule['petbar'] end
         if bar then
-            --          
-            local buttonTable = bar.buttonTable
-            local btnCount = #buttonTable
+            --     
+            if not bar.DFDarkmodeUpdateBarButtons then
+                bar.DFDarkmodeUpdateBarButtons = function()
+                    local buttonTable = bar.buttonTable
+                    local btnCount = #buttonTable
 
-            for j = 1, btnCount do
-                --
-                local btn = buttonTable[j]
-                btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                      state.actionbarB / 255)
+                    for j = 1, btnCount do
+                        --
+                        local btn = buttonTable[j]
+                        btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                              state.actionbarB / 255)
+                    end
+                end
+
+                hooksecurefunc(bar, 'Update', function()
+                    --
+                    -- print('updatehook', i)
+                    bar.DFDarkmodeUpdateBarButtons()
+                end)
             end
+
+            bar.DFDarkmodeUpdateBarButtons()
         end
     end
 
