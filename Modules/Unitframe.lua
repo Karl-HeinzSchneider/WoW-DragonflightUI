@@ -1849,6 +1849,7 @@ function Module.ChangePlayerframe()
 
     PlayerLevelText:ClearAllPoints()
     PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 1)
+    PlayerLevelText:SetHeight(12)
 
     -- Health 119,12
     PlayerFrameHealthBar:SetSize(125, 20)
@@ -2090,9 +2091,11 @@ function Module.ChangeTargetFrame()
     -- @TODO: change text spacing
     TargetFrameTextureFrameName:ClearAllPoints()
     TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3 - 2)
+    TargetFrameTextureFrameName:SetSize(100, 12)
 
     TargetFrameTextureFrameLevelText:ClearAllPoints()
     TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
+    TargetFrameTextureFrameLevelText:SetHeight(12)
 
     TargetFrameTextureFrameDeadText:ClearAllPoints()
     TargetFrameTextureFrameDeadText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
@@ -2583,9 +2586,11 @@ function Module.ChangeFocusFrame()
     -- @TODO: change text spacing
     FocusFrameTextureFrameName:ClearAllPoints()
     FocusFrameTextureFrameName:SetPoint('BOTTOM', FocusFrameHealthBar, 'TOP', 10, 3 - 2)
+    FocusFrameTextureFrameName:SetSize(100, 12)
 
     FocusFrameTextureFrameLevelText:ClearAllPoints()
     FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
+    FocusFrameTextureFrameLevelText:SetHeight(12)
 
     FocusFrameTextureFrameDeadText:ClearAllPoints()
     FocusFrameTextureFrameDeadText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
