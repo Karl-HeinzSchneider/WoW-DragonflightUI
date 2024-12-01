@@ -15,6 +15,7 @@ local defaults = {
         focus = {
             classcolor = false,
             breakUpLargeNumbers = true,
+            hideNameBackground = false,
             scale = 1.0,
             override = false,
             anchorFrame = 'UIParent',
@@ -68,6 +69,7 @@ local defaults = {
             enableNumericThreat = true,
             enableThreatGlow = true,
             comboPointsOnPlayerFrame = false,
+            hideNameBackground = false,
             scale = 1.0,
             override = false,
             anchorFrame = 'UIParent',
@@ -486,11 +488,18 @@ local optionsTarget = {
             order = 10,
             disabled = true
         },
+        hideNameBackground = {
+            type = 'toggle',
+            name = 'Hide Name Background',
+            desc = 'Hide Name Background',
+            order = 11,
+            new = true
+        },
         comboPointsOnPlayerFrame = {
             type = 'toggle',
             name = 'ComboPoints on PlayerFrame',
             desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
-            order = 10,
+            order = 12,
             new = true
         }
     }
@@ -753,6 +762,13 @@ local optionsFocus = {
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             order = 8
+        },
+        hideNameBackground = {
+            type = 'toggle',
+            name = 'Hide Name Background',
+            desc = 'Hide Name Background',
+            order = 11,
+            new = true
         }
     }
 }
@@ -1151,6 +1167,7 @@ function Module:ApplySettings()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
         Module.UpdateComboFrameState(obj.comboPointsOnPlayerFrame)
+        TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
 
         TargetFrame:UpdateStateHandler(obj)
     end
@@ -1224,6 +1241,7 @@ function Module:ApplySettings()
             Module.ReApplyFocusToT()
             FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
             TextStatusBar_UpdateTextString(FocusFrameHealthBar)
+            FocusFrameNameBackground:SetShown(not obj.hideNameBackground)
 
             FocusFrame:UpdateStateHandler(obj)
         end
@@ -2099,6 +2117,19 @@ function Module.ChangeTargetFrame()
     TargetFrameNameBackground:ClearAllPoints()
     TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
 
+    if not TargetFrameNameBackground.DFHooked then
+        TargetFrameNameBackground.DFHooked = true
+
+        TargetFrameNameBackground:HookScript('OnShow', function()
+            --          
+            local db = Module.db.profile.target
+            if db.hideNameBackground then
+                -- 
+                TargetFrameNameBackground:Hide()
+            end
+        end)
+    end
+
     if DF.Era then
         local parent = TargetFrameTextureFrame
         -- health
@@ -2535,6 +2566,19 @@ function Module.ChangeFocusFrame()
     FocusFrameNameBackground:SetSize(135, 18)
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
+
+    if not FocusFrameNameBackground.DFHooked then
+        FocusFrameNameBackground.DFHooked = true
+
+        FocusFrameNameBackground:HookScript('OnShow', function()
+            --          
+            local db = Module.db.profile.focus
+            if db.hideNameBackground then
+                -- 
+                FocusFrameNameBackground:Hide()
+            end
+        end)
+    end
 
     -- @TODO: change text spacing
     FocusFrameTextureFrameName:ClearAllPoints()
