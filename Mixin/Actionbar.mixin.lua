@@ -695,7 +695,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
         btn.DragonflightFixHotkeyPosition = function()
             local hotkey = _G[btnName .. 'HotKey']
             hotkey:ClearAllPoints()
-            hotkey:SetSize(46, 10)
+            hotkey:SetSize(46 - 10, 10)
             hotkey:SetPoint('TOPRIGHT', -5, -5)
 
             function btn:SetKeybindFontSize(newSize)
