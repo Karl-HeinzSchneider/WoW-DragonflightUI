@@ -447,7 +447,8 @@
         "CUSTOM_CLASS_COLORS",
         "QuestTimerFrame",
         "PlayerFrameHealthBar",
-        "SetItemButtonTextureVertexColor"
+        "SetItemButtonTextureVertexColor",
+        "KeyRingButton"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

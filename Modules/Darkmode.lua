@@ -512,6 +512,12 @@ function Module:UpdateActionbar(state)
             slot.Border:SetDesaturated(state.actionbarDesaturate)
             slot.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
         end
+
+        if KeyRingButton then
+            --       
+            KeyRingButton.Border:SetDesaturated(state.actionbarDesaturate)
+            KeyRingButton.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+        end
     end
 end
 
