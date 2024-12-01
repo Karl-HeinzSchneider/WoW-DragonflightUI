@@ -482,6 +482,24 @@ function Module:UpdateActionbar(state)
             end
         end
     end
+
+    if true then
+        --   
+        -- SetItemButtonDesaturated(MainMenuBarBackpackButton, state.actionbarDesaturate)
+        -- SetItemButtonTextureVertexColor(MainMenuBarBackpackButton, state.actionbarR / 255, state.actionbarG / 255,
+        --                                 state.actionbarB / 255)
+
+        MainMenuBarBackpackButton.Border:SetDesaturated(state.actionbarDesaturate)
+        MainMenuBarBackpackButton.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                        state.actionbarB / 255)
+
+        for i = 0, 3 do
+            --
+            local slot = _G['CharacterBag' .. i .. 'Slot']
+            slot.Border:SetDesaturated(state.actionbarDesaturate)
+            slot.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+        end
+    end
 end
 
 function Module:HookOnEnable()

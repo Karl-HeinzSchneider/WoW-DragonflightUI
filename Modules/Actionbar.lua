@@ -3477,6 +3477,20 @@ function Module.ChangeBackpack()
 
         MainMenuBarBackpackButtonNormalTexture:Hide()
         MainMenuBarBackpackButtonNormalTexture:SetTexture()
+
+        if not MainMenuBarBackpackButton.Border then
+            local cutout = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslotCutout'
+
+            local border = MainMenuBarBackpackButton:CreateTexture('DragonflightUIBigBagBorder')
+            border:SetTexture(cutout)
+            -- border:SetTexCoord(0, 96 / 128, 0, 96 / 128)
+            -- border:SetSize(30, 30)
+            -- border:SetPoint('CENTER', 2, -1 + 50)
+            border:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', 0, 0)
+            border:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 0, 0)
+
+            MainMenuBarBackpackButton.Border = border
+        end
     end
 
     -- bags
