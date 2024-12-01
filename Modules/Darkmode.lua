@@ -544,8 +544,10 @@ end
 
 -- Wrath
 function Module.Wrath()
+    Module:HookOnEnable()
 end
 
 -- Era
 function Module.Era()
+    Module:HookOnEnable()
 end
