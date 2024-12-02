@@ -1312,12 +1312,18 @@ function Module.ChangeEra()
     DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
         --
         local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
-        f:SetPoint('CENTER', Minimap, 'CENTER', -83, -35)
+        f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
         f:SetSize(32, 32)
 
         Module.QueueStatus = f
 
         local btn = _G.LFGMinimapFrame
+
+        local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+        local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
+        LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
+        LFGMinimapFrameBorder:SetSize(50, 50)
 
         -- hooksecurefunc(btn, 'SetParent', function()
         --     print('SetParent')

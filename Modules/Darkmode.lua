@@ -321,6 +321,13 @@ function Module:UpdateMinimap(state)
             Module:UpdateMinimapButton(btn)
         end
     end
+
+    if DF.Era then
+        if _G['LFGMinimapFrameBorder'] then
+            _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
+            _G['LFGMinimapFrameBorder']:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+        end
+    end
 end
 
 function Module:UpdateUnitframe(state)
