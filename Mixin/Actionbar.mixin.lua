@@ -756,7 +756,7 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
         newNormal:SetPoint('TOPLEFT')
         newNormal:SetTexture(textureRefTwo)
         newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
-        newNormal:SetAlpha(1)
+        -- newNormal:SetAlpha(1)
     end
 end
 
