@@ -154,23 +154,28 @@ function DragonflightUIActionbarMixin:Update()
             end
 
             -- btn:GetAttribute("showgrid") can be nil
+            -- if state.alwaysShow then
+            -- if btn:GetAttribute("showgrid") then
+            --     if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
+            -- else
+            --     btn:SetAttribute("showgrid", 1)
+            -- end            
+            -- else
+            -- if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
+            --     btn:SetAttribute("showgrid", 0)
+            -- end
+
+            -- if btn.action then
+            --     if not HasAction(btn.action) then btn:Hide() end
+            -- else
+            --     btn:Hide()
+            -- end              
+            -- end
+
             if state.alwaysShow then
-                if btn:GetAttribute("showgrid") then
-                    if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
-                else
-                    btn:SetAttribute("showgrid", 1)
-                end
-
+                btn:SetAttribute("showgrid", 1)
             else
-                if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
-                    btn:SetAttribute("showgrid", 0)
-                end
-
-                if btn.action then
-                    if not HasAction(btn.action) then btn:Hide() end
-                else
-                    btn:Hide()
-                end
+                btn:SetAttribute("showgrid", 0)
             end
 
             if state.hideArt then
