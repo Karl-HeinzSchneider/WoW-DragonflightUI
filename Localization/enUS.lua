@@ -1,5 +1,4 @@
-print('enUS')
-
+-- print('enUS')
 local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
 
 -- modules - config.lua
