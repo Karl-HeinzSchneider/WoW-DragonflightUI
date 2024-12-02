@@ -3,6 +3,8 @@
 	<Script file="Mixin/Statusbar.mixin.lua" />
 	<Frame name="DragonflightUIActionbarFrameTemplate" mixin="DragonflightUIActionbarMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
 	</Frame>
+	<Frame name="DragonflightUIStancebarFrameTemplate" mixin="DragonflightUIStancebarMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
+	</Frame>
 	<Frame name="DragonflightUIPetbarFrameTemplate" mixin="DragonflightUIPetbarMixin" virtual="true">
 	</Frame>
 	<Frame name="DragonflightUIXPBarTemplate" mixin="DragonflightUIXPBarMixin" virtual="true">

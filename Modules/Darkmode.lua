@@ -467,34 +467,89 @@ function Module:UpdateActionbar(state)
     gryphonRight:SetDesaturated(state.actionbarDesaturate)
     gryphonRight:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
 
-    for i = 0, 8 do
+    local barTable = {}
+    for i = 1, 8 do
         local bar = unitModule['bar' .. i]
-        if i == 0 then bar = unitModule['petbar'] end
-        if bar then
-            --     
-            if not bar.DFDarkmodeUpdateBarButtons then
-                bar.DFDarkmodeUpdateBarButtons = function()
-                    local buttonTable = bar.buttonTable
-                    local btnCount = #buttonTable
+        if bar then table.insert(barTable, bar) end
+    end
+    if unitModule['petbar'] then table.insert(barTable, unitModule['petbar']) end
+    if unitModule['stancebar'] then table.insert(barTable, unitModule['stancebar']) end
 
-                    for j = 1, btnCount do
-                        --
-                        local btn = buttonTable[j]
+    for k, bar in ipairs(barTable) do
+        if not bar.DFDarkmodeUpdateBarButtons then
+            bar.DFDarkmodeUpdateBarButtons = function()
+                local buttonTable = bar.buttonTable
+                local btnCount = #buttonTable
+
+                for j = 1, btnCount do
+                    --
+                    local btn = buttonTable[j]
+                    if btn.DFNormalTexture then
+                        btn.DFNormalTexture:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                           state.actionbarB / 255)
+                    else
                         btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
                                                               state.actionbarB / 255)
                     end
                 end
-
-                hooksecurefunc(bar, 'Update', function()
-                    --
-                    -- print('updatehook', i)
-                    bar.DFDarkmodeUpdateBarButtons()
-                end)
             end
 
-            bar.DFDarkmodeUpdateBarButtons()
+            hooksecurefunc(bar, 'Update', function()
+                --
+                -- print('updatehook', k, bar:GetName())
+                bar.DFDarkmodeUpdateBarButtons()
+            end)
         end
+
+        bar.DFDarkmodeUpdateBarButtons()
     end
+
+    if not Module.DFActionbarGridHooked then
+        Module.DFActionbarGridHooked = true
+
+        hooksecurefunc('ActionButton_ShowGrid', function(btn)
+            for k, bar in ipairs(barTable) do
+                --
+                bar.DFDarkmodeUpdateBarButtons()
+            end
+        end)
+
+        hooksecurefunc('ActionButton_HideGrid', function(btn)
+            for k, bar in ipairs(barTable) do
+                --
+                bar.DFDarkmodeUpdateBarButtons()
+            end
+        end)
+    end
+
+    -- for i = 0, 8 do
+    --     local bar = unitModule['bar' .. i]
+    --     if i == 0 then bar = unitModule['petbar'] end
+    --     if bar then
+    --         --     
+    --         if not bar.DFDarkmodeUpdateBarButtons then
+    --             bar.DFDarkmodeUpdateBarButtons = function()
+    --                 local buttonTable = bar.buttonTable
+    --                 local btnCount = #buttonTable
+
+    --                 for j = 1, btnCount do
+    --                     --
+    --                     local btn = buttonTable[j]
+    --                     btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+    --                                                           state.actionbarB / 255)
+    --                 end
+    --             end
+
+    --             hooksecurefunc(bar, 'Update', function()
+    --                 --
+    --                 -- print('updatehook', i)
+    --                 bar.DFDarkmodeUpdateBarButtons()
+    --             end)
+    --         end
+
+    --         bar.DFDarkmodeUpdateBarButtons()
+    --     end
+    -- end
 
     if true then
         --   

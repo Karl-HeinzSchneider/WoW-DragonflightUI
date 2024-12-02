@@ -154,23 +154,28 @@ function DragonflightUIActionbarMixin:Update()
             end
 
             -- btn:GetAttribute("showgrid") can be nil
+            -- if state.alwaysShow then
+            -- if btn:GetAttribute("showgrid") then
+            --     if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
+            -- else
+            --     btn:SetAttribute("showgrid", 1)
+            -- end            
+            -- else
+            -- if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
+            --     btn:SetAttribute("showgrid", 0)
+            -- end
+
+            -- if btn.action then
+            --     if not HasAction(btn.action) then btn:Hide() end
+            -- else
+            --     btn:Hide()
+            -- end              
+            -- end
+
             if state.alwaysShow then
-                if btn:GetAttribute("showgrid") then
-                    if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
-                else
-                    btn:SetAttribute("showgrid", 1)
-                end
-
+                btn:SetAttribute("showgrid", 1)
             else
-                if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
-                    btn:SetAttribute("showgrid", 0)
-                end
-
-                if btn.action then
-                    if not HasAction(btn.action) then btn:Hide() end
-                else
-                    btn:Hide()
-                end
+                btn:SetAttribute("showgrid", 0)
             end
 
             if state.hideArt then
@@ -751,7 +756,8 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
         newNormal:SetPoint('TOPLEFT')
         newNormal:SetTexture(textureRefTwo)
         newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
-        newNormal:SetAlpha(1)
+        btn.DFNormalTexture = newNormal
+        -- newNormal:SetAlpha(1)
     end
 end
 
@@ -767,7 +773,7 @@ function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
 
     -- mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
     -- mask:SetDesaturated(true)
-    -- if true then return end
+    if true then return end
     if not isUsable then
         -- mask:SetVertexColor(0.4, 0.4, 0.4, 1.0)
         mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
@@ -1032,3 +1038,196 @@ function DragonflightUIPetbarMixin:StylePetButton()
         auto:SetDrawLayer('OVERLAY', 2)
     end
 end
+
+DragonflightUIStancebarMixinCode = {}
+
+function DragonflightUIStancebarMixinCode:Update()
+    local state = self.state
+    -- print("DragonflightUIStancebarMixin:Update()", state)
+    -- DevTools_Dump(state)
+    local buttonTable = self.buttonTable
+    local btnCount = #buttonTable
+
+    if state.reverse then
+        local tmp = {}
+        for i = 1, btnCount do tmp[i] = buttonTable[i] end
+        buttonTable = {}
+        for i = 1, btnCount do buttonTable[btnCount + 1 - i] = tmp[i] end
+    end
+
+    local btnScale = state.buttonScale
+    local btnSize = buttonTable[1]:GetWidth()
+    -- local btnSize = self.buttonTable[1]:GetWidth() * state.buttonScale
+    -- local btnSize = (self.buttonTable[1]:GetWidth() / self.buttonTable[1]:GetScale()) * btnScale
+    -- local btnSize = 36 * state.buttonScale
+
+    -- print(btnScale, btnSize)
+
+    local modulo = state.buttons % state.rows
+
+    local buttons = state.buttons
+    local rows = state.rows
+    if rows > state.buttons then rows = buttons end
+
+    local maxRowButtons = math.ceil(buttons / rows)
+    -- print('maxRowButtons', maxRowButtons)
+
+    local padding = state.padding
+    -- local width = (maxRowButtons * btnSize + (maxRowButtons + 1) * padding) * btnScale
+    local width = (maxRowButtons * (btnSize + 2 * padding)) * btnScale
+    local height = (rows * (btnSize + 2 * padding)) * btnScale
+
+    if state.orientation == 'horizontal' then
+        self:SetSize(width, height)
+    else
+        self:SetSize(height, width)
+    end
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    for i = buttons + 1, btnCount do
+        local btn = buttonTable[i]
+        btn:ClearAllPoints()
+        btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
+        btn:Hide()
+
+        if btn.decoDF then btn.decoDF:Hide() end
+    end
+
+    local index = 1
+
+    local forms = GetNumShapeshiftForms()
+
+    -- i = rowIndex
+    for i = 1, rows do
+        local rowButtons = buttons / rows
+
+        if i <= modulo then
+            rowButtons = math.ceil(rowButtons)
+        else
+            rowButtons = math.floor(rowButtons)
+        end
+        -- print('row', i, rowButtons)
+
+        -- j = btn in row index
+        for j = 1, rowButtons do
+            local btn = buttonTable[index]
+            -- print('btn', i, btn:GetName())
+            btn:ClearAllPoints()
+            if index > forms then
+                -- btn:Hide()
+            else
+                -- btn:Show()
+            end
+            if btn.decoDF then btn.decoDF:SetShown(not state.hideArt) end
+
+            btn:SetScale(btnScale)
+            local dx = (2 * j - 1) * padding + (j - 1) * btnSize
+            local dy = (2 * i - 1) * padding + (i - 1) * btnSize
+
+            if state.orientation == 'horizontal' then
+                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dx, dy)
+            else
+                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
+            end
+
+            -- btn:GetAttribute("showgrid") can be nil
+            -- if state.alwaysShow then
+            -- if btn:GetAttribute("showgrid") then
+            --     if btn:GetAttribute("showgrid") < 1 then btn:SetAttribute("showgrid", 1) end
+            -- else
+            --     btn:SetAttribute("showgrid", 1)
+            -- end            
+            -- else
+            -- if btn:GetAttribute("showgrid") and btn:GetAttribute("showgrid") > 0 then
+            --     btn:SetAttribute("showgrid", 0)
+            -- end
+
+            -- if btn.action then
+            --     if not HasAction(btn.action) then btn:Hide() end
+            -- else
+            --     btn:Hide()
+            -- end              
+            -- end
+
+            -- if state.alwaysShow then
+            --     btn:SetAttribute("showgrid", 1)
+            -- else
+            --     btn:SetAttribute("showgrid", 0)
+            -- end
+
+            if state.hideArt then
+                if btn.DFDeco then btn.DFDeco:Hide() end
+            else
+                if btn.DFDeco then btn.DFDeco:Show() end
+            end
+
+            local name = btn:GetName()
+            local macroText = _G[name .. 'Name']
+            local keybindText = _G[name .. 'HotKey']
+
+            if state.hideMacro then
+                macroText:SetAlpha(0)
+            else
+                macroText:SetAlpha(1)
+            end
+
+            btn:SetMacroFontSize(state.macroFontSize)
+
+            if state.hideKeybind then
+                keybindText:SetAlpha(0)
+            else
+                keybindText:SetAlpha(1)
+            end
+
+            btn:SetKeybindFontSize(state.keybindFontSize)
+
+            index = index + 1
+        end
+    end
+    self:ShowHighlight(false)
+
+    -- print(self.buttonTable[1]:GetName(), 'update')
+    -- self:UpdateGrid(state.alwaysShow)
+
+    -- mainbar only
+    if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
+
+    if self.numberFrame then self:UpdateNumberFrame() end
+
+    -- if self.decoFrame then self.decoFrame.update(state) end
+
+    if state.activate ~= nil and false then
+        --
+        -- print('state.activate ~= nil', state.activate, self:GetName())
+        -- self:SetShown(state.activate)
+        if state.activate == false then
+            if self.stanceBar then self:Hide() end
+            for i = 1, btnCount do
+                local btn = buttonTable[i]
+                btn:ClearAllPoints()
+                btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
+                btn:Hide()
+                if btn.decoDF then btn.decoDF:Hide() end
+            end
+        else
+            if self.stanceBar then
+                self:Show()
+                for i = 1, btnCount do
+                    local btn = buttonTable[i]
+
+                    if btn.action then
+                        --
+                        if HasAction(btn.action) then btn:Show() end
+                    end
+                end
+            end
+        end
+    end
+
+    self:UpdateStateHandler(state)
+end
+
+DragonflightUIStancebarMixin = CreateFromMixins(DragonflightUIActionbarMixin, DragonflightUIStancebarMixinCode)

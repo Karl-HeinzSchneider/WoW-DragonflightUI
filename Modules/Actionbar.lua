@@ -2086,7 +2086,7 @@ function Module:SetupActionbarFrames()
     end
 
     do
-        local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIActionbarFrameTemplate')
+        local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIStancebarFrameTemplate')
         local buttons = {}
 
         for i = 1, 10 do
