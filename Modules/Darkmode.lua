@@ -491,7 +491,7 @@ function Module:UpdateActionbar(state)
 
             hooksecurefunc(bar, 'Update', function()
                 --
-                -- print('updatehook', i)
+                -- print('updatehook', k, bar:GetName())
                 bar.DFDarkmodeUpdateBarButtons()
             end)
         end
