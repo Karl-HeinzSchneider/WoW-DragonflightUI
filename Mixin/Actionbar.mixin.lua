@@ -756,6 +756,7 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
         newNormal:SetPoint('TOPLEFT')
         newNormal:SetTexture(textureRefTwo)
         newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+        btn.DFNormalTexture = newNormal
         -- newNormal:SetAlpha(1)
     end
 end
@@ -1042,7 +1043,7 @@ DragonflightUIStancebarMixinCode = {}
 
 function DragonflightUIStancebarMixinCode:Update()
     local state = self.state
-    print("DragonflightUIStancebarMixin:Update()", state)
+    -- print("DragonflightUIStancebarMixin:Update()", state)
     -- DevTools_Dump(state)
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable

@@ -484,8 +484,13 @@ function Module:UpdateActionbar(state)
                 for j = 1, btnCount do
                     --
                     local btn = buttonTable[j]
-                    btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                          state.actionbarB / 255)
+                    if btn.DFNormalTexture then
+                        btn.DFNormalTexture:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                           state.actionbarB / 255)
+                    else
+                        btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                              state.actionbarB / 255)
+                    end
                 end
             end
 
