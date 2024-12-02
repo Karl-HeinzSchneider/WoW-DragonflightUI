@@ -2086,12 +2086,13 @@ function Module:SetupActionbarFrames()
     end
 
     do
-        local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIActionbarFrameTemplate')
+        local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIStancebarFrameTemplate')
         local buttons = {}
 
         for i = 1, 10 do
             local btn = _G['StanceButton' .. i]
             buttons[i] = btn
+            btn:Hide()
         end
 
         bar:Init()
@@ -2100,6 +2101,8 @@ function Module:SetupActionbarFrames()
         bar:ReplaceNormalTexture2()
         bar.stanceBar = true
         Module['stancebar'] = bar
+
+        StanceBar_UpdateState()
     end
 
     -- @TODO
