@@ -3646,6 +3646,7 @@ function DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame, hideDisabled
     -- print('DragonflightUIMixin:CharacterFrameTabButtonTemplate(frame)', frame:GetName())
 
     local name = frame:GetName()
+    if not name then return false end -- TODO: ..'UI.mixin.lua:3671: attempt to concatenate local 'name' (a nil value)'
 
     local tex = base .. 'uiframetabs'
 
