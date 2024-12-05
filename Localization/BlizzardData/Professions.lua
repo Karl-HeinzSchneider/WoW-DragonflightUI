@@ -69,7 +69,7 @@ elseif locale == 'enUS' then
 
     DF_PROFESSIONS_POISON = "Poisons"
     DF_PROFESSIONS_BEAST = "Beast Training"
-elseif locale == 'esMX' or locale == 'esES' then
+elseif locale == 'esMX' or (not DF.Era and locale == 'esES') then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alquimia";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Herrería";
     DF_CHARACTER_PROFESSIONENCHANTING = "Encantamiento";
@@ -82,6 +82,25 @@ elseif locale == 'esMX' or locale == 'esES' then
     DF_CHARACTER_PROFESSIONMINING = "Minería";
     DF_CHARACTER_PROFESSIONSKINNING = "Desuello";
     DF_CHARACTER_PROFESSIONTAILORING = "Sastrería";
+
+    DF_PROFESSIONS_COOKING = "Cocina";
+    DF_PROFESSIONS_FISHING = "Pesca";
+
+    DF_PROFESSIONS_POISON = "Venenos"
+    DF_PROFESSIONS_BEAST = "Doma de bestias"
+elseif (DF.Era and locale == 'esES') then
+    DF_CHARACTER_PROFESSIONALCHEMY = "Alquimia";
+    DF_CHARACTER_PROFESSIONBLACKSMITHING = "Herrería";
+    DF_CHARACTER_PROFESSIONENCHANTING = "Encantamiento";
+    DF_CHARACTER_PROFESSIONENGINEERING = "Ingeniería";
+    DF_CHARACTER_PROFESSIONFIRST_AID = "Primeros auxilios";
+    DF_CHARACTER_PROFESSIONHERBALISM = "Botánica";
+    DF_CHARACTER_PROFESSIONINSCRIPTION = "Inscripción";
+    DF_CHARACTER_PROFESSIONJEWELCRAFTING = "Joyería";
+    DF_CHARACTER_PROFESSIONLEATHERWORKING = "Marroquinería";
+    DF_CHARACTER_PROFESSIONMINING = "Minería";
+    DF_CHARACTER_PROFESSIONSKINNING = "Desollar";
+    DF_CHARACTER_PROFESSIONTAILORING = "Costura";
 
     DF_PROFESSIONS_COOKING = "Cocina";
     DF_PROFESSIONS_FISHING = "Pesca";
