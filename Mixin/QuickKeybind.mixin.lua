@@ -230,6 +230,20 @@ function DragonFlightUIQuickKeybindMixin:HookButtons()
             end
         end)
     end
+
+    for i = 1, 10 do
+        --
+        local btn = _G['PetActionButton' .. i]
+
+        btn.command = 'BONUSACTIONBUTTON' .. i
+        btn.commandHuman = 'Pet Action Button ' .. i
+
+        btn:HookScript('OnEnter', function(selfButton)
+            if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
+                DragonflightUIQuickKeybindButtonOverlay:SetButton(selfButton)
+            end
+        end)
+    end
 end
 
 function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
