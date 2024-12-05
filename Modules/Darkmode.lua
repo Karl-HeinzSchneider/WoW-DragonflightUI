@@ -327,6 +327,11 @@ function Module:UpdateMinimap(state)
             _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
             _G['LFGMinimapFrameBorder']:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
         end
+
+        if _G['MiniMapTrackingBorder'] then
+            _G['MiniMapTrackingBorder']:SetDesaturated(state.minimapDesaturate)
+            _G['MiniMapTrackingBorder']:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+        end
     end
 end
 
