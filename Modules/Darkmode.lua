@@ -367,6 +367,9 @@ function Module:UpdateUnitframe(state)
     -- pet
     Module:UpdatePetFrame(state)
 
+    -- party
+    Module:UpdatePartyFrame(state)
+
     -- focus
     if DF.Wrath then
         --      
@@ -434,6 +437,23 @@ function Module:UpdateTargetFrame(state)
 
     -- TODO
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+end
+
+function Module:UpdatePartyFrame(state)
+    local unitModule = DF:GetModule('Unitframe')
+    local f = unitModule.Frame
+
+    for i = 1, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+
+        if pf.PartyFrameBorder then
+            -- print('yes')
+            pf.PartyFrameBorder:SetDesaturated(state.unitframeDesaturate)
+            pf.PartyFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+        else
+            -- print('not')
+        end
+    end
 end
 
 function Module:UpdateFocusFrame(state)
