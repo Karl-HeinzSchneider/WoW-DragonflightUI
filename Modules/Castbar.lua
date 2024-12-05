@@ -21,6 +21,7 @@ local defaults = {
             castTimeMaxEnabled = true,
             compactLayout = true,
             showIcon = false,
+            sizeIcon = 24,
             showTicks = false,
             showRank = true,
             autoAdjust = false
@@ -40,6 +41,7 @@ local defaults = {
             castTimeMaxEnabled = false,
             compactLayout = true,
             showIcon = true,
+            sizeIcon = 20,
             showTicks = false,
             showRank = false,
             autoAdjust = true
@@ -59,6 +61,7 @@ local defaults = {
             castTimeMaxEnabled = false,
             compactLayout = true,
             showIcon = true,
+            sizeIcon = 20,
             showTicks = false,
             showRank = false,
             autoAdjust = true
@@ -220,6 +223,16 @@ local optionsPlayer = {
             order = 16
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'player'), order = 17},
+        sizeIcon = {
+            type = 'range',
+            name = 'Icon Size',
+            desc = getDefaultStr('sizeIcon', 'player'),
+            min = 1,
+            max = 64,
+            bigStep = 1,
+            order = 17.1,
+            new = true
+        },
         showTicks = {
             type = 'toggle',
             name = 'Show Ticks',
@@ -380,6 +393,16 @@ local optionsTarget = {
             order = 16
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'target'), order = 17},
+        sizeIcon = {
+            type = 'range',
+            name = 'Icon Size',
+            desc = getDefaultStr('sizeIcon', 'target'),
+            min = 1,
+            max = 64,
+            bigStep = 1,
+            order = 17.1,
+            new = true
+        },
         showTicks = {
             type = 'toggle',
             name = 'Show Ticks',
@@ -540,6 +563,16 @@ local optionsFocus = {
             order = 16
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'focus'), order = 17},
+        sizeIcon = {
+            type = 'range',
+            name = 'Icon Size',
+            desc = getDefaultStr('sizeIcon', 'focus'),
+            min = 1,
+            max = 64,
+            bigStep = 1,
+            order = 17.1,
+            new = true
+        },
         showTicks = {type = 'toggle', name = 'Show Ticks', desc = '' .. getDefaultStr('showTicks', 'focus'), order = 18},
         autoAdjust = {
             type = 'toggle',

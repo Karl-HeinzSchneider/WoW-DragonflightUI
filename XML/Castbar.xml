@@ -49,7 +49,7 @@ UI_shared.xsd">
 				<Texture parentKey="Icon" hidden="true">
 					<Size x="16" y="16" />
 					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT" x="-5" y="0" />
+						<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPLEFT" x="-5" y="1" />
 					</Anchors>
 				</Texture>
 				<Texture parentKey="Border" file="Interface/AddOns/DragonflightUI/Textures/Castbar/uicastingbar2x">

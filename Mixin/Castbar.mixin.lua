@@ -693,6 +693,7 @@ function DragonFlightUICastbarMixin:Update()
     self:SetShowRank(state.showRank)
     self:SetIconShown(state.showIcon)
     -- self.Icon:SetSize(state.sizeY, state.sizeY)
+    self.Icon:SetSize(state.sizeIcon, state.sizeIcon)
 end
 
 function DragonFlightUICastbarMixin:AdjustPosition()
