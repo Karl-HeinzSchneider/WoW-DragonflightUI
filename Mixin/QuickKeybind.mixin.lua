@@ -216,6 +216,20 @@ function DragonFlightUIQuickKeybindMixin:HookButtons()
             end)
         end
     end
+
+    for i = 1, 10 do
+        --
+        local btn = _G['StanceButton' .. i]
+
+        btn.command = 'SHAPESHIFTBUTTON' .. i
+        btn.commandHuman = 'Special Action Button ' .. i
+
+        btn:HookScript('OnEnter', function(selfButton)
+            if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
+                DragonflightUIQuickKeybindButtonOverlay:SetButton(selfButton)
+            end
+        end)
+    end
 end
 
 function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
