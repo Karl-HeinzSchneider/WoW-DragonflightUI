@@ -115,8 +115,8 @@ function DragonFlightUIConfigMixin:InitCategorys()
         local cat = 'General'
         addCat(cat)
         addSubCat('Info', cat)
-        addSubCat('Modules', cat, true)
-        addSubCat('Profiles', cat, true)
+        addSubCat('Modules', cat)
+        addSubCat('Profiles', cat)
         addSubCat('WhatsNew', cat)
     end
 
@@ -124,15 +124,15 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Actionbar
         local cat = 'Actionbar'
         addCat(cat)
-        addSubCat('Actionbar1', cat, true)
-        addSubCat('Actionbar2', cat, true)
-        addSubCat('Actionbar3', cat, true)
-        addSubCat('Actionbar4', cat, true)
-        addSubCat('Actionbar5', cat, true)
+        addSubCat('Actionbar1', cat)
+        addSubCat('Actionbar2', cat)
+        addSubCat('Actionbar3', cat)
+        addSubCat('Actionbar4', cat)
+        addSubCat('Actionbar5', cat)
 
-        addSubCat('Actionbar6', cat, true)
-        addSubCat('Actionbar7', cat, true)
-        addSubCat('Actionbar8', cat, true)
+        addSubCat('Actionbar6', cat)
+        addSubCat('Actionbar7', cat)
+        addSubCat('Actionbar8', cat)
 
         addSubCat('Petbar', cat)
         addSubCat('XPbar', cat)
@@ -148,9 +148,9 @@ function DragonFlightUIConfigMixin:InitCategorys()
         -- Castbar
         local cat = 'Castbar'
         addCat(cat)
-        if DF.Wrath then addSubCat('Focus', cat) end
-        addSubCat('Player', cat)
-        addSubCat('Target', cat)
+        if DF.Wrath then addSubCat('Focus', cat, true) end
+        addSubCat('Player', cat, true)
+        addSubCat('Target', cat, true)
     end
 
     do

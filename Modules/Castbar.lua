@@ -20,6 +20,7 @@ local defaults = {
             castTimeEnabled = true,
             castTimeMaxEnabled = true,
             compactLayout = true,
+            holdTime = 1.0,
             showIcon = false,
             sizeIcon = 24,
             showTicks = false,
@@ -40,6 +41,7 @@ local defaults = {
             castTimeEnabled = true,
             castTimeMaxEnabled = false,
             compactLayout = true,
+            holdTime = 1.0,
             showIcon = true,
             sizeIcon = 20,
             showTicks = false,
@@ -60,6 +62,7 @@ local defaults = {
             castTimeEnabled = true,
             castTimeMaxEnabled = false,
             compactLayout = true,
+            holdTime = 1.0,
             showIcon = true,
             sizeIcon = 20,
             showTicks = false,
@@ -221,6 +224,16 @@ local optionsPlayer = {
             name = 'Compact Layout',
             desc = '' .. getDefaultStr('compactLayout', 'player'),
             order = 16
+        },
+        holdTime = {
+            type = 'range',
+            name = 'Hold Time',
+            desc = 'Time before the Castbar starts fading.' .. getDefaultStr('holdTime', 'player'),
+            min = 0,
+            max = 2,
+            bigStep = 0.05,
+            order = 13.1,
+            new = true
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'player'), order = 17},
         sizeIcon = {
@@ -392,6 +405,16 @@ local optionsTarget = {
             desc = '' .. getDefaultStr('compactLayout', 'target'),
             order = 16
         },
+        holdTime = {
+            type = 'range',
+            name = 'Hold Time',
+            desc = 'Time before the Castbar starts fading.' .. getDefaultStr('holdTime', 'target'),
+            min = 0,
+            max = 2,
+            bigStep = 0.05,
+            order = 13.1,
+            new = true
+        },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'target'), order = 17},
         sizeIcon = {
             type = 'range',
@@ -561,6 +584,16 @@ local optionsFocus = {
             name = 'Compact Layout',
             desc = '' .. getDefaultStr('compactLayout', 'focus'),
             order = 16
+        },
+        holdTime = {
+            type = 'range',
+            name = 'Hold Time',
+            desc = 'Time before the Castbar starts fading.' .. getDefaultStr('holdTime', 'focus'),
+            min = 0,
+            max = 2,
+            bigStep = 0.05,
+            order = 13.1,
+            new = true
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'focus'), order = 17},
         sizeIcon = {

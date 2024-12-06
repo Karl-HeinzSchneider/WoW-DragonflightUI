@@ -7,6 +7,7 @@ DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
     -- print('OnLoad', unit)
+    self.maxHoldTime = 1.0;
     self:SetUnit(unit)
     self:AddTicks(15)
     self:SetPrecision(1, 2)
@@ -423,7 +424,7 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
 
         self.flash = true;
         self.fadeOut = true;
-        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME; -- 0 on classic?
+        self.holdTime = GetTime() + self.maxHoldTime; -- 0 on classic?
     else
         -- TODO should not go here but does on cast finished
         --[[       if (event == "UNIT_SPELLCAST_STOP") then
@@ -466,7 +467,7 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
         self.reverseChanneling = nil;
 
         self.fadeOut = true;
-        self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
+        self.holdTime = GetTime() + self.maxHoldTime;
         -- self:PlayInterruptAnims();
     end
 end
@@ -619,7 +620,7 @@ function DragonFlightUICastbarMixin:FinishSpell()
 
     self.flash = true;
     self.fadeOut = true;
-    self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
+    self.holdTime = GetTime() + self.maxHoldTime;
 end
 
 function DragonFlightUICastbarMixin:AddTicks(count)
@@ -688,6 +689,7 @@ function DragonFlightUICastbarMixin:Update()
     self:SetPrecision(state.preci, state.preciMax)
     self:SetCastTimeTextShown(state.castTimeEnabled)
     self:SetCastTimeTextMaxShown(state.castTimeMaxEnabled)
+    self.maxHoldTime = state.holdTime
     self:SetCompactLayout(state.compactLayout)
     self:SetShowTicks(state.showTicks)
     self:SetShowRank(state.showRank)
