@@ -111,6 +111,12 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
         self:SetStatusBarTexture(standardRef)
 
+        if notInterruptible then
+            self:SetStatusBarDesaturated(true)
+        else
+            self:SetStatusBarDesaturated(false)
+        end
+
         self:ShowSpark();
         self:HideAllTicks()
 
@@ -209,6 +215,12 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
 
         -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
         self:SetStatusBarTexture(channelRef)
+
+        if notInterruptible then
+            self:SetStatusBarDesaturated(true)
+        else
+            self:SetStatusBarDesaturated(false)
+        end
 
         self.value = (endTime / 1000) - GetTime();
 
