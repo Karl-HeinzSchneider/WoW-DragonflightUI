@@ -3930,6 +3930,31 @@ function DragonflightUIMixin:BottomEncounterTierTabTemplate(frame)
     end
 end
 
+function DragonflightUIMixin:AddIconBorder(btn, helpful)
+    if btn.DFIconBorder then return end
+    btn.DFIconBorder = btn:CreateTexture('DragonflightUIIconBorder')
+    local border = btn.DFIconBorder;
+    border:ClearAllPoints()
+    border:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0.25)
+    border:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 1.75, -0.75)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x')
+    border:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+    -- border:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+    border:SetDrawLayer('OVERLAY')
+
+    if not helpful then
+        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\iconborderWhite')
+        border:SetTexCoord(0, 92 / 128, 0, 90 / 128)
+    end
+
+    local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
+    local delta = 1.25
+    mask:SetPoint('TOPLEFT', btn, 'TOPLEFT', -delta, delta)
+    mask:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', delta, -delta)
+    mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+    _G[btn:GetName() .. 'Icon']:AddMaskTexture(mask)
+end
+
 --[[ ["Interface/FrameGeneral/UIFrameTabs"]={
     ["uiframe-activetab-left"]={35, 42, 0.015625, 0.5625, 0.496094, 0.660156, false, false, "1x"},
     ["uiframe-activetab-right"]={37, 42, 0.015625, 0.59375, 0.324219, 0.488281, false, false, "1x"},

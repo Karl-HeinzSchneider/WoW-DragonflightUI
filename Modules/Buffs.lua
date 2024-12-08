@@ -471,6 +471,37 @@ function Module.MoveBuffs()
     end)
 end
 
+function Module.AddBuffBorders()
+    -- buffs
+    hooksecurefunc('AuraButton_Update', function(buttonName, index, filter) --
+
+        local buffName = buttonName .. index;
+        local buff = _G[buffName];
+
+        if not buff then return end
+        if not buff:IsShown() then return end
+
+        -- print(buttonName, index, filter)
+        local helpful = (filter == "HELPFUL" or filter == "HELPFUL");
+
+        if not buff.DFIconBorder then
+            --
+            DragonflightUIMixin:AddIconBorder(buff, helpful)
+        end
+
+        if (not helpful) then
+            local debuffSlot = _G[buffName .. "Border"];
+            if not debuffSlot then return end
+
+            debuffSlot:Hide()
+
+            local r, g, b = debuffSlot:GetVertexColor()
+            -- print(r, g, b)
+            buff.DFIconBorder:SetVertexColor(r, g, b)
+        end
+    end)
+end
+
 function Module.CreateDebuffFrame()
     local f = CreateFrame('FRAME', 'DragonflightUIDebuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (2 - 1) * 35)
@@ -525,6 +556,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 -- Cata
 function Module.Cata()
     Module.CreateBuffFrame()
+    Module.AddBuffBorders()
     Module.MoveBuffs()
     Module.CreateDebuffFrame()
     Module.MoveDebuffs()
@@ -533,6 +565,7 @@ end
 -- Wrath
 function Module.Wrath()
     Module.CreateBuffFrame()
+    Module.AddBuffBorders()
     Module.MoveBuffs()
     Module.CreateDebuffFrame()
     Module.MoveDebuffs()
@@ -541,6 +574,7 @@ end
 -- Era
 function Module.Era()
     Module.CreateBuffFrame()
+    Module.AddBuffBorders()
     Module.MoveBuffs()
     Module.CreateDebuffFrame()
     Module.MoveDebuffs()
