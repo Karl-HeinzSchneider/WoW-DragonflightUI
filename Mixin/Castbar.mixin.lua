@@ -18,6 +18,17 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     self.showTradeSkills = true
     self.showTicks = false
     self.showRank = false
+
+    self.BorderShield:ClearAllPoints();
+    self.BorderShield:SetPoint('CENTER', self.Icon, 'CENTER', 0, -2.25);
+
+    -- icon mask
+    local mask = self:CreateMaskTexture('DragonflightUIIconMask')
+    local delta = 0
+    mask:SetPoint('TOPLEFT', self.Icon, 'TOPLEFT', -delta, delta)
+    mask:SetPoint('BOTTOMRIGHT', self.Icon, 'BOTTOMRIGHT', delta, -delta)
+    mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+    self.Icon:AddMaskTexture(mask)
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -694,8 +705,12 @@ function DragonFlightUICastbarMixin:Update()
     self:SetShowTicks(state.showTicks)
     self:SetShowRank(state.showRank)
     self:SetIconShown(state.showIcon)
+
     -- self.Icon:SetSize(state.sizeY, state.sizeY)
+    local iconScale = state.sizeIcon / 16
     self.Icon:SetSize(state.sizeIcon, state.sizeIcon)
+    self.Icon:SetPoint('RIGHT', self, 'LEFT', -7 * iconScale, -4)
+    self.BorderShield:SetScale(iconScale * 0.9)
 end
 
 function DragonFlightUICastbarMixin:AdjustPosition()
