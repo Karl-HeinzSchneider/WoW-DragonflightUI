@@ -301,7 +301,33 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             self:UpdateCastTimeText();
         end
     elseif (event == "UNIT_SPELLCAST_INTERRUPTIBLE" or event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE") then
-        -- self:UpdateInterruptibleState(event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE");
+        self:UpdateInterruptibleState(event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE");
+    end
+end
+
+function DragonFlightUICastbarMixin:UpdateInterruptibleState(notInterruptible)
+    if (self.casting or self.channeling) then
+        local _, _, _, _, _, isTradeSkill = UnitCastingInfo(self.unit);
+        -- self.barType = self:GetEffectiveType(false, notInterruptible, isTradeSkill, false);
+        -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
+
+        if notInterruptible then
+            self:SetStatusBarDesaturated(true)
+        else
+            self:SetStatusBarDesaturated(false)
+        end
+
+        if (self.BorderShield) then
+            if (self.showShield and notInterruptible) then
+                self.BorderShield:Show();
+                if (self.BarBorder) then self.BarBorder:Hide(); end
+            else
+                self.BorderShield:Hide();
+                if (self.BarBorder) then self.BarBorder:Show(); end
+            end
+        end
+
+        -- if (self.Icon and self.iconWhenNoninterruptible) then self.Icon:SetShown(not notInterruptible); end
     end
 end
 
