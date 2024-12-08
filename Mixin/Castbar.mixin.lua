@@ -502,7 +502,8 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
         self.reverseChanneling = nil;
 
         self.fadeOut = true;
-        self.holdTime = GetTime() + self.maxHoldTime;
+        -- self.holdTime = GetTime() + self.maxHoldTime;
+        self.holdTime = GetTime() + self.maxHoldTimeInterrupt;
         -- self:PlayInterruptAnims();
     end
 end
@@ -726,6 +727,7 @@ function DragonFlightUICastbarMixin:Update()
     self:SetCastTimeTextShown(state.castTimeEnabled)
     self:SetCastTimeTextMaxShown(state.castTimeMaxEnabled)
     self.maxHoldTime = state.holdTime
+    self.maxHoldTimeInterrupt = state.holdTimeInterrupt
     self:SetCompactLayout(state.compactLayout)
     self:SetShowTicks(state.showTicks)
     self:SetShowRank(state.showRank)

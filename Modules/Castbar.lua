@@ -21,6 +21,7 @@ local defaults = {
             castTimeMaxEnabled = true,
             compactLayout = true,
             holdTime = 1.0,
+            holdTimeInterrupt = 1.0,
             showIcon = false,
             sizeIcon = 30,
             showTicks = false,
@@ -42,6 +43,7 @@ local defaults = {
             castTimeMaxEnabled = false,
             compactLayout = true,
             holdTime = 1.0,
+            holdTimeInterrupt = 1.0,
             showIcon = true,
             sizeIcon = 20,
             showTicks = false,
@@ -63,6 +65,7 @@ local defaults = {
             castTimeMaxEnabled = false,
             compactLayout = true,
             holdTime = 1.0,
+            holdTimeInterrupt = 1.0,
             showIcon = true,
             sizeIcon = 20,
             showTicks = false,
@@ -227,12 +230,24 @@ local optionsPlayer = {
         },
         holdTime = {
             type = 'range',
-            name = 'Hold Time',
-            desc = 'Time before the Castbar starts fading.' .. getDefaultStr('holdTime', 'player'),
+            name = 'Hold Time (Success)',
+            desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
+                getDefaultStr('holdTime', 'player'),
             min = 0,
             max = 2,
             bigStep = 0.05,
             order = 13.1,
+            new = true
+        },
+        holdTimeInterrupt = {
+            type = 'range',
+            name = 'Hold Time (Interrupt)',
+            desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
+                getDefaultStr('holdTimeInterrupt', 'player'),
+            min = 0,
+            max = 2,
+            bigStep = 0.05,
+            order = 13.2,
             new = true
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'player'), order = 17},
@@ -407,12 +422,24 @@ local optionsTarget = {
         },
         holdTime = {
             type = 'range',
-            name = 'Hold Time',
-            desc = 'Time before the Castbar starts fading.' .. getDefaultStr('holdTime', 'target'),
+            name = 'Hold Time (Success)',
+            desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
+                getDefaultStr('holdTime', 'target'),
             min = 0,
             max = 2,
             bigStep = 0.05,
             order = 13.1,
+            new = true
+        },
+        holdTimeInterrupt = {
+            type = 'range',
+            name = 'Hold Time (Interrupt)',
+            desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
+                getDefaultStr('holdTimeInterrupt', 'target'),
+            min = 0,
+            max = 2,
+            bigStep = 0.05,
+            order = 13.2,
             new = true
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'target'), order = 17},
@@ -587,12 +614,24 @@ local optionsFocus = {
         },
         holdTime = {
             type = 'range',
-            name = 'Hold Time',
-            desc = 'Time before the Castbar starts fading.' .. getDefaultStr('holdTime', 'focus'),
+            name = 'Hold Time (Success)',
+            desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
+                getDefaultStr('holdTime', 'focus'),
             min = 0,
             max = 2,
             bigStep = 0.05,
             order = 13.1,
+            new = true
+        },
+        holdTimeInterrupt = {
+            type = 'range',
+            name = 'Hold Time (Interrupt)',
+            desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
+                getDefaultStr('holdTimeInterrupt', 'focus'),
+            min = 0,
+            max = 2,
+            bigStep = 0.05,
+            order = 13.2,
             new = true
         },
         showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'focus'), order = 17},
