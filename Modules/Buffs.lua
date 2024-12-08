@@ -500,6 +500,53 @@ function Module.AddBuffBorders()
             buff.DFIconBorder:SetVertexColor(r, g, b)
         end
     end)
+
+    hooksecurefunc('TargetFrame_UpdateAuras', function(self)
+        -- 
+        -- print('TargetFrame_UpdateAuras')
+        local frame, frameName, frameStealable;
+        local selfName = self:GetName();
+        for i = 1, MAX_TARGET_BUFFS do
+            frameName = selfName .. "Buff" .. (i);
+            frame = _G[frameName];
+
+            if frame and frame:IsShown() then
+                -- 
+                if not frame.DFIconBorder then
+                    --
+                    DragonflightUIMixin:AddIconBorder(frame, true)
+                end
+
+                -- TODO: style etc
+                -- frameStealable = _G[frameName .. "Stealable"];
+                -- frameStealable:Show()
+            end
+        end
+
+        local maxDebuffs = self.maxDebuffs or MAX_TARGET_DEBUFFS; -- max = 16
+
+        for i = 1, maxDebuffs do
+            frameName = selfName .. "Debuff" .. (i);
+            frame = _G[frameName];
+
+            if frame and frame:IsShown() then
+                -- 
+                if not frame.DFIconBorder then
+                    --
+                    DragonflightUIMixin:AddIconBorder(frame, false)
+                end
+
+                local debuffSlot = _G[frameName .. "Border"];
+                if debuffSlot then
+                    --
+                    debuffSlot:Hide()
+                    local r, g, b = debuffSlot:GetVertexColor()
+                    -- print(r, g, b)
+                    frame.DFIconBorder:SetVertexColor(r, g, b)
+                end
+            end
+        end
+    end)
 end
 
 function Module.CreateDebuffFrame()

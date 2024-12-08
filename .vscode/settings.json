@@ -449,7 +449,9 @@
         "PlayerFrameHealthBar",
         "SetItemButtonTextureVertexColor",
         "KeyRingButton",
-        "UIDropDownMenu_AddButton"
+        "UIDropDownMenu_AddButton",
+        "MAX_TARGET_BUFFS",
+        "MAX_TARGET_DEBUFFS"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
