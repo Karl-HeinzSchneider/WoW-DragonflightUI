@@ -502,8 +502,8 @@ function Module.AddBuffBorders()
     end)
 
     hooksecurefunc('TargetFrame_UpdateAuras', function(self)
-        -- 
-        -- print('TargetFrame_UpdateAuras')
+        -- also styles focusFrame
+        -- print('TargetFrame_UpdateAuras', self:GetName())
         local frame, frameName, frameStealable;
         local selfName = self:GetName();
         for i = 1, MAX_TARGET_BUFFS do
