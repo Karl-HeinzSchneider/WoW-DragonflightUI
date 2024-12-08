@@ -40,6 +40,7 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x')
     border:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
     border:SetDrawLayer('OVERLAY')
+    self.Icon.Border = border;
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -612,6 +613,7 @@ end
 function DragonFlightUICastbarMixin:SetIconShown(bShown)
     self.showIcon = bShown
     self.Icon:SetShown(self.showIcon)
+    self.Icon.Border:SetShown(self.showIcon)
 end
 
 function DragonFlightUICastbarMixin:UpdateCastTimeTextShown()
