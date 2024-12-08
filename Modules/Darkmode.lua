@@ -606,6 +606,20 @@ function Module:UpdateActionbar(state)
             KeyRingButton.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
         end
     end
+
+    -- XP/Repbar   
+    local XPBar = unitModule.xpbar
+    if XPBar and XPBar.Border then
+        --
+        XPBar.Border:SetDesaturated(state.actionbarDesaturate)
+        XPBar.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+    end
+    local RepBar = unitModule.repbar
+    if RepBar and RepBar.Border then
+        --
+        RepBar.Border:SetDesaturated(state.actionbarDesaturate)
+        RepBar.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+    end
 end
 
 function Module:HookOnEnable()
