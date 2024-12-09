@@ -25,6 +25,7 @@ Modules:
 - Bossframe
 - Castbar
 - Chat
+- Darkmode
 - Minimap
 - UI
 - Unitframe
