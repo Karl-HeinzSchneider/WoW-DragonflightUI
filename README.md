@@ -63,6 +63,9 @@ If you want to support the development, like and share, but if you're feeling ex
 
 ![](Screenshots/v0.10/Castbar.png)
 
+## Darkmode
+![](Screenshots/darkmode/CompleteUI_dark.png)
+
 ## Minimap
 
 ![](Screenshots/v0.10/Minimap.png)
