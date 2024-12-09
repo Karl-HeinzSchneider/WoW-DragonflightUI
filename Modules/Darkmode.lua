@@ -24,7 +24,12 @@ local defaults = {
             actionbarDesaturate = true,
             actionbarR = 0.4 * 255,
             actionbarG = 0.4 * 255,
-            actionbarB = 0.4 * 255
+            actionbarB = 0.4 * 255,
+            -- Buffs
+            buffDesaturate = true,
+            buffR = 0.4 * 255,
+            buffG = 0.4 * 255,
+            buffB = 0.4 * 255
         }
     }
 }
@@ -172,6 +177,40 @@ local generalOptions = {
             max = 255,
             bigStep = 1,
             order = 303
+        },
+        headerBuff = {type = 'header', name = 'Buffs', desc = '...', order = 400},
+        buffDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('buffDesaturate', 'general'),
+            order = 400.5
+        },
+        buffR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('buffR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 401
+        },
+        buffG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('buffG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 402
+        },
+        buffB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('buffB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 403
         }
     }
 }
@@ -244,6 +283,7 @@ function Module:ApplySettings()
     Module:UpdateMinimap(state)
     Module:UpdateUnitframe(state)
     Module:UpdateActionbar(state)
+    Module:UpdateBuff(state)
 end
 
 function Module:UpdateMinimapButton(btn)
@@ -619,6 +659,55 @@ function Module:UpdateActionbar(state)
         --
         RepBar.Border:SetDesaturated(state.actionbarDesaturate)
         RepBar.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+    end
+end
+
+function Module:UpdateBuff(state)
+    local unitModule = DF:GetModule('Buffs')
+    local f = unitModule.Frame
+
+    if not unitModule:IsEnabled() then return end
+
+    -- update defaults
+    unitModule.BuffVertexColorR = state.buffR / 255;
+    unitModule.BuffVertexColorG = state.buffG / 255;
+    unitModule.BuffVertexColorB = state.buffB / 255;
+
+    local buff;
+    -- player
+    for i = 1, 40 do
+        --
+        buff = _G['BuffButton' .. i]
+        if buff and buff.DFIconBorder then
+            --
+            buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
+            buff.DFIconBorder:SetVertexColor(unitModule.BuffVertexColorR, unitModule.BuffVertexColorG,
+                                             unitModule.BuffVertexColorB)
+        end
+    end
+    -- target 
+    for i = 1, MAX_TARGET_BUFFS do
+        --   
+        buff = _G['TargetFrameBuff' .. i];
+        if buff and buff.DFIconBorder then
+            --
+            buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
+            buff.DFIconBorder:SetVertexColor(unitModule.BuffVertexColorR, unitModule.BuffVertexColorG,
+                                             unitModule.BuffVertexColorB)
+        end
+    end
+    -- focus 
+    if DF.Wrath then
+        for i = 1, MAX_TARGET_BUFFS do
+            --   
+            buff = _G['FocusFrameBuff' .. i];
+            if buff and buff.DFIconBorder then
+                --
+                buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
+                buff.DFIconBorder:SetVertexColor(unitModule.BuffVertexColorR, unitModule.BuffVertexColorG,
+                                                 unitModule.BuffVertexColorB)
+            end
+        end
     end
 end
 

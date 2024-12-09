@@ -471,6 +471,11 @@ function Module.MoveBuffs()
     end)
 end
 
+-- set default, may be overriden by darkmode module
+Module.BuffVertexColorR = 1.0;
+Module.BuffVertexColorG = 1.0;
+Module.BuffVertexColorB = 1.0;
+Module.BuffDesaturate = false;
 function Module.AddBuffBorders()
     -- buffs
     hooksecurefunc('AuraButton_Update', function(buttonName, index, filter) --
@@ -487,6 +492,8 @@ function Module.AddBuffBorders()
         if not buff.DFIconBorder then
             --
             DragonflightUIMixin:AddIconBorder(buff, helpful)
+            buff.DFIconBorder:SetDesaturated(Module.BuffDesaturate)
+            buff.DFIconBorder:SetVertexColor(Module.BuffVertexColorR, Module.BuffVertexColorG, Module.BuffVertexColorB)
         end
 
         if (not helpful) then
@@ -515,6 +522,9 @@ function Module.AddBuffBorders()
                 if not frame.DFIconBorder then
                     --
                     DragonflightUIMixin:AddIconBorder(frame, true)
+                    frame.DFIconBorder:SetDesaturated(Module.BuffDesaturate)
+                    frame.DFIconBorder:SetVertexColor(Module.BuffVertexColorR, Module.BuffVertexColorG,
+                                                      Module.BuffVertexColorB)
                 end
 
                 -- TODO: style etc
