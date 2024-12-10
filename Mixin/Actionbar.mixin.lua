@@ -1045,6 +1045,7 @@ function DragonflightUIPetbarMixin:StylePetButton()
         newNormal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
         newNormal:SetAlpha(1)
         newNormal:SetDrawLayer('OVERLAY', 1)
+        btn.DFNormalTexture = newNormal
 
         local shine = _G[btnName .. 'Shine']
         -- <Frame name="$parentShine" inherits="AutoCastShineTemplate">
