@@ -607,6 +607,10 @@ function DragonflightUIActionbarMixin:StyleButtons()
         cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
         cd:SetSize(45, 45)
         -- cd:GetSwipeTexture():SetAlpha(0.5)
+        local deltaCD = 1.5;
+        cd:ClearAllPoints();
+        cd:SetPoint('TOPLEFT', btn, 'TOPLEFT', deltaCD, -deltaCD + 1);
+        cd:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -deltaCD, deltaCD + 1);
 
         local floatingBG = _G[btnName .. 'FloatingBG']
         if floatingBG then
@@ -643,6 +647,25 @@ function DragonflightUIActionbarMixin:StyleButtons()
         pushed:SetPoint('TOPLEFT')
         pushed:SetTexture(textureRefTwo)
         pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+        -- pushed:SetAlpha(0)
+
+        if false then
+            --
+            local customFrame = CreateFrame('FRAME', 'DragonflightUIPushTextureFrame', btn)
+            customFrame:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0)
+            customFrame:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
+            customFrame:SetFrameStrata('MEDIUM')
+            customFrame:SetFrameLevel(6)
+            btn.DFCustomPushedTextureFrame = customFrame;
+            customFrame:Hide()
+
+            local customPush = customFrame:CreateTexture('DragonflightUIPushedTexture')
+            customPush:ClearAllPoints()
+            customPush:SetSize(46, 45)
+            customPush:SetPoint('TOPLEFT')
+            customPush:SetTexture(textureRefTwo)
+            customPush:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+        end
 
         -- iconframe-mouseover
         local highlight = btn:GetHighlightTexture()
