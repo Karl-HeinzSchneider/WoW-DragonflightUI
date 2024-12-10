@@ -592,6 +592,18 @@ function Module:UpdateActionbar(state)
                 bar.DFDarkmodeUpdateBarButtons()
             end
         end)
+
+        hooksecurefunc('ActionButton_UpdateUsable', function(btn)
+            --
+            -- print('ActionButton_UpdateUsable', btn:GetName())
+            if btn.DFNormalTexture then
+                btn.DFNormalTexture:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                   state.actionbarB / 255)
+            else
+                btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
+                                                      state.actionbarB / 255)
+            end
+        end)
     end
 
     -- for i = 0, 8 do
