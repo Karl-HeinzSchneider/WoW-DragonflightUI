@@ -1312,8 +1312,10 @@ function Module.ChangeEra()
     DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
         --
         local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
-        f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
+        -- f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
+        f:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
         f:SetSize(32, 32)
+        f:SetParent(Minimap)
 
         Module.QueueStatus = f
 
