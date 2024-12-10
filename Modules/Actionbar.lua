@@ -1960,12 +1960,12 @@ function Module:OnEnable()
     end
     Module:SetupActionbarFrames()
     Module.AddStateUpdater()
-    Module:ApplySettings()
+    Module:ApplySettings('ALL')
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
-        Module:ApplySettings()
+        Module:ApplySettings('ALL')
         Module:RefreshOptionScreens()
     end)
 end
@@ -2259,51 +2259,100 @@ function Module:RefreshOptionScreens()
     refreshCat('Micromenu')
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
+    -- print('function Module:ApplySettings(sub)', sub)
     local db = Module.db.profile
-    -- Module.ChangeGryphonVisibility(db.showGryphon)
 
-    local MinimapModule = DF:GetModule('Minimap')
-    -- if MinimapModule and MinimapModule:IsEnabled() then MinimapModule.MoveTrackerFunc() end
+    if not sub or sub == 'ALL' then
+        Module.bar1:SetState(db.bar1)
+        Module.bar2:SetState(db.bar2)
+        Module.bar3:SetState(db.bar3)
+        Module.bar4:SetState(db.bar4)
+        Module.bar5:SetState(db.bar5)
 
-    Module.bar1:SetState(db.bar1)
-    Module.bar2:SetState(db.bar2)
-    Module.bar3:SetState(db.bar3)
-    Module.bar4:SetState(db.bar4)
-    Module.bar5:SetState(db.bar5)
+        Module.bar6:SetState(db.bar6)
+        Module.bar7:SetState(db.bar7)
+        Module.bar8:SetState(db.bar8)
 
-    Module.bar6:SetState(db.bar6)
-    Module.bar7:SetState(db.bar7)
-    Module.bar8:SetState(db.bar8)
+        Module.petbar:SetState(db.pet)
+        Module.xpbar:SetState(db.xp)
+        Module.repbar:SetState(db.rep)
+        Module.stancebar:SetState(db.stance)
 
-    Module.petbar:SetState(db.pet)
-    Module.xpbar:SetState(db.xp)
-    Module.repbar:SetState(db.rep)
-    Module.stancebar:SetState(db.stance)
-
-    if db.bar1.range then
-        if Module.UpdateRangeHooked then
-            -- already hooked
+        if db.bar1.range then
+            if Module.UpdateRangeHooked then
+                -- already hooked
+            else
+                self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
+                    DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
+                end)
+                Module.UpdateRangeHooked = true
+            end
         else
-            self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
-                DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
-            end)
-            Module.UpdateRangeHooked = true
+            if Module.UpdateRangeHooked then
+                -- remove hook      
+                Module.UpdateRangeHooked = false
+                self:Unhook('ActionButton_UpdateRangeIndicator')
+            end
         end
-    else
-        if Module.UpdateRangeHooked then
-            -- remove hook      
-            Module.UpdateRangeHooked = false
-            self:Unhook('ActionButton_UpdateRangeIndicator')
+
+        if DF.Cata then Module.UpdateTotemState(db.totem) end
+
+        Module.UpdateBagState(db.bags)
+        Module.UpdateMicromenuState(db.micro)
+
+        Module.UpdatePossesbarState(db.possess)
+
+    elseif sub == 'bar1' then
+        Module.bar1:SetState(db.bar1)
+
+        if db.bar1.range then
+            if Module.UpdateRangeHooked then
+                -- already hooked
+            else
+                self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
+                    DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
+                end)
+                Module.UpdateRangeHooked = true
+            end
+        else
+            if Module.UpdateRangeHooked then
+                -- remove hook      
+                Module.UpdateRangeHooked = false
+                self:Unhook('ActionButton_UpdateRangeIndicator')
+            end
         end
+    elseif sub == 'bar2' then
+        Module.bar2:SetState(db.bar2)
+    elseif sub == 'bar3' then
+        Module.bar3:SetState(db.bar3)
+    elseif sub == 'bar4' then
+        Module.bar4:SetState(db.bar4)
+    elseif sub == 'bar5' then
+        Module.bar5:SetState(db.bar5)
+    elseif sub == 'bar6' then
+        Module.bar6:SetState(db.bar6)
+    elseif sub == 'bar7' then
+        Module.bar7:SetState(db.bar7)
+    elseif sub == 'bar8' then
+        Module.bar8:SetState(db.bar8)
+    elseif sub == 'pet' then
+        Module.petbar:SetState(db.pet)
+    elseif sub == 'xp' then
+        Module.xpbar:SetState(db.xp)
+    elseif sub == 'rep' then
+        Module.repbar:SetState(db.rep)
+    elseif sub == 'stance' then
+        Module.stancebar:SetState(db.stance)
+    elseif sub == 'possess' then
+        Module.UpdatePossesbarState(db.possess)
+    elseif sub == 'totem' then
+        if DF.Cata then Module.UpdateTotemState(db.totem) end
+    elseif sub == 'bags' then
+        Module.UpdateBagState(db.bags)
+    elseif sub == 'micro' then
+        Module.UpdateMicromenuState(db.micro)
     end
-
-    if DF.Cata then Module.UpdateTotemState(db.totem) end
-
-    Module.UpdateBagState(db.bags)
-    Module.UpdateMicromenuState(db.micro)
-
-    Module.UpdatePossesbarState(db.possess)
 end
 
 -- Actionbar

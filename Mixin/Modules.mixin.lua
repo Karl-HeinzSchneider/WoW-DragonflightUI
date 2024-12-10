@@ -39,7 +39,7 @@ function DragonflightUIModulesMixin:SetDefaultSubValues(sub)
 
     if db[sub] then
         for k, v in pairs(self.defaults.profile[sub]) do db[sub][k] = v end
-        self:ApplySettings()
+        self:ApplySettings(sub)
     end
 end
 
@@ -66,10 +66,11 @@ function DragonflightUIModulesMixin:SetOption(info, value)
     if sub then
         local t = self.db.profile[key]
         t[sub] = value
+        self:ApplySettings(key)
     else
         self.db.profile[key] = value
+        self:ApplySettings()
     end
-    self:ApplySettings()
 end
 
 function DragonflightUIModulesMixin:SetWasEnabled(state)
