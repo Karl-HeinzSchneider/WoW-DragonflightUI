@@ -1168,7 +1168,7 @@ function Module:ApplySettings()
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
         Module.UpdateComboFrameState(obj.comboPointsOnPlayerFrame)
         TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
-
+        UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
     end
 
