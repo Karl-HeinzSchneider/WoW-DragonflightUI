@@ -1333,7 +1333,7 @@ function Module:QueueStatusAnchor(move)
     if move then
         lfg:ClearAllPoints()
         lfg:SetParent(_G['DragonflightUIMicroMenuBar'])
-        lfg:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -80, 0)
+        lfg:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -70, 0)
         lfg:SetScale(1.2)
     else
         lfg:ClearAllPoints()
