@@ -20,6 +20,7 @@ local defaults = {
             showPingChat = false,
             hideCalendar = false,
             hideZoom = false,
+            moveLFG = false,
             skinButtons = true,
             durability = 'BOTTOM',
             -- Visibility
@@ -285,10 +286,22 @@ do
             type = 'toggle',
             name = ROTATE_MINIMAP,
             desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
-            order = 13,
+            order = 13.1,
             blizzard = true
         }
     }
+
+    if DF.Era then
+        local moveLFG = {
+            type = 'toggle',
+            name = 'Move LFG Button',
+            desc = 'Moves the LFG Button to the Micromenu (needs the Actionbar Module, or it does nothing)' ..
+                getDefaultStr('moveLFG', 'minimap'),
+            order = 13.2,
+            new = true
+        }
+        moreOptions['moveLFG'] = moveLFG;
+    end
 
     for k, v in pairs(moreOptions) do minimapOptions.args[k] = v end
 
@@ -621,6 +634,15 @@ function Module.UpdateMinimapState(state)
         Module.ChangeMinimapButtons()
     elseif not state.skinButtons and Module.SkinButtonsHooked then
         DF:Print("'Skin Minimap Buttons' was deactivated, but Buttons were already modified, please /reload.");
+    end
+
+    if DF.Era then
+        --      
+        if Module.MoveLFG then
+            Module:QueueStatusAnchor(state.moveLFG)
+        else
+            Module:QueueStatusAnchor(false)
+        end
     end
 end
 
@@ -1305,37 +1327,69 @@ function Module:QueueStatusReposition(_, anchorFrame)
     end
 end
 
+function Module:QueueStatusAnchor(move)
+    local lfg = Module.QueueStatus;
+    if not lfg then return end
+    if move then
+        lfg:ClearAllPoints()
+        lfg:SetParent(_G['DragonflightUIMicroMenuBar'])
+        lfg:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -80, 0)
+        lfg:SetScale(1.2)
+    else
+        lfg:ClearAllPoints()
+        lfg:SetParent(Minimap)
+        lfg:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
+        lfg:SetScale(1.0)
+    end
+end
+
+function Module:CreateQueueStatus()
+    local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
+    -- f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
+    f:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
+    f:SetSize(32, 32)
+    f:SetParent(Minimap)
+
+    Module.QueueStatus = f
+
+    local btn = _G.LFGMinimapFrame
+    btn:SetParent(f)
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
+    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
+    LFGMinimapFrameBorder:SetSize(50, 50)
+
+    hooksecurefunc(btn, 'SetPoint', Module.QueueStatusReposition)
+    btn:SetPoint('CENTER')
+
+    local unitModule = DF:GetModule('Actionbar')
+
+    if unitModule:IsEnabled() then
+        Module.MoveLFG = true;
+
+        local db = Module.db.profile
+        local state = db.minimap
+        Module:QueueStatusAnchor(state.moveLFG)
+    else
+        hooksecurefunc(unitModule, 'OnEnable', function()
+            --
+            local db = Module.db.profile
+            local state = db.minimap
+            Module:QueueStatusAnchor(state.moveLFG)
+            Module.MoveLFG = true;
+        end)
+
+    end
+end
+
 function Module.ChangeEra()
     GameTimeFrame:Hide()
     MinimapToggleButton:Hide()
 
     DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
         --
-        local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
-        -- f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
-        f:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-        f:SetSize(32, 32)
-        f:SetParent(Minimap)
-
-        Module.QueueStatus = f
-
-        local btn = _G.LFGMinimapFrame
-
-        local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-        local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
-        LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
-        LFGMinimapFrameBorder:SetSize(50, 50)
-
-        -- hooksecurefunc(btn, 'SetParent', function()
-        --     print('SetParent')
-        -- end)
-        hooksecurefunc(btn, 'SetPoint', Module.QueueStatusReposition)
-        -- hooksecurefunc(btn, 'SetScale', function()
-        --     print('SetScale')
-        -- end)
-
-        btn:SetPoint('CENTER')
+        Module:CreateQueueStatus()
     end)
 end
 
