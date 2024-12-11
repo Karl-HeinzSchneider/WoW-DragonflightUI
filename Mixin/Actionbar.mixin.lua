@@ -714,7 +714,16 @@ function DragonflightUIActionbarMixin:StyleButtons()
             flyoutArrow:SetTexture(textureRefTwo)
             flyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
             flyoutArrow:SetPoint('TOP', btn, 'TOP', 0, 6)
+        end
 
+        local flash = _G[btnName .. 'Flash']
+        if flash then
+            flash:ClearAllPoints()
+            flash:SetSize(46, 45)
+            flash:SetPoint('TOPLEFT')
+            flash:SetTexture(textureRefTwo)
+            flash:SetTexCoord(0.701172, 0.880859, 0.475098, 0.519043)
+            flash:SetDrawLayer('OVERLAY')
         end
 
         -- TODO: support dynamic
