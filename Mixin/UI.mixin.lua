@@ -1864,6 +1864,33 @@ function DragonflightUIMixin:ShowQuestXP()
     hooksecurefunc('QuestFrameItems_Update', hookFunc)
 end
 
+function DragonflightUIMixin:GetCompletedQuestsAndXP()
+    -- C_QuestLog.GetMaxNumQuestsCanAccept() -- 20
+    -- local maxQuests = C_QuestLog.GetMaxNumQuests(); -- 25
+    local numEntries, numQuests = GetNumQuestLogEntries();
+    local returnTable = {}
+    returnTable.completedQuests = {};
+    returnTable.numQuests = numQuests;
+    returnTable.numCompletedQuests = 0;
+    returnTable.numQuestXP = 0;
+
+    for i = 1, numEntries do
+        local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent,
+              displayQuestID, isOnMap, hasLocalPOI, isTask, isBounty, isStory, isHidden, isScaling = GetQuestLogTitle(i);
+        if isComplete then
+            ---@diagnostic disable-next-line: redundant-parameter
+            local questXP, questLevel = GetQuestLogRewardXP(questID);
+            returnTable.numCompletedQuests = returnTable.numCompletedQuests + 1;
+            returnTable.numQuestXP = returnTable.numQuestXP + questXP;
+
+            local info = {title = title, questID = questID, questXP = questXP, questLevel = questLevel};
+            table.insert(returnTable.completedQuests, info);
+        end
+    end
+
+    return returnTable;
+end
+
 function DragonflightUIMixin:ChangeGossipFrame()
     local frame = GossipFrame
     local greeting = frame.GreetingPanel
