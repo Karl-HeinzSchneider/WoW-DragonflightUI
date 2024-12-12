@@ -609,8 +609,8 @@ function DragonflightUIActionbarMixin:StyleButtons()
         -- cd:GetSwipeTexture():SetAlpha(0.5)
         local deltaCD = 1.5;
         cd:ClearAllPoints();
-        cd:SetPoint('TOPLEFT', btn, 'TOPLEFT', deltaCD, -deltaCD + 1);
-        cd:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -deltaCD, deltaCD + 1);
+        cd:SetPoint('TOPLEFT', btn, 'TOPLEFT', deltaCD + 0.25, -deltaCD - 0.25);
+        cd:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -deltaCD, deltaCD);
 
         local floatingBG = _G[btnName .. 'FloatingBG']
         if floatingBG then
