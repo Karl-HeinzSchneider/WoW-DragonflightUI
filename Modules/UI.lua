@@ -488,6 +488,11 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
         end)
 
+        Module:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+            --
+            -- DragonflightUIMixin:ChangeLFGListingFrameEra()
+        end)
+
         Module:FuncOrWaitframe('Blizzard_MacroUI', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
         end)

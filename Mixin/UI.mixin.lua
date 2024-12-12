@@ -2536,6 +2536,46 @@ function DragonflightUIMixin:ChangeTalentsEra()
     end)
 end
 
+function DragonflightUIMixin:ChangeLFGListingFrameEra()
+    print('DragonflightUIMixin:ChangeLFGListingFrameEra()')
+    local frame = LFGListingFrame
+    local parentFrame = LFGParentFrame
+    if not frame then return end
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    frame:SetSize(338 - 2, 424)
+    parentFrame:SetSize(338 - 2, 424)
+
+    _G['LFGListingFrameFrameBackgroundTop']:Hide()
+    _G['LFGListingFrameFrameBackgroundBottom']:Hide()
+
+    do
+        local port = _G['LFGParentFramePortrait']
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        -- port:SetDrawLayer('OVERLAY', 6)
+
+        frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
+        local pp = frame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+
+        local icon = _G['LFGParentFramePortraitIcon']
+        icon:SetDrawLayer('OVERLAY', 7)
+
+        local text = _G['LFGParentFramePortraitTexture']
+        text:SetDrawLayer('OVERLAY', 7)
+    end
+end
+
 function DragonflightUIMixin:ChangeSpellbookEra()
     local frame = SpellBookFrame
 
