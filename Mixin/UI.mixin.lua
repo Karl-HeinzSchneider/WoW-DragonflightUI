@@ -2174,6 +2174,10 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
         --
         GameTooltip_AddNewbieTip(self, TRACK_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_TRACKQUEST, 1);
     end)
+    track:SetScript('OnLeave', function(self)
+        --
+        GameTooltip:Hide()
+    end)
     local DF_QuestLogTitleButton_OnClick = function(self)
         local questIndex = GetQuestLogSelection()
 
