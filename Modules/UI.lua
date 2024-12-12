@@ -469,6 +469,7 @@ function Module:ChangeFrames()
         end
         DragonflightUIMixin:ChangeQuestLogFrameEra()
         DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:EnhanceDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
         DragonflightUIMixin:ChangeGossipFrame()
         DragonflightUIMixin:ChangeQuestFrame()

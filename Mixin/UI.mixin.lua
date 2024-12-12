@@ -770,12 +770,13 @@ function DragonflightUIMixin:ChangeDressupFrame()
 
     DressUpModelFrame:ClearAllPoints()
     DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
+    DressUpModelFrame:SetHeight(351 - 18)
 
     do
         local inset = CreateFrame('Frame', 'DragonflightUIInset', DressUpModelFrame, 'InsetFrameTemplate')
         inset:ClearAllPoints()
         inset:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
-        inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 18)
+        inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 0)
         -- inset:SetFrameLevel(1)
 
         _G[inset:GetName() .. 'Bg']:Hide()
@@ -806,6 +807,30 @@ function DragonflightUIMixin:ChangeDressupFrame()
     DressUpFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
     DressUpFrame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
     HideUIPanel(frame)
+end
+
+function DragonflightUIMixin:EnhanceDressupFrame()
+    DressUpModelFrame:EnableMouseWheel(true)
+    DressUpModelFrame:HookScript('OnMouseWheel', Model_OnMouseWheel)
+    DressUpModelFrame:HookScript('OnMouseDown', function(self, button)
+        --
+        -- function Model_StartPanning(self, usePanningFrame)
+        if button == 'RightButton' then Model_StartPanning(self) end
+    end)
+    DressUpModelFrame:HookScript('OnMouseUp', function(self, button)
+        --
+        -- function Model_StopPanning(self)
+        Model_StopPanning(self)
+    end)
+
+    -- default reset is not at 0
+    DressUpFrameResetButton:HookScript('OnClick', function()
+        --
+        DressUpModelFrame:SetRotation(0)
+        DressUpModelFrame:SetPosition(0, 0, 0)
+        DressUpModelFrame:SetPortraitZoom(0)
+        DressUpModelFrame:RefreshCamera()
+    end)
 end
 
 function DragonflightUIMixin:ChangeInspectFrame()
