@@ -1025,14 +1025,22 @@ function Module.ChangeTrackingEra()
     local updatePos = function()
         MiniMapTrackingFrame:ClearAllPoints()
         -- MiniMapTrackingFrame:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, -2)
-        MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'LEFT', 15, 56)
+        -- MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'LEFT', 15, 56)
+        MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'CENTER', -52.56, 53.51)
+
         MiniMapTrackingFrame:SetParent(Minimap)
     end
 
     updatePos()
-    MiniMapTrackingFrame:SetSize(33, 33)
+    MiniMapTrackingFrame:SetSize(31, 31)
     -- MiniMapTrackingFrame:SetScale(0.75)
-    MiniMapTrackingFrame:SetScale(1.15)
+    -- MiniMapTrackingFrame:SetScale(1.15)
+
+    local bg = MiniMapTrackingFrame:CreateTexture('DragonflightUITrackingFrameBackground', 'BACKGROUND')
+    bg:SetSize(24, 24)
+    bg:SetTexture(base .. 'ui-minimap-background')
+    bg:ClearAllPoints()
+    bg:SetPoint("CENTER", MiniMapTrackingFrame, "CENTER")
 
     MiniMapTrackingBorder:SetSize(50, 50)
     MiniMapTrackingBorder:SetTexture(base .. 'minimap-trackingborder')
