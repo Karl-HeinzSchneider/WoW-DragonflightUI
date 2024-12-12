@@ -122,7 +122,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="DFQuestLogCountTopRight" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentTopRight" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="8" y="8" />
 					</Size>
@@ -131,7 +131,7 @@
 					</Anchors>
 					<TexCoords left="0.9375" right="1.0" top="0" bottom="0.25" />
 				</Texture>
-				<Texture name="DFQuestLogCountBottomRight" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentBottomRight" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="8" y="8" />
 					</Size>
@@ -140,17 +140,17 @@
 					</Anchors>
 					<TexCoords left="0.9375" right="1.0" top="0.375" bottom="0.625" />
 				</Texture>
-				<Texture name="DFQuestLogCountRight" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="8" y="0" />
 					</Size>
 					<Anchors>
-						<Anchor point="TOP" relativeTo="DFQuestLogCountTopRight" relativePoint="BOTTOM" />
-						<Anchor point="BOTTOM" relativeTo="DFQuestLogCountBottomRight" relativePoint="TOP" />
+						<Anchor point="TOP" relativeTo="$parentTopRight" relativePoint="BOTTOM" />
+						<Anchor point="BOTTOM" relativeTo="$parentBottomRight" relativePoint="TOP" />
 					</Anchors>
 					<TexCoords left="0.9375" right="1.0" top="0.25" bottom="0.375" />
 				</Texture>
-				<Texture name="DFQuestLogCountTopLeft" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentTopLeft" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="8" y="8" />
 					</Size>
@@ -159,7 +159,7 @@
 					</Anchors>
 					<TexCoords left="0" right="0.0625" top="0" bottom="0.25" />
 				</Texture>
-				<Texture name="DFQuestLogCountBottomLeft" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentBottomLeft" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="8" y="8" />
 					</Size>
@@ -168,23 +168,23 @@
 					</Anchors>
 					<TexCoords left="0" right="0.0625" top="0.375" bottom="0.625" />
 				</Texture>
-				<Texture name="DFQuestLogCountLeft" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="8" y="0" />
 					</Size>
 					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="DFQuestLogCountTopLeft" relativePoint="BOTTOMLEFT" />
-						<Anchor point="BOTTOMLEFT" relativeTo="DFQuestLogCountBottomLeft" relativePoint="TOPLEFT" />
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="BOTTOMLEFT" />
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentBottomLeft" relativePoint="TOPLEFT" />
 					</Anchors>
 					<TexCoords left="0" right="0.0625" top="0.25" bottom="0.375" />
 				</Texture>
-				<Texture name="DFQuestLogCountTopMiddle" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentTopMiddle" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="100" y="8" />
 					</Size>
 					<Anchors>
-						<Anchor point="RIGHT" relativeTo="DFQuestLogCountTopRight" relativePoint="LEFT" />
-						<Anchor point="LEFT" relativeTo="DFQuestLogCountTopLeft" relativePoint="RIGHT" />
+						<Anchor point="RIGHT" relativeTo="$parentTopRight" relativePoint="LEFT" />
+						<Anchor point="LEFT" relativeTo="$parentTopLeft" relativePoint="RIGHT" />
 					</Anchors>
 					<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.25" />
 				</Texture>
@@ -193,18 +193,18 @@
 						<AbsDimension x="100" y="4" />
 					</Size>
 					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="DFQuestLogCountTopLeft" relativePoint="BOTTOMRIGHT" />
-						<Anchor point="BOTTOMRIGHT" relativeTo="DFQuestLogCountBottomRight" relativePoint="TOPLEFT" />
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBottomRight" relativePoint="TOPLEFT" />
 					</Anchors>
 					<TexCoords left="0.0625" right="0.9375" top="0.25" bottom="0.375" />
 				</Texture>
-				<Texture name="DFQuestLogCountBottomMiddle" file="Interface\Common\Common-Input-Border">
+				<Texture name="$parentBottomMiddle" file="Interface\Common\Common-Input-Border">
 					<Size>
 						<AbsDimension x="100" y="8" />
 					</Size>
 					<Anchors>
-						<Anchor point="RIGHT" relativeTo="DFQuestLogCountBottomRight" relativePoint="LEFT" />
-						<Anchor point="LEFT" relativeTo="DFQuestLogCountBottomLeft" relativePoint="RIGHT" />
+						<Anchor point="RIGHT" relativeTo="$parentBottomRight" relativePoint="LEFT" />
+						<Anchor point="LEFT" relativeTo="$parentBottomLeft" relativePoint="RIGHT" />
 					</Anchors>
 					<TexCoords left="0.0625" right="0.9375" top="0.375" bottom="0.625" />
 				</Texture>
