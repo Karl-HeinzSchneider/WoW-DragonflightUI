@@ -1204,6 +1204,22 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
     local model = CharacterModelFrame
     model:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', 52, -66)
+    model:SetHeight(224 - 12)
+
+    -- wheel 
+    model:EnableMouseWheel(true)
+    model:HookScript('OnMouseWheel', Model_OnMouseWheel)
+    -- panning? maybe
+    -- model:HookScript('OnMouseDown', function(self, button)
+    --     --
+    --     -- function Model_StartPanning(self, usePanningFrame)
+    --     if button == 'RightButton' then Model_StartPanning(self) end
+    -- end)
+    -- model:HookScript('OnMouseUp', function(self, button)
+    --     --
+    --     -- function Model_StopPanning(self)
+    --     Model_StopPanning(self)
+    -- end)
 
     local res = CharacterResistanceFrame
     res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
