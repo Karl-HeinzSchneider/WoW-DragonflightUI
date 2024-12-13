@@ -1829,11 +1829,14 @@ function DragonflightUIMixin:ShowQuestXP()
             relativeTo = QuestLogItem7
         elseif relativeTo == QuestLogItem10 then
             relativeTo = QuestLogItem9
+        elseif relativeTo == _G["QuestLogSpellLearnText"] then
+            relativeTo = QuestLogItem1
         end
 
         local str = QuestLogFrame.DFQuestXP
         local strXP = QuestLogFrame.DFQuestXP2
         local rewardText = _G['QuestLogRewardTitleText']
+        -- local learnSpellText = _G["QuestLogSpellLearnText"];
 
         if rewardText:IsShown() then
             -- 'You will also receive'
