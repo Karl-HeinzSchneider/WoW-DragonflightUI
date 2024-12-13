@@ -282,3 +282,5 @@ function DragonflightUILocalizationData:GetSkillIDFromProfessionName(name)
     return ProfessionNamesToSkillID[name]
 end
 
+-- fix beast training
+DragonflightUILocalizationData.DF_PROFESSIONS_BEAST = DF_PROFESSIONS_BEAST

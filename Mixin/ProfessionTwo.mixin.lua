@@ -870,7 +870,11 @@ function DragonFlightUIProfessionCraftMixin:UpdateHeader()
     local profData = professionDataTable[skillID]
 
     local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
-    if not nameLoc then nameLoc = GetCraftSkillLine(1) end -- beast training
+    if not nameLoc then
+        -- beast training
+        --  nameLoc = GetCraftSkillLine(1) 
+        nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
+    end
 
     -- print(nameLoc, skillID, icon)
     -- self.NineSlice.Text:SetText(nameLoc) 
@@ -908,7 +912,13 @@ function DragonFlightUIProfessionCraftMixin:GetProfessionID()
     -- localized...
     local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
 
-    if not nameLoc then nameLoc = GetCraftSkillLine(1) end -- beast training
+    if nameLoc then
+        -- normal 
+    else
+        -- beast training
+        -- nameLoc = GetCraftSkillLine(1)
+        nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
+    end
 
     local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
     local profData = professionDataTable[skillID]
