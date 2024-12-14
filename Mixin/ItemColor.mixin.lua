@@ -67,7 +67,7 @@ function DragonflightUIItemColorMixin:UpdateOverlayQuality(frame, quality)
     local color = DF_BAG_ITEM_QUALITY_COLORS[quality]
     if not color then
         color = DF_BAG_ITEM_QUALITY_COLORS[1]
-        print('No Color:', frame:GetName(), quality)
+        -- print('No Color:', frame:GetName(), quality)
     end
     -- print('color', color)
     frame.DFQuality:SetVertexColor(color.r, color.g, color.b, color.a)
