@@ -3715,7 +3715,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
 
                     if i == 5 then
                         local tabHigh = _G[name .. 'Tab' .. i .. 'HighlightTexture']
-                        tabHigh:Hide()
+                        if tabHigh then tabHigh:Hide() end
                     end
                 end
             end
