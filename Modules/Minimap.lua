@@ -1415,6 +1415,7 @@ function Module.ChangeEra()
 end
 
 function Module:UpdateButton(btn)
+    if not btn then return end
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
     local children = {btn:GetRegions()}
 
