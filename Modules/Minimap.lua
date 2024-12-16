@@ -277,6 +277,13 @@ local minimapOptions = {
                 ['LEFT'] = 'LEFT'
             },
             order = 20
+        },
+        useStateHandler = {
+            type = 'toggle',
+            name = 'Use State Handler',
+            desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
+                getDefaultStr('useStateHandler', 'minimap'),
+            order = 115
         }
     }
 }
@@ -432,7 +439,7 @@ function Module:OnEnable()
 
     Module.Tmp.MinimapX = 0
     Module.Tmp.MinimapY = 0
-    Module.AddStateUpdater()
+    -- Module.AddStateUpdater()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -478,6 +485,11 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
+
+    if db.minimap.useStateHandler and not Module.StateHandlerAdded then
+        Module.StateHandlerAdded = true;
+        Module.AddStateUpdater()
+    end
 
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
@@ -627,7 +639,7 @@ function Module.UpdateMinimapState(state)
         MinimapZoomOut:Show()
     end
 
-    Minimap:UpdateStateHandler(state)
+    if Module.StateHandlerAdded then Minimap:UpdateStateHandler(state) end
 
     if state.skinButtons and not Module.SkinButtonsHooked then
         Module.SkinButtonsHooked = true;

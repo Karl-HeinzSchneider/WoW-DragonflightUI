@@ -26,7 +26,8 @@ local defaults = {
             hideStealth = false,
             hideNoStealth = false,
             hideCustom = false,
-            hideCustomCond = ''
+            hideCustomCond = '',
+            useStateHandler = true
         },
         debuffs = {
             scale = 1,
@@ -172,6 +173,13 @@ local buffsOptions = {
             desc = '' .. getDefaultStr('expanded', 'buffs'),
             order = 10,
             new = true
+        },
+        useStateHandler = {
+            type = 'toggle',
+            name = 'Use State Handler',
+            desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
+                getDefaultStr('useStateHandler', 'buffs'),
+            order = 115
         }
     }
 }
@@ -322,7 +330,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
-    Module.AddStateUpdater()
+    -- Module.AddStateUpdater()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -367,6 +375,11 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
+
+    if db.buffs.useStateHandler and not Module.StateHandlerAdded then
+        Module.StateHandlerAdded = true;
+        Module.AddStateUpdater()
+    end
 
     Module.UpdateBuffState(db.buffs)
     Module.UpdateDebuffState(db.debuffs)
@@ -460,7 +473,7 @@ function Module.UpdateBuffState(state)
     TemporaryEnchantFrame:SetScale(state.scale)
     TemporaryEnchantFrame:SetParent(f)
 
-    f:UpdateStateHandler(state)
+    if Module.StateHandlerAdded then f:UpdateStateHandler(state) end
 end
 
 function Module.MoveBuffs()
@@ -600,7 +613,7 @@ function Module.UpdateDebuffState(state)
         end
     end
 
-    f:UpdateStateHandler(state)
+    if Module.StateHandlerAdded then f:UpdateStateHandler(state) end
 end
 
 local frame = CreateFrame('FRAME')
