@@ -34,7 +34,8 @@ local defaults = {
             hideStealth = false,
             hideNoStealth = false,
             hideCustom = false,
-            hideCustomCond = ''
+            hideCustomCond = '',
+            useStateHandler = true
         },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
     }
