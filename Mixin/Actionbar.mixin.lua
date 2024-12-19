@@ -67,6 +67,25 @@ function DragonflightUIActionbarMixin:SetState(state)
     self:Update()
 end
 
+function DragonflightUIActionbarMixin:IsAnchorframeLegal()
+    local parent = _G[self.state.anchorFrame];
+    local loopStr = self:GetName();
+    local toCheck = parent;
+    local relativeTo;
+
+    while toCheck ~= UIParent do
+        --
+        loopStr = loopStr .. ' -> ' .. toCheck:GetName();
+        if toCheck == self then return false, loopStr; end
+        _, relativeTo, _, _, _ = toCheck:GetPoint(1)
+        toCheck = relativeTo;
+    end
+
+    loopStr = loopStr .. ' -> ' .. toCheck:GetName();
+    -- UIParent
+    return true, loopStr;
+end
+
 function DragonflightUIActionbarMixin:Update()
     local state = self.state
     -- print("DragonflightUIActionbarMixin:Update()", state)
@@ -108,10 +127,6 @@ function DragonflightUIActionbarMixin:Update()
     else
         self:SetSize(height, width)
     end
-
-    local parent = _G[state.anchorFrame]
-    self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     for i = buttons + 1, btnCount do
         local btn = buttonTable[i]
@@ -246,6 +261,26 @@ function DragonflightUIActionbarMixin:Update()
             end
         end
     end
+
+    local isLegal, loopStr = self:IsAnchorframeLegal();
+    local loopStrFixed, _ = gsub(loopStr, 'DragonflightUI', 'DF')
+    -- print(loopStrFixed)
+    if not isLegal then
+        local retOK, ret1 = xpcall(function()
+            local msg = self:GetName() ..
+                            ' AnchorFrame is forming an illegal anchor chain, please fix inside the DragonflightUI options! (A frame cant be anchored to another frame depending on it) \n LOOP: ' ..
+                            loopStrFixed
+            print('|cffFF0000ERROR! |r' .. msg);
+            -- print(loopStrFixed)
+            error(msg, 1)
+        end, geterrorhandler())
+
+        return
+    end
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     self:UpdateStateHandler(state)
 end
