@@ -119,10 +119,8 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:CreateGrid()
     print('CreateGrid()')
-
-    local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
-    grid:Show()
-    grid:SetAllPoints();
+    local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
+                                      'DragonflightUIEditModeFrameTemplate');
 
 end
 

@@ -20,4 +20,67 @@
 			<KeyValue key="isGridLine" value="true" type="boolean" />
 		</KeyValues>
 	</Line>
+	<Frame name="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeFrameMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
+		<Size x="450" y="250" />
+		<Anchors>
+			<Anchor point="CENTER" y="150" />
+		</Anchors>
+		<Layers>
+			<Layer level="BORDER">
+				<FontString parentKey="InstructionText" inherits="GameFontWhite" text="QUICK_KEYBIND_DESCRIPTION" wordwrap="true">
+					<Size x="400" y="50" />
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-20" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="CancelDescriptionText" inherits="GameFontWhite" text="QUICK_KEYBIND_CANCEL_DESCRIPTION" wordwrap="true">
+					<Size x="400" y="50" />
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.InstructionText" relativePoint="CENTER" x="0" y="-50" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="OutputText" inherits="GameFontWhite">
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.CancelDescriptionText" relativePoint="CENTER" x="0" y="-50" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="BG" inherits="DialogBorderTemplate" />
+			<Frame parentKey="Header" inherits="DragonflightDialogHeaderTemplate">
+				<KeyValues>
+					<KeyValue key="textString" value="QUICK_KEYBIND_MODE" type="global" />
+				</KeyValues>
+			</Frame>
+			<Button parentKey="ClosePanelButton" inherits="UIPanelCloseButtonDefaultAnchors" />
+			<CheckButton parentKey="UseCharacterBindingsButton" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="CENTER" x="-82" y="-65" />
+				</Anchors>
+			</CheckButton>
+			<Button parentKey="RevertButton" inherits="UIPanelButtonTemplate">
+				<Size x="155" y="22" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" x="25" y="15" />
+				</Anchors>
+			</Button>
+			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate">
+				<Size x="155" y="22" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-25" y="15" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnShow method="OnShow" /> -->
+			<!-- <OnHide method="OnHide" /> -->
+			<!-- <OnKeyDown method="OnKeyDown" /> -->
+			<!-- <OnGamePadButtonDown method="OnKeyDown" /> -->
+			<!-- <OnMouseWheel method="OnMouseWheel" /> -->
+			<OnDragStart method="OnDragStart" />
+			<OnDragStop method="OnDragStop" />
+		</Scripts>
+	</Frame>
 </Ui>

@@ -1,3 +1,41 @@
+DragonflightUIEditModeFrameMixin = {}
+
+function DragonflightUIEditModeFrameMixin:OnLoad()
+    self.InstructionText:SetText('InstructionText')
+    self.CancelDescriptionText:SetText('')
+    self.Header.Text:SetText('HUD Edit Mode')
+
+    self.RevertButton:SetText('Revert All Changes');
+    -- self.CancelButton:SetScript("OnClick", function(button, buttonName, down)
+    --     self:CancelBinding();
+    -- end);
+
+    self.SaveButton:SetText('Save');
+    -- self.OkayButton:SetScript("OnClick", function(button, buttonName, down)
+    --     KeybindListener:Commit();
+
+    --     HideUIPanel(self);
+    -- end);
+
+    local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
+    grid:Show()
+    grid:SetAllPoints();
+
+    self.Grid = grid;
+
+    local closeBtn = self.ClosePanelButton
+    DragonflightUIMixin:UIPanelCloseButton(closeBtn)
+    closeBtn:SetPoint('TOPRIGHT', 1, 0)
+end
+
+function DragonflightUIEditModeFrameMixin:OnDragStart()
+    self:StartMoving()
+end
+
+function DragonflightUIEditModeFrameMixin:OnDragStop()
+    self:StopMovingOrSizing()
+end
+
 DragonflightUIEditModeGridMixin = {}
 
 function DragonflightUIEditModeGridMixin:OnLoad()
@@ -9,6 +47,15 @@ function DragonflightUIEditModeGridMixin:OnLoad()
     hooksecurefunc("UpdateUIParentPosition", function()
         if self:IsShown() then self:UpdateGrid() end
     end);
+
+    local function startTimer()
+        C_Timer.After(1, function()
+            local spacing = self.gridSpacing;
+            self:SetGridSpacing(spacing + 5);
+            startTimer()
+        end)
+    end
+    -- startTimer()
 end
 
 function DragonflightUIEditModeGridMixin:OnHide()
