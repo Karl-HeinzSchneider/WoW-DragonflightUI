@@ -172,6 +172,7 @@ function Module:ApplySettings()
     local modules = db.modules
 
     DF:EnableModule('Profiles')
+    DF:EnableModule('Editmode')
 
     for k, v in pairs(modules) do
         -- print(k, v)

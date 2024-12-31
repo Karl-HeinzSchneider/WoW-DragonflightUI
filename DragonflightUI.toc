@@ -50,6 +50,7 @@ XML\Bossframe.xml
 XML\Castbar.xml
 XML\ConfigCategoryList.xml
 XML\Config.xml
+XML\Editmode.xml
 XML\Profession.xml
 XML\ProfessionSpellbook.xml
 XML\ProfessionTwo.xml
@@ -63,6 +64,7 @@ Modules\Config.lua
 
 # Modules
 Modules\Profiles.lua
+Modules\Editmode.lua
 
 Modules\Actionbar.lua
 Modules\Bossframe.lua

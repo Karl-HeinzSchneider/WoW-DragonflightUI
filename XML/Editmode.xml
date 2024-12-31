@@ -1,0 +1,23 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
+	<Script file="Mixin/Editmode.mixin.lua" />
+	<Frame name="DragonflightUIEditModeGrid" frameStrata="BACKGROUND" mixin="DragonflightUIEditModeGridMixin" hidden="true" virtual="true">
+		<KeyValues>
+			<KeyValue key="ignoreInLayout" value="true" type="boolean" />
+		</KeyValues>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" />
+			<Anchor point="BOTTOMRIGHT" relativeTo="UIParent" />
+		</Anchors>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnShow method="UpdateGrid" />
+			<OnEvent method="UpdateGrid" />
+			<OnHide method="OnHide" />
+		</Scripts>
+	</Frame>
+	<Line name="DFEditModeGridLineTemplate" mixin="DFEditModeGridLineMixin" virtual="true">
+		<KeyValues>
+			<KeyValue key="isGridLine" value="true" type="boolean" />
+		</KeyValues>
+	</Line>
+</Ui>
