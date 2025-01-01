@@ -5,7 +5,9 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, general = {showGrid = true, gridSize = 20}}}
+local defaults = {
+    profile = {scale = 1, general = {showGrid = true, gridSize = 20, snapGrid = true, snapElements = true}}
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub)
@@ -30,7 +32,7 @@ end
 
 local generalOptions = {
     type = 'group',
-    name = 'Darkmode',
+    name = 'EditMode',
     get = getOption,
     set = setOption,
     args = {
@@ -38,16 +40,32 @@ local generalOptions = {
             type = 'toggle',
             name = 'Show Grid',
             desc = '' .. getDefaultStr('showGrid', 'general'),
-            order = 100.5
+            order = 100.5,
+            small = true
         },
         gridSize = {
             type = 'range',
-            name = 'r',
+            name = 'Grid Size',
             desc = '' .. getDefaultStr('gridSize', 'general'),
-            min = 1,
-            max = 32,
+            min = 8,
+            max = 128,
             bigStep = 1,
-            order = 101
+            order = 101,
+            small = true
+        },
+        snapGrid = {
+            type = 'toggle',
+            name = 'Snap to Grid',
+            desc = '' .. getDefaultStr('snapGrid', 'general'),
+            order = 102,
+            small = true
+        },
+        snapElements = {
+            type = 'toggle',
+            name = 'Snap to Elements',
+            desc = '' .. getDefaultStr('snapElements', 'general'),
+            order = 103,
+            small = true
         }
     }
 }
@@ -73,8 +91,10 @@ function Module:OnEnable()
         Module.Era()
     end
 
+    Module:CreateGrid()
+
     Module:ApplySettings()
-    -- Module:RegisterOptionScreens()
+    Module:RegisterOptionScreens()
 
     -- self:SecureHook(DF, 'RefreshConfig', function()
     --     -- print('RefreshConfig', mName)
@@ -86,16 +106,25 @@ end
 function Module:OnDisable()
 end
 
--- function Module:RegisterOptionScreens()
---     DF.ConfigModule:RegisterOptionScreen('Misc', 'Darkmode', {
---         name = 'Darkmode',
---         sub = 'general',
---         options = generalOptions,
---         default = function()
---             setDefaultSubValues('general')
---         end
---     })
--- end
+function Module:RegisterOptionScreens()
+    -- DF.ConfigModule:RegisterOptionScreen('Misc', 'Darkmode', {
+    --     name = 'Darkmode',
+    --     sub = 'general',
+    --     options = generalOptions,
+    --     default = function()
+    --         setDefaultSubValues('general')
+    --     end
+    -- })
+
+    Module.EditModeFrame:SetupOptions({
+        name = 'EditMode',
+        sub = 'general',
+        options = generalOptions,
+        default = function()
+            setDefaultSubValues('general')
+        end
+    })
+end
 
 function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
@@ -108,6 +137,11 @@ end
 function Module:ApplySettings()
     local db = Module.db.profile
     local state = db.general
+
+    local f = Module.EditModeFrame
+
+    f.Grid:SetShown(state.showGrid)
+    f.Grid:SetGridSpacing(state.gridSize)
 end
 
 local frame = CreateFrame('FRAME')
@@ -121,12 +155,11 @@ function Module:CreateGrid()
     print('CreateGrid()')
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeFrameTemplate');
-
+    Module.EditModeFrame = editModeFrame;
 end
 
 -- Cata
 function Module.Cata()
-    Module:CreateGrid()
 end
 
 -- Wrath

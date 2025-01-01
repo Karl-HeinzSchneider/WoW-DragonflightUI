@@ -1,11 +1,35 @@
-DragonflightUIEditModeFrameMixin = {}
+-- DragonflightUIEditModeFrameMixin = {}
+DragonflightUIEditModeFrameMixin = CreateFromMixins(CallbackRegistryMixin);
+DragonflightUIEditModeFrameMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
 function DragonflightUIEditModeFrameMixin:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
+
+    self:SetupFrame();
+
+    local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
+    grid:Show()
+    grid:SetAllPoints();
+
+    self.Grid = grid;
+end
+
+function DragonflightUIEditModeFrameMixin:OnDragStart()
+    self:StartMoving()
+end
+
+function DragonflightUIEditModeFrameMixin:OnDragStop()
+    self:StopMovingOrSizing()
+end
+
+function DragonflightUIEditModeFrameMixin:SetupFrame()
     self.InstructionText:SetText('InstructionText')
+    self.InstructionText:Hide()
     self.CancelDescriptionText:SetText('')
     self.Header.Text:SetText('HUD Edit Mode')
 
     self.RevertButton:SetText('Revert All Changes');
+    self.RevertButton:SetEnabled(false);
     -- self.CancelButton:SetScript("OnClick", function(button, buttonName, down)
     --     self:CancelBinding();
     -- end);
@@ -17,23 +41,30 @@ function DragonflightUIEditModeFrameMixin:OnLoad()
     --     HideUIPanel(self);
     -- end);
 
-    local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
-    grid:Show()
-    grid:SetAllPoints();
-
-    self.Grid = grid;
-
     local closeBtn = self.ClosePanelButton
     DragonflightUIMixin:UIPanelCloseButton(closeBtn)
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
 end
 
-function DragonflightUIEditModeFrameMixin:OnDragStart()
-    self:StartMoving()
-end
+function DragonflightUIEditModeFrameMixin:SetupOptions(data)
+    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'SettingsListTemplateDF')
+    displayFrame:Display(data)
 
-function DragonflightUIEditModeFrameMixin:OnDragStop()
-    self:StopMovingOrSizing()
+    displayFrame:ClearAllPoints()
+    -- -@diagnostic disable-next-line: param-type-mismatch
+    -- displayFrame:SetParent(self)
+    displayFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+    displayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    displayFrame:CallRefresh()
+    displayFrame:Show()
+
+    local scrollBox = displayFrame.ScrollBox
+    scrollBox:ClearAllPoints()
+    scrollBox:SetPoint('TOPLEFT', self, 'TOPLEFT', -2, -50)
+    scrollBox:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -8, 20)
+
+    -- displayFrame.Header.DefaultsButton:Hide()
+    displayFrame.Header:Hide()
 end
 
 DragonflightUIEditModeGridMixin = {}
@@ -47,15 +78,6 @@ function DragonflightUIEditModeGridMixin:OnLoad()
     hooksecurefunc("UpdateUIParentPosition", function()
         if self:IsShown() then self:UpdateGrid() end
     end);
-
-    local function startTimer()
-        C_Timer.After(1, function()
-            local spacing = self.gridSpacing;
-            self:SetGridSpacing(spacing + 5);
-            startTimer()
-        end)
-    end
-    -- startTimer()
 end
 
 function DragonflightUIEditModeGridMixin:OnHide()
@@ -82,7 +104,7 @@ function DragonflightUIEditModeGridMixin:SetGridSpacing(spacing)
 end
 
 function DragonflightUIEditModeGridMixin:UpdateGrid()
-    print('DragonflightUIEditModeGridMixin:UpdateGrid()')
+    -- print('DragonflightUIEditModeGridMixin:UpdateGrid()')
 
     if not self:IsVisible() then return; end
 

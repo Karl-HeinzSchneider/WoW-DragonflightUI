@@ -21,6 +21,8 @@ function ScrollableListItemMixinDF:Init(elementData)
         self.Item.Blizzard:Show()
     end
 
+    if data.small then self:SetSmall(true) end
+
     if data.type == 'header' then
         self:SetHeader(data.name)
     elseif data.type == 'range' then
@@ -135,6 +137,14 @@ function ScrollableListItemMixinDF:Reset()
 
     self.Item.NewFeature:Hide()
     self.Item.Blizzard:Hide()
+end
+
+function ScrollableListItemMixinDF:SetSmall(small)
+    self.Item.Text:SetPoint("LEFT", 10, 0); -- 37
+    -- self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -85, 0);
+    -- self.Item:Hide()
+
+    self.Item.Slider:SetWidth(235) -- 250
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)

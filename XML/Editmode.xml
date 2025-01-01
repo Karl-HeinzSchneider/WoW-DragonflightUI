@@ -54,21 +54,16 @@
 				</KeyValues>
 			</Frame>
 			<Button parentKey="ClosePanelButton" inherits="UIPanelCloseButtonDefaultAnchors" />
-			<CheckButton parentKey="UseCharacterBindingsButton" inherits="UICheckButtonTemplate">
-				<Anchors>
-					<Anchor point="CENTER" x="-82" y="-65" />
-				</Anchors>
-			</CheckButton>
 			<Button parentKey="RevertButton" inherits="UIPanelButtonTemplate">
-				<Size x="155" y="22" />
+				<Size x="155" y="25" />
 				<Anchors>
-					<Anchor point="BOTTOMLEFT" x="25" y="15" />
+					<Anchor point="BOTTOMLEFT" x="25" y="18" />
 				</Anchors>
 			</Button>
 			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate">
-				<Size x="155" y="22" />
+				<Size x="155" y="25" />
 				<Anchors>
-					<Anchor point="BOTTOMRIGHT" x="-25" y="15" />
+					<Anchor point="BOTTOMRIGHT" x="-25" y="18" />
 				</Anchors>
 			</Button>
 		</Frames>
