@@ -1,3 +1,6 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+
 -- DragonflightUIEditModeFrameMixin = {}
 DragonflightUIEditModeFrameMixin = CreateFromMixins(CallbackRegistryMixin);
 DragonflightUIEditModeFrameMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
@@ -8,7 +11,7 @@ function DragonflightUIEditModeFrameMixin:OnLoad()
     self:SetupFrame();
 
     local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
-    grid:Show()
+    grid:Hide()
     grid:SetAllPoints();
 
     self.Grid = grid;
@@ -23,6 +26,11 @@ function DragonflightUIEditModeFrameMixin:OnDragStop()
 end
 
 function DragonflightUIEditModeFrameMixin:SetupFrame()
+    self.EditmodeModule = DF:GetModule('Editmode')
+
+    self:SetFrameLevel(69)
+    self:SetFrameStrata('HIGH')
+
     self.InstructionText:SetText('InstructionText')
     self.InstructionText:Hide()
     self.CancelDescriptionText:SetText('')
@@ -35,6 +43,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
     -- end);
 
     self.SaveButton:SetText('Save');
+    self.SaveButton:SetEnabled(false);
     -- self.OkayButton:SetScript("OnClick", function(button, buttonName, down)
     --     KeybindListener:Commit();
 
@@ -44,6 +53,11 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
     local closeBtn = self.ClosePanelButton
     DragonflightUIMixin:UIPanelCloseButton(closeBtn)
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
+    closeBtn:SetScript('OnClick', function(button, buttonName, down)
+        --
+        print('onclick')
+        self.EditmodeModule:SetEditMode(false);
+    end)
 end
 
 function DragonflightUIEditModeFrameMixin:SetupOptions(data)

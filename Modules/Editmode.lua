@@ -4,6 +4,7 @@ local mName = 'Editmode'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
+Mixin(Module, CallbackRegistryMixin)
 
 local defaults = {
     profile = {scale = 1, general = {showGrid = true, gridSize = 20, snapGrid = true, snapElements = true}}
@@ -77,6 +78,8 @@ function Module:OnInitialize()
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     -- DF:RegisterModuleOptions(mName, generalOptions)
+
+    CallbackRegistryMixin.OnLoad(self);
 end
 
 function Module:OnEnable()
@@ -92,6 +95,14 @@ function Module:OnEnable()
     end
 
     Module:CreateGrid()
+    Module:SetupMainmenuButton()
+
+    Module:RegisterChatCommand('editmode', 'SlashCommand')
+
+    Module:GenerateCallbackEvents({"OnEditMode"})
+    self:RegisterCallback('OnEditMode', function(self, value)
+        print('~> OnEditMode', value)
+    end, self)
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -140,8 +151,12 @@ function Module:ApplySettings()
 
     local f = Module.EditModeFrame
 
-    f.Grid:SetShown(state.showGrid)
-    f.Grid:SetGridSpacing(state.gridSize)
+    if Module.IsEditMode then
+        f.Grid:SetShown(state.showGrid)
+        f.Grid:SetGridSpacing(state.gridSize)
+    else
+        f.Grid:SetShown(false)
+    end
 end
 
 local frame = CreateFrame('FRAME')
@@ -155,7 +170,45 @@ function Module:CreateGrid()
     print('CreateGrid()')
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeFrameTemplate');
+    editModeFrame:Hide()
+    -- editModeFrame.Grid:Hide()
+    Module.IsEditMode = false;
     Module.EditModeFrame = editModeFrame;
+end
+
+function Module:SlashCommand()
+    Module:SetEditMode(not Module.IsEditMode);
+end
+
+function Module:SetupMainmenuButton()
+    local configModule = DF:GetModule('Config')
+
+    local btn = configModule.EditModeButton
+
+    btn:SetScript('OnClick', function()
+        -- 
+        print('editmode')
+        Module:SetEditMode(not Module.IsEditMode)
+    end)
+end
+
+function Module:SetEditMode(isEditMode)
+    print('SetEditMode', isEditMode)
+
+    Module.IsEditMode = isEditMode;
+    Module.EditModeFrame:SetShown(isEditMode)
+
+    Module:ApplySettings()
+
+    if isEditMode then
+        if not InCombatLockdown() then
+            HideUIPanel(GameMenuFrame)
+            HideUIPanel(SettingsPanel)
+        end
+    else
+    end
+
+    self:TriggerEvent(self.Event.OnEditMode, isEditMode)
 end
 
 -- Cata

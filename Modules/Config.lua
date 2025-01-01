@@ -215,7 +215,7 @@ function Module:AddMainMenuButton()
         -- print('GameMenuFrame_UpdateVisibleButtons')
         local blizzHeight = self:GetHeight()
 
-        self:SetHeight(blizzHeight + 22)
+        self:SetHeight(blizzHeight + 22 + 22)
 
         Module.UpdateMainMenuButtons()
     end)
@@ -225,8 +225,15 @@ function Module:AddMainMenuButton()
     btn:SetText('DragonflightUI')
     Module.MainMenuButton = btn
 
+    local editBtn = CreateFrame('Button', 'DragonflightUIEditModeButton', GameMenuFrame, 'UIPanelButtonTemplate')
+    editBtn:SetSize(145, 21)
+    editBtn:SetText('Editmode')
+    editBtn:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
+    Module.EditModeButton = editBtn
+
     Module.UpdateMainMenuButtons = function()
         local btn = Module.MainMenuButton
+        local editBtn = Module.EditModeButton
 
         -- TODO:
         -- 'Interface action failed because of an AddOn' when infight and clicking DF Menu button    
@@ -237,7 +244,7 @@ function Module:AddMainMenuButton()
             btn:SetPoint('TOP', GameMenuButtonHelp, 'BOTTOM', 0, -16)
         end
 
-        GameMenuButtonOptions:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
+        GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1)
     end
     Module.UpdateMainMenuButtons()
 
