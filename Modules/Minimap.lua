@@ -361,14 +361,16 @@ local trackerOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'tracker'),
             values = frameTableTracker,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -385,7 +387,8 @@ local trackerOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -402,7 +405,8 @@ local trackerOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -411,7 +415,8 @@ local trackerOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -420,7 +425,8 @@ local trackerOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         }
     }
 }
@@ -492,6 +498,7 @@ function Module:RefreshOptionScreens()
 
     -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
     Minimap.DFEditModeSelection:RefreshOptionScreen();
+    Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
 end
 
 function Module:ApplySettings()
@@ -645,6 +652,25 @@ function Module:AddEditMode()
     Minimap.DFEditModeSelection:ClearAllPoints()
     Minimap.DFEditModeSelection:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
     Minimap.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+
+    -- QuestTracker
+    local trackerFrame = DF.Era and QuestWatchFrame or (DF.Cata and WatchFrame) and WatchFrame;
+    Module.TrackerFrameRef = trackerFrame;
+    EditModeModule:AddEditModeToFrame(trackerFrame)
+
+    trackerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Questtracker'
+    end)
+
+    trackerFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Questtracker',
+        sub = 'tracker',
+        options = trackerOptions,
+        default = function()
+            setDefaultSubValues('tracker')
+        end,
+        moduleRef = self
+    });
 end
 
 function Module.UpdateMinimapState(state)
