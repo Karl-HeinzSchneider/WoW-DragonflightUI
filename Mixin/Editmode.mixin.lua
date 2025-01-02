@@ -264,10 +264,8 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     local EditModeModule = DF:GetModule('Editmode');
     EditModeModule:RegisterCallback('OnEditMode', function(self, value)
         print('SELECTION: OnEditMode', value)
+        self:ShowHighlighted()
         self:SetShown(value)
-        self:SetNinesliceSelected(false)
-        if self.SelectionOptions then self.SelectionOptions:Hide() end
-        -- self.parent:SetShown(value)
 
         if value then
             self.parent.DFEditMode = true;
@@ -295,13 +293,9 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
         self:SetNinesliceSelected(value and value == self)
         if value and value == self then
             print('SELECTION', value:GetName())
-            self:SetNinesliceSelected(true)
-            self.isSelected = true;
-            if self.SelectionOptions then self.SelectionOptions:Show() end
+            self:ShowSelected()
         else
-            self:SetNinesliceSelected(false)
-            self.isSelected = false;
-            if self.SelectionOptions then self.SelectionOptions:Hide() end
+            self:ShowHighlighted()
         end
     end, self)
 
@@ -443,6 +437,7 @@ function DFEditModeSystemSelectionBaseMixin:ShowHighlighted()
     self.isSelected = false;
     self:UpdateLabelVisibility();
     self:Show();
+    if self.SelectionOptions then self.SelectionOptions:Hide() end
 end
 
 function DFEditModeSystemSelectionBaseMixin:ShowSelected()
@@ -451,6 +446,7 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     self.isSelected = true;
     self:UpdateLabelVisibility();
     self:Show();
+    if self.SelectionOptions then self.SelectionOptions:Show() end
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnDragStart()
