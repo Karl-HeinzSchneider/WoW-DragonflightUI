@@ -499,7 +499,12 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
 
     if not self.ModuleRef then return end
 
-    local db = self.ModuleRef.db.profile[self.ModuleSub]
+    local db;
+    if self.ModuleSub then
+        db = self.ModuleRef.db.profile[self.ModuleSub]
+    else
+        db = self.ModuleRef.db.profile
+    end
     if not db then return end
 
     db.anchor = point;
