@@ -92,6 +92,8 @@
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<OnMouseDown method="OnMouseDown" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
 			<OnDragStart method="OnDragStart" />
 			<OnDragStop method="OnDragStop" />
 		</Scripts>

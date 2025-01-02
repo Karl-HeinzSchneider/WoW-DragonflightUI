@@ -305,6 +305,16 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     -- self:SetClampedToScreen(true) --TODO
 end
 
+function DFEditModeSystemSelectionBaseMixin:OnEnter()
+    if self.getLabelText then self.Label:SetText(self.getLabelText()); end
+
+    self.Label:SetShown(true);
+end
+
+function DFEditModeSystemSelectionBaseMixin:OnLeave()
+    self:UpdateLabelVisibility()
+end
+
 function DFEditModeSystemSelectionBaseMixin:AddNineslice()
     self.NineSlice = {}
     local slice = self.NineSlice
