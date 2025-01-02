@@ -78,4 +78,28 @@
 			<OnDragStop method="OnDragStop" />
 		</Scripts>
 	</Frame>
+	<Frame name="DFEditModeSystemSelectionBaseTemplate" parentKey="Selection" mixin="DFEditModeSystemSelectionBaseMixin" ignoreParentAlpha="true" frameStrata="MEDIUM" frameLevel="1000" toplevel="true" enableMouse="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
+		<Size x="1" y="1" />
+		<!--
+		<KeyValues>
+		<KeyValue key="highlightTextureKit" value="editmode-actionbar-highlight" type="string" />
+		<KeyValue key="selectedTextureKit" value="editmode-actionbar-selected" type="string" />
+		<KeyValue key="ignoreInLayout" value="true" type="boolean" />
+		</KeyValues>
+		-->
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnMouseDown method="OnMouseDown" />
+			<OnDragStart method="OnDragStart" />
+			<OnDragStop method="OnDragStop" />
+		</Scripts>
+	</Frame>
+	<Frame name="DFEditModeSystemSelectionTemplate" inherits="DFEditModeSystemSelectionBaseTemplate" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Label" inherits="GameFontHighlightLarge" mixin="ShrinkUntilTruncateFontStringMixin" setAllPoints="true" ignoreParentScale="true" hidden="true">
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
 </Ui>

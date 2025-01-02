@@ -456,7 +456,9 @@
         "CreateObjectPool",
         "EditModeGridLineMixin",
         "EditModeMagnetismManager",
-        "EditModeManagerFrame"
+        "EditModeManagerFrame",
+        "NineSliceUtil",
+        "EditModeSystemSelectionBaseMixin"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

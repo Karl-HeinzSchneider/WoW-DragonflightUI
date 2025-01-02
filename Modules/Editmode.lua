@@ -104,6 +104,8 @@ function Module:OnEnable()
         print('~> OnEditMode', value)
     end, self)
 
+    Module:AddEditModeToFrame(PlayerFrame)
+
     Module:ApplySettings()
     Module:RegisterOptionScreens()
 
@@ -209,6 +211,11 @@ function Module:SetEditMode(isEditMode)
     end
 
     self:TriggerEvent(self.Event.OnEditMode, isEditMode)
+end
+
+function Module:AddEditModeToFrame(frameRef)
+    local f = CreateFrame('Frame', 'DragonflightUIEditModeHelper', frameRef, 'DFEditModeSystemSelectionTemplate')
+
 end
 
 -- Cata

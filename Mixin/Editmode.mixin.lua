@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+-- local EditModeModule = DF:GetModule('Editmode');
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 -- DragonflightUIEditModeFrameMixin = {}
@@ -192,4 +193,188 @@ function DFEditModeGridLineMixin:SetupLine(centerLine, verticalLine, xOffset, yO
     SetupLineThickness(self, editModeGridLinePixelWidth);
 
     -- EditModeMagnetismManager:RegisterGridLine(self, verticalLine, verticalLine and xOffset or yOffset);
+end
+
+----------
+
+DFEditModeSystemSelectionBaseMixin = {};
+
+function DFEditModeSystemSelectionBaseMixin:OnLoad()
+    self.parent = self:GetParent();
+    print('DFEditModeSystemSelectionBaseMixin:OnLoad()', self.parent:GetName())
+    if self.Label then
+        self.Label:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium", "GameFontHighlightSmall");
+        -- self.Label:SetText('PlayerFrame')
+        -- self.Label:Show()
+    end
+    if self.HorizontalLabel then
+        self.HorizontalLabel:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium",
+                                                 "GameFontHighlightSmall");
+    end
+
+    self:SetPoint('TOPLEFT', self.parent, 'TOPLEFT', 0, 0)
+    self:SetPoint('BOTTOMRIGHT', self.parent, 'BOTTOMRIGHT', 0, 0)
+
+    self:AddNineslice()
+    self:SetNinesliceSelected(false)
+end
+
+function DFEditModeSystemSelectionBaseMixin:AddNineslice()
+    self.NineSlice = {}
+    local slice = self.NineSlice
+
+    slice.TopLeftCorner = self:CreateTexture('TopLeftCorner')
+    slice.TopLeftCorner:SetSize(16, 16)
+    slice.TopLeftCorner:SetPoint('TOPLEFT', -8, 8)
+
+    slice.TopRightCorner = self:CreateTexture('TopRightCorner')
+    slice.TopRightCorner:SetSize(16, 16)
+    slice.TopRightCorner:SetPoint('TOPRIGHT', 8, 8)
+    slice.TopRightCorner:SetRotation(-math.pi / 2)
+
+    slice.BottomLeftCorner = self:CreateTexture('BottomLeftCorner')
+    slice.BottomLeftCorner:SetSize(16, 16)
+    slice.BottomLeftCorner:SetPoint('BOTTOMLEFT', -8, -8)
+    slice.BottomLeftCorner:SetRotation(math.pi / 2)
+
+    slice.BottomRightCorner = self:CreateTexture('BottomRightCorner')
+    slice.BottomRightCorner:SetSize(16, 16)
+    slice.BottomRightCorner:SetPoint('BOTTOMRIGHT', 8, -8)
+    slice.BottomRightCorner:SetRotation(-math.pi)
+
+    slice.TopEdge = self:CreateTexture('TopEdge')
+    slice.TopEdge:SetPoint('TOPLEFT', slice.TopLeftCorner, 'TOPRIGHT')
+    slice.TopEdge:SetPoint('BOTTOMRIGHT', slice.TopRightCorner, 'BOTTOMLEFT')
+
+    slice.BottomEdge = self:CreateTexture('BottomEdge')
+    slice.BottomEdge:SetPoint('TOPLEFT', slice.BottomLeftCorner, 'TOPRIGHT')
+    slice.BottomEdge:SetPoint('BOTTOMRIGHT', slice.BottomRightCorner, 'BOTTOMLEFT')
+
+    slice.LeftEdge = self:CreateTexture('LeftEdge')
+    slice.LeftEdge:SetPoint('TOPLEFT', slice.TopLeftCorner, 'BOTTOMLEFT')
+    slice.LeftEdge:SetPoint('BOTTOMRIGHT', slice.BottomLeftCorner, 'TOPRIGHT')
+
+    slice.RightEdge = self:CreateTexture('RightEdge')
+    slice.RightEdge:SetPoint('TOPLEFT', slice.TopRightCorner, 'BOTTOMLEFT')
+    slice.RightEdge:SetPoint('BOTTOMRIGHT', slice.BottomRightCorner, 'TOPRIGHT')
+
+    slice.Center = self:CreateTexture('Center')
+    slice.Center:SetSize(16, 16)
+    -- slice.Center:SetPoint('TOPLEFT', -8, 8)
+    -- slice.Center:SetPoint('BOTTOMRIGHT', 8, -8)
+    slice.Center:SetPoint('TOPLEFT', 0, 0)
+    slice.Center:SetPoint('BOTTOMRIGHT', 0, 0)
+end
+
+-- ["Interface/Editmode/EditModeUI"]={
+--     ["editmode-actionbar-highlight-nineslice-corner"]={16, 16, 0.03125, 0.53125, 0.285156, 0.347656, false, false, "1x"},
+--     ["_editmode-actionbar-highlight-nineslice-edgebottom"]={16, 16, 0, 0.5, 0.00390625, 0.0664062, true, false, "1x"},
+--     ["_editmode-actionbar-highlight-nineslice-edgetop"]={16, 16, 0, 0.5, 0.0742188, 0.136719, true, false, "1x"},
+--     ["editmode-actionbar-selected-nineslice-corner"]={16, 16, 0.03125, 0.53125, 0.355469, 0.417969, false, false, "1x"},
+--     ["_editmode-actionbar-selected-nineslice-edgebottom"]={16, 16, 0, 0.5, 0.144531, 0.207031, true, false, "1x"},
+--     ["_editmode-actionbar-selected-nineslice-edgetop"]={16, 16, 0, 0.5, 0.214844, 0.277344, true, false, "1x"},
+--     ["editmode-down-arrow"]={16, 11, 0.03125, 0.53125, 0.566406, 0.609375, false, false, "1x"},
+--     ["editmode-up-arrow"]={16, 11, 0.03125, 0.53125, 0.617188, 0.660156, false, false, "1x"},
+--     ["editmode-new-layout-plus-disabled"]={16, 16, 0.03125, 0.53125, 0.425781, 0.488281, false, false, "1x"},
+--     ["editmode-new-layout-plus"]={16, 16, 0.03125, 0.53125, 0.496094, 0.558594, false, false, "1x"},
+-- }, -- Interface/Editmode/EditModeUI
+-- ["Interface/Editmode/EditModeUIHighlightBackground"]={
+--     ["editmode-actionbar-highlight-nineslice-center"]={16, 16, 0, 1, 0, 1, true, true, "1x"},
+-- }, -- Interface/Editmode/EditModeUIHighlightBackground
+-- ["Interface/Editmode/EditModeUISelectedBackground"]={
+--     ["editmode-actionbar-selected-nineslice-center"]={16, 16, 0, 1, 0, 1, true, true, "1x"},
+-- }, -- Interface/Editmode/EditModeUISelectedBackground
+-- ["Interface/Editmode/EditModeUIVertical"]={
+--     ["!editmode-actionbar-highlight-nineslice-edgeleft"]={16, 16, 0.0078125, 0.132812, 0, 1, false, true, "1x"},
+--     ["!editmode-actionbar-highlight-nineslice-edgeright"]={16, 16, 0.148438, 0.273438, 0, 1, false, true, "1x"},
+--     ["!editmode-actionbar-selected-nineslice-edgeleft"]={16, 16, 0.289062, 0.414062, 0, 1, false, true, "1x"},
+--     ["!editmode-actionbar-selected-nineslice-edgeright"]={16, 16, 0.429688, 0.554688, 0, 1, false, true, "1x"},
+-- }, -- Interface/Editmode/EditModeUIVertical
+
+function DFEditModeSystemSelectionBaseMixin:SetNinesliceSelected(selected)
+    print('DFEditModeSystemSelectionBaseMixin:SetNinesliceSelected(selected)', selected)
+    local slice = self.NineSlice
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\Editmode\\'
+
+    if selected then
+        --
+        slice.TopLeftCorner:SetTexture(base .. 'EditModeUI')
+        slice.TopLeftCorner:SetTexCoord(0.03125, 0.53125, 0.355469, 0.417969)
+        slice.TopRightCorner:SetTexture(base .. 'EditModeUI')
+        slice.TopRightCorner:SetTexCoord(0.03125, 0.53125, 0.355469, 0.417969)
+        slice.BottomLeftCorner:SetTexture(base .. 'EditModeUI')
+        slice.BottomLeftCorner:SetTexCoord(0.03125, 0.53125, 0.355469, 0.417969)
+        slice.BottomRightCorner:SetTexture(base .. 'EditModeUI')
+        slice.BottomRightCorner:SetTexCoord(0.03125, 0.53125, 0.355469, 0.417969)
+
+        slice.TopEdge:SetTexture(base .. 'EditModeUI')
+        slice.TopEdge:SetTexCoord(0, 0.5, 0.214844, 0.277344)
+        slice.BottomEdge:SetTexture(base .. 'EditModeUI')
+        slice.BottomEdge:SetTexCoord(0, 0.5, 0.144531, 0.207031)
+
+        slice.LeftEdge:SetTexture(base .. 'EditModeUIVertical')
+        slice.LeftEdge:SetTexCoord(0.289062, 0.414062, 0, 1)
+        slice.RightEdge:SetTexture(base .. 'EditModeUIVertical')
+        slice.RightEdge:SetTexCoord(0.429688, 0.554688, 0, 1)
+
+        slice.Center:SetTexture(base .. 'editmodeuiselectedbackground')
+        slice.Center:SetTexCoord(0, 1, 0, 1)
+    else
+        --
+        slice.TopLeftCorner:SetTexture(base .. 'EditModeUI')
+        slice.TopLeftCorner:SetTexCoord(0.03125, 0.53125, 0.285156, 0.347656)
+        slice.TopRightCorner:SetTexture(base .. 'EditModeUI')
+        slice.TopRightCorner:SetTexCoord(0.03125, 0.53125, 0.285156, 0.347656)
+        slice.BottomLeftCorner:SetTexture(base .. 'EditModeUI')
+        slice.BottomLeftCorner:SetTexCoord(0.03125, 0.53125, 0.285156, 0.347656)
+        slice.BottomRightCorner:SetTexture(base .. 'EditModeUI')
+        slice.BottomRightCorner:SetTexCoord(0.03125, 0.53125, 0.285156, 0.347656)
+
+        slice.TopEdge:SetTexture(base .. 'EditModeUI')
+        slice.TopEdge:SetTexCoord(0, 0.5, 0.0742188, 0.136719)
+        slice.BottomEdge:SetTexture(base .. 'EditModeUI')
+        slice.BottomEdge:SetTexCoord(0, 0.5, 0.00390625, 0.0664062)
+
+        slice.LeftEdge:SetTexture(base .. 'EditModeUIVertical')
+        slice.LeftEdge:SetTexCoord(0.0078125, 0.132812, 0, 1)
+        slice.RightEdge:SetTexture(base .. 'EditModeUIVertical')
+        slice.RightEdge:SetTexCoord(0.148438, 0.273438, 0, 1)
+
+        slice.Center:SetTexture(base .. 'EditModeUIHighlightBackground')
+        slice.Center:SetTexCoord(0, 1, 0, 1)
+    end
+end
+
+function DFEditModeSystemSelectionBaseMixin:ShowHighlighted()
+    -- NineSliceUtil.ApplyLayout(self, EditModeSystemSelectionLayout, self.highlightTextureKit);
+    self.isSelected = false;
+    self:UpdateLabelVisibility();
+    self:Show();
+end
+
+function DFEditModeSystemSelectionBaseMixin:ShowSelected()
+    -- NineSliceUtil.ApplyLayout(self, EditModeSystemSelectionLayout, self.selectedTextureKit);
+    self.isSelected = true;
+    self:UpdateLabelVisibility();
+    self:Show();
+end
+
+function DFEditModeSystemSelectionBaseMixin:OnDragStart()
+    -- self.parent:OnDragStart();
+end
+
+function DFEditModeSystemSelectionBaseMixin:OnDragStop()
+    -- self.parent:OnDragStop();
+end
+
+function DFEditModeSystemSelectionBaseMixin:OnMouseDown()
+    -- EditModeManagerFrame:SelectSystem(self.parent);
+    print('DFEditModeSystemSelectionBaseMixin:OnMouseDown()')
+    self:SetNinesliceSelected(true)
+end
+
+function DFEditModeSystemSelectionBaseMixin:UpdateLabelVisibility()
+    -- if self.getLabelText then self.Label:SetText(self.getLabelText()); end
+
+    self.Label:SetShown(self.isSelected);
 end
