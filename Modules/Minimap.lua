@@ -489,6 +489,9 @@ function Module:RefreshOptionScreens()
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Minimap')
     configFrame:RefreshCatSub(cat, 'Questtracker')
+
+    -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
+    Minimap.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings()
@@ -635,7 +638,8 @@ function Module:AddEditMode()
         options = minimapOptions,
         default = function()
             setDefaultSubValues('minimap')
-        end
+        end,
+        moduleRef = self
     });
 
     Minimap.DFEditModeSelection:ClearAllPoints()
@@ -644,6 +648,7 @@ function Module:AddEditMode()
 end
 
 function Module.UpdateMinimapState(state)
+    -- print('state', state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
     Minimap:ClearAllPoints()
     Minimap:SetClampedToScreen(true)
     Minimap:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)

@@ -268,6 +268,27 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
         self:SetNinesliceSelected(false)
         if self.SelectionOptions then self.SelectionOptions:Hide() end
         -- self.parent:SetShown(value)
+
+        if value then
+            self.parent.DFEditMode = true;
+            self.parent:Show();
+
+            if self.ModuleRef then
+                --            
+                local db = self.ModuleRef.db.profile[self.ModuleSub]
+                if db then db.EditModeActive = true; end
+                self.ModuleRef:ApplySettings()
+            end
+        else
+            self.parent.DFEditMode = false;
+            if self.ModuleRef then
+                --            
+                local db = self.ModuleRef.db.profile[self.ModuleSub]
+                if db then db.EditModeActive = false; end
+                self.ModuleRef:ApplySettings()
+            end
+
+        end
     end, self)
 
     EditModeModule:RegisterCallback('OnSelection', function(self, value)
@@ -275,12 +296,19 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
         if value and value == self then
             print('SELECTION', value:GetName())
             self:SetNinesliceSelected(true)
+            self.isSelected = true;
             if self.SelectionOptions then self.SelectionOptions:Show() end
         else
             self:SetNinesliceSelected(false)
+            self.isSelected = false;
             if self.SelectionOptions then self.SelectionOptions:Hide() end
         end
     end, self)
+
+    -- self:SetMovable(true)
+    -- self:EnableMouse(true)      
+    self:RegisterForDrag("LeftButton")
+    -- self:SetClampedToScreen(true) --TODO
 end
 
 function DFEditModeSystemSelectionBaseMixin:AddNineslice()
@@ -426,11 +454,57 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnDragStart()
+    if not self.isSelected then return end
     -- self.parent:OnDragStart();
+    local x, y = self:GetCenter()
+
+    self.StartX = x;
+    self.StartY = y;
+
+    -- self:StartMoving()
+    local parent = self.parent;
+    self.StartMovable = parent:IsMovable()
+
+    self.parent:SetMovable(true)
+    self.parent:RegisterForDrag("LeftButton")
+
+    self.parent:StartMoving()
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnDragStop()
+    -- print('DFEditModeSystemSelectionBaseMixin:OnDragStop()')
+    if not self.isSelected then return end
     -- self.parent:OnDragStop();
+    local parent = self.parent;
+
+    self:StopMovingOrSizing()
+    parent:StopMovingOrSizing()
+    self.parent:SetMovable(self.StartMovable)
+
+    local x, y = self:GetCenter()
+
+    local dx = self.StartX - x;
+    local dy = self.StartY - y;
+
+    -- print('dx', dx, ', dy', dy)
+    -- print('~~~>>>', parent:GetPoint(1))
+
+    local point, relativeTo, relativePoint, xOfs, yOfs = parent:GetPoint(1)
+
+    if not self.ModuleRef then return end
+
+    local db = self.ModuleRef.db.profile[self.ModuleSub]
+    if not db then return end
+
+    db.anchor = point;
+    db.anchorFrame = 'UIParent';
+    db.anchorParent = relativePoint;
+    db.x = math.floor(xOfs);
+    db.y = math.floor(yOfs);
+
+    self.ModuleRef:ApplySettings()
+    self.ModuleRef:RefreshOptionScreens()
+    parent:Show()
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnMouseDown()
@@ -454,6 +528,8 @@ end
 function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
     -- DevTools_Dump(data)
+    self.ModuleRef = data.moduleRef;
+    self.ModuleSub = data.sub;
 
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeSelectionOptionsTemplate');
@@ -484,4 +560,10 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     local oldScrollH = editModeFrame:GetHeight() - 80
     local newH = 80 + (26 + 9) * numOptions + 11
     editModeFrame:SetHeight(newH)
+end
+
+function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
+    -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
+    -- self.SelectionOptions
+    self.SelectionOptions.DisplayFrame:CallRefresh()
 end

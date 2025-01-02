@@ -724,7 +724,6 @@ function SettingsListMixinDF:OnLoad()
 end
 
 function SettingsListMixinDF:CallRefresh()
-    -- print('CallRefresh')
     self:TriggerEvent(SettingsListMixinDF.Event.OnRefresh, true)
 end
 
