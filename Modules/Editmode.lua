@@ -99,9 +99,12 @@ function Module:OnEnable()
 
     Module:RegisterChatCommand('editmode', 'SlashCommand')
 
-    Module:GenerateCallbackEvents({"OnEditMode"})
+    Module:GenerateCallbackEvents({"OnEditMode", 'OnSelection'})
     self:RegisterCallback('OnEditMode', function(self, value)
         print('~> OnEditMode', value)
+    end, self)
+    self:RegisterCallback('OnSelection', function(self, value)
+        print('~> OnSelection', value and value:GetName())
     end, self)
 
     Module:AddEditModeToFrame(PlayerFrame)
@@ -210,12 +213,25 @@ function Module:SetEditMode(isEditMode)
     else
     end
 
+    self.SelectedFrame = nil;
     self:TriggerEvent(self.Event.OnEditMode, isEditMode)
 end
 
 function Module:AddEditModeToFrame(frameRef)
-    local f = CreateFrame('Frame', 'DragonflightUIEditModeHelper', frameRef, 'DFEditModeSystemSelectionTemplate')
+    local f = CreateFrame('Frame', frameRef:GetName() .. '_DFEditModeSelection', frameRef,
+                          'DFEditModeSystemSelectionTemplate')
 
+    return f;
+end
+
+function Module:SelectFrame(frameRef)
+    if frameRef and self.SelectedFrame == frameRef then
+        -- already selected
+    else
+        print('Module:SelectFrame(frameRef)', frameRef and frameRef:GetName())
+        self.SelectedFrame = frameRef
+        self:TriggerEvent(self.Event.OnSelection, frameRef)
+    end
 end
 
 -- Cata

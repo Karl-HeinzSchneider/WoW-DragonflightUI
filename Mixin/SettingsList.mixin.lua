@@ -22,6 +22,7 @@ function ScrollableListItemMixinDF:Init(elementData)
     end
 
     if data.small then self:SetSmall(true) end
+    if data.editmode then self:SetSmall(true) end
 
     if data.type == 'header' then
         self:SetHeader(data.name)
@@ -145,6 +146,12 @@ function ScrollableListItemMixinDF:SetSmall(small)
     -- self.Item:Hide()
 
     self.Item.Slider:SetWidth(235) -- 250
+
+    self.Item.Dropdown.Button:SetWidth(204) -- 250
+    self.Item.Dropdown:SetPoint("LEFT", self, "CENTER", -64, 3) -- -40
+
+    -- <Size x="250" y="38" />
+
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)

@@ -458,7 +458,8 @@
         "EditModeMagnetismManager",
         "EditModeManagerFrame",
         "NineSliceUtil",
-        "EditModeSystemSelectionBaseMixin"
+        "EditModeSystemSelectionBaseMixin",
+        "EditModeSystemSelectionMixin"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

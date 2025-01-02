@@ -164,14 +164,16 @@ local minimapOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -188,7 +190,8 @@ local minimapOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -205,7 +208,8 @@ local minimapOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -214,7 +218,8 @@ local minimapOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -223,7 +228,8 @@ local minimapOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         locked = {
             type = 'toggle',
@@ -444,6 +450,7 @@ function Module:OnEnable()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
+    Module:AddEditMode()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -612,6 +619,28 @@ function Module.AddStateUpdater()
     Minimap.DFMouseHandler:ClearAllPoints()
     Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
     Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:AddEditModeToFrame(Minimap)
+
+    Minimap.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Minimap'
+    end)
+
+    Minimap.DFEditModeSelection:RegisterOptions({
+        name = 'Minimap',
+        sub = 'minimap',
+        options = minimapOptions,
+        default = function()
+            setDefaultSubValues('minimap')
+        end
+    });
+
+    Minimap.DFEditModeSelection:ClearAllPoints()
+    Minimap.DFEditModeSelection:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+    Minimap.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
 end
 
 function Module.UpdateMinimapState(state)

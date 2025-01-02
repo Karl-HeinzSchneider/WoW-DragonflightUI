@@ -64,6 +64,7 @@ end
 function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'SettingsListTemplateDF')
     displayFrame:Display(data)
+    self.DisplayFrame = displayFrame
 
     displayFrame:ClearAllPoints()
     -- -@diagnostic disable-next-line: param-type-mismatch
@@ -76,10 +77,51 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     local scrollBox = displayFrame.ScrollBox
     scrollBox:ClearAllPoints()
     scrollBox:SetPoint('TOPLEFT', self, 'TOPLEFT', -2, -50)
-    scrollBox:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -8, 20)
+    scrollBox:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
     -- displayFrame.Header.DefaultsButton:Hide()
     displayFrame.Header:Hide()
+end
+
+DragonflightUIEditModeSelectionOptionsMixin = {}
+
+function DragonflightUIEditModeSelectionOptionsMixin:SetupFrame()
+    self.EditmodeModule = DF:GetModule('Editmode')
+
+    self:SetFrameLevel(69 + 5)
+    self:SetFrameStrata('HIGH')
+    self:SetPoint('CENTER', 0 + 450, 150)
+
+    self.InstructionText:SetText('InstructionTextsss')
+    self.InstructionText:Hide()
+    self.CancelDescriptionText:SetText('')
+    self.Header.Text:SetText('HUD Edit Modesss')
+
+    self.RevertButton:SetText('Revert All Changes');
+    self.RevertButton:SetEnabled(false);
+    -- self.CancelButton:SetScript("OnClick", function(button, buttonName, down)
+    --     self:CancelBinding();
+    -- end);
+    self.RevertButton:Hide();
+
+    self.SaveButton:SetText('Save');
+    self.SaveButton:SetEnabled(false);
+    -- self.OkayButton:SetScript("OnClick", function(button, buttonName, down)
+    --     KeybindListener:Commit();
+
+    --     HideUIPanel(self);
+    -- end);
+    self.SaveButton:Hide();
+
+    local closeBtn = self.ClosePanelButton
+    DragonflightUIMixin:UIPanelCloseButton(closeBtn)
+    closeBtn:SetPoint('TOPRIGHT', 1, 0)
+    closeBtn:SetScript('OnClick', function(button, buttonName, down)
+        --
+        print('onclick')
+        -- self.EditmodeModule:SetEditMode(false);
+        self.EditmodeModule:SelectFrame(nil);
+    end)
 end
 
 DragonflightUIEditModeGridMixin = {}
@@ -201,6 +243,7 @@ DFEditModeSystemSelectionBaseMixin = {};
 
 function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self.parent = self:GetParent();
+    self.parent.DFEditModeSelection = self;
     print('DFEditModeSystemSelectionBaseMixin:OnLoad()', self.parent:GetName())
     if self.Label then
         self.Label:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium", "GameFontHighlightSmall");
@@ -217,6 +260,27 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
 
     self:AddNineslice()
     self:SetNinesliceSelected(false)
+
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:RegisterCallback('OnEditMode', function(self, value)
+        print('SELECTION: OnEditMode', value)
+        self:SetShown(value)
+        self:SetNinesliceSelected(false)
+        if self.SelectionOptions then self.SelectionOptions:Hide() end
+        -- self.parent:SetShown(value)
+    end, self)
+
+    EditModeModule:RegisterCallback('OnSelection', function(self, value)
+        self:SetNinesliceSelected(value and value == self)
+        if value and value == self then
+            print('SELECTION', value:GetName())
+            self:SetNinesliceSelected(true)
+            if self.SelectionOptions then self.SelectionOptions:Show() end
+        else
+            self:SetNinesliceSelected(false)
+            if self.SelectionOptions then self.SelectionOptions:Hide() end
+        end
+    end, self)
 end
 
 function DFEditModeSystemSelectionBaseMixin:AddNineslice()
@@ -292,7 +356,7 @@ end
 -- }, -- Interface/Editmode/EditModeUIVertical
 
 function DFEditModeSystemSelectionBaseMixin:SetNinesliceSelected(selected)
-    print('DFEditModeSystemSelectionBaseMixin:SetNinesliceSelected(selected)', selected)
+    -- print('DFEditModeSystemSelectionBaseMixin:SetNinesliceSelected(selected)', selected)
     local slice = self.NineSlice
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\Editmode\\'
 
@@ -347,6 +411,7 @@ end
 
 function DFEditModeSystemSelectionBaseMixin:ShowHighlighted()
     -- NineSliceUtil.ApplyLayout(self, EditModeSystemSelectionLayout, self.highlightTextureKit);
+    self:SetNinesliceSelected(false);
     self.isSelected = false;
     self:UpdateLabelVisibility();
     self:Show();
@@ -354,6 +419,7 @@ end
 
 function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     -- NineSliceUtil.ApplyLayout(self, EditModeSystemSelectionLayout, self.selectedTextureKit);
+    self:SetNinesliceSelected(true);
     self.isSelected = true;
     self:UpdateLabelVisibility();
     self:Show();
@@ -370,11 +436,52 @@ end
 function DFEditModeSystemSelectionBaseMixin:OnMouseDown()
     -- EditModeManagerFrame:SelectSystem(self.parent);
     print('DFEditModeSystemSelectionBaseMixin:OnMouseDown()')
-    self:SetNinesliceSelected(true)
+    -- self:SetNinesliceSelected(true)
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:SelectFrame(self)
+end
+
+function DFEditModeSystemSelectionBaseMixin:SetGetLabelTextFunction(getLabelText)
+    self.getLabelText = getLabelText;
 end
 
 function DFEditModeSystemSelectionBaseMixin:UpdateLabelVisibility()
-    -- if self.getLabelText then self.Label:SetText(self.getLabelText()); end
+    if self.getLabelText then self.Label:SetText(self.getLabelText()); end
 
     self.Label:SetShown(self.isSelected);
+end
+
+function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
+    print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
+    -- DevTools_Dump(data)
+
+    local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
+                                      'DragonflightUIEditModeSelectionOptionsTemplate');
+    editModeFrame.Header.Text:SetText(data.name)
+    self.SelectionOptions = editModeFrame
+
+    local filteredData = {name = data.name, sub = data.sub, default = data.default}
+
+    local filteredOptions = {
+        type = data.options.type,
+        name = data.options.name,
+        get = data.options.get,
+        set = data.options.set,
+        args = {}
+    }
+    local numOptions = 0;
+    for k, v in pairs(data.options.args) do
+        if v.editmode then
+            filteredOptions.args[k] = v
+            numOptions = numOptions + 1
+        end
+    end
+
+    filteredData.options = filteredOptions
+    editModeFrame:SetupOptions(filteredData)
+    editModeFrame:Hide()
+
+    local oldScrollH = editModeFrame:GetHeight() - 80
+    local newH = 80 + (26 + 9) * numOptions + 11
+    editModeFrame:SetHeight(newH)
 end
