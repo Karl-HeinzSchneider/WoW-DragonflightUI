@@ -107,8 +107,6 @@ function Module:OnEnable()
         print('~> OnSelection', value and value:GetName())
     end, self)
 
-    Module:AddEditModeToFrame(PlayerFrame)
-
     Module:ApplySettings()
     Module:RegisterOptionScreens()
 

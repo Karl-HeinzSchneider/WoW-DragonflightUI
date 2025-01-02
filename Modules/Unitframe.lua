@@ -101,7 +101,7 @@ local defaults = {
             x = 4,
             y = 28,
             hideStatusbarText = false,
-            offset = true,
+            offset = false,
             hideIndicator = false,
             -- Visibility
             showMouseover = false,
@@ -221,14 +221,16 @@ local optionsPlayer = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'player'),
             values = frameTableWithout('PlayerFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -245,7 +247,8 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -262,7 +265,8 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -271,7 +275,8 @@ local optionsPlayer = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -280,7 +285,8 @@ local optionsPlayer = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
         breakUpLargeNumbers = {
@@ -294,7 +300,8 @@ local optionsPlayer = {
             name = 'Bigger Healthbar',
             desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
             order = 9,
-            new = true
+            new = true,
+            editmode = true
         },
         hideRedStatus = {
             type = 'toggle',
@@ -325,7 +332,8 @@ if true then
                 ['Numeric Value'] = 'Numeric Value'
             },
             order = 10,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         }
     }
 
@@ -405,14 +413,16 @@ local optionsTarget = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
             values = frameTableWithout('TargetFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -429,7 +439,8 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -446,7 +457,8 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -455,7 +467,8 @@ local optionsTarget = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -464,10 +477,25 @@ local optionsTarget = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
-        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = false},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 7,
+            editmode = true
+        },
+        classicon = {
+            type = 'toggle',
+            name = 'Class Icon Portrait',
+            desc = '',
+            order = 7,
+            disabled = true,
+            new = false,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -493,14 +521,16 @@ local optionsTarget = {
             name = 'Hide Name Background',
             desc = 'Hide Name Background',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         },
         comboPointsOnPlayerFrame = {
             type = 'toggle',
             name = 'ComboPoints on PlayerFrame',
             desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
             order = 12,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -580,14 +610,16 @@ local optionsPet = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
             values = frameTableWithout('PetFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -604,7 +636,8 @@ local optionsPet = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -621,7 +654,8 @@ local optionsPet = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -630,7 +664,8 @@ local optionsPet = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -639,7 +674,8 @@ local optionsPet = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
@@ -695,14 +731,16 @@ local optionsFocus = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
             values = frameTableWithout('FocusFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -719,7 +757,8 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -736,7 +775,8 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -745,7 +785,8 @@ local optionsFocus = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -754,9 +795,16 @@ local optionsFocus = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 7,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -768,7 +816,8 @@ local optionsFocus = {
             name = 'Hide Name Background',
             desc = 'Hide Name Background',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -788,14 +837,16 @@ local optionsParty = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'party'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -812,7 +863,8 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -829,7 +881,8 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -838,7 +891,8 @@ local optionsParty = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -847,9 +901,16 @@ local optionsParty = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 7,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -976,6 +1037,7 @@ function Module:OnEnable()
         Module.Era()
     end
     Module.AddStateUpdater()
+    Module:AddEditMode()
 
     Module:SaveLocalSettings()
     Module:ApplySettings()
@@ -1065,6 +1127,12 @@ function Module:RefreshOptionScreens()
     refreshCat('Pet')
     refreshCat('Player')
     refreshCat('Target')
+
+    PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
+    PetFrame.DFEditModeSelection:RefreshOptionScreen();
+    TargetFrame.DFEditModeSelection:RefreshOptionScreen();
+    if DF.Wrath then FocusFrame.DFEditModeSelection:RefreshOptionScreen(); end
+
 end
 
 function Module:SaveLocalSettings()
@@ -1323,6 +1391,79 @@ function Module.AddStateUpdater()
         Mixin(pf, DragonflightUIStateHandlerMixin)
         pf:InitStateHandler()
         pf:SetUnit('party' .. i)
+    end
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    -- Player
+    EditModeModule:AddEditModeToFrame(PlayerFrame)
+
+    PlayerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PlayerFrame'
+    end)
+
+    PlayerFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Player',
+        sub = 'player',
+        options = optionsPlayer,
+        default = function()
+            setDefaultSubValues('player')
+        end,
+        moduleRef = self
+    });
+
+    -- Pet
+    EditModeModule:AddEditModeToFrame(PetFrame)
+
+    PetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PetFrame'
+    end)
+
+    PetFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Pet',
+        sub = 'pet',
+        options = optionsPet,
+        default = function()
+            setDefaultSubValues('pet')
+        end,
+        moduleRef = self
+    });
+
+    -- Target
+    EditModeModule:AddEditModeToFrame(TargetFrame)
+
+    TargetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'TargetFrame'
+    end)
+
+    TargetFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Target',
+        sub = 'target',
+        options = optionsTarget,
+        default = function()
+            setDefaultSubValues('target')
+        end,
+        moduleRef = self
+    });
+
+    if DF.Wrath then
+        -- Focus
+        EditModeModule:AddEditModeToFrame(FocusFrame)
+
+        FocusFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'FocusFrame'
+        end)
+
+        FocusFrame.DFEditModeSelection:RegisterOptions({
+            name = 'Focus',
+            sub = 'focus',
+            options = optionsFocus,
+            default = function()
+                setDefaultSubValues('focus')
+            end,
+            moduleRef = self
+        });
     end
 end
 
