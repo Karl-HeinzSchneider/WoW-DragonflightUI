@@ -106,14 +106,16 @@ local buffsOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'buffs'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -130,7 +132,8 @@ local buffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -147,7 +150,8 @@ local buffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -156,7 +160,8 @@ local buffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -165,7 +170,8 @@ local buffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         expanded = {
             type = 'toggle',
@@ -244,14 +250,16 @@ local debuffsOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'debuffs'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -268,7 +276,8 @@ local debuffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -285,7 +294,8 @@ local debuffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -294,7 +304,8 @@ local debuffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -303,7 +314,8 @@ local debuffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         }
     }
 }
@@ -331,6 +343,7 @@ function Module:OnEnable()
     end
 
     -- Module.AddStateUpdater()
+    Module:AddEditMode()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -371,6 +384,10 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Buffs')
+    configFrame:RefreshCatSub(cat, 'Debuffs')
+
+    Module.DFBuffFrame.DFEditModeSelection:RefreshOptionScreen();
+    Module.DFDebuffFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings()
@@ -405,11 +422,51 @@ function Module.AddStateUpdater()
     Module.DFDebuffFrame:InitStateHandler(4, 4)
 end
 
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:AddEditModeToFrame(Module.DFBuffFrame)
+
+    Module.DFBuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Buffs'
+    end)
+
+    Module.DFBuffFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Buffs',
+        sub = 'buffs',
+        options = buffsOptions,
+        default = function()
+            setDefaultSubValues('buffs')
+        end,
+        moduleRef = self
+    });
+
+    -- Module.DFBuffFrame.DFEditModeSelection:ClearAllPoints()
+    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('TOPLEFT', Module.DFBuffFrame, 'TOPLEFT', -16, 32)
+    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.DFBuffFrame, 'BOTTOMRIGHT', 16, -16)
+
+    EditModeModule:AddEditModeToFrame(Module.DFDebuffFrame)
+
+    Module.DFDebuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Debuffs'
+    end)
+
+    Module.DFDebuffFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Debuffs',
+        sub = 'debuffs',
+        options = debuffsOptions,
+        default = function()
+            setDefaultSubValues('debuffs')
+        end,
+        moduleRef = self
+    });
+end
+
 function Module.CreateBuffFrame()
     local f = CreateFrame('FRAME', 'DragonflightUIBuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (3 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13)
     Module.DFBuffFrame = f
+    f:SetClampedToScreen(true)
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
 
@@ -576,6 +633,7 @@ function Module.CreateDebuffFrame()
     local f = CreateFrame('FRAME', 'DragonflightUIDebuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (2 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13 - 110)
+    f:SetClampedToScreen(true)
     Module.DFDebuffFrame = f
 end
 

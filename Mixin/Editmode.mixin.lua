@@ -263,7 +263,7 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
 
     local EditModeModule = DF:GetModule('Editmode');
     EditModeModule:RegisterCallback('OnEditMode', function(self, value)
-        print('SELECTION: OnEditMode', value)
+        -- print('SELECTION: OnEditMode', value)
         self:ShowHighlighted()
         self:SetShown(value)
 
@@ -515,7 +515,7 @@ end
 
 function DFEditModeSystemSelectionBaseMixin:OnMouseDown()
     -- EditModeManagerFrame:SelectSystem(self.parent);
-    print('DFEditModeSystemSelectionBaseMixin:OnMouseDown()')
+    -- print('DFEditModeSystemSelectionBaseMixin:OnMouseDown()')
     -- self:SetNinesliceSelected(true)
     local EditModeModule = DF:GetModule('Editmode');
     EditModeModule:SelectFrame(self)
