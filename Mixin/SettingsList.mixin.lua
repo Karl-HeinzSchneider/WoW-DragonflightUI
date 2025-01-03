@@ -137,7 +137,10 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Dropdown:UnregisterCallback('OnValueChanged', self)
 
     self.Item.NewFeature:Hide()
+    self.Item.NewFeature:SetPoint('RIGHT', self.Item.Text, 'LEFT', -37, 3)
+
     self.Item.Blizzard:Hide()
+    self.Item.Blizzard:SetPoint('RIGHT', self.Item.Text, 'LEFT', -37, 3)
 end
 
 function ScrollableListItemMixinDF:SetSmall(small)
@@ -154,6 +157,8 @@ function ScrollableListItemMixinDF:SetSmall(small)
 
     -- <Size x="250" y="38" />
 
+    self.Item.NewFeature:SetPoint('RIGHT', self.Item.Text, 'LEFT', -20, 3) -- -37,3
+    self.Item.Blizzard:SetPoint('RIGHT', self.Item.Text, 'LEFT', -20, 3) -- -37,3
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
