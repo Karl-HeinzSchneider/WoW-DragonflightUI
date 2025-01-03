@@ -685,10 +685,6 @@ local options = {
 }
 
 -- .....\BlizzardInterfaceCode\Interface\FrameXML\SettingDefinitions\ActionBarsOverrides.lua
-local ActionBarSettingsTogglesCache = nil;
-local ActionBarSettingsLastCacheTime = 0;
-local ActionBarSettingsCacheTimeout = 10;
-
 local actionBars = {
     {
         variable = "PROXY_SHOW_ACTIONBAR_2",
@@ -712,44 +708,6 @@ local actionBars = {
         uvar = "SHOW_MULTI_ACTIONBAR_4"
     }
 };
-
-local function SetActionBarToggle(index, value)
-    -- Use local cache instead of GetActionBarToggles since it could lead to inconsistencies between UI and server state.
-    -- If SetActionBarToggle is called multiple times before the server has mirrored the data back to the client, the client will send an outdated mask to the server and clear out values that were just set.
-    -- Timeout the cache so we use latest mirror data after a period of time. This is incase actionbar toggles are set through macros or other addons, we need to make sure the settings still syncs with mirror data.
-    if ((ActionBarSettingsTogglesCache == nil) or
-        (GetTime() - ActionBarSettingsLastCacheTime > ActionBarSettingsCacheTimeout)) then
-        ActionBarSettingsTogglesCache = {GetActionBarToggles()};
-    end
-
-    -- reset cache timeout each time set actionbar is called so that it doesnt timeout while toggling quickly
-    ActionBarSettingsLastCacheTime = GetTime();
-
-    ActionBarSettingsTogglesCache[index] = value;
-
-    _G[actionBars[index].uvar] = value;
-
-    SetActionBarToggles(unpack(ActionBarSettingsTogglesCache));
-    MultiActionBar_Update();
-end
-
-local function ActivateAllActionbars()
-    -- TODO: better system, without taint
-    if true then return end
-    -- SHOW_MULTI_ACTIONBAR_1 = true
-    -- SHOW_MULTI_ACTIONBAR_2 = true
-    -- SHOW_MULTI_ACTIONBAR_3 = true
-    -- SHOW_MULTI_ACTIONBAR_4 = true
-    ---@diagnostic disable-next-line: missing-parameter, param-type-mismatch
-    SetActionBarToggles(1, 1, 1, 1, 1)
-    ---@diagnostic disable-next-line: missing-parameter
-    SetActionBarToggles(true, true, true, true, true)
-    MultiActionBar_Update()
-end
-
-local function GetActionBarToggle(index)
-    return select(index, GetActionBarToggles());
-end
 
 local function GetBarOption(n)
     local barname = 'bar' .. n
@@ -967,56 +925,37 @@ local function GetBarOption(n)
         }
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
-    elseif n <= 5 and false then
+        -- elseif n <= 5 then
+        --     local moreOptions = {
+        --         activate = {
+        --             type = 'toggle',
+        --             name = actionBars[n - 1].label,
+        --             desc = actionBars[n - 1].tooltip,
+        --             order = 13,
+        --             blizzard = true,
+        --             editmode = true
+        --         }
+        --     }
+        --     for k, v in pairs(moreOptions) do opt.args[k] = v end
+        -- elseif n > 5 then
+    else
         local moreOptions = {
             activate = {
                 type = 'toggle',
-                name = actionBars[n - 1].label,
-                desc = actionBars[n - 1].tooltip,
+                name = 'Active',
+                desc = '' .. getDefaultStr('activate', barname),
                 order = 13,
-                blizzard = true,
+                new = true,
                 editmode = true
             }
         }
-
         for k, v in pairs(moreOptions) do opt.args[k] = v end
-
-        opt.get = function(info)
-            local key = info[1]
-            local sub = info[2]
-
-            if sub == 'activate' then
-                return GetActionBarToggle(n - 1)
-            else
-                return getOption(info)
-            end
-        end
-
-        opt.set = function(info, value)
-            local key = info[1]
-            local sub = info[2]
-
-            if sub == 'activate' then
-                SetActionBarToggle(n - 1, value)
-            else
-                setOption(info, value)
-            end
-        end
-    elseif n > 5 then
-        -- extra
-        -- print('extra', n)
-        -- opt.args.alwaysShow.editmode = true;
-        -- DevTools_Dump(opt.args.alwaysShow)
-    else
-        local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
-
-        -- for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
 
     -- AddStateTable(opt, barname, 'Actionbar' .. n)
     DragonflightUIStateHandlerMixin:AddStateTable(Module, opt, barname, 'Actionbar' .. n, getDefaultStr)
 
-    if n > 5 then opt.args.hideAlways.editmode = true; end
+    -- if n > 5 then opt.args.hideAlways.editmode = true; end
 
     return opt
 end
@@ -2046,7 +1985,6 @@ function Module:OnEnable()
 
     -- not the best solution, override global CVAR and let DF UI handle everything
     C_CVar.SetCVar("alwaysShowActionBars", 1)
-    ActivateAllActionbars()
 
     Module.Temp = {}
     Module.UpdateRangeHooked = false
@@ -3075,10 +3013,50 @@ function Module.UpdatePossesbarState(state)
     PossessBarFrame:SetScale(state.scale)
 end
 
+function Module:ActivateAllActionbars()
+    Module:Print('ActivateAllActionbars', true);
+    Settings.SetValue("PROXY_SHOW_ACTIONBAR_2", true)
+    Settings.SetValue("PROXY_SHOW_ACTIONBAR_3", true)
+    Settings.SetValue("PROXY_SHOW_ACTIONBAR_4", true)
+    Settings.SetValue("PROXY_SHOW_ACTIONBAR_5", true)
+    ReloadUI()
+end
+
+function Module:CheckActionbarSettingsCVars()
+    -- print('Module:CheckActionbarSettingsCVars()')
+
+    local allSet = true;
+
+    for i = 2, 5 do
+        local settingProxyName = 'PROXY_SHOW_ACTIONBAR_' .. i
+        local value = Settings.GetValue(settingProxyName);
+        -- print(settingProxyName, value)
+        if not value then allSet = false end
+    end
+
+    if allSet then
+        print('~~>> All Actionbars Set <3')
+    else
+        Module:RegisterChatCommand('ActivateActionbars', 'ActivateAllActionbars')
+
+        C_Timer.After(2, function()
+            --
+            Module:Print([[At least one of the default 5 Actionbars is not activated.]])
+            Module:Print([[Please activate them through the Blizzard options and let DragonflightUI handle it.]])
+            Module:Print([[You can also type '/ActivateActionbars' to activate all at once (this also reloads the UI)]])
+            Module:Print(
+                [[Tip: If you dont need all 5 Actionbars, you can deactivate them through the Dragonflight Options like you would with Actionbar 6/7/8.]])
+        end)
+    end
+end
+
 function frame:OnEvent(event, arg1)
     -- print('event', event)
     if event == 'PLAYER_ENTERING_WORLD' then
-        -- ActivateAllActionbars()
+        -- ActivateAllActionbars() 
+    elseif event == 'SETTINGS_LOADED' then
+        -- print('SETTINGS_LOADED')
+        Module:CheckActionbarSettingsCVars()
     elseif event == 'PLAYER_REGEN_ENABLED' then
         --
         -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
@@ -3093,6 +3071,7 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+frame:RegisterEvent('SETTINGS_LOADED')
 
 local atlasActionbar = {
     ['UI-HUD-ActionBar-Gryphon-Left'] = {200, 188, 0.001953125, 0.697265625, 0.10205078125, 0.26513671875, false, false},
