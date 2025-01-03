@@ -276,7 +276,12 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
                 --            
                 local db = self.ModuleRef.db.profile[self.ModuleSub]
                 if db then db.EditModeActive = true; end
-                self.ModuleRef:ApplySettings(self.ModuleSub or false)
+                -- 
+                if self.ShowFunction then
+                    self.ShowFunction();
+                else
+                    self.ModuleRef:ApplySettings(self.ModuleSub or false);
+                end
             end
         else
             self.parent.DFEditMode = false;
@@ -285,7 +290,12 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
                 --            
                 local db = self.ModuleRef.db.profile[self.ModuleSub]
                 if db then db.EditModeActive = false; end
-                self.ModuleRef:ApplySettings(self.ModuleSub or false)
+                -- self.ModuleRef:ApplySettings(self.ModuleSub or false)
+                if self.HideFunction then
+                    self.HideFunction();
+                else
+                    self.ModuleRef:ApplySettings(self.ModuleSub or false);
+                end
             end
 
         end
@@ -543,6 +553,9 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     -- DevTools_Dump(data)
     self.ModuleRef = data.moduleRef;
     self.ModuleSub = data.sub;
+
+    self.ShowFunction = data.showFunction;
+    self.HideFunction = data.hideFunction;
 
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeSelectionOptionsTemplate');

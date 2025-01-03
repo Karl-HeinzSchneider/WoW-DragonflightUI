@@ -1198,6 +1198,16 @@ function Module:ApplySettings()
     local db = Module.db.profile
     local orig = defaults.profile
 
+    -- if sub then
+    --     if sub == "target" then
+    --         print('sub target')
+    --         -- return;
+    --     elseif sub == 'focus' then
+    --         print('sub focus')
+    --         -- return;
+    --     end
+    -- end
+
     -- playerframe
     do
         local obj = db.player
@@ -1444,7 +1454,18 @@ function Module:AddEditMode()
         default = function()
             setDefaultSubValues('target')
         end,
-        moduleRef = self
+        moduleRef = self,
+        showFunction = function()
+            --
+            -- TargetFrame.unit = 'player';
+            -- TargetFrame_Update(TargetFrame);
+            -- TargetFrame:Show()
+        end,
+        hideFunction = function()
+            --        
+            -- TargetFrame.unit = 'target';
+            -- TargetFrame_Update(TargetFrame);
+        end
     });
 
     if DF.Wrath then
@@ -1462,7 +1483,18 @@ function Module:AddEditMode()
             default = function()
                 setDefaultSubValues('focus')
             end,
-            moduleRef = self
+            moduleRef = self,
+            showFunction = function()
+                --
+                -- FocusFrame.unit = 'player';
+                -- TargetFrame_Update(FocusFrame);
+                -- FocusFrame:Show()
+            end,
+            hideFunction = function()
+                --
+                -- FocusFrame.unit = 'focus';
+                -- TargetFrame_Update(FocusFrame);
+            end
         });
     end
 end
