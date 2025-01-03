@@ -669,7 +669,8 @@ function Module:AddEditMode()
         default = function()
             setDefaultSubValues('tracker')
         end,
-        moduleRef = self
+        moduleRef = self,
+        prio = -5
     });
 end
 

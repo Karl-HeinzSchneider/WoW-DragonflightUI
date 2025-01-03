@@ -50,7 +50,7 @@ local generalOptions = {
             desc = '' .. getDefaultStr('gridSize', 'general'),
             min = 8,
             max = 128,
-            bigStep = 1,
+            bigStep = 4,
             order = 101,
             small = true
         },

@@ -63,7 +63,7 @@ end
 
 function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'SettingsListTemplateDF')
-    displayFrame:Display(data)
+    displayFrame:Display(data, true)
     self.DisplayFrame = displayFrame
 
     displayFrame:ClearAllPoints()
@@ -270,27 +270,29 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
         if value then
             self.parent.DFEditMode = true;
             self.parent:Show();
+            self:SetFrameLevel(self.Prio or 1000)
 
             if self.ModuleRef then
                 --            
                 local db = self.ModuleRef.db.profile[self.ModuleSub]
                 if db then db.EditModeActive = true; end
-                self.ModuleRef:ApplySettings()
+                self.ModuleRef:ApplySettings(self.ModuleSub or false)
             end
         else
             self.parent.DFEditMode = false;
+            self.parent:Hide()
             if self.ModuleRef then
                 --            
                 local db = self.ModuleRef.db.profile[self.ModuleSub]
                 if db then db.EditModeActive = false; end
-                self.ModuleRef:ApplySettings()
+                self.ModuleRef:ApplySettings(self.ModuleSub or false)
             end
 
         end
     end, self)
 
     EditModeModule:RegisterCallback('OnSelection', function(self, value)
-        self:SetNinesliceSelected(value and value == self)
+        self:SetFrameLevel(self.Prio or 1000)
         if value and value == self then
             print('SELECTION', value:GetName())
             self:ShowSelected()
@@ -513,7 +515,7 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     db.x = math.floor(xOfs);
     db.y = math.floor(yOfs);
 
-    self.ModuleRef:ApplySettings()
+    self.ModuleRef:ApplySettings(self.ModuleSub or false)
     self.ModuleRef:RefreshOptionScreens()
     parent:Show()
 end
@@ -571,6 +573,9 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     local oldScrollH = editModeFrame:GetHeight() - 80
     local newH = 80 + (26 + 9) * numOptions + 11
     editModeFrame:SetHeight(newH)
+
+    self.Prio = 1000 + (data.prio or 0)
+    self:SetFrameLevel(self.Prio)
 end
 
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()

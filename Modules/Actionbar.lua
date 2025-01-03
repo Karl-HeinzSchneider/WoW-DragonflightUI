@@ -212,7 +212,7 @@ local defaults = {
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
-            hideAlways = true,
+            hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
@@ -245,7 +245,7 @@ local defaults = {
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
-            hideAlways = true,
+            hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
@@ -278,7 +278,7 @@ local defaults = {
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
-            hideAlways = true,
+            hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
@@ -428,7 +428,7 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = -4,
             y = 2,
-            offset = true,
+            offset = false,
             -- Visibility
             hideAlways = false,
             hideCombat = false,
@@ -774,7 +774,8 @@ local function GetBarOption(n)
                 name = 'Anchorframe',
                 desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
                 values = frameTableWithout('DragonflightUIActionbarFrame' .. n),
-                order = 4
+                order = 4,
+                editmode = true
             },
             anchor = {
                 type = 'select',
@@ -791,7 +792,8 @@ local function GetBarOption(n)
                     ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                     ['CENTER'] = 'CENTER'
                 },
-                order = 2
+                order = 2,
+                editmode = true
             },
             anchorParent = {
                 type = 'select',
@@ -808,7 +810,8 @@ local function GetBarOption(n)
                     ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                     ['CENTER'] = 'CENTER'
                 },
-                order = 3
+                order = 3,
+                editmode = true
             },
             x = {
                 type = 'range',
@@ -817,7 +820,8 @@ local function GetBarOption(n)
                 min = -2500,
                 max = 2500,
                 bigStep = 1,
-                order = 5
+                order = 5,
+                editmode = true
             },
             y = {
                 type = 'range',
@@ -826,20 +830,23 @@ local function GetBarOption(n)
                 min = -2500,
                 max = 2500,
                 bigStep = 1,
-                order = 6
+                order = 6,
+                editmode = true
             },
             orientation = {
                 type = 'select',
                 name = 'Orientation',
                 desc = 'Orientation' .. getDefaultStr('orientation', barname),
                 values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-                order = 7
+                order = 7,
+                editmode = true
             },
             reverse = {
                 type = 'toggle',
                 name = 'Reverse Button order',
                 desc = '' .. getDefaultStr('reverse', barname),
-                order = 7.5
+                order = 7.5,
+                editmode = true
             },
             buttonScale = {
                 type = 'range',
@@ -848,7 +855,8 @@ local function GetBarOption(n)
                 min = 0.1,
                 max = 3,
                 bigStep = 0.05,
-                order = 1
+                order = 1,
+                editmode = true
             },
             rows = {
                 type = 'range',
@@ -857,7 +865,8 @@ local function GetBarOption(n)
                 min = 1,
                 max = 12,
                 bigStep = 1,
-                order = 9
+                order = 9,
+                editmode = true
             },
             buttons = {
                 type = 'range',
@@ -866,7 +875,8 @@ local function GetBarOption(n)
                 min = 1,
                 max = 12,
                 bigStep = 1,
-                order = 10
+                order = 10,
+                editmode = true
             },
             padding = {
                 type = 'range',
@@ -875,7 +885,8 @@ local function GetBarOption(n)
                 min = 0,
                 max = 10,
                 bigStep = 1,
-                order = 11
+                order = 11,
+                editmode = true
             },
             headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
             alwaysShow = {
@@ -927,27 +938,31 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar art',
                 desc = '' .. getDefaultStr('hideArt', barname),
-                order = 51.2
+                order = 51.2,
+                editmode = true
             },
             hideScrolling = {
                 type = 'toggle',
                 name = 'Hide bar scrolling',
                 desc = '' .. getDefaultStr('hideScrolling', barname),
-                order = 51.3
+                order = 51.3,
+                editmode = true
             },
             gryphons = {
                 type = 'select',
                 name = 'Gryphons',
                 desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
-                order = 51.4
+                order = 51.4,
+                editmode = true
             },
             range = {
                 type = 'toggle',
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
-                order = 51.1
+                order = 51.1,
+                editmode = true
             }
         }
 
@@ -959,7 +974,8 @@ local function GetBarOption(n)
                 name = actionBars[n - 1].label,
                 desc = actionBars[n - 1].tooltip,
                 order = 13,
-                blizzard = true
+                blizzard = true,
+                editmode = true
             }
         }
 
@@ -986,6 +1002,11 @@ local function GetBarOption(n)
                 setOption(info, value)
             end
         end
+    elseif n > 5 then
+        -- extra
+        -- print('extra', n)
+        -- opt.args.alwaysShow.editmode = true;
+        -- DevTools_Dump(opt.args.alwaysShow)
     else
         local moreOptions = {activate = {type = 'toggle', name = 'Action Bar ' .. n, desc = '', order = 13, new = true}}
 
@@ -994,6 +1015,8 @@ local function GetBarOption(n)
 
     -- AddStateTable(opt, barname, 'Actionbar' .. n)
     DragonflightUIStateHandlerMixin:AddStateTable(Module, opt, barname, 'Actionbar' .. n, getDefaultStr)
+
+    if n > 5 then opt.args.hideAlways.editmode = true; end
 
     return opt
 end
@@ -1010,7 +1033,8 @@ local petOptions = {
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
             values = frameTableWithout('DragonflightUIPetBar'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1027,7 +1051,8 @@ local petOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1044,7 +1069,8 @@ local petOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1053,7 +1079,8 @@ local petOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1062,14 +1089,16 @@ local petOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         orientation = {
             type = 'select',
             name = 'Orientation',
             desc = 'Orientation' .. getDefaultStr('orientation', 'pet'),
             values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-            order = 7
+            order = 7,
+            editmode = true
         },
         buttonScale = {
             type = 'range',
@@ -1078,7 +1107,8 @@ local petOptions = {
             min = 0.1,
             max = 3,
             bigStep = 0.05,
-            order = 1
+            order = 1,
+            editmode = true
         },
         rows = {
             type = 'range',
@@ -1087,7 +1117,8 @@ local petOptions = {
             min = 1,
             max = 12,
             bigStep = 1,
-            order = 9
+            order = 9,
+            editmode = true
         },
         buttons = {
             type = 'range',
@@ -1096,7 +1127,8 @@ local petOptions = {
             min = 1,
             max = 10,
             bigStep = 1,
-            order = 10
+            order = 10,
+            editmode = true
         },
         padding = {
             type = 'range',
@@ -1105,25 +1137,29 @@ local petOptions = {
             min = 0,
             max = 10,
             bigStep = 1,
-            order = 11
+            order = 11,
+            editmode = true
         },
         alwaysShow = {
             type = 'toggle',
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', 'pet'),
-            order = 12
+            order = 12,
+            editmode = true
         },
         hideMacro = {
             type = 'toggle',
             name = 'Hide Macro Text',
             desc = '' .. getDefaultStr('hideMacro', 'pet'),
-            order = 16
+            order = 16,
+            editmode = true
         },
         hideKeybind = {
             type = 'toggle',
             name = 'Hide Keybind Text',
             desc = '' .. getDefaultStr('hideKeybind', 'pet'),
-            order = 17
+            order = 17,
+            editmode = true
         }
     }
 }
@@ -1143,14 +1179,16 @@ local xpOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'xp'),
             values = frameTableWithout('DragonflightUIXPBar'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1167,7 +1205,8 @@ local xpOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1184,7 +1223,8 @@ local xpOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1193,7 +1233,8 @@ local xpOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1202,7 +1243,8 @@ local xpOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         width = {
             type = 'range',
@@ -1211,7 +1253,8 @@ local xpOptions = {
             min = 1,
             max = 2500,
             bigStep = 1,
-            order = 7
+            order = 7,
+            editmode = true
         },
         height = {
             type = 'range',
@@ -1220,19 +1263,22 @@ local xpOptions = {
             min = 1,
             max = 69,
             bigStep = 1,
-            order = 8
+            order = 8,
+            editmode = true
         },
         alwaysShowXP = {
             type = 'toggle',
             name = 'Always show XP text',
             desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
-            order = 12
+            order = 12,
+            editmode = true
         },
         showXPPercent = {
             type = 'toggle',
             name = 'Show XP Percent',
             desc = '' .. getDefaultStr('showXPPercent', 'xp'),
-            order = 13
+            order = 13,
+            editmode = true
         }
     }
 }
@@ -1252,14 +1298,16 @@ local repOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'rep'),
             values = frameTableWithout('DragonflightUIRepBar'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1276,7 +1324,8 @@ local repOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1293,7 +1342,8 @@ local repOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1302,7 +1352,8 @@ local repOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1311,7 +1362,8 @@ local repOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         width = {
             type = 'range',
@@ -1320,7 +1372,8 @@ local repOptions = {
             min = 1,
             max = 2500,
             bigStep = 1,
-            order = 7
+            order = 7,
+            editmode = true
         },
         height = {
             type = 'range',
@@ -1329,13 +1382,15 @@ local repOptions = {
             min = 1,
             max = 69,
             bigStep = 1,
-            order = 8
+            order = 8,
+            editmode = true
         },
         alwaysShowRep = {
             type = 'toggle',
             name = 'Always show Rep text',
             desc = '' .. getDefaultStr('alwaysShowRep', 'rep'),
-            order = 12
+            order = 12,
+            editmode = true
         }
     }
 }
@@ -1353,7 +1408,8 @@ local stanceOptions = {
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'stance'),
             values = frameTableWithout('DragonflightUIStancebar'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1370,7 +1426,8 @@ local stanceOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1387,7 +1444,8 @@ local stanceOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1396,7 +1454,8 @@ local stanceOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1405,14 +1464,16 @@ local stanceOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         orientation = {
             type = 'select',
             name = 'Orientation',
             desc = 'Orientation' .. getDefaultStr('orientation', 'stance'),
             values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-            order = 7
+            order = 7,
+            editmode = true
         },
         buttonScale = {
             type = 'range',
@@ -1421,7 +1482,8 @@ local stanceOptions = {
             min = 0.1,
             max = 3,
             bigStep = 0.05,
-            order = 1
+            order = 1,
+            editmode = true
         },
         rows = {
             type = 'range',
@@ -1430,7 +1492,8 @@ local stanceOptions = {
             min = 1,
             max = 12,
             bigStep = 1,
-            order = 9
+            order = 9,
+            editmode = true
         },
         buttons = {
             type = 'range',
@@ -1439,7 +1502,8 @@ local stanceOptions = {
             min = 1,
             max = 10,
             bigStep = 1,
-            order = 10
+            order = 10,
+            editmode = true
         },
         padding = {
             type = 'range',
@@ -1448,7 +1512,8 @@ local stanceOptions = {
             min = 0,
             max = 10,
             bigStep = 1,
-            order = 11
+            order = 11,
+            editmode = true
         },
         headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
         alwaysShow = {
@@ -1508,14 +1573,16 @@ local totemOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'totem'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1532,7 +1599,8 @@ local totemOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1549,7 +1617,8 @@ local totemOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1558,7 +1627,8 @@ local totemOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1567,7 +1637,8 @@ local totemOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         }
     }
 }
@@ -1587,14 +1658,16 @@ local possessOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'possess'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1611,7 +1684,8 @@ local possessOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1628,7 +1702,8 @@ local possessOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1637,7 +1712,8 @@ local possessOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1646,7 +1722,8 @@ local possessOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         offset = {
             type = 'toggle',
@@ -1654,7 +1731,8 @@ local possessOptions = {
             desc = 'Auto add some Y offset depending on the class, e.g. on Paladin to make room for the stance bar' ..
                 getDefaultStr('offset', 'possess'),
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -1674,14 +1752,16 @@ local bagsOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'bags'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1698,7 +1778,8 @@ local bagsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1715,7 +1796,8 @@ local bagsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1724,7 +1806,8 @@ local bagsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1733,15 +1816,23 @@ local bagsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         expanded = {type = 'toggle', name = 'Expanded', desc = '' .. getDefaultStr('expanded', 'bags'), order = 7},
-        hideArrow = {type = 'toggle', name = 'HideArrow', desc = '' .. getDefaultStr('hideArrow', 'bags'), order = 8},
+        hideArrow = {
+            type = 'toggle',
+            name = 'HideArrow',
+            desc = '' .. getDefaultStr('hideArrow', 'bags'),
+            order = 8,
+            editmode = true
+        },
         hidden = {
             type = 'toggle',
             name = 'Hidden',
             desc = 'Backpack hidden' .. getDefaultStr('hidden', 'bags'),
-            order = 9
+            order = 9,
+            editmode = true
         },
         overrideBagAnchor = {
             type = 'toggle',
@@ -1839,14 +1930,16 @@ local microOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.05,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'micro'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -1863,7 +1956,8 @@ local microOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -1880,7 +1974,8 @@ local microOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -1889,7 +1984,8 @@ local microOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -1898,7 +1994,8 @@ local microOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         -- hidden = {
         --     type = 'toggle',
@@ -1960,6 +2057,8 @@ function Module:OnEnable()
     end
     Module:SetupActionbarFrames()
     Module.AddStateUpdater()
+    Module:AddEditMode()
+
     Module:ApplySettings('ALL')
     Module:RegisterOptionScreens()
 
@@ -1974,9 +2073,7 @@ function Module:OnDisable()
 end
 
 function Module:SetupActionbarFrames()
-
     local createStuff = function(n, base)
-
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
                                 'DragonflightUIActionbarFrameTemplate')
         local buttons = {}
@@ -2153,6 +2250,184 @@ function Module.AddStateUpdater()
     end)
 end
 
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+
+    -- bars
+    for i = 1, 8 do
+        local bar = Module['bar' .. i]
+
+        EditModeModule:AddEditModeToFrame(bar)
+
+        bar.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Actionbar' .. i
+        end)
+
+        local optionsBar = GetBarOption(i)
+        bar.DFEditModeSelection:RegisterOptions({
+            name = 'Actionbar' .. i,
+            sub = 'bar' .. i,
+            options = optionsBar,
+            default = function()
+                setDefaultSubValues('bar' .. i)
+            end,
+            moduleRef = self
+        });
+    end
+
+    -- Pet 
+    EditModeModule:AddEditModeToFrame(Module.petbar)
+
+    Module.petbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Petbar'
+    end)
+
+    Module.petbar.DFEditModeSelection:RegisterOptions({
+        name = 'Petbar',
+        sub = 'pet',
+        options = petOptions,
+        default = function()
+            setDefaultSubValues('pet')
+        end,
+        moduleRef = self
+    });
+
+    -- XP 
+    EditModeModule:AddEditModeToFrame(Module.xpbar)
+
+    Module.xpbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'XPbar'
+    end)
+
+    Module.xpbar.DFEditModeSelection:RegisterOptions({
+        name = 'XPbar',
+        sub = 'xp',
+        options = xpOptions,
+        default = function()
+            setDefaultSubValues('xp')
+        end,
+        moduleRef = self
+    });
+
+    -- Rep 
+    EditModeModule:AddEditModeToFrame(Module.repbar)
+
+    Module.repbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Repbar'
+    end)
+
+    Module.repbar.DFEditModeSelection:RegisterOptions({
+        name = 'Repbar',
+        sub = 'rep',
+        options = repOptions,
+        default = function()
+            setDefaultSubValues('rep')
+        end,
+        moduleRef = self
+    });
+
+    -- Possess 
+    EditModeModule:AddEditModeToFrame(PossessBarFrame)
+
+    PossessBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Possessbar'
+    end)
+
+    PossessBarFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Possessbar',
+        sub = 'possess',
+        options = possessOptions,
+        default = function()
+            setDefaultSubValues('possess')
+        end,
+        moduleRef = self
+    });
+
+    PossessBarFrame.DFEditModeSelection:ClearAllPoints()
+    local possessDelta = 4
+    PossessBarFrame.DFEditModeSelection:SetPoint('TOPLEFT', _G['PossessButton1'], 'TOPLEFT', -possessDelta, possessDelta)
+    PossessBarFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', _G['PossessButton2'], 'BOTTOMRIGHT', possessDelta,
+                                                 -possessDelta)
+
+    -- Stance 
+    EditModeModule:AddEditModeToFrame(Module.stancebar)
+
+    Module.stancebar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Stancebar'
+    end)
+
+    Module.stancebar.DFEditModeSelection:RegisterOptions({
+        name = 'Stancebar',
+        sub = 'stance',
+        options = stanceOptions,
+        default = function()
+            setDefaultSubValues('stance')
+        end,
+        moduleRef = self
+    });
+
+    -- totem
+    if DF.Cata then
+        EditModeModule:AddEditModeToFrame(MultiCastActionBarFrame)
+
+        MultiCastActionBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Totembar'
+        end)
+
+        MultiCastActionBarFrame.DFEditModeSelection:RegisterOptions({
+            name = 'Totembar',
+            sub = 'totem',
+            options = totemOptions,
+            default = function()
+                setDefaultSubValues('totem')
+            end,
+            moduleRef = self
+        });
+    end
+
+    -- Bags
+    EditModeModule:AddEditModeToFrame(MainMenuBarBackpackButton)
+
+    MainMenuBarBackpackButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Bags'
+    end)
+
+    MainMenuBarBackpackButton.DFEditModeSelection:RegisterOptions({
+        name = 'Bags',
+        sub = 'bags',
+        options = bagsOptions,
+        default = function()
+            setDefaultSubValues('bags')
+            UpdateContainerFrameAnchors()
+        end,
+        moduleRef = self
+    });
+
+    -- Micro 
+    EditModeModule:AddEditModeToFrame(CharacterMicroButton)
+
+    CharacterMicroButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Micromenu'
+    end)
+
+    CharacterMicroButton.DFEditModeSelection:RegisterOptions({
+        name = 'Micromenu',
+        sub = 'micro',
+        options = microOptions,
+        default = function()
+            setDefaultSubValues('micro')
+        end,
+        moduleRef = self
+    });
+
+    CharacterMicroButton.DFEditModeSelection:ClearAllPoints()
+    local microDelta = 0
+    CharacterMicroButton.DFEditModeSelection:SetPoint('TOPLEFT', _G['CharacterMicroButton'], 'TOPLEFT', -microDelta,
+                                                      microDelta)
+    CharacterMicroButton.DFEditModeSelection:SetPoint('BOTTOMRIGHT', _G['HelpMicroButton'], 'BOTTOMRIGHT', microDelta,
+                                                      -microDelta)
+end
+
 function Module:RegisterOptionScreens()
     for i = 1, 8 do
         local optionsBar = GetBarOption(i)
@@ -2257,6 +2532,21 @@ function Module:RefreshOptionScreens()
     if DF.Cata then refreshCat('Totembar') end
     refreshCat('Bags')
     refreshCat('Micromenu')
+
+    for i = 1, 8 do
+        local bar = Module['bar' .. i]
+        bar.DFEditModeSelection:RefreshOptionScreen();
+    end
+
+    Module.petbar.DFEditModeSelection:RefreshOptionScreen();
+    Module.xpbar.DFEditModeSelection:RefreshOptionScreen();
+    Module.repbar.DFEditModeSelection:RefreshOptionScreen();
+    PossessBarFrame.DFEditModeSelection:RefreshOptionScreen();
+    Module.stancebar.DFEditModeSelection:RefreshOptionScreen();
+    if DF.Cata then MultiCastActionBarFrame.DFEditModeSelection:RefreshOptionScreen(); end
+
+    MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
+    CharacterMicroButton.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings(sub)

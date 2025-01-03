@@ -21,8 +21,8 @@ function ScrollableListItemMixinDF:Init(elementData)
         self.Item.Blizzard:Show()
     end
 
-    if data.small then self:SetSmall(true) end
-    if data.editmode then self:SetSmall(true) end
+    if elementData.small then self:SetSmall(true) end
+    -- if data.editmode then self:SetSmall(true) end
 
     if data.type == 'header' then
         self:SetHeader(data.name)
@@ -142,8 +142,10 @@ end
 
 function ScrollableListItemMixinDF:SetSmall(small)
     self.Item.Text:SetPoint("LEFT", 10, 0); -- 37
-    -- self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -85, 0);
+    self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -65, 0); -- 85,0
     -- self.Item:Hide()
+
+    self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -60, 0) -- 80,0
 
     self.Item.Slider:SetWidth(235) -- 250
 
@@ -727,7 +729,7 @@ function SettingsListMixinDF:CallRefresh()
     self:TriggerEvent(SettingsListMixinDF.Event.OnRefresh, true)
 end
 
-function SettingsListMixinDF:Display(data)
+function SettingsListMixinDF:Display(data, small)
     -- self.DataProvider:Flush()
     self.DataProvider = CreateDataProvider()
     self.ScrollView:SetDataProvider(self.DataProvider)
@@ -796,9 +798,16 @@ function SettingsListMixinDF:Display(data)
                 newInfo[2] = info[1]
                 return data.options.set(newInfo, value)
             end
-            elementData = {key = k, args = v, get = subGet, set = subSet, settingsList = self}
+            elementData = {key = k, args = v, get = subGet, set = subSet, settingsList = self, small = small}
         else
-            elementData = {key = k, args = v, get = data.options.get, set = data.options.set, settingsList = self}
+            elementData = {
+                key = k,
+                args = v,
+                get = data.options.get,
+                set = data.options.set,
+                settingsList = self,
+                small = small
+            }
         end
 
         if v.name ~= '' and v.name ~= 'Enable' then self.DataProvider:Insert(elementData) end
