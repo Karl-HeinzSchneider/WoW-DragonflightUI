@@ -207,6 +207,23 @@ local function frameTableWithout(without)
     return newTable
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting';
+
+local function setPreset(T, preset)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings()
+    Module:RefreshOptionScreens()
+end
+
 local optionsPlayer = {
     name = 'Player',
     desc = 'PlayerframeDesc',
@@ -398,6 +415,36 @@ if true then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
+local optionsPlayerEditmode = {
+    name = 'Player',
+    desc = 'PlayerframeDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.player
+                local defaultsTable = defaults.profile.player
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsTarget = {
     name = 'Target',
@@ -1417,6 +1464,7 @@ function Module:AddEditMode()
         name = 'Player',
         sub = 'player',
         options = optionsPlayer,
+        extra = optionsPlayerEditmode,
         default = function()
             setDefaultSubValues('player')
         end,

@@ -116,7 +116,8 @@ function ScrollableListItemMixinDF:Reset()
     self.Item:Hide()
 
     self.Item.Button:SetParent(self)
-    -- self.Item.Button:SetPoint("LEFT", self, "CENTER", -40, 0)
+    self.Item.Button.Button:SetPoint("LEFT", self, "CENTER", -40, 0)
+    self.Item.Button.Button:SetWidth(200)
     self.Item.Button:Hide()
     self.Item.Button:UnregisterCallback('OnClick', self)
 
@@ -147,6 +148,10 @@ function ScrollableListItemMixinDF:SetSmall(small)
     self.Item.Text:SetPoint("LEFT", 10, 0); -- 37
     self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -65, 0); -- 85,0
     -- self.Item:Hide()
+
+    self.Item.Button.Button:SetPoint("LEFT", self, "CENTER", -45 - 34, 0) -- -40
+    self.Item.Button.Button:SetWidth(220 + 34) -- 200
+    -- self.Item.Button:Hide()
 
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -60, 0) -- 80,0
 

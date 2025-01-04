@@ -76,8 +76,30 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data)
 
     local scrollBox = displayFrame.ScrollBox
     scrollBox:ClearAllPoints()
-    scrollBox:SetPoint('TOPLEFT', self, 'TOPLEFT', -2, -50)
-    scrollBox:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
+    scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+    scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
+
+    -- displayFrame.Header.DefaultsButton:Hide()
+    displayFrame.Header:Hide()
+end
+
+function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
+    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'SettingsListTemplateDF')
+    displayFrame:Display(data, true)
+    self.DisplayFrameExtra = displayFrame
+
+    displayFrame:ClearAllPoints()
+    -- -@diagnostic disable-next-line: param-type-mismatch
+    -- displayFrame:SetParent(self)
+    displayFrame:SetPoint('TOPLEFT', self.DisplayFrame, 'BOTTOMLEFT', 0, 80 + 10)
+    displayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    displayFrame:CallRefresh()
+    displayFrame:Show()
+
+    local scrollBox = displayFrame.ScrollBox
+    scrollBox:ClearAllPoints()
+    scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+    scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
     -- displayFrame.Header.DefaultsButton:Hide()
     displayFrame.Header:Hide()
@@ -583,8 +605,42 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     editModeFrame:SetupOptions(filteredData)
     editModeFrame:Hide()
 
-    local oldScrollH = editModeFrame:GetHeight() - 80
-    local newH = 80 + (26 + 9) * numOptions + 11
+    local optionsH = (26 + 9) * numOptions + 11
+
+    local displayFrame = editModeFrame.DisplayFrame
+    displayFrame:ClearAllPoints()
+    -- -@diagnostic disable-next-line: param-type-mismatch
+    -- displayFrame:SetParent(self)
+    displayFrame:SetPoint('TOPLEFT', editModeFrame, 'TOPLEFT', 0, 0)
+    displayFrame:SetPoint('BOTTOMRIGHT', editModeFrame, 'TOPRIGHT', 0, -80 - optionsH)
+
+    local extraH = 0;
+    if data.extra then
+        --  
+        local extraData = {name = data.name, sub = data.sub, default = data.default}
+
+        local extraOptions = {
+            type = data.extra.type,
+            name = data.extra.name,
+            get = data.extra.get,
+            set = data.extra.set,
+            args = {}
+        }
+
+        local numExtraOptions = 0;
+        for k, v in pairs(data.extra.args) do
+            if v.editmode then
+                extraOptions.args[k] = v
+                numExtraOptions = numExtraOptions + 1
+            end
+        end
+        extraData.options = extraOptions
+        editModeFrame:SetupExtraOptions(extraData)
+
+        extraH = (26 + 9) * numExtraOptions + 10
+    end
+
+    local newH = 80 + optionsH + extraH
     editModeFrame:SetHeight(newH)
 
     self.Prio = 1000 + (data.prio or 0)
