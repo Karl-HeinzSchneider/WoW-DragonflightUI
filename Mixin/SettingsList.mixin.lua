@@ -101,12 +101,14 @@ function ScrollableListItemMixinDF:Init(elementData)
             end
             self.Item.Dropdown:SetDropdownSelection(get({key}))
         end, self)
-    elseif data.type == 'toggle' then
+    elseif data.type == 'divider' then
+        self.Divider:Show()
     end
 end
 
 function ScrollableListItemMixinDF:Reset()
     self.Header:Hide()
+    self.Divider:Hide()
 
     self.Item.Tooltip:SetScript('OnMouseDown', nil)
 
@@ -691,7 +693,7 @@ end
 
 ------------------------------------
 
-local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26}
+local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26, divider = 16}
 
 --- Settingslist
 SettingsListMixinDF = CreateFromMixins(CallbackRegistryMixin);

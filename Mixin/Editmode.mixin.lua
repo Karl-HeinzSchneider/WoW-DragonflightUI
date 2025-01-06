@@ -582,6 +582,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeSelectionOptionsTemplate');
     editModeFrame.Header.Text:SetText(data.name)
+    editModeFrame.BG.Bg:SetVertexColor(1, 0, 0, 1) -- TODO?
     self.SelectionOptions = editModeFrame
 
     local filteredData = {name = data.name, sub = data.sub, default = data.default}
@@ -624,7 +625,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
             name = data.extra.name,
             get = data.extra.get,
             set = data.extra.set,
-            args = {}
+            args = {divider = {type = 'divider', name = '*divider*', desc = '***', order = 1, editmode = true}}
         }
 
         local numExtraOptions = 0;
@@ -637,7 +638,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
         extraData.options = extraOptions
         editModeFrame:SetupExtraOptions(extraData)
 
-        extraH = (26 + 9) * numExtraOptions + 10
+        -- 16 = divider
+        extraH = 16 + (26 + 9) * numExtraOptions + 10
     end
 
     local newH = 80 + optionsH + extraH
