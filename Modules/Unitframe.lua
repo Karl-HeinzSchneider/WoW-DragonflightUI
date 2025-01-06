@@ -435,6 +435,7 @@ local optionsPlayerEditmode = {
                     scale = defaultsTable.scale,
                     anchor = defaultsTable.anchor,
                     anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
                     x = defaultsTable.x,
                     y = defaultsTable.y
                 })
@@ -642,6 +643,37 @@ if true then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsTarget, 'target', 'Target', getDefaultStr)
+local optionsTargetEditmode = {
+    name = 'Target',
+    desc = 'Targetframedesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.target
+                local defaultsTable = defaults.profile.target
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsPet = {
     name = 'Pet',
@@ -763,6 +795,37 @@ if DF.Cata then
     for k, v in pairs(moreOptions) do optionsPet.args[k] = v end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr)
+local optionsPetEditmode = {
+    name = 'Pet',
+    desc = 'Pet',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.pet
+                local defaultsTable = defaults.profile.pet
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsFocus = {
     name = 'Focus',
@@ -869,6 +932,37 @@ local optionsFocus = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr)
+local optionsFocusEditmode = {
+    name = 'Focus',
+    desc = 'Focus',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.focus
+                local defaultsTable = defaults.profile.focus
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsParty = {
     name = 'Party',
@@ -1482,6 +1576,7 @@ function Module:AddEditMode()
         name = 'Pet',
         sub = 'pet',
         options = optionsPet,
+        extra = optionsPetEditmode,
         default = function()
             setDefaultSubValues('pet')
         end,
@@ -1499,6 +1594,7 @@ function Module:AddEditMode()
         name = 'Target',
         sub = 'target',
         options = optionsTarget,
+        extra = optionsTargetEditmode,
         default = function()
             setDefaultSubValues('target')
         end,
@@ -1528,6 +1624,7 @@ function Module:AddEditMode()
             name = 'Focus',
             sub = 'focus',
             options = optionsFocus,
+            extra = optionsFocusEditmode,
             default = function()
                 setDefaultSubValues('focus')
             end,
