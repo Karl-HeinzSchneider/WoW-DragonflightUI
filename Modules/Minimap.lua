@@ -62,6 +62,23 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -347,6 +364,37 @@ do
 end
 -- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
+local optionsMinimapEditmode = {
+    name = 'Minimap',
+    desc = 'Minimapdesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.minimap
+                local defaultsTable = defaults.profile.minimap
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'minimap')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local trackerOptions = {
     type = 'group',
@@ -430,6 +478,37 @@ local trackerOptions = {
         }
     }
 }
+local optionsTrackerEditmode = {
+    name = 'Tracker',
+    desc = 'Tracker',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.tracker
+                local defaultsTable = defaults.profile.tracker
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'tracker')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -501,7 +580,7 @@ function Module:RefreshOptionScreens()
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
 
     if db.minimap.useStateHandler and not Module.StateHandlerAdded then
@@ -643,6 +722,7 @@ function Module:AddEditMode()
         name = 'Minimap',
         sub = 'minimap',
         options = minimapOptions,
+        extra = optionsMinimapEditmode,
         default = function()
             setDefaultSubValues('minimap')
         end,
@@ -666,6 +746,7 @@ function Module:AddEditMode()
         name = 'Questtracker',
         sub = 'tracker',
         options = trackerOptions,
+        extra = optionsTrackerEditmode,
         default = function()
             setDefaultSubValues('tracker')
         end,

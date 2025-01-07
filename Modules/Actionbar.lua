@@ -539,6 +539,23 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local frameTable = {
     ['UIParent'] = 'UIParent',
     ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
@@ -959,6 +976,41 @@ local function GetBarOption(n)
 
     return opt
 end
+local function GetBarExtraOptions(n)
+    local bar = 'bar' .. n;
+    local extra = {
+        name = bar,
+        desc = bar,
+        get = getOption,
+        set = setOption,
+        type = 'group',
+        args = {
+            resetPosition = {
+                type = 'execute',
+                name = 'Preset',
+                btnName = 'Reset to Default Position',
+                desc = presetDesc,
+                func = function()
+                    local dbTable = Module.db.profile[bar]
+                    local defaultsTable = defaults.profile[bar]
+                    -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                    setPreset(dbTable, {
+                        scale = defaultsTable.scale,
+                        anchor = defaultsTable.anchor,
+                        anchorParent = defaultsTable.anchorParent,
+                        anchorFrame = defaultsTable.anchorFrame,
+                        x = defaultsTable.x,
+                        y = defaultsTable.y
+                    }, bar)
+                end,
+                order = 16,
+                editmode = true,
+                new = true
+            }
+        }
+    }
+    return extra;
+end
 
 local petOptions = {
     name = 'PetBar',
@@ -1103,6 +1155,37 @@ local petOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, petOptions, 'pet', 'PetBar', getDefaultStr)
+local optionsPetEdtimode = {
+    name = 'pet',
+    desc = 'pet',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.pet
+                local defaultsTable = defaults.profile.pet
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'pet')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local xpOptions = {
     name = 'XP',
@@ -1222,6 +1305,37 @@ local xpOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, xpOptions, 'xp', 'XPBar', getDefaultStr)
+local optionsXpEdtimode = {
+    name = 'xp',
+    desc = 'xp',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.xp
+                local defaultsTable = defaults.profile.xp
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'xp')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local repOptions = {
     name = 'Rep',
@@ -1334,6 +1448,37 @@ local repOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, repOptions, 'rep', 'RepBar', getDefaultStr)
+local optionsRepEdtimode = {
+    name = 'rep',
+    desc = 'rep',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.rep
+                local defaultsTable = defaults.profile.rep
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'rep')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local stanceOptions = {
     name = 'StanceBar',
@@ -1497,6 +1642,37 @@ local stanceOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, stanceOptions, 'stance', 'StanceBar', getDefaultStr)
+local optionsStanceEdtimode = {
+    name = 'stance',
+    desc = 'stance',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.stance
+                local defaultsTable = defaults.profile.stance
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'stance')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local totemOptions = {
     name = 'Totembar',
@@ -1582,6 +1758,37 @@ local totemOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, totemOptions, 'totem', 'TotemBar', getDefaultStr)
+local optionsTotemEdtimode = {
+    name = 'totem',
+    desc = 'totem',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.totem
+                local defaultsTable = defaults.profile.totem
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'totem')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local possessOptions = {
     name = 'Possessbar',
@@ -1676,6 +1883,37 @@ local possessOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, possessOptions, 'possess', 'PossessBar', getDefaultStr)
+local optionsPossessEdtimode = {
+    name = 'possess',
+    desc = 'possess',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.possess
+                local defaultsTable = defaults.profile.possess
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'possess')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local bagsOptions = {
     name = 'Bags',
@@ -1854,6 +2092,37 @@ do
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, bagsOptions, 'bags', 'Bags', getDefaultStr)
+local optionsBagsEdtimode = {
+    name = 'bags',
+    desc = 'bags',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.bags
+                local defaultsTable = defaults.profile.bags
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'bags')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local microOptions = {
     name = 'Micromenu',
@@ -1969,6 +2238,37 @@ local microOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, microOptions, 'micro', 'Micromenu', getDefaultStr)
+local optionsMicroEditmode = {
+    name = 'micro',
+    desc = 'micro',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.micro
+                local defaultsTable = defaults.profile.micro
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'micro')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -2202,10 +2502,12 @@ function Module:AddEditMode()
         end)
 
         local optionsBar = GetBarOption(i)
+        local optionsBarExtra = GetBarExtraOptions(i)
         bar.DFEditModeSelection:RegisterOptions({
             name = 'Actionbar' .. i,
             sub = 'bar' .. i,
             options = optionsBar,
+            extra = optionsBarExtra,
             default = function()
                 setDefaultSubValues('bar' .. i)
             end,
@@ -2224,6 +2526,7 @@ function Module:AddEditMode()
         name = 'Petbar',
         sub = 'pet',
         options = petOptions,
+        extra = optionsPetEdtimode,
         default = function()
             setDefaultSubValues('pet')
         end,
@@ -2241,6 +2544,7 @@ function Module:AddEditMode()
         name = 'XPbar',
         sub = 'xp',
         options = xpOptions,
+        extra = optionsXpEdtimode,
         default = function()
             setDefaultSubValues('xp')
         end,
@@ -2258,6 +2562,7 @@ function Module:AddEditMode()
         name = 'Repbar',
         sub = 'rep',
         options = repOptions,
+        extra = optionsRepEdtimode,
         default = function()
             setDefaultSubValues('rep')
         end,
@@ -2275,6 +2580,7 @@ function Module:AddEditMode()
         name = 'Possessbar',
         sub = 'possess',
         options = possessOptions,
+        extra = optionsPossessEdtimode,
         default = function()
             setDefaultSubValues('possess')
         end,
@@ -2298,6 +2604,7 @@ function Module:AddEditMode()
         name = 'Stancebar',
         sub = 'stance',
         options = stanceOptions,
+        extra = optionsStanceEdtimode,
         default = function()
             setDefaultSubValues('stance')
         end,
@@ -2316,6 +2623,7 @@ function Module:AddEditMode()
             name = 'Totembar',
             sub = 'totem',
             options = totemOptions,
+            extra = optionsTotemEdtimode,
             default = function()
                 setDefaultSubValues('totem')
             end,
@@ -2334,6 +2642,7 @@ function Module:AddEditMode()
         name = 'Bags',
         sub = 'bags',
         options = bagsOptions,
+        extra = optionsBagsEdtimode,
         default = function()
             setDefaultSubValues('bags')
             UpdateContainerFrameAnchors()
@@ -2352,6 +2661,7 @@ function Module:AddEditMode()
         name = 'Micromenu',
         sub = 'micro',
         options = microOptions,
+        extra = optionsMicroEditmode,
         default = function()
             setDefaultSubValues('micro')
         end,

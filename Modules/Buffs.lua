@@ -73,6 +73,23 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local generalOptions = {
     type = 'group',
     name = 'Buffs',
@@ -236,6 +253,37 @@ if DF.Cata then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr)
+local optionsBuffEditmode = {
+    name = 'Buff',
+    desc = 'Buff',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.buffs
+                local defaultsTable = defaults.profile.buffs
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'buffs')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local debuffsOptions = {
     type = 'group',
@@ -320,6 +368,37 @@ local debuffsOptions = {
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr)
+local optionsDebuffEditmode = {
+    name = 'Debuff',
+    desc = 'Debuff',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.debuffs
+                local defaultsTable = defaults.profile.debuffs
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'debuffs')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -390,7 +469,7 @@ function Module:RefreshOptionScreens()
     Module.DFDebuffFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
 
     if db.buffs.useStateHandler and not Module.StateHandlerAdded then
@@ -434,6 +513,7 @@ function Module:AddEditMode()
         name = 'Buffs',
         sub = 'buffs',
         options = buffsOptions,
+        extra = optionsBuffEditmode,
         default = function()
             setDefaultSubValues('buffs')
         end,
@@ -454,6 +534,7 @@ function Module:AddEditMode()
         name = 'Debuffs',
         sub = 'debuffs',
         options = debuffsOptions,
+        extra = optionsDebuffEditmode,
         default = function()
             setDefaultSubValues('debuffs')
         end,
