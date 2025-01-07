@@ -208,9 +208,9 @@ local function frameTableWithout(without)
 end
 
 local presetDesc =
-    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting';
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
 
-local function setPreset(T, preset)
+local function setPreset(T, preset, sub)
     -- print('setPreset')
     -- DevTools_Dump(T)
     -- print('---')
@@ -220,7 +220,7 @@ local function setPreset(T, preset)
         --
         T[k] = v;
     end
-    Module:ApplySettings()
+    Module:ApplySettings(sub)
     Module:RefreshOptionScreens()
 end
 
@@ -1335,7 +1335,7 @@ function Module:SaveLocalSettings()
     -- DevTools_Dump({localSettings})
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
     local orig = defaults.profile
 
