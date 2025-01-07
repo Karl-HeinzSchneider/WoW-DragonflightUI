@@ -276,7 +276,7 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
         self.HorizontalLabel:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium",
                                                  "GameFontHighlightSmall");
     end
-
+    -- self:SetIgnoreParentScale()
     self:SetPoint('TOPLEFT', self.parent, 'TOPLEFT', 0, 0)
     self:SetPoint('BOTTOMRIGHT', self.parent, 'BOTTOMRIGHT', 0, 0)
 
@@ -493,6 +493,10 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     if self.SelectionOptions then self.SelectionOptions:Show() end
 end
 
+function DFEditModeSystemSelectionBaseMixin:SnapToGrid(value, gridSize)
+    return math.floor((value + gridSize / 2) / gridSize) * gridSize
+end
+
 function DFEditModeSystemSelectionBaseMixin:OnDragStart()
     if not self.isSelected then return end
     -- self.parent:OnDragStart();
@@ -508,28 +512,26 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStart()
     self.parent:SetMovable(true)
     self.parent:RegisterForDrag("LeftButton")
 
+    self.isDragging = true;
     self.parent:StartMoving()
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     -- print('DFEditModeSystemSelectionBaseMixin:OnDragStop()')
-    if not self.isSelected then return end
+    if not self.isSelected or not self.isDragging then return end
+    self.isDragging = false;
     -- self.parent:OnDragStop();
     local parent = self.parent;
+    local EditModeModule = DF:GetModule('Editmode')
+    local state = EditModeModule.db.profile.general;
 
     self:StopMovingOrSizing()
     parent:StopMovingOrSizing()
     self.parent:SetMovable(self.StartMovable)
 
     local x, y = self:GetCenter()
-
     local dx = self.StartX - x;
     local dy = self.StartY - y;
-
-    -- print('dx', dx, ', dy', dy)
-    -- print('~~~>>>', parent:GetPoint(1))
-
-    local point, relativeTo, relativePoint, xOfs, yOfs = parent:GetPoint(1)
 
     if not self.ModuleRef then return end
 
@@ -541,11 +543,24 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     end
     if not db then return end
 
-    db.anchor = point;
+    local gridSize = state.gridSize;
+
+    if not state.snapGrid then gridSize = 1 end
+
+    local scale = self.parent:GetScale()
+    local effectiveScale, screenScale = self.parent:GetEffectiveScale(), UIParent:GetEffectiveScale()
+    local screenW = GetScreenWidth() * (screenScale / effectiveScale)
+    local screenH = GetScreenHeight() * (screenScale / effectiveScale)
+
+    x, y = self.parent:GetCenter()
+    local centerX = x - screenW / 2
+    local centerY = y - screenH / 2
+
+    db.anchor = 'CENTER';
     db.anchorFrame = 'UIParent';
-    db.anchorParent = relativePoint;
-    db.x = math.floor(xOfs);
-    db.y = math.floor(yOfs);
+    db.anchorParent = 'CENTER';
+    db.x = self:SnapToGrid(centerX, gridSize / scale)
+    db.y = self:SnapToGrid(centerY, gridSize / scale)
 
     self.ModuleRef:ApplySettings(self.ModuleSub or false)
     self.ModuleRef:RefreshOptionScreens()

@@ -180,7 +180,7 @@ local minimapOptions = {
             desc = '' .. getDefaultStr('scale', 'minimap'),
             min = 0.1,
             max = 5,
-            bigStep = 0.1,
+            bigStep = 0.025,
             order = 1,
             editmode = true
         },
@@ -248,13 +248,13 @@ local minimapOptions = {
             order = 6,
             editmode = true
         },
-        locked = {
-            type = 'toggle',
-            name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked', 'minimap'),
-            order = 10
-        },
+        -- locked = {
+        --     type = 'toggle',
+        --     name = 'Locked',
+        --     desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
+        --         getDefaultStr('locked', 'minimap'),
+        --     order = 10
+        -- },
         showPing = {
             type = 'toggle',
             name = 'Show Ping',
@@ -761,11 +761,10 @@ function Module.UpdateMinimapState(state)
     Minimap:SetClampedToScreen(true)
     Minimap:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
 
+    -- Module.LFG:SetScale(state.scale)
     local dfScale = 1.25
     Minimap:SetScale(state.scale * dfScale)
-    -- Module.LFG:SetScale(state.scale)
-
-    Module.LockMinimap(state.locked)
+    -- Module.LockMinimap(state.locked)
     Module.UpdateDurabilityState(state)
 
     if state.hideCalendar then

@@ -64,7 +64,7 @@ local generalOptions = {
         snapElements = {
             type = 'toggle',
             name = 'Snap to Elements',
-            desc = '' .. getDefaultStr('snapElements', 'general'),
+            desc = '*NOT YET IMPLEMENTED - COMING SOON*' .. getDefaultStr('snapElements', 'general'),
             order = 103,
             small = true
         }
@@ -79,6 +79,7 @@ function Module:OnInitialize()
 
     -- DF:RegisterModuleOptions(mName, generalOptions)
 
+    ---@diagnostic disable-next-line: param-type-mismatch
     CallbackRegistryMixin.OnLoad(self);
 end
 
