@@ -23,6 +23,7 @@ table.insert(DF.VIPTable, {
     hpAmount = 100,
     energyAmount = 100,
     targetIcon = 0,
+    role = 'TANK',
     extra = 'worldboss',
     displayID = 369 -- awrwrwrll
 })
@@ -35,6 +36,7 @@ table.insert(DF.VIPTable, {
     hpAmount = 100,
     energyAmount = 100,
     targetIcon = 0,
+    role = 'TANK',
     extra = 'worldboss',
     displayID = 6290 -- dragon
 })
