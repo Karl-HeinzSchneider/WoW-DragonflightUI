@@ -1116,6 +1116,37 @@ if true then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsParty, 'party', 'Party', getDefaultStr)
+local optionsPartyEditmode = {
+    name = 'party',
+    desc = 'party',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.party
+                local defaultsTable = defaults.profile.party
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local options = {
     type = 'group',
@@ -1273,6 +1304,7 @@ function Module:RefreshOptionScreens()
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
     -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
+    Module.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     if DF.Wrath then
         --  FocusFrame.DFEditModeSelection:RefreshOptionScreen();
         Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
@@ -1434,9 +1466,11 @@ function Module:ApplySettings(sub)
         local obj = db.party
         local objLocal = localSettings.party
 
-        local party1 = _G['PartyMemberFrame' .. 1]
-        party1:ClearAllPoints()
-        party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
+        Module.PartyMoveFrame:ClearAllPoints();
+        Module.PartyMoveFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
+        -- local party1 = _G['PartyMemberFrame' .. 1]
+        -- party1:ClearAllPoints()
+        -- party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
 
         for i = 1, 4 do
             local pf = _G['PartyMemberFrame' .. i]
@@ -1449,6 +1483,8 @@ function Module:ApplySettings(sub)
 
             pf:UpdateStateHandler(obj)
         end
+
+        Module.PreviewParty:UpdateState(obj)
     end
 
     if DF.Wrath then
@@ -1622,6 +1658,44 @@ function Module:AddEditMode()
             -- TargetFrame.unit = 'target';
             -- TargetFrame_Update(TargetFrame);
             TargetFrame:SetAlpha(1)
+        end
+    });
+
+    -- party 
+    local fakeParty = CreateFrame('Frame', 'DragonflightUIEditModePartyFramePreview', UIParent,
+                                  'DFEditModePreviewPartyFrameTemplate')
+    fakeParty:OnLoad()
+    -- fakeParty:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    Module.PreviewParty = fakeParty;
+
+    EditModeModule:AddEditModeToFrame(fakeParty)
+
+    fakeParty.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PartyFrame'
+    end)
+
+    fakeParty.DFEditModeSelection:RegisterOptions({
+        name = 'Party',
+        sub = 'party',
+        options = optionsParty,
+        extra = optionsPartyEditmode,
+        default = function()
+            setDefaultSubValues('party')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --
+            for k = 1, 4 do
+                local p = _G['PartyMemberFrame' .. k]
+                p:SetAlpha(0)
+            end
+        end,
+        hideFunction = function()
+            --        
+            for k = 1, 4 do
+                local p = _G['PartyMemberFrame' .. k]
+                p:SetAlpha(1)
+            end
         end
     });
 
@@ -3420,8 +3494,18 @@ function Module.GetPetOffset(offset)
 end
 
 function Module.ChangePartyFrame()
+    local PartyMoveFrame = CreateFrame('Frame', 'DraggonflightUIPartyMoveFrame', UIParent)
+    PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    Module.PartyMoveFrame = PartyMoveFrame
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local gap = 10;
+    PartyMoveFrame:SetSize(sizeX, sizeY * 4 + 3 * gap)
+
     local first = _G['PartyMemberFrame' .. 1]
-    first:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+    -- first:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+    first:ClearAllPoints()
+    first:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]

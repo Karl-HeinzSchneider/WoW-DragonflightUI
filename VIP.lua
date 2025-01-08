@@ -25,7 +25,7 @@ table.insert(DF.VIPTable, {
     targetIcon = 0,
     role = 'TANK',
     extra = 'worldboss',
-    displayID = 369 -- awrwrwrll
+    displayID = 176 -- awrwrwrll
 })
 
 table.insert(DF.VIPTable, {
@@ -39,6 +39,19 @@ table.insert(DF.VIPTable, {
     role = 'TANK',
     extra = 'worldboss',
     displayID = 6290 -- dragon
+})
+
+table.insert(DF.VIPTable, {
+    name = 'Norbert',
+    level = '??',
+    class = 'WARRIOR',
+    powerType = 'FOCUS',
+    hpAmount = 100,
+    energyAmount = 69,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = 'worldboss',
+    displayID = 73 -- wolf
 })
 
 -- DevTools_Dump(DF.VIPTable)
