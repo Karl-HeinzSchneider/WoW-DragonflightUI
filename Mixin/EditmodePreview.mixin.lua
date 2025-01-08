@@ -28,9 +28,8 @@ function DragonflightUIEditModePreviewTargetMixin:OnLoad()
 end
 
 function DragonflightUIEditModePreviewTargetMixin:SetRandomUnit()
-    local unit = 'Zimtschnecke'
-
-    self:SetUnit(DF.VIPTable[unit])
+    local vip = DF:GetRandomVIP()
+    self:SetUnit(vip)
 end
 
 function DragonflightUIEditModePreviewTargetMixin:SetUnit(unit)
