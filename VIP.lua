@@ -17,7 +17,7 @@ end
 
 table.insert(DF.VIPTable, {
     name = 'Zimtschnecke',
-    level = '69',
+    level = '85',
     class = 'PALADIN',
     powerType = 'MANA',
     hpAmount = 100,
@@ -25,20 +25,22 @@ table.insert(DF.VIPTable, {
     targetIcon = 0,
     role = 'TANK',
     extra = 'worldboss',
-    displayID = 176 -- awrwrwrll
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'zimtschnecke128'
 })
 
 table.insert(DF.VIPTable, {
     name = 'Dratini',
     level = '??',
     class = 'MAGE',
-    powerType = 'RAGE',
+    powerType = 'RUNIC_POWER',
     hpAmount = 100,
     energyAmount = 100,
     targetIcon = 0,
     role = 'TANK',
     extra = 'worldboss',
-    displayID = 6290 -- dragon
+    displayID = 6290, -- dragon
+    displayTexture = 'dratini'
 })
 
 table.insert(DF.VIPTable, {
@@ -52,6 +54,32 @@ table.insert(DF.VIPTable, {
     role = 'DAMAGER',
     extra = 'worldboss',
     displayID = 73 -- wolf
+})
+
+table.insert(DF.VIPTable, {
+    name = 'Matada',
+    level = '60',
+    class = 'PRIEST',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'HEALER',
+    extra = '',
+    displayID = 176 -- wolf
+})
+
+table.insert(DF.VIPTable, {
+    name = 'Schokobon',
+    level = '85',
+    class = 'MAGE',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = '',
+    displayID = 176 -- wolf
 })
 
 -- DevTools_Dump(DF.VIPTable)

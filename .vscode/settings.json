@@ -459,7 +459,8 @@
         "EditModeManagerFrame",
         "NineSliceUtil",
         "EditModeSystemSelectionBaseMixin",
-        "EditModeSystemSelectionMixin"
+        "EditModeSystemSelectionMixin",
+        "MODELFRAME_DEFAULT_ROTATION"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

@@ -107,9 +107,9 @@
 			</Layer>
 		</Layers>
 	</Frame>
-	<Frame name="DFEditModePreviewTargetTemplate" mixin="DragonflightUIEditModePreviewTargetMixin" virtual="true">
+	<Frame name="DFEditModePreviewTargetTemplate" mixin="DragonflightUIEditModePreviewTargetMixin" virtual="true" hidden="true">
 	</Frame>
-	<Frame name="DFEditModePreviewPartyFrameTemplate" mixin="DragonflightUIEditModePreviewPartyFrameMixin" virtual="true">
+	<Frame name="DFEditModePreviewPartyFrameTemplate" mixin="DragonflightUIEditModePreviewPartyFrameMixin" virtual="true" hidden="true">
 	</Frame>
 	<Frame name="DFEditModePreviewPartyTemplate" mixin="DragonflightUIEditModePreviewPartyMixin" virtual="true">
 	</Frame>

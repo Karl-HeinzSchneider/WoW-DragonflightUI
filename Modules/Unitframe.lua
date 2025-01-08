@@ -1684,14 +1684,14 @@ function Module:AddEditMode()
         end,
         moduleRef = self,
         showFunction = function()
-            --
+            --           
             for k = 1, 4 do
                 local p = _G['PartyMemberFrame' .. k]
                 p:SetAlpha(0)
             end
         end,
         hideFunction = function()
-            --        
+            --            
             for k = 1, 4 do
                 local p = _G['PartyMemberFrame' .. k]
                 p:SetAlpha(1)
@@ -4235,6 +4235,43 @@ function Module.CreatThreatIndicator()
 end
 
 frame:SetScript('OnEvent', frame.OnEvent)
+
+function Module:TakePicture()
+    if not Module.PictureTakerFrame then
+        local pt = CreateFrame('FRAME', 'DragonflightUIPictureTakerFrame', UIParent);
+        local size = 256
+        local border = 0;
+        pt:SetSize(size + 2 * border, size + 2 * border);
+        pt:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+
+        local tex = pt:CreateTexture();
+        tex:SetColorTexture(0, 0, 0, 1)
+        tex:SetPoint('TOPLEFT')
+        tex:SetPoint('BOTTOMRIGHT')
+
+        local port = pt:CreateTexture()
+        port:SetPoint('TOPLEFT', tex, 'TOPLEFT', border, -border)
+        port:SetPoint('BOTTOMRIGHT', tex, 'BOTTOMRIGHT', -border, border)
+        pt.Portrait = port;
+
+        pt:Hide()
+        Module.PictureTakerFrame = pt;
+
+        function Module.PictureTakerFrame:Update()
+            -- print('update....')
+            SetPortraitTexture(pt.Portrait, 'target')
+        end
+    end
+
+    if Module.PictureTakerFrame:IsVisible() then
+        Module.PictureTakerFrame:Hide()
+    else
+        print('cheeese ', GetUnitName('target'))
+        Module.PictureTakerFrame:Show()
+        Module.PictureTakerFrame:Update()
+    end
+end
+Module:RegisterChatCommand('cheeese', 'TakePicture')
 
 function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')

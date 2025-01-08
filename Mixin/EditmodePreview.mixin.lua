@@ -44,7 +44,20 @@ function DragonflightUIEditModePreviewTargetMixin:SetUnit(unit)
     --     targetIcon = 0,
     --     extra = ''
     -- }
-    if self.TargetFramePortrait then self.TargetFramePortrait:UpdatePortrait(unit.displayID) end
+    if self.TargetFramePortrait then
+        if unit.displayTexture then
+            self.TargetFramePortrait:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\VIP\\' ..
+                                                    unit.displayTexture)
+
+            local circleMask = self:CreateMaskTexture()
+            circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
+            circleMask:SetPoint('TOPLEFT', self.TargetFramePortrait, 'TOPLEFT', 0, 0)
+            circleMask:SetPoint('BOTTOMRIGHT', self.TargetFramePortrait, 'BOTTOMRIGHT', 0, 0)
+            self.TargetFramePortrait:AddMaskTexture(circleMask)
+        else
+            self.TargetFramePortrait:UpdatePortrait(unit.displayID)
+        end
+    end
     if self.PortraitExtra then self.PortraitExtra:UpdateStyle(unit.extra) end
     if self.RoleIcon then self.RoleIcon:UpdateRoleIcon(unit.role) end
 
@@ -293,6 +306,24 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
         self.PartyFrames[k] = fakeParty;
     end
 
+    -- local m = CreateFrame("PlayerModel", nil, UIParent)
+    -- m:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    -- m:SetSize(256, 256)
+    -- -- m:SetDisplayInfo(21723) -- creature/murloccostume/murloccostume.m2
+
+    -- C_Timer.After(1.5, function()
+
+    --     print('.........')
+    --     m:SetUnit('player')
+    --     -- MODELFRAME_DEFAULT_ROTATION 0.61
+    --     -- m:SetRotation(0.61)
+    --     m:SetRotation(0)
+    --     m:SetPortraitZoom(1)
+    --     m:SetAnimation(804)
+    --     -- myModel:FreezeAnimation(60, 0, 55) -- Freeze the talking animation at the frame 55
+    --     m:FreezeAnimation(804, 0, 0) -- Freeze the talking animation at the frame 55
+    --     -- m:StopAnimKit()  
+    -- end)
 end
 
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
