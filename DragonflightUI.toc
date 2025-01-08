@@ -34,6 +34,7 @@ Libs\TaintLess\TaintLess.xml
 Core.lua
 Config.lua
 Version.lua
+VIP.lua
 
 # Localization
 LocalizationData.lua

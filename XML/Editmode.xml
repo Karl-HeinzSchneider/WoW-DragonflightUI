@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
 	<Script file="Mixin/Editmode.mixin.lua" />
+	<Script file="Mixin/EditmodePreview.mixin.lua" />
 	<Frame name="DragonflightUIEditModeGrid" frameStrata="BACKGROUND" mixin="DragonflightUIEditModeGridMixin" hidden="true" virtual="true">
 		<KeyValues>
 			<KeyValue key="ignoreInLayout" value="true" type="boolean" />
@@ -105,5 +106,7 @@
 				</FontString>
 			</Layer>
 		</Layers>
+	</Frame>
+	<Frame name="DFEditModePreviewTargetTemplate" mixin="DragonflightUIEditModePreviewTargetMixin" virtual="true">
 	</Frame>
 </Ui>

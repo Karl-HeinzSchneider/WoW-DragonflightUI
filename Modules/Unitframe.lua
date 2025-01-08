@@ -1271,8 +1271,12 @@ function Module:RefreshOptionScreens()
 
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
-    TargetFrame.DFEditModeSelection:RefreshOptionScreen();
-    if DF.Wrath then FocusFrame.DFEditModeSelection:RefreshOptionScreen(); end
+    -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
+    Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
+    if DF.Wrath then
+        --  FocusFrame.DFEditModeSelection:RefreshOptionScreen();
+        Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
+    end
 
 end
 
@@ -1389,6 +1393,7 @@ function Module:ApplySettings(sub)
         TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
         UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
+        Module.PreviewTarget:UpdateState(obj);
     end
 
     -- pet
@@ -1463,6 +1468,7 @@ function Module:ApplySettings(sub)
             FocusFrameNameBackground:SetShown(not obj.hideNameBackground)
 
             FocusFrame:UpdateStateHandler(obj)
+            Module.PreviewFocus:UpdateState(obj);
         end
     end
 end
@@ -1584,13 +1590,18 @@ function Module:AddEditMode()
     });
 
     -- Target
-    EditModeModule:AddEditModeToFrame(TargetFrame)
+    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                   'DFEditModePreviewTargetTemplate')
+    fakeTarget:OnLoad()
+    Module.PreviewTarget = fakeTarget;
 
-    TargetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+    EditModeModule:AddEditModeToFrame(fakeTarget)
+
+    fakeTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
         return 'TargetFrame'
     end)
 
-    TargetFrame.DFEditModeSelection:RegisterOptions({
+    fakeTarget.DFEditModeSelection:RegisterOptions({
         name = 'Target',
         sub = 'target',
         options = optionsTarget,
@@ -1604,23 +1615,30 @@ function Module:AddEditMode()
             -- TargetFrame.unit = 'player';
             -- TargetFrame_Update(TargetFrame);
             -- TargetFrame:Show()
+            TargetFrame:SetAlpha(0)
         end,
         hideFunction = function()
             --        
             -- TargetFrame.unit = 'target';
             -- TargetFrame_Update(TargetFrame);
+            TargetFrame:SetAlpha(1)
         end
     });
 
     if DF.Wrath then
         -- Focus
-        EditModeModule:AddEditModeToFrame(FocusFrame)
+        local fakeFocus = CreateFrame('Frame', 'DragonflightUIEditModeFocusFramePreview', UIParent,
+                                      'DFEditModePreviewTargetTemplate')
+        fakeFocus:OnLoad()
+        Module.PreviewFocus = fakeFocus;
 
-        FocusFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        EditModeModule:AddEditModeToFrame(fakeFocus)
+
+        fakeFocus.DFEditModeSelection:SetGetLabelTextFunction(function()
             return 'FocusFrame'
         end)
 
-        FocusFrame.DFEditModeSelection:RegisterOptions({
+        fakeFocus.DFEditModeSelection:RegisterOptions({
             name = 'Focus',
             sub = 'focus',
             options = optionsFocus,
@@ -1634,11 +1652,13 @@ function Module:AddEditMode()
                 -- FocusFrame.unit = 'player';
                 -- TargetFrame_Update(FocusFrame);
                 -- FocusFrame:Show()
+                FocusFrame:SetAlpha(0)
             end,
             hideFunction = function()
                 --
                 -- FocusFrame.unit = 'focus';
                 -- TargetFrame_Update(FocusFrame);
+                FocusFrame:SetAlpha(1)
             end
         });
     end

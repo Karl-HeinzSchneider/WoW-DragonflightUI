@@ -56,7 +56,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
     closeBtn:SetScript('OnClick', function(button, buttonName, down)
         --
-        print('onclick')
+        -- print('onclick')
         self.EditmodeModule:SetEditMode(false);
     end)
 end
@@ -140,7 +140,7 @@ function DragonflightUIEditModeSelectionOptionsMixin:SetupFrame()
     closeBtn:SetPoint('TOPRIGHT', 1, 0)
     closeBtn:SetScript('OnClick', function(button, buttonName, down)
         --
-        print('onclick')
+        -- print('onclick')
         -- self.EditmodeModule:SetEditMode(false);
         self.EditmodeModule:SelectFrame(nil);
     end)
@@ -266,7 +266,7 @@ DFEditModeSystemSelectionBaseMixin = {};
 function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self.parent = self:GetParent();
     self.parent.DFEditModeSelection = self;
-    print('DFEditModeSystemSelectionBaseMixin:OnLoad()', self.parent:GetName())
+    -- print('DFEditModeSystemSelectionBaseMixin:OnLoad()', self.parent:GetName())
     if self.Label then
         self.Label:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium", "GameFontHighlightSmall");
         -- self.Label:SetText('PlayerFrame')
@@ -586,7 +586,7 @@ function DFEditModeSystemSelectionBaseMixin:UpdateLabelVisibility()
 end
 
 function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
-    print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
+    -- print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
     -- DevTools_Dump(data)
     self.ModuleRef = data.moduleRef;
     self.ModuleSub = data.sub;
