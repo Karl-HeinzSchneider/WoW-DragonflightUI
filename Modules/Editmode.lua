@@ -102,10 +102,10 @@ function Module:OnEnable()
 
     Module:GenerateCallbackEvents({"OnEditMode", 'OnSelection'})
     self:RegisterCallback('OnEditMode', function(self, value)
-        print('~> OnEditMode', value)
+        DF:Debug(self, '~> OnEditMode', value)
     end, self)
     self:RegisterCallback('OnSelection', function(self, value)
-        print('~> OnSelection', value and value:GetName())
+        DF:Debug(self, '~> OnSelection', value and value:GetName())
     end, self)
 
     Module:ApplySettings()
@@ -171,7 +171,7 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:CreateGrid()
-    print('CreateGrid()')
+    DF:Debug(self, 'CreateGrid()')
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeFrameTemplate');
     editModeFrame:Hide()
@@ -191,13 +191,13 @@ function Module:SetupMainmenuButton()
 
     btn:SetScript('OnClick', function()
         -- 
-        print('editmode')
+        DF:Debug(self, 'editmode')
         Module:SetEditMode(not Module.IsEditMode)
     end)
 end
 
 function Module:SetEditMode(isEditMode)
-    print('SetEditMode', isEditMode)
+    DF:Debug(self, 'SetEditMode', isEditMode)
 
     Module.IsEditMode = isEditMode;
     Module.EditModeFrame:SetShown(isEditMode)
@@ -227,7 +227,7 @@ function Module:SelectFrame(frameRef)
     if frameRef and self.SelectedFrame == frameRef then
         -- already selected
     else
-        print('Module:SelectFrame(frameRef)', frameRef and frameRef:GetName())
+        DF:Debug(self, 'Module:SelectFrame(frameRef)', frameRef and frameRef:GetName())
         self.SelectedFrame = frameRef
         self:TriggerEvent(self.Event.OnSelection, frameRef)
     end

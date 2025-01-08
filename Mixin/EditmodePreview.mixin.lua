@@ -19,7 +19,7 @@ end
 DragonflightUIEditModePreviewTargetMixin = {}
 
 function DragonflightUIEditModePreviewTargetMixin:OnLoad()
-    print('--------------DragonflightUIEditModePreviewTargetMixin:OnLoad()')
+    -- print('--------------DragonflightUIEditModePreviewTargetMixin:OnLoad()')
 
     local sizeX, sizeY = TargetFrame:GetSize()
     self:SetSize(sizeX, sizeY)
@@ -284,7 +284,7 @@ end
 ------- party frame
 DragonflightUIEditModePreviewPartyFrameMixin = {}
 function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
-    print('~~ DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()')
+    -- print('~~ DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()')
 
     local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
     local gap = 10;
@@ -343,7 +343,7 @@ DragonflightUIEditModePreviewPartyMixin = {}
 Mixin(DragonflightUIEditModePreviewPartyMixin, DragonflightUIEditModePreviewTargetMixin)
 
 function DragonflightUIEditModePreviewPartyMixin:OnLoad()
-    print('~~~~~~~~~~~~DragonflightUIEditModePreviewPartyMixin:OnLoad()')
+    -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewPartyMixin:OnLoad()')
 
     local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
     self:SetSize(sizeX, sizeY)

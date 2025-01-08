@@ -3345,7 +3345,7 @@ function Module:CheckActionbarSettingsCVars()
     end
 
     if allSet then
-        print('~~>> All Actionbars Set <3')
+        DF:Debug(self, '~~>> All Actionbars Set <3')
     else
         Module:RegisterChatCommand('ActivateActionbars', 'ActivateAllActionbars')
 
