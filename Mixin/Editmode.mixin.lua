@@ -326,7 +326,7 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     EditModeModule:RegisterCallback('OnSelection', function(self, value)
         self:SetFrameLevel(self.Prio or 1000)
         if value and value == self then
-            print('SELECTION', value:GetName())
+            DF:Debug(EditModeModule, 'SELECTION', value:GetName())
             self:ShowSelected()
         else
             self:ShowHighlighted()
