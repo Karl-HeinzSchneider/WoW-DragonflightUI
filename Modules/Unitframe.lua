@@ -2286,10 +2286,13 @@ function Module.ChangePlayerframe()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
 
-    PlayerPortrait:ClearAllPoints()
-    PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
-    PlayerPortrait:SetDrawLayer('ARTWORK', 5)
-    PlayerPortrait:SetSize(56, 56)
+    if not PlayerPortrait.DFSet then
+        PlayerPortrait.DFSet = true;
+        PlayerPortrait:ClearAllPoints()
+        PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
+        PlayerPortrait:SetDrawLayer('ARTWORK', 5)
+        PlayerPortrait:SetSize(56, 56)
+    end
 
     -- @TODO: change text spacing
     PlayerName:ClearAllPoints()
