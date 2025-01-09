@@ -38,6 +38,7 @@ local defaults = {
         },
         player = {
             classcolor = false,
+            classicon = false,
             breakUpLargeNumbers = true,
             scale = 1.0,
             override = false,
@@ -306,6 +307,7 @@ local optionsPlayer = {
             editmode = true
         },
         classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = false},
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -1398,6 +1400,7 @@ function Module:ApplySettings(sub)
         Module.SetPlayerBiggerHealthbar(obj.biggerHealthbar)
         PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
+        UnitFramePortrait_Update(PlayerFrame)
 
         if obj.hideIndicator then
             PlayerHitIndicator:SetScale(0.01)
@@ -2084,12 +2087,18 @@ function Module.HookClassIcon()
         -- print('UnitFramePortrait_Update', self:GetName(), self.unit)
         if not self.portrait then return end
 
-        local icon = Module.db.profile.target.classicon
+        local icon
         local unit = self.unit
 
-        if (not icon) or unit == "player" or unit == "pet" or (not UnitIsPlayer(unit)) then
+        if unit == "player" then
+            icon = Module.db.profile.player.classicon
+        elseif unit == "target" then
+            icon = Module.db.profile.target.classicon
+        end
+
+        if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
             self.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
-            SetPortraitTexture(self.portrait, unit);
+            SetPortraitTexture(self.portrait, unit)
             return
         end
 
