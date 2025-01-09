@@ -651,6 +651,9 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     self.ModuleRef = data.moduleRef;
     self.ModuleSub = data.sub;
 
+    local db = self.ModuleRef.db.profile[self.ModuleSub]
+    if db then db.EditModeActive = false; end
+
     self.ShowFunction = data.showFunction;
     self.HideFunction = data.hideFunction;
 
