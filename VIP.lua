@@ -95,7 +95,8 @@ table.insert(DF.VIPTable, {
     targetIcon = 0,
     role = 'DAMAGER',
     extra = '',
-    displayID = 176 -- wolf
+    displayID = 176, -- wolf
+    displayTexture = 'schokobon'
 })
 
 -- DevTools_Dump(DF.VIPTable)

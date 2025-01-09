@@ -336,6 +336,29 @@ function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
         --
         v:UpdateState(state)
     end
+
+    self:SetScript('OnEvent', self.OnEvent)
+    self:RegisterEvent('GROUP_ROSTER_UPDATE')
+end
+
+function DragonflightUIEditModePreviewPartyFrameMixin:UpdateVisibility()
+    for k, v in ipairs(self.PartyFrames) do
+        --
+        if UnitExists('party' .. k) then
+            v:Hide()
+        else
+            v:Show()
+        end
+    end
+end
+
+function DragonflightUIEditModePreviewPartyFrameMixin:OnEvent(event, arg1)
+
+    if event == 'GROUP_ROSTER_UPDATE' then
+        --
+        print('GROUP_ROSTER_UPDATE')
+        self:UpdateVisibility()
+    end
 end
 
 ------ individual party member

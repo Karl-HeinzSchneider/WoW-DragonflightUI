@@ -92,6 +92,7 @@
 		-->
 		<Scripts>
 			<OnLoad method="OnLoad" />
+			<OnUpdate method="OnUpdate" />
 			<OnMouseDown method="OnMouseDown" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />

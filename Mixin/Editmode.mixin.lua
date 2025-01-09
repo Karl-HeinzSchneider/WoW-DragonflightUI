@@ -493,6 +493,40 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     if self.SelectionOptions then self.SelectionOptions:Show() end
 end
 
+function DFEditModeSystemSelectionBaseMixin:OnUpdate()
+    if self.isDragging then
+        --
+        -- print('drag drag')
+    end
+end
+
+function DFEditModeSystemSelectionBaseMixin:CalcSnapParentToGrid()
+    local EditModeModule = DF:GetModule('Editmode')
+    local state = EditModeModule.db.profile.general;
+
+    local gridSize = state.gridSize;
+
+    if not state.snapGrid then gridSize = 1 end
+
+    local scale = self.parent:GetScale()
+    local effectiveScale, screenScale = self.parent:GetEffectiveScale(), UIParent:GetEffectiveScale()
+    local screenW = GetScreenWidth() * (screenScale / effectiveScale)
+    local screenH = GetScreenHeight() * (screenScale / effectiveScale)
+
+    local x, y = self.parent:GetCenter()
+    local centerX = x - screenW / 2
+    local centerY = y - screenH / 2
+
+    -- db.anchor = 'CENTER';
+    -- db.anchorFrame = 'UIParent';
+    -- db.anchorParent = 'CENTER';
+    -- db.x = self:SnapToGrid(centerX, gridSize / scale)
+    -- db.y = self:SnapToGrid(centerY, gridSize / scale)
+
+    return 'CENTER', 'UIParent', 'CENTER', self:SnapToGrid(centerX, gridSize / scale),
+           self:SnapToGrid(centerY, gridSize / scale)
+end
+
 function DFEditModeSystemSelectionBaseMixin:SnapToGrid(value, gridSize)
     return math.floor((value + gridSize / 2) / gridSize) * gridSize
 end
@@ -512,6 +546,15 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStart()
     self.parent:SetMovable(true)
     self.parent:RegisterForDrag("LeftButton")
 
+    if self.parentExtra then
+        local parentExtra = self.parentExtra;
+        -- self.StartMovableExtra = parentExtra:IsMovable()
+        -- self.parentExtra:SetMovable(true)
+        -- self.parentExtra:StartMoving()
+        parentExtra:ClearAllPoints()
+        parentExtra:SetPoint('CENTER', self, 'CENTER', 0, 0)
+    end
+
     self.isDragging = true;
     self.parent:StartMoving()
 end
@@ -529,9 +572,14 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     parent:StopMovingOrSizing()
     self.parent:SetMovable(self.StartMovable)
 
-    local x, y = self:GetCenter()
-    local dx = self.StartX - x;
-    local dy = self.StartY - y;
+    if self.parentExtra then
+        -- self.parentExtra:StopMovingOrSizing()
+        -- self.parentExtra:SetMovable(self.StartMovableExtra)
+    end
+
+    -- local x, y = self:GetCenter()
+    -- local dx = self.StartX - x;
+    -- local dy = self.StartY - y;
 
     if not self.ModuleRef then return end
 
@@ -543,24 +591,32 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     end
     if not db then return end
 
-    local gridSize = state.gridSize;
+    -- local gridSize = state.gridSize;
 
-    if not state.snapGrid then gridSize = 1 end
+    -- if not state.snapGrid then gridSize = 1 end
 
-    local scale = self.parent:GetScale()
-    local effectiveScale, screenScale = self.parent:GetEffectiveScale(), UIParent:GetEffectiveScale()
-    local screenW = GetScreenWidth() * (screenScale / effectiveScale)
-    local screenH = GetScreenHeight() * (screenScale / effectiveScale)
+    -- local scale = self.parent:GetScale()
+    -- local effectiveScale, screenScale = self.parent:GetEffectiveScale(), UIParent:GetEffectiveScale()
+    -- local screenW = GetScreenWidth() * (screenScale / effectiveScale)
+    -- local screenH = GetScreenHeight() * (screenScale / effectiveScale)
 
-    x, y = self.parent:GetCenter()
-    local centerX = x - screenW / 2
-    local centerY = y - screenH / 2
+    -- x, y = self.parent:GetCenter()
+    -- local centerX = x - screenW / 2
+    -- local centerY = y - screenH / 2
 
-    db.anchor = 'CENTER';
-    db.anchorFrame = 'UIParent';
-    db.anchorParent = 'CENTER';
-    db.x = self:SnapToGrid(centerX, gridSize / scale)
-    db.y = self:SnapToGrid(centerY, gridSize / scale)
+    -- db.anchor = 'CENTER';
+    -- db.anchorFrame = 'UIParent';
+    -- db.anchorParent = 'CENTER';
+    -- db.x = self:SnapToGrid(centerX, gridSize / scale)
+    -- db.y = self:SnapToGrid(centerY, gridSize / scale)
+
+    local anchor, anchorFrame, anchorParent, xxx, yyy = self:CalcSnapParentToGrid()
+
+    db.anchor = anchor;
+    db.anchorFrame = anchorFrame;
+    db.anchorParent = anchorParent;
+    db.x = xxx
+    db.y = yyy
 
     self.ModuleRef:ApplySettings(self.ModuleSub or false)
     self.ModuleRef:RefreshOptionScreens()
@@ -588,6 +644,8 @@ end
 function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     -- print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
     -- DevTools_Dump(data)
+    self.parentExtra = data.parentExtra
+
     self.ModuleRef = data.moduleRef;
     self.ModuleSub = data.sub;
 

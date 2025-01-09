@@ -1642,6 +1642,7 @@ function Module:AddEditMode()
         sub = 'target',
         options = optionsTarget,
         extra = optionsTargetEditmode,
+        parentExtra = TargetFrame,
         default = function()
             setDefaultSubValues('target')
         end,
@@ -1679,6 +1680,7 @@ function Module:AddEditMode()
         sub = 'party',
         options = optionsParty,
         extra = optionsPartyEditmode,
+        -- parentExtra = Module.PartyMoveFrame,
         default = function()
             setDefaultSubValues('party')
         end,
@@ -1687,14 +1689,16 @@ function Module:AddEditMode()
             --           
             for k = 1, 4 do
                 local p = _G['PartyMemberFrame' .. k]
-                p:SetAlpha(0)
+                -- p:SetAlpha(0)
+                -- print('p', k)
             end
         end,
         hideFunction = function()
             --            
             for k = 1, 4 do
                 local p = _G['PartyMemberFrame' .. k]
-                p:SetAlpha(1)
+                -- p:SetAlpha(0)
+                -- print('p', k)
             end
         end
     });
@@ -1717,6 +1721,7 @@ function Module:AddEditMode()
             sub = 'focus',
             options = optionsFocus,
             extra = optionsFocusEditmode,
+            parentExtra = FocusFrame,
             default = function()
                 setDefaultSubValues('focus')
             end,
