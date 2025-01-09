@@ -49,11 +49,15 @@ function DragonflightUIEditModePreviewTargetMixin:SetUnit(unit)
             self.TargetFramePortrait:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\VIP\\' ..
                                                     unit.displayTexture)
 
-            local circleMask = self:CreateMaskTexture()
-            circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
-            circleMask:SetPoint('TOPLEFT', self.TargetFramePortrait, 'TOPLEFT', 0, 0)
-            circleMask:SetPoint('BOTTOMRIGHT', self.TargetFramePortrait, 'BOTTOMRIGHT', 0, 0)
-            self.TargetFramePortrait:AddMaskTexture(circleMask)
+            if not self.TargetFramePortrait.CircleMask then
+                local circleMask = self:CreateMaskTexture()
+                circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
+                circleMask:SetPoint('TOPLEFT', self.TargetFramePortrait, 'TOPLEFT', 0, 0)
+                circleMask:SetPoint('BOTTOMRIGHT', self.TargetFramePortrait, 'BOTTOMRIGHT', 0, 0)
+                self.TargetFramePortrait:AddMaskTexture(circleMask)
+                self.TargetFramePortrait.CircleMask = circleMask;
+            end
+            local mask = self.TargetFramePortrait.CircleMask
         else
             self.TargetFramePortrait:UpdatePortrait(unit.displayID)
         end
@@ -86,6 +90,20 @@ function DragonflightUIEditModePreviewTargetMixin:UpdateState(state)
         self.HealthBar:SetClass(self.Unit.class)
     else
         self.HealthBar:SetClass('')
+    end
+
+    if state.classicon then
+        local texCoords = CLASS_ICON_TCOORDS[self.Unit.class]
+        if texCoords then
+            self.TargetFramePortrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
+            self.TargetFramePortrait:SetTexCoord(unpack(texCoords))
+        else
+            self:SetUnit(self.Unit)
+            self.TargetFramePortrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
+        end
+    else
+        self:SetUnit(self.Unit)
+        self.TargetFramePortrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
     end
 end
 
