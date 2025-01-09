@@ -2535,6 +2535,9 @@ function Module.ChangeToT()
     TargetFrameToTTextureFrameDeadText:ClearAllPoints()
     TargetFrameToTTextureFrameDeadText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
 
+    TargetFrameToTTextureFrameUnconsciousText:ClearAllPoints()
+    TargetFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
+
     TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 25, -20)
 end
 
@@ -2866,6 +2869,9 @@ function Module.ChangeFocusToT()
 
     FocusFrameToTTextureFrameDeadText:ClearAllPoints()
     FocusFrameToTTextureFrameDeadText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
+
+    FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
+    FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
 end
 
 function Module.UpdateFocusText()
