@@ -2548,6 +2548,9 @@ function Module.ChangeTargetFrame()
     TargetFrameTextureFrameDeadText:ClearAllPoints()
     TargetFrameTextureFrameDeadText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
 
+    TargetFrameTextureFrameUnconsciousText:ClearAllPoints()
+    TargetFrameTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
+
     -- Health 119,12
     TargetFrameHealthBar:ClearAllPoints()
     TargetFrameHealthBar:SetSize(125, 20)
@@ -2977,6 +2980,9 @@ function Module.ChangeToT()
     TargetFrameToTTextureFrameDeadText:ClearAllPoints()
     TargetFrameToTTextureFrameDeadText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
 
+    TargetFrameToTTextureFrameUnconsciousText:ClearAllPoints()
+    TargetFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
+
     TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 25, -20)
 end
 
@@ -3042,6 +3048,9 @@ function Module.ChangeFocusFrame()
 
     FocusFrameTextureFrameDeadText:ClearAllPoints()
     FocusFrameTextureFrameDeadText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
+
+    FocusFrameTextureFrameUnconsciousText:ClearAllPoints()
+    FocusFrameTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
 
     local dx = 5
     -- health vs mana bar
@@ -3271,6 +3280,7 @@ function Module.ChangeFocusToT()
 
     FocusFrameToTTextureFrameTexture:SetTexture('')
 
+    FocusFrameToTBackground:Hide()
     if not frame.FocusFrameToTBackground then
         local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
         background:SetDrawLayer('BACKGROUND', 1)
@@ -3308,6 +3318,9 @@ function Module.ChangeFocusToT()
 
     FocusFrameToTTextureFrameDeadText:ClearAllPoints()
     FocusFrameToTTextureFrameDeadText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
+
+    FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
+    FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
 end
 
 function Module.UpdateFocusText()
