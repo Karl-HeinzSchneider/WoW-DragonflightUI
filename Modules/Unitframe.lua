@@ -101,7 +101,7 @@ local defaults = {
             x = 4,
             y = 28,
             hideStatusbarText = false,
-            offset = true,
+            offset = false,
             hideIndicator = false,
             -- Visibility
             showMouseover = false,
@@ -207,6 +207,23 @@ local function frameTableWithout(without)
     return newTable
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local optionsPlayer = {
     name = 'Player',
     desc = 'PlayerframeDesc',
@@ -221,14 +238,16 @@ local optionsPlayer = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'player'),
             values = frameTableWithout('PlayerFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -245,7 +264,8 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -262,7 +282,8 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -271,7 +292,8 @@ local optionsPlayer = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -280,7 +302,8 @@ local optionsPlayer = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
         breakUpLargeNumbers = {
@@ -294,7 +317,8 @@ local optionsPlayer = {
             name = 'Bigger Healthbar',
             desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
             order = 9,
-            new = true
+            new = true,
+            editmode = true
         },
         hideRedStatus = {
             type = 'toggle',
@@ -325,7 +349,8 @@ if true then
                 ['Numeric Value'] = 'Numeric Value'
             },
             order = 10,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         }
     }
 
@@ -390,6 +415,37 @@ if true then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
+local optionsPlayerEditmode = {
+    name = 'Player',
+    desc = 'PlayerframeDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.player
+                local defaultsTable = defaults.profile.player
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsTarget = {
     name = 'Target',
@@ -405,14 +461,16 @@ local optionsTarget = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
             values = frameTableWithout('TargetFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -429,7 +487,8 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -446,7 +505,8 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -455,7 +515,8 @@ local optionsTarget = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -464,10 +525,25 @@ local optionsTarget = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
-        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = false},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 7,
+            editmode = true
+        },
+        classicon = {
+            type = 'toggle',
+            name = 'Class Icon Portrait',
+            desc = '',
+            order = 7,
+            disabled = true,
+            new = false,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -493,14 +569,16 @@ local optionsTarget = {
             name = 'Hide Name Background',
             desc = 'Hide Name Background',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         },
         comboPointsOnPlayerFrame = {
             type = 'toggle',
             name = 'ComboPoints on PlayerFrame',
             desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
             order = 12,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -565,6 +643,37 @@ if true then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsTarget, 'target', 'Target', getDefaultStr)
+local optionsTargetEditmode = {
+    name = 'Target',
+    desc = 'Targetframedesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.target
+                local defaultsTable = defaults.profile.target
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsPet = {
     name = 'Pet',
@@ -580,14 +689,16 @@ local optionsPet = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
             values = frameTableWithout('PetFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -604,7 +715,8 @@ local optionsPet = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -621,7 +733,8 @@ local optionsPet = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -630,7 +743,8 @@ local optionsPet = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -639,7 +753,8 @@ local optionsPet = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
@@ -680,6 +795,37 @@ if DF.Cata then
     for k, v in pairs(moreOptions) do optionsPet.args[k] = v end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr)
+local optionsPetEditmode = {
+    name = 'Pet',
+    desc = 'Pet',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.pet
+                local defaultsTable = defaults.profile.pet
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsFocus = {
     name = 'Focus',
@@ -695,14 +841,16 @@ local optionsFocus = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
             values = frameTableWithout('FocusFrame'),
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -719,7 +867,8 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -736,7 +885,8 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -745,7 +895,8 @@ local optionsFocus = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -754,9 +905,16 @@ local optionsFocus = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 7,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -768,11 +926,43 @@ local optionsFocus = {
             name = 'Hide Name Background',
             desc = 'Hide Name Background',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr)
+local optionsFocusEditmode = {
+    name = 'Focus',
+    desc = 'Focus',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.focus
+                local defaultsTable = defaults.profile.focus
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsParty = {
     name = 'Party',
@@ -788,14 +978,16 @@ local optionsParty = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'party'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -812,7 +1004,8 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -829,7 +1022,8 @@ local optionsParty = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -838,7 +1032,8 @@ local optionsParty = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -847,9 +1042,16 @@ local optionsParty = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar',
+            order = 7,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -914,6 +1116,37 @@ if true then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsParty, 'party', 'Party', getDefaultStr)
+local optionsPartyEditmode = {
+    name = 'party',
+    desc = 'party',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.party
+                local defaultsTable = defaults.profile.party
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local options = {
     type = 'group',
@@ -976,6 +1209,7 @@ function Module:OnEnable()
         Module.Era()
     end
     Module.AddStateUpdater()
+    Module:AddEditMode()
 
     Module:SaveLocalSettings()
     Module:ApplySettings()
@@ -1065,6 +1299,17 @@ function Module:RefreshOptionScreens()
     refreshCat('Pet')
     refreshCat('Player')
     refreshCat('Target')
+
+    PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
+    PetFrame.DFEditModeSelection:RefreshOptionScreen();
+    -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
+    Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
+    Module.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
+    if DF.Wrath then
+        --  FocusFrame.DFEditModeSelection:RefreshOptionScreen();
+        Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
+    end
+
 end
 
 function Module:SaveLocalSettings()
@@ -1126,9 +1371,19 @@ function Module:SaveLocalSettings()
     -- DevTools_Dump({localSettings})
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
     local orig = defaults.profile
+
+    -- if sub then
+    --     if sub == "target" then
+    --         print('sub target')
+    --         -- return;
+    --     elseif sub == 'focus' then
+    --         print('sub focus')
+    --         -- return;
+    --     end
+    -- end
 
     -- playerframe
     do
@@ -1170,6 +1425,7 @@ function Module:ApplySettings()
         TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
         UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
+        Module.PreviewTarget:UpdateState(obj);
     end
 
     -- pet
@@ -1210,9 +1466,11 @@ function Module:ApplySettings()
         local obj = db.party
         local objLocal = localSettings.party
 
-        local party1 = _G['PartyMemberFrame' .. 1]
-        party1:ClearAllPoints()
-        party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
+        Module.PartyMoveFrame:ClearAllPoints();
+        Module.PartyMoveFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
+        -- local party1 = _G['PartyMemberFrame' .. 1]
+        -- party1:ClearAllPoints()
+        -- party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
 
         for i = 1, 4 do
             local pf = _G['PartyMemberFrame' .. i]
@@ -1225,6 +1483,8 @@ function Module:ApplySettings()
 
             pf:UpdateStateHandler(obj)
         end
+
+        Module.PreviewParty:UpdateState(obj)
     end
 
     if DF.Wrath then
@@ -1244,6 +1504,7 @@ function Module:ApplySettings()
             FocusFrameNameBackground:SetShown(not obj.hideNameBackground)
 
             FocusFrame:UpdateStateHandler(obj)
+            Module.PreviewFocus:UpdateState(obj);
         end
     end
 end
@@ -1323,6 +1584,164 @@ function Module.AddStateUpdater()
         Mixin(pf, DragonflightUIStateHandlerMixin)
         pf:InitStateHandler()
         pf:SetUnit('party' .. i)
+    end
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    -- Player
+    EditModeModule:AddEditModeToFrame(PlayerFrame)
+
+    PlayerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PlayerFrame'
+    end)
+
+    PlayerFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Player',
+        sub = 'player',
+        options = optionsPlayer,
+        extra = optionsPlayerEditmode,
+        default = function()
+            setDefaultSubValues('player')
+        end,
+        moduleRef = self
+    });
+
+    -- Pet
+    EditModeModule:AddEditModeToFrame(PetFrame)
+
+    PetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PetFrame'
+    end)
+
+    PetFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Pet',
+        sub = 'pet',
+        options = optionsPet,
+        extra = optionsPetEditmode,
+        default = function()
+            setDefaultSubValues('pet')
+        end,
+        moduleRef = self
+    });
+
+    -- Target
+    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                   'DFEditModePreviewTargetTemplate')
+    fakeTarget:OnLoad()
+    Module.PreviewTarget = fakeTarget;
+
+    EditModeModule:AddEditModeToFrame(fakeTarget)
+
+    fakeTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'TargetFrame'
+    end)
+
+    fakeTarget.DFEditModeSelection:RegisterOptions({
+        name = 'Target',
+        sub = 'target',
+        options = optionsTarget,
+        extra = optionsTargetEditmode,
+        parentExtra = TargetFrame,
+        default = function()
+            setDefaultSubValues('target')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --
+            -- TargetFrame.unit = 'player';
+            -- TargetFrame_Update(TargetFrame);
+            -- TargetFrame:Show()
+            TargetFrame:SetAlpha(0)
+        end,
+        hideFunction = function()
+            --        
+            -- TargetFrame.unit = 'target';
+            -- TargetFrame_Update(TargetFrame);
+            TargetFrame:SetAlpha(1)
+        end
+    });
+
+    -- party 
+    local fakeParty = CreateFrame('Frame', 'DragonflightUIEditModePartyFramePreview', UIParent,
+                                  'DFEditModePreviewPartyFrameTemplate')
+    fakeParty:OnLoad()
+    -- fakeParty:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    Module.PreviewParty = fakeParty;
+
+    EditModeModule:AddEditModeToFrame(fakeParty)
+
+    fakeParty.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PartyFrame'
+    end)
+
+    fakeParty.DFEditModeSelection:RegisterOptions({
+        name = 'Party',
+        sub = 'party',
+        options = optionsParty,
+        extra = optionsPartyEditmode,
+        -- parentExtra = Module.PartyMoveFrame,
+        default = function()
+            setDefaultSubValues('party')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --           
+            for k = 1, 4 do
+                local p = _G['PartyMemberFrame' .. k]
+                -- p:SetAlpha(0)
+                -- print('p', k)
+            end
+            -- Module.PartyMoveFrame:Hide()
+        end,
+        hideFunction = function()
+            --            
+            for k = 1, 4 do
+                local p = _G['PartyMemberFrame' .. k]
+                -- p:SetAlpha(0)
+                -- print('p', k)
+            end
+            -- Module.PartyMoveFrame:Show()
+        end
+    });
+
+    if DF.Wrath then
+        -- Focus
+        local fakeFocus = CreateFrame('Frame', 'DragonflightUIEditModeFocusFramePreview', UIParent,
+                                      'DFEditModePreviewTargetTemplate')
+        fakeFocus:OnLoad()
+        Module.PreviewFocus = fakeFocus;
+
+        EditModeModule:AddEditModeToFrame(fakeFocus)
+
+        fakeFocus.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'FocusFrame'
+        end)
+
+        fakeFocus.DFEditModeSelection:RegisterOptions({
+            name = 'Focus',
+            sub = 'focus',
+            options = optionsFocus,
+            extra = optionsFocusEditmode,
+            parentExtra = FocusFrame,
+            default = function()
+                setDefaultSubValues('focus')
+            end,
+            moduleRef = self,
+            showFunction = function()
+                --
+                -- FocusFrame.unit = 'player';
+                -- TargetFrame_Update(FocusFrame);
+                -- FocusFrame:Show()
+                FocusFrame:SetAlpha(0)
+            end,
+            hideFunction = function()
+                --
+                -- FocusFrame.unit = 'focus';
+                -- TargetFrame_Update(FocusFrame);
+                FocusFrame:SetAlpha(1)
+            end
+        });
     end
 end
 
@@ -1662,7 +2081,7 @@ end
 function Module.HookClassIcon()
     Module:Unhook('UnitFramePortrait_Update')
     Module:SecureHook('UnitFramePortrait_Update', function(self)
-        -- print('UnitFramePortrait_Update', self:GetName())
+        -- print('UnitFramePortrait_Update', self:GetName(), self.unit)
         if not self.portrait then return end
 
         local icon = Module.db.profile.target.classicon
@@ -3082,8 +3501,18 @@ function Module.GetPetOffset(offset)
 end
 
 function Module.ChangePartyFrame()
+    local PartyMoveFrame = CreateFrame('Frame', 'DraggonflightUIPartyMoveFrame', UIParent)
+    PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    Module.PartyMoveFrame = PartyMoveFrame
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local gap = 10;
+    PartyMoveFrame:SetSize(sizeX, sizeY * 4 + 3 * gap)
+
     local first = _G['PartyMemberFrame' .. 1]
-    first:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+    -- first:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+    first:ClearAllPoints()
+    first:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
@@ -3813,6 +4242,43 @@ function Module.CreatThreatIndicator()
 end
 
 frame:SetScript('OnEvent', frame.OnEvent)
+
+function Module:TakePicture()
+    if not Module.PictureTakerFrame then
+        local pt = CreateFrame('FRAME', 'DragonflightUIPictureTakerFrame', UIParent);
+        local size = 256
+        local border = 0;
+        pt:SetSize(size + 2 * border, size + 2 * border);
+        pt:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+
+        local tex = pt:CreateTexture();
+        tex:SetColorTexture(0, 0, 0, 1)
+        tex:SetPoint('TOPLEFT')
+        tex:SetPoint('BOTTOMRIGHT')
+
+        local port = pt:CreateTexture()
+        port:SetPoint('TOPLEFT', tex, 'TOPLEFT', border, -border)
+        port:SetPoint('BOTTOMRIGHT', tex, 'BOTTOMRIGHT', -border, border)
+        pt.Portrait = port;
+
+        pt:Hide()
+        Module.PictureTakerFrame = pt;
+
+        function Module.PictureTakerFrame:Update()
+            -- print('update....')
+            SetPortraitTexture(pt.Portrait, 'target')
+        end
+    end
+
+    if Module.PictureTakerFrame:IsVisible() then
+        Module.PictureTakerFrame:Hide()
+    else
+        print('cheeese ', GetUnitName('target'))
+        Module.PictureTakerFrame:Show()
+        Module.PictureTakerFrame:Update()
+    end
+end
+Module:RegisterChatCommand('cheeese', 'TakePicture')
 
 function Module.Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')

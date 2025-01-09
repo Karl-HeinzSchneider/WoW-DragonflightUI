@@ -73,6 +73,23 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local generalOptions = {
     type = 'group',
     name = 'Buffs',
@@ -106,14 +123,16 @@ local buffsOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'buffs'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -130,7 +149,8 @@ local buffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -147,7 +167,8 @@ local buffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -156,7 +177,8 @@ local buffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -165,7 +187,8 @@ local buffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         expanded = {
             type = 'toggle',
@@ -230,6 +253,37 @@ if DF.Cata then
     end
 end
 DragonflightUIStateHandlerMixin:AddStateTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr)
+local optionsBuffEditmode = {
+    name = 'Buff',
+    desc = 'Buff',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.buffs
+                local defaultsTable = defaults.profile.buffs
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'buffs')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local debuffsOptions = {
     type = 'group',
@@ -244,14 +298,16 @@ local debuffsOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'debuffs'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -268,7 +324,8 @@ local debuffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -285,7 +342,8 @@ local debuffsOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -294,7 +352,8 @@ local debuffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -303,11 +362,43 @@ local debuffsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         }
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr)
+local optionsDebuffEditmode = {
+    name = 'Debuff',
+    desc = 'Debuff',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.debuffs
+                local defaultsTable = defaults.profile.debuffs
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'debuffs')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -331,6 +422,7 @@ function Module:OnEnable()
     end
 
     -- Module.AddStateUpdater()
+    Module:AddEditMode()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -371,9 +463,13 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Buffs')
+    configFrame:RefreshCatSub(cat, 'Debuffs')
+
+    Module.DFBuffFrame.DFEditModeSelection:RefreshOptionScreen();
+    Module.DFDebuffFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
 
     if db.buffs.useStateHandler and not Module.StateHandlerAdded then
@@ -405,11 +501,53 @@ function Module.AddStateUpdater()
     Module.DFDebuffFrame:InitStateHandler(4, 4)
 end
 
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:AddEditModeToFrame(Module.DFBuffFrame)
+
+    Module.DFBuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Buffs'
+    end)
+
+    Module.DFBuffFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Buffs',
+        sub = 'buffs',
+        options = buffsOptions,
+        extra = optionsBuffEditmode,
+        default = function()
+            setDefaultSubValues('buffs')
+        end,
+        moduleRef = self
+    });
+
+    -- Module.DFBuffFrame.DFEditModeSelection:ClearAllPoints()
+    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('TOPLEFT', Module.DFBuffFrame, 'TOPLEFT', -16, 32)
+    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.DFBuffFrame, 'BOTTOMRIGHT', 16, -16)
+
+    EditModeModule:AddEditModeToFrame(Module.DFDebuffFrame)
+
+    Module.DFDebuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Debuffs'
+    end)
+
+    Module.DFDebuffFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Debuffs',
+        sub = 'debuffs',
+        options = debuffsOptions,
+        extra = optionsDebuffEditmode,
+        default = function()
+            setDefaultSubValues('debuffs')
+        end,
+        moduleRef = self
+    });
+end
+
 function Module.CreateBuffFrame()
     local f = CreateFrame('FRAME', 'DragonflightUIBuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (3 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13)
     Module.DFBuffFrame = f
+    f:SetClampedToScreen(true)
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
 
@@ -576,6 +714,7 @@ function Module.CreateDebuffFrame()
     local f = CreateFrame('FRAME', 'DragonflightUIDebuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (2 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13 - 110)
+    f:SetClampedToScreen(true)
     Module.DFDebuffFrame = f
 end
 

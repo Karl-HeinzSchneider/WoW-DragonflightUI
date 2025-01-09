@@ -133,10 +133,12 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state)
 
     local driverTable = {}
 
+    if state.EditModeActive then table.insert(driverTable, 'show') end
+    if state.activate ~= nil and not state.activate then table.insert(driverTable, 'hide') end
+
     if state.hideCustom then
         table.insert(driverTable, state.hideCustomCond)
     else
-
         for k, v in pairs(visConditionalTable) do
             if state[k] then
                 if k == 'hideStance' then
@@ -163,7 +165,7 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state)
     handler:SetAttribute('state-vis', result)
 
     local mouseHandler = self.DFMouseHandler
-    if state.showMouseover then
+    if state.showMouseover and not state.EditModeActive and not (state.activate ~= nil and not state.activate) then
         mouseHandler:Show()
     else
         mouseHandler:Hide()

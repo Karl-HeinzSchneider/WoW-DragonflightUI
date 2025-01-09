@@ -492,6 +492,11 @@ function Module:UpdateTargetFrame(state)
 
     -- TODO
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+
+    -- editmode
+    local e = unitModule.PreviewTarget
+    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 end
 
 function Module:UpdatePartyFrame(state)
@@ -508,6 +513,14 @@ function Module:UpdatePartyFrame(state)
         else
             -- print('not')
         end
+    end
+
+    -- editmode
+    local e = unitModule.PreviewParty
+    for k, v in ipairs(e.PartyFrames) do
+        --
+        v.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
+        v.TargetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
     end
 end
 
@@ -533,6 +546,11 @@ function Module:UpdateFocusFrame(state)
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+
+    -- editmode
+    local e = unitModule.PreviewFocus
+    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
 end
 
 function Module:UpdateActionbar(state)

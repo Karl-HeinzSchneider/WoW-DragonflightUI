@@ -21,6 +21,9 @@ function ScrollableListItemMixinDF:Init(elementData)
         self.Item.Blizzard:Show()
     end
 
+    if elementData.small then self:SetSmall(true) end
+    -- if data.editmode then self:SetSmall(true) end
+
     if data.type == 'header' then
         self:SetHeader(data.name)
     elseif data.type == 'range' then
@@ -98,12 +101,14 @@ function ScrollableListItemMixinDF:Init(elementData)
             end
             self.Item.Dropdown:SetDropdownSelection(get({key}))
         end, self)
-    elseif data.type == 'toggle' then
+    elseif data.type == 'divider' then
+        self.Divider:Show()
     end
 end
 
 function ScrollableListItemMixinDF:Reset()
     self.Header:Hide()
+    self.Divider:Hide()
 
     self.Item.Tooltip:SetScript('OnMouseDown', nil)
 
@@ -113,7 +118,8 @@ function ScrollableListItemMixinDF:Reset()
     self.Item:Hide()
 
     self.Item.Button:SetParent(self)
-    -- self.Item.Button:SetPoint("LEFT", self, "CENTER", -40, 0)
+    self.Item.Button.Button:SetPoint("LEFT", self, "CENTER", -40, 0)
+    self.Item.Button.Button:SetWidth(200)
     self.Item.Button:Hide()
     self.Item.Button:UnregisterCallback('OnClick', self)
 
@@ -134,7 +140,32 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Dropdown:UnregisterCallback('OnValueChanged', self)
 
     self.Item.NewFeature:Hide()
+    self.Item.NewFeature:SetPoint('RIGHT', self.Item.Text, 'LEFT', -37, 3)
+
     self.Item.Blizzard:Hide()
+    self.Item.Blizzard:SetPoint('RIGHT', self.Item.Text, 'LEFT', -37, 3)
+end
+
+function ScrollableListItemMixinDF:SetSmall(small)
+    self.Item.Text:SetPoint("LEFT", 10, 0); -- 37
+    self.Item.Text:SetPoint("RIGHT", self:GetParent(), "CENTER", -65, 0); -- 85,0
+    -- self.Item:Hide()
+
+    self.Item.Button.Button:SetPoint("LEFT", self, "CENTER", -45 - 34, 0) -- -40
+    self.Item.Button.Button:SetWidth(220 + 34) -- 200
+    -- self.Item.Button:Hide()
+
+    self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -60, 0) -- 80,0
+
+    self.Item.Slider:SetWidth(235) -- 250
+
+    self.Item.Dropdown.Button:SetWidth(204) -- 250
+    self.Item.Dropdown:SetPoint("LEFT", self, "CENTER", -64, 3) -- -40
+
+    -- <Size x="250" y="38" />
+
+    self.Item.NewFeature:SetPoint('RIGHT', self.Item.Text, 'LEFT', -20, 3) -- -37,3
+    self.Item.Blizzard:SetPoint('RIGHT', self.Item.Text, 'LEFT', -20, 3) -- -37,3
 end
 
 function ScrollableListItemMixinDF:SetHeader(header)
@@ -662,7 +693,7 @@ end
 
 ------------------------------------
 
-local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26}
+local elementSize = {header = 45, range = 26, execute = 26, description = 26, toggle = 26, select = 26, divider = 16}
 
 --- Settingslist
 SettingsListMixinDF = CreateFromMixins(CallbackRegistryMixin);
@@ -707,11 +738,10 @@ function SettingsListMixinDF:OnLoad()
 end
 
 function SettingsListMixinDF:CallRefresh()
-    -- print('CallRefresh')
     self:TriggerEvent(SettingsListMixinDF.Event.OnRefresh, true)
 end
 
-function SettingsListMixinDF:Display(data)
+function SettingsListMixinDF:Display(data, small)
     -- self.DataProvider:Flush()
     self.DataProvider = CreateDataProvider()
     self.ScrollView:SetDataProvider(self.DataProvider)
@@ -780,9 +810,16 @@ function SettingsListMixinDF:Display(data)
                 newInfo[2] = info[1]
                 return data.options.set(newInfo, value)
             end
-            elementData = {key = k, args = v, get = subGet, set = subSet, settingsList = self}
+            elementData = {key = k, args = v, get = subGet, set = subSet, settingsList = self, small = small}
         else
-            elementData = {key = k, args = v, get = data.options.get, set = data.options.set, settingsList = self}
+            elementData = {
+                key = k,
+                args = v,
+                get = data.options.get,
+                set = data.options.set,
+                settingsList = self,
+                small = small
+            }
         end
 
         if v.name ~= '' and v.name ~= 'Enable' then self.DataProvider:Insert(elementData) end

@@ -73,6 +73,8 @@
 		<Frames>
 			<Frame parentKey="Header" inherits="SettingsListSectionHeaderTemplateDF" hidden="true" setAllPoints="true">
 			</Frame>
+			<Frame parentKey="Divider" inherits="SettingsListSectionDividerTemplateDF" hidden="true" setAllPoints="true">
+			</Frame>
 			<Frame parentKey="Item" inherits="SettingsListElementTemplateDF" hidden="true" setAllPoints="true">
 			</Frame>
 		</Frames>
@@ -87,6 +89,23 @@
 						<Anchor point="TOPLEFT" x="7" y="-16" />
 					</Anchors>
 				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+	<!-- Divider -->
+	<Frame name="SettingsListSectionDividerTemplateDF" virtual="true">
+		<Size y="16" />
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Texture" file="Interface\AddOns\DragonflightUI\Textures\Editmode\ui-friendsframe-onlinedivider">
+					<!-- <Size x="330" y="8" /> -->
+					<!-- <Anchor point="TOPLEFT" x="7" y="-16" /> -->
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="0" />
+						<Anchor point="BOTTOMRIGHT" x="0" y="0" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="1" />
+				</Texture>
 			</Layer>
 		</Layers>
 	</Frame>

@@ -62,6 +62,23 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -163,15 +180,17 @@ local minimapOptions = {
             desc = '' .. getDefaultStr('scale', 'minimap'),
             min = 0.1,
             max = 5,
-            bigStep = 0.1,
-            order = 1
+            bigStep = 0.025,
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -188,7 +207,8 @@ local minimapOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -205,7 +225,8 @@ local minimapOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -214,7 +235,8 @@ local minimapOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -223,15 +245,16 @@ local minimapOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
-        locked = {
-            type = 'toggle',
-            name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked', 'minimap'),
-            order = 10
-        },
+        -- locked = {
+        --     type = 'toggle',
+        --     name = 'Locked',
+        --     desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
+        --         getDefaultStr('locked', 'minimap'),
+        --     order = 10
+        -- },
         showPing = {
             type = 'toggle',
             name = 'Show Ping',
@@ -341,6 +364,37 @@ do
 end
 -- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
+local optionsMinimapEditmode = {
+    name = 'Minimap',
+    desc = 'Minimapdesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.minimap
+                local defaultsTable = defaults.profile.minimap
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'minimap')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local trackerOptions = {
     type = 'group',
@@ -355,14 +409,16 @@ local trackerOptions = {
             min = 0.1,
             max = 5,
             bigStep = 0.1,
-            order = 1
+            order = 1,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'tracker'),
             values = frameTableTracker,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -379,7 +435,8 @@ local trackerOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -396,7 +453,8 @@ local trackerOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -405,7 +463,8 @@ local trackerOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -414,7 +473,39 @@ local trackerOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
+        }
+    }
+}
+local optionsTrackerEditmode = {
+    name = 'Tracker',
+    desc = 'Tracker',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.tracker
+                local defaultsTable = defaults.profile.tracker
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'tracker')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
         }
     }
 }
@@ -444,6 +535,7 @@ function Module:OnEnable()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
+    Module:AddEditMode()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -482,9 +574,13 @@ function Module:RefreshOptionScreens()
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Minimap')
     configFrame:RefreshCatSub(cat, 'Questtracker')
+
+    -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
+    Minimap.DFEditModeSelection:RefreshOptionScreen();
+    Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
 
     if db.minimap.useStateHandler and not Module.StateHandlerAdded then
@@ -614,16 +710,61 @@ function Module.AddStateUpdater()
     Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
 end
 
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:AddEditModeToFrame(Minimap)
+
+    Minimap.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Minimap'
+    end)
+
+    Minimap.DFEditModeSelection:RegisterOptions({
+        name = 'Minimap',
+        sub = 'minimap',
+        options = minimapOptions,
+        extra = optionsMinimapEditmode,
+        default = function()
+            setDefaultSubValues('minimap')
+        end,
+        moduleRef = self
+    });
+
+    Minimap.DFEditModeSelection:ClearAllPoints()
+    Minimap.DFEditModeSelection:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+    Minimap.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+
+    -- QuestTracker
+    local trackerFrame = DF.Era and QuestWatchFrame or (DF.Cata and WatchFrame) and WatchFrame;
+    Module.TrackerFrameRef = trackerFrame;
+    EditModeModule:AddEditModeToFrame(trackerFrame)
+
+    trackerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Questtracker'
+    end)
+
+    trackerFrame.DFEditModeSelection:RegisterOptions({
+        name = 'Questtracker',
+        sub = 'tracker',
+        options = trackerOptions,
+        extra = optionsTrackerEditmode,
+        default = function()
+            setDefaultSubValues('tracker')
+        end,
+        moduleRef = self,
+        prio = -5
+    });
+end
+
 function Module.UpdateMinimapState(state)
+    -- print('state', state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
     Minimap:ClearAllPoints()
     Minimap:SetClampedToScreen(true)
     Minimap:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
 
+    -- Module.LFG:SetScale(state.scale)
     local dfScale = 1.25
     Minimap:SetScale(state.scale * dfScale)
-    -- Module.LFG:SetScale(state.scale)
-
-    Module.LockMinimap(state.locked)
+    -- Module.LockMinimap(state.locked)
     Module.UpdateDurabilityState(state)
 
     if state.hideCalendar then

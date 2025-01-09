@@ -7,6 +7,9 @@ Mixin(Module, DragonflightUIModulesMixin)
 local defaults = {
     profile = {
         scale = 1,
+        anchorFrame = 'UIParent',
+        anchor = 'BOTTOMLEFT',
+        anchorParent = 'BOTTOMLEFT',
         x = 42,
         y = 35,
         sizeX = 460,
@@ -47,6 +50,8 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local frameTable = {['UIParent'] = 'UIParent'}
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -61,7 +66,52 @@ local options = {
             max = 5,
             bigStep = 0.1,
             order = 1,
-            disabled = true
+            disabled = true,
+            editmode = true
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame'),
+            values = frameTable,
+            order = 4,
+            editmode = true
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2,
+            editmode = true
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -70,7 +120,8 @@ local options = {
             min = 0,
             max = 3500,
             bigStep = 1,
-            order = 2
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -79,7 +130,8 @@ local options = {
             min = 0,
             max = 3500,
             bigStep = 1,
-            order = 3
+            order = 6,
+            editmode = true
         },
         sizeX = {
             type = 'range',
@@ -88,7 +140,8 @@ local options = {
             min = 0,
             max = 1000,
             bigStep = 1,
-            order = 4
+            order = 10,
+            editmode = true
         },
         sizeY = {
             type = 'range',
@@ -97,7 +150,8 @@ local options = {
             min = 0,
             max = 1000,
             bigStep = 1,
-            order = 5
+            order = 11,
+            editmode = true
         }
     }
 }
@@ -122,6 +176,7 @@ function Module:OnEnable()
         Module.Era()
     end
     -- Module.AddStateUpdater()
+    -- Module:AddEditMode()
 
     Module:ApplySettings()
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Chat', {name = 'Chat', options = options, default = setDefaultValues})
@@ -146,12 +201,13 @@ function Module:RefreshOptionScreens()
     end
 
     refreshCat('Chat')
+    -- ChatFrame1.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings()
     local db = Module.db.profile
 
-    ChatFrame1:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', db.x, db.y)
+    ChatFrame1:SetPoint(db.anchor, db.anchorFrame, db.anchorParent, db.x, db.y)
     ChatFrame1:SetSize(db.sizeX, db.sizeY)
     ChatFrame1:SetUserPlaced(true)
 
@@ -164,6 +220,22 @@ function Module.AddStateUpdater()
     Mixin(ChatFrame1, DragonflightUIStateHandlerMixin)
     ChatFrame1:InitStateHandler()
     -- Minimap:SetHideFrame(frame.CalendarButton, 2)
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:AddEditModeToFrame(ChatFrame1)
+
+    ChatFrame1.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Chat'
+    end)
+
+    ChatFrame1.DFEditModeSelection:RegisterOptions({
+        name = 'Chat',
+        options = options,
+        default = setDefaultValues,
+        moduleRef = self
+    });
 end
 
 function Module.ChangeSizeAndPosition()
