@@ -69,7 +69,8 @@ table.insert(DF.VIPTable, {
     targetIcon = 0,
     role = 'DAMAGER',
     extra = 'worldboss',
-    displayID = 73 -- wolf
+    displayID = 73, -- wolf
+    displayTexture = 'norbert'
 })
 
 table.insert(DF.VIPTable, {
