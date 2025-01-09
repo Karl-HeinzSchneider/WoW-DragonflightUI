@@ -2081,7 +2081,7 @@ end
 function Module.HookClassIcon()
     Module:Unhook('UnitFramePortrait_Update')
     Module:SecureHook('UnitFramePortrait_Update', function(self)
-        -- print('UnitFramePortrait_Update', self:GetName())
+        -- print('UnitFramePortrait_Update', self:GetName(), self.unit)
         if not self.portrait then return end
 
         local icon = Module.db.profile.target.classicon
