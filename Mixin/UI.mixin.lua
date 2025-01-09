@@ -3719,6 +3719,73 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                     end
                 end
             end
+
+            -- guild 
+
+            local originalGuild = _G[name .. 'Tab' .. 3];
+
+            local newGuildBtn = CreateFrame('Button', 'DragonflightUIFixedGuildButton', FriendsFrame,
+                                            'DFGuildTab, SecureActionButtonTemplate')
+
+            DragonflightUIMixin:CharacterFrameTabButtonTemplate(newGuildBtn, true, true)
+            newGuildBtn.DFFirstOffsetX = 4
+            newGuildBtn.DFTabWidth = 62.8
+            DragonflightUIMixin:TabResize(newGuildBtn)
+
+            local dx = newGuildBtn.DFFirstOffsetX + 2 * newGuildBtn.DFTabWidth + 2 * 4
+
+            newGuildBtn:ClearAllPoints()
+            newGuildBtn:SetPoint('TOPLEFT', FriendsFrame, 'BOTTOMLEFT', dx, 1)
+            DragonflightUIMixin:TabResize(originalGuild)
+
+            _G[newGuildBtn:GetName() .. 'LeftDisabled']:Hide()
+            _G[newGuildBtn:GetName() .. 'RightDisabled']:Hide()
+            _G[newGuildBtn:GetName() .. 'MiddleDisabled']:Hide()
+
+            newGuildBtn:SetText(originalGuild:GetText())
+
+            newGuildBtn:SetAttribute("type", "macro"); -- Set type to "macro"
+            newGuildBtn:SetAttribute("macrotext", "/click GuildMicroButton");
+
+            -- CommunitiesFrame:HookScript('OnShow', function()
+            --     -- newGuildBtn:SetNormal(false)
+            --     -- newGuildBtn:DFHighlight(true)
+            --     -- newGuildBtn:SetNormalFontObject(GameFontHighlightSmall)
+            -- end)
+            -- CommunitiesFrame:HookScript('OnHide', function()
+            --     -- newGuildBtn:SetNormal(true)
+            --     -- newGuildBtn:DFHighlight(false)
+            --     -- newGuildBtn:SetNormalFontObject(GameFontNormalSmall)
+            -- end)
+
+            originalGuild.DFNewGuildButton = newGuildBtn
+
+            hooksecurefunc('FriendsFrame_UpdateGuildTabVisibility', function()
+                --
+                if InCombatLockdown() then return end -- TODO
+                local classicUI = Settings.GetValue('useClassicGuildUI')
+                -- print('FriendsFrame_UpdateGuildTabVisibility', classicUI, newGuildBtn:IsVisible())
+                if classicUI and newGuildBtn:IsVisible() then
+                    newGuildBtn:Hide()
+                elseif not classicUI and not newGuildBtn:IsVisible() then
+                    newGuildBtn:Show()
+                end
+            end)
+            newGuildBtn:SetShown(not Settings.GetValue('useClassicGuildUI'))
+            newGuildBtn:SetScript('OnEvent', function(self, event, cvarName, value)
+                --
+                if InCombatLockdown() then return end -- TODO
+                if event == "CVAR_UPDATE" then
+                    if cvarName == "useClassicGuildUI" then
+                        if value == "1" then
+                            newGuildBtn:Hide()
+                        else
+                            newGuildBtn:Show()
+                        end
+                    end
+                end
+            end)
+            newGuildBtn:RegisterEvent("CVAR_UPDATE")
         else
             for i = 1, 5 do
                 --
