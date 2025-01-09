@@ -5,14 +5,30 @@ DF.VIPTable = {}
 local getIndex = 1;
 local maxVIPs = 0;
 
+local alreadyRandom = {};
+local maxReroll = 5;
+
 function DF:GetRandomVIP()
-    local vip = DF.VIPTable[getIndex];
+    -- local vip = DF.VIPTable[getIndex];
 
-    getIndex = getIndex + 1;
+    -- getIndex = getIndex + 1;
 
-    if getIndex > maxVIPs then getIndex = 1; end
+    -- if getIndex > maxVIPs then getIndex = 1; end
 
-    return vip;
+    -- return vip;
+
+    local rand;
+
+    for k = 1, maxReroll do
+        rand = fastrandom(1, maxVIPs);
+        if not alreadyRandom[rand] then
+            alreadyRandom[rand] = true;
+            return DF.VIPTable[rand]
+        else
+            -- print('REROLL', k, rand)
+        end
+    end
+    return DF.VIPTable[rand]
 end
 
 table.insert(DF.VIPTable, {
