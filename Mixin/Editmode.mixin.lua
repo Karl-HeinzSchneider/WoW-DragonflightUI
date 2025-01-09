@@ -497,6 +497,8 @@ function DFEditModeSystemSelectionBaseMixin:OnUpdate()
     if self.isDragging then
         --
         -- print('drag drag')
+        -- local anchor, anchorFrame, anchorParent, xxx, yyy = self:CalcSnapParentToGrid()
+        -- self:SetPoint(anchor, anchorFrame, anchorParent, xxx, yyy)
     end
 end
 
