@@ -306,8 +306,22 @@ local optionsPlayer = {
             order = 6,
             editmode = true
         },
-        classcolor = {type = 'toggle', name = 'Class Color', desc = 'Enable classcolors for the healthbar', order = 7},
-        classicon = {type = 'toggle', name = 'Class Icon Portrait', desc = '', order = 7, disabled = true, new = false},
+        classcolor = {
+            type = 'toggle',
+            name = 'Class Color',
+            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'player'),
+            order = 7,
+            editmode = true
+        },
+        classicon = {
+            type = 'toggle',
+            name = 'Class Icon Portrait',
+            desc = '' .. getDefaultStr('classicon', 'player'),
+            order = 7.1,
+            disabled = true,
+            new = false,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
@@ -533,15 +547,15 @@ local optionsTarget = {
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar',
+            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'target'),
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
             name = 'Class Icon Portrait',
-            desc = '',
-            order = 7,
+            desc = '' .. getDefaultStr('classicon', 'target'),
+            order = 7.1,
             disabled = true,
             new = false,
             editmode = true
