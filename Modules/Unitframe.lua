@@ -1692,6 +1692,7 @@ function Module:AddEditMode()
                 -- p:SetAlpha(0)
                 -- print('p', k)
             end
+            -- Module.PartyMoveFrame:Hide()
         end,
         hideFunction = function()
             --            
@@ -1700,6 +1701,7 @@ function Module:AddEditMode()
                 -- p:SetAlpha(0)
                 -- print('p', k)
             end
+            -- Module.PartyMoveFrame:Show()
         end
     });
 
