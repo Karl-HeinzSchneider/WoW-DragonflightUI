@@ -3713,6 +3713,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                     tab.DFFirstOffsetX = 4
                     tab.DFTabWidth = 62.8
 
+                    if i == 4 then
+                        -- raid 
+                        -- tab:SetText('Schlachtzug')
+                        local text = _G['FriendsFrameTab' .. i .. 'Text']
+                        -- print('ss', text:GetWrappedWidth())
+                        if text:GetWrappedWidth() > 24 then
+                            tab.DFTabWidth = math.min(text:GetWrappedWidth() + 16, 84)
+                        end
+                    end
+
                     if i == 5 then
                         local tabHigh = _G[name .. 'Tab' .. i .. 'HighlightTexture']
                         if tabHigh then tabHigh:Hide() end
