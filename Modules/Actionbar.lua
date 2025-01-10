@@ -3868,6 +3868,16 @@ function Module.ChangeCharacterMicroButton()
     end
 end
 
+function Module:CreateCustomMicromenu()
+    local microFrame = CreateFrame('Frame', 'DragonflightUICustomMicromenuFrame', UIParent,
+                                   'DragonflightUIMicromenuFrameTemplate')
+    microFrame:SetSize(200, 40)
+    microFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    -- microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
+    -- microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
+    -- Module.MicroFrame = microFrame
+end
+
 function Module.ChangeMicroMenu()
     local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent, 'SecureFrameTemplate')
     microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
@@ -4642,6 +4652,7 @@ function Module.Wrath()
     -- Module.DrawActionbarDeco()
 
     Module.ChangeMicroMenu()
+    Module:CreateCustomMicromenu()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()

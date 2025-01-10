@@ -1,0 +1,209 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
+	<Script file="Mixin/Micromenu.mixin.lua" />
+	<Frame name="DragonflightUIMicromenuFrameTemplate" mixin="DragonflightUIMicromenuMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<Button name="DragonflightUIMicroButtonTemplate" mixin="DragonflightUIMicromenuButtonMixin" inherits="SecureActionButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size>
+			<AbsDimension x="28" y="58" />
+		</Size>
+		<HitRectInsets>
+			<AbsInset left="0" right="0" top="18" bottom="0" />
+		</HitRectInsets>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentFlash" file="Interface\Buttons\Micro-Highlight" alphaMode="ADD" parentKey="Flash" hidden="true">
+					<Size x="64" y="64" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-2" y="-18" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				DragonflightUIMicromenuButtonMixin:OnEnter(self)
+			</OnEnter>
+			<OnEnable>
+				self:SetAlpha(1);
+			</OnEnable>
+			<OnDisable>
+				self:SetAlpha(0.5);
+			</OnDisable>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUISpellbookMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'SpellbookAbilities'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click SpellbookMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK");
+				self.newbieText = NEWBIE_TOOLTIP_SPELLBOOK;
+			</OnLoad>
+			<OnEvent>
+				self.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK");
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUITalentMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'SpecTalents'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click TalentMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS");
+				self.newbieText = NEWBIE_TOOLTIP_TALENTS;
+				
+				self.minLevel = SHOW_TALENT_LEVEL;
+				self:RegisterEvent("PLAYER_LEVEL_UP");
+				self:RegisterEvent("UPDATE_BINDINGS");
+			</OnLoad>
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIAchievementMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'Achievements'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click AchievementMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT");
+				self.newbieText = NEWBIE_TOOLTIP_ACHIEVEMENT;
+			</OnLoad>
+			<OnEvent>
+				self.tooltipText = MicroButtonTooltipText(ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT");
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIQuestLogMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'Questlog'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click QuestLogMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(QUESTLOG_BUTTON, "TOGGLEQUESTLOG");
+				self.newbieText = NEWBIE_TOOLTIP_QUESTLOG;
+			</OnLoad>
+			<OnEvent>
+				self.tooltipText = MicroButtonTooltipText(QUESTLOG_BUTTON, "TOGGLEQUESTLOG");
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIGuildMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'GuildCommunities'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click GuildMicroButton");
+			</OnLoad>
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUICollectionsMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'Collections'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click CollectionsMicroButton");
+			</OnLoad>
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIPVPMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'AdventureGuide'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click PVPMicroButton");
+				
+				self:RegisterEvent("UPDATE_BINDINGS");
+				local factionGroup = UnitFactionGroup("player");
+				if ( factionGroup ) then
+				<!-- _G[self:GetName().."Texture"]:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup); -->
+				end
+				self.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4");
+				self.newbieText = NEWBIE_TOOLTIP_PVP;
+				self.minLevel = SHOW_PVP_LEVEL;
+			</OnLoad>
+			<OnEvent>
+				self.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4");
+				self.newbieText = NEWBIE_TOOLTIP_PVP;
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUILFGMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'Groupfinder'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click LFGMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(LFG_BUTTON, "TOGGLEGROUPFINDER");
+				self.newbieText = NEWBIE_TOOLTIP_LFGPARENT;
+			</OnLoad>
+			<OnEvent>
+				self.tooltipText = MicroButtonTooltipText(LFG_BUTTON, "TOGGLEGROUPFINDER");
+				self.newbieText = NEWBIE_TOOLTIP_LFGPARENT;
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIEJMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'AdventureGuide'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click EJMicroButton");
+			</OnLoad>
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIMainMenuMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'Shop'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click MainMenuMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU");
+				self.newbieText = NEWBIE_TOOLTIP_MAINMENU;
+			</OnLoad>
+			<OnEvent>
+				self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU");
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIHelpMicroButton" inherits="DragonflightUIMicroButtonTemplate" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self.atlas = 'GameMenu'
+				self:UpdateStyle()
+				self:SetAttribute("type", "macro")
+				self:SetAttribute("macrotext", "/click HelpMicroButton");
+				
+				self.tooltipText = MicroButtonTooltipText(HELP_BUTTON, "TOGGLEHELP");
+				self.newbieText = NEWBIE_TOOLTIP_HELP;
+			</OnLoad>
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Button>
+</Ui>

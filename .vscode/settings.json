@@ -460,7 +460,9 @@
         "NineSliceUtil",
         "EditModeSystemSelectionBaseMixin",
         "EditModeSystemSelectionMixin",
-        "MODELFRAME_DEFAULT_ROTATION"
+        "MODELFRAME_DEFAULT_ROTATION",
+        "FEATURE_NOT_AVAILBLE_PANDAREN",
+        "FEATURE_BECOMES_AVAILABLE_AT_LEVEL"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
