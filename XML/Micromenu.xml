@@ -131,7 +131,7 @@
 				self.atlas = 'AdventureGuide'
 				self:UpdateStyle()
 				self:SetAttribute("type", "macro")
-				self:SetAttribute("macrotext", "/click PVPMicroButton");
+				self:SetAttribute("macrotext", "/run TogglePVPFrame()");
 				
 				self:RegisterEvent("UPDATE_BINDINGS");
 				local factionGroup = UnitFactionGroup("player");
@@ -182,7 +182,7 @@
 				self.atlas = 'Shop'
 				self:UpdateStyle()
 				self:SetAttribute("type", "macro")
-				self:SetAttribute("macrotext", "/click MainMenuMicroButton");
+				self:SetAttribute("macrotext", "/click MainMenuMicroButton LeftButton 1");
 				
 				self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU");
 				self.newbieText = NEWBIE_TOOLTIP_MAINMENU;
