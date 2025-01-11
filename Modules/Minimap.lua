@@ -734,25 +734,27 @@ function Module:AddEditMode()
     Minimap.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
 
     -- QuestTracker
-    local trackerFrame = DF.Era and QuestWatchFrame or (DF.Cata and WatchFrame) and WatchFrame;
-    Module.TrackerFrameRef = trackerFrame;
-    EditModeModule:AddEditModeToFrame(trackerFrame)
+    local trackerFrame = (DF.Era and QuestWatchFrame) or (DF.Wrath and WatchFrame) or (DF.Cata and WatchFrame);
+    if trackerFrame then
+        Module.TrackerFrameRef = trackerFrame;
+        EditModeModule:AddEditModeToFrame(trackerFrame)
 
-    trackerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Questtracker'
-    end)
+        trackerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Questtracker'
+        end)
 
-    trackerFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Questtracker',
-        sub = 'tracker',
-        options = trackerOptions,
-        extra = optionsTrackerEditmode,
-        default = function()
-            setDefaultSubValues('tracker')
-        end,
-        moduleRef = self,
-        prio = -5
-    });
+        trackerFrame.DFEditModeSelection:RegisterOptions({
+            name = 'Questtracker',
+            sub = 'tracker',
+            options = trackerOptions,
+            extra = optionsTrackerEditmode,
+            default = function()
+                setDefaultSubValues('tracker')
+            end,
+            moduleRef = self,
+            prio = -5
+        });
+    end
 end
 
 function Module.UpdateMinimapState(state)

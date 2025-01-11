@@ -217,6 +217,7 @@ function Module:SetEditMode(isEditMode)
 end
 
 function Module:AddEditModeToFrame(frameRef)
+    if not frameRef then return end
     local f = CreateFrame('Frame', frameRef:GetName() .. '_DFEditModeSelection', frameRef,
                           'DFEditModeSystemSelectionTemplate')
 

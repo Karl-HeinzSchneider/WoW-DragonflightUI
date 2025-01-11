@@ -154,9 +154,11 @@ function DragonflightUIEditModeGridMixin:OnLoad()
 
     self:RegisterEvent("DISPLAY_SIZE_CHANGED");
     self:RegisterEvent("UI_SCALE_CHANGED");
-    hooksecurefunc("UpdateUIParentPosition", function()
-        if self:IsShown() then self:UpdateGrid() end
-    end);
+    if UpdateUIParentPosition then
+        hooksecurefunc("UpdateUIParentPosition", function()
+            if self:IsShown() then self:UpdateGrid() end
+        end);
+    end
 end
 
 function DragonflightUIEditModeGridMixin:OnHide()
