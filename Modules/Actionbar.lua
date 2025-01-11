@@ -4039,7 +4039,7 @@ function Module.Era()
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
 
-    -- Module.ChangeMicroMenu()
+    Module.ChangeMicroMenu()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()

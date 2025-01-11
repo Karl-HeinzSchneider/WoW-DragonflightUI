@@ -25,33 +25,39 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         v:SetFrameLevel(self:GetFrameLevel() + 1)
     end
 
+    local numButtons = #self.MicroButtons;
+    if DF.Era then
+        -- socials/guild button
+        numButtons = numButtons - 1
+    end
+
     local sizeX, sizeY = self.MicroButtons[1]:GetSize()
-    local width = (sizeX - 3) * #self.MicroButtons + 3
+    local width = (sizeX - 3) * numButtons + 3
     local height = sizeY
     self:SetSize(width, height)
 
-    -- hooksecurefunc('UpdateMicroButtons', function()
-    --     -- print('#UpdateMicroButtons')
-    --     self:UpdateLayout()
+    hooksecurefunc('UpdateMicroButtons', function()
+        -- print('#UpdateMicroButtons')
+        self:UpdateLayout()
+    end)
+
+    hooksecurefunc('UpdateMicroButtonsParent', function(parent)
+        -- print('#UpdateMicroButtonsParent')
+        self:OnUpdateMicroButtonsParent(parent)
+    end)
+
+    -- inside calls UpdateMicroButtons
+    -- hooksecurefunc('MoveMicroButtons', function()
+    --     -- print('#MoveMicroButtons')
+    --     self:UpdateLayout(true)
     -- end)
 
-    -- hooksecurefunc('UpdateMicroButtonsParent', function(parent)
-    --     -- print('#UpdateMicroButtonsParent')
-    --     self:OnUpdateMicroButtonsParent(parent)
-    -- end)
+    hooksecurefunc('ActionBarController_UpdateAll', function(force)
+        -- print('#ActionBarController_UpdateAll')
+        self:OnActionBarController_UpdateAll()
+    end)
 
-    -- -- inside calls UpdateMicroButtons
-    -- -- hooksecurefunc('MoveMicroButtons', function()
-    -- --     -- print('#MoveMicroButtons')
-    -- --     self:UpdateLayout(true)
-    -- -- end)
-
-    -- hooksecurefunc('ActionBarController_UpdateAll', function(force)
-    --     -- print('#ActionBarController_UpdateAll')
-    --     self:OnActionBarController_UpdateAll()
-    -- end)
-
-    -- UpdateMicroButtonsParent(self)
+    UpdateMicroButtonsParent(self)
 end
 
 function DragonflightUIMicroMenuMixin:OnUpdateMicroButtonsParent(parent)
@@ -193,47 +199,21 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         self:HookMicromenuOverride()
     elseif DF.Era then
         self:ChangeCharacterMicroButton()
-        -- self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
-        -- self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
-        -- self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        -- -- WorldMapMicroButton    
-        -- self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
+        self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
+        self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        -- WorldMapMicroButton    
+        self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
 
-        -- if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
-        -- if SocialsMicroButton then self:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities') end
-        -- if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
+        if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
+        if SocialsMicroButton then self:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities') end
+        if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
 
-        -- -- TODO
-        -- -- if SocialsMicroButton and GuildMicroButton then
-        -- --     SocialsMicroButton:Hide();
-        -- --     GuildMicroButton:Hide();
-        -- -- end
+        self:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
+        self:ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
 
-        -- self:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
-        -- self:ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-
-        -- MainMenuBarPerformanceBarFrame:Hide()
-
-        -- self:HookMicromenuOverride()
+        MainMenuBarPerformanceBarFrame:Hide()
     end
-
-    -- TODO
-    -- -- TalentMicroButton getting updated from UpdateMicroButtons() when open/closeing talentframe
-    -- hooksecurefunc('UpdateMicroButtons', function()
-    --     --
-    --     -- print('UpdateMicroButtons')
-
-    --     if InCombatLockdown() then
-    --         -- prevent unsecure update in combat TODO: message?
-    --         frame.ShouldUpdate = true
-    --         return
-    --     end
-    --     frame.ShouldUpdate = false
-
-    --     local db = self:db.profile
-    --     local state = db.micro
-    --     self:MicroFrame:UpdateStateHandler(state)
-    -- end)
 end
 
 function DragonflightUIMicroMenuMixin:ChangeCharacterMicroButton()
