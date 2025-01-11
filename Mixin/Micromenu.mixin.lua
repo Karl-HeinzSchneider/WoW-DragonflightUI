@@ -3,7 +3,7 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 DragonflightUIMicroMenuMixin = {}
 
 function DragonflightUIMicroMenuMixin:OnLoad()
-    print('~~DragonflightUIMicroMenuMixin:OnLoad()', self:GetName())
+    -- print('~~DragonflightUIMicroMenuMixin:OnLoad()', self:GetName())
 
     -- self:SetSize(200, 40)
     -- self:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
@@ -17,7 +17,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         self.ParentByUI = true
     end
 
-    print('~~~~>', self.ParentByUI, '<~~~~')
+    -- print('~~~~>', self.ParentByUI, '<~~~~')
 
     self.OriginalAnchors = {}
     for k, v in ipairs(self.MicroButtons) do
@@ -61,34 +61,34 @@ function DragonflightUIMicroMenuMixin:OnLoad()
 end
 
 function DragonflightUIMicroMenuMixin:OnUpdateMicroButtonsParent(parent)
-    print('OnUpdateMicroButtonsParent() to ', parent:GetName())
+    -- print('OnUpdateMicroButtonsParent() to ', parent:GetName())
 
     if (not parent) or (parent == UIParent) then
         -- normal
-        print('~~> normal')
+        -- print('~~> normal')
         UpdateMicroButtonsParent(self)
         -- self:UpdateLayout()
     elseif parent == OverrideActionBar then
         -- vehicle etc
-        print('~~> vehicle')
+        -- print('~~> vehicle')
         self:BlizzardMicroMenuShow()
     elseif parent == PetBattleFrame then
         -- pet battle
-        print('~~> pet battle')
+        -- print('~~> pet battle')
         self:BlizzardMicroMenuShow()
     elseif parent == self then
         -- custom
-        print('~~> self')
+        -- print('~~> self')
         self:UpdateLayout(false)
     else
         -- ELSE - should not happen?
-        print('~~> ELSE')
+        -- print('~~> ELSE')
         UpdateMicroButtonsParent(self)
     end
 end
 
 function DragonflightUIMicroMenuMixin:OnActionBarController_UpdateAll()
-    print('OnActionBarController_UpdateAll()', ActionBarController_GetCurrentActionBarState())
+    -- print('OnActionBarController_UpdateAll()', ActionBarController_GetCurrentActionBarState())
     local abState = ActionBarController_GetCurrentActionBarState();
     if abState == LE_ACTIONBAR_STATE_MAIN and not (C_PetBattles and C_PetBattles.IsInBattle()) then
         self:UpdateLayout()
@@ -96,7 +96,7 @@ function DragonflightUIMicroMenuMixin:OnActionBarController_UpdateAll()
 end
 
 function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
-    print('BlizzardMicroMenuShow()')
+    -- print('BlizzardMicroMenuShow()')
     -- restore anchors
     for k, v in ipairs(self.MicroButtons) do
         if v == CharacterMicroButton or v == PVPMicroButton then
@@ -118,7 +118,7 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             return;
         end
     end
-    print('~> set custom anchors')
+    -- print('~> set custom anchors')
     -- set custom anchors
     for k, v in ipairs(self.MicroButtons) do
         -- print(k, v:GetName(), v)
@@ -151,7 +151,7 @@ function DragonflightUIMicroMenuMixin:Update()
 end
 
 function DragonflightUIMicroMenuMixin:ChangeButtons()
-    print('~~~~DragonflightUIMicroMenuMixin:ChangeButtons()')
+    -- print('~~~~DragonflightUIMicroMenuMixin:ChangeButtons()')
     if DF.Cata then
         self:ChangeCharacterMicroButton()
         self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
