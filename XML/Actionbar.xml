@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
 	<Script file="Mixin/Actionbar.mixin.lua" />
+	<Script file="Mixin/Micromenu.mixin.lua" />
 	<Script file="Mixin/Statusbar.mixin.lua" />
 	<Frame name="DragonflightUIActionbarFrameTemplate" mixin="DragonflightUIActionbarMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
 	</Frame>
@@ -18,6 +19,11 @@
 		</Scripts>
 	</Frame>
 	<Frame name="DragonflightUIDecoFrameTemplate" inherits="ButtonFrameTemplate" virtual="true">
+	</Frame>
+	<Frame name="DragonflightUIMicroMenuFrameTemplate" mixin="DragonflightUIMicroMenuMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
 	</Frame>
 	<CheckButton name="DragonflightUIMultibarButton6Template" virtual="true" inherits="MultiBarButtonTemplate">
 		<Scripts>

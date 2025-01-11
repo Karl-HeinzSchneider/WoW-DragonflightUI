@@ -472,7 +472,7 @@ local defaults = {
             anchorFrame = 'UIParent',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = -320,
+            x = 0,
             y = 0,
             hidden = false,
             hideDefaultFPS = true,
@@ -494,13 +494,13 @@ local defaults = {
         }
     }
 }
-if DF.Cata then
-    defaults.profile.micro.x = -320
-elseif DF.Wrath then
-    defaults.profile.micro.x = -294
-elseif DF.Era then
-    defaults.profile.micro.x = -205
-end
+-- if DF.Cata then
+--     defaults.profile.micro.x = -320
+-- elseif DF.Wrath then
+--     defaults.profile.micro.x = -294
+-- elseif DF.Era then
+--     defaults.profile.micro.x = -205
+-- end
 
 Module:SetDefaults(defaults)
 
@@ -2297,8 +2297,8 @@ function Module:OnEnable()
     Module.AddStateUpdater()
     Module:AddEditMode()
 
-    Module:ApplySettings('ALL')
     Module:RegisterOptionScreens()
+    Module:ApplySettings('ALL')
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -2467,25 +2467,8 @@ function Module.AddStateUpdater()
 
     ---
     local microFrame = Module.MicroFrame
-
     Mixin(microFrame, DragonflightUIStateHandlerMixin)
-    microFrame:InitStateHandler(4, 4)
-
-    table.insert(Module.MicroButtons, CharacterMicroButton)
-    table.insert(Module.MicroButtons, PVPMicroButton)
-
-    for k, v in ipairs(Module.MicroButtons) do
-        --
-        -- print(k, v:GetName())
-        -- v:SetParent(microFrame)
-        microFrame:SetHideFrame(v, k)
-    end
-
-    C_Timer.After(0, function()
-        local db = Module.db.profile
-        local state = db.micro
-        Module.MicroFrame:UpdateStateHandler(state)
-    end)
+    microFrame:InitStateHandler()
 end
 
 function Module:AddEditMode()
@@ -2651,13 +2634,13 @@ function Module:AddEditMode()
     });
 
     -- Micro 
-    EditModeModule:AddEditModeToFrame(CharacterMicroButton)
+    EditModeModule:AddEditModeToFrame(Module.MicroFrame)
 
-    CharacterMicroButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+    Module.MicroFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
         return 'Micromenu'
     end)
 
-    CharacterMicroButton.DFEditModeSelection:RegisterOptions({
+    Module.MicroFrame.DFEditModeSelection:RegisterOptions({
         name = 'Micromenu',
         sub = 'micro',
         options = microOptions,
@@ -2667,13 +2650,6 @@ function Module:AddEditMode()
         end,
         moduleRef = self
     });
-
-    CharacterMicroButton.DFEditModeSelection:ClearAllPoints()
-    local microDelta = 0
-    CharacterMicroButton.DFEditModeSelection:SetPoint('TOPLEFT', _G['CharacterMicroButton'], 'TOPLEFT', -microDelta,
-                                                      microDelta)
-    CharacterMicroButton.DFEditModeSelection:SetPoint('BOTTOMRIGHT', _G['HelpMicroButton'], 'BOTTOMRIGHT', microDelta,
-                                                      -microDelta)
 end
 
 function Module:RegisterOptionScreens()
@@ -2794,7 +2770,7 @@ function Module:RefreshOptionScreens()
     if DF.Cata then MultiCastActionBarFrame.DFEditModeSelection:RefreshOptionScreen(); end
 
     MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
-    CharacterMicroButton.DFEditModeSelection:RefreshOptionScreen();
+    Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings(sub)
@@ -2837,7 +2813,7 @@ function Module:ApplySettings(sub)
         if DF.Cata then Module.UpdateTotemState(db.totem) end
 
         Module.UpdateBagState(db.bags)
-        Module.UpdateMicromenuState(db.micro)
+        Module.MicroFrame:UpdateState(db.micro)
 
         Module.UpdatePossesbarState(db.possess)
 
@@ -2889,7 +2865,7 @@ function Module:ApplySettings(sub)
     elseif sub == 'bags' then
         Module.UpdateBagState(db.bags)
     elseif sub == 'micro' then
-        Module.UpdateMicromenuState(db.micro)
+        Module.MicroFrame:UpdateState(db.micro)
     end
 end
 
@@ -3459,615 +3435,12 @@ function Module.SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
     return frame
 end
 
-Module.MicromenuAtlas = {
-    ["UI-HUD-MicroMenu-Achievements-Disabled"] = {
-        16, 20, 0.000976562, 0.0634766, 0.00195312, 0.162109, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-Achievements-Down"] = {16, 20, 0.000976562, 0.0634766, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Achievements-Mouseover"] = {
-        16, 20, 0.000976562, 0.0634766, 0.330078, 0.490234, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-Achievements-Up"] = {16, 20, 0.000976562, 0.0634766, 0.494141, 0.654297, false, false, "2x"},
-    ["UI-HUD-MicroMenu-AdventureGuide-Disabled"] = {
-        16, 20, 0.000976562, 0.0634766, 0.658203, 0.818359, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-AdventureGuide-Down"] = {16, 20, 0.000976562, 0.0634766, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-AdventureGuide-Mouseover"] = {
-        16, 20, 0.0654297, 0.12793, 0.00195312, 0.162109, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-AdventureGuide-Up"] = {16, 20, 0.0654297, 0.12793, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Collections-Disabled"] = {16, 20, 0.0654297, 0.12793, 0.658203, 0.818359, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Collections-Down"] = {16, 20, 0.0654297, 0.12793, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Collections-Mouseover"] = {16, 20, 0.129883, 0.192383, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Collections-Up"] = {16, 20, 0.129883, 0.192383, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Communities-Icon-Notification"] = {
-        7, 7, 0.581055, 0.608398, 0.166016, 0.220703, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-GameMenu-Disabled"] = {16, 20, 0.129883, 0.192383, 0.330078, 0.490234, false, false, "2x"},
-    ["UI-HUD-MicroMenu-GameMenu-Down"] = {16, 20, 0.129883, 0.192383, 0.494141, 0.654297, false, false, "2x"},
-    ["UI-HUD-MicroMenu-GameMenu-Mouseover"] = {16, 20, 0.129883, 0.192383, 0.658203, 0.818359, false, false, "2x"},
-    ["UI-HUD-MicroMenu-GameMenu-Up"] = {16, 20, 0.129883, 0.192383, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Groupfinder-Disabled"] = {16, 20, 0.194336, 0.256836, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Groupfinder-Down"] = {16, 20, 0.194336, 0.256836, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Groupfinder-Mouseover"] = {16, 20, 0.194336, 0.256836, 0.330078, 0.490234, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Groupfinder-Up"] = {16, 20, 0.194336, 0.256836, 0.494141, 0.654297, false, false, "2x"},
-    ["UI-HUD-MicroMenu-GuildCommunities-Disabled"] = {
-        16, 20, 0.194336, 0.256836, 0.658203, 0.818359, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-GuildCommunities-Down"] = {16, 20, 0.194336, 0.256836, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-GuildCommunities-Mouseover"] = {
-        16, 20, 0.258789, 0.321289, 0.658203, 0.818359, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-GuildCommunities-Up"] = {16, 20, 0.258789, 0.321289, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Highlightalert"] = {16, 20, 0.323242, 0.385742, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Questlog-Disabled"] = {16, 20, 0.323242, 0.385742, 0.494141, 0.654297, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Questlog-Down"] = {16, 20, 0.323242, 0.385742, 0.658203, 0.818359, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Questlog-Mouseover"] = {16, 20, 0.323242, 0.385742, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Questlog-Up"] = {16, 20, 0.387695, 0.450195, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Shop-Disabled"] = {16, 20, 0.387695, 0.450195, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Shop-Mouseover"] = {16, 20, 0.387695, 0.450195, 0.330078, 0.490234, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Shop-Down"] = {16, 20, 0.387695, 0.450195, 0.494141, 0.654297, false, false, "2x"},
-    ["UI-HUD-MicroMenu-Shop-Up"] = {16, 20, 0.387695, 0.450195, 0.658203, 0.818359, false, false, "2x"},
-    ["UI-HUD-MicroMenu-SpecTalents-Disabled"] = {16, 20, 0.387695, 0.450195, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-SpecTalents-Down"] = {16, 20, 0.452148, 0.514648, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-SpecTalents-Mouseover"] = {16, 20, 0.452148, 0.514648, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-SpecTalents-Up"] = {16, 20, 0.452148, 0.514648, 0.330078, 0.490234, false, false, "2x"},
-    ["UI-HUD-MicroMenu-SpellbookAbilities-Disabled"] = {
-        16, 20, 0.452148, 0.514648, 0.494141, 0.654297, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-SpellbookAbilities-Down"] = {16, 20, 0.452148, 0.514648, 0.658203, 0.818359, false, false, "2x"},
-    ["UI-HUD-MicroMenu-SpellbookAbilities-Mouseover"] = {
-        16, 20, 0.452148, 0.514648, 0.822266, 0.982422, false, false, "2x"
-    },
-    ["UI-HUD-MicroMenu-SpellbookAbilities-Up"] = {16, 20, 0.516602, 0.579102, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-StreamDLGreen-Down"] = {16, 20, 0.516602, 0.579102, 0.166016, 0.326172, false, false, "2x"},
-    ["UI-HUD-MicroMenu-StreamDLGreen-Up"] = {16, 20, 0.516602, 0.579102, 0.330078, 0.490234, false, false, "2x"},
-    ["UI-HUD-MicroMenu-StreamDLRed-Down"] = {16, 20, 0.516602, 0.579102, 0.494141, 0.654297, false, false, "2x"},
-    ["UI-HUD-MicroMenu-StreamDLRed-Up"] = {16, 20, 0.516602, 0.579102, 0.658203, 0.818359, false, false, "2x"},
-    ["UI-HUD-MicroMenu-StreamDLYellow-Down"] = {16, 20, 0.516602, 0.579102, 0.822266, 0.982422, false, false, "2x"},
-    ["UI-HUD-MicroMenu-StreamDLYellow-Up"] = {16, 20, 0.581055, 0.643555, 0.00195312, 0.162109, false, false, "2x"},
-    ["UI-HUD-MicroMenu-ButtonBG-Down"] = {32, 41, 0.0654297, 0.12793, 0.330078, 0.490234, false, false, "1x"},
-    ["UI-HUD-MicroMenu-ButtonBG-Up"] = {32, 41, 0.0654297, 0.12793, 0.494141, 0.654297, false, false, "1x"},
-    ["UI-HUD-MicroMenu-Portrait-Shadow-2x"] = {32, 41, 0.323242, 0.385742, 0.330078, 0.490234, false, false, "1x"},
-    ["UI-HUD-MicroMenu-Portrait-Down-2x"] = {32, 41, 0.323242, 0.385742, 0.166016, 0.326172, false, false, "1x"},
-    ["UI-HUD-MicroMenu-GuildCommunities-GuildColor-Disabled"] = {
-        32, 41, 0.258789, 0.321289, 0.00195312, 0.162109, false, false, "1x"
-    },
-    ["UI-HUD-MicroMenu-GuildCommunities-GuildColor-Down"] = {
-        32, 41, 0.258789, 0.321289, 0.166016, 0.326172, false, false, "1x"
-    },
-    ["UI-HUD-MicroMenu-GuildCommunities-GuildColor-Mouseover"] = {
-        32, 41, 0.258789, 0.321289, 0.330078, 0.490234, false, false, "1x"
-    },
-    ["UI-HUD-MicroMenu-GuildCommunities-GuildColor-Up"] = {
-        32, 41, 0.258789, 0.321289, 0.494141, 0.654297, false, false, "1x"
-    }
-}
-
-Module.MicroButtons = {}
-
-function Module.ChangeMicroMenuButton(frame, name)
-    table.insert(Module.MicroButtons, frame)
-    local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
-
-    if DF.Era then microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA' end
-
-    local pre = 'UI-HUD-MicroMenu-'
-    local key = pre .. name
-    local up = Module.MicromenuAtlas[key .. '-Up']
-
-    local sizeX, sizeY = 32, 40
-    frame:SetSize(sizeX, sizeY)
-    frame:SetHitRectInsets(0, 0, 0, 0)
-
-    frame:SetNormalTexture(microTexture)
-    frame:GetNormalTexture():SetTexCoord(up[3], up[4], up[5], up[6])
-
-    local disabled = Module.MicromenuAtlas[key .. '-Disabled']
-    frame:SetDisabledTexture(microTexture)
-    frame:GetDisabledTexture():SetTexCoord(disabled[3], disabled[4], disabled[5], disabled[6])
-
-    local down = Module.MicromenuAtlas[key .. '-Down']
-    frame:SetPushedTexture(microTexture)
-    frame:GetPushedTexture():SetTexCoord(down[3], down[4], down[5], down[6])
-
-    local mouseover = Module.MicromenuAtlas[key .. '-Mouseover']
-    frame:SetHighlightTexture(microTexture)
-    frame:GetHighlightTexture():SetTexCoord(mouseover[3], mouseover[4], mouseover[5], mouseover[6])
-    frame:GetHighlightTexture():SetSize(sizeX, sizeY)
-
-    -- Fix: on Era textures get overwritten inside OnUpdate :x
-    if DF.Era and frame == MainMenuMicroButton then
-        MainMenuMicroButton:HookScript('OnUpdate', function(self)
-            frame:SetNormalTexture(microTexture)
-            frame:SetDisabledTexture(microTexture)
-            frame:SetPushedTexture(microTexture)
-            frame:SetHighlightTexture(microTexture)
-        end)
-    end
-
-    -- add missing background
-    local dx, dy = -1, 1
-    local offX, offY = frame:GetPushedTextOffset()
-
-    -- ["UI-HUD-MicroMenu-ButtonBG-Down"]={32, 41, 0.0654297, 0.12793, 0.330078, 0.490234, false, false, "1x"},
-    local bg = frame:CreateTexture('Background', 'BACKGROUND')
-    bg:SetTexture(microTexture)
-    bg:SetSize(sizeX, sizeY + 1)
-    bg:SetTexCoord(0.0654297, 0.12793, 0.330078, 0.490234)
-    bg:SetPoint('CENTER', dx, dy)
-    frame.Background = bg
-
-    --	["UI-HUD-MicroMenu-ButtonBG-Up"]={32, 41, 0.0654297, 0.12793, 0.494141, 0.654297, false, false, "1x"},
-    local bgPushed = frame:CreateTexture('Background', 'BACKGROUND')
-    bgPushed:SetTexture(microTexture)
-    bgPushed:SetSize(sizeX, sizeY + 1)
-    bgPushed:SetTexCoord(0.0654297, 0.12793, 0.494141, 0.654297)
-    bgPushed:SetPoint('CENTER', dx + offX, dy + offY)
-    bgPushed:Hide()
-    frame.BackgroundPushed = bgPushed
-
-    -- frame:GetHighlightTexture():SetPoint('CENTER', 0, 0)
-    -- frame:GetHighlightTexture():SetPoint('CENTER', 2, -2)
-
-    frame.dfState = {}
-    frame.dfState.pushed = false
-    frame.dfState.highlight = false
-
-    frame.HandleState = function()
-        -- DF:Dump(frame.dfState)
-        local state = frame.dfState
-
-        if state.pushed then
-            frame.Background:Hide()
-            frame.BackgroundPushed:Show()
-            frame:GetHighlightTexture():ClearAllPoints()
-            frame:GetHighlightTexture():SetPoint('CENTER', offX, offY)
-        else
-            frame.Background:Show()
-            frame.BackgroundPushed:Hide()
-            frame:GetHighlightTexture():ClearAllPoints()
-
-            frame:GetHighlightTexture():SetPoint('CENTER', 0, 0)
-        end
-    end
-    frame.HandleState()
-
-    frame:GetNormalTexture():HookScript('OnShow', function(self)
-        -- frame.Background:Show()
-        frame.dfState.pushed = false
-        frame.HandleState()
-    end)
-
-    --[[   frame:GetNormalTexture():HookScript('OnHide', function(self)
-        frame.Background:Hide()
-        frame.dfState.pushed = true
-        frame.HandleState()
-    end)    ]]
-
-    frame:GetPushedTexture():HookScript('OnShow', function(self)
-        -- frame.BackgroundPushed:Show()
-        frame.dfState.pushed = true
-        frame.HandleState()
-    end)
-
-    --[[   frame:GetPushedTexture():HookScript('OnHide', function(self)
-        frame.BackgroundPushed:Hide()
-        frame.dfState.pushed = false
-        frame.HandleState()
-    end)  ]]
-
-    frame:HookScript('OnEnter', function(self)
-        -- frame.Background:Show()
-        frame.dfState.highlight = true
-        frame.HandleState()
-    end)
-
-    frame:HookScript('OnLeave', function(self)
-        -- frame.Background:Show()
-        frame.dfState.highlight = false
-        frame.HandleState()
-    end)
-
-    -- flash
-    local flash = _G[frame:GetName() .. 'Flash']
-    if flash then
-        -- print(flash:GetName())
-        flash:SetSize(sizeX, sizeY)
-        flash:SetTexture(microTexture)
-        flash:SetTexCoord(0.323242, 0.385742, 0.00195312, 0.162109)
-        flash:ClearAllPoints()
-        flash:SetPoint('CENTER', 0, 0)
-    end
-
-    -- gap
-    --[[     local gap = 0
-    local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint(1)
-    print(point, relativeTo, relativePoint, xOfs, yOfs)
-    frame:SetPoint(point, relativeTo, relativePoint, gap, yOfs)
-    ]]
-end
-
-function Module.ChangeCharacterMicroButton()
-    local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
-
-    --[[   local name = 'CharacterInfo'
-    local pre = 'UI-HUD-MicroMenu-'
-    local key = pre .. name
-    local up = Module.MicromenuAtlas[key .. '-Up']
-    ]]
-
-    local frame = CharacterMicroButton
-    local sizeX, sizeY = 32, 40
-    local offX, offY = frame:GetPushedTextOffset()
-
-    frame:SetSize(sizeX, sizeY)
-    frame:SetHitRectInsets(0, 0, 0, 0)
-
-    frame:GetNormalTexture():SetAlpha(0)
-    frame:GetPushedTexture():SetAlpha(0)
-    frame:GetHighlightTexture():SetAlpha(0)
-
-    MicroButtonPortrait:ClearAllPoints()
-    MicroButtonPortrait:Hide()
-
-    -- new portrait
-    local dfPortrait = frame:CreateTexture('NewPortrait', 'ARTWORK')
-    dfPortrait:SetAllPoints()
-    -- newPortrait:SetSize(sizeX - 2 * inside, sizeY - 2 * inside)
-    -- newPortrait:SetPoint('CENTER', 0.5, 0)
-    dfPortrait:SetPoint('TOPLEFT', 8, -7)
-    dfPortrait:SetPoint('BOTTOMRIGHT', -6, 7)
-    dfPortrait:SetTexCoord(0.2, 0.8, 0.0666, 0.9)
-    frame.dfPortrait = dfPortrait
-
-    local microPortraitMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenuportraitmask2x'
-
-    -- portraitMask
-    local dfPortraitMask = frame:CreateMaskTexture()
-    dfPortraitMask:SetTexture(microPortraitMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    dfPortraitMask:SetPoint('CENTER')
-    dfPortraitMask:SetSize(35, 65)
-    dfPortrait:AddMaskTexture(dfPortraitMask)
-    frame.dfPortraitMask = dfPortraitMask
-
-    -- portraitShadow (pushed)
-    local dfPortraitShadow = frame:CreateTexture('NewPortraitShadow', 'OVERLAY')
-    dfPortraitShadow:SetTexture(microTexture)
-    dfPortraitShadow:SetTexCoord(0.323242, 0.385742, 0.166016, 0.326172)
-    dfPortraitShadow:SetSize(32, 41)
-    dfPortraitShadow:SetPoint('CENTER', 1, -4)
-    dfPortraitShadow:Hide()
-    frame.dfPortraitShadow = dfPortraitShadow
-
-    SetPortraitTexture(frame.dfPortrait, 'player')
-
-    -- CharacterMicroButton_OnEvent
-    CharacterMicroButton:HookScript('OnEvent', function(self)
-        -- print('on event')
-        SetPortraitTexture(frame.dfPortrait, 'player')
-    end)
-
-    frame.dfSetState = function(pushed)
-        if pushed then
-            local delta = offX / 2
-            frame.dfPortraitMask:ClearAllPoints()
-            frame.dfPortraitMask:SetPoint('CENTER', delta, -delta)
-
-            frame.dfPortrait:ClearAllPoints()
-            frame.dfPortrait:SetPoint('TOPLEFT', 8 + delta, -7 - delta)
-            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6 + delta, 7 - delta)
-
-            dfPortraitShadow:Show()
-        else
-            frame.dfPortraitMask:ClearAllPoints()
-            frame.dfPortraitMask:SetPoint('CENTER', 0, 0)
-
-            frame.dfPortrait:ClearAllPoints()
-            frame.dfPortrait:SetPoint('TOPLEFT', 8, -7)
-            frame.dfPortrait:SetPoint('BOTTOMRIGHT', -6, 7)
-
-            dfPortraitShadow:Hide()
-        end
-    end
-
-    do
-        -- add missing background
-        local dx, dy = -1, 1
-
-        -- ["UI-HUD-MicroMenu-ButtonBG-Down"]={32, 41, 0.0654297, 0.12793, 0.330078, 0.490234, false, false, "1x"},
-        local bg = frame:CreateTexture('Background', 'BACKGROUND')
-        bg:SetTexture(microTexture)
-        bg:SetSize(sizeX, sizeY + 1)
-        bg:SetTexCoord(0.0654297, 0.12793, 0.330078, 0.490234)
-        bg:SetPoint('CENTER', dx, dy)
-        frame.Background = bg
-
-        --	["UI-HUD-MicroMenu-ButtonBG-Up"]={32, 41, 0.0654297, 0.12793, 0.494141, 0.654297, false, false, "1x"},
-        local bgPushed = frame:CreateTexture('Background', 'BACKGROUND')
-        bgPushed:SetTexture(microTexture)
-        bgPushed:SetSize(sizeX, sizeY + 1)
-        bgPushed:SetTexCoord(0.0654297, 0.12793, 0.494141, 0.654297)
-        bgPushed:SetPoint('CENTER', dx + offX, dy + offY)
-        bgPushed:Hide()
-        frame.BackgroundPushed = bgPushed
-
-        -- frame:GetHighlightTexture():SetPoint('CENTER', 0, 0)
-        -- frame:GetHighlightTexture():SetPoint('CENTER', 2, -2)
-
-        frame.dfState = {}
-        frame.dfState.pushed = false
-        frame.dfState.highlight = false
-
-        frame.HandleState = function()
-            -- DF:Dump(frame.dfState)
-            local state = frame.dfState
-
-            if state.pushed then
-                frame.Background:Hide()
-                frame.BackgroundPushed:Show()
-                frame:GetHighlightTexture():ClearAllPoints()
-                frame:GetHighlightTexture():SetPoint('CENTER', offX, offY)
-            else
-                frame.Background:Show()
-                frame.BackgroundPushed:Hide()
-                frame:GetHighlightTexture():ClearAllPoints()
-
-                frame:GetHighlightTexture():SetPoint('CENTER', 0, 0)
-            end
-            frame.dfSetState(state.pushed)
-        end
-        frame.HandleState()
-
-        frame:GetNormalTexture():HookScript('OnShow', function(self)
-            -- frame.Background:Show()
-            frame.dfState.pushed = false
-            frame.HandleState()
-        end)
-
-        --[[   frame:GetNormalTexture():HookScript('OnHide', function(self)
-        frame.Background:Hide()
-        frame.dfState.pushed = true
-        frame.HandleState()
-        end)    ]]
-
-        frame:GetPushedTexture():HookScript('OnShow', function(self)
-            -- frame.BackgroundPushed:Show()
-            frame.dfState.pushed = true
-            frame.HandleState()
-        end)
-
-        --[[   frame:GetPushedTexture():HookScript('OnHide', function(self)
-        frame.BackgroundPushed:Hide()
-        frame.dfState.pushed = false
-        frame.HandleState()
-         end)  ]]
-
-        frame:HookScript('OnEnter', function(self)
-            -- frame.Background:Show()
-            frame.dfState.highlight = true
-            frame.HandleState()
-        end)
-
-        frame:HookScript('OnLeave', function(self)
-            -- frame.Background:Show()
-            frame.dfState.highlight = false
-            frame.HandleState()
-        end)
-
-        -- flash
-        local flash = _G[frame:GetName() .. 'Flash']
-        if flash then
-            -- print(flash:GetName())
-            flash:SetSize(sizeX, sizeY)
-            flash:SetTexture(microTexture)
-            flash:SetTexCoord(0.323242, 0.385742, 0.00195312, 0.162109)
-            flash:ClearAllPoints()
-            flash:SetPoint('CENTER', 0, 0)
-        end
-    end
-end
-
 function Module.ChangeMicroMenu()
-    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent, 'SecureFrameTemplate')
-    microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
-    microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
+    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent,
+                                   'DragonflightUIMicroMenuFrameTemplate')
+    -- microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
+    -- microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
     Module.MicroFrame = microFrame
-
-    if DF.Cata then
-        Module.ChangeCharacterMicroButton()
-        Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
-        Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
-        Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
-        Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities')
-        Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
-        Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
-        Module.BetterPVPMicroButton(PVPMicroButton)
-        PVPMicroButtonTexture:Hide()
-        Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
-        Module.ChangeMicroMenuButton(EJMicroButton, 'AdventureGuide')
-        Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
-        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-
-        MainMenuBarTextureExtender:Hide()
-
-        -- MainMenuBarPerformanceBar:ClearAllPoints()
-        MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
-        MainMenuBarPerformanceBar:SetSize(19, 39)
-
-        Module.HookMicromenuOverride()
-    elseif DF.Wrath then
-        Module.ChangeCharacterMicroButton()
-        Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
-        Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
-        Module.ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
-        Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
-        Module.ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
-        Module.ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
-        Module.BetterPVPMicroButton(PVPMicroButton)
-        PVPMicroButtonTexture:Hide()
-        Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
-        Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
-        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-
-        MainMenuBarTextureExtender:Hide()
-
-        -- MainMenuBarPerformanceBar:ClearAllPoints()
-        MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
-        MainMenuBarPerformanceBar:SetSize(19, 39)
-
-        Module.HookMicromenuOverride()
-    elseif DF.Era then
-        Module.ChangeCharacterMicroButton()
-        Module.ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
-        Module.ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
-        Module.ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        -- WorldMapMicroButton    
-        Module.ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
-
-        if LFGMicroButton then Module.ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
-        if SocialsMicroButton then Module.ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities') end
-        if GuildMicroButton then Module.ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
-
-        -- TODO
-        if SocialsMicroButton and GuildMicroButton then
-            SocialsMicroButton:Hide();
-            GuildMicroButton:Hide();
-        end
-
-        Module.ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
-        Module.ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-
-        MainMenuBarPerformanceBarFrame:Hide()
-
-        Module.HookMicromenuOverride()
-    end
-
-    -- TalentMicroButton getting updated from UpdateMicroButtons() when open/closeing talentframe
-    hooksecurefunc('UpdateMicroButtons', function()
-        --
-        -- print('UpdateMicroButtons')
-
-        if InCombatLockdown() then
-            -- prevent unsecure update in combat TODO: message?
-            frame.ShouldUpdate = true
-            return
-        end
-        frame.ShouldUpdate = false
-
-        local db = Module.db.profile
-        local state = db.micro
-        Module.MicroFrame:UpdateStateHandler(state)
-    end)
-end
-
-function Module.BetterPVPMicroButton(btn)
-    local tex = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\micropvp'
-
-    local englishFaction, localizedFaction = UnitFactionGroup('player')
-
-    if englishFaction == 'Alliance' then
-        btn:SetNormalTexture(tex)
-        btn:GetNormalTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
-
-        btn:SetDisabledTexture(tex)
-        btn:GetDisabledTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
-
-        btn:SetPushedTexture(tex)
-        btn:GetPushedTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
-
-        btn:SetHighlightTexture(tex)
-        btn:GetHighlightTexture():SetTexCoord(0, 118 / 256, 0, 151 / 256)
-    else
-        btn:SetNormalTexture(tex)
-        btn:GetNormalTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
-
-        btn:SetDisabledTexture(tex)
-        btn:GetDisabledTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
-
-        btn:SetPushedTexture(tex)
-        btn:GetPushedTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
-
-        btn:SetHighlightTexture(tex)
-        btn:GetHighlightTexture():SetTexCoord(118 / 256, 236 / 256, 0, 151 / 256)
-    end
-end
-
-function Module.HookMicromenuOverride()
-    hooksecurefunc('MoveMicroButtons', function(self, anchor, anchorTo, relAnchor, x, y, isStacked)
-        -- print('MoveMicroButtons', anchor:GetName(), anchorTo, relAnchor, x, y, isStacked)
-        if isStacked then
-            -- CharacterMicroButton:SetPoint('BOTTOMLEFT', OverrideActionBar, 'BOTTOMLEFT', 532, 41)
-            GuildMicroButton:ClearAllPoints()
-            GuildMicroButton:SetPoint('BOTTOMLEFT', QuestLogMicroButton, 'BOTTOMRIGHT', -3, 0)
-            CollectionsMicroButton:ClearAllPoints()
-            CollectionsMicroButton:SetPoint('TOPLEFT', CharacterMicroButton, 'BOTTOMLEFT', 0, 5)
-        else
-            local db = Module.db.profile
-            Module.UpdateMicromenuState(db.micro)
-        end
-    end)
-end
-
-function Module.UpdateMicromenuState(state)
-    -- print('UpdateMicromenuState')
-
-    CharacterMicroButton:ClearAllPoints()
-    CharacterMicroButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
-
-    local buttons = {}
-
-    if DF.Cata then
-        buttons = {
-            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton,
-            GuildMicroButton, CollectionsMicroButton, PVPMicroButton, LFGMicroButton, EJMicroButton,
-            MainMenuMicroButton, HelpMicroButton
-        }
-    elseif DF.Wrath then
-        buttons = {
-            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton,
-            SocialsMicroButton, CollectionsMicroButton, PVPMicroButton, LFGMicroButton, MainMenuMicroButton,
-            HelpMicroButton
-        }
-    elseif DF.Era then
-        buttons = {
-            CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, QuestLogMicroButton, GuildMicroButton,
-            WorldMapMicroButton, LFGMicroButton, MainMenuMicroButton, HelpMicroButton
-        }
-    end
-
-    -- for k, v in ipairs(buttons) do
-    --     --
-    --     v:SetScale(state.scale)
-    --     -- v:SetShown(not state.hidden)
-    --     if state.hidden then
-    --         --
-    --         v:SetAlpha(0)
-    --         v:EnableMouse(false)
-    --     else
-    --         --
-    --         v:SetAlpha(1)
-    --         v:EnableMouse(true)
-    --     end
-    -- end
-
-    -- for k, v in ipairs(buttons) do v:SetScale(state.scale) end
-
-    for k, v in ipairs(Module.MicroButtons) do
-        --
-        v:SetScale(state.scale)
-    end
-
-    -- local playerLevel = UnitLevel("player");
-    -- if (playerLevel < SHOW_SPEC_LEVEL) then TalentMicroButton:Hide(); end
-
-    -- FPS
-    Module.UpdateFPSState(state)
-
-    Module.MicroFrame:SetScale(state.scale) -- compat
-    Module.MicroFrame:UpdateStateHandler(state)
 end
 
 function Module.UpdateTotemState(state)
@@ -4666,7 +4039,7 @@ function Module.Era()
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
 
-    Module.ChangeMicroMenu()
+    -- Module.ChangeMicroMenu()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()

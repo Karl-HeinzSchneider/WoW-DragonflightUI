@@ -466,7 +466,8 @@
         "deprecated",
         "need-check-nil",
         "undefined-field",
-        "inject-field"
+        "inject-field",
+        "undefined-global"
     ],
     "markdown.occurrencesHighlight.enabled": true
 }
