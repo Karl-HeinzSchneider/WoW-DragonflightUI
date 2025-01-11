@@ -96,6 +96,19 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local presetDesc =
+    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
+local presetStyleDesc = 'Sets all settings that change the style of the castbar, but does not change any other setting.';
+
+local function setPreset(T, preset, sub)
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local frameTable = {['UIParent'] = 'UIParent', ['PlayerFrame'] = 'PlayerFrame', ['TargetFrame'] = 'TargetFrame'}
 if DF.Wrath then frameTable['FocusFrame'] = 'FocusFrame' end
 
@@ -113,14 +126,16 @@ local optionsPlayer = {
             max = 5,
             bigStep = 0.1,
             order = 1,
-            disabled = false
+            disabled = false,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'player'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -137,7 +152,8 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -154,7 +170,8 @@ local optionsPlayer = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -163,7 +180,8 @@ local optionsPlayer = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -172,7 +190,8 @@ local optionsPlayer = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         sizeX = {
             type = 'range',
@@ -181,7 +200,8 @@ local optionsPlayer = {
             min = 80,
             max = 512,
             bigStep = 1,
-            order = 10
+            order = 10,
+            editmode = true
         },
         sizeY = {
             type = 'range',
@@ -190,7 +210,8 @@ local optionsPlayer = {
             min = 10,
             max = 64,
             bigStep = 1,
-            order = 11
+            order = 11,
+            editmode = true
         },
         preci = {
             type = 'range',
@@ -199,7 +220,8 @@ local optionsPlayer = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 12
+            order = 12,
+            editmode = true
         },
         preciMax = {
             type = 'range',
@@ -208,25 +230,29 @@ local optionsPlayer = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 13
+            order = 13,
+            editmode = true
         },
         castTimeEnabled = {
             type = 'toggle',
             name = 'Show cast time text',
             desc = '' .. getDefaultStr('castTimeEnabled', 'player'),
-            order = 14
+            order = 14,
+            editmode = true
         },
         castTimeMaxEnabled = {
             type = 'toggle',
             name = 'Show cast time max text',
             desc = '' .. getDefaultStr('castTimeMaxEnabled', 'player'),
-            order = 15
+            order = 15,
+            editmode = true
         },
         compactLayout = {
             type = 'toggle',
             name = 'Compact Layout',
             desc = '' .. getDefaultStr('compactLayout', 'player'),
-            order = 16
+            order = 16,
+            editmode = true
         },
         holdTime = {
             type = 'range',
@@ -237,7 +263,8 @@ local optionsPlayer = {
             max = 2,
             bigStep = 0.05,
             order = 13.1,
-            new = true
+            new = true,
+            editmode = true
         },
         holdTimeInterrupt = {
             type = 'range',
@@ -248,9 +275,16 @@ local optionsPlayer = {
             max = 2,
             bigStep = 0.05,
             order = 13.2,
-            new = true
+            new = true,
+            editmode = true
         },
-        showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'player'), order = 17},
+        showIcon = {
+            type = 'toggle',
+            name = 'Show Icon',
+            desc = '' .. getDefaultStr('showIcon', 'player'),
+            order = 17,
+            editmode = true
+        },
         sizeIcon = {
             type = 'range',
             name = 'Icon Size',
@@ -259,7 +293,8 @@ local optionsPlayer = {
             max = 64,
             bigStep = 1,
             order = 17.1,
-            new = true
+            new = true,
+            editmode = true
         },
         showTicks = {
             type = 'toggle',
@@ -284,12 +319,75 @@ if DF.Era then
             name = 'Show Rank',
             desc = '' .. getDefaultStr('showRank', 'player'),
             order = 20,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 
     for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
 end
+
+local optionsPlayerEditmode = {
+    name = 'player',
+    desc = 'player',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.player
+                local defaultsTable = defaults.profile.player
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'player')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        },
+        resetStyle = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Style',
+            desc = presetStyleDesc,
+            func = function()
+                local dbTable = Module.db.profile.player
+                local defaultsTable = defaults.profile.player
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    sizeX = defaultsTable.sizeX,
+                    sizeY = defaultsTable.sizeY,
+                    preci = defaultsTable.preci,
+                    preciMax = defaultsTable.preciMax,
+                    castTimeEnabled = defaultsTable.castTimeEnabled,
+                    castTimeMaxEnabled = defaultsTable.castTimeMaxEnabled,
+                    compactLayout = defaultsTable.compactLayout,
+                    -- holdTime = defaultsTable.holdTime,
+                    -- holdTimeInterrupt = defaultsTable.holdTimeInterrupt,
+                    showIcon = defaultsTable.showIcon,
+                    sizeIcon = defaultsTable.sizeIcon,
+                    showTicks = defaultsTable.showTicks,
+                    showRank = defaultsTable.showRank,
+                    autoAdjust = defaultsTable.autoAdjust
+                }, 'player')
+            end,
+            order = 17,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsTarget = {
     type = 'group',
@@ -305,14 +403,16 @@ local optionsTarget = {
             max = 5,
             bigStep = 0.1,
             order = 1,
-            disabled = false
+            disabled = false,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -329,7 +429,8 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -346,7 +447,8 @@ local optionsTarget = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -355,7 +457,8 @@ local optionsTarget = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -364,7 +467,8 @@ local optionsTarget = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         sizeX = {
             type = 'range',
@@ -373,7 +477,8 @@ local optionsTarget = {
             min = 80,
             max = 512,
             bigStep = 1,
-            order = 10
+            order = 10,
+            editmode = true
         },
         sizeY = {
             type = 'range',
@@ -382,7 +487,8 @@ local optionsTarget = {
             min = 10,
             max = 64,
             bigStep = 1,
-            order = 11
+            order = 11,
+            editmode = true
         },
         preci = {
             type = 'range',
@@ -391,7 +497,8 @@ local optionsTarget = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 12
+            order = 12,
+            editmode = true
         },
         preciMax = {
             type = 'range',
@@ -400,25 +507,29 @@ local optionsTarget = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 13
+            order = 13,
+            editmode = true
         },
         castTimeEnabled = {
             type = 'toggle',
             name = 'Show cast time text',
             desc = '' .. getDefaultStr('castTimeEnabled', 'target'),
-            order = 14
+            order = 14,
+            editmode = true
         },
         castTimeMaxEnabled = {
             type = 'toggle',
             name = 'Show cast time max text',
             desc = '' .. getDefaultStr('castTimeMaxEnabled', 'target'),
-            order = 15
+            order = 15,
+            editmode = true
         },
         compactLayout = {
             type = 'toggle',
             name = 'Compact Layout',
             desc = '' .. getDefaultStr('compactLayout', 'target'),
-            order = 16
+            order = 16,
+            editmode = true
         },
         holdTime = {
             type = 'range',
@@ -429,7 +540,8 @@ local optionsTarget = {
             max = 2,
             bigStep = 0.05,
             order = 13.1,
-            new = true
+            new = true,
+            editmode = true
         },
         holdTimeInterrupt = {
             type = 'range',
@@ -440,9 +552,16 @@ local optionsTarget = {
             max = 2,
             bigStep = 0.05,
             order = 13.2,
-            new = true
+            new = true,
+            editmode = true
         },
-        showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'target'), order = 17},
+        showIcon = {
+            type = 'toggle',
+            name = 'Show Icon',
+            desc = '' .. getDefaultStr('showIcon', 'target'),
+            order = 17,
+            editmode = true
+        },
         sizeIcon = {
             type = 'range',
             name = 'Icon Size',
@@ -451,20 +570,23 @@ local optionsTarget = {
             max = 64,
             bigStep = 1,
             order = 17.1,
-            new = true
+            new = true,
+            editmode = true
         },
         showTicks = {
             type = 'toggle',
             name = 'Show Ticks',
             desc = '' .. getDefaultStr('showTicks', 'target'),
-            order = 18
+            order = 18,
+            editmode = true
         },
         autoAdjust = {
             type = 'toggle',
             name = 'Auto Adjust',
             desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the TargetFrame' ..
                 getDefaultStr('autoAdjust', 'target'),
-            order = 22
+            order = 22,
+            editmode = true
         }
     }
 }
@@ -476,12 +598,77 @@ if DF.Era then
             name = 'Show Rank',
             desc = '' .. getDefaultStr('showRank', 'target'),
             order = 20,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 
     for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
 end
+
+local optionsTargetEditmode = {
+    name = 'target',
+    desc = 'target',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.target
+                local defaultsTable = defaults.profile.target
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'target')
+                Module.TargetCastbar:SetParent(UIParent)
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        },
+        resetStyle = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Style',
+            desc = presetStyleDesc,
+            func = function()
+                local dbTable = Module.db.profile.target
+                local defaultsTable = defaults.profile.target
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    sizeX = defaultsTable.sizeX,
+                    sizeY = defaultsTable.sizeY,
+                    preci = defaultsTable.preci,
+                    preciMax = defaultsTable.preciMax,
+                    castTimeEnabled = defaultsTable.castTimeEnabled,
+                    castTimeMaxEnabled = defaultsTable.castTimeMaxEnabled,
+                    compactLayout = defaultsTable.compactLayout,
+                    -- holdTime = defaultsTable.holdTime,
+                    -- holdTimeInterrupt = defaultsTable.holdTimeInterrupt,
+                    showIcon = defaultsTable.showIcon,
+                    sizeIcon = defaultsTable.sizeIcon,
+                    showTicks = defaultsTable.showTicks,
+                    showRank = defaultsTable.showRank,
+                    autoAdjust = defaultsTable.autoAdjust
+                }, 'target')
+                Module.TargetCastbar:SetParent(UIParent)
+            end,
+            order = 17,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsFocus = {
     type = 'group',
@@ -497,14 +684,16 @@ local optionsFocus = {
             max = 5,
             bigStep = 0.1,
             order = 1,
-            disabled = false
+            disabled = false,
+            editmode = true
         },
         anchorFrame = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
             values = frameTable,
-            order = 4
+            order = 4,
+            editmode = true
         },
         anchor = {
             type = 'select',
@@ -521,7 +710,8 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 2
+            order = 2,
+            editmode = true
         },
         anchorParent = {
             type = 'select',
@@ -538,7 +728,8 @@ local optionsFocus = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
-            order = 3
+            order = 3,
+            editmode = true
         },
         x = {
             type = 'range',
@@ -547,7 +738,8 @@ local optionsFocus = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 5
+            order = 5,
+            editmode = true
         },
         y = {
             type = 'range',
@@ -556,7 +748,8 @@ local optionsFocus = {
             min = -2500,
             max = 2500,
             bigStep = 1,
-            order = 6
+            order = 6,
+            editmode = true
         },
         sizeX = {
             type = 'range',
@@ -565,7 +758,8 @@ local optionsFocus = {
             min = 80,
             max = 512,
             bigStep = 1,
-            order = 10
+            order = 10,
+            editmode = true
         },
         sizeY = {
             type = 'range',
@@ -574,7 +768,8 @@ local optionsFocus = {
             min = 10,
             max = 64,
             bigStep = 1,
-            order = 11
+            order = 11,
+            editmode = true
         },
         preci = {
             type = 'range',
@@ -583,7 +778,8 @@ local optionsFocus = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 12
+            order = 12,
+            editmode = true
         },
         preciMax = {
             type = 'range',
@@ -592,25 +788,29 @@ local optionsFocus = {
             min = 0,
             max = 3,
             bigStep = 1,
-            order = 13
+            order = 13,
+            editmode = true
         },
         castTimeEnabled = {
             type = 'toggle',
             name = 'Show cast time text',
             desc = '' .. getDefaultStr('castTimeEnabled', 'focus'),
-            order = 14
+            order = 14,
+            editmode = true
         },
         castTimeMaxEnabled = {
             type = 'toggle',
             name = 'Show cast time max text',
             desc = '' .. getDefaultStr('castTimeMaxEnabled', 'focus'),
-            order = 15
+            order = 15,
+            editmode = true
         },
         compactLayout = {
             type = 'toggle',
             name = 'Compact Layout',
             desc = '' .. getDefaultStr('compactLayout', 'focus'),
-            order = 16
+            order = 16,
+            editmode = true
         },
         holdTime = {
             type = 'range',
@@ -621,7 +821,8 @@ local optionsFocus = {
             max = 2,
             bigStep = 0.05,
             order = 13.1,
-            new = true
+            new = true,
+            editmode = true
         },
         holdTimeInterrupt = {
             type = 'range',
@@ -632,9 +833,16 @@ local optionsFocus = {
             max = 2,
             bigStep = 0.05,
             order = 13.2,
-            new = true
+            new = true,
+            editmode = true
         },
-        showIcon = {type = 'toggle', name = 'Show Icon', desc = '' .. getDefaultStr('showIcon', 'focus'), order = 17},
+        showIcon = {
+            type = 'toggle',
+            name = 'Show Icon',
+            desc = '' .. getDefaultStr('showIcon', 'focus'),
+            order = 17,
+            editmode = true
+        },
         sizeIcon = {
             type = 'range',
             name = 'Icon Size',
@@ -643,15 +851,87 @@ local optionsFocus = {
             max = 64,
             bigStep = 1,
             order = 17.1,
-            new = true
+            new = true,
+            editmode = true
         },
-        showTicks = {type = 'toggle', name = 'Show Ticks', desc = '' .. getDefaultStr('showTicks', 'focus'), order = 18},
+        showTicks = {
+            type = 'toggle',
+            name = 'Show Ticks',
+            desc = '' .. getDefaultStr('showTicks', 'focus'),
+            order = 18,
+            editmode = true
+        },
         autoAdjust = {
             type = 'toggle',
             name = 'Auto Adjust',
             desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the FocusFrame' ..
                 getDefaultStr('autoAdjust', 'focus'),
-            order = 22
+            order = 22,
+            editmode = true
+        }
+    }
+}
+
+local optionsFocusEditmode = {
+    name = 'focus',
+    desc = 'focus',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.focus
+                local defaultsTable = defaults.profile.focus
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'focus')
+                Module.FocusCastbar:SetParent(UIParent)
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        },
+        resetStyle = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Style',
+            desc = presetStyleDesc,
+            func = function()
+                local dbTable = Module.db.profile.focus
+                local defaultsTable = defaults.profile.focus
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    sizeX = defaultsTable.sizeX,
+                    sizeY = defaultsTable.sizeY,
+                    preci = defaultsTable.preci,
+                    preciMax = defaultsTable.preciMax,
+                    castTimeEnabled = defaultsTable.castTimeEnabled,
+                    castTimeMaxEnabled = defaultsTable.castTimeMaxEnabled,
+                    compactLayout = defaultsTable.compactLayout,
+                    -- holdTime = defaultsTable.holdTime,
+                    -- holdTimeInterrupt = defaultsTable.holdTimeInterrupt,
+                    showIcon = defaultsTable.showIcon,
+                    sizeIcon = defaultsTable.sizeIcon,
+                    showTicks = defaultsTable.showTicks,
+                    showRank = defaultsTable.showRank,
+                    autoAdjust = defaultsTable.autoAdjust
+                }, 'focus')
+                Module.FocusCastbar:SetParent(UIParent)
+            end,
+            order = 17,
+            editmode = true,
+            new = true
         }
     }
 }
@@ -714,8 +994,22 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+    Module:AddEditMode()
+
+    Module:RegisterOptionScreens()
     Module:ApplySettings()
 
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+        Module:RefreshOptionScreens()
+    end)
+end
+
+function Module:OnDisable()
+end
+
+function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterOptionScreen('Castbar', 'Player', {
         name = 'Player',
         sub = 'player',
@@ -744,15 +1038,6 @@ function Module:OnEnable()
             end
         })
     end
-
-    self:SecureHook(DF, 'RefreshConfig', function()
-        -- print('RefreshConfig', mName)
-        Module:ApplySettings()
-        Module:RefreshOptionScreens()
-    end)
-end
-
-function Module:OnDisable()
 end
 
 function Module:RefreshOptionScreens()
@@ -766,15 +1051,99 @@ function Module:RefreshOptionScreens()
 
     refreshCat('Player')
     refreshCat('Target')
+
+    Module.PlayerCastbar.DFEditModeSelection:RefreshOptionScreen();
+    Module.TargetCastbar.DFEditModeSelection:RefreshOptionScreen();
+
+    if DF.Wrath then
+        refreshCat('Focus')
+        Module.FocusCastbar.DFEditModeSelection:RefreshOptionScreen();
+    end
 end
 
-function Module:ApplySettings()
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:AddEditModeToFrame(Module.PlayerCastbar)
+    Module.PlayerCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'PlayerCastbar'
+    end)
+    Module.PlayerCastbar.DFEditModeSelection:RegisterOptions({
+        name = 'PlayerCastbar',
+        sub = 'player',
+        options = optionsPlayer,
+        extra = optionsPlayerEditmode,
+        default = function()
+            setDefaultSubValues('player')
+        end,
+        moduleRef = self
+    });
+
+    Module.PlayerCastbar.DFEditModeSelection:ClearAllPoints()
+    Module.PlayerCastbar.DFEditModeSelection:SetPoint('TOPLEFT', Module.PlayerCastbar, 'TOPLEFT', -4, 4)
+    Module.PlayerCastbar.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.PlayerCastbar, 'BOTTOMRIGHT', 4, -16)
+
+    EditModeModule:AddEditModeToFrame(Module.TargetCastbar)
+    Module.TargetCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'TargetCastbar'
+    end)
+    Module.TargetCastbar.DFEditModeSelection:RegisterOptions({
+        name = 'TargetCastbar',
+        sub = 'target',
+        options = optionsTarget,
+        extra = optionsTargetEditmode,
+        default = function()
+            setDefaultSubValues('target')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            Module.TargetCastbar:SetParent(UIParent)
+        end
+    });
+
+    Module.TargetCastbar.DFEditModeSelection:ClearAllPoints()
+    Module.TargetCastbar.DFEditModeSelection:SetPoint('TOPLEFT', Module.TargetCastbar, 'TOPLEFT', -4, 4)
+    Module.TargetCastbar.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.TargetCastbar, 'BOTTOMRIGHT', 4, -16)
+
+    if DF.Wrath then
+        EditModeModule:AddEditModeToFrame(Module.FocusCastbar)
+        Module.FocusCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'FocusCastbar'
+        end)
+        Module.FocusCastbar.DFEditModeSelection:RegisterOptions({
+            name = 'FocusCastbar',
+            sub = 'focus',
+            options = optionsFocus,
+            extra = optionsFocusEditmode,
+            default = function()
+                setDefaultSubValues('focus')
+            end,
+            moduleRef = self,
+            showFunction = function()
+                Module.FocusCastbar:SetParent(UIParent)
+            end
+        });
+
+        Module.FocusCastbar.DFEditModeSelection:ClearAllPoints()
+        Module.FocusCastbar.DFEditModeSelection:SetPoint('TOPLEFT', Module.FocusCastbar, 'TOPLEFT', -4, 4)
+        Module.FocusCastbar.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.FocusCastbar, 'BOTTOMRIGHT', 4, -16)
+    end
+end
+
+function Module:ApplySettings(sub)
     local db = Module.db.profile
 
-    Module.PlayerCastbar:UpdateState(db.player)
-    Module.TargetCastbar:UpdateState(db.target)
+    if not sub or sub == 'ALL' then
+        Module.PlayerCastbar:UpdateState(db.player)
+        Module.TargetCastbar:UpdateState(db.target)
 
-    if DF.Wrath then Module.FocusCastbar:UpdateState(db.focus) end
+        if DF.Wrath then Module.FocusCastbar:UpdateState(db.focus) end
+    elseif sub == 'player' then
+        Module.PlayerCastbar:UpdateState(db.player)
+    elseif sub == 'target' then
+        Module.TargetCastbar:UpdateState(db.target)
+    elseif sub == 'focus' then
+        Module.FocusCastbar:UpdateState(db.focus)
+    end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)

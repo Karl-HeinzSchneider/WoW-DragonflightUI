@@ -58,6 +58,8 @@ end
 function DragonFlightUICastbarMixin:OnEvent(event, ...)
     -- print('event:', event)
     -- if true then return end
+    if self.DFEditMode then return end
+
     local arg1 = ...;
 
     local unit = self.unit;
@@ -390,7 +392,9 @@ function DragonFlightUICastbarMixin:SetUnit(unit)
 end
 
 function DragonFlightUICastbarMixin:OnUpdate(elapsed)
-    if (self.casting or self.reverseChanneling) then
+    if self.DFEditMode then
+        --
+    elseif (self.casting or self.reverseChanneling) then
         self.value = self.value + elapsed;
 
         if (self.value >= self.maxValue) then
@@ -442,7 +446,7 @@ end
 
 function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
     -- print('HandleCastStop', event, ...)
-    if (not self:IsVisible()) then
+    if (not self:IsVisible() or self.DFEditMode) then
         local desiredShowFalse = false;
         self:UpdateShownState(desiredShowFalse);
     end
@@ -534,6 +538,39 @@ function DragonFlightUICastbarMixin:HandleInterruptOrSpellFailed(empoweredInterr
     end
 end
 
+function DragonFlightUICastbarMixin:SetEditMode(editmode)
+    -- print('DragonFlightUICastbarMixin:SetEditMode(editmode)', editmode)
+    if editmode then
+        self.DFEditMode = true;
+        self:Show();
+        self:UpdateEditModeStyle(true)
+    else
+        self.DFEditMode = false;
+        self:Hide();
+    end
+end
+
+function DragonFlightUICastbarMixin:UpdateEditModeStyle(editmode)
+    self:UpdateCastTimeText()
+    self:SetMinMaxValues(0, 10);
+    self:SetValue(6.9)
+    self.value = self:GetValue()
+    _, self.maxValue = self:GetMinMaxValues()
+
+    self:SetStatusBarDesaturated(false)
+    self:SetStatusBarTexture(standardRef)
+
+    local sparkPosition = (self.value / self.maxValue) * self:GetWidth();
+    self.Spark:SetPoint("CENTER", self, "LEFT", sparkPosition, 0);
+    self.Spark:Show()
+
+    local castName = 'Shadow Bolt'
+    self.Text:SetText(castName);
+    self.TextCompact:SetText(castName)
+
+    self.Icon:SetTexture(136197)
+end
+
 function DragonFlightUICastbarMixin:StopAnims()
     -- self:StopInterruptAnims();
     -- self:StopFinishAnims();
@@ -563,8 +600,9 @@ function DragonFlightUICastbarMixin:UpdateCastTimeText()
         else
             seconds = math.max(min, self:GetValue());
         end
-    elseif self.isInEditMode then
-        seconds = 10;
+    elseif self.DFEditMode then
+        seconds = 6.9;
+        secondsMax = 10
     end
 
     -- local text = string.format(CAST_BAR_CAST_TIME, seconds);
@@ -602,11 +640,12 @@ end
 function DragonFlightUICastbarMixin:UpdateShownState(desiredShow)
     self:UpdateCastTimeTextShown();
 
-    if self.isInEditMode then
+    if self.DFEditMode then
         -- If we are in edit mode then override and just show
-        self:StopFinishAnims();
-        self:ApplyAlpha(1.0);
+        -- self:StopFinishAnims();
+        -- self:ApplyAlpha(1.0);
         self:Show();
+        self:UpdateEditModeStyle(true)
         return;
     end
 
@@ -646,7 +685,7 @@ end
 function DragonFlightUICastbarMixin:UpdateCastTimeTextShown()
     if not self.CastTimeText then return; end
 
-    local showCastTime = self.showCastTimeSetting and (self.casting or self.channeling or self.isInEditMode)
+    local showCastTime = self.showCastTimeSetting and (self.casting or self.channeling or self.DFEditMode)
     if self.compactLayout then
         self.CastTimeText:SetShown(false)
         self.CastTimeTextCompact:SetShown(showCastTime)
@@ -655,7 +694,7 @@ function DragonFlightUICastbarMixin:UpdateCastTimeTextShown()
         self.CastTimeTextCompact:SetShown(false)
     end
 
-    if showCastTime and self.isInEditMode and not self.CastTimeText.text then self:UpdateCastTimeText(); end
+    if showCastTime and self.DFEditMode and not self.CastTimeText.text then self:UpdateCastTimeText(); end
 end
 
 function DragonFlightUICastbarMixin:FinishSpell()
@@ -743,8 +782,13 @@ function DragonFlightUICastbarMixin:Update()
     self:SetSize(state.sizeX, state.sizeY)
 
     local parent = _G[state.anchorFrame]
-    self:SetParent(parent) -- TODO
-
+    if self.DFEditMode then
+        self:Show()
+        self:UpdateEditModeStyle(true)
+        self:SetParent(UIParent)
+    else
+        self:SetParent(parent) -- TODO
+    end
     -- self:ClearAllPoints()
     -- self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y) 
     self:AdjustPosition()

@@ -293,7 +293,11 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
 
         if value then
             self.parent.DFEditMode = true;
-            self.parent:Show();
+            if self.parent.SetEditMode then
+                self.parent:SetEditMode(true)
+            else
+                self.parent:Show();
+            end
             self:SetFrameLevel(self.Prio or 1000)
 
             if self.ModuleRef then
@@ -309,7 +313,11 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
             end
         else
             self.parent.DFEditMode = false;
-            self.parent:Hide()
+            if self.parent.SetEditMode then
+                self.parent:SetEditMode(false)
+            else
+                self.parent:Hide()
+            end
             if self.ModuleRef then
                 --            
                 local db = self.ModuleRef.db.profile[self.ModuleSub]
