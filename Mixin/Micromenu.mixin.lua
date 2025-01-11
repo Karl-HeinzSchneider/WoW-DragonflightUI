@@ -195,8 +195,6 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         -- MainMenuBarPerformanceBar:ClearAllPoints()
         MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
         MainMenuBarPerformanceBar:SetSize(19, 39)
-
-        self:HookMicromenuOverride()
     elseif DF.Era then
         self:ChangeCharacterMicroButton()
         self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
