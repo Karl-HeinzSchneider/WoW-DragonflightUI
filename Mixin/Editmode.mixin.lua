@@ -694,6 +694,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     editModeFrame:SetupOptions(filteredData)
     editModeFrame:Hide()
 
+    numOptions = math.min(numOptions, 10)
+
     local optionsH = (26 + 9) * numOptions + 11
 
     local displayFrame = editModeFrame.DisplayFrame
@@ -702,6 +704,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     -- displayFrame:SetParent(self)
     displayFrame:SetPoint('TOPLEFT', editModeFrame, 'TOPLEFT', 0, 0)
     displayFrame:SetPoint('BOTTOMRIGHT', editModeFrame, 'TOPRIGHT', 0, -80 - optionsH)
+    displayFrame:SetHeight(optionsH)
 
     local extraH = 0;
     if data.extra then
