@@ -29,7 +29,12 @@ local defaults = {
             buffDesaturate = true,
             buffR = 0.4 * 255,
             buffG = 0.4 * 255,
-            buffB = 0.4 * 255
+            buffB = 0.4 * 255,
+            -- Castbar
+            castbarDesaturate = true,
+            castbarR = 0.4 * 255,
+            castbarG = 0.4 * 255,
+            castbarB = 0.4 * 255
         }
     }
 }
@@ -211,6 +216,40 @@ local generalOptions = {
             max = 255,
             bigStep = 1,
             order = 403
+        },
+        headerCastbar = {type = 'header', name = 'Castbar', desc = '...', order = 500},
+        castbarDesaturate = {
+            type = 'toggle',
+            name = 'Desaturate',
+            desc = '' .. getDefaultStr('castbarDesaturate', 'general'),
+            order = 500.1
+        },
+        castbarR = {
+            type = 'range',
+            name = 'r',
+            desc = '' .. getDefaultStr('castbarR', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 500.5
+        },
+        castbarG = {
+            type = 'range',
+            name = 'g',
+            desc = '' .. getDefaultStr('castbarG', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 500.6
+        },
+        castbarB = {
+            type = 'range',
+            name = 'b',
+            desc = '' .. getDefaultStr('castbarB', 'general'),
+            min = 0,
+            max = 255,
+            bigStep = 1,
+            order = 500.7
         }
     }
 }
@@ -284,6 +323,7 @@ function Module:ApplySettings()
     Module:UpdateUnitframe(state)
     Module:UpdateActionbar(state)
     Module:UpdateBuff(state)
+    Module:UpdateCastbar(state)
 end
 
 function Module:UpdateMinimapButton(btn)
@@ -753,6 +793,33 @@ function Module:UpdateBuff(state)
                                                  unitModule.BuffVertexColorB)
             end
         end
+    end
+end
+
+function Module:UpdateCastbar(state)
+    local unitModule = DF:GetModule('Castbar')
+    local f = unitModule.Frame
+
+    if not unitModule:IsEnabled() then return end
+
+    local player = unitModule.PlayerCastbar
+    local target = unitModule.TargetCastbar
+    local focus = unitModule.FocusCastbar
+
+    local frameTable = {player, target, focus}
+
+    for k, v in pairs(frameTable) do
+        v.Background:SetDesaturated(state.castbarDesaturate)
+        v.Background:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+
+        v.Border:SetDesaturated(state.castbarDesaturate)
+        v.Border:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+
+        v.BorderShield:SetDesaturated(state.castbarDesaturate)
+        v.BorderShield:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+
+        v.Icon.Border:SetDesaturated(state.castbarDesaturate)
+        v.Icon.Border:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
     end
 end
 
