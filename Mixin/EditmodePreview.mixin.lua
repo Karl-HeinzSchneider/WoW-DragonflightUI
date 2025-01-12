@@ -374,7 +374,7 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnEvent(event, arg1)
 
     if event == 'GROUP_ROSTER_UPDATE' then
         --
-        print('GROUP_ROSTER_UPDATE')
+        -- print('GROUP_ROSTER_UPDATE')
         self:UpdateVisibility()
     end
 end
