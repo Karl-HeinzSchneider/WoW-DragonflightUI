@@ -542,6 +542,8 @@ function DragonFlightUICastbarMixin:SetEditMode(editmode)
     -- print('DragonFlightUICastbarMixin:SetEditMode(editmode)', editmode)
     if editmode then
         self.DFEditMode = true;
+        self.fadeOut = nil;
+        self:SetAlpha(1)
         self:Show();
         self:UpdateEditModeStyle(true)
     else
