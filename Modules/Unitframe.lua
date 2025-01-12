@@ -563,27 +563,28 @@ local optionsTarget = {
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
+                getDefaultStr('breakUpLargeNumbers', 'target'),
             order = 8
         },
         enableNumericThreat = {
             type = 'toggle',
             name = 'Numeric Threat',
-            desc = 'Enable numeric threat',
+            desc = 'Enable numeric threat' .. getDefaultStr('enableNumericThreat', 'target'),
             order = 9,
             disabled = not DF.Era
         },
         enableThreatGlow = {
             type = 'toggle',
             name = 'Threat Glow',
-            desc = 'Enable threat glow',
+            desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'target'),
             order = 10,
             disabled = true
         },
         hideNameBackground = {
             type = 'toggle',
             name = 'Hide Name Background',
-            desc = 'Hide Name Background',
+            desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'target'),
             order = 11,
             new = true,
             editmode = true
@@ -775,17 +776,23 @@ local optionsPet = {
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
+                getDefaultStr('breakUpLargeNumbers', 'pet'),
             order = 9
         },
         enableThreatGlow = {
             type = 'toggle',
             name = 'Threat Glow',
-            desc = 'Enable threat glow',
+            desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'pet'),
             order = 8,
             disabled = true
         },
-        hideStatusbarText = {type = 'toggle', name = 'Hide Statusbar Text', desc = '', order = 10},
+        hideStatusbarText = {
+            type = 'toggle',
+            name = 'Hide Statusbar Text',
+            desc = '' .. getDefaultStr('hideStatusbarText', 'pet'),
+            order = 10
+        },
         hideIndicator = {
             type = 'toggle',
             name = 'Hide Hit Indicator',
@@ -927,20 +934,21 @@ local optionsFocus = {
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar',
+            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'focus'),
             order = 7,
             editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
+                getDefaultStr('breakUpLargeNumbers', 'focus'),
             order = 8
         },
         hideNameBackground = {
             type = 'toggle',
             name = 'Hide Name Background',
-            desc = 'Hide Name Background',
+            desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'focus'),
             order = 11,
             new = true,
             editmode = true
@@ -1064,14 +1072,15 @@ local optionsParty = {
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar',
+            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'party'),
             order = 7,
             editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
+                getDefaultStr('breakUpLargeNumbers', 'party'),
             order = 8
         }
     }
