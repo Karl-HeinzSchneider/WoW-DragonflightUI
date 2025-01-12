@@ -313,10 +313,31 @@ function DragonflightUIRepBarMixin:OnLoad()
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     self:SetScript('OnEvent', self.OnEvent)
+
+    self:OnEvent('<3')
 end
 
 function DragonflightUIRepBarMixin:OnEvent(event, arg1)
-    self:Update()
+    -- print('OnEvent', event)
+    local watchedName = self.WatchedName;
+    local name, _, _, _, _ = GetWatchedFactionInfo()
+
+    if watchedName == name then
+        -- same -> just update visual
+        self:UpdateBar()
+    else
+        if not watchedName and name then
+            -- was collapsed and needs to be shown now
+            self:Update()
+        elseif watchedName and not name then
+            -- was shown but needs to be collapsed 
+            self:Update()
+        else
+            self:UpdateBar()
+        end
+    end
+
+    if not InCombatLockdown() and self.NeedsUpdate then self:Update() end
 end
 
 function DragonflightUIRepBarMixin:CreateBar()
@@ -379,23 +400,23 @@ function DragonflightUIRepBarMixin:SetState(state)
 end
 
 function DragonflightUIRepBarMixin:Update()
+    -- print('update')
     local state = self.state
 
-    local name, standing, min, max, value = GetWatchedFactionInfo()
-    if name then
-        self:UpdateText()
-    else
-    end
-
-    if state.alwaysShowRep then
-        self.Text:SetDrawLayer('OVERLAY')
-    else
-        self.Text:SetDrawLayer('HIGHLIGHT')
-    end
+    self:UpdateBar()
 
     if InCombatLockdown() then
         -- print('Rep-bar update after combat fades...')
+        self.NeedsUpdate = true;
     else
+        if not state then return end
+
+        if state.alwaysShowRep then
+            self.Text:SetDrawLayer('OVERLAY')
+        else
+            self.Text:SetDrawLayer('HIGHLIGHT')
+        end
+
         local parent = _G[state.anchorFrame]
         self:ClearAllPoints()
         self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
@@ -405,14 +426,18 @@ function DragonflightUIRepBarMixin:Update()
         self:SetWidth(state.width)
         self:SetHeight(state.height)
 
-        self:Collapse(not name)
+        self:Collapse(not self.WatchedName)
 
         self:UpdateStateHandler(state)
+
+        self.NeedsUpdate = false;
     end
 end
 
-function DragonflightUIRepBarMixin:UpdateText()
+function DragonflightUIRepBarMixin:UpdateBar()
     local name, standing, min, max, value = GetWatchedFactionInfo()
+    -- print('updateBar()', self.WatchedName, ' TO ', name)
+    self.WatchedName = name;
     if name then
         -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
         self.valid = true
