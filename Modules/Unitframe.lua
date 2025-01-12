@@ -14,6 +14,7 @@ local defaults = {
         scale = 1,
         focus = {
             classcolor = false,
+            classicon = false,
             breakUpLargeNumbers = true,
             hideNameBackground = false,
             scale = 1.0,
@@ -936,6 +937,15 @@ local optionsFocus = {
             name = 'Class Color',
             desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'focus'),
             order = 7,
+            editmode = true
+        },
+        classicon = {
+            type = 'toggle',
+            name = 'Class Icon Portrait',
+            desc = '' .. getDefaultStr('classicon', 'focus'),
+            order = 7.1,
+            disabled = true,
+            new = false,
             editmode = true
         },
         breakUpLargeNumbers = {
@@ -2117,6 +2127,8 @@ function Module.HookClassIcon()
             icon = Module.db.profile.player.classicon
         elseif unit == "target" then
             icon = Module.db.profile.target.classicon
+        elseif unit == "focus" then
+            icon = Module.db.profile.focus.classicon
         end
 
         if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
