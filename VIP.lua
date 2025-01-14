@@ -46,6 +46,20 @@ table.insert(DF.VIPTable, {
 })
 
 table.insert(DF.VIPTable, {
+    name = 'Zimtgirly',
+    level = '85',
+    class = 'DEATHKNIGHT',
+    powerType = 'RUNIC_POWER',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'TANK',
+    extra = 'worldboss',
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'zimtgirly'
+})
+
+table.insert(DF.VIPTable, {
     name = 'Dratini',
     level = '??',
     class = 'MAGE',
