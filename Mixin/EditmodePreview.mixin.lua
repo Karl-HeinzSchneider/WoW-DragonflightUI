@@ -324,24 +324,10 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
         self.PartyFrames[k] = fakeParty;
     end
 
-    -- local m = CreateFrame("PlayerModel", nil, UIParent)
-    -- m:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-    -- m:SetSize(256, 256)
-    -- -- m:SetDisplayInfo(21723) -- creature/murloccostume/murloccostume.m2
+    self:SetScript('OnEvent', self.OnEvent)
+    self:RegisterEvent('GROUP_ROSTER_UPDATE')
 
-    -- C_Timer.After(1.5, function()
-
-    --     print('.........')
-    --     m:SetUnit('player')
-    --     -- MODELFRAME_DEFAULT_ROTATION 0.61
-    --     -- m:SetRotation(0.61)
-    --     m:SetRotation(0)
-    --     m:SetPortraitZoom(1)
-    --     m:SetAnimation(804)
-    --     -- myModel:FreezeAnimation(60, 0, 55) -- Freeze the talking animation at the frame 55
-    --     m:FreezeAnimation(804, 0, 0) -- Freeze the talking animation at the frame 55
-    --     -- m:StopAnimKit()  
-    -- end)
+    self:UpdateVisibility()
 end
 
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
@@ -355,8 +341,7 @@ function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
         v:UpdateState(state)
     end
 
-    self:SetScript('OnEvent', self.OnEvent)
-    self:RegisterEvent('GROUP_ROSTER_UPDATE')
+    self:UpdateVisibility()
 end
 
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateVisibility()
