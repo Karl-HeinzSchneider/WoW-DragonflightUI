@@ -110,7 +110,7 @@ end
 function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    local textureFrame = CreateFrame('Frame', 'DragonflightUIBossFrameTextureFrame', self)
+    local textureFrame = CreateFrame('Frame', 'DragonflightUITargetFrameTextureFrame', self)
     textureFrame:SetPoint('CENTER')
     textureFrame:SetFrameLevel(3)
     self.TextureFrame = textureFrame
@@ -127,7 +127,7 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
     self.TargetFrameBorder = border
 
-    local portrait = self.TextureFrame:CreateTexture('DragonflightUITargetFramePortrait')
+    local portrait = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetFramePortrait')
     portrait:SetDrawLayer('ARTWORK', 1)
     portrait:SetSize(56, 56)
     local CorrectionY = -3
@@ -146,7 +146,7 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     -- portraitBackground:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
     -- portraitBackground:SetTexture("Interface\\AddOns\\rTextures\\portrait_back")
 
-    local extra = self.TextureFrame:CreateTexture('DragonflightUITargetFramePortraitExtra')
+    local extra = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetFramePortraitExtra')
     extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
     extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
     extra:SetSize(80, 79)
@@ -395,7 +395,7 @@ end
 function DragonflightUIEditModePreviewPartyMixin:SetupFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    local textureFrame = CreateFrame('Frame', 'DragonflightUIBossFrameTextureFrame', self)
+    local textureFrame = CreateFrame('Frame', 'DragonflightUIPartyFrameTextureFrame', self)
     textureFrame:SetPoint('CENTER')
     textureFrame:SetFrameLevel(3)
     self.TextureFrame = textureFrame
@@ -414,7 +414,7 @@ function DragonflightUIEditModePreviewPartyMixin:SetupFrame()
     border:SetPoint('TOPLEFT', self, 'TOPLEFT', 1, -2)
     self.TargetFrameBorder = border
 
-    local portrait = self:CreateTexture('DragonflightUITargetFramePortrait')
+    local portrait = self:CreateTexture('DragonflightUIPartyFramePortrait')
     portrait:SetDrawLayer('ARTWORK', 1)
     portrait:SetSize(37, 37)
     portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', 7, -6)
@@ -425,7 +425,7 @@ function DragonflightUIEditModePreviewPartyMixin:SetupFrame()
         SetPortraitTextureFromCreatureDisplayID(portrait, tonumber(id) or 0);
     end
 
-    -- local extra = self.TextureFrame:CreateTexture('DragonflightUITargetFramePortraitExtra')
+    -- local extra = self.TextureFrame:CreateTexture('DragonflightUIPartyFramePortraitExtra')
     -- extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
     -- extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
     -- extra:SetSize(80, 79)
