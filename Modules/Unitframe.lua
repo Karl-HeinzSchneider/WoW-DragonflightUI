@@ -1102,7 +1102,8 @@ if true then
             name = USE_RAID_STYLE_PARTY_FRAMES,
             desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
             order = 15,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         },
         raidFrameBtn = {
             type = 'execute',
@@ -1113,7 +1114,8 @@ if true then
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             end,
             order = 16,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         }
     }
 
