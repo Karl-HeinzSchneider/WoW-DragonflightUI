@@ -326,6 +326,7 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
 
     self:SetScript('OnEvent', self.OnEvent)
     self:RegisterEvent('GROUP_ROSTER_UPDATE')
+    self:RegisterEvent("CVAR_UPDATE")
 
     self:UpdateVisibility()
 end
@@ -345,6 +346,13 @@ function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
 end
 
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateVisibility()
+    if (GetDisplayedAllyFrames() ~= "party") then
+        for k, v in ipairs(self.PartyFrames) do
+            --           
+            v:Show()
+        end
+        return;
+    end
     for k, v in ipairs(self.PartyFrames) do
         --
         if UnitExists('party' .. k) then
@@ -360,6 +368,8 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnEvent(event, arg1)
     if event == 'GROUP_ROSTER_UPDATE' then
         --
         -- print('GROUP_ROSTER_UPDATE')
+        self:UpdateVisibility()
+    elseif event == 'CVAR_UPDATE' and arg1 == 'useCompactPartyFrames' then
         self:UpdateVisibility()
     end
 end

@@ -1520,6 +1520,7 @@ function Module:ApplySettings(sub)
             TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
 
             pf:UpdateStateHandler(obj)
+            PartyMemberFrame_UpdateMember(pf)
         end
 
         Module.PreviewParty:UpdateState(obj)
@@ -1722,25 +1723,25 @@ function Module:AddEditMode()
         default = function()
             setDefaultSubValues('party')
         end,
-        moduleRef = self,
-        showFunction = function()
-            --           
-            for k = 1, 4 do
-                local p = _G['PartyMemberFrame' .. k]
-                -- p:SetAlpha(0)
-                -- print('p', k)
-            end
-            -- Module.PartyMoveFrame:Hide()
-        end,
-        hideFunction = function()
-            --            
-            for k = 1, 4 do
-                local p = _G['PartyMemberFrame' .. k]
-                -- p:SetAlpha(0)
-                -- print('p', k)
-            end
-            -- Module.PartyMoveFrame:Show()
-        end
+        moduleRef = self
+        -- showFunction = function()
+        --     --           
+        --     for k = 1, 4 do
+        --         local p = _G['PartyMemberFrame' .. k]
+        --         -- p:SetAlpha(0)
+        --         -- print('p', k)
+        --     end
+        --     -- Module.PartyMoveFrame:Hide()
+        -- end,
+        -- hideFunction = function()
+        --     --            
+        --     for k = 1, 4 do
+        --         local p = _G['PartyMemberFrame' .. k]
+        --         -- p:SetAlpha(0)
+        --         -- print('p', k)
+        --     end
+        --     -- Module.PartyMoveFrame:Show()
+        -- end
     });
 
     if DF.Wrath then
