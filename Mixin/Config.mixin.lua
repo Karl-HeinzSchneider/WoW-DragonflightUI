@@ -176,6 +176,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Party', cat)
         addSubCat('Pet', cat)
         addSubCat('Player', cat)
+        addSubCat('Raid', cat)
         addSubCat('Target', cat)
     end
 

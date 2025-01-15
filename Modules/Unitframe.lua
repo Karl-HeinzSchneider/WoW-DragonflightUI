@@ -1185,6 +1185,260 @@ local optionsPartyEditmode = {
     }
 }
 
+local optionsRaid = {
+    name = 'Party',
+    desc = 'PartyframeDesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        -- scale = {
+        --     type = 'range',
+        --     name = 'Scale',
+        --     desc = '' .. getDefaultStr('scale', 'party'),
+        --     min = 0.1,
+        --     max = 5,
+        --     bigStep = 0.1,
+        --     order = 1,
+        --     editmode = true
+        -- },
+        -- anchorFrame = {
+        --     type = 'select',
+        --     name = 'Anchorframe',
+        --     desc = 'Anchor' .. getDefaultStr('anchorFrame', 'party'),
+        --     values = frameTable,
+        --     order = 4,
+        --     editmode = true
+        -- },
+        -- anchor = {
+        --     type = 'select',
+        --     name = 'Anchor',
+        --     desc = 'Anchor' .. getDefaultStr('anchor', 'party'),
+        --     values = {
+        --         ['TOP'] = 'TOP',
+        --         ['RIGHT'] = 'RIGHT',
+        --         ['BOTTOM'] = 'BOTTOM',
+        --         ['LEFT'] = 'LEFT',
+        --         ['TOPRIGHT'] = 'TOPRIGHT',
+        --         ['TOPLEFT'] = 'TOPLEFT',
+        --         ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+        --         ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+        --         ['CENTER'] = 'CENTER'
+        --     },
+        --     order = 2,
+        --     editmode = true
+        -- },
+        -- anchorParent = {
+        --     type = 'select',
+        --     name = 'AnchorParent',
+        --     desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'party'),
+        --     values = {
+        --         ['TOP'] = 'TOP',
+        --         ['RIGHT'] = 'RIGHT',
+        --         ['BOTTOM'] = 'BOTTOM',
+        --         ['LEFT'] = 'LEFT',
+        --         ['TOPRIGHT'] = 'TOPRIGHT',
+        --         ['TOPLEFT'] = 'TOPLEFT',
+        --         ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+        --         ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+        --         ['CENTER'] = 'CENTER'
+        --     },
+        --     order = 3,
+        --     editmode = true
+        -- },
+        -- x = {
+        --     type = 'range',
+        --     name = 'X',
+        --     desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'party'),
+        --     min = -2500,
+        --     max = 2500,
+        --     bigStep = 1,
+        --     order = 5,
+        --     editmode = true
+        -- },
+        -- y = {
+        --     type = 'range',
+        --     name = 'Y',
+        --     desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'party'),
+        --     min = -2500,
+        --     max = 2500,
+        --     bigStep = 1,
+        --     order = 6,
+        --     editmode = true
+        -- }     
+    }
+}
+if true then
+    local moreOptions = {
+        useCompactPartyFrames = {
+            type = 'toggle',
+            name = USE_RAID_STYLE_PARTY_FRAMES,
+            desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
+            order = 15,
+            blizzard = true,
+            editmode = true
+        },
+        raidFrameBtn = {
+            type = 'execute',
+            name = 'Raid Frame Settings',
+            btnName = 'Open',
+            func = function()
+                Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            end,
+            order = 16,
+            blizzard = true,
+            editmode = true
+        },
+        keepGroupTogether = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_KEEPGROUPSTOGETHER,
+            desc = OPTION_TOOLTIP_KEEP_GROUPS_TOGETHER,
+            proxy = 'PROXY_RAID_FRAME_KEEP_GROUPS_TOGETHER',
+            order = 20.1,
+            blizzard = true,
+            editmode = true
+        },
+        keepHorizontalGroup = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_HORIZONTALGROUPS,
+            desc = '',
+            proxy = 'PROXY_RAID_FRAME_KEEP_HORIZONTAL_GROUPS',
+            order = 20.2,
+            blizzard = true,
+            editmode = true
+        },
+        displayPowerBar = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYPOWERBAR,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYPOWERBAR,
+            proxy = 'PROXY_RAID_FRAME_POWER_BAR',
+            order = 20.3,
+            blizzard = true,
+            editmode = true
+        },
+        useClassColors = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS,
+            proxy = 'PROXY_RAID_FRAME_CLASS_COLORS',
+            order = 20.4,
+            blizzard = true,
+            editmode = true
+        },
+        displayPets = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS,
+            proxy = 'PROXY_RAID_FRAME_PETS',
+            order = 20.5,
+            blizzard = true,
+            editmode = true
+        },
+        displayMainTankAndAssist = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYMAINTANKANDASSIST,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYMAINTANKANDASSIST,
+            proxy = 'PROXY_RAID_FRAME_TANK_ASSIST',
+            order = 20.6,
+            blizzard = true,
+            editmode = true
+        },
+        displayBorder = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYBORDER,
+            desc = '',
+            proxy = 'PROXY_RAID_FRAME_BORDER',
+            order = 20.7,
+            blizzard = true,
+            editmode = true
+        },
+        displayNonBossDebuffs = {
+            type = 'toggle',
+            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYNONBOSSDEBUFFS,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYNONBOSSDEBUFFS,
+            proxy = 'PROXY_RAID_FRAME_SHOW_DEBUFFS',
+            order = 20.8,
+            blizzard = true,
+            editmode = true
+        },
+        displayOnlyDispellableDebuffs = {
+            type = 'toggle',
+            name = DISPLAY_ONLY_DISPELLABLE_DEBUFFS,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYONLYDISPELLABLEDEBUFFS,
+            proxy = 'PROXY_RAID_FRAME_DISPELLABLE_DEBUFFS',
+            order = 20.10,
+            blizzard = true,
+            editmode = true
+        }
+    }
+
+    for k, v in pairs(moreOptions) do optionsRaid.args[k] = v end
+
+    local defaultFuncs = {}
+
+    -- Proxy
+    -- RevertSetting("PROXY_RAID_FRAME_CLASS_COLORS");
+    -- RevertSetting("PROXY_RAID_FRAME_PETS");
+    -- RevertSetting("PROXY_RAID_FRAME_TANK_ASSIST");
+    -- RevertSetting("PROXY_RAID_FRAME_BORDER");
+    -- RevertSetting("PROXY_RAID_FRAME_SHOW_DEBUFFS");
+    -- RevertSetting("PROXY_RAID_FRAME_KEEP_GROUPS_TOGETHER");
+    -- RevertSetting("PROXY_RAID_FRAME_KEEP_HORIZONTAL_GROUPS");
+    -- RevertSetting("PROXY_RAID_FRAME_SORT_BY");
+    -- RevertSetting("PROXY_RAID_FRAME_POWER_BAR");
+    -- RevertSetting("PROXY_RAID_FRAME_DISPELLABLE_DEBUFFS");
+    -- RevertSetting("PROXY_RAID_HEALTH_TEXT");
+    -- RevertSetting("PROXY_RAID_FRAME_HEIGHT");
+    -- RevertSetting("PROXY_RAID_FRAME_WIDTH");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_2");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_3");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_5");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_10");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_15");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_20");
+    -- RevertSetting("PROXY_RAID_AUTO_ACTIVATE_40");
+
+    optionsRaid.get = function(info)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'useCompactPartyFrames' then
+            local value = C_CVar.GetCVar("useCompactPartyFrames");
+            if value == '1' then
+                return true
+            else
+                return false
+            end
+        end
+
+        if moreOptions[sub].proxy then
+            -- proxy
+            local value = Settings.GetValue(moreOptions[sub].proxy);
+            return value;
+        end
+    end
+
+    optionsRaid.set = function(info, value)
+        local key = info[1]
+        local sub = info[2]
+
+        if sub == 'useCompactPartyFrames' then
+            if value then
+                SetCVar("useCompactPartyFrames", "1");
+            else
+                SetCVar("useCompactPartyFrames", "0");
+            end
+        end
+
+        if moreOptions[sub].proxy then
+            -- proxy
+            Settings.SetValue(moreOptions[sub].proxy, value);
+        end
+    end
+end
+
 local options = {
     type = 'group',
     name = 'DragonflightUI - ' .. mName,
@@ -1296,6 +1550,16 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('party')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Raid', {
+        name = 'Raid',
+        sub = 'raid',
+        options = optionsRaid
+        -- default = function()
+        --     setDefaultSubValues('party')
+        -- end
+    })
+
     DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Pet', {
         name = 'Pet',
         sub = 'pet',
@@ -1304,6 +1568,7 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('pet')
         end
     })
+
     DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Player', {
         name = 'Player',
         sub = 'player',
@@ -1312,6 +1577,7 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('player')
         end
     })
+
     DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Target', {
         name = 'Target',
         sub = 'target',
@@ -1335,6 +1601,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Party')
     refreshCat('Pet')
     refreshCat('Player')
+    refreshCat('Raid')
     refreshCat('Target')
 
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
@@ -4170,6 +4437,8 @@ function frame:OnEvent(event, arg1)
                 Module.UpdatePartyManaBar(i)
             end
         end
+    elseif event == 'SETTINGS_LOADED' then
+        Module:RefreshOptionScreens()
     end
 end
 
@@ -4367,6 +4636,7 @@ function Module.Wrath()
     frame:RegisterEvent('PORTRAITS_UPDATED')
 
     frame:RegisterEvent('CVAR_UPDATE')
+    frame:RegisterEvent('SETTINGS_LOADED')
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
@@ -4401,6 +4671,7 @@ function Module.Era()
     frame:RegisterEvent('PORTRAITS_UPDATED')
 
     frame:RegisterEvent('CVAR_UPDATE')
+    frame:RegisterEvent('SETTINGS_LOADED')
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
