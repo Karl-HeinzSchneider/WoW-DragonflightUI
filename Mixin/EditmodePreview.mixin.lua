@@ -363,7 +363,8 @@ function DragonflightUIEditModePreviewPartyFrameMixin:UpdateVisibility()
     end
 end
 
-function DragonflightUIEditModePreviewPartyFrameMixin:OnEvent(event, arg1)
+function DragonflightUIEditModePreviewPartyFrameMixin:OnEvent(event, arg1, ...)
+    -- print(event, arg1, ...)
 
     if event == 'GROUP_ROSTER_UPDATE' then
         --
