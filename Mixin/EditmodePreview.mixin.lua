@@ -759,6 +759,7 @@ function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
     --     fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
 
     if settings.keepGroupsTogether then
+        local borderSize = (settings.displayBorder and 8) or 0;
         if settings.horizontalGroups then
             local maxRows = math.floor(managerSize / (settings.frameHeight + 14)) -- 14 = title
             maxRows = math.min(maxRows, 8)
@@ -815,7 +816,7 @@ function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
                     if k == 1 then
                         -- first stays
                         v:ClearAllPoints();
-                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0 - 14);
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0 + borderSize, 0 - 14);
                         -- print(k, 1)
                     elseif mod == 1 then
                         -- header
@@ -825,18 +826,18 @@ function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
 
                         if maxRows == 1 then
                             v:ClearAllPoints();
-                            v:SetPoint('TOPLEFT', self, 'TOPLEFT', (((k - mod) / 5)) * settings.frameWidth, 0 - 14);
+                            v:SetPoint('TOPLEFT', self, 'TOPLEFT',
+                                       (((k - mod) / 5)) * (settings.frameWidth + 2 * borderSize), 0 - 14);
                         else
                             if groupIndex % 2 == 0 then
                                 -- 2,4
                                 v:ClearAllPoints();
-                                v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap - 14);
+                                v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap - 14 - borderSize);
                             else
                                 -- 3,5
                                 v:ClearAllPoints();
-                                v:SetPoint('TOPLEFT', self, 'TOPLEFT',
-                                           (((k - 5 * (math.floor(groupIndex / 2)) - mod) / 5)) * settings.frameWidth,
-                                           0 - 14);
+                                v:SetPoint('TOPLEFT', self, 'TOPLEFT', (((k - 5 * (math.floor(groupIndex / 2)) - mod) /
+                                               5)) * (settings.frameWidth + 2 * borderSize), 0 - 14);
                             end
                         end
                     else
