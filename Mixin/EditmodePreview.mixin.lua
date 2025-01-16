@@ -211,13 +211,25 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     self.HealthBar:SetClass('PRIEST')
 
     local manaBar = CreateFrame("StatusBar", nil, self)
-    manaBar:SetSize(132, 9)
-    manaBar:SetPoint('RIGHT', portrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
+    -- manaBar:SetSize(132, 9)
+    -- manaBar:SetPoint('RIGHT', portrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
+    manaBar:SetPoint('TOPLEFT', healthBar, 'BOTTOMLEFT', 0, -1)
+    manaBar:SetSize(134, 10)
     manaBar:SetStatusBarTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
     manaBar:SetStatusBarColor(1, 1, 1, 1)
     manaBar:SetMinMaxValues(0, 100)
     manaBar:SetValue(100)
+
+    local manaMask = manaBar:CreateMaskTexture()
+    manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -61, 3)
+    manaMask:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+        'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    manaMask:SetTexCoord(0, 1, 0, 1)
+    manaMask:SetSize(256, 16)
+    manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+
     self.ManaBar = manaBar
     function manaBar:SetPowerType(powerTypeString)
         if powerTypeString == 'MANA' then

@@ -3017,9 +3017,19 @@ function Module.ChangeTargetFrame()
     TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
     -- Mana 119,12
     TargetFrameManaBar:ClearAllPoints()
-    TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
-    TargetFrameManaBar:SetSize(132, 9)
+    -- TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5 + 1, -18 + 1 + 0.5)
+    TargetFrameManaBar:SetPoint('TOPLEFT', TargetFrameHealthBar, 'BOTTOMLEFT', 0, -1)
+    TargetFrameManaBar:SetSize(134, 10)
     TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+    local manaMask = TargetFrameManaBar:CreateMaskTexture()
+    manaMask:SetPoint('TOPLEFT', TargetFrameManaBar, 'TOPLEFT', -61, 3)
+    manaMask:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+        'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    manaMask:SetTexCoord(0, 1, 0, 1)
+    manaMask:SetSize(256, 16)
+    TargetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
     TargetFrameNameBackground:SetTexture(base)
     TargetFrameNameBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
@@ -3532,11 +3542,21 @@ function Module.ChangeFocusFrame()
     FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
     -- Mana 119,12
     FocusFrameManaBar:ClearAllPoints()
-    FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
-    FocusFrameManaBar:SetSize(132, 9)
+    -- FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
+    FocusFrameManaBar:SetPoint('TOPLEFT', FocusFrameHealthBar, 'BOTTOMLEFT', 0, -1)
+    FocusFrameManaBar:SetSize(134, 10)
     FocusFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+    local manaMask = FocusFrameManaBar:CreateMaskTexture()
+    manaMask:SetPoint('TOPLEFT', FocusFrameManaBar, 'TOPLEFT', -61, 3)
+    manaMask:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+        'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    manaMask:SetTexCoord(0, 1, 0, 1)
+    manaMask:SetSize(256, 16)
+    FocusFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
     -- CUSTOM HealthText
     if not frame.FocusFrameHealthBarText then
