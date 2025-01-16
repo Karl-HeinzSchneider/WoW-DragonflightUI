@@ -1276,7 +1276,7 @@ if true then
             desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
             order = 15,
             blizzard = true,
-            editmode = true
+            editmode = false
         },
         raidFrameBtn = {
             type = 'execute',
@@ -1288,134 +1288,134 @@ if true then
             end,
             order = 5,
             blizzard = true,
-            editmode = true
-        },
-        headerTaint = {type = 'header', name = 'May Cause Taint Issues - /reload after setup', desc = '', order = 10},
-        keepGroupsTogether = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_KEEPGROUPSTOGETHER,
-            desc = OPTION_TOOLTIP_KEEP_GROUPS_TOGETHER,
-            proxy = 'PROXY_RAID_FRAME_KEEP_GROUPS_TOGETHER',
-            order = 20.1,
-            blizzard = true,
-            editmode = true
-        },
-        horizontalGroups = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_HORIZONTALGROUPS,
-            desc = '',
-            proxy = 'PROXY_RAID_FRAME_KEEP_HORIZONTAL_GROUPS',
-            order = 20.2,
-            blizzard = true,
-            editmode = true
-        },
-        sortBy = {
-            type = 'select',
-            name = COMPACT_UNIT_FRAME_PROFILE_SORTBY,
-            desc = '',
-            values = {['role'] = 'role', ['group'] = 'group', ['alphabetical'] = 'alphabetical'},
-            proxy = 'PROXY_RAID_FRAME_SORT_BY',
-            order = 20.21,
-            blizzard = true,
-            editmode = true
-        },
-        displayPowerBar = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYPOWERBAR,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYPOWERBAR,
-            proxy = 'PROXY_RAID_FRAME_POWER_BAR',
-            order = 20.3,
-            blizzard = true,
-            editmode = true
-        },
-        useClassColors = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS,
-            proxy = 'PROXY_RAID_FRAME_CLASS_COLORS',
-            order = 20.4,
-            blizzard = true,
-            editmode = true
-        },
-        displayPets = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS,
-            proxy = 'PROXY_RAID_FRAME_PETS',
-            order = 20.5,
-            blizzard = true,
-            editmode = true
-        },
-        displayMainTankAndAssist = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYMAINTANKANDASSIST,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYMAINTANKANDASSIST,
-            proxy = 'PROXY_RAID_FRAME_TANK_ASSIST',
-            order = 20.6,
-            blizzard = true,
-            editmode = true
-        },
-        displayBorder = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYBORDER,
-            desc = '',
-            proxy = 'PROXY_RAID_FRAME_BORDER',
-            order = 20.7,
-            blizzard = true,
-            editmode = true
-        },
-        displayNonBossDebuffs = {
-            type = 'toggle',
-            name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYNONBOSSDEBUFFS,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYNONBOSSDEBUFFS,
-            proxy = 'PROXY_RAID_FRAME_SHOW_DEBUFFS',
-            order = 20.8,
-            blizzard = true,
-            editmode = true
-        },
-        displayOnlyDispellableDebuffs = {
-            type = 'toggle',
-            name = DISPLAY_ONLY_DISPELLABLE_DEBUFFS,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYONLYDISPELLABLEDEBUFFS,
-            proxy = 'PROXY_RAID_FRAME_DISPELLABLE_DEBUFFS',
-            order = 21.1,
-            blizzard = true,
-            editmode = true
-        },
-        healthText = {
-            type = 'select',
-            name = COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
-            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
-            values = {['none'] = 'none', ['health'] = 'health', ['losthealth'] = 'losthealth', ['perc'] = 'perc'},
-            proxy = 'PROXY_RAID_HEALTH_TEXT',
-            order = 21.2,
-            blizzard = true,
-            editmode = true
-        },
-        frameHeight = {
-            type = 'range',
-            name = COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT,
-            desc = '',
-            proxy = 'PROXY_RAID_FRAME_HEIGHT',
-            min = 20,
-            max = 128,
-            bigStep = 1,
-            order = 22.1,
-            editmode = true,
-            blizzard = true
-        },
-        frameWidth = {
-            type = 'range',
-            name = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH,
-            desc = '',
-            proxy = 'PROXY_RAID_FRAME_WIDTH',
-            min = 20,
-            max = 256,
-            bigStep = 1,
-            order = 22.2,
-            editmode = true,
-            blizzard = true
+            editmode = false
         }
+        -- headerTaint = {type = 'header', name = 'May Cause Taint Issues - /reload after setup', desc = '', order = 10},
+        -- keepGroupsTogether = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_KEEPGROUPSTOGETHER,
+        --     desc = OPTION_TOOLTIP_KEEP_GROUPS_TOGETHER,
+        --     proxy = 'PROXY_RAID_FRAME_KEEP_GROUPS_TOGETHER',
+        --     order = 20.1,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- horizontalGroups = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_HORIZONTALGROUPS,
+        --     desc = '',
+        --     proxy = 'PROXY_RAID_FRAME_KEEP_HORIZONTAL_GROUPS',
+        --     order = 20.2,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- sortBy = {
+        --     type = 'select',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_SORTBY,
+        --     desc = '',
+        --     values = {['role'] = 'role', ['group'] = 'group', ['alphabetical'] = 'alphabetical'},
+        --     proxy = 'PROXY_RAID_FRAME_SORT_BY',
+        --     order = 20.21,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- displayPowerBar = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYPOWERBAR,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYPOWERBAR,
+        --     proxy = 'PROXY_RAID_FRAME_POWER_BAR',
+        --     order = 20.3,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- useClassColors = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS,
+        --     proxy = 'PROXY_RAID_FRAME_CLASS_COLORS',
+        --     order = 20.4,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- displayPets = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS,
+        --     proxy = 'PROXY_RAID_FRAME_PETS',
+        --     order = 20.5,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- displayMainTankAndAssist = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYMAINTANKANDASSIST,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYMAINTANKANDASSIST,
+        --     proxy = 'PROXY_RAID_FRAME_TANK_ASSIST',
+        --     order = 20.6,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- displayBorder = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYBORDER,
+        --     desc = '',
+        --     proxy = 'PROXY_RAID_FRAME_BORDER',
+        --     order = 20.7,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- displayNonBossDebuffs = {
+        --     type = 'toggle',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_DISPLAYNONBOSSDEBUFFS,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYNONBOSSDEBUFFS,
+        --     proxy = 'PROXY_RAID_FRAME_SHOW_DEBUFFS',
+        --     order = 20.8,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- displayOnlyDispellableDebuffs = {
+        --     type = 'toggle',
+        --     name = DISPLAY_ONLY_DISPELLABLE_DEBUFFS,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYONLYDISPELLABLEDEBUFFS,
+        --     proxy = 'PROXY_RAID_FRAME_DISPELLABLE_DEBUFFS',
+        --     order = 21.1,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- healthText = {
+        --     type = 'select',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        --     desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        --     values = {['none'] = 'none', ['health'] = 'health', ['losthealth'] = 'losthealth', ['perc'] = 'perc'},
+        --     proxy = 'PROXY_RAID_HEALTH_TEXT',
+        --     order = 21.2,
+        --     blizzard = true,
+        --     editmode = true
+        -- },
+        -- frameHeight = {
+        --     type = 'range',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT,
+        --     desc = '',
+        --     proxy = 'PROXY_RAID_FRAME_HEIGHT',
+        --     min = 20,
+        --     max = 128,
+        --     bigStep = 1,
+        --     order = 22.1,
+        --     editmode = true,
+        --     blizzard = true
+        -- },
+        -- frameWidth = {
+        --     type = 'range',
+        --     name = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH,
+        --     desc = '',
+        --     proxy = 'PROXY_RAID_FRAME_WIDTH',
+        --     min = 20,
+        --     max = 256,
+        --     bigStep = 1,
+        --     order = 22.2,
+        --     editmode = true,
+        --     blizzard = true
+        -- }
     }
 
     for k, v in pairs(moreOptions) do optionsRaid.args[k] = v end
@@ -1486,6 +1486,27 @@ if true then
         end
     end
 end
+local optionsRaidEditmode = {
+    name = 'Raid',
+    desc = 'Raid',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        raidFrameBtn = {
+            type = 'execute',
+            name = 'Raid Frame Settings',
+            btnName = 'Open',
+            func = function()
+                Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            end,
+            order = 5,
+            blizzard = true,
+            editmode = true
+        }
+    }
+}
 
 local options = {
     type = 'group',
@@ -2072,6 +2093,41 @@ function Module:AddEditMode()
         f.DFEditModeSelection:ClearAllPoints()
         f.DFEditModeSelection:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, -7)
         f.DFEditModeSelection:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 11)
+
+        f.DFEditModeSelection:RegisterOptions({
+            name = 'Raid',
+            sub = 'raid',
+            options = optionsRaid,
+            extra = optionsRaidEditmode,
+            -- parentExtra = FocusFrame,
+            default = function()
+                -- setDefaultSubValues('focus')
+            end,
+            moduleRef = self,
+            showFunction = function()
+                --   
+                CompactRaidFrameManager_SetSetting('Locked', false)
+            end,
+            hideFunction = function()
+                --      
+                CompactRaidFrameManager_SetSetting('Locked', true)
+                CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+            end
+        });
+
+        local editModule = DF:GetModule('Editmode')
+
+        hooksecurefunc('CompactRaidFrameManager_UpdateContainerVisibility', function()
+            -- print('CompactRaidFrameManager_UpdateContainerVisibility')
+            if editModule.IsEditMode then
+                --             
+                -- CompactRaidFrameManager_SetSetting('Locked', false)
+                C_Timer.After(0, function()
+                    --
+                    CompactRaidFrameManager_SetSetting('Locked', false)
+                end)
+            end
+        end)
     end
 
     if DF.Wrath then
