@@ -638,14 +638,14 @@ end
 ------- raid frame
 DragonflightUIEditModePreviewRaidFrameMixin = {}
 function DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()
-    print('~~ DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()')
+    -- print('~~ DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()')
 
     self:SetSize(100, 100)
 
     self.PartyFrames = {}
     local gap = 0;
 
-    for k = 1, 5 do
+    for k = 1, 40 do
         -- 
         local member = CreateFrame('Frame', 'DragonflightUIEditModeRaid' .. k .. 'Preview', self,
                                    'DFEditModePreviewRaidTemplate')
@@ -656,6 +656,14 @@ function DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()
             member:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap)
         end
 
+        if k % 5 == 1 then
+            member.GroupHeader = member:CreateFontString('DragonflightUIRaidPreviewGroupHeader', 'ARTWORK',
+                                                         'GameFontNormalSmall')
+            member.GroupHeader:SetSize(50, 14)
+            member.GroupHeader:SetPoint('BOTTOM', member, 'TOP', 0, 0)
+            member.GroupHeader:SetFormattedText(GROUP_NUMBER, ((k - 1) / 5) + 1);
+        end
+
         self.PartyFrames[k] = member;
     end
 
@@ -664,7 +672,26 @@ function DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()
     -- self:RegisterEvent("CVAR_UPDATE")
 
     -- self:UpdateVisibility()
+    self.MaxToShow = 15;
     self:UpdateState(nil)
+
+    hooksecurefunc(InterfaceOverrides, 'SetRaidProfileOption', function(option, value)
+        --
+        -- print('SetRaidProfileOption', option, value);
+        self:UpdateState(nil);
+    end)
+
+    local updateInterval = 0.25;
+    self.LastUpdate = GetTime()
+    hooksecurefunc('CompactRaidFrameManager_ResizeFrame_UpdateContainerSize', function(manager)
+        --
+        if GetTime() - self.LastUpdate >= updateInterval then
+            self.LastUpdate = GetTime()
+            -- print('CompactRaidFrameManager_ResizeFrame_UpdateContainerSize', manager.container:GetHeight())
+            self:UpdateState(nil)
+        else
+        end
+    end)
 end
 
 function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
@@ -674,10 +701,90 @@ function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
     -- self:SetScale(state.scale)
 
     local settings = GetRaidProfileFlattenedOptions(GetActiveRaidProfile());
+    local maxToShow = self.MaxToShow;
+    local gap = 0;
 
-    for k, v in ipairs(self.PartyFrames) do
-        --
-        v:UpdateState(settings)
+    local manager = CompactRaidFrameManager;
+    local managerSize = manager.container:GetHeight();
+
+    if settings.keepGroupsTogether then
+        local maxRows = math.floor(managerSize / (5 * settings.frameHeight + 14)) -- 14 = title
+        if maxRows < 1 then
+            maxRows = 1
+        elseif maxRows > 1 then
+            maxRows = 2;
+        end
+        -- print('maxRows:', maxRows)
+        for k, v in ipairs(self.PartyFrames) do
+            --
+            if k > maxToShow then
+                v:Hide()
+            else
+                v:Show()
+                v:UpdateState(settings)
+
+                local mod = k % 5;
+                -- print(k, mod)
+                if k == 1 then
+                    -- first stays
+                    v:ClearAllPoints();
+                    v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0 - 14);
+                    -- print(k, 1)
+                elseif mod == 1 then
+                    -- header
+                    local groupIndex = 1 + (k - mod) / 5; -- 1,2,3
+                    local groupIndexZero = groupIndex - 1;
+                    -- print(k, groupIndex)
+
+                    if maxRows == 1 then
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', (((k - mod) / 5)) * settings.frameWidth, 0 - 14);
+                    else
+                        if groupIndex % 2 == 0 then
+                            -- 2,4
+                            v:ClearAllPoints();
+                            v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap - 14);
+                        else
+                            -- 3,5
+                            v:ClearAllPoints();
+                            v:SetPoint('TOPLEFT', self, 'TOPLEFT',
+                                       (((k - 5 * (math.floor(groupIndex / 2)) - mod) / 5)) * settings.frameWidth,
+                                       0 - 14);
+                        end
+                    end
+                else
+                    v:ClearAllPoints();
+                    v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap);
+                end
+            end
+        end
+    else
+        local maxRows = math.floor(managerSize / settings.frameHeight)
+        -- print('maxRows:', maxRows)
+        for k, v in ipairs(self.PartyFrames) do
+            --
+            if k > maxToShow then
+                v:Hide()
+            else
+                v:Show()
+                v:UpdateState(settings)
+                if k == 1 then
+                    -- first stays
+                    v:ClearAllPoints();
+                    v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+                    -- print(k, 1, 1)
+                else
+                    local zeroIndex = k - 1;
+                    local column = 1 + math.floor(zeroIndex / maxRows);
+                    local row = 1 + (zeroIndex % maxRows);
+
+                    -- print(k, column, row)
+                    v:ClearAllPoints()
+                    v:SetPoint('TOPLEFT', self, 'TOPLEFT', (column - 1) * settings.frameWidth,
+                               -(row - 1) * settings.frameHeight)
+                end
+            end
+        end
     end
 
     self:UpdateVisibility()
@@ -718,7 +825,7 @@ DragonflightUIEditModePreviewRaidMixin = {}
 Mixin(DragonflightUIEditModePreviewRaidMixin, DragonflightUIEditModePreviewTargetMixin)
 
 function DragonflightUIEditModePreviewRaidMixin:OnLoad()
-    print('~~~~~~~~~~~~DragonflightUIEditModePreviewRaidMixin:OnLoad()')
+    -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewRaidMixin:OnLoad()')
 
     local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
     self:SetSize(sizeX, sizeY)
@@ -897,6 +1004,14 @@ function DragonflightUIEditModePreviewRaidMixin:UpdateState(state)
     -- [05:21:29] }
     local frame = self;
     local componentScale = min(state.frameHeight / NATIVE_UNIT_FRAME_HEIGHT, state.frameWidth / NATIVE_UNIT_FRAME_WIDTH);
+
+    if self.GroupHeader then
+        if state.keepGroupsTogether then
+            self.GroupHeader:Show()
+        else
+            self.GroupHeader:Hide()
+        end
+    end
 
     self:SetSize(state.frameWidth, state.frameHeight)
 

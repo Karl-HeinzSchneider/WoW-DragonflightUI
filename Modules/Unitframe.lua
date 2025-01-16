@@ -2084,12 +2084,13 @@ function Module:AddEditMode()
     if true then
         local f = _G['CompactRaidFrameManagerContainerResizeFrame']
 
-        local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', UIParent,
+        local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
                                      'DFEditModePreviewRaidFrameTemplate')
         fakeRaid:OnLoad()
-        -- fakeParty:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-        -- fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
-        fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', 0, 0)
+        fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
+        fakeRaid:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+
+        -- fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', 0, 0)
         fakeRaid:Show()
 
         Module.PreviewRaid = fakeRaid;
