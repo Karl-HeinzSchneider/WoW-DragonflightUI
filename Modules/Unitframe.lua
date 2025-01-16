@@ -2059,6 +2059,21 @@ function Module:AddEditMode()
         -- end
     });
 
+    -- raid frame 
+    if true then
+        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+
+        EditModeModule:AddEditModeToFrame(f)
+
+        f.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Raidframe'
+        end)
+
+        f.DFEditModeSelection:ClearAllPoints()
+        f.DFEditModeSelection:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, -7)
+        f.DFEditModeSelection:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 11)
+    end
+
     if DF.Wrath then
         -- Focus
         local fakeFocus = CreateFrame('Frame', 'DragonflightUIEditModeFocusFramePreview', UIParent,
