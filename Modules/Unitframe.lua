@@ -2082,73 +2082,95 @@ function Module:AddEditMode()
 
     -- raid frame 
     if true then
-        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+        local initRaid = function()
+            --         
+            local f = _G['CompactRaidFrameManagerContainerResizeFrame']
 
-        local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
-                                     'DFEditModePreviewRaidFrameTemplate')
-        fakeRaid:OnLoad()
-        fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
-        fakeRaid:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+            local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
+                                         'DFEditModePreviewRaidFrameTemplate')
+            fakeRaid:OnLoad()
+            fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
+            fakeRaid:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
 
-        -- fakeRaid:ClearAllPoints()
-        -- fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', -50, 50)
-        -- fakeRaid:SetParent(UIParent)
+            -- fakeRaid:ClearAllPoints()
+            -- fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', -50, 50)
+            -- fakeRaid:SetParent(UIParent)
 
-        fakeRaid:Show()
+            fakeRaid:Show()
 
-        Module.PreviewRaid = fakeRaid;
+            Module.PreviewRaid = fakeRaid;
 
-        EditModeModule:AddEditModeToFrame(f)
+            EditModeModule:AddEditModeToFrame(f)
 
-        f.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Raidframe'
-        end)
+            f.DFEditModeSelection:SetGetLabelTextFunction(function()
+                return 'Raidframe'
+            end)
 
-        f.DFEditModeSelection:ClearAllPoints()
-        f.DFEditModeSelection:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, -7)
-        f.DFEditModeSelection:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 11)
+            f.DFEditModeSelection:ClearAllPoints()
+            f.DFEditModeSelection:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, -7)
+            f.DFEditModeSelection:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 11)
 
-        f.DFEditModeSelection:RegisterOptions({
-            name = 'Raid',
-            sub = 'raid',
-            options = optionsRaid,
-            extra = optionsRaidEditmode,
-            -- parentExtra = FocusFrame,
-            default = function()
-                -- setDefaultSubValues('focus')
-            end,
-            moduleRef = self,
-            showFunction = function()
-                --   
-                CompactRaidFrameManager_SetSetting('Locked', false)
-            end,
-            hideFunction = function()
-                --      
-                CompactRaidFrameManager_SetSetting('Locked', true)
-                CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
-            end
-        });
-
-        fakeRaid:UpdateState(nil)
-
-        local editModule = DF:GetModule('Editmode')
-
-        hooksecurefunc('CompactRaidFrameManager_UpdateContainerVisibility', function()
-            -- print('CompactRaidFrameManager_UpdateContainerVisibility')
-            if editModule.IsEditMode then
-                --             
-                -- CompactRaidFrameManager_SetSetting('Locked', false)
-                C_Timer.After(0, function()
-                    --
+            f.DFEditModeSelection:RegisterOptions({
+                name = 'Raid',
+                sub = 'raid',
+                options = optionsRaid,
+                extra = optionsRaidEditmode,
+                -- parentExtra = FocusFrame,
+                default = function()
+                    -- setDefaultSubValues('focus')
+                end,
+                moduleRef = self,
+                showFunction = function()
+                    --  
+                    f:Show()
                     CompactRaidFrameManager_SetSetting('Locked', false)
-                end)
-            end
-        end)
+                    f:Show()
+                end,
+                hideFunction = function()
+                    --      
+                    CompactRaidFrameManager_SetSetting('Locked', true)
+                    CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+                end
+            });
 
-        f.DFEditModeSelection:HookScript('OnDragStop', function()
-            --
-            CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
-        end)
+            fakeRaid:UpdateState(nil)
+
+            local editModule = DF:GetModule('Editmode')
+
+            hooksecurefunc('CompactRaidFrameManager_UpdateContainerVisibility', function()
+                -- print('CompactRaidFrameManager_UpdateContainerVisibility')
+                if editModule.IsEditMode then
+                    --             
+                    -- CompactRaidFrameManager_SetSetting('Locked', false)
+                    C_Timer.After(0, function()
+                        --
+                        CompactRaidFrameManager_SetSetting('Locked', false)
+                    end)
+                end
+            end)
+
+            f.DFEditModeSelection:HookScript('OnDragStop', function()
+                --
+                CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+            end)
+        end
+
+        if HasLoadedCUFProfiles() and CompactUnitFrameProfiles and CompactUnitFrameProfiles.variablesLoaded then
+            initRaid()
+        else
+            local waitFrame = CreateFrame('Frame')
+            waitFrame:RegisterEvent("COMPACT_UNIT_FRAME_PROFILES_LOADED")
+            waitFrame:RegisterEvent("VARIABLES_LOADED")
+            waitFrame:SetScript("OnEvent", function(waitFrame, event, arg1)
+                --
+                -- print(event)
+                waitFrame:UnregisterEvent(event);
+                if (HasLoadedCUFProfiles() and CompactUnitFrameProfiles and CompactUnitFrameProfiles.variablesLoaded) then
+                    --
+                    initRaid()
+                end
+            end)
+        end
     end
 
     if DF.Wrath then
