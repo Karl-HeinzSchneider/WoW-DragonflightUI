@@ -634,3 +634,585 @@ function DragonflightUIEditModePreviewPartyMixin:UpdateState(state)
         self.HealthBar:SetClass('')
     end
 end
+
+------- raid frame
+DragonflightUIEditModePreviewRaidFrameMixin = {}
+function DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()
+    -- print('~~ DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()')
+
+    self:SetSize(100, 100)
+
+    self.PartyFrames = {}
+    local gap = 0;
+
+    for k = 1, 40 do
+        -- 
+        local member = CreateFrame('Frame', 'DragonflightUIEditModeRaid' .. k .. 'Preview', self,
+                                   'DFEditModePreviewRaidTemplate')
+        member:OnLoad()
+        if k == 1 then
+            member:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+        else
+            member:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap)
+        end
+
+        if k % 5 == 1 then
+            member.GroupHeader = member:CreateFontString('DragonflightUIRaidPreviewGroupHeader', 'ARTWORK',
+                                                         'GameFontNormalSmall')
+            member.GroupHeader:SetSize(50, 14)
+            member.GroupHeader:SetPoint('BOTTOM', member, 'TOP', 0, 0)
+            member.GroupHeader:SetFormattedText(GROUP_NUMBER, ((k - 1) / 5) + 1);
+        end
+
+        self.PartyFrames[k] = member;
+    end
+
+    self.AssistFrames = {};
+    for k = 1, 2 do
+        -- 
+        local member = CreateFrame('Frame', 'DragonflightUIEditModeRaid' .. k .. 'Preview', self,
+                                   'DFEditModePreviewRaidTemplate')
+        member:OnLoad()
+        if k == 1 then
+            member:SetPoint('TOPRIGHT', self, 'TOPLEFT', 0, 0)
+        else
+            member:SetPoint('TOPLEFT', self.AssistFrames[k - 1], 'BOTTOMLEFT', 0, -gap)
+        end
+        self.AssistFrames[k] = member;
+
+        if k % 2 == 1 then
+            member.roleIcon:UpdateRoleIcon('MAINTANK')
+        else
+            member.roleIcon:UpdateRoleIcon('MAINASSIST')
+        end
+
+    end
+
+    -- self:SetScript('OnEvent', self.OnEvent)
+    -- self:RegisterEvent('GROUP_ROSTER_UPDATE')
+    -- self:RegisterEvent("CVAR_UPDATE")
+
+    -- self:UpdateVisibility()
+    self.MaxToShow = 15;
+    self:UpdateState(nil)
+
+    hooksecurefunc(InterfaceOverrides, 'SetRaidProfileOption', function(option, value)
+        --
+        -- print('SetRaidProfileOption', option, value);
+        self:UpdateState(nil);
+    end)
+
+    local updateInterval = 0.15;
+    self.LastUpdate = GetTime()
+    hooksecurefunc('CompactRaidFrameManager_ResizeFrame_UpdateContainerSize', function(manager)
+        --
+        if GetTime() - self.LastUpdate >= updateInterval then
+            self.LastUpdate = GetTime()
+            -- print('CompactRaidFrameManager_ResizeFrame_UpdateContainerSize', manager.container:GetHeight())
+            self:UpdateState(nil)
+        else
+        end
+    end)
+end
+
+function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
+    -- self:ClearAllPoints()
+    -- local parent = _G[state.anchorFrame]
+    -- self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    -- self:SetScale(state.scale)
+
+    local settings = GetRaidProfileFlattenedOptions(GetActiveRaidProfile());
+    local maxToShow = self.MaxToShow;
+    local gap = 0;
+
+    local manager = CompactRaidFrameManager;
+    local managerSize = manager.container:GetHeight();
+
+    if settings.displayMainTankAndAssist then
+        for k, v in ipairs(self.AssistFrames) do
+            --
+            v:Show()
+            v:UpdateState(settings)
+        end
+
+        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+        self:ClearAllPoints()
+        self:SetPoint('TOPLEFT', f, 'TOPLEFT', 4 + settings.frameWidth, -7)
+        self:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    else
+        for k, v in ipairs(self.AssistFrames) do
+            --
+            v:Hide()
+        end
+
+        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+        self:ClearAllPoints()
+        self:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
+        self:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    end
+
+    -- local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+
+    --     local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
+    --                                  'DFEditModePreviewRaidFrameTemplate')
+    --     fakeRaid:OnLoad()
+    --     fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
+
+    if settings.keepGroupsTogether then
+        local borderSize = (settings.displayBorder and 8) or 0;
+        if settings.horizontalGroups then
+            local maxRows = math.floor(managerSize / (settings.frameHeight + 14)) -- 14 = title
+            maxRows = math.min(maxRows, 8)
+            maxRows = math.max(maxRows, 1)
+            -- print('maxRows:', maxRows)
+            for k, v in ipairs(self.PartyFrames) do
+                --
+                if k > maxToShow then
+                    v:Hide()
+                else
+                    v:Show()
+                    v:UpdateState(settings)
+
+                    local mod = k % 5;
+                    -- print(k, mod)
+                    if k == 1 then
+                        -- first stays
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0 - 14);
+                    elseif mod == 1 then
+                        -- header
+                        local groupIndex = 1 + (k - mod) / 5; -- 1,2,3             
+
+                        local column = math.floor((groupIndex - 1) / maxRows) + 1;
+                        local row = groupIndex - maxRows * (column - 1);
+
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', (column - 1) * 5 * settings.frameWidth,
+                                   -(row - 1) * (settings.frameHeight + 14) - 14);
+                    else
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'TOPRIGHT', 0, 0);
+                    end
+                end
+            end
+        else
+            local maxRows = math.floor(managerSize / (5 * settings.frameHeight + 14)) -- 14 = title
+            if maxRows < 1 then
+                maxRows = 1
+            elseif maxRows > 1 then
+                maxRows = 2;
+            end
+            -- print('maxRows:', maxRows)
+            for k, v in ipairs(self.PartyFrames) do
+                --
+                if k > maxToShow then
+                    v:Hide()
+                else
+                    v:Show()
+                    v:UpdateState(settings)
+
+                    local mod = k % 5;
+                    -- print(k, mod)
+                    if k == 1 then
+                        -- first stays
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0 + borderSize, 0 - 14);
+                        -- print(k, 1)
+                    elseif mod == 1 then
+                        -- header
+                        local groupIndex = 1 + (k - mod) / 5; -- 1,2,3
+                        local groupIndexZero = groupIndex - 1;
+                        -- print(k, groupIndex)
+
+                        if maxRows == 1 then
+                            v:ClearAllPoints();
+                            v:SetPoint('TOPLEFT', self, 'TOPLEFT',
+                                       (((k - mod) / 5)) * (settings.frameWidth + 2 * borderSize), 0 - 14);
+                        else
+                            if groupIndex % 2 == 0 then
+                                -- 2,4
+                                v:ClearAllPoints();
+                                v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap - 14 - borderSize);
+                            else
+                                -- 3,5
+                                v:ClearAllPoints();
+                                v:SetPoint('TOPLEFT', self, 'TOPLEFT', (((k - 5 * (math.floor(groupIndex / 2)) - mod) /
+                                               5)) * (settings.frameWidth + 2 * borderSize), 0 - 14);
+                            end
+                        end
+                    else
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap);
+                    end
+                end
+            end
+        end
+    else
+        local maxRows = math.floor(managerSize / settings.frameHeight)
+        -- print('maxRows:', maxRows)
+        for k, v in ipairs(self.PartyFrames) do
+            --
+            if k > maxToShow then
+                v:Hide()
+            else
+                v:Show()
+                v:UpdateState(settings)
+                if k == 1 then
+                    -- first stays
+                    v:ClearAllPoints();
+                    v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+                    -- print(k, 1, 1)
+                else
+                    local zeroIndex = k - 1;
+                    local column = 1 + math.floor(zeroIndex / maxRows);
+                    local row = 1 + (zeroIndex % maxRows);
+
+                    -- print(k, column, row)
+                    v:ClearAllPoints()
+                    v:SetPoint('TOPLEFT', self, 'TOPLEFT', (column - 1) * settings.frameWidth,
+                               -(row - 1) * settings.frameHeight)
+                end
+            end
+        end
+    end
+
+    self:UpdateVisibility()
+end
+
+function DragonflightUIEditModePreviewRaidFrameMixin:UpdateVisibility()
+    -- if (GetDisplayedAllyFrames() ~= "party") then
+    --     for k, v in ipairs(self.PartyFrames) do
+    --         --           
+    --         v:Show()
+    --     end
+    --     return;
+    -- end
+    -- for k, v in ipairs(self.PartyFrames) do
+    --     --
+    --     if UnitExists('party' .. k) then
+    --         v:Hide()
+    --     else
+    --         v:Show()
+    --     end
+    -- end
+end
+
+function DragonflightUIEditModePreviewRaidFrameMixin:OnEvent(event, arg1, ...)
+    -- print(event, arg1, ...)
+
+    -- if event == 'GROUP_ROSTER_UPDATE' then
+    --     --
+    --     -- print('GROUP_ROSTER_UPDATE')
+    --     self:UpdateVisibility()
+    -- elseif event == 'CVAR_UPDATE' and arg1 == 'useCompactPartyFrames' then
+    --     self:UpdateVisibility()
+    -- end
+end
+
+------ individual raid member
+DragonflightUIEditModePreviewRaidMixin = {}
+Mixin(DragonflightUIEditModePreviewRaidMixin, DragonflightUIEditModePreviewTargetMixin)
+
+function DragonflightUIEditModePreviewRaidMixin:OnLoad()
+    -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewRaidMixin:OnLoad()')
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    self:SetSize(sizeX, sizeY)
+    self:SetupFrame()
+    self:SetRandomUnit()
+end
+
+local NATIVE_UNIT_FRAME_HEIGHT = 36;
+local NATIVE_UNIT_FRAME_WIDTH = 72;
+-- DefaultCompactUnitFrameSetupOptions = {
+-- 	displayPowerBar = true,
+-- 	height = NATIVE_UNIT_FRAME_HEIGHT,
+-- 	width = NATIVE_UNIT_FRAME_WIDTH,
+-- 	displayBorder = true,
+-- }
+
+function DragonflightUIEditModePreviewRaidMixin:SetupFrame()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local frame = self;
+
+    local options = DefaultCompactUnitFrameSetupOptions;
+    local componentScale = min(options.height / NATIVE_UNIT_FRAME_HEIGHT, options.width / NATIVE_UNIT_FRAME_WIDTH);
+
+    frame:SetAlpha(1);
+
+    frame:SetSize(options.width, options.height);
+    local powerBarHeight = 8;
+    local powerBarUsedHeight = options.displayPowerBar and powerBarHeight or 0;
+
+    frame.background = frame:CreateTexture('DragonflightUIBackgroundTexture')
+    frame.background:SetAllPoints()
+    frame.background:SetTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Bg");
+    frame.background:SetTexCoord(0, 1, 0, 0.53125);
+
+    frame.healthBar = CreateFrame('StatusBar', nil, self)
+    frame.healthBar:SetMinMaxValues(0, 100)
+    frame.healthBar:SetValue(69)
+    -- frame.healthBar:SetFrameStrata('LOW')
+
+    function frame.healthBar:SetClass(class)
+        if class == '' then
+            frame.healthBar:SetStatusBarColor(1, 1, 1, 1)
+        else
+            frame.healthBar:SetStatusBarColor(DF:GetClassColor(class, 1))
+        end
+    end
+    frame.healthBar:SetClass('PRIEST')
+
+    frame.healthBar:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1);
+    frame.healthBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1);
+    frame.healthBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1 + powerBarUsedHeight);
+
+    frame.healthBar:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Fill");
+    frame.healthBar:SetStatusBarColor(0.0, 1.0, 0.0) -- 
+    frame.healthBar:SetFrameLevel(7)
+
+    frame.powerBar = CreateFrame('StatusBar', nil, self)
+    frame.powerBar:SetMinMaxValues(0, 100)
+    frame.powerBar:SetValue(100)
+
+    frame.powerBar.background = frame.powerBar:CreateTexture(nil, 'BACKGROUND')
+    frame.powerBar.background:SetAllPoints()
+
+    if (frame.powerBar) then
+        if (options.displayPowerBar) then
+            if (options.displayBorder) then
+                frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, -2);
+            else
+                frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, 0);
+            end
+            frame.powerBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1);
+            frame.powerBar:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Resource-Fill");
+            frame.powerBar.background:SetTexture("Interface\\RaidFrame\\Raid-Bar-Resource-Background");
+            frame.powerBar:Show();
+        else
+            frame.powerBar:Hide();
+        end
+    end
+
+    function frame.powerBar:SetPowerType(powerType)
+        local r, g, b;
+        local info = PowerBarColor[powerType];
+        if (info) then
+            r, g, b = info.r, info.g, info.b;
+        else
+            if (not altR) then
+                -- couldn't find a power token entry...default to indexing by power type or just mana if we don't have that either
+                info = PowerBarColor[powerType] or PowerBarColor["MANA"];
+                r, g, b = info.r, info.g, info.b;
+            else
+                r, g, b = altR, altG, altB;
+            end
+        end
+        frame.powerBar:SetStatusBarColor(r, g, b);
+    end
+
+    frame.iconFrame = CreateFrame('FRAME', 'DragonflightUIIconFrame', frame)
+    -- frame.iconFrame:SetAllPoints()
+    frame.iconFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
+    frame.iconFrame:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, 0)
+    frame.iconFrame:SetHeight(12)
+
+    -- frame.iconFrame:SetSize(55, 55)
+    frame.iconFrame:SetFrameLevel(10)
+
+    frame.roleIcon = frame.iconFrame:CreateTexture('DragonflightUIRoleIcon', 'ARTWORK')
+    frame.roleIcon:ClearAllPoints();
+    frame.roleIcon:SetPoint("TOPLEFT", frame, 'TOPLEFT', 3, -2);
+    frame.roleIcon:SetSize(12, 12);
+    -- frame.roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
+
+    -- function frame.roleIcon:UpdateRoleIcon(role)
+    --     frame.roleIcon:Show()
+    --     if role == 'TANK' then
+    --         frame.roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
+    --     elseif role == 'HEALER' then
+    --         frame.roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
+    --     elseif role == 'DAMAGER' then
+    --         frame.roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+    --     else
+    --         frame.roleIcon:Hide()
+    --     end
+    -- end
+    function frame.roleIcon:UpdateRoleIcon(role)
+        frame.roleIcon:Show()
+        if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
+            frame.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");
+            frame.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role));
+        elseif (role == 'MAINTANK' or role == 'MAINASSIST') then
+            frame.roleIcon:SetTexture("Interface\\GroupFrame\\UI-Group-" .. role .. "Icon");
+            frame.roleIcon:SetTexCoord(0, 1, 0, 1);
+        else
+            frame.roleIcon:Hide()
+        end
+    end
+    frame.roleIcon:UpdateRoleIcon('TANK')
+
+    frame.name = frame.iconFrame:CreateFontString('DragonflightUIName', 'ARTWORK', 'GameFontHighlightSmall')
+    frame.name:SetPoint("TOPLEFT", frame.roleIcon, "TOPRIGHT", 0, -1);
+    frame.name:SetPoint("TOPRIGHT", frame, 'TOPRIGHT', -3, -3);
+    frame.name:SetJustifyH("LEFT");
+    frame.name:SetWordWrap(false);
+    frame.name:SetText('Zimt <3')
+
+    function frame.name:SetName(name)
+        frame.name:SetText(name)
+    end
+    frame.name:SetName('Zimtschnecke')
+
+    frame.statusText = frame.powerBar:CreateFontString('DragonflightUIStatusText', 'ARTWORK', 'GameFontDisable')
+
+    local NATIVE_FONT_SIZE = 12;
+    local fontName, fontSize, fontFlags = frame.statusText:GetFont();
+    frame.statusText:SetFont('GameFontDisable', NATIVE_FONT_SIZE * componentScale, fontFlags);
+    frame.statusText:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 3, options.height / 3 - 2);
+    frame.statusText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -3, options.height / 3 - 2);
+    frame.statusText:SetHeight(12 * componentScale);
+    frame.statusText:SetText('100%')
+
+    frame.horizTopBorder = frame.healthBar:CreateTexture(nil, 'BORDER')
+    frame.horizBottomBorder = frame.healthBar:CreateTexture(nil, 'BORDER')
+    frame.vertLeftBorder = frame.healthBar:CreateTexture(nil, 'BORDER')
+    frame.vertRightBorder = frame.healthBar:CreateTexture(nil, 'BORDER')
+    frame.horizDivider = frame.healthBar:CreateTexture(nil, 'BORDER')
+
+    self.HealthBar = frame.healthBar
+    self.ManaBar = frame.powerBar
+    self.FontName = frame.name
+    self.RoleIcon = frame.roleIcon
+end
+
+function DragonflightUIEditModePreviewRaidMixin:UpdateState(state)
+    --     [05:21:29] Dump: value=GetRaidProfileFlattenedOptions(GetActiveRaidProfile())
+    -- [05:21:29] [1]={
+    -- [05:21:29]   autoActivate2Players=false,
+    -- [05:21:29]   horizontalGroups=false,
+    -- [05:21:29]   shown=true,
+    -- [05:21:29]   healthText="health",
+    -- [05:21:29]   displayNonBossDebuffs=true,
+    -- [05:21:29]   autoActivatePvE=false,
+    -- [05:21:29]   autoActivate3Players=false,
+    -- [05:21:29]   locked=true,
+    -- [05:21:29]   keepGroupsTogether=false,
+    -- [05:21:29]   displayBorder=false,
+    -- [05:21:29]   frameHeight=50,
+    -- [05:21:29]   autoActivatePvP=false,
+    -- [05:21:29]   autoActivate40Players=false,
+    -- [05:21:29]   displayPowerBar=true,
+    -- [05:21:29]   displayOnlyDispellableDebuffs=false,
+    -- [05:21:29]   autoActivate20Players=false,
+    -- [05:21:29]   autoActivate15Players=false,
+    -- [05:21:29]   autoActivate5Players=false,
+    -- [05:21:29]   autoActivate10Players=false,
+    -- [05:21:29]   displayMainTankAndAssist=false,
+    -- [05:21:29]   useClassColors=true,
+    -- [05:21:29]   sortBy="group",
+    -- [05:21:29]   displayPets=true,
+    -- [05:21:29]   frameWidth=120
+    -- [05:21:29] }
+    local frame = self;
+    local componentScale = min(state.frameHeight / NATIVE_UNIT_FRAME_HEIGHT, state.frameWidth / NATIVE_UNIT_FRAME_WIDTH);
+
+    if self.GroupHeader then
+        if state.keepGroupsTogether then
+            self.GroupHeader:Show()
+
+            if state.horizontalGroups then
+                self.GroupHeader:ClearAllPoints()
+                self.GroupHeader:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 0)
+            else
+                self.GroupHeader:ClearAllPoints()
+                self.GroupHeader:SetPoint('BOTTOM', frame, 'TOP', 0, 0)
+            end
+        else
+            self.GroupHeader:Hide()
+        end
+    end
+
+    self:SetSize(state.frameWidth, state.frameHeight)
+
+    if state.useClassColors then
+        self.HealthBar:SetClass(self.Unit.class)
+    else
+        self.HealthBar:SetClass('')
+    end
+
+    local powerBarHeight = 8;
+    local powerBarUsedHeight = state.displayPowerBar and powerBarHeight or 0;
+    frame.healthBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1 + powerBarUsedHeight);
+
+    if (frame.powerBar) then
+        if (state.displayPowerBar) then
+            if (state.displayBorder) then
+                frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, -2);
+            else
+                frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, 0);
+            end
+            frame.powerBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1);
+            -- frame.powerBar:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Resource-Fill", "BORDER");
+            -- frame.powerBar.background:SetTexture("Interface\\RaidFrame\\Raid-Bar-Resource-Background");
+            frame.powerBar:Show();
+        else
+            frame.powerBar:Hide();
+        end
+    end
+
+    local NATIVE_FONT_SIZE = 12;
+    local fontName, fontSize, fontFlags = frame.statusText:GetFont();
+    frame.statusText:SetFont(fontName, NATIVE_FONT_SIZE * componentScale, fontFlags);
+    frame.statusText:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 3, state.frameHeight / 3 - 2);
+    frame.statusText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -3, state.frameHeight / 3 - 2);
+    frame.statusText:SetHeight(12 * componentScale);
+
+    if (state.displayBorder) then
+        frame.horizTopBorder:ClearAllPoints();
+        frame.horizTopBorder:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -7);
+        frame.horizTopBorder:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 0, -7);
+        frame.horizTopBorder:SetTexture("Interface\\RaidFrame\\Raid-HSeparator");
+        frame.horizTopBorder:SetHeight(8);
+        frame.horizTopBorder:Show();
+
+        frame.horizBottomBorder:ClearAllPoints();
+        frame.horizBottomBorder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 1);
+        frame.horizBottomBorder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, 1);
+        frame.horizBottomBorder:SetTexture("Interface\\RaidFrame\\Raid-HSeparator");
+        frame.horizBottomBorder:SetHeight(8);
+        frame.horizBottomBorder:Show();
+
+        frame.vertLeftBorder:ClearAllPoints();
+        frame.vertLeftBorder:SetPoint("TOPRIGHT", frame, "TOPLEFT", 7, 0);
+        frame.vertLeftBorder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 7, 0);
+        frame.vertLeftBorder:SetTexture("Interface\\RaidFrame\\Raid-VSeparator");
+        frame.vertLeftBorder:SetWidth(8);
+        frame.vertLeftBorder:Show();
+
+        frame.vertRightBorder:ClearAllPoints();
+        frame.vertRightBorder:SetPoint("TOPLEFT", frame, "TOPRIGHT", -1, 0);
+        frame.vertRightBorder:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", -1, 0);
+        frame.vertRightBorder:SetTexture("Interface\\RaidFrame\\Raid-VSeparator");
+        frame.vertRightBorder:SetWidth(8);
+        frame.vertRightBorder:Show();
+
+        if (state.displayPowerBar) then
+            frame.horizDivider:ClearAllPoints();
+            frame.horizDivider:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 1 + powerBarUsedHeight);
+            frame.horizDivider:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, 1 + powerBarUsedHeight);
+            frame.horizDivider:SetTexture("Interface\\RaidFrame\\Raid-HSeparator");
+            frame.horizDivider:SetHeight(8);
+            frame.horizDivider:Show();
+        else
+            frame.horizDivider:Hide();
+        end
+    else
+        frame.horizTopBorder:Hide();
+        frame.horizBottomBorder:Hide();
+        frame.vertLeftBorder:Hide();
+        frame.vertRightBorder:Hide();
+
+        frame.horizDivider:Hide();
+    end
+end
