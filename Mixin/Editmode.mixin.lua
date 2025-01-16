@@ -706,6 +706,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     displayFrame:SetPoint('BOTTOMRIGHT', editModeFrame, 'TOPRIGHT', 0, -80 - optionsH)
     displayFrame:SetHeight(optionsH)
 
+    if numOptions == 0 then displayFrame:Hide() end
+
     local extraH = 0;
     if data.extra then
         --  
