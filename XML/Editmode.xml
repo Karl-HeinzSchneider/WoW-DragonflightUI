@@ -114,4 +114,8 @@
 	</Frame>
 	<Frame name="DFEditModePreviewPartyTemplate" mixin="DragonflightUIEditModePreviewPartyMixin" virtual="true">
 	</Frame>
+	<Frame name="DFEditModePreviewRaidFrameTemplate" mixin="DragonflightUIEditModePreviewRaidFrameMixin" virtual="true" hidden="true">
+	</Frame>
+	<Frame name="DFEditModePreviewRaidTemplate" mixin="DragonflightUIEditModePreviewRaidMixin" virtual="true">
+	</Frame>
 </Ui>
