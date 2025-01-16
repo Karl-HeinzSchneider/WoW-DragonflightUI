@@ -1286,11 +1286,12 @@ if true then
                 Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             end,
-            order = 16,
+            order = 5,
             blizzard = true,
             editmode = true
         },
-        keepGroupTogether = {
+        headerTaint = {type = 'header', name = 'May Cause Taint Issues - /reload after setup', desc = '', order = 10},
+        keepGroupsTogether = {
             type = 'toggle',
             name = COMPACT_UNIT_FRAME_PROFILE_KEEPGROUPSTOGETHER,
             desc = OPTION_TOOLTIP_KEEP_GROUPS_TOGETHER,
@@ -1299,12 +1300,22 @@ if true then
             blizzard = true,
             editmode = true
         },
-        keepHorizontalGroup = {
+        horizontalGroups = {
             type = 'toggle',
             name = COMPACT_UNIT_FRAME_PROFILE_HORIZONTALGROUPS,
             desc = '',
             proxy = 'PROXY_RAID_FRAME_KEEP_HORIZONTAL_GROUPS',
             order = 20.2,
+            blizzard = true,
+            editmode = true
+        },
+        sortBy = {
+            type = 'select',
+            name = COMPACT_UNIT_FRAME_PROFILE_SORTBY,
+            desc = '',
+            values = {['role'] = 'role', ['group'] = 'group', ['alphabetical'] = 'alphabetical'},
+            proxy = 'PROXY_RAID_FRAME_SORT_BY',
+            order = 20.21,
             blizzard = true,
             editmode = true
         },
@@ -1367,9 +1378,43 @@ if true then
             name = DISPLAY_ONLY_DISPELLABLE_DEBUFFS,
             desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYONLYDISPELLABLEDEBUFFS,
             proxy = 'PROXY_RAID_FRAME_DISPELLABLE_DEBUFFS',
-            order = 20.10,
+            order = 21.1,
             blizzard = true,
             editmode = true
+        },
+        healthText = {
+            type = 'select',
+            name = COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+            desc = OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+            values = {['none'] = 'none', ['health'] = 'health', ['losthealth'] = 'losthealth', ['perc'] = 'perc'},
+            proxy = 'PROXY_RAID_HEALTH_TEXT',
+            order = 21.2,
+            blizzard = true,
+            editmode = true
+        },
+        frameHeight = {
+            type = 'range',
+            name = COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT,
+            desc = '',
+            proxy = 'PROXY_RAID_FRAME_HEIGHT',
+            min = 20,
+            max = 128,
+            bigStep = 1,
+            order = 22.1,
+            editmode = true,
+            blizzard = true
+        },
+        frameWidth = {
+            type = 'range',
+            name = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH,
+            desc = '',
+            proxy = 'PROXY_RAID_FRAME_WIDTH',
+            min = 20,
+            max = 256,
+            bigStep = 1,
+            order = 22.2,
+            editmode = true,
+            blizzard = true
         }
     }
 
@@ -1435,6 +1480,9 @@ if true then
         if moreOptions[sub].proxy then
             -- proxy
             Settings.SetValue(moreOptions[sub].proxy, value);
+            -- InterfaceOverrides.SetRaidProfileOption(sub, value);
+            -- local isSecure, taint = issecurevariable('CompactRaidGroup1Member1')
+            -- print('SECURE? ', isSecure, ', TAINT? ', taint)       
         end
     end
 end
