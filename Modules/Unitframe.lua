@@ -4745,12 +4745,12 @@ function Module:TakePicture()
         pt:SetSize(size + 2 * border, size + 2 * border);
         pt:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 
-        local tex = pt:CreateTexture();
+        local tex = pt:CreateTexture(nil, 'BACKGROUND');
         tex:SetColorTexture(0, 0, 0, 1)
         tex:SetPoint('TOPLEFT')
         tex:SetPoint('BOTTOMRIGHT')
 
-        local port = pt:CreateTexture()
+        local port = pt:CreateTexture(nil, 'OVERLAY')
         port:SetPoint('TOPLEFT', tex, 'TOPLEFT', border, -border)
         port:SetPoint('BOTTOMRIGHT', tex, 'BOTTOMRIGHT', -border, border)
         pt.Portrait = port;
