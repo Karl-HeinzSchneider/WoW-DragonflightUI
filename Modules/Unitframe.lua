@@ -2980,7 +2980,7 @@ function Module.ChangeTargetFrame()
         frame.TargetFrameBorder = border
     end
 
-    TargetFramePortrait:SetDrawLayer('ARTWORK', 1)
+    TargetFramePortrait:SetDrawLayer('BACKGROUND', -1)
     TargetFramePortrait:SetSize(56, 56)
     local CorrectionY = -3
     local CorrectionX = -5
@@ -3465,7 +3465,7 @@ function Module.ChangeFocusFrame()
         frame.FocusFrameBorder = border
     end
 
-    FocusFramePortrait:SetDrawLayer('ARTWORK', 1)
+    FocusFramePortrait:SetDrawLayer('BACKGROUND', -1)
     FocusFramePortrait:SetSize(56, 56)
     local CorrectionY = -3
     local CorrectionX = -5
@@ -4807,7 +4807,7 @@ function Module.Wrath()
     Module.HookPlayerArt()
     Module.HookDrag()
 
-    Module.ApplyPortraitMask()
+    -- Module.ApplyPortraitMask()
     Module.HookClassIcon()
     Module.ChangePartyFrame()
     Module.ChangePetFrame()
@@ -4842,7 +4842,7 @@ function Module.Era()
     Module.HookPlayerArt()
     Module.HookDrag()
 
-    Module.ApplyPortraitMask()
+    -- Module.ApplyPortraitMask()
     Module.HookClassIcon()
     Module.ChangePartyFrame()
     Module.AddMobhealth()
