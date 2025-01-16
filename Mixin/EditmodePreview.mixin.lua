@@ -667,6 +667,27 @@ function DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()
         self.PartyFrames[k] = member;
     end
 
+    self.AssistFrames = {};
+    for k = 1, 2 do
+        -- 
+        local member = CreateFrame('Frame', 'DragonflightUIEditModeRaid' .. k .. 'Preview', self,
+                                   'DFEditModePreviewRaidTemplate')
+        member:OnLoad()
+        if k == 1 then
+            member:SetPoint('TOPRIGHT', self, 'TOPLEFT', 0, 0)
+        else
+            member:SetPoint('TOPLEFT', self.AssistFrames[k - 1], 'BOTTOMLEFT', 0, -gap)
+        end
+        self.AssistFrames[k] = member;
+
+        if k % 2 == 1 then
+            member.roleIcon:UpdateRoleIcon('MAINTANK')
+        else
+            member.roleIcon:UpdateRoleIcon('MAINASSIST')
+        end
+
+    end
+
     -- self:SetScript('OnEvent', self.OnEvent)
     -- self:RegisterEvent('GROUP_ROSTER_UPDATE')
     -- self:RegisterEvent("CVAR_UPDATE")
@@ -706,6 +727,36 @@ function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
 
     local manager = CompactRaidFrameManager;
     local managerSize = manager.container:GetHeight();
+
+    if settings.displayMainTankAndAssist then
+        for k, v in ipairs(self.AssistFrames) do
+            --
+            v:Show()
+            v:UpdateState(settings)
+        end
+
+        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+        self:ClearAllPoints()
+        self:SetPoint('TOPLEFT', f, 'TOPLEFT', 4 + settings.frameWidth, -7)
+        self:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    else
+        for k, v in ipairs(self.AssistFrames) do
+            --
+            v:Hide()
+        end
+
+        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+        self:ClearAllPoints()
+        self:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
+        self:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    end
+
+    -- local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+
+    --     local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
+    --                                  'DFEditModePreviewRaidFrameTemplate')
+    --     fakeRaid:OnLoad()
+    --     fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
 
     if settings.keepGroupsTogether then
         if settings.horizontalGroups then
@@ -972,16 +1023,28 @@ function DragonflightUIEditModePreviewRaidMixin:SetupFrame()
     frame.roleIcon:ClearAllPoints();
     frame.roleIcon:SetPoint("TOPLEFT", frame, 'TOPLEFT', 3, -2);
     frame.roleIcon:SetSize(12, 12);
-    frame.roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
+    -- frame.roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
 
+    -- function frame.roleIcon:UpdateRoleIcon(role)
+    --     frame.roleIcon:Show()
+    --     if role == 'TANK' then
+    --         frame.roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
+    --     elseif role == 'HEALER' then
+    --         frame.roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
+    --     elseif role == 'DAMAGER' then
+    --         frame.roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+    --     else
+    --         frame.roleIcon:Hide()
+    --     end
+    -- end
     function frame.roleIcon:UpdateRoleIcon(role)
         frame.roleIcon:Show()
-        if role == 'TANK' then
-            frame.roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
-        elseif role == 'HEALER' then
-            frame.roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
-        elseif role == 'DAMAGER' then
-            frame.roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+        if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
+            frame.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");
+            frame.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role));
+        elseif (role == 'MAINTANK' or role == 'MAINASSIST') then
+            frame.roleIcon:SetTexture("Interface\\GroupFrame\\UI-Group-" .. role .. "Icon");
+            frame.roleIcon:SetTexCoord(0, 1, 0, 1);
         else
             frame.roleIcon:Hide()
         end
