@@ -681,7 +681,7 @@ function DragonflightUIEditModePreviewRaidFrameMixin:OnLoad()
         self:UpdateState(nil);
     end)
 
-    local updateInterval = 0.25;
+    local updateInterval = 0.15;
     self.LastUpdate = GetTime()
     hooksecurefunc('CompactRaidFrameManager_ResizeFrame_UpdateContainerSize', function(manager)
         --
@@ -708,53 +708,90 @@ function DragonflightUIEditModePreviewRaidFrameMixin:UpdateState(state)
     local managerSize = manager.container:GetHeight();
 
     if settings.keepGroupsTogether then
-        local maxRows = math.floor(managerSize / (5 * settings.frameHeight + 14)) -- 14 = title
-        if maxRows < 1 then
-            maxRows = 1
-        elseif maxRows > 1 then
-            maxRows = 2;
-        end
-        -- print('maxRows:', maxRows)
-        for k, v in ipairs(self.PartyFrames) do
-            --
-            if k > maxToShow then
-                v:Hide()
-            else
-                v:Show()
-                v:UpdateState(settings)
-
-                local mod = k % 5;
-                -- print(k, mod)
-                if k == 1 then
-                    -- first stays
-                    v:ClearAllPoints();
-                    v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0 - 14);
-                    -- print(k, 1)
-                elseif mod == 1 then
-                    -- header
-                    local groupIndex = 1 + (k - mod) / 5; -- 1,2,3
-                    local groupIndexZero = groupIndex - 1;
-                    -- print(k, groupIndex)
-
-                    if maxRows == 1 then
-                        v:ClearAllPoints();
-                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', (((k - mod) / 5)) * settings.frameWidth, 0 - 14);
-                    else
-                        if groupIndex % 2 == 0 then
-                            -- 2,4
-                            v:ClearAllPoints();
-                            v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap - 14);
-                        else
-                            -- 3,5
-                            v:ClearAllPoints();
-                            v:SetPoint('TOPLEFT', self, 'TOPLEFT',
-                                       (((k - 5 * (math.floor(groupIndex / 2)) - mod) / 5)) * settings.frameWidth,
-                                       0 - 14);
-                        end
-                    end
+        if settings.horizontalGroups then
+            local maxRows = math.floor(managerSize / (settings.frameHeight + 14)) -- 14 = title
+            maxRows = math.min(maxRows, 8)
+            maxRows = math.max(maxRows, 1)
+            -- print('maxRows:', maxRows)
+            for k, v in ipairs(self.PartyFrames) do
+                --
+                if k > maxToShow then
+                    v:Hide()
                 else
-                    v:ClearAllPoints();
-                    v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap);
+                    v:Show()
+                    v:UpdateState(settings)
+
+                    local mod = k % 5;
+                    -- print(k, mod)
+                    if k == 1 then
+                        -- first stays
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0 - 14);
+                    elseif mod == 1 then
+                        -- header
+                        local groupIndex = 1 + (k - mod) / 5; -- 1,2,3             
+
+                        local column = math.floor((groupIndex - 1) / maxRows) + 1;
+                        local row = groupIndex - maxRows * (column - 1);
+
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', (column - 1) * 5 * settings.frameWidth,
+                                   -(row - 1) * (settings.frameHeight + 14) - 14);
+                    else
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'TOPRIGHT', 0, 0);
+                    end
+                end
+            end
+        else
+            local maxRows = math.floor(managerSize / (5 * settings.frameHeight + 14)) -- 14 = title
+            if maxRows < 1 then
+                maxRows = 1
+            elseif maxRows > 1 then
+                maxRows = 2;
+            end
+            -- print('maxRows:', maxRows)
+            for k, v in ipairs(self.PartyFrames) do
+                --
+                if k > maxToShow then
+                    v:Hide()
+                else
+                    v:Show()
+                    v:UpdateState(settings)
+
+                    local mod = k % 5;
+                    -- print(k, mod)
+                    if k == 1 then
+                        -- first stays
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0 - 14);
+                        -- print(k, 1)
+                    elseif mod == 1 then
+                        -- header
+                        local groupIndex = 1 + (k - mod) / 5; -- 1,2,3
+                        local groupIndexZero = groupIndex - 1;
+                        -- print(k, groupIndex)
+
+                        if maxRows == 1 then
+                            v:ClearAllPoints();
+                            v:SetPoint('TOPLEFT', self, 'TOPLEFT', (((k - mod) / 5)) * settings.frameWidth, 0 - 14);
+                        else
+                            if groupIndex % 2 == 0 then
+                                -- 2,4
+                                v:ClearAllPoints();
+                                v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap - 14);
+                            else
+                                -- 3,5
+                                v:ClearAllPoints();
+                                v:SetPoint('TOPLEFT', self, 'TOPLEFT',
+                                           (((k - 5 * (math.floor(groupIndex / 2)) - mod) / 5)) * settings.frameWidth,
+                                           0 - 14);
+                            end
+                        end
+                    else
+                        v:ClearAllPoints();
+                        v:SetPoint('TOPLEFT', self.PartyFrames[k - 1], 'BOTTOMLEFT', 0, -gap);
+                    end
                 end
             end
         end
@@ -880,6 +917,7 @@ function DragonflightUIEditModePreviewRaidMixin:SetupFrame()
 
     frame.healthBar:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Fill");
     frame.healthBar:SetStatusBarColor(0.0, 1.0, 0.0) -- 
+    frame.healthBar:SetFrameLevel(7)
 
     frame.powerBar = CreateFrame('StatusBar', nil, self)
     frame.powerBar:SetMinMaxValues(0, 100)
@@ -921,7 +959,16 @@ function DragonflightUIEditModePreviewRaidMixin:SetupFrame()
         frame.powerBar:SetStatusBarColor(r, g, b);
     end
 
-    frame.roleIcon = frame.powerBar:CreateTexture('DragonflightUIRoleIcon', 'ARTWORK')
+    frame.iconFrame = CreateFrame('FRAME', 'DragonflightUIIconFrame', frame)
+    -- frame.iconFrame:SetAllPoints()
+    frame.iconFrame:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
+    frame.iconFrame:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, 0)
+    frame.iconFrame:SetHeight(12)
+
+    -- frame.iconFrame:SetSize(55, 55)
+    frame.iconFrame:SetFrameLevel(10)
+
+    frame.roleIcon = frame.iconFrame:CreateTexture('DragonflightUIRoleIcon', 'ARTWORK')
     frame.roleIcon:ClearAllPoints();
     frame.roleIcon:SetPoint("TOPLEFT", frame, 'TOPLEFT', 3, -2);
     frame.roleIcon:SetSize(12, 12);
@@ -941,10 +988,11 @@ function DragonflightUIEditModePreviewRaidMixin:SetupFrame()
     end
     frame.roleIcon:UpdateRoleIcon('TANK')
 
-    frame.name = frame.powerBar:CreateFontString('DragonflightUIName', 'ARTWORK', 'GameFontHighlightSmall')
+    frame.name = frame.iconFrame:CreateFontString('DragonflightUIName', 'ARTWORK', 'GameFontHighlightSmall')
     frame.name:SetPoint("TOPLEFT", frame.roleIcon, "TOPRIGHT", 0, -1);
-    frame.name:SetPoint("TOPRIGHT", -3, -3);
+    frame.name:SetPoint("TOPRIGHT", frame, 'TOPRIGHT', -3, -3);
     frame.name:SetJustifyH("LEFT");
+    frame.name:SetWordWrap(false);
     frame.name:SetText('Zimt <3')
 
     function frame.name:SetName(name)
@@ -1008,6 +1056,14 @@ function DragonflightUIEditModePreviewRaidMixin:UpdateState(state)
     if self.GroupHeader then
         if state.keepGroupsTogether then
             self.GroupHeader:Show()
+
+            if state.horizontalGroups then
+                self.GroupHeader:ClearAllPoints()
+                self.GroupHeader:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 0)
+            else
+                self.GroupHeader:ClearAllPoints()
+                self.GroupHeader:SetPoint('BOTTOM', frame, 'TOP', 0, 0)
+            end
         else
             self.GroupHeader:Hide()
         end

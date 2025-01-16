@@ -569,6 +569,8 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStart()
 
     self.isDragging = true;
     self.parent:StartMoving()
+
+    if self.DragStartFunc then self.DragStartFunc(); end
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnDragStop()
@@ -633,6 +635,8 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     self.ModuleRef:ApplySettings(self.ModuleSub or false)
     self.ModuleRef:RefreshOptionScreens()
     parent:Show()
+
+    if self.DragStopFunc then self.DragStopFunc(); end
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnMouseDown()
@@ -666,6 +670,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
 
     self.ShowFunction = data.showFunction;
     self.HideFunction = data.hideFunction;
+    self.DragStopFunc = data.dragStopFunction;
+    self.DragStartFunc = data.dragStartFunction;
 
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeSelectionOptionsTemplate');

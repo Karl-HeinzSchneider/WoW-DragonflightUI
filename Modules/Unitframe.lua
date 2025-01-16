@@ -2090,7 +2090,10 @@ function Module:AddEditMode()
         fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
         fakeRaid:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
 
-        -- fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', 0, 0)
+        fakeRaid:ClearAllPoints()
+        fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', -50, 50)
+        fakeRaid:SetParent(UIParent)
+
         fakeRaid:Show()
 
         Module.PreviewRaid = fakeRaid;
@@ -2138,6 +2141,11 @@ function Module:AddEditMode()
                     CompactRaidFrameManager_SetSetting('Locked', false)
                 end)
             end
+        end)
+
+        f.DFEditModeSelection:HookScript('OnDragStop', function()
+            --
+            CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
         end)
     end
 
