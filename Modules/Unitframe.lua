@@ -1270,14 +1270,14 @@ local optionsRaid = {
 }
 if true then
     local moreOptions = {
-        useCompactPartyFrames = {
-            type = 'toggle',
-            name = USE_RAID_STYLE_PARTY_FRAMES,
-            desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
-            order = 15,
-            blizzard = true,
-            editmode = false
-        },
+        -- useCompactPartyFrames = {
+        --     type = 'toggle',
+        --     name = USE_RAID_STYLE_PARTY_FRAMES,
+        --     desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
+        --     order = 15,
+        --     blizzard = true,
+        --     editmode = false
+        -- },
         raidFrameBtn = {
             type = 'execute',
             name = 'Raid Frame Settings',
@@ -1288,6 +1288,13 @@ if true then
             end,
             order = 5,
             blizzard = true,
+            editmode = false
+        },
+        headerTaint = {
+            type = 'header',
+            name = 'Use the blizzard settings, as setting them through addons taints the UI.',
+            desc = '',
+            order = 1,
             editmode = false
         }
         -- headerTaint = {type = 'header', name = 'May Cause Taint Issues - /reload after setup', desc = '', order = 10},
