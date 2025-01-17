@@ -24,7 +24,7 @@
 	<Frame name="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeFrameMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
 		<Size x="450" y="250" />
 		<Anchors>
-			<Anchor point="CENTER" y="150" />
+			<Anchor point="TOP" y="-100" />
 		</Anchors>
 		<Layers>
 			<Layer level="BORDER">

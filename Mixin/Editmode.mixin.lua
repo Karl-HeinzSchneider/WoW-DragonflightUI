@@ -675,6 +675,10 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
 
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeSelectionOptionsTemplate');
+    editModeFrame:ClearAllPoints()
+    editModeFrame:SetPoint('TOP', UIParent, 'TOP', 0, -100)
+    local dx = 4 + editModeFrame:GetWidth() / 2
+    editModeFrame:SetPoint('LEFT', UIParent, 'CENTER', dx, 0)
     editModeFrame.Header.Text:SetText(data.name)
     editModeFrame.BG.Bg:SetVertexColor(1, 0, 0, 1) -- TODO?
     self.SelectionOptions = editModeFrame
