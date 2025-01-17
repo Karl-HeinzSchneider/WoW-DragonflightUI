@@ -2085,6 +2085,7 @@ function Module:AddEditMode()
         local initRaid = function()
             --         
             local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+            _G['CompactRaidFrameManagerContainerResizeFrameResizer']:SetFrameLevel(15)
 
             local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
                                          'DFEditModePreviewRaidFrameTemplate')
