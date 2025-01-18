@@ -114,5 +114,19 @@ table.insert(DF.VIPTable, {
     displayTexture = 'schokobon'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Jagrune',
+    level = '60',
+    class = 'HUNTER',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = '',
+    displayID = 176, -- wolf
+    displayTexture = 'jag'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;
