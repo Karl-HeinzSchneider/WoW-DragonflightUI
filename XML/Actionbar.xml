@@ -18,6 +18,12 @@
 			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<Frame name="DragonflightUIFPSTemplate" mixin="DragonflightUIFPSMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnUpdate method="OnUpdate" />
+		</Scripts>
+	</Frame>
 	<Frame name="DragonflightUIDecoFrameTemplate" inherits="ButtonFrameTemplate" virtual="true">
 	</Frame>
 	<Frame name="DragonflightUIMicroMenuFrameTemplate" mixin="DragonflightUIMicroMenuMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
