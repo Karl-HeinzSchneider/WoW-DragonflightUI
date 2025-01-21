@@ -286,7 +286,7 @@ function DragonflightUIXPBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
     local state = self.state
 
-    if collapse then
+    if collapse and not state.EditModeActive then
         self:Hide()
         self:SetHeight(0.00000001)
         self.RestedBarMark:Hide()
@@ -468,7 +468,7 @@ function DragonflightUIRepBarMixin:Collapse(collapse)
     -- @TODO: add combatlock
     local state = self.state
 
-    if collapse then
+    if collapse and not state.EditModeActive then
         self:Hide()
         self:SetHeight(0.00000001)
     else
