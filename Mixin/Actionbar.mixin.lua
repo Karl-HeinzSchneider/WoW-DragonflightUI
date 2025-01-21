@@ -1377,6 +1377,8 @@ function DragonflightUIFPSMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
+    self:SetScale(state.scale)
+
     -- self:UpdateStateHandler(state)
 
     FramerateLabel:ClearAllPoints()
