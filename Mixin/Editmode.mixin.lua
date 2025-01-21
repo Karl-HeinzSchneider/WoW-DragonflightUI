@@ -62,6 +62,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
 
     self.AdvancedOptions = false;
     local advButton = self.AdvancedButton
+    advButton:Show()
     advButton:SetText('Advanced Options')
     advButton:SetScript('OnClick', function(button, buttonName, down)
         --
