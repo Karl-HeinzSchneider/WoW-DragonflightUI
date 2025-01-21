@@ -2384,6 +2384,37 @@ local fpsOptions = {
         }
     }
 }
+local optionsFPSEditmode = {
+    name = 'fps',
+    desc = 'fps',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.fps
+                local defaultsTable = defaults.profile.fps
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'fps')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -2774,6 +2805,25 @@ function Module:AddEditMode()
         end,
         moduleRef = self
     });
+
+    -- fps 
+    EditModeModule:AddEditModeToFrame(Module.FPSFrame)
+
+    Module.FPSFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'FPS'
+    end)
+
+    Module.FPSFrame.DFEditModeSelection:RegisterOptions({
+        name = 'FPS',
+        sub = 'fps',
+        advancedName = 'FPS',
+        options = fpsOptions,
+        extra = optionsFPSEditmode,
+        default = function()
+            setDefaultSubValues('fps')
+        end,
+        moduleRef = self
+    });
 end
 
 function Module:RegisterOptionScreens()
@@ -2905,6 +2955,7 @@ function Module:RefreshOptionScreens()
 
     MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
     Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
+    Module.FPSFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings(sub)

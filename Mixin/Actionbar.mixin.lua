@@ -1405,5 +1405,7 @@ function DragonflightUIFPSMixin:Update()
     self:SetShown(FramerateLabel:IsShown())
 
     if state.alwaysShowFPS then self:Show() end
+
+    if state.EditModeActive then self:Show() end
 end
 
