@@ -24,7 +24,7 @@
 	<Frame name="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeFrameMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
 		<Size x="450" y="250" />
 		<Anchors>
-			<Anchor point="CENTER" y="150" />
+			<Anchor point="TOP" y="-100" />
 		</Anchors>
 		<Layers>
 			<Layer level="BORDER">
@@ -65,6 +65,12 @@
 				<Size x="155" y="25" />
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" x="-25" y="18" />
+				</Anchors>
+			</Button>
+			<Button parentKey="AdvancedButton" inherits="UIPanelButtonTemplate">
+				<Size x="155" y="25" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-28" />
 				</Anchors>
 			</Button>
 		</Frames>

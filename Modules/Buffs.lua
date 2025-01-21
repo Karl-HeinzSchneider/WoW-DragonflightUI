@@ -512,6 +512,7 @@ function Module:AddEditMode()
     Module.DFBuffFrame.DFEditModeSelection:RegisterOptions({
         name = 'Buffs',
         sub = 'buffs',
+        advancedName = 'Buffs',
         options = buffsOptions,
         extra = optionsBuffEditmode,
         default = function()
@@ -533,6 +534,7 @@ function Module:AddEditMode()
     Module.DFDebuffFrame.DFEditModeSelection:RegisterOptions({
         name = 'Debuffs',
         sub = 'debuffs',
+        advancedName = 'Debuffs',
         options = debuffsOptions,
         extra = optionsDebuffEditmode,
         default = function()

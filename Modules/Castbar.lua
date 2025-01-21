@@ -1070,6 +1070,7 @@ function Module:AddEditMode()
     Module.PlayerCastbar.DFEditModeSelection:RegisterOptions({
         name = 'PlayerCastbar',
         sub = 'player',
+        advancedName = 'Castbars',
         options = optionsPlayer,
         extra = optionsPlayerEditmode,
         default = function()
@@ -1089,6 +1090,7 @@ function Module:AddEditMode()
     Module.TargetCastbar.DFEditModeSelection:RegisterOptions({
         name = 'TargetCastbar',
         sub = 'target',
+        advancedName = 'Castbars',
         options = optionsTarget,
         extra = optionsTargetEditmode,
         default = function()
@@ -1112,6 +1114,7 @@ function Module:AddEditMode()
         Module.FocusCastbar.DFEditModeSelection:RegisterOptions({
             name = 'FocusCastbar',
             sub = 'focus',
+            advancedName = 'Castbars',
             options = optionsFocus,
             extra = optionsFocusEditmode,
             default = function()
