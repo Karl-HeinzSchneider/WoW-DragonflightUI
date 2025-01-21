@@ -697,10 +697,12 @@ function Module:RefreshOptionScreens()
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Minimap')
     configFrame:RefreshCatSub(cat, 'Questtracker')
+    configFrame:RefreshCatSub(cat, 'Durability')
 
     -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
     Minimap.DFEditModeSelection:RefreshOptionScreen();
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
+    Module.DurabilityContainer.DFEditModeSelection:RefreshOptionScreen()
 end
 
 function Module:ApplySettings(sub)
