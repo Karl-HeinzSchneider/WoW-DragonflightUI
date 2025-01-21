@@ -315,8 +315,13 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self:SetNinesliceSelected(false)
 
     local EditModeModule = DF:GetModule('Editmode');
-    EditModeModule:RegisterCallback('OnEditMode', function(self, value)
+    EditModeModule:RegisterCallback('OnEditMode', function(self, editValue)
         -- print('SELECTION: OnEditMode', value)
+        local db = EditModeModule.db.profile
+        local state = db.advanced
+
+        local value = editValue and state[self.AdvancedName]
+
         self:ShowHighlighted()
         self:SetShown(value)
 
@@ -691,6 +696,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     -- DevTools_Dump(data)
     self.parentExtra = data.parentExtra
 
+    self.AdvancedName = data.advancedName;
     self.ModuleRef = data.moduleRef;
     self.ModuleSub = data.sub;
 

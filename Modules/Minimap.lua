@@ -721,6 +721,7 @@ function Module:AddEditMode()
     Minimap.DFEditModeSelection:RegisterOptions({
         name = 'Minimap',
         sub = 'minimap',
+        advancedName = 'Minimap',
         options = minimapOptions,
         extra = optionsMinimapEditmode,
         default = function()
@@ -746,6 +747,7 @@ function Module:AddEditMode()
         trackerFrame.DFEditModeSelection:RegisterOptions({
             name = 'Questtracker',
             sub = 'tracker',
+            advancedName = 'Tracker',
             options = trackerOptions,
             extra = optionsTrackerEditmode,
             default = function()

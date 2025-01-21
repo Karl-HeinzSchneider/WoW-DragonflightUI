@@ -2489,6 +2489,7 @@ function Module:AddEditMode()
         bar.DFEditModeSelection:RegisterOptions({
             name = 'Actionbar' .. i,
             sub = 'bar' .. i,
+            advancedName = 'ActionBars',
             options = optionsBar,
             extra = optionsBarExtra,
             default = function()
@@ -2509,6 +2510,7 @@ function Module:AddEditMode()
         name = 'Petbar',
         sub = 'pet',
         options = petOptions,
+        advancedName = 'PetBar',
         extra = optionsPetEdtimode,
         default = function()
             setDefaultSubValues('pet')
@@ -2526,6 +2528,7 @@ function Module:AddEditMode()
     Module.xpbar.DFEditModeSelection:RegisterOptions({
         name = 'XPbar',
         sub = 'xp',
+        advancedName = 'XPBar',
         options = xpOptions,
         extra = optionsXpEdtimode,
         default = function()
@@ -2544,6 +2547,7 @@ function Module:AddEditMode()
     Module.repbar.DFEditModeSelection:RegisterOptions({
         name = 'Repbar',
         sub = 'rep',
+        advancedName = 'RepBar',
         options = repOptions,
         extra = optionsRepEdtimode,
         default = function()
@@ -2562,6 +2566,7 @@ function Module:AddEditMode()
     PossessBarFrame.DFEditModeSelection:RegisterOptions({
         name = 'Possessbar',
         sub = 'possess',
+        advancedName = 'PossessBar',
         options = possessOptions,
         extra = optionsPossessEdtimode,
         default = function()
@@ -2586,6 +2591,7 @@ function Module:AddEditMode()
     Module.stancebar.DFEditModeSelection:RegisterOptions({
         name = 'Stancebar',
         sub = 'stance',
+        advancedName = 'StanceBar',
         options = stanceOptions,
         extra = optionsStanceEdtimode,
         default = function()
@@ -2605,6 +2611,7 @@ function Module:AddEditMode()
         MultiCastActionBarFrame.DFEditModeSelection:RegisterOptions({
             name = 'Totembar',
             sub = 'totem',
+            advancedName = 'TotemBar',
             options = totemOptions,
             extra = optionsTotemEdtimode,
             default = function()
@@ -2624,6 +2631,7 @@ function Module:AddEditMode()
     MainMenuBarBackpackButton.DFEditModeSelection:RegisterOptions({
         name = 'Bags',
         sub = 'bags',
+        advancedName = 'Bags',
         options = bagsOptions,
         extra = optionsBagsEdtimode,
         default = function()
@@ -2643,6 +2651,7 @@ function Module:AddEditMode()
     Module.MicroFrame.DFEditModeSelection:RegisterOptions({
         name = 'Micromenu',
         sub = 'micro',
+        advancedName = 'MicroMenu',
         options = microOptions,
         extra = optionsMicroEditmode,
         default = function()

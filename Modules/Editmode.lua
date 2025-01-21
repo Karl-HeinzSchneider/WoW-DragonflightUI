@@ -20,6 +20,8 @@ local defaults = {
             Bags = true,
             MicroMenu = true,
             FPS = true,
+            XPBar = true,
+            RepBar = true,
             -- Bossframe
             BossFrames = true,
             -- buffs,
@@ -152,6 +154,12 @@ if true then
     -- misc
     local miscFrames = {'Bags', 'FPS', 'Minimap', 'Tracker'}
     AddTableToCategory(miscFrames, 400)
+
+    advancedOptions.set = function(...)
+        -- print(...)
+        setOption(...)
+        Module:SetEditMode(Module.IsEditMode)
+    end
 end
 
 function Module:OnInitialize()

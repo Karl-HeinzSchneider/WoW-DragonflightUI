@@ -1981,6 +1981,7 @@ function Module:AddEditMode()
     PlayerFrame.DFEditModeSelection:RegisterOptions({
         name = 'Player',
         sub = 'player',
+        advancedName = 'PlayerFrame',
         options = optionsPlayer,
         extra = optionsPlayerEditmode,
         default = function()
@@ -1999,6 +2000,7 @@ function Module:AddEditMode()
     PetFrame.DFEditModeSelection:RegisterOptions({
         name = 'Pet',
         sub = 'pet',
+        advancedName = 'PetFrame',
         options = optionsPet,
         extra = optionsPetEditmode,
         default = function()
@@ -2022,6 +2024,7 @@ function Module:AddEditMode()
     fakeTarget.DFEditModeSelection:RegisterOptions({
         name = 'Target',
         sub = 'target',
+        advancedName = 'TargetFrame',
         options = optionsTarget,
         extra = optionsTargetEditmode,
         parentExtra = TargetFrame,
@@ -2060,6 +2063,7 @@ function Module:AddEditMode()
     fakeParty.DFEditModeSelection:RegisterOptions({
         name = 'Party',
         sub = 'party',
+        advancedName = 'PartyFrame',
         options = optionsParty,
         extra = optionsPartyEditmode,
         -- parentExtra = Module.PartyMoveFrame,
@@ -2121,6 +2125,7 @@ function Module:AddEditMode()
             f.DFEditModeSelection:RegisterOptions({
                 name = 'Raid',
                 sub = 'raid',
+                advancedName = 'RaidFrame',
                 options = optionsRaid,
                 extra = optionsRaidEditmode,
                 -- parentExtra = FocusFrame,
@@ -2197,6 +2202,7 @@ function Module:AddEditMode()
         fakeFocus.DFEditModeSelection:RegisterOptions({
             name = 'Focus',
             sub = 'focus',
+            advancedName = 'FocusFrame',
             options = optionsFocus,
             extra = optionsFocusEditmode,
             parentExtra = FocusFrame,
