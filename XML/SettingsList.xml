@@ -201,6 +201,22 @@
 			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Frame>
+	<EditBox name="SettingsSliderEditboxTemplateDF" multiLine="false" autoFocus="false" virtual="true">
+		<Size>
+			<AbsDimension x="60" y="20">
+			</AbsDimension>
+		</Size>
+		<TextInsets left="1" right="1" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="HoverBackground">
+					<Color a="0.42" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<FontString inherits="GameFontNormal">
+		</FontString>
+	</EditBox>
 	<!-- Dropdown -->
 	<Frame name="SettingsDropdownTemplateDF" mixin="SettingsDropdownMixinDF" virtual="true">
 		<Size x="223" y="38" />
