@@ -882,6 +882,12 @@ function Module:AddEditMode()
             moduleRef = self,
             prio = -5
         });
+
+        if trackerFrame:GetHeight() > 500 then
+            trackerFrame.DFEditModeSelection:ClearAllPoints()
+            trackerFrame.DFEditModeSelection:SetPoint('TOPLEFT', trackerFrame, 'TOPLEFT', 0, 0)
+            trackerFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', trackerFrame, 'TOPRIGHT', 0, -500)
+        end
     end
 
     -- durablity
