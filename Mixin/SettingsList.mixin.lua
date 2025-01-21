@@ -162,7 +162,7 @@ function ScrollableListItemMixinDF:SetSmall(small)
 
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -60, 0) -- 80,0
 
-    self.Item.Slider:SetWidth(235) -- 250
+    self.Item.Slider:SetWidth(228) -- 250
     -- self.Item.Slider.Editbox:SetJustifyH('LEFT')
     self.Item.Slider.Editbox:SetWidth(48) -- 60
     self.Item.Slider.Editbox:SetPoint('LEFT', self.Item.Slider.RightText, 'LEFT', -5, 0)
