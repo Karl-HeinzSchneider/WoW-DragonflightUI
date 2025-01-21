@@ -888,6 +888,10 @@ function Module:AddEditMode()
             trackerFrame.DFEditModeSelection:SetPoint('TOPLEFT', trackerFrame, 'TOPLEFT', 0, 0)
             trackerFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', trackerFrame, 'TOPRIGHT', 0, -500)
         end
+
+        -- TODO: add fake preview
+        function Module.TrackerFrameRef:SetEditMode()
+        end
     end
 
     -- durablity
