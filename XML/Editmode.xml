@@ -67,6 +67,12 @@
 					<Anchor point="BOTTOMRIGHT" x="-25" y="18" />
 				</Anchors>
 			</Button>
+			<Button parentKey="AdvancedButton" inherits="UIPanelButtonTemplate">
+				<Size x="155" y="25" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-28" />
+				</Anchors>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />

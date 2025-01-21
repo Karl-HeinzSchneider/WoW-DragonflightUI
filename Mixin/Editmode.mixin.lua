@@ -59,12 +59,36 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
         -- print('onclick')
         self.EditmodeModule:SetEditMode(false);
     end)
+
+    self.AdvancedOptions = false;
+    local advButton = self.AdvancedButton
+    advButton:SetText('Advanced Options')
+    advButton:SetScript('OnClick', function(button, buttonName, down)
+        --
+        -- print('onclick')
+        if self.AdvancedOptions then
+            -- switch to basic options
+            advButton:SetText('Advanced Options')
+            self.DisplayFrame:Display(self.DataOptions, true)
+            self:SetHeight(250);
+            self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+        else
+            -- switch to advanced options
+            advButton:SetText('Basic Options')
+            self.DisplayFrame:Display(self.DataAdvancedOptions, true)
+            self:SetHeight(450);
+            self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + 24)
+        end
+        self.AdvancedOptions = not self.AdvancedOptions;
+
+    end)
 end
 
 function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'SettingsListTemplateDF')
     displayFrame:Display(data, true)
     self.DisplayFrame = displayFrame
+    self.DataOptions = data;
 
     displayFrame:ClearAllPoints()
     -- -@diagnostic disable-next-line: param-type-mismatch
@@ -83,10 +107,15 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     displayFrame.Header:Hide()
 end
 
+function DragonflightUIEditModeFrameMixin:SetupAdvancedOptions(data)
+    self.DataAdvancedOptions = data;
+end
+
 function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'SettingsListTemplateDF')
     displayFrame:Display(data, true)
     self.DisplayFrameExtra = displayFrame
+    self.DataExtraOptions = data;
 
     displayFrame:ClearAllPoints()
     -- -@diagnostic disable-next-line: param-type-mismatch

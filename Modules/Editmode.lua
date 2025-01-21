@@ -7,7 +7,39 @@ Mixin(Module, DragonflightUIModulesMixin)
 Mixin(Module, CallbackRegistryMixin)
 
 local defaults = {
-    profile = {scale = 1, general = {showGrid = true, gridSize = 20, snapGrid = true, snapElements = true}}
+    profile = {
+        scale = 1,
+        general = {showGrid = true, gridSize = 20, snapGrid = true, snapElements = true},
+        advanced = {
+            -- actionbar
+            ActionBars = true,
+            StanceBar = true,
+            PossessBar = true,
+            PetBar = true,
+            TotemBar = true,
+            Bags = true,
+            MicroMenu = true,
+            FPS = true,
+            -- Bossframe
+            BossFrames = true,
+            -- buffs,
+            Buffs = true,
+            Debuffs = true,
+            -- castbar
+            Castbars = true,
+            -- minimap
+            Minimap = true,
+            Tracker = true,
+            -- UI
+            -- unitframes
+            PlayerFrame = true,
+            PetFrame = true,
+            TargetFrame = true,
+            FocusFrame = true,
+            PartyFrame = true,
+            RaidFrame = true
+        }
+    }
 }
 Module:SetDefaults(defaults)
 
@@ -70,6 +102,57 @@ local generalOptions = {
         }
     }
 }
+
+local advancedOptions;
+if true then
+    --
+    advancedOptions = {
+        type = 'group',
+        name = 'EditMode',
+        get = getOption,
+        set = setOption,
+        args = {
+            headerActionbar = {type = 'header', name = 'Actionbar', desc = '...', order = 100},
+            headerCombat = {type = 'header', name = 'Combat', desc = '...', order = 200},
+            headerFrames = {type = 'header', name = 'Frames', desc = '...', order = 300},
+            headerMisc = {type = 'header', name = 'Misc', desc = '...', order = 400}
+        }
+    }
+
+    local function AddTableToCategory(t, order)
+        table.sort(t, function(a, b)
+            return a < b
+        end)
+
+        for k, v in ipairs(t) do
+            --
+            advancedOptions.args[v] = {
+                type = 'toggle',
+                name = v,
+                desc = '' .. getDefaultStr(v, 'advanced'),
+                order = order + 0.1 + k,
+                small = true
+            }
+        end
+    end
+
+    -- actionbar
+    local actionbarFrames = {'ActionBars', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
+    AddTableToCategory(actionbarFrames, 100);
+
+    -- combat
+    local combatFrames = {'Buffs', 'Debuffs', 'Castbars'};
+    AddTableToCategory(combatFrames, 200);
+
+    -- frames
+    local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'PartyFrame', 'RaidFrame'}
+    if DF.Wrath then table.insert(framesFrames, 'FocusFrame') end
+    AddTableToCategory(framesFrames, 300)
+
+    -- misc
+    local miscFrames = {'Bags', 'FPS', 'Minimap', 'Tracker'}
+    AddTableToCategory(miscFrames, 400)
+end
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -137,6 +220,15 @@ function Module:RegisterOptionScreens()
         options = generalOptions,
         default = function()
             setDefaultSubValues('general')
+        end
+    })
+
+    Module.EditModeFrame:SetupAdvancedOptions({
+        name = 'EditMode',
+        sub = 'advanced',
+        options = advancedOptions,
+        default = function()
+            setDefaultSubValues('advanced')
         end
     })
 end
