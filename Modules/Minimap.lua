@@ -22,7 +22,6 @@ local defaults = {
             hideZoom = false,
             moveLFG = false,
             skinButtons = true,
-            durability = 'BOTTOM',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -37,7 +36,8 @@ local defaults = {
             hideCustomCond = '',
             useStateHandler = true
         },
-        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
+        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310},
+        durability = {scale = 1, anchorFrame = 'Minimap', anchor = 'TOP', anchorParent = 'BOTTOM', x = 0, y = -15}
     }
 }
 Module:SetDefaults(defaults)
@@ -510,6 +510,120 @@ local optionsTrackerEditmode = {
     }
 }
 
+local optionsDurability = {
+    type = 'group',
+    name = 'Durability',
+    get = getOption,
+    set = setOption,
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'durability'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.1,
+            order = 1,
+            editmode = true
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'durability'),
+            values = frameTableTracker,
+            order = 4,
+            editmode = true
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'durability'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2,
+            editmode = true
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'durability'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3,
+            editmode = true
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'durability'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5,
+            editmode = true
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'durability'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6,
+            editmode = true
+        }
+    }
+}
+local optionsDurabilityEditmode = {
+    name = 'Durability',
+    desc = 'Durability',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = 'Preset',
+            btnName = 'Reset to Default Position',
+            desc = presetDesc,
+            func = function()
+                local dbTable = Module.db.profile.durability
+                local defaultsTable = defaults.profile.durability
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'durability')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -565,6 +679,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('tracker')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Misc', 'Durability', {
+        name = 'Durability',
+        sub = 'durability',
+        options = optionsDurability,
+        default = function()
+            setDefaultSubValues('durability')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -590,6 +713,7 @@ function Module:ApplySettings(sub)
 
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
+    Module.UpdateDurabilityState(db.durability)
 end
 
 local frame = CreateFrame('FRAME')
@@ -757,6 +881,35 @@ function Module:AddEditMode()
             prio = -5
         });
     end
+
+    -- durablity
+    EditModeModule:AddEditModeToFrame(Module.DurabilityContainer)
+
+    Module.DurabilityContainer.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Durability'
+    end)
+
+    Module.DurabilityContainer.DFEditModeSelection:RegisterOptions({
+        name = 'Durability',
+        sub = 'durability',
+        advancedName = 'Durability',
+        options = optionsDurability,
+        extra = optionsDurabilityEditmode,
+        showFunction = function()
+            -- 
+        end,
+        hideFunction = function()
+            -- DurabilityFrame_SetAlerts()
+        end,
+        default = function()
+            setDefaultSubValues('durability')
+        end,
+        moduleRef = self
+    });
+
+    -- TODO: add fake preview
+    function Module.DurabilityContainer:SetEditMode()
+    end
 end
 
 function Module.UpdateMinimapState(state)
@@ -769,7 +922,6 @@ function Module.UpdateMinimapState(state)
     local dfScale = 1.25
     Minimap:SetScale(state.scale * dfScale)
     -- Module.LockMinimap(state.locked)
-    Module.UpdateDurabilityState(state)
 
     if state.hideCalendar then
         frame.CalendarButton:Hide()
@@ -879,29 +1031,11 @@ function Module.MoveDefaultStuff()
 end
 
 function Module.UpdateDurabilityState(state)
-    local dur = state.durability
     local container = Module.DurabilityContainer
 
-    if dur == 'HIDDEN' then
-        container:Hide()
-        return
-    end
-
-    container:Show()
-    container:ClearAllPoints()
-    local delta = 15
-
     container:SetScale(state.scale)
-
-    if dur == 'TOP' then
-        container:SetPoint('BOTTOM', Minimap, 'TOP', 0, delta + 20)
-    elseif dur == 'RIGHT' then
-        container:SetPoint('LEFT', Minimap, 'RIGHT', delta, 0)
-    elseif dur == 'BOTTOM' then
-        container:SetPoint('TOP', Minimap, 'BOTTOM', 0, -delta)
-    elseif dur == 'LEFT' then
-        container:SetPoint('RIGHT', Minimap, 'LEFT', -delta, 0)
-    end
+    container:ClearAllPoints()
+    container:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
 end
 
 function Module.MoveMinimap(x, y)
