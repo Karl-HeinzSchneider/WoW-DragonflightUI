@@ -193,7 +193,7 @@ function ScrollableListItemMixinDF:SetTooltip(name, desc)
 end
 
 function ScrollableListItemMixinDF:SetCheckbox(checked)
-    self.Item.Checkbox:SetValue(checked)
+    self.Item.Checkbox:SetValue(checked, true)
     self.Item.Checkbox:Show()
 end
 
@@ -256,8 +256,9 @@ function SettingsCheckBoxMixinDF:OnLeave()
     SettingsTooltip:Hide();
 end
 
-function SettingsCheckBoxMixinDF:SetValue(value)
+function SettingsCheckBoxMixinDF:SetValue(value, muted)
     self:SetChecked(value)
+    if muted then return end
     if value then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
     else
