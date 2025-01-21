@@ -1030,6 +1030,138 @@ local function GetBarExtraOptions(n)
             }
         }
     }
+
+    if n == 4 then
+        -- left
+        local morePresets = {
+            sidebarModern = {
+                type = 'execute',
+                name = 'Preset',
+                btnName = 'modern Layout (default)',
+                desc = '',
+                func = function()
+                    local dbTable = Module.db.profile[bar]
+                    local defaultsTable = defaults.profile[bar]
+                    -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                    setPreset(dbTable, {
+                        scale = defaultsTable.scale,
+                        anchor = defaultsTable.anchor,
+                        anchorParent = defaultsTable.anchorParent,
+                        anchorFrame = defaultsTable.anchorFrame,
+                        x = defaultsTable.x,
+                        y = defaultsTable.y,
+
+                        orientation = defaultsTable.orientation,
+                        reverse = defaultsTable.reverse,
+                        buttonScale = defaultsTable.buttonScale,
+                        rows = defaultsTable.rows,
+                        buttons = defaultsTable.buttons,
+                        padding = defaultsTable.padding
+                    }, bar)
+                end,
+                order = 20,
+                editmode = true,
+                new = true
+            },
+            sidebarClassic = {
+                type = 'execute',
+                name = 'Preset',
+                btnName = 'classic Layout (sidebar)',
+                desc = '',
+                func = function()
+                    local dbTable = Module.db.profile[bar]
+                    local defaultsTable = defaults.profile[bar]
+                    -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                    setPreset(dbTable, {
+                        scale = defaultsTable.scale,
+                        anchor = 'RIGHT',
+                        anchorParent = 'RIGHT',
+                        anchorFrame = 'UIParent',
+                        x = -38,
+                        y = -100,
+
+                        orientation = 'vertical',
+                        reverse = false,
+                        buttonScale = defaultsTable.buttonScale,
+                        rows = 1,
+                        buttons = 12,
+                        padding = defaultsTable.padding
+                    }, bar)
+                end,
+                order = 21,
+                editmode = true,
+                new = true
+            }
+
+        }
+        for k, v in pairs(morePresets) do extra.args[k] = v end
+
+    elseif n == 5 then
+        -- right
+        local morePresets = {
+            sidebarModern = {
+                type = 'execute',
+                name = 'Preset',
+                btnName = 'modern Layout (default)',
+                desc = '',
+                func = function()
+                    local dbTable = Module.db.profile[bar]
+                    local defaultsTable = defaults.profile[bar]
+                    -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                    setPreset(dbTable, {
+                        scale = defaultsTable.scale,
+                        anchor = defaultsTable.anchor,
+                        anchorParent = defaultsTable.anchorParent,
+                        anchorFrame = defaultsTable.anchorFrame,
+                        x = defaultsTable.x,
+                        y = defaultsTable.y,
+
+                        orientation = defaultsTable.orientation,
+                        reverse = defaultsTable.reverse,
+                        buttonScale = defaultsTable.buttonScale,
+                        rows = defaultsTable.rows,
+                        buttons = defaultsTable.buttons,
+                        padding = defaultsTable.padding
+                    }, bar)
+                end,
+                order = 20,
+                editmode = true,
+                new = true
+            },
+            sidebarClassic = {
+                type = 'execute',
+                name = 'Preset',
+                btnName = 'classic Layout (sidebar)',
+                desc = '',
+                func = function()
+                    local dbTable = Module.db.profile[bar]
+                    local defaultsTable = defaults.profile[bar]
+                    -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                    setPreset(dbTable, {
+                        scale = defaultsTable.scale,
+                        anchor = 'RIGHT',
+                        anchorParent = 'RIGHT',
+                        anchorFrame = 'UIParent',
+                        x = 0,
+                        y = -100,
+
+                        orientation = 'vertical',
+                        reverse = false,
+                        buttonScale = defaultsTable.buttonScale,
+                        rows = 1,
+                        buttons = 12,
+                        padding = defaultsTable.padding
+                    }, bar)
+                end,
+                order = 21,
+                editmode = true,
+                new = true
+            }
+
+        }
+        for k, v in pairs(morePresets) do extra.args[k] = v end
+    end
+
     return extra;
 end
 
