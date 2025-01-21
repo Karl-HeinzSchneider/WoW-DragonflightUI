@@ -142,6 +142,7 @@ function DragonFlightUIConfigMixin:InitCategorys()
         addSubCat('Totembar', cat)
         addSubCat('Bags', cat)
         addSubCat('Micromenu', cat)
+        addSubCat('FPS', cat, true)
     end
 
     do

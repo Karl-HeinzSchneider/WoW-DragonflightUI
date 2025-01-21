@@ -475,10 +475,6 @@ local defaults = {
             x = 0,
             y = 0,
             hidden = false,
-            hideDefaultFPS = true,
-            showFPS = true,
-            alwaysShowFPS = false,
-            showPing = true,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -491,6 +487,31 @@ local defaults = {
             hideNoStealth = false,
             hideCustom = false,
             hideCustomCond = ''
+        },
+        fps = {
+            scale = 1,
+            anchorFrame = 'CharacterMicroButton',
+            anchor = 'RIGHT',
+            anchorParent = 'LEFT',
+            x = -10,
+            y = 0,
+            hidden = false,
+            hideDefaultFPS = true,
+            alwaysShowFPS = false,
+            showFPS = true,
+            showPing = true
+            -- Visibility
+            -- showMouseover = false,
+            -- hideAlways = false,
+            -- hideCombat = false,
+            -- hideOutOfCombat = false,
+            -- hidePet = false,
+            -- hideNoPet = false,
+            -- hideStance = false,
+            -- hideStealth = false,
+            -- hideNoStealth = false,
+            -- hideCustom = false,
+            -- hideCustomCond = ''
         }
     }
 }
@@ -2204,37 +2225,13 @@ local microOptions = {
             bigStep = 1,
             order = 6,
             editmode = true
-        },
+        }
         -- hidden = {
         --     type = 'toggle',
         --     name = 'Hidden',
         --     desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
         --     order = 7
-        -- },
-        hideDefaultFPS = {
-            type = 'toggle',
-            name = 'HideDefaultFPS',
-            desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'micro'),
-            order = 8
-        },
-        showFPS = {
-            type = 'toggle',
-            name = 'ShowFPS',
-            desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'micro'),
-            order = 9
-        },
-        alwaysShowFPS = {
-            type = 'toggle',
-            name = 'AlwaysShowFPS',
-            desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'micro'),
-            order = 10
-        },
-        showPing = {
-            type = 'toggle',
-            name = 'ShowPing',
-            desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'micro'),
-            order = 11
-        }
+        -- },   
     }
 }
 DragonflightUIStateHandlerMixin:AddStateTable(Module, microOptions, 'micro', 'Micromenu', getDefaultStr)
@@ -2266,6 +2263,124 @@ local optionsMicroEditmode = {
             order = 16,
             editmode = true,
             new = true
+        }
+    }
+}
+
+local fpsOptions = {
+    name = 'FPS',
+    desc = 'FPS',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        scale = {
+            type = 'range',
+            name = 'Scale',
+            desc = '' .. getDefaultStr('scale', 'fps'),
+            min = 0.1,
+            max = 5,
+            bigStep = 0.05,
+            order = 1,
+            editmode = true
+        },
+        anchorFrame = {
+            type = 'select',
+            name = 'Anchorframe',
+            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'fps'),
+            values = {['CharacterMicroButton'] = 'CharacterMicroButton', ['UIParent'] = 'UIParent'},
+            order = 4,
+            editmode = true
+        },
+        anchor = {
+            type = 'select',
+            name = 'Anchor',
+            desc = 'Anchor' .. getDefaultStr('anchor', 'fps'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 2,
+            editmode = true
+        },
+        anchorParent = {
+            type = 'select',
+            name = 'AnchorParent',
+            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'fps'),
+            values = {
+                ['TOP'] = 'TOP',
+                ['RIGHT'] = 'RIGHT',
+                ['BOTTOM'] = 'BOTTOM',
+                ['LEFT'] = 'LEFT',
+                ['TOPRIGHT'] = 'TOPRIGHT',
+                ['TOPLEFT'] = 'TOPLEFT',
+                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+                ['CENTER'] = 'CENTER'
+            },
+            order = 3,
+            editmode = true
+        },
+        x = {
+            type = 'range',
+            name = 'X',
+            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'fps'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5,
+            editmode = true
+        },
+        y = {
+            type = 'range',
+            name = 'Y',
+            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'fps'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6,
+            editmode = true
+        },
+        -- hidden = {
+        --     type = 'toggle',
+        --     name = 'Hidden',
+        --     desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
+        --     order = 7
+        -- },
+        hideDefaultFPS = {
+            type = 'toggle',
+            name = 'HideDefaultFPS',
+            desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'fps'),
+            order = 8,
+            editmode = true
+        },
+        showFPS = {
+            type = 'toggle',
+            name = 'ShowFPS',
+            desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'fps'),
+            order = 10,
+            editmode = true
+        },
+        alwaysShowFPS = {
+            type = 'toggle',
+            name = 'AlwaysShowFPS',
+            desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'fps'),
+            order = 9,
+            editmode = true
+        },
+        showPing = {
+            type = 'toggle',
+            name = 'ShowPing',
+            desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'fps'),
+            order = 11,
+            editmode = true
         }
     }
 }
@@ -2746,6 +2861,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('micro')
         end
     })
+
+    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'FPS', {
+        name = 'FPS',
+        sub = 'fps',
+        options = fpsOptions,
+        default = function()
+            setDefaultSubValues('fps')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -2765,6 +2889,7 @@ function Module:RefreshOptionScreens()
     if DF.Cata then refreshCat('Totembar') end
     refreshCat('Bags')
     refreshCat('Micromenu')
+    refreshCat('FPS')
 
     for i = 1, 8 do
         local bar = Module['bar' .. i]
@@ -2823,6 +2948,7 @@ function Module:ApplySettings(sub)
 
         Module.UpdateBagState(db.bags)
         Module.MicroFrame:UpdateState(db.micro)
+        Module.FPSFrame:SetState(db.fps)
 
         Module.UpdatePossesbarState(db.possess)
 
@@ -2875,6 +3001,8 @@ function Module:ApplySettings(sub)
         Module.UpdateBagState(db.bags)
     elseif sub == 'micro' then
         Module.MicroFrame:UpdateState(db.micro)
+    elseif sub == 'fps' then
+        Module.FPSFrame:SetState(db.fps)
     end
 end
 
@@ -3466,29 +3594,6 @@ function Module.UpdateTotemState(state)
     Module.Temp.TotemFixing = nil
 end
 
-function Module.UpdateFPSState(state)
-    FramerateLabel:ClearAllPoints()
-    if state.hideDefaultFPS then
-        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117 - 500)
-    else
-        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117)
-    end
-
-    local fps = Module.FPSFrame
-
-    if state.alwaysShowFPS then fps:Show() end
-
-    if state.showPing then
-        fps.PingLabel:Show()
-        fps.PingText:Show()
-    else
-        fps.PingLabel:Hide()
-        fps.PingText:Hide()
-    end
-
-    if not state.showFPS then fps:Hide() end
-end
-
 function Module.GetBagSlots(id)
     local build, _, _, _ = GetBuildInfo()
     if not GetContainerNumSlots then
@@ -3925,86 +4030,11 @@ function Module.RefreshBagBarToggle()
 end
 
 function Module.ChangeFramerate()
-    UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
-
-    -- fps
-    local Path, Size, Flags = FramerateText:GetFont()
-
-    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', Module.MicroFrame)
+    local fps = CreateFrame('Frame', 'DragonflightUIFPSTextFrame', UIParent, 'DragonflightUIFPSTemplate')
     fps:SetSize(65, 26)
     fps:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -10, 0)
 
     Module.FPSFrame = fps
-
-    do
-        local t = fps:CreateFontString('FPSLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
-        t:SetPoint('TOPLEFT', 0, 0)
-        t:SetText('FPS:')
-        t:SetFont(Path, Size, Flags)
-
-        fps.FPSLabel = t
-    end
-
-    do
-        local t = fps:CreateFontString('PingLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
-        t:SetPoint('TOPLEFT', fps.FPSLabel, 'BOTTOMLEFT', 0, 0)
-        t:SetText('MS:')
-        t:SetFont(Path, Size, Flags)
-
-        fps.PingLabel = t
-    end
-
-    do
-        local t = fps:CreateFontString('FPSText', 'OVERLAY', 'SystemFont_Shadow_Med1')
-        t:SetPoint('TOPRIGHT', fps, 'TOPRIGHT', 0, 0)
-        t:SetText('')
-        t:SetFont(Path, Size, Flags)
-
-        fps.FPSText = t
-    end
-
-    do
-        local t = fps:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
-        t:SetPoint('TOPRIGHT', fps.FPSText, 'BOTTOMRIGHT', 0, 0)
-        t:SetText('')
-        t:SetFont(Path, Size, Flags)
-
-        fps.PingText = t
-    end
-
-    fps:SetScript('OnUpdate', function(self, elapsed)
-        if (fps:IsShown()) then
-            local timeLeft = fps.fpsTime - elapsed
-            if (timeLeft <= 0) then
-                fps.fpsTime = FRAMERATE_FREQUENCY;
-
-                local framerate = GetFramerate();
-                fps.FPSText:SetFormattedText("%.1f", framerate);
-
-                local down, up, lagHome, lagWorld = GetNetStats()
-                -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
-                local str = tostring(math.max(lagHome, lagWorld))
-                fps.PingText:SetText(str)
-            else
-                fps.fpsTime = timeLeft;
-            end
-        end
-    end)
-    fps.fpsTime = 0;
-    fps:Hide()
-
-    hooksecurefunc('ToggleFramerate', function()
-        local fps = Module.FPSFrame
-        local state = Module.db.profile.micro
-
-        if (fps:IsShown()) then
-            fps:Hide()
-        else
-            fps:Show()
-        end
-
-        Module.UpdateFPSState(state)
-    end)
 end
 
 -- WRATH
