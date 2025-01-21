@@ -374,7 +374,15 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
             DF:Debug(EditModeModule, 'SELECTION', value:GetName())
             self:ShowSelected()
         else
-            self:ShowHighlighted()
+            local db = EditModeModule.db.profile
+            local state = db.advanced
+
+            if state[self.AdvancedName] then
+                -- 
+                self:ShowHighlighted()
+            else
+                -- deactivated ~> dont change
+            end
         end
     end, self)
 
