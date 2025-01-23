@@ -55,11 +55,11 @@ local options = {
             type = 'toggle',
             name = 'Enable',
             get = function()
----@diagnostic disable-next-line: undefined-field
+                ---@diagnostic disable-next-line: undefined-field
                 return DF:GetModuleEnabled(mName)
             end,
             set = function(info, v)
----@diagnostic disable-next-line: undefined-field
+                ---@diagnostic disable-next-line: undefined-field
                 DF:SetModuleEnabled(mName, v)
             end,
             order = 1
@@ -207,8 +207,10 @@ local bossOptions = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
----@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, options)
@@ -226,8 +228,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
----@diagnostic disable-next-line: missing-parameter
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -238,6 +239,17 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Boss'
+    local cat = 'unitframes'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('boss', {order = 0, name = 'Boss', descr = 'Bossss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

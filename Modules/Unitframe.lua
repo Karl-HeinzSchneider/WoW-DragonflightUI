@@ -1560,6 +1560,9 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     -- db = self.db.profile
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
@@ -1596,6 +1599,22 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Unitframe'
+    local cat = 'unitframes'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
+    register('party', {order = 0, name = 'Party', descr = 'Partyss', isNew = false})
+    register('pet', {order = 0, name = 'Pet', descr = 'Petss', isNew = false})
+    register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
+    register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
+    register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

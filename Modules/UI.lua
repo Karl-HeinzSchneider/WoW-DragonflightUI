@@ -180,6 +180,9 @@ frame:SetScript('OnEvent', frame.OnEvent)
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     ---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
@@ -199,8 +202,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
-    ---@diagnostic disable-next-line: missing-parameter
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -213,8 +215,18 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'UI'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('ui', {order = 0, name = 'UI', descr = 'UIsss', isNew = false})
+end
+
 function Module:RegisterOptionScreens()
-    ---@diagnostic disable-next-line: undefined-field
     DF.ConfigModule:RegisterOptionScreen('Misc', 'UI', {
         name = 'UI',
         sub = 'first',
@@ -228,7 +240,6 @@ end
 function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
 
-    ---@diagnostic disable-next-line: undefined-field
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)

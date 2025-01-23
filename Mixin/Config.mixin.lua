@@ -40,6 +40,8 @@ function DragonFlightUIConfigMixin:OnLoad()
 
     self:InitCategorys()
     self.selectedFrame = nil
+
+    self:SetupSettingsCategorys()
 end
 
 function DragonFlightUIConfigMixin:OnShow()
@@ -93,6 +95,29 @@ function DragonFlightUIConfigMixin:ShowQuickKeybind(show)
     else
         self.QuickKeybind:Hide()
     end
+end
+
+function DragonFlightUIConfigMixin:SetupSettingsCategorys()
+    local list = self.DFSettingsCategoryList;
+
+    -- first selected
+    list.selectedElement = 'general_modules'
+
+    -- default
+    local orderSortComparator = function(a, b)
+        return b.data.order > a.data.order
+    end
+    -- alphabetical
+    local alphaSortComparator = function(a, b)
+        return b.data.elementInfo.name > a.data.elementInfo.name
+    end
+
+    -- default categorys
+    list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1}, nil, true)
+    list:RegisterCategory('actionbar', {name = 'Action Bar', descr = 'descr..', order = 2}, nil, true)
+    list:RegisterCategory('castbar', {name = 'Cast Bar', descr = 'descr..', order = 3}, alphaSortComparator, true)
+    list:RegisterCategory('misc', {name = 'Misc', descr = 'descr..', order = 4}, alphaSortComparator, true)
+    list:RegisterCategory('unitframes', {name = 'Unitframes', descr = 'descr..', order = 5}, alphaSortComparator, true)
 end
 
 function DragonFlightUIConfigMixin:InitCategorys()

@@ -129,6 +129,9 @@ end
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     -- self:SetEnabledState(DF:GetModuleEnabled(mName))
     self:SetEnabledState(true)
@@ -164,6 +167,19 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Config'
+    local cat = 'general'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('whatsnew', {order = 4, name = [[What's New]], descr = 'Whatsnewss', isNew = false})
+    register('modules', {order = 2, name = 'Modules', descr = 'Modulesss', isNew = false})
+    register('info', {order = 1, name = 'Info', descr = 'Infoss', isNew = false})
 end
 
 function Module:ApplySettings()
@@ -249,8 +265,7 @@ function Module:AddMainMenuButton()
     Module.UpdateMainMenuButtons()
 
     btn:SetScript('OnClick', function()
-        ---@diagnostic disable-next-line: missing-parameter
-        Module.ToggleConfigFrame()
+        Module:ToggleConfigFrame()
         -- HideUIPanel(GameMenuFrame)
     end)
 end
@@ -352,6 +367,14 @@ function Module:RegisterOptionScreen(cat, sub, data)
     local config = Module.ConfigFrame
 
     config.DFCategoryList:SetDisplayData(cat, sub, data)
+end
+
+function Module:RegisterSettingsElement(id, categoryID, data, firstTime)
+    if firstTime then
+        Module.ConfigFrame.DFSettingsCategoryList:RegisterElement(id, categoryID, data)
+    else
+        Module.ConfigFrame.DFSettingsCategoryList:UpdateElementData(id, categoryID, data)
+    end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)

@@ -2552,6 +2552,10 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
+
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, options)
@@ -2586,6 +2590,36 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Actionbar'
+    local cat = 'actionbar'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('actionbar1', {order = 1, name = 'Action Bar 1', descr = 'desc', isNew = false})
+    register('actionbar2', {order = 2, name = 'Action Bar 2', descr = 'desc', isNew = false})
+    register('actionbar3', {order = 3, name = 'Action Bar 3', descr = 'desc', isNew = false})
+    register('actionbar4', {order = 4, name = 'Action Bar 4', descr = 'desc', isNew = false})
+    register('actionbar5', {order = 5, name = 'Action Bar 5', descr = 'desc', isNew = false})
+    register('actionbar6', {order = 6, name = 'Action Bar 6', descr = 'desc', isNew = false})
+    register('actionbar7', {order = 7, name = 'Action Bar 7', descr = 'desc', isNew = false})
+    register('actionbar8', {order = 8, name = 'Action Bar 8', descr = 'desc', isNew = false})
+
+    register('petbar', {order = 9, name = 'Pet Bar', descr = 'desc', isNew = false})
+    register('xpbar', {order = 10, name = 'XP Bar', descr = 'desc', isNew = false})
+    register('repbar', {order = 11, name = 'Rep Bar', descr = 'desc', isNew = false})
+    register('possessbar', {order = 12, name = 'Possess Bar', descr = 'desc', isNew = false})
+    register('stancebar', {order = 13, name = 'Stance Bar', descr = 'desc', isNew = false})
+
+    register('bags', {order = 15, name = 'Bags', descr = 'desc', isNew = false})
+    register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
+    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = true})
+
+    if DF.Cata then register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false}) end
 end
 
 function Module:SetupActionbarFrames()

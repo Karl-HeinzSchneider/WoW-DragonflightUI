@@ -403,6 +403,9 @@ local optionsDebuffEditmode = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
@@ -435,6 +438,18 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Buffs'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('buffs', {order = 1, name = 'Buffs', descr = 'Buffsss', isNew = false})
+    register('debuffs', {order = 1, name = 'Debuffs', descr = 'Debuffsss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

@@ -980,6 +980,10 @@ function Module:OnInitialize()
     self.db = DF.db:RegisterNamespace(mName, defaults)
     -- db = self.db.profile
 
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
+
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, options)
@@ -1007,6 +1011,32 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Castbar'
+    local cat = 'castbar'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('player', {
+        order = 1,
+        name = 'Player',
+        descr = 'Player Cast Bar',
+        isNew = false
+        --
+        -- sub = 'player',
+        -- options = optionsPlayer,
+        -- default = function()
+        --     setDefaultSubValues('player')
+        -- end
+    })
+
+    register('target', {order = 2, name = 'Target', descr = 'Target Cast Bar', isNew = false})
+
+    if DF.Wrath then register('focus', {order = 3, name = 'Focus', descr = 'Focus Cast Bar', isNew = false}) end
 end
 
 function Module:RegisterOptionScreens()
