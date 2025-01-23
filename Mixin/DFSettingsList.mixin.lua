@@ -56,6 +56,8 @@ function DFSettingsListMixin:OnLoad()
             factory("DFSettingsListCheckboxContainer", Initializer);
         elseif elementType == 'range' then
             factory("DFSettingsListSliderContainer", Initializer);
+        elseif elementType == 'execute' then
+            factory("DFSettingsListButton", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -192,7 +194,7 @@ end
 
 -- Base
 DFSettingsListElementBaseMixin = CreateFromMixins(CallbackRegistryMixin);
-DFSettingsListElementBaseMixin:GenerateCallbackEvents({"OnValueChanged"});
+DFSettingsListElementBaseMixin:GenerateCallbackEvents({"OnValueChanged", "OnClick"});
 
 function DFSettingsListElementBaseMixin:OnLoad()
     -- print('DFSettingsListElementBaseMixin:OnLoad()')
@@ -413,4 +415,40 @@ function DFSettingsListSliderMixin:OnLeave()
     local parent = self:GetParent()
     parent.Tooltip.HoverBackground:Hide()
     SettingsTooltip:Hide();
+end
+
+-- Button
+-- DFSettingsListButtonMixin = CreateFromMixins(CallbackRegistryMixin);
+-- DFSettingsListButtonMixin:GenerateCallbackEvents({"OnButtonClicked"});
+DFSettingsListButtonMixin = {}
+
+function DFSettingsListButtonMixin:Init(node)
+    -- print('DFSettingsListButtonMixin:Init()')
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+    local args = elementData.args;
+
+    self.Text:SetText(args.name);
+    self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    if args.small then
+        -- self.Slider:SetWidth(250);
+        -- self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    else
+        self.Button:SetWidth(200);
+        self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+    end
+
+    self.Button:SetText(args.btnName);
+    self.Button:SetScript('OnClick', function(button, buttonName)
+        -- print('OnClick')
+        self:TriggerEvent(DFSettingsListElementBaseMixin.Event.OnClick, true)
+    end)
+
+    self:UnregisterCallback('OnClick', self)
+    self:RegisterCallback('OnClick', function(self, ...)
+        args.func()
+    end, self)
 end

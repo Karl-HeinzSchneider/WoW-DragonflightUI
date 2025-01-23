@@ -203,4 +203,17 @@ UI_shared.xsd">
 		<FontString inherits="GameFontNormal">
 		</FontString>
 	</EditBox>
+	<!-- Button -->
+	<Frame name="DFSettingsListButton" inherits="DFSettingsListElementBase" mixin="DFSettingsListButtonMixin" virtual="true">
+		<Frames>
+			<Button parentKey="Button" inherits="UIPanelButtonTemplate" hidden="false">
+				<Size x="200" y="26" />
+				<!--
+				<Anchors>
+				<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="0" y="0" />
+				</Anchors>
+				-->
+			</Button>
+		</Frames>
+	</Frame>
 </Ui>
