@@ -50,6 +50,7 @@ XML\Actionbar.xml
 XML\Bossframe.xml
 XML\Castbar.xml
 XML\ConfigCategoryList.xml
+XML\DFSettingsCategory.xml
 XML\Config.xml
 XML\Editmode.xml
 XML\Profession.xml

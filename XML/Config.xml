@@ -53,6 +53,13 @@ UI_shared.xsd">
 					<Anchor point="BOTTOMLEFT" x="178" y="46" />
 				</Anchors>
 			</Frame>
+			<Frame parentKey="DFSettingsCategoryList" inherits="DFSettingsCategoryList">
+				<Size x="199" y="569" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="-250" y="-76" />
+					<!-- <Anchor point="BOTTOMLEFT" x="178-100" y="46" /> -->
+				</Anchors>
+			</Frame>
 			<Frame parentKey="Container">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.DFCategoryList" relativePoint="TOPRIGHT" x="16" />
