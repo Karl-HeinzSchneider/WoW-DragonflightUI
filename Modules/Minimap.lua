@@ -687,6 +687,15 @@ function Module:RegisterOptionScreens()
         end
     })
 
+    DF.ConfigModule.ConfigFrame.Container.DFSettingsList:Display({
+        name = 'Minimap',
+        sub = 'minimap',
+        options = minimapOptions,
+        default = function()
+            setDefaultSubValues('minimap')
+        end
+    })
+
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
         name = 'Questtracker',
         sub = 'tracker',

@@ -229,13 +229,14 @@ function DragonFlightUIConfigMixin:OnSelectionChanged(elementData, selected)
     if oldFrame then oldFrame:Hide() end
 
     local f = self.Container
+    f.SettingsList:Hide()
 
     newFrame:ClearAllPoints()
     newFrame:SetParent(f)
     newFrame:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
     newFrame:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
     newFrame:CallRefresh()
-    newFrame:Show()
+    newFrame:Hide()
     self.selectedFrame = newFrame
     self.selected = true
 end

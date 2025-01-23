@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
-	<Script file="Mixin/DFSettings.mixin.lua" />
+	<Script file="Mixin/DFSettingsCategory.mixin.lua" />
 	<!-- List -->
 	<Frame name="DFSettingsCategoryList" mixin="DFSettingsCategoryListMixin" virtual="true">
 		<Frames>
