@@ -40,6 +40,8 @@ function DFSettingsListMixin:OnLoad()
             factory("DFSettingsListDivider", Initializer);
         elseif elementType == 'toggle' then
             factory("DFSettingsListCheckboxContainer", Initializer);
+        elseif elementType == 'range' then
+            factory("DFSettingsListSliderContainer", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -184,7 +186,7 @@ end
 DFSettingsListHeaderMixin = {}
 
 function DFSettingsListHeaderMixin:Init(node)
-    print('DFSettingsListHeaderMixin:OnLoad()')
+    -- print('DFSettingsListHeaderMixin:OnLoad()')
 
     local elementData = node:GetData();
     self.Title:SetText(elementData.args.name)
@@ -194,14 +196,14 @@ end
 DFSettingsListDividerMixin = {}
 
 function DFSettingsListDividerMixin:Init(node)
-    print('DFSettingsListDividerMixin:OnLoad()')
+    -- print('DFSettingsListDividerMixin:OnLoad()')
 end
 
 -- CheckboxContainer
 DFSettingsListCheckboxContainerMixin = {}
 
 function DFSettingsListCheckboxContainerMixin:Init(node)
-    print('DFSettingsListCheckboxContainerMixin:OnLoad()')
+    -- print('DFSettingsListCheckboxContainerMixin:OnLoad()')
     local elementData = node:GetData();
     self.ElementData = elementData;
     local args = elementData.args;
@@ -212,11 +214,12 @@ function DFSettingsListCheckboxContainerMixin:Init(node)
     self:SetTooltip(args.name, args.desc);
 
     -- self.checkbox:UnregisterCallback('OnValueChanged', self);
+    self.Checkbox:UnregisterCallback('OnValueChanged', self)
     self.Checkbox:SetValue(elementData.get({elementData.key}));
     self.Checkbox:RegisterCallback('OnValueChanged', function(cb, checked)
         -- print('OnValueChanged', checked) 
         elementData.set({elementData.key}, checked)
-    end)
+    end, self)
 
     self.Tooltip:SetScript('OnMouseDown', function()
         self.Checkbox:SetValue(not self.Checkbox:GetChecked())
@@ -263,4 +266,123 @@ function DFSettingsListCheckboxMixin:SetValue(value, muted)
     else
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
     end
+end
+
+-- SliderContainer
+DFSettingsListSliderContainerMixin = {}
+
+function DFSettingsListSliderContainerMixin:Init(node)
+    -- print('DFSettingsListCheckboxContainerMixin:OnLoad()')
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+    local args = elementData.args;
+    print('~~~~~~:OnLoad()', args.name)
+
+    self.Text:SetText(args.name);
+    self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    self.Slider:UnregisterCallback('OnValueChanged', self)
+    -- print(args.min, args.max, args.bigStep)
+    -- get({key}), data.min, data.max, data.bigStep
+    self.Slider.Slider:SetMinMaxValues(args.min, args.max)
+    self.Slider.Slider:SetValueStep(args.bigStep)
+    self.Slider.Slider:SetValue(elementData.get({elementData.key}))
+    self.Slider.RightText:Hide()
+    self.Editbox:SetText(self.Slider.RightText:GetText())
+
+    self.Slider:RegisterCallback('OnValueChanged', function(self, ...)
+        local newValue = ...
+        if ... ~= elementData.get({elementData.key}) then elementData.set({elementData.key}, newValue) end
+        self.Slider.RightText:Hide();
+        self.Editbox:SetText(self.Slider.RightText:GetText())
+    end, self)
+
+    if args.small then
+        -- self.Slider:SetWidth(250);
+        -- self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    else
+        self.Slider:SetWidth(250);
+        self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    end
+
+    -- editbox
+    self.Editbox:SetScript('OnEscapePressed', function()
+        self.Editbox:ClearFocus()
+    end)
+
+    self.Editbox:SetScript('OnTabPressed', function()
+        self.Editbox:ClearFocus()
+    end)
+
+    self.Editbox:SetScript('OnEditFocusGained', function()
+        self.Editbox:HighlightText()
+    end)
+
+    self.Editbox:SetScript('OnEnterPressed', function()
+        self.Editbox:ClearFocus()
+        local newValue = tonumber(self.Editbox:GetText()) or self.Slider:GetValue();
+        self.Slider:SetValue(newValue)
+        self.Editbox:SetText(self.Slider.RightText:GetText())
+        self.Slider.RightText:Hide()
+    end)
+
+    self.Editbox:SetJustifyH('CENTER')
+end
+
+-- Slider
+DFSettingsListSliderMixin = CreateFromMixins(CallbackRegistryMixin);
+DFSettingsListSliderMixin:GenerateCallbackEvents({
+    "OnValueChanged", "OnValueChangedFilter", "OnInteractStart", "OnInteractEnd"
+});
+
+local sliderFormat = {}
+-- sliderFormat[2] = CreateMinimalSliderFormatter()
+sliderFormat[2] = function(value)
+    if math.floor(value) == value then
+        return value
+    else
+        return string.format('%.2f', value)
+    end
+end
+
+function DFSettingsListSliderMixin:OnLoad()
+    CallbackRegistryMixin.OnLoad(self);
+
+    local options = Settings.CreateSliderOptions(0, 100, 1);
+    self:Init(41, options.minValue, options.maxValue, options.steps, sliderFormat)
+
+    if self.SetEnabled_ then
+        self:SetEnabled_(true)
+    else
+        self:SetEnabled(true)
+    end
+
+    self.Back:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, false))
+    self.Forward:SetScript('OnClick', GenerateClosure(self.OnStepperClicked, self, true))
+
+    self.Slider:HookScript('OnEnter', function()
+        self:OnEnter()
+    end)
+    self.Slider:HookScript('OnLeave', function()
+        self:OnLeave()
+    end)
+end
+
+function DFSettingsListSliderMixin:OnEnter()
+    -- print('DFSettingsListSliderMixin:OnEnter()')
+    local parent = self:GetParent();
+
+    parent.Tooltip.HoverBackground:Show();
+    SettingsTooltip:SetOwner(self, 'ANCHOR_RIGHT', 0, 0);
+    parent.TooltipFunc();
+    SettingsTooltip:Show();
+end
+
+function DFSettingsListSliderMixin:OnLeave()
+    -- print('DFSettingsListSliderMixin:OnLeave()')
+    local parent = self:GetParent()
+    parent.Tooltip.HoverBackground:Hide()
+    SettingsTooltip:Hide();
 end

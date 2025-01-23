@@ -168,4 +168,39 @@ UI_shared.xsd">
 		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
 		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
 	</CheckButton>
+	<!-- Slider -->
+	<Frame name="DFSettingsListSliderContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListSliderContainerMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="Slider" inherits="DFSettingsListSlider">
+			</Frame>
+			<EditBox parentKey="Editbox" inherits="DFSettingsListEditbox">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Slider.RightText" relativePoint="LEFT" x="0" y="0" />
+				</Anchors>
+			</EditBox>
+		</Frames>
+	</Frame>
+	<Frame name="DFSettingsListSlider" inherits="MinimalSliderWithSteppersTemplate" mixin="DFSettingsListSliderMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Frame>
+	<EditBox name="DFSettingsListEditbox" multiLine="false" autoFocus="false" virtual="true">
+		<Size>
+			<AbsDimension x="60" y="20">
+			</AbsDimension>
+		</Size>
+		<TextInsets left="1" right="1" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="HoverBackground">
+					<Color a="0.42" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<FontString inherits="GameFontNormal">
+		</FontString>
+	</EditBox>
 </Ui>

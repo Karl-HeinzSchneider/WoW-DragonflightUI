@@ -59,6 +59,7 @@ local function getOption(info)
 end
 
 local function setOption(info, value)
+    -- print('setOption', info[1], info[2], value)
     Module:SetOption(info, value)
 end
 
@@ -180,7 +181,7 @@ local minimapOptions = {
             desc = '' .. getDefaultStr('scale', 'minimap'),
             min = 0.1,
             max = 5,
-            bigStep = 0.025,
+            bigStep = 0.05,
             order = 1,
             editmode = true
         },
