@@ -11,12 +11,12 @@ function DFSettingsListMixin:OnLoad()
     self:Show()
 
     self.DataProvider = CreateTreeDataProvider();
-    local sortComparator = function(a, b)
+    self.sortComparator = function(a, b)
         return b.data.order > a.data.order
     end
-    local affectChildren = false;
+    local affectChildren = true;
     local skipSort = true;
-    self.DataProvider:SetSortComparator(sortComparator, affectChildren, skipSort)
+    self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
 
     local indent = 0;
     local verticalPad = 10;
@@ -31,6 +31,20 @@ function DFSettingsListMixin:OnLoad()
         local elementType = elementData.args.type;
 
         local function Initializer(button, n)
+            self:UnregisterCallback('OnDefaults', button);
+            self:UnregisterCallback('OnRefresh', button);
+
+            self:RegisterCallback('OnDefaults', function(btn, message)
+                --
+                -- print(btn, message)
+                button:Init(n);
+            end, button)
+            self:RegisterCallback('OnRefresh', function(btn, message)
+                --
+                -- print(btn, message)
+                button:Init(n);
+            end, button)
+
             button:Init(n);
         end
 
@@ -75,9 +89,15 @@ function DFSettingsListMixin:OnLoad()
 end
 
 function DFSettingsListMixin:Display(data, small)
-    self.DataProvider:Flush()
+    -- self.DataProvider:Flush()
     -- self.DataProvider = CreateTreeDataProvider()
     -- self.ScrollView:SetDataProvider(self.DataProvider)
+
+    self.DataProvider = CreateTreeDataProvider();
+    local affectChildren = true;
+    local skipSort = true;
+    self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
+    self.ScrollView:SetDataProvider(self.DataProvider)
 
     if not data then
         print('DFSettingsListMixin:Display', 'no data')
@@ -129,8 +149,13 @@ function DFSettingsListMixin:Display(data, small)
 
         if v.type == 'header' then
             -- create new category
+            -- print('header', k)
             local elementData = {key = k, order = (v.order or 9999), args = v, small = small}
-            self.DataProvider:Insert(elementData);
+            local node = self.DataProvider:Insert(elementData);
+
+            -- local affectChildren = true;
+            -- local skipSort = false;
+            node:SetSortComparator(self.sortComparator, affectChildren, skipSort)
         else
             local elementData = {
                 key = k,
@@ -144,6 +169,7 @@ function DFSettingsListMixin:Display(data, small)
 
             if group == '*NOGROUP*' then
                 -- just append  @TODO
+                -- print('~~ NOGROUP', k)
                 self.DataProvider:Insert(elementData);
             else
                 local oldNode = self.DataProvider:FindElementDataByPredicate(function(node)
@@ -152,9 +178,11 @@ function DFSettingsListMixin:Display(data, small)
                 end, false)
 
                 if oldNode then
+                    -- print('~~ oldNode', k)
                     oldNode:Insert(elementData)
                 else
                     -- @TODO but shouldnt happen
+                    -- print('else?!?!!?')
                 end
             end
         end
