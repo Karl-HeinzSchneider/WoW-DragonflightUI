@@ -1627,7 +1627,7 @@ function Module:RegisterOptionScreens()
     end
 
     if DF.Wrath then
-        DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Focus', {
+        DF.ConfigModule:RegisterSettingsData('focus', 'unitframes', {
             name = 'Focus',
             sub = 'focus',
             options = optionsFocus,
@@ -1637,7 +1637,7 @@ function Module:RegisterOptionScreens()
         })
     end
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Party', {
+    DF.ConfigModule:RegisterSettingsData('party', 'unitframes', {
         name = 'Party',
         sub = 'party',
         options = optionsParty,
@@ -1646,7 +1646,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Raid', {
+    DF.ConfigModule:RegisterSettingsData('raid', 'unitframes', {
         name = 'Raid',
         sub = 'raid',
         options = optionsRaid
@@ -1655,7 +1655,7 @@ function Module:RegisterOptionScreens()
         -- end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Pet', {
+    DF.ConfigModule:RegisterSettingsData('pet', 'unitframes', {
         name = 'Pet',
         sub = 'pet',
         options = optionsPet,
@@ -1664,7 +1664,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Player', {
+    DF.ConfigModule:RegisterSettingsData('player', 'unitframes', {
         name = 'Player',
         sub = 'player',
         options = optionsPlayer,
@@ -1673,7 +1673,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Target', {
+    DF.ConfigModule:RegisterSettingsData('target', 'unitframes', {
         name = 'Target',
         sub = 'target',
         options = optionsTarget,

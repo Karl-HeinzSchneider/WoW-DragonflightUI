@@ -242,7 +242,7 @@ function Module:RegisterOptionScreens()
     }
 
     local config = {name = 'Profiles', options = options}
-    DF.ConfigModule:RegisterOptionScreen('General', 'Profiles', config)
+    DF.ConfigModule:RegisterSettingsData('profiles', 'general', config)
 end
 
 function Module:RefreshOptionScreens()

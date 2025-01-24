@@ -96,7 +96,7 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Utility', {
+    DF.ConfigModule:RegisterSettingsData('utility', 'misc', {
         name = 'Utility',
         sub = 'first',
         options = utilityOptions,

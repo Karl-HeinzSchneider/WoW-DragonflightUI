@@ -151,7 +151,7 @@ function Module:OnEnable()
 
     Module:ApplySettings()
 
-    DF.ConfigModule:RegisterOptionScreen('General', 'Modules', {
+    DF.ConfigModule:RegisterSettingsData('modules', 'general', {
         name = 'Modules',
         sub = 'modules',
         options = modulesOptions,
@@ -322,7 +322,7 @@ function Module:AddTestConfig()
         }
     }
     local config = {name = 'WhatsNew', options = options}
-    Module:RegisterOptionScreen('General', 'WhatsNew', config)
+    Module:RegisterSettingsData('whatsnew', 'general', config)
 end
 
 function Module:ToggleConfigFrame()

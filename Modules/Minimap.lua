@@ -681,15 +681,6 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap', {
-        name = 'Minimap',
-        sub = 'minimap',
-        options = minimapOptions,
-        default = function()
-            setDefaultSubValues('minimap')
-        end
-    })
-
     DF.ConfigModule:RegisterSettingsData('minimap', 'misc', {
         name = 'Minimap',
         sub = 'minimap',
@@ -699,16 +690,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    -- DF.ConfigModule.ConfigFrame.Container.DFSettingsList:Display({
-    --     name = 'Minimap',
-    --     sub = 'minimap',
-    --     options = minimapOptions,
-    --     default = function()
-    --         setDefaultSubValues('minimap')
-    --     end
-    -- })
-
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
+    DF.ConfigModule:RegisterSettingsData('questtracker', 'misc', {
         name = 'Questtracker',
         sub = 'tracker',
         options = trackerOptions,
@@ -717,7 +699,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Durability', {
+    DF.ConfigModule:RegisterSettingsData('durability', 'misc', {
         name = 'Durability',
         sub = 'durability',
         options = optionsDurability,

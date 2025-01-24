@@ -464,7 +464,7 @@ end
 DFSettingsListDropdownContainerMixin = {}
 
 function DFSettingsListDropdownContainerMixin:OnLoad()
-    print('~~DFSettingsListDropdownMixin:OnLoad()');
+    -- print('~~DFSettingsListDropdownMixin:OnLoad()');
     DFSettingsListElementBaseMixin.OnLoad(self);
 
     self.Button:ClearAllPoints()
@@ -511,7 +511,7 @@ end
 -- end)
 
 function DFSettingsListDropdownContainerMixin:Init(node)
-    print('~~~~DFSettingsListDropdownMixin:Init()');
+    -- print('~~~~DFSettingsListDropdownMixin:Init()');
     local elementData = node:GetData();
     self.ElementData = elementData;
     local args = elementData.args;
@@ -611,30 +611,3 @@ function DFSettingsListDropdownContainerMixin:Init(node)
         end
     end
 end
-
--- Dropdown button
-DFSettingsListDropdownButtonMixin = {}
-
--- function DFSettingsListDropdownButtonMixin:OnLoad()
---     print('~~DFSettingsListDropdownContainerMixin:OnLoad()');
--- end
-
--- function DFSettingsListDropdownButtonMixin:OnHide()
---     print('~~DFSettingsListDropdownMixin:OnHide()');
--- end
-
--- function DFSettingsListDropdownButtonMixin:OnMouseDown()
---     -- print('~~DFSettingsListDropdownMixin:OnMouseDown()');
--- end
-
--- function DFSettingsListDropdownButtonMixin:OnMouseWheel()
---     -- print('~~DFSettingsListDropdownMixin:OnMouseWheel()');
--- end
-
--- function DFSettingsListDropdownButtonMixin:OnEnter()
---     -- print('~~DFSettingsListDropdownMixin:OnEnter()');
--- end
-
--- function DFSettingsListDropdownButtonMixin:OnLeave()
---     -- print('~~DFSettingsListDropdownMixin:OnLeave()');
--- end

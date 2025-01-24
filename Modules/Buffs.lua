@@ -453,7 +453,7 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Buffs', {
+    DF.ConfigModule:RegisterSettingsData('buffs', 'misc', {
         name = 'Buffs',
         sub = 'buffs',
         options = buffsOptions,
@@ -462,7 +462,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Debuffs', {
+    DF.ConfigModule:RegisterSettingsData('debuffs', 'misc', {
         name = 'Debuffs',
         sub = 'debuffs',
         options = debuffsOptions,

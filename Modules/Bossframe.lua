@@ -254,7 +254,7 @@ end
 
 function Module:RegisterOptionScreens()
     if not DF.Cata then return end
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Boss', {
+    DF.ConfigModule:RegisterSettingsData('boss', 'unitframes', {
         name = 'Boss',
         sub = 'boss',
         options = bossOptions,

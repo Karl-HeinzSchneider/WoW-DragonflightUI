@@ -2995,7 +2995,7 @@ end
 function Module:RegisterOptionScreens()
     for i = 1, 8 do
         local optionsBar = GetBarOption(i)
-        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
+        DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
             name = 'Actionbar' .. i,
             sub = 'bar' .. i,
             options = optionsBar,
@@ -3005,7 +3005,7 @@ function Module:RegisterOptionScreens()
         })
     end
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Petbar', {
+    DF.ConfigModule:RegisterSettingsData('petbar', 'actionbar', {
         name = 'Petbar',
         sub = 'pet',
         options = petOptions,
@@ -3014,7 +3014,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'XPbar', {
+    DF.ConfigModule:RegisterSettingsData('xpbar', 'actionbar', {
         name = 'XPbar',
         sub = 'xp',
         options = xpOptions,
@@ -3023,7 +3023,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Repbar', {
+    DF.ConfigModule:RegisterSettingsData('repbar', 'actionbar', {
         name = 'Repbar',
         sub = 'rep',
         options = repOptions,
@@ -3032,7 +3032,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Possessbar', {
+    DF.ConfigModule:RegisterSettingsData('possessbar', 'actionbar', {
         name = 'Possessbar',
         sub = 'possess',
         options = possessOptions,
@@ -3041,7 +3041,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Stancebar', {
+    DF.ConfigModule:RegisterSettingsData('stancebar', 'actionbar', {
         name = 'Stancebar',
         sub = 'stance',
         options = stanceOptions,
@@ -3050,7 +3050,7 @@ function Module:RegisterOptionScreens()
         end
     })
     if DF.Cata then
-        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Totembar', {
+        DF.ConfigModule:RegisterSettingsData('totembar', 'actionbar', {
             name = 'Totembar',
             sub = 'totem',
             options = totemOptions,
@@ -3059,7 +3059,7 @@ function Module:RegisterOptionScreens()
             end
         })
     end
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Bags', {
+    DF.ConfigModule:RegisterSettingsData('bags', 'actionbar', {
         name = 'Bags',
         sub = 'bags',
         options = bagsOptions,
@@ -3069,7 +3069,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Micromenu', {
+    DF.ConfigModule:RegisterSettingsData('micromenu', 'actionbar', {
         name = 'Micromenu',
         sub = 'micro',
         options = microOptions,
@@ -3078,7 +3078,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'FPS', {
+    DF.ConfigModule:RegisterSettingsData('fps', 'actionbar', {
         name = 'FPS',
         sub = 'fps',
         options = fpsOptions,

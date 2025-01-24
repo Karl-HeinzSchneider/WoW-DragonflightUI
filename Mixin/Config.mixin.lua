@@ -157,6 +157,8 @@ function DragonFlightUIConfigMixin:RegisterSettingsData(id, categoryID, data)
     -- nodeData.isEnabled = true;
     -- self.DFSettingsCategoryList:UpdateElementData(id, categoryID, nodeData)
     self.DFSettingsCategoryList:EnableElement(id, categoryID)
+
+    if self.DFSettingsCategoryList.selectedElement == key then self.Container.DFSettingsList:Display(data) end
 end
 
 function DragonFlightUIConfigMixin:InitCategorys()

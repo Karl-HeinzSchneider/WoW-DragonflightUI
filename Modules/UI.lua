@@ -227,7 +227,7 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'UI', {
+    DF.ConfigModule:RegisterSettingsData('ui', 'misc', {
         name = 'UI',
         sub = 'first',
         options = UIOptions,

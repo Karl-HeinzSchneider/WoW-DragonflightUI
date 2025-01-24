@@ -94,7 +94,7 @@ function DFSettingsCategoryListMixin:OnLoad()
             local newElementID = data.key
             local changed = newElementID ~= self.selectedElement
             if changed then
-                print('OnSelectionChanged-changed', data.id)
+                -- print('OnSelectionChanged-changed', newElementID)
                 self.selectedElement = newElementID
                 EventRegistry:TriggerEvent("DFSettingsCategoryListMixin.Event.OnSelectionChanged", newElementID, self);
 

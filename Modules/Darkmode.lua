@@ -311,7 +311,7 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Darkmode', {
+    DF.ConfigModule:RegisterSettingsData('darkmode', 'misc', {
         name = 'Darkmode',
         sub = 'general',
         options = generalOptions,

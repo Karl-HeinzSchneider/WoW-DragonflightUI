@@ -1040,7 +1040,7 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Castbar', 'Player', {
+    DF.ConfigModule:RegisterSettingsData('player', 'castbar', {
         name = 'Player',
         sub = 'player',
         options = optionsPlayer,
@@ -1049,7 +1049,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Castbar', 'Target', {
+    DF.ConfigModule:RegisterSettingsData('target', 'castbar', {
         name = 'Target',
         sub = 'target',
         options = optionsTarget,
@@ -1059,7 +1059,7 @@ function Module:RegisterOptionScreens()
     })
 
     if DF.Wrath then
-        DF.ConfigModule:RegisterOptionScreen('Castbar', 'Focus', {
+        DF.ConfigModule:RegisterSettingsData('focus', 'castbar', {
             name = 'Focus',
             sub = 'focus',
             options = optionsFocus,
