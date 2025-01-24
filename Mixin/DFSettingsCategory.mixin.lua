@@ -91,7 +91,7 @@ function DFSettingsCategoryListMixin:OnLoad()
         if selected then
             local data = elementData:GetData();
 
-            local newElementID = data.id
+            local newElementID = data.key
             local changed = newElementID ~= self.selectedElement
             if changed then
                 print('OnSelectionChanged-changed', data.id)
@@ -189,6 +189,37 @@ function DFSettingsCategoryListMixin:UpdateElementData(id, categoryID, info)
     self.DataProvider:Remove(oldNode, skipInvalidation)
 
     self:RegisterElement(id, categoryID, info)
+end
+
+function DFSettingsCategoryListMixin:EnableElement(id, categoryID)
+    local key = categoryID .. '_' .. id;
+    local oldNode = self.DataProvider:FindElementDataByPredicate(function(node)
+        local data = node:GetData();
+        return data.key == key;
+    end, false)
+
+    local skipInvalidation = true;
+    self.DataProvider:Remove(oldNode, skipInvalidation);
+
+    local oldNodeData = oldNode:GetData();
+    oldNodeData.isEnabled = true;
+
+    self.DataProvider:InsertInParentByPredicate(oldNodeData, function(node)
+        local nodeData = node:GetData()
+
+        return nodeData.id == categoryID
+    end)
+end
+
+function DFSettingsCategoryListMixin:FindElementDataByPredicate(predicate)
+    return self.DataProvider:FindElementDataByPredicate(predicate, false)
+end
+
+function DFSettingsCategoryListMixin:FindElementDataByKey(key)
+    return self:FindElementDataByPredicate(function(node)
+        local nodeData = node:GetData();
+        return nodeData.key == key;
+    end)
 end
 
 -- Header

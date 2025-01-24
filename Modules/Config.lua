@@ -366,15 +366,15 @@ function Module:RegisterOptionScreen(cat, sub, data)
     -- print('RegisterOptionScreen', cat, sub)
     local config = Module.ConfigFrame
 
-    config.DFCategoryList:SetDisplayData(cat, sub, data)
+    -- config.DFCategoryList:SetDisplayData(cat, sub, data)
 end
 
 function Module:RegisterSettingsElement(id, categoryID, data, firstTime)
-    if firstTime then
-        Module.ConfigFrame.DFSettingsCategoryList:RegisterElement(id, categoryID, data)
-    else
-        Module.ConfigFrame.DFSettingsCategoryList:UpdateElementData(id, categoryID, data)
-    end
+    Module.ConfigFrame:RegisterSettingsElement(id, categoryID, data, firstTime)
+end
+
+function Module:RegisterSettingsData(id, categoryID, data)
+    Module.ConfigFrame:RegisterSettingsData(id, categoryID, data)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)

@@ -92,6 +92,11 @@ function DFSettingsListMixin:OnLoad()
     ScrollUtil.AddManagedScrollBarVisibilityBehavior(self.ScrollBox, self.ScrollBar, scrollBoxAnchors, scrollBoxAnchors);
 end
 
+function DFSettingsListMixin:FlushDisplay()
+    self.DataProvider = CreateTreeDataProvider();
+    self.ScrollView:SetDataProvider(self.DataProvider)
+end
+
 function DFSettingsListMixin:Display(data, small)
     -- self.DataProvider:Flush()
     -- self.DataProvider = CreateTreeDataProvider()
@@ -108,7 +113,7 @@ function DFSettingsListMixin:Display(data, small)
         return
     end
 
-    DevTools_Dump(data.name)
+    -- DevTools_Dump(data.name)
 
     self.Header.Title:SetText(data.name)
 

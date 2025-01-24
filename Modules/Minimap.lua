@@ -227,6 +227,7 @@ local minimapOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
+            dropdownValues = DF.Settings.DropdownAnchorTable,
             order = 3,
             editmode = true
         },
@@ -689,7 +690,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule.ConfigFrame.Container.DFSettingsList:Display({
+    DF.ConfigModule:RegisterSettingsData('minimap', 'misc', {
         name = 'Minimap',
         sub = 'minimap',
         options = minimapOptions,
@@ -697,6 +698,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('minimap')
         end
     })
+
+    -- DF.ConfigModule.ConfigFrame.Container.DFSettingsList:Display({
+    --     name = 'Minimap',
+    --     sub = 'minimap',
+    --     options = minimapOptions,
+    --     default = function()
+    --         setDefaultSubValues('minimap')
+    --     end
+    -- })
 
     DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
         name = 'Questtracker',
