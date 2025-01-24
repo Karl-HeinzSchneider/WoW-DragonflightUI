@@ -166,8 +166,16 @@ local options = {
     }
 }
 
-local frameTable = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster'}
-local frameTableTracker = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster', ['Minimap'] = 'Minimap'}
+local frameTable = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
+}
+
+local frameTableTracker = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'},
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+}
 
 local minimapOptions = {
     type = 'group',
@@ -175,82 +183,82 @@ local minimapOptions = {
     get = getOption,
     set = setOption,
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'minimap'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.05,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'minimap'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            dropdownValues = DF.Settings.DropdownAnchorTable,
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'minimap'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            dropdownValues = DF.Settings.DropdownAnchorTable,
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'minimap'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'minimap'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
+        -- scale = {
+        --     type = 'range',
+        --     name = 'Scale',
+        --     desc = '' .. getDefaultStr('scale', 'minimap'),
+        --     min = 0.1,
+        --     max = 5,
+        --     bigStep = 0.05,
+        --     order = 1,
+        --     editmode = true
+        -- },
+        -- anchorFrame = {
+        --     type = 'select',
+        --     name = 'Anchorframe',
+        --     desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
+        --     values = frameTable,
+        --     order = 4,
+        --     editmode = true
+        -- },
+        -- anchor = {
+        --     type = 'select',
+        --     name = 'Anchor',
+        --     desc = 'Anchor' .. getDefaultStr('anchor', 'minimap'),
+        --     values = {
+        --         ['TOP'] = 'TOP',
+        --         ['RIGHT'] = 'RIGHT',
+        --         ['BOTTOM'] = 'BOTTOM',
+        --         ['LEFT'] = 'LEFT',
+        --         ['TOPRIGHT'] = 'TOPRIGHT',
+        --         ['TOPLEFT'] = 'TOPLEFT',
+        --         ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+        --         ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+        --         ['CENTER'] = 'CENTER'
+        --     },
+        --     dropdownValues = DF.Settings.DropdownAnchorTable,
+        --     order = 2,
+        --     editmode = true
+        -- },
+        -- anchorParent = {
+        --     type = 'select',
+        --     name = 'AnchorParent',
+        --     desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'minimap'),
+        --     values = {
+        --         ['TOP'] = 'TOP',
+        --         ['RIGHT'] = 'RIGHT',
+        --         ['BOTTOM'] = 'BOTTOM',
+        --         ['LEFT'] = 'LEFT',
+        --         ['TOPRIGHT'] = 'TOPRIGHT',
+        --         ['TOPLEFT'] = 'TOPLEFT',
+        --         ['BOTTOMLEFT'] = 'BOTTOMLEFT',
+        --         ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
+        --         ['CENTER'] = 'CENTER'
+        --     },
+        --     dropdownValues = DF.Settings.DropdownAnchorTable,
+        --     order = 3,
+        --     editmode = true
+        -- },
+        -- x = {
+        --     type = 'range',
+        --     name = 'X',
+        --     desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'minimap'),
+        --     min = -2500,
+        --     max = 2500,
+        --     bigStep = 1,
+        --     order = 5,
+        --     editmode = true
+        -- },
+        -- y = {
+        --     type = 'range',
+        --     name = 'Y',
+        --     desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'minimap'),
+        --     min = -2500,
+        --     max = 2500,
+        --     bigStep = 1,
+        --     order = 6,
+        --     editmode = true
+        -- },
         -- locked = {
         --     type = 'toggle',
         --     name = 'Locked',
@@ -365,6 +373,7 @@ do
         end
     end
 end
+DF.Settings:AddPositionTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr, frameTable)
 -- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
 local optionsMinimapEditmode = {
@@ -399,88 +408,9 @@ local optionsMinimapEditmode = {
     }
 }
 
-local trackerOptions = {
-    type = 'group',
-    name = 'Tracker',
-    get = getOption,
-    set = setOption,
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'tracker'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'tracker'),
-            values = frameTableTracker,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'tracker'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'tracker'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'tracker'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'tracker'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local trackerOptions = {type = 'group', name = 'Tracker', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, trackerOptions, 'tracker', 'Tracker', getDefaultStr, frameTableTracker)
+
 local optionsTrackerEditmode = {
     name = 'Tracker',
     desc = 'Tracker',
@@ -513,88 +443,9 @@ local optionsTrackerEditmode = {
     }
 }
 
-local optionsDurability = {
-    type = 'group',
-    name = 'Durability',
-    get = getOption,
-    set = setOption,
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'durability'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'durability'),
-            values = frameTableTracker,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'durability'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'durability'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'durability'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'durability'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local optionsDurability = {type = 'group', name = 'Durability', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, optionsDurability, 'durability', 'Durability', getDefaultStr, frameTableTracker)
+
 local optionsDurabilityEditmode = {
     name = 'Durability',
     desc = 'Durability',

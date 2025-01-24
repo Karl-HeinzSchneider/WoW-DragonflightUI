@@ -152,7 +152,7 @@ function DragonFlightUIConfigMixin:RegisterSettingsData(id, categoryID, data)
     local node = self.DFSettingsCategoryList:FindElementDataByKey(key)
     -- print('node?!', key, node:GetData().key)
     local nodeData = node:GetData()
-    print('node?!', key, nodeData.key)
+    -- print('node?!', key, nodeData.key)
 
     -- nodeData.isEnabled = true;
     -- self.DFSettingsCategoryList:UpdateElementData(id, categoryID, nodeData)

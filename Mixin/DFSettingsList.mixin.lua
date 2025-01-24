@@ -106,7 +106,6 @@ function DFSettingsListMixin:Display(data, small)
     local affectChildren = true;
     local skipSort = true;
     self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
-    self.ScrollView:SetDataProvider(self.DataProvider)
 
     if not data then
         print('DFSettingsListMixin:Display', 'no data')
@@ -153,18 +152,27 @@ function DFSettingsListMixin:Display(data, small)
         setFunc = data.set;
     end
 
+    -- first pass ~> categorys
     for k, v in pairs(data.options.args) do
         --
 
         if v.type == 'header' then
-            -- create new category
             -- print('header', k)
             local elementData = {key = k, order = (v.order or 9999), args = v, small = small}
             local node = self.DataProvider:Insert(elementData);
 
             -- local affectChildren = true;
             -- local skipSort = false;
-            node:SetSortComparator(self.sortComparator, affectChildren, skipSort)
+            node:SetSortComparator(self.sortComparator, true, false)
+        end
+    end
+
+    -- second pass ~> elements
+    for k, v in pairs(data.options.args) do
+        --
+
+        if v.type == 'header' then
+            -- already done
         else
             local elementData = {
                 key = k,
@@ -181,22 +189,33 @@ function DFSettingsListMixin:Display(data, small)
                 -- print('~~ NOGROUP', k)
                 self.DataProvider:Insert(elementData);
             else
-                local oldNode = self.DataProvider:FindElementDataByPredicate(function(node)
-                    local nodeData = node:GetData();
-                    return nodeData.key == key;
-                end, false)
 
-                if oldNode then
-                    -- print('~~ oldNode', k)
-                    oldNode:Insert(elementData)
-                else
-                    -- @TODO but shouldnt happen
-                    -- print('else?!?!!?')
-                end
+                self.DataProvider:InsertInParentByPredicate(elementData, function(node)
+                    local nodeData = node:GetData()
+                    return nodeData.key == group;
+                end)
+
+                -- local oldNode = self.DataProvider:FindElementDataByPredicate(function(node)
+                --     local nodeData = node:GetData();
+                --     return nodeData.key == group;
+                -- end, false)
+
+                -- elementData.args.desc = 'order:' .. elementData.order .. ', group: ' .. group
+
+                -- if oldNode then
+                --     print('~~ oldNode', k)
+                --     oldNode:Insert(elementData)
+                --     oldNode:Sort()
+                -- else
+                --     -- @TODO but shouldnt happen
+                --     print('else?!?!!?')
+                -- end
             end
         end
 
     end
+
+    self.ScrollView:SetDataProvider(self.DataProvider)
 end
 
 -- Base
@@ -227,6 +246,12 @@ function DFSettingsListHeaderMixin:Init(node)
 
     local elementData = node:GetData();
     self.Title:SetText(elementData.args.name)
+
+    if elementData.args.isExpanded then
+        node:SetCollapsed(false, true, false)
+    else
+        node:SetCollapsed(true, true, false)
+    end
 end
 
 -- Divider
