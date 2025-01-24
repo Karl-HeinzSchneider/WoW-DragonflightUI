@@ -58,6 +58,8 @@ function DFSettingsListMixin:OnLoad()
             factory("DFSettingsListSliderContainer", Initializer);
         elseif elementType == 'execute' then
             factory("DFSettingsListButton", Initializer);
+        elseif elementType == 'select' then
+            factory("DFSettingsListDropdownContainer", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -306,7 +308,7 @@ function DFSettingsListSliderContainerMixin:Init(node)
     local elementData = node:GetData();
     self.ElementData = elementData;
     local args = elementData.args;
-    print('~~~~~~:OnLoad()', args.name)
+    -- print('~~~~~~:OnLoad()', args.name)
 
     self.Text:SetText(args.name);
     self.Text:Show();
@@ -452,3 +454,182 @@ function DFSettingsListButtonMixin:Init(node)
         args.func()
     end, self)
 end
+
+-- Dropdown
+DFSettingsListDropdownContainerMixin = {}
+
+function DFSettingsListDropdownContainerMixin:OnLoad()
+    print('~~DFSettingsListDropdownMixin:OnLoad()');
+    DFSettingsListElementBaseMixin.OnLoad(self);
+
+    self.Button:ClearAllPoints()
+    -- self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 4 + 32 + 5, 0);
+    self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 20, 0);
+    -- self.Button:SetEnabled(false)
+
+    local sizeX = 185
+    self.Button.Dropdown:SetWidth(sizeX)
+    -- self.Button:SetWidth(sizeX - 2 * (32 + 5))
+    self.Button.Dropdown.Text:SetText('TEST')
+
+    -- DevTools_Dump(self.Button.Dropdown)
+end
+
+-- hooksecurefunc(Settings, 'CreateDropdownOptionInserter', function(options)
+-- DevTools_Dump(options())
+-- end)
+
+-- hooksecurefunc(Settings, 'CreateOptionsInitTooltip', function(setting, name, tooltip, options)
+--     if name == 'Auto Loot Key' then
+--         -- DevTools_Dump(setting)
+--         print('name:', name)
+--         -- DevTools_Dump(tooltip)
+--         -- DevTools_Dump(options())
+--     end
+-- end)
+
+-- hooksecurefunc(Settings, 'InitDropdown', function(dropdown, setting, elementInserter, initTooltip)
+--     -- DevTools_Dump(options())
+
+--     local settingValue = setting:GetValue();
+--     if settingValue == 'SHIFT' then
+--         print('settingValue:', settingValue)
+
+--         -- DevTools_Dump(setting)
+--         -- DevTools_Dump(name)
+--         -- DevTools_Dump(tooltip)
+--         -- DevTools_Dump(options())
+--         local test = initTooltip()
+--         DevTools_Dump(test)
+--     end
+
+-- end)
+
+function DFSettingsListDropdownContainerMixin:Init(node)
+    print('~~~~DFSettingsListDropdownMixin:Init()');
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+    local args = elementData.args;
+
+    self.Text:SetText(args.name);
+    self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    if args.small then
+        -- self.Slider:SetWidth(250);
+        -- self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    else
+        -- self.Button:SetWidth(200);
+        -- self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+    end
+
+    if args.dropdownValues then
+
+        local generator = function(dropdown, rootDescription)
+            rootDescription:SetTag('')
+            -- rootDescription:CreateTitle('TITLETEST')
+
+            local function IsSelected(name)
+                -- print('IsSelected', name)
+                return elementData.get({elementData.key}) == name;
+            end
+
+            local function SetSelected(name)
+                -- print('SetSelected', name)
+                elementData.set({elementData.key}, name)
+            end
+
+            for k, v in ipairs(args.dropdownValues) do
+                --
+                local name = v.value;
+                local desc = v.text;
+                local radio = rootDescription:CreateRadio(desc, IsSelected, SetSelected, name);
+            end
+        end
+        self.Button.Dropdown:SetupMenu(generator)
+
+        -- rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC);
+
+        -- __Checkbox__
+        -- rootDescription:SetTag("MENU_CALENDAR_FILTER");
+        -- for index, data in ipairs(CALENDAR_FILTER_CVARS) do
+        -- 	rootDescription:CreateCheckbox(data.text, IsSelected, SetSelected, data);
+        -- end
+
+        -- __Radio__
+        -- rootDescription:SetTag("MENU_COMPACT_RAID_FRAME_DISPLAY_PROFILES");
+        -- for i = 1, GetNumRaidProfiles() do
+        --     local name = GetRaidProfileName(i);
+        --     rootDescription:CreateRadio(name, IsSelected, SetSelected, name);
+        -- end
+
+        -- __ Divider__
+        -- rootDescription:CreateDivider();
+
+        -- __Button__
+        -- local button = rootDescription:CreateButton(tbl.text, tbl.func);     
+        -- button:SetEnabled(not tbl.disabled);
+        do
+            -- print('~~~~~dropdownValues~~~~~')
+            -- DevTools_Dump(args.dropdownValues)
+            -- -- local function Inserter(rootDescription, isSelected, setSelected)
+            -- -- 	for index, optionData in ipairs(options()) do
+            -- -- 		local optionDescription = rootDescription:CreateTemplate("SettingsDropdownButtonTemplate");
+            -- -- 		Settings.CreateDropdownButton(optionDescription, optionData, isSelected, setSelected);
+            -- -- 	end
+            -- -- end
+            -- -- return Inserter;
+            -- local inserter = Settings.CreateDropdownOptionInserter(args.dropdownValues);
+
+            -- -- local initDropdownTooltip = Settings.CreateOptionsInitTooltip(dropdownSetting, args.name, args.desc,
+            -- --                                                               dropdownOptions);
+            -- local initDropdownTooltip = function()
+            --     print('initDropdownTooltip!')
+            -- end
+
+            -- local dropdownSetting = {}
+            -- function dropdownSetting:GetValue()
+            --     print('dropdownSetting:GetValue()')
+            --     return elementData.get({elementData.key});
+            -- end
+
+            -- function dropdownSetting:SetValue(value)
+            --     print('dropdownSetting:SetValue()', value)
+            --     return elementData.set({elementData.key}, value);
+            -- end
+
+            -- Settings.InitDropdown(self.Dropdown, dropdownSetting, inserter, initDropdownTooltip);
+
+            -- self.Dropdown:SetEnabled(true)
+
+        end
+    end
+end
+
+-- Dropdown button
+DFSettingsListDropdownButtonMixin = {}
+
+-- function DFSettingsListDropdownButtonMixin:OnLoad()
+--     print('~~DFSettingsListDropdownContainerMixin:OnLoad()');
+-- end
+
+-- function DFSettingsListDropdownButtonMixin:OnHide()
+--     print('~~DFSettingsListDropdownMixin:OnHide()');
+-- end
+
+-- function DFSettingsListDropdownButtonMixin:OnMouseDown()
+--     -- print('~~DFSettingsListDropdownMixin:OnMouseDown()');
+-- end
+
+-- function DFSettingsListDropdownButtonMixin:OnMouseWheel()
+--     -- print('~~DFSettingsListDropdownMixin:OnMouseWheel()');
+-- end
+
+-- function DFSettingsListDropdownButtonMixin:OnEnter()
+--     -- print('~~DFSettingsListDropdownMixin:OnEnter()');
+-- end
+
+-- function DFSettingsListDropdownButtonMixin:OnLeave()
+--     -- print('~~DFSettingsListDropdownMixin:OnLeave()');
+-- end

@@ -216,4 +216,70 @@ UI_shared.xsd">
 			</Button>
 		</Frames>
 	</Frame>
+	<!-- Dropdown -->
+	<Frame name="DFSettingsListDropdownContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListDropdownContainerMixin" virtual="true">
+		<Frames>
+			<!--
+			<DropdownButton parentKey="Button" mixin="DFSettingsListDropdownButtonMixin" inherits="WowStyle2DropdownTemplate">
+			<Anchors>
+			<Anchor point="CENTER" />
+			</Anchors>
+			</DropdownButton>
+			-->
+			<Frame parentKey="Button" inherits="DropdownWithSteppersTemplate" mixin="DropdownWithSteppersAndLabelMixin" virtual="true">
+				<Frames>
+					<DropdownButton parentKey="Dropdown" inherits="WowStyle2DropdownTemplate">
+						<Anchors>
+							<Anchor point="CENTER" />
+						</Anchors>
+					</DropdownButton>
+				</Frames>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Label" font="GameFontHighlightMed2">
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.DecrementButton" relativePoint="LEFT" x="-34" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<!--
+			<Button mixin="DFSettingsListDropdownButtonMixin" parentKey="Button">
+			<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnHide method="OnHide" />
+			<OnMouseDown method="OnMouseDown" />
+			<OnMouseWheel method="OnMouseWheel" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			</Scripts>
+			</Button>
+			-->
+			<!--
+			<Frame parentKey="Button" inherits="SettingsDropdownWithButtonsTemplate">
+			
+			<Anchors>
+			<Anchor point="LEFT" relativePoint="CENTER" x="-40" />
+			</Anchors>
+			
+			</Frame>
+			-->
+			<Button parentKey="IncrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
+				<Size x="32" y="32" />
+				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-nextbutton" />
+				<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-nextbutton-down" />
+				<DisabledTexture atlas="charactercreate-customize-nextbutton-disabled" />
+			</Button>
+			<Button parentKey="DecrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
+				<Size x="32" y="32" />
+				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-backbutton" />
+				<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-backbutton-down" />
+				<DisabledTexture atlas="charactercreate-customize-backbutton-disabled" />
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
 </Ui>

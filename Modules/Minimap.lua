@@ -208,6 +208,7 @@ local minimapOptions = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
+            dropdownValues = DF.Settings.DropdownAnchorTable,
             order = 2,
             editmode = true
         },

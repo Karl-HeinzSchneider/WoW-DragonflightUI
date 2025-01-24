@@ -63,6 +63,7 @@ XML\Talents.xml
 XML\UI.xml
 
 # Config
+Modules\__Settings.lua
 Modules\Config.lua
 
 # Modules
