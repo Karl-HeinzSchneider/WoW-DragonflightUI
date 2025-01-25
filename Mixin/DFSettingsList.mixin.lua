@@ -148,8 +148,8 @@ function DFSettingsListMixin:Display(data, small)
             return data.options.set(newInfo, value)
         end
     else
-        getFunc = data.get;
-        setFunc = data.set;
+        getFunc = data.options.get;
+        setFunc = data.options.set;
     end
 
     -- first pass ~> categorys

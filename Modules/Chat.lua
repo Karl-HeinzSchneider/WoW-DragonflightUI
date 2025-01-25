@@ -50,7 +50,7 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local frameTable = {['UIParent'] = 'UIParent'}
+local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
 
 local options = {
     type = 'group',
@@ -73,6 +73,7 @@ local options = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame'),
+            dropdownValues = frameTable,
             values = frameTable,
             order = 4,
             editmode = true
@@ -92,6 +93,7 @@ local options = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
+            dropdownValues = DF.Settings.DropdownAnchorTable,
             order = 2,
             editmode = true
         },
@@ -110,6 +112,7 @@ local options = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
+            dropdownValues = DF.Settings.DropdownAnchorTable,
             order = 3,
             editmode = true
         },
