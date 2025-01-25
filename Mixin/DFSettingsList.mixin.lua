@@ -575,9 +575,11 @@ function DFSettingsListDropdownContainerMixin:Init(node)
     end
 
     if args.dropdownValues then
+        -- self.Button.Dropdown:OverrideText(elementData.get({elementData.key}));
+        -- self.Button.Dropdown:SetDefaultText(elementData.get({elementData.key}));
 
         local generator = function(dropdown, rootDescription)
-            rootDescription:SetTag('')
+            rootDescription:SetTag('TAG?')
             -- rootDescription:CreateTitle('TITLETEST')
 
             local function IsSelected(name)
@@ -594,7 +596,25 @@ function DFSettingsListDropdownContainerMixin:Init(node)
                 --
                 local name = v.value;
                 local desc = v.text;
+
+                -- local btnFunc = function()
+                --     print('btnFunc', name)
+                --     -- elementData.set({args.name}, name)
+                --     elementData.set({elementData.key}, name)
+
+                --     self.Text:SetText(args.name);
+                --     self.Text:Show();
+                -- end
+
                 local radio = rootDescription:CreateRadio(desc, IsSelected, SetSelected, name);
+                -- radio:SetTooltip(function(tooltip, elementDescription)
+                --     GameTooltip_SetTitle(tooltip, MenuUtil.GetElementText(elementDescription));
+                --     GameTooltip_AddInstructionLine(tooltip, "Test Tooltip Instruction");
+                --     GameTooltip_AddNormalLine(tooltip, "Test Tooltip Normal Line");
+                --     GameTooltip_AddErrorLine(tooltip, "Test Tooltip Colored Line");
+                -- end);
+
+                -- local button = rootDescription:CreateButton(desc, btnFunc, name);
             end
         end
         self.Button.Dropdown:SetupMenu(generator)
