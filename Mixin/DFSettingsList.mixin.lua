@@ -297,7 +297,7 @@ function DFSettingsListCheckboxContainerMixin:Init(node)
 
     -- self.checkbox:UnregisterCallback('OnValueChanged', self);
     self.Checkbox:UnregisterCallback('OnValueChanged', self)
-    self.Checkbox:SetValue(elementData.get({elementData.key}));
+    self.Checkbox:SetValue(elementData.get({elementData.key}), true);
     self.Checkbox:RegisterCallback('OnValueChanged', function(cb, checked)
         -- print('OnValueChanged', checked) 
         elementData.set({elementData.key}, checked)
