@@ -222,13 +222,14 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
     end
 
     local extraOptions = {
-        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
+        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100, isExpanded = true},
         showMouseover = {
             type = 'toggle',
             name = 'Show On Mouseover',
             desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
                 getDefaultStr('showMouseover', sub),
             order = 100.5,
+            group = 'headerVis',
             new = false
         },
         hideAlways = {
@@ -236,6 +237,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Always Hide',
             desc = '' .. cond('hide') .. getDefaultStr('hideAlways', sub),
             order = 101,
+            group = 'headerVis',
             new = false
         },
         hideCombat = {
@@ -243,6 +245,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide In Combat',
             desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', sub),
             order = 102,
+            group = 'headerVis',
             new = false
         },
         hideOutOfCombat = {
@@ -250,6 +253,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide Out Of Combat',
             desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', sub),
             order = 103,
+            group = 'headerVis',
             new = false
         },
         hidePet = {
@@ -257,6 +261,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide With Pet',
             desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', sub),
             order = 104,
+            group = 'headerVis',
             new = false
         },
         hideNoPet = {
@@ -264,6 +269,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide Without Pet',
             desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', sub),
             order = 105,
+            group = 'headerVis',
             new = false
         },
         hideStance = {
@@ -271,6 +277,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide Without Stance/Form',
             desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', sub),
             order = 106,
+            group = 'headerVis',
             new = false
         },
         hideStealth = {
@@ -278,6 +285,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide In Stealth',
             desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', sub),
             order = 107,
+            group = 'headerVis',
             new = false
         },
         hideNoStealth = {
@@ -285,6 +293,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide Outside Stealth',
             desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', sub),
             order = 108,
+            group = 'headerVis',
             new = false
         },
         hideCustom = {
@@ -293,6 +302,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
                 getDefaultStr('hideCustom', sub),
             order = 109,
+            group = 'headerVis',
             new = false
         },
         hideCustomCondButton = {
@@ -304,7 +314,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                 StaticPopup_Show(popupName)
             end,
-            order = 109.5
+            order = 109.5,
+            group = 'headerVis'
         }
     }
 

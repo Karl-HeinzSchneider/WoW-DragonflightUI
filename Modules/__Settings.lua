@@ -14,6 +14,11 @@ DF.Settings.DropdownAnchorTable = {
     {value = 'BOTTOMRIGHT', text = 'BOTTOMRIGHT', tooltip = 'descr', label = 'label'}
 }
 
+DF.Settings.OrientationTable = {
+    {value = 'horizontal', text = 'Horizontal', tooltip = 'descr', label = 'label'},
+    {value = 'vertical', text = 'Vertical', tooltip = 'descr', label = 'label'}
+}
+
 function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, getDefaultStr, frameTable)
     local extraOptions = {
         headerPosition = {type = 'header', name = 'Scale and Position', desc = '', order = 0, isExpanded = true},

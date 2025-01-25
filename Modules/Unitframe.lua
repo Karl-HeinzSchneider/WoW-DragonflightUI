@@ -242,10 +242,12 @@ local optionsPlayer = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
             desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'player'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -253,6 +255,7 @@ local optionsPlayer = {
             type = 'toggle',
             name = 'Class Icon Portrait',
             desc = '' .. getDefaultStr('classicon', 'player'),
+            group = 'headerStyling',
             order = 7.1,
             disabled = true,
             new = false,
@@ -262,12 +265,14 @@ local optionsPlayer = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            group = 'headerStyling',
             order = 8
         },
         biggerHealthbar = {
             type = 'toggle',
             name = 'Bigger Healthbar',
             desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
+            group = 'headerStyling',
             order = 9,
             new = true,
             editmode = true
@@ -276,6 +281,7 @@ local optionsPlayer = {
             type = 'toggle',
             name = 'Hide In Combat Red Statusglow',
             desc = '' .. getDefaultStr('hideRedStatus', 'player'),
+            group = 'headerStyling',
             order = 10,
             new = true
         },
@@ -283,6 +289,7 @@ local optionsPlayer = {
             type = 'toggle',
             name = 'Hide Hit Indicator',
             desc = '' .. getDefaultStr('hideIndicator', 'player'),
+            group = 'headerStyling',
             order = 11,
             new = true
         }
@@ -300,6 +307,7 @@ if true then
                 ['Both'] = 'Both',
                 ['Numeric Value'] = 'Numeric Value'
             },
+            group = 'headerStyling',
             order = 10,
             blizzard = true,
             editmode = true
@@ -408,10 +416,12 @@ local optionsTarget = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
             desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'target'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -419,6 +429,7 @@ local optionsTarget = {
             type = 'toggle',
             name = 'Class Icon Portrait',
             desc = '' .. getDefaultStr('classicon', 'target'),
+            group = 'headerStyling',
             order = 7.1,
             disabled = true,
             new = false,
@@ -429,12 +440,14 @@ local optionsTarget = {
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'target'),
+            group = 'headerStyling',
             order = 8
         },
         enableNumericThreat = {
             type = 'toggle',
             name = 'Numeric Threat',
             desc = 'Enable numeric threat' .. getDefaultStr('enableNumericThreat', 'target'),
+            group = 'headerStyling',
             order = 9,
             disabled = not DF.Era
         },
@@ -442,6 +455,7 @@ local optionsTarget = {
             type = 'toggle',
             name = 'Threat Glow',
             desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'target'),
+            group = 'headerStyling',
             order = 10,
             disabled = true
         },
@@ -449,6 +463,7 @@ local optionsTarget = {
             type = 'toggle',
             name = 'Hide Name Background',
             desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'target'),
+            group = 'headerStyling',
             order = 11,
             new = true,
             editmode = true
@@ -457,6 +472,7 @@ local optionsTarget = {
             type = 'toggle',
             name = 'ComboPoints on PlayerFrame',
             desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
+            group = 'headerStyling',
             order = 12,
             new = true,
             editmode = true
@@ -469,10 +485,18 @@ if true then
             type = 'toggle',
             name = SHOW_TARGET_OF_TARGET_TEXT,
             desc = OPTION_TOOLTIP_SHOW_TARGET_OF_TARGET,
+            group = 'headerStyling',
             order = 15,
             blizzard = true
         },
-        buffsOnTop = {type = 'toggle', name = 'Buffs On Top', desc = '', order = 16, blizzard = true}
+        buffsOnTop = {
+            type = 'toggle',
+            name = 'Buffs On Top',
+            desc = '',
+            group = 'headerStyling',
+            order = 16,
+            blizzard = true
+        }
     }
 
     for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
@@ -565,17 +589,20 @@ local optionsPet = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'pet'),
+            group = 'headerStyling',
             order = 9
         },
         enableThreatGlow = {
             type = 'toggle',
             name = 'Threat Glow',
             desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'pet'),
+            group = 'headerStyling',
             order = 8,
             disabled = true
         },
@@ -583,12 +610,14 @@ local optionsPet = {
             type = 'toggle',
             name = 'Hide Statusbar Text',
             desc = '' .. getDefaultStr('hideStatusbarText', 'pet'),
+            group = 'headerStyling',
             order = 10
         },
         hideIndicator = {
             type = 'toggle',
             name = 'Hide Hit Indicator',
             desc = '' .. getDefaultStr('hideIndicator', 'pet'),
+            group = 'headerStyling',
             order = 11,
             new = true
         }
@@ -602,6 +631,7 @@ if DF.Cata then
             name = 'Auto adjust offset',
             desc = 'Auto add some Y offset depending on the class, e.g. on Deathknight to make room for the rune display' ..
                 getDefaultStr('offset', 'pet'),
+            group = 'headerStyling',
             order = 11,
             new = true
         }
@@ -651,10 +681,12 @@ local optionsFocus = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
             desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'focus'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -662,6 +694,7 @@ local optionsFocus = {
             type = 'toggle',
             name = 'Class Icon Portrait',
             desc = '' .. getDefaultStr('classicon', 'focus'),
+            group = 'headerStyling',
             order = 7.1,
             disabled = true,
             new = false,
@@ -672,12 +705,14 @@ local optionsFocus = {
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'focus'),
+            group = 'headerStyling',
             order = 8
         },
         hideNameBackground = {
             type = 'toggle',
             name = 'Hide Name Background',
             desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'focus'),
+            group = 'headerStyling',
             order = 11,
             new = true,
             editmode = true
@@ -726,10 +761,12 @@ local optionsParty = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
             desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'party'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -738,6 +775,7 @@ local optionsParty = {
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'party'),
+            group = 'headerStyling',
             order = 8
         }
     }
@@ -748,6 +786,7 @@ if true then
             type = 'toggle',
             name = USE_RAID_STYLE_PARTY_FRAMES,
             desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
+            group = 'headerStyling',
             order = 15,
             blizzard = true,
             editmode = true
@@ -760,6 +799,7 @@ if true then
                 Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             end,
+            group = 'headerStyling',
             order = 16,
             blizzard = true,
             editmode = true
@@ -1164,47 +1204,6 @@ local optionsRaidEditmode = {
     }
 }
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        focus = optionsFocus,
-        player = optionsPlayer,
-        target = optionsTarget,
-        pet = optionsPet,
-        party = optionsParty
-    }
-}
-
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -1214,8 +1213,6 @@ function Module:OnInitialize()
     end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
-
-    DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()

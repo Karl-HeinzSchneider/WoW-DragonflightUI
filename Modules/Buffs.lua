@@ -119,11 +119,12 @@ local buffsOptions = {
     get = getOption,
     set = setOption,
     args = {
-
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         expanded = {
             type = 'toggle',
             name = 'Expanded',
             desc = '' .. getDefaultStr('expanded', 'buffs'),
+            group = 'headerStyling',
             order = 10,
             new = true
         },
@@ -132,6 +133,7 @@ local buffsOptions = {
             name = 'Use State Handler',
             desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
                 getDefaultStr('useStateHandler', 'buffs'),
+            group = 'headerStyling',
             order = 115
         }
     }
@@ -143,6 +145,7 @@ if DF.Cata then
             type = 'toggle',
             name = CONSOLIDATE_BUFFS_TEXT,
             desc = OPTION_TOOLTIP_CONSOLIDATE_BUFFS,
+            group = 'headerStyling',
             order = 13,
             blizzard = true
         }

@@ -118,70 +118,83 @@ if DF.Wrath then
     table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
 end
 
-local optionsPlayer = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
+function AddCastbarTable(optionTable, sub)
+    local extraOptions = {
+        -- activate = {
+        --     type = 'toggle',
+        --     name = 'Active',
+        --     desc = '' .. getDefaultStr('activate', sub),
+        --     order = -1,
+        --     new = true,
+        --     editmode = true
+        -- },
+        -- headerCastbar = {type = 'header', name = 'Castbar', desc = '', order = 10, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         sizeX = {
             type = 'range',
             name = 'Width',
-            desc = getDefaultStr('sizeX', 'player'),
+            desc = getDefaultStr('sizeX', sub),
             min = 80,
             max = 512,
             bigStep = 1,
+            group = 'headerStyling',
             order = 10,
             editmode = true
         },
         sizeY = {
             type = 'range',
             name = 'Height',
-            desc = getDefaultStr('sizeY', 'player'),
+            desc = getDefaultStr('sizeY', sub),
             min = 10,
             max = 64,
             bigStep = 1,
+            group = 'headerStyling',
             order = 11,
             editmode = true
         },
         preci = {
             type = 'range',
             name = 'Precision (time left)',
-            desc = '...' .. getDefaultStr('preci', 'player'),
+            desc = '...' .. getDefaultStr('preci', sub),
             min = 0,
             max = 3,
             bigStep = 1,
+            group = 'headerStyling',
             order = 12,
             editmode = true
         },
         preciMax = {
             type = 'range',
             name = 'Precision (time max)',
-            desc = '...' .. getDefaultStr('preciMax', 'player'),
+            desc = '...' .. getDefaultStr('preciMax', sub),
             min = 0,
             max = 3,
             bigStep = 1,
+            group = 'headerStyling',
             order = 13,
             editmode = true
         },
         castTimeEnabled = {
             type = 'toggle',
             name = 'Show cast time text',
-            desc = '' .. getDefaultStr('castTimeEnabled', 'player'),
+            desc = '' .. getDefaultStr('castTimeEnabled', sub),
+            group = 'headerStyling',
             order = 14,
             editmode = true
         },
         castTimeMaxEnabled = {
             type = 'toggle',
             name = 'Show cast time max text',
-            desc = '' .. getDefaultStr('castTimeMaxEnabled', 'player'),
+            desc = '' .. getDefaultStr('castTimeMaxEnabled', sub),
+            group = 'headerStyling',
             order = 15,
             editmode = true
         },
         compactLayout = {
             type = 'toggle',
             name = 'Compact Layout',
-            desc = '' .. getDefaultStr('compactLayout', 'player'),
+            desc = '' .. getDefaultStr('compactLayout', sub),
+            group = 'headerStyling',
             order = 16,
             editmode = true
         },
@@ -189,10 +202,11 @@ local optionsPlayer = {
             type = 'range',
             name = 'Hold Time (Success)',
             desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
-                getDefaultStr('holdTime', 'player'),
+                getDefaultStr('holdTime', sub),
             min = 0,
             max = 2,
             bigStep = 0.05,
+            group = 'headerStyling',
             order = 13.1,
             new = true,
             editmode = true
@@ -201,10 +215,11 @@ local optionsPlayer = {
             type = 'range',
             name = 'Hold Time (Interrupt)',
             desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
-                getDefaultStr('holdTimeInterrupt', 'player'),
+                getDefaultStr('holdTimeInterrupt', sub),
             min = 0,
             max = 2,
             bigStep = 0.05,
+            group = 'headerStyling',
             order = 13.2,
             new = true,
             editmode = true
@@ -212,17 +227,19 @@ local optionsPlayer = {
         showIcon = {
             type = 'toggle',
             name = 'Show Icon',
-            desc = '' .. getDefaultStr('showIcon', 'player'),
+            desc = '' .. getDefaultStr('showIcon', sub),
+            group = 'headerStyling',
             order = 17,
             editmode = true
         },
         sizeIcon = {
             type = 'range',
             name = 'Icon Size',
-            desc = getDefaultStr('sizeIcon', 'player'),
+            desc = getDefaultStr('sizeIcon', sub),
             min = 1,
             max = 64,
             bigStep = 1,
+            group = 'headerStyling',
             order = 17.1,
             new = true,
             editmode = true
@@ -230,25 +247,35 @@ local optionsPlayer = {
         showTicks = {
             type = 'toggle',
             name = 'Show Ticks',
-            desc = '' .. getDefaultStr('showTicks', 'player'),
+            desc = '' .. getDefaultStr('showTicks', sub),
+            group = 'headerStyling',
             order = 18
+        },
+        autoAdjust = {
+            type = 'toggle',
+            name = 'Auto Adjust',
+            desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the FocusFrame' ..
+                getDefaultStr('autoAdjust', sub),
+            group = 'headerStyling',
+            order = 22,
+            editmode = true
         }
-        -- autoAdjust = {
-        --     type = 'toggle',
-        --     name = 'Auto Adjust',
-        --     desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the PlayerFrame' ..
-        --         getDefaultStr('autoAdjust', 'player'),
-        --     order = 22
-        -- }
     }
-}
 
+    for k, v in pairs(extraOptions) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
+local optionsPlayer = {type = 'group', name = 'DragonflightUI - ' .. mName, get = getOption, set = setOption, args = {}}
 if DF.Era then
     local moreOptions = {
         showRank = {
             type = 'toggle',
             name = 'Show Rank',
             desc = '' .. getDefaultStr('showRank', 'player'),
+            group = 'headerStyling',
             order = 20,
             new = true,
             editmode = true
@@ -257,6 +284,8 @@ if DF.Era then
 
     for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
 end
+AddCastbarTable(optionsPlayer, 'player')
+optionsPlayer.args.autoAdjust = nil;
 DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr, frameTable)
 
 local optionsPlayerEditmode = {
@@ -321,132 +350,8 @@ local optionsPlayerEditmode = {
     }
 }
 
-local optionsTarget = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        sizeX = {
-            type = 'range',
-            name = 'Width',
-            desc = getDefaultStr('sizeX', 'target'),
-            min = 80,
-            max = 512,
-            bigStep = 1,
-            order = 10,
-            editmode = true
-        },
-        sizeY = {
-            type = 'range',
-            name = 'Height',
-            desc = getDefaultStr('sizeY', 'target'),
-            min = 10,
-            max = 64,
-            bigStep = 1,
-            order = 11,
-            editmode = true
-        },
-        preci = {
-            type = 'range',
-            name = 'Precision (time left)',
-            desc = '...' .. getDefaultStr('preci', 'target'),
-            min = 0,
-            max = 3,
-            bigStep = 1,
-            order = 12,
-            editmode = true
-        },
-        preciMax = {
-            type = 'range',
-            name = 'Precision (time max)',
-            desc = '...' .. getDefaultStr('preciMax', 'target'),
-            min = 0,
-            max = 3,
-            bigStep = 1,
-            order = 13,
-            editmode = true
-        },
-        castTimeEnabled = {
-            type = 'toggle',
-            name = 'Show cast time text',
-            desc = '' .. getDefaultStr('castTimeEnabled', 'target'),
-            order = 14,
-            editmode = true
-        },
-        castTimeMaxEnabled = {
-            type = 'toggle',
-            name = 'Show cast time max text',
-            desc = '' .. getDefaultStr('castTimeMaxEnabled', 'target'),
-            order = 15,
-            editmode = true
-        },
-        compactLayout = {
-            type = 'toggle',
-            name = 'Compact Layout',
-            desc = '' .. getDefaultStr('compactLayout', 'target'),
-            order = 16,
-            editmode = true
-        },
-        holdTime = {
-            type = 'range',
-            name = 'Hold Time (Success)',
-            desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
-                getDefaultStr('holdTime', 'target'),
-            min = 0,
-            max = 2,
-            bigStep = 0.05,
-            order = 13.1,
-            new = true,
-            editmode = true
-        },
-        holdTimeInterrupt = {
-            type = 'range',
-            name = 'Hold Time (Interrupt)',
-            desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
-                getDefaultStr('holdTimeInterrupt', 'target'),
-            min = 0,
-            max = 2,
-            bigStep = 0.05,
-            order = 13.2,
-            new = true,
-            editmode = true
-        },
-        showIcon = {
-            type = 'toggle',
-            name = 'Show Icon',
-            desc = '' .. getDefaultStr('showIcon', 'target'),
-            order = 17,
-            editmode = true
-        },
-        sizeIcon = {
-            type = 'range',
-            name = 'Icon Size',
-            desc = getDefaultStr('sizeIcon', 'target'),
-            min = 1,
-            max = 64,
-            bigStep = 1,
-            order = 17.1,
-            new = true,
-            editmode = true
-        },
-        showTicks = {
-            type = 'toggle',
-            name = 'Show Ticks',
-            desc = '' .. getDefaultStr('showTicks', 'target'),
-            order = 18,
-            editmode = true
-        },
-        autoAdjust = {
-            type = 'toggle',
-            name = 'Auto Adjust',
-            desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the TargetFrame' ..
-                getDefaultStr('autoAdjust', 'target'),
-            order = 22,
-            editmode = true
-        }
-    }
-}
+local optionsTarget = {type = 'group', name = 'DragonflightUI - ' .. mName, get = getOption, set = setOption, args = {}}
+AddCastbarTable(optionsTarget, 'target')
 DF.Settings:AddPositionTable(Module, optionsTarget, 'target', 'Target', getDefaultStr, frameTable)
 
 if DF.Era then
@@ -528,132 +433,8 @@ local optionsTargetEditmode = {
     }
 }
 
-local optionsFocus = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        sizeX = {
-            type = 'range',
-            name = 'Width',
-            desc = getDefaultStr('sizeX', 'focus'),
-            min = 80,
-            max = 512,
-            bigStep = 1,
-            order = 10,
-            editmode = true
-        },
-        sizeY = {
-            type = 'range',
-            name = 'Height',
-            desc = getDefaultStr('sizeY', 'focus'),
-            min = 10,
-            max = 64,
-            bigStep = 1,
-            order = 11,
-            editmode = true
-        },
-        preci = {
-            type = 'range',
-            name = 'Precision (time left)',
-            desc = '...' .. getDefaultStr('preci', 'focus'),
-            min = 0,
-            max = 3,
-            bigStep = 1,
-            order = 12,
-            editmode = true
-        },
-        preciMax = {
-            type = 'range',
-            name = 'Precision (time max)',
-            desc = '...' .. getDefaultStr('preciMax', 'focus'),
-            min = 0,
-            max = 3,
-            bigStep = 1,
-            order = 13,
-            editmode = true
-        },
-        castTimeEnabled = {
-            type = 'toggle',
-            name = 'Show cast time text',
-            desc = '' .. getDefaultStr('castTimeEnabled', 'focus'),
-            order = 14,
-            editmode = true
-        },
-        castTimeMaxEnabled = {
-            type = 'toggle',
-            name = 'Show cast time max text',
-            desc = '' .. getDefaultStr('castTimeMaxEnabled', 'focus'),
-            order = 15,
-            editmode = true
-        },
-        compactLayout = {
-            type = 'toggle',
-            name = 'Compact Layout',
-            desc = '' .. getDefaultStr('compactLayout', 'focus'),
-            order = 16,
-            editmode = true
-        },
-        holdTime = {
-            type = 'range',
-            name = 'Hold Time (Success)',
-            desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
-                getDefaultStr('holdTime', 'focus'),
-            min = 0,
-            max = 2,
-            bigStep = 0.05,
-            order = 13.1,
-            new = true,
-            editmode = true
-        },
-        holdTimeInterrupt = {
-            type = 'range',
-            name = 'Hold Time (Interrupt)',
-            desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
-                getDefaultStr('holdTimeInterrupt', 'focus'),
-            min = 0,
-            max = 2,
-            bigStep = 0.05,
-            order = 13.2,
-            new = true,
-            editmode = true
-        },
-        showIcon = {
-            type = 'toggle',
-            name = 'Show Icon',
-            desc = '' .. getDefaultStr('showIcon', 'focus'),
-            order = 17,
-            editmode = true
-        },
-        sizeIcon = {
-            type = 'range',
-            name = 'Icon Size',
-            desc = getDefaultStr('sizeIcon', 'focus'),
-            min = 1,
-            max = 64,
-            bigStep = 1,
-            order = 17.1,
-            new = true,
-            editmode = true
-        },
-        showTicks = {
-            type = 'toggle',
-            name = 'Show Ticks',
-            desc = '' .. getDefaultStr('showTicks', 'focus'),
-            order = 18,
-            editmode = true
-        },
-        autoAdjust = {
-            type = 'toggle',
-            name = 'Auto Adjust',
-            desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the FocusFrame' ..
-                getDefaultStr('autoAdjust', 'focus'),
-            order = 22,
-            editmode = true
-        }
-    }
-}
+local optionsFocus = {type = 'group', name = 'DragonflightUI - ' .. mName, get = getOption, set = setOption, args = {}}
+AddCastbarTable(optionsFocus, 'focus')
 DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTable)
 
 local optionsFocusEditmode = {
@@ -720,45 +501,6 @@ local optionsFocusEditmode = {
     }
 }
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        focus = optionsFocus,
-        player = optionsPlayer,
-        target = optionsTarget
-    }
-}
-
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -769,8 +511,6 @@ function Module:OnInitialize()
     end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
-
-    DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()

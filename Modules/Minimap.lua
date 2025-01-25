@@ -80,92 +80,6 @@ local function setPreset(T, preset, sub)
     Module:RefreshOptionScreens()
 end
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        --[[ config = {type = 'header', name = 'Config - Player', order = 100}, ]]
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale'),
-            min = 0.2,
-            max = 3,
-            bigStep = 0.025,
-            order = 101,
-            disabled = false
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to TOPRIGHT' .. getDefaultStr('x'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to TOPRIGHT' .. getDefaultStr('y'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102
-        },
-        locked = {
-            type = 'toggle',
-            name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked'),
-            order = 103
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 110
-        },
-        trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 120}
-    }
-}
-
 local frameTable = {
     {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
     {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
@@ -183,105 +97,26 @@ local minimapOptions = {
     get = getOption,
     set = setOption,
     args = {
-        -- scale = {
-        --     type = 'range',
-        --     name = 'Scale',
-        --     desc = '' .. getDefaultStr('scale', 'minimap'),
-        --     min = 0.1,
-        --     max = 5,
-        --     bigStep = 0.05,
-        --     order = 1,
-        --     editmode = true
-        -- },
-        -- anchorFrame = {
-        --     type = 'select',
-        --     name = 'Anchorframe',
-        --     desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
-        --     values = frameTable,
-        --     order = 4,
-        --     editmode = true
-        -- },
-        -- anchor = {
-        --     type = 'select',
-        --     name = 'Anchor',
-        --     desc = 'Anchor' .. getDefaultStr('anchor', 'minimap'),
-        --     values = {
-        --         ['TOP'] = 'TOP',
-        --         ['RIGHT'] = 'RIGHT',
-        --         ['BOTTOM'] = 'BOTTOM',
-        --         ['LEFT'] = 'LEFT',
-        --         ['TOPRIGHT'] = 'TOPRIGHT',
-        --         ['TOPLEFT'] = 'TOPLEFT',
-        --         ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-        --         ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-        --         ['CENTER'] = 'CENTER'
-        --     },
-        --     dropdownValues = DF.Settings.DropdownAnchorTable,
-        --     order = 2,
-        --     editmode = true
-        -- },
-        -- anchorParent = {
-        --     type = 'select',
-        --     name = 'AnchorParent',
-        --     desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'minimap'),
-        --     values = {
-        --         ['TOP'] = 'TOP',
-        --         ['RIGHT'] = 'RIGHT',
-        --         ['BOTTOM'] = 'BOTTOM',
-        --         ['LEFT'] = 'LEFT',
-        --         ['TOPRIGHT'] = 'TOPRIGHT',
-        --         ['TOPLEFT'] = 'TOPLEFT',
-        --         ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-        --         ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-        --         ['CENTER'] = 'CENTER'
-        --     },
-        --     dropdownValues = DF.Settings.DropdownAnchorTable,
-        --     order = 3,
-        --     editmode = true
-        -- },
-        -- x = {
-        --     type = 'range',
-        --     name = 'X',
-        --     desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'minimap'),
-        --     min = -2500,
-        --     max = 2500,
-        --     bigStep = 1,
-        --     order = 5,
-        --     editmode = true
-        -- },
-        -- y = {
-        --     type = 'range',
-        --     name = 'Y',
-        --     desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'minimap'),
-        --     min = -2500,
-        --     max = 2500,
-        --     bigStep = 1,
-        --     order = 6,
-        --     editmode = true
-        -- },
-        -- locked = {
-        --     type = 'toggle',
-        --     name = 'Locked',
-        --     desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-        --         getDefaultStr('locked', 'minimap'),
-        --     order = 10
-        -- },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         showPing = {
             type = 'toggle',
             name = 'Show Ping',
             desc = '(NOT YET IMPLEMENTED)' .. getDefaultStr('showPing', 'minimap'),
+            group = 'headerStyling',
             order = 11
         },
         showPingChat = {
             type = 'toggle',
             name = 'Show Ping in Chat',
             desc = '' .. getDefaultStr('showPingChat', 'minimap'),
+            group = 'headerStyling',
             order = 12
         },
         hideCalendar = {
             type = 'toggle',
             name = 'Hide Calendar',
             desc = 'Hides the calendar button' .. getDefaultStr('hideCalendar', 'minimap'),
+            group = 'headerStyling',
             order = 13,
             new = false
         },
@@ -289,6 +124,7 @@ local minimapOptions = {
             type = 'toggle',
             name = 'Hide Zoom Buttons',
             desc = 'Hides the zoom buttons (+) (-)' .. getDefaultStr('hideZoom', 'minimap'),
+            group = 'headerStyling',
             order = 14,
             new = true
         },
@@ -297,27 +133,16 @@ local minimapOptions = {
             name = 'Skin Minimap Buttons',
             desc = 'Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)' ..
                 getDefaultStr('skinButtons', 'minimap'),
+            group = 'headerStyling',
             order = 15,
             new = true
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability', 'minimap'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 20
         },
         useStateHandler = {
             type = 'toggle',
             name = 'Use State Handler',
             desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
                 getDefaultStr('useStateHandler', 'minimap'),
+            group = 'headerVis',
             order = 115
         }
     }
@@ -328,6 +153,7 @@ do
             type = 'toggle',
             name = ROTATE_MINIMAP,
             desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+            group = 'headerStyling',
             order = 13.1,
             blizzard = true
         }
@@ -339,6 +165,7 @@ do
             name = 'Move LFG Button',
             desc = 'Moves the LFG Button to the Micromenu (needs the Actionbar Module, or it does nothing)' ..
                 getDefaultStr('moveLFG', 'minimap'),
+            group = 'headerStyling',
             order = 13.2,
             new = true
         }
@@ -486,8 +313,6 @@ function Module:OnInitialize()
     end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
-
-    DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()

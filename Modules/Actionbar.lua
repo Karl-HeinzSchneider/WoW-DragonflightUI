@@ -35,6 +35,7 @@ local defaults = {
             padding = 2,
             -- Style
             alwaysShow = true,
+            activate = true,
             hideArt = false,
             hideScrolling = false,
             gryphons = 'DEFAULT',
@@ -304,6 +305,7 @@ local defaults = {
             padding = 2,
             -- Style
             alwaysShow = true,
+            activate = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -576,9 +578,11 @@ local frameTable = {
     {value = 'DragonflightUIMicroMenuBar', text = 'Micromenu', tooltip = 'descr', label = 'label'}
 }
 
-local orientationTable = {
-    {value = 'horizontal', text = 'Horizontal', tooltip = 'descr', label = 'label'},
-    {value = 'vertical', text = 'Vertical', tooltip = 'descr', label = 'label'}
+local gryphonsTable = {
+    {value = 'DEFAULT', text = 'Default', tooltip = 'descr', label = 'label'},
+    {value = 'ALLY', text = 'Alliance', tooltip = 'descr', label = 'label'},
+    {value = 'HORDE', text = 'Horde', tooltip = 'descr', label = 'label'},
+    {value = 'NONE', text = 'None', tooltip = 'descr', label = 'label'}
 }
 
 if DF.Cata then
@@ -600,6 +604,131 @@ local function frameTableWithout(without)
     return newTable
 end
 
+function AddButtonTable(optionTable, sub)
+    local extraOptions = {
+        activate = {
+            type = 'toggle',
+            name = 'Active',
+            desc = '' .. getDefaultStr('activate', sub),
+            order = -1,
+            new = true,
+            editmode = true
+        },
+        headerButtons = {type = 'header', name = 'Buttons', desc = '', order = 10, isExpanded = true},
+        buttonScale = {
+            type = 'range',
+            name = 'ButtonScale',
+            desc = '' .. getDefaultStr('buttonScale', sub),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.05,
+            order = 1,
+            group = 'headerButtons',
+            editmode = true
+        },
+        orientation = {
+            type = 'select',
+            name = 'Orientation',
+            desc = 'Orientation' .. getDefaultStr('orientation', sub),
+            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            dropdownValues = DF.Settings.OrientationTable,
+            order = 7,
+            group = 'headerButtons',
+            editmode = true
+        },
+        reverse = {
+            type = 'toggle',
+            name = 'Reverse Button order',
+            desc = '' .. getDefaultStr('reverse', sub),
+            order = 7.5,
+            group = 'headerButtons',
+            editmode = true
+        },
+        rows = {
+            type = 'range',
+            name = '# of Rows',
+            desc = '' .. getDefaultStr('rows', sub),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 9,
+            group = 'headerButtons',
+            editmode = true
+        },
+        buttons = {
+            type = 'range',
+            name = '# of Buttons',
+            desc = '' .. getDefaultStr('buttons', sub),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 10,
+            group = 'headerButtons',
+            editmode = true
+        },
+        padding = {
+            type = 'range',
+            name = 'Padding',
+            desc = '' .. getDefaultStr('padding', sub),
+            min = 0,
+            max = 10,
+            bigStep = 1,
+            order = 11,
+            group = 'headerButtons',
+            editmode = true
+        },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        alwaysShow = {
+            type = 'toggle',
+            name = 'Always show Actionbar',
+            desc = '' .. getDefaultStr('alwaysShow', sub),
+            group = 'headerStyling',
+            order = 50.1
+        },
+        hideMacro = {
+            type = 'toggle',
+            name = 'Hide Macro Text',
+            desc = '' .. getDefaultStr('hideMacro', sub),
+            group = 'headerStyling',
+            order = 55
+        },
+        macroFontSize = {
+            type = 'range',
+            name = 'MacroName Font Size',
+            desc = '' .. getDefaultStr('macroFontSize', sub),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 55.1,
+            new = true
+        },
+        hideKeybind = {
+            type = 'toggle',
+            name = 'Hide Keybind Text',
+            desc = '' .. getDefaultStr('hideKeybind', sub),
+            group = 'headerStyling',
+            order = 56
+        },
+        keybindFontSize = {
+            type = 'range',
+            name = 'Keybind Font Size',
+            desc = '' .. getDefaultStr('keybindFontSize', sub),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 56.1,
+            new = true
+        }
+    }
+
+    for k, v in pairs(extraOptions) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
@@ -608,106 +737,9 @@ local function GetBarOption(n)
         get = getOption,
         set = setOption,
         type = 'group',
-        args = {
-            buttonScale = {
-                type = 'range',
-                name = 'ButtonScale',
-                desc = '' .. getDefaultStr('buttonScale', barname),
-                min = 0.1,
-                max = 3,
-                bigStep = 0.05,
-                order = 1,
-                group = 'headerPosition',
-                editmode = true
-            },
-            orientation = {
-                type = 'select',
-                name = 'Orientation',
-                desc = 'Orientation' .. getDefaultStr('orientation', barname),
-                values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-                dropdownValues = orientationTable,
-                order = 7,
-                editmode = true
-            },
-            reverse = {
-                type = 'toggle',
-                name = 'Reverse Button order',
-                desc = '' .. getDefaultStr('reverse', barname),
-                order = 7.5,
-                editmode = true
-            },
-            rows = {
-                type = 'range',
-                name = '# of Rows',
-                desc = '' .. getDefaultStr('rows', barname),
-                min = 1,
-                max = 12,
-                bigStep = 1,
-                order = 9,
-                editmode = true
-            },
-            buttons = {
-                type = 'range',
-                name = '# of Buttons',
-                desc = '' .. getDefaultStr('buttons', barname),
-                min = 1,
-                max = 12,
-                bigStep = 1,
-                order = 10,
-                editmode = true
-            },
-            padding = {
-                type = 'range',
-                name = 'Padding',
-                desc = '' .. getDefaultStr('padding', barname),
-                min = 0,
-                max = 10,
-                bigStep = 1,
-                order = 11,
-                editmode = true
-            },
-            headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
-            alwaysShow = {
-                type = 'toggle',
-                name = 'Always show Actionbar',
-                desc = '' .. getDefaultStr('alwaysShow', barname),
-                order = 50.1
-            },
-            hideMacro = {
-                type = 'toggle',
-                name = 'Hide Macro Text',
-                desc = '' .. getDefaultStr('hideMacro', barname),
-                order = 55
-            },
-            macroFontSize = {
-                type = 'range',
-                name = 'MacroName Font Size',
-                desc = '' .. getDefaultStr('macroFontSize', barname),
-                min = 6,
-                max = 24,
-                bigStep = 1,
-                order = 55.1,
-                new = true
-            },
-            hideKeybind = {
-                type = 'toggle',
-                name = 'Hide Keybind Text',
-                desc = '' .. getDefaultStr('hideKeybind', barname),
-                order = 56
-            },
-            keybindFontSize = {
-                type = 'range',
-                name = 'Keybind Font Size',
-                desc = '' .. getDefaultStr('keybindFontSize', barname),
-                min = 6,
-                max = 24,
-                bigStep = 1,
-                order = 56.1,
-                new = true
-            }
-
-        }
+        args = {}
     }
+    AddButtonTable(opt, barname)
     DF.Settings:AddPositionTable(Module, opt, barname, 'Action Bar' .. n, getDefaultStr,
                                  frameTableWithout('DragonflightUIActionbarFrame' .. n))
     opt.args.scale = nil;
@@ -718,6 +750,7 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar art',
                 desc = '' .. getDefaultStr('hideArt', barname),
+                group = 'headerButtons',
                 order = 51.2,
                 editmode = true
             },
@@ -725,6 +758,7 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar scrolling',
                 desc = '' .. getDefaultStr('hideScrolling', barname),
+                group = 'headerButtons',
                 order = 51.3,
                 editmode = true
             },
@@ -733,6 +767,8 @@ local function GetBarOption(n)
                 name = 'Gryphons',
                 desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
+                dropdownValues = gryphonsTable,
+                group = 'headerButtons',
                 order = 51.4,
                 editmode = true
             },
@@ -741,6 +777,7 @@ local function GetBarOption(n)
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
+                group = 'headerButtons',
                 order = 51.1,
                 editmode = true
             }
@@ -762,14 +799,14 @@ local function GetBarOption(n)
         -- elseif n > 5 then
     else
         local moreOptions = {
-            activate = {
-                type = 'toggle',
-                name = 'Active',
-                desc = '' .. getDefaultStr('activate', barname),
-                order = 13,
-                new = true,
-                editmode = true
-            }
+            -- activate = {
+            --     type = 'toggle',
+            --     name = 'Active',
+            --     desc = '' .. getDefaultStr('activate', barname),
+            --     order = 13,
+            --     new = true,
+            --     editmode = true
+            -- }
         }
         for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
@@ -949,89 +986,14 @@ local function GetBarExtraOptions(n)
     return extra;
 end
 
-local petOptions = {
-    name = 'PetBar',
-    desc = 'PetBar',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {
-        orientation = {
-            type = 'select',
-            name = 'Orientation',
-            desc = 'Orientation' .. getDefaultStr('orientation', 'pet'),
-            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-            dropdownValues = orientationTable,
-            order = 7,
-            editmode = true
-        },
-        buttonScale = {
-            type = 'range',
-            name = 'ButtonScale',
-            desc = '' .. getDefaultStr('buttonScale', 'pet'),
-            min = 0.1,
-            max = 3,
-            bigStep = 0.05,
-            order = 1,
-            group = 'headerPosition',
-            editmode = true
-        },
-        rows = {
-            type = 'range',
-            name = '# of Rows',
-            desc = '' .. getDefaultStr('rows', 'pet'),
-            min = 1,
-            max = 12,
-            bigStep = 1,
-            order = 9,
-            editmode = true
-        },
-        buttons = {
-            type = 'range',
-            name = '# of Buttons',
-            desc = '' .. getDefaultStr('buttons', 'pet'),
-            min = 1,
-            max = 10,
-            bigStep = 1,
-            order = 10,
-            editmode = true
-        },
-        padding = {
-            type = 'range',
-            name = 'Padding',
-            desc = '' .. getDefaultStr('padding', 'pet'),
-            min = 0,
-            max = 10,
-            bigStep = 1,
-            order = 11,
-            editmode = true
-        },
-        alwaysShow = {
-            type = 'toggle',
-            name = 'Always show Actionbar',
-            desc = '' .. getDefaultStr('alwaysShow', 'pet'),
-            order = 12,
-            editmode = true
-        },
-        hideMacro = {
-            type = 'toggle',
-            name = 'Hide Macro Text',
-            desc = '' .. getDefaultStr('hideMacro', 'pet'),
-            order = 16,
-            editmode = true
-        },
-        hideKeybind = {
-            type = 'toggle',
-            name = 'Hide Keybind Text',
-            desc = '' .. getDefaultStr('hideKeybind', 'pet'),
-            order = 17,
-            editmode = true
-        }
-    }
-}
+local petOptions = {name = 'PetBar', desc = 'PetBar', get = getOption, set = setOption, type = 'group', args = {}}
+AddButtonTable(petOptions, 'pet')
 DF.Settings:AddPositionTable(Module, petOptions, 'pet', 'Pet Bar', getDefaultStr,
                              frameTableWithout('DragonflightUIPetBar'))
 petOptions.args.scale = nil;
+petOptions.args.hideMacro = nil;
+petOptions.args.macroFontSize = nil;
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, petOptions, 'pet', 'PetBar', getDefaultStr)
 local optionsPetEdtimode = {
     name = 'pet',
@@ -1072,6 +1034,7 @@ local xpOptions = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         width = {
             type = 'range',
             name = 'Width',
@@ -1079,6 +1042,7 @@ local xpOptions = {
             min = 1,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -1089,6 +1053,7 @@ local xpOptions = {
             min = 1,
             max = 69,
             bigStep = 1,
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -1096,6 +1061,7 @@ local xpOptions = {
             type = 'toggle',
             name = 'Always show XP text',
             desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
+            group = 'headerStyling',
             order = 12,
             editmode = true
         },
@@ -1103,6 +1069,7 @@ local xpOptions = {
             type = 'toggle',
             name = 'Show XP Percent',
             desc = '' .. getDefaultStr('showXPPercent', 'xp'),
+            group = 'headerStyling',
             order = 13,
             editmode = true
         }
@@ -1149,6 +1116,7 @@ local repOptions = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         width = {
             type = 'range',
             name = 'Width',
@@ -1156,6 +1124,7 @@ local repOptions = {
             min = 1,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -1166,6 +1135,7 @@ local repOptions = {
             min = 1,
             max = 69,
             bigStep = 1,
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -1173,6 +1143,7 @@ local repOptions = {
             type = 'toggle',
             name = 'Always show Rep text',
             desc = '' .. getDefaultStr('alwaysShowRep', 'rep'),
+            group = 'headerStyling',
             order = 12,
             editmode = true
         }
@@ -1219,99 +1190,9 @@ local stanceOptions = {
     get = getOption,
     set = setOption,
     type = 'group',
-    args = {
-        buttonScale = {
-            type = 'range',
-            name = 'ButtonScale',
-            desc = '' .. getDefaultStr('buttonScale', 'stance'),
-            min = 0.1,
-            max = 3,
-            bigStep = 0.05,
-            order = 1,
-            group = 'headerPosition',
-            editmode = true
-        },
-        orientation = {
-            type = 'select',
-            name = 'Orientation',
-            desc = 'Orientation' .. getDefaultStr('orientation', 'stance'),
-            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-            dropdownValues = orientationTable,
-            order = 7,
-            editmode = true
-        },
-        rows = {
-            type = 'range',
-            name = '# of Rows',
-            desc = '' .. getDefaultStr('rows', 'stance'),
-            min = 1,
-            max = 12,
-            bigStep = 1,
-            order = 9,
-            editmode = true
-        },
-        buttons = {
-            type = 'range',
-            name = '# of Buttons',
-            desc = '' .. getDefaultStr('buttons', 'stance'),
-            min = 1,
-            max = 10,
-            bigStep = 1,
-            order = 10,
-            editmode = true
-        },
-        padding = {
-            type = 'range',
-            name = 'Padding',
-            desc = '' .. getDefaultStr('padding', 'stance'),
-            min = 0,
-            max = 10,
-            bigStep = 1,
-            order = 11,
-            editmode = true
-        },
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
-        alwaysShow = {
-            type = 'toggle',
-            name = 'Always show Actionbar',
-            desc = '' .. getDefaultStr('alwaysShow', 'stance'),
-            order = 50.1
-        },
-        hideMacro = {
-            type = 'toggle',
-            name = 'Hide Macro Text',
-            desc = '' .. getDefaultStr('hideMacro', 'stance'),
-            order = 55
-        },
-        macroFontSize = {
-            type = 'range',
-            name = 'MacroName Font Size',
-            desc = '' .. getDefaultStr('macroFontSize', 'stance'),
-            min = 6,
-            max = 24,
-            bigStep = 1,
-            order = 55.1,
-            new = true
-        },
-        hideKeybind = {
-            type = 'toggle',
-            name = 'Hide Keybind Text',
-            desc = '' .. getDefaultStr('hideKeybind', 'stance'),
-            order = 56
-        },
-        keybindFontSize = {
-            type = 'range',
-            name = 'Keybind Font Size',
-            desc = '' .. getDefaultStr('keybindFontSize', 'stance'),
-            min = 6,
-            max = 24,
-            bigStep = 1,
-            order = 56.1,
-            new = true
-        },
-        activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
-    }
+    args = {activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}}
 }
+AddButtonTable(stanceOptions, 'stance')
 DF.Settings:AddPositionTable(Module, stanceOptions, 'stance', 'Stance Bar', getDefaultStr,
                              frameTableWithout('DragonflightUIStanceBar'))
 stanceOptions.args.scale = nil;
@@ -1391,11 +1272,13 @@ local possessOptions = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         offset = {
             type = 'toggle',
             name = 'Auto adjust offset',
             desc = 'Auto add some Y offset depending on the class, e.g. on Paladin to make room for the stance bar' ..
                 getDefaultStr('offset', 'possess'),
+            group = 'headerStyling',
             order = 11,
             new = true,
             editmode = true
@@ -1444,11 +1327,19 @@ local bagsOptions = {
     set = setOption,
     type = 'group',
     args = {
-        expanded = {type = 'toggle', name = 'Expanded', desc = '' .. getDefaultStr('expanded', 'bags'), order = 7},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        expanded = {
+            type = 'toggle',
+            name = 'Expanded',
+            desc = '' .. getDefaultStr('expanded', 'bags'),
+            group = 'headerStyling',
+            order = 7
+        },
         hideArrow = {
             type = 'toggle',
             name = 'HideArrow',
             desc = '' .. getDefaultStr('hideArrow', 'bags'),
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -1456,6 +1347,7 @@ local bagsOptions = {
             type = 'toggle',
             name = 'Hidden',
             desc = 'Backpack hidden' .. getDefaultStr('hidden', 'bags'),
+            group = 'headerStyling',
             order = 9,
             editmode = true
         },
@@ -1463,6 +1355,7 @@ local bagsOptions = {
             type = 'toggle',
             name = 'Override BagAnchor',
             desc = '' .. getDefaultStr('overrideBagAnchor', 'bags'),
+            group = 'headerStyling',
             order = 15,
             new = true
         },
@@ -1473,6 +1366,7 @@ local bagsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 16,
             new = true
         },
@@ -1483,6 +1377,7 @@ local bagsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 17,
             new = true
         }
@@ -1495,6 +1390,7 @@ do
             type = 'toggle',
             name = DISPLAY_FREE_BAG_SLOTS,
             desc = OPTION_TOOLTIP_DISPLAY_FREE_BAG_SLOTS,
+            group = 'headerStyling',
             order = 13,
             blizzard = true
         }
@@ -1630,6 +1526,7 @@ local fpsOptions = {
     set = setOption,
     type = 'group',
     args = {
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         -- hidden = {
         --     type = 'toggle',
         --     name = 'Hidden',
@@ -1640,6 +1537,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'HideDefaultFPS',
             desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'fps'),
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -1647,6 +1545,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'ShowFPS',
             desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'fps'),
+            group = 'headerStyling',
             order = 10,
             editmode = true
         },
@@ -1654,6 +1553,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'AlwaysShowFPS',
             desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'fps'),
+            group = 'headerStyling',
             order = 9,
             editmode = true
         },
@@ -1661,6 +1561,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'ShowPing',
             desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'fps'),
+            group = 'headerStyling',
             order = 11,
             editmode = true
         }

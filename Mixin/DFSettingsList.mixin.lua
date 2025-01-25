@@ -46,6 +46,14 @@ function DFSettingsListMixin:OnLoad()
             end, button)
 
             button:Init(n);
+
+            if elementType == 'header' then
+                button.Tooltip:SetScript("OnMouseDown", function(_, _)
+                    node:ToggleCollapsed();
+                    button:SetCollapseState(node:IsCollapsed());
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+                end);
+            end
         end
 
         if elementType == 'header' then
@@ -251,6 +259,18 @@ function DFSettingsListHeaderMixin:Init(node)
         node:SetCollapsed(false, true, false)
     else
         node:SetCollapsed(true, true, false)
+    end
+
+    self:SetCollapseState(node:IsCollapsed());
+end
+
+function DFSettingsListHeaderMixin:SetCollapseState(collapsed)
+    if collapsed then
+        self.CollapseIcon:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+    else
+        self.CollapseIcon:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
     end
 end
 
