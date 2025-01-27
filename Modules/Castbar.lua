@@ -7,6 +7,7 @@ Mixin(Module, DragonflightUIModulesMixin)
 local defaults = {
     profile = {
         player = {
+            activate = true,
             scale = 1,
             anchorFrame = 'UIParent',
             anchor = 'CENTER',
@@ -29,6 +30,7 @@ local defaults = {
             autoAdjust = false
         },
         target = {
+            activate = true,
             scale = 1,
             anchorFrame = 'TargetFrame',
             anchor = 'TOP',
@@ -51,6 +53,7 @@ local defaults = {
             autoAdjust = true
         },
         focus = {
+            activate = true,
             scale = 1,
             anchorFrame = 'FocusFrame',
             anchor = 'TOP',
@@ -120,14 +123,14 @@ end
 
 function AddCastbarTable(optionTable, sub)
     local extraOptions = {
-        -- activate = {
-        --     type = 'toggle',
-        --     name = 'Active',
-        --     desc = '' .. getDefaultStr('activate', sub),
-        --     order = -1,
-        --     new = true,
-        --     editmode = true
-        -- },
+        activate = {
+            type = 'toggle',
+            name = 'Active',
+            desc = '' .. getDefaultStr('activate', sub),
+            order = -1,
+            new = true,
+            editmode = true
+        },
         -- headerCastbar = {type = 'header', name = 'Castbar', desc = '', order = 10, isExpanded = true},
         headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         sizeX = {

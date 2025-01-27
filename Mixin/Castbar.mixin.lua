@@ -58,7 +58,11 @@ end
 function DragonFlightUICastbarMixin:OnEvent(event, ...)
     -- print('event:', event)
     -- if true then return end
-    if self.DFEditMode then return end
+    if self.DFEditMode then
+        return
+    elseif self.state and not self.state.activate then
+        return
+    end
 
     local arg1 = ...;
 
@@ -788,7 +792,11 @@ function DragonFlightUICastbarMixin:Update()
         self:Show()
         self:UpdateEditModeStyle(true)
         self:SetParent(UIParent)
+    elseif not state.activate then
+        -- self:Hide()
+        self:UpdateShownState(false)
     else
+        self:UpdateShownState()
         self:SetParent(parent) -- TODO
     end
     -- self:ClearAllPoints()
