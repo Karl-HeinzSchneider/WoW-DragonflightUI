@@ -71,6 +71,7 @@ local generalOptions = {
     name = 'EditMode',
     get = getOption,
     set = setOption,
+    hideDefault = true,
     args = {
         showGrid = {
             type = 'toggle',
@@ -114,6 +115,7 @@ if true then
         name = 'EditMode',
         get = getOption,
         set = setOption,
+        hideDefault = true,
         args = {
             headerActionbar = {
                 type = 'header',

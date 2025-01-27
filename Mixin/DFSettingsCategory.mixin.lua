@@ -3,7 +3,7 @@ DFSettingsCategoryListMixin = CreateFromMixins(CallbackRegistryMixin);
 DFSettingsCategoryListMixin:GenerateCallbackEvents({"OnSelectionChanged"});
 
 function DFSettingsCategoryListMixin:OnLoad()
-    print('DFSettingsCategoryListMixin:OnLoad()')
+    -- print('DFSettingsCategoryListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self)
 
     self.DataProvider = CreateTreeDataProvider();

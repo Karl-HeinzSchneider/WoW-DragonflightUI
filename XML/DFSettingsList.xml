@@ -17,7 +17,7 @@ UI_shared.xsd">
 								<Anchor point="TOPLEFT" x="7" y="-22" />
 							</Anchors>
 						</FontString>
-						<Texture atlas="Options_HorizontalDivider" useAtlasSize="true">
+						<Texture parentKey="HorizontalDivider" atlas="Options_HorizontalDivider" useAtlasSize="true">
 							<Anchors>
 								<Anchor point="TOP" y="-50" />
 							</Anchors>
@@ -45,6 +45,12 @@ UI_shared.xsd">
 					</Button>
 				</Frames>
 			</Frame>
+			<Button parentKey="SmallDefaultsButton" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="155" y="25" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-28" />
+				</Anchors>
+			</Button>
 			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
 				<Frames>
 					<Button parentKey="InputBlocker" clipChildren="true" setAllPoints="true" hidden="true" />

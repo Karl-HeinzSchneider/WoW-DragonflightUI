@@ -9,7 +9,7 @@ DFSettingsListMixin.ElementSize = {
     description = 26,
     toggle = 26,
     select = 26,
-    divider = 16
+    divider = 16 + 10
 }
 
 function DFSettingsListMixin:OnLoad()
@@ -139,6 +139,9 @@ function DFSettingsListMixin:Display(data, small)
         end)
     else
         self.Header.DefaultsButton:Hide()
+        self.Header.DefaultsButton:SetText('')
+        self.Header.DefaultsButton:SetScript('OnClick', function()
+        end)
     end
 
     local getFunc;

@@ -104,7 +104,7 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
     scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
-    -- displayFrame.Header.DefaultsButton:Hide()
+    displayFrame.Header.DefaultsButton:Hide()
     displayFrame.Header:Hide()
 end
 
@@ -131,7 +131,7 @@ function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
     scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
     scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
-    -- displayFrame.Header.DefaultsButton:Hide()
+    displayFrame.Header.DefaultsButton:Hide()
     displayFrame.Header:Hide()
 end
 
@@ -701,7 +701,7 @@ function DFEditModeSystemSelectionBaseMixin:UpdateLabelVisibility()
 end
 
 function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
-    print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
+    -- print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
     -- DevTools_Dump(data)
     self.parentExtra = data.parentExtra
 
@@ -751,8 +751,6 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
         end
     end
 
-    if data.sub == 'debuffs' then print('debuffs', numOptions) end
-
     filteredData.options = filteredOptions
     editModeFrame:SetupOptions(filteredData)
     editModeFrame:Hide()
@@ -776,7 +774,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     local extraElementH = 0;
     if data.extra then
         --  
-        local extraData = {name = data.name, sub = data.sub, default = data.default}
+        local extraData = {name = data.name, sub = data.sub, default = data.default, hideDefault = true}
 
         local extraOptions = {
             type = data.extra.type,
@@ -797,8 +795,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
         extraData.options = extraOptions
         editModeFrame:SetupExtraOptions(extraData)
 
-        -- 16 = divider
-        extraH = 16 + extraElementH + 11
+        -- 26 = divider
+        extraH = 26 + extraElementH + 11
     end
 
     local newH = 80 + optionsH + extraH
