@@ -222,7 +222,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
     end
 
     local extraOptions = {
-        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100, isExpanded = true},
+        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100, isExpanded = true, editmode = true},
         showMouseover = {
             type = 'toggle',
             name = 'Show On Mouseover',
@@ -230,7 +230,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 getDefaultStr('showMouseover', sub),
             order = 100.5,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideAlways = {
             type = 'toggle',
@@ -238,7 +239,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('hide') .. getDefaultStr('hideAlways', sub),
             order = 101,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideCombat = {
             type = 'toggle',
@@ -246,7 +248,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', sub),
             order = 102,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideOutOfCombat = {
             type = 'toggle',
@@ -254,7 +257,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', sub),
             order = 103,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hidePet = {
             type = 'toggle',
@@ -262,7 +266,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', sub),
             order = 104,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideNoPet = {
             type = 'toggle',
@@ -270,7 +275,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', sub),
             order = 105,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideStance = {
             type = 'toggle',
@@ -278,7 +284,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', sub),
             order = 106,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideStealth = {
             type = 'toggle',
@@ -286,7 +293,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', sub),
             order = 107,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideNoStealth = {
             type = 'toggle',
@@ -294,7 +302,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', sub),
             order = 108,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideCustom = {
             type = 'toggle',
@@ -303,7 +312,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 getDefaultStr('hideCustom', sub),
             order = 109,
             group = 'headerVis',
-            new = false
+            new = false,
+            editmode = true
         },
         hideCustomCondButton = {
             type = 'execute',
@@ -315,7 +325,8 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 StaticPopup_Show(popupName)
             end,
             order = 109.5,
-            group = 'headerVis'
+            group = 'headerVis',
+            editmode = true
         }
     }
 
