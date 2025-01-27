@@ -219,6 +219,20 @@ UI_shared.xsd">
 		<FontString inherits="GameFontNormal">
 		</FontString>
 	</EditBox>
+	<!--
+	Slider with checkbox
+	<Frame name="DFSettingsListSliderWithChexboxContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListSliderWithCheckboxContainerMixin" virtual="true">
+	<Frames>
+	<Frame parentKey="Slider" inherits="DFSettingsListSlider">
+	</Frame>
+	<EditBox parentKey="Editbox" inherits="DFSettingsListEditboxTemplate">
+	<Anchors>
+	<Anchor point="LEFT" relativeKey="$parent.Slider.RightText" relativePoint="LEFT" x="0" y="0" />
+	</Anchors>
+	</EditBox>
+	</Frames>
+	</Frame>
+	-->
 	<!-- Button -->
 	<Frame name="DFSettingsListButton" inherits="DFSettingsListElementBase" mixin="DFSettingsListButtonMixin" virtual="true">
 		<Frames>

@@ -439,6 +439,78 @@ function DFSettingsListSliderContainerMixin:Init(node)
     self.Editbox:SetJustifyH('CENTER')
 end
 
+-- -- SliderContainer
+-- DFSettingsListSliderWithCheckboxContainerMixin = {}
+
+-- function DFSettingsListSliderWithCheckboxContainerMixin:Init(node)
+--     -- print('DFSettingsListCheckboxContainerMixin:OnLoad()')
+--     local elementData = node:GetData();
+--     self.ElementData = elementData;
+--     local args = elementData.args;
+--     -- print('~~~~~~:OnLoad()', args.name)
+
+--     self.Text:SetText(args.name);
+--     self.Text:Show();
+
+--     self:SetTooltip(args.name, args.desc);
+
+--     self.Slider:UnregisterCallback('OnValueChanged', self)
+--     -- print(args.min, args.max, args.bigStep)
+--     -- get({key}), data.min, data.max, data.bigStep
+--     self.Slider.Slider:SetMinMaxValues(args.min, args.max)
+--     self.Slider.Slider:SetValueStep(args.bigStep)
+--     self.Slider.Slider:SetValue(elementData.get({elementData.key}))
+--     self.Slider.RightText:Hide()
+--     self.Editbox:SetText(self.Slider.RightText:GetText())
+--     self.Editbox:SetFrameLevel(self.Tooltip:GetFrameLevel() + 1)
+
+--     self.Slider:RegisterCallback('OnValueChanged', function(self, ...)
+--         local newValue = ...
+--         if ... ~= elementData.get({elementData.key}) then elementData.set({elementData.key}, newValue) end
+--         self.Slider.RightText:Hide();
+--         self.Editbox:SetText(self.Slider.RightText:GetText())
+--     end, self)
+
+--     self:SetBaseSmall(elementData.small);
+
+--     if elementData.small then
+--         self.Slider:SetWidth(204);
+--         self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+
+--         self.Editbox:SetPoint('LEFT', self.Slider.RightText, 'LEFT', -5, 0)
+--         self.Editbox:SetWidth(40);
+--     else
+--         self.Slider:SetWidth(250);
+--         self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+
+--         self.Editbox:SetPoint('LEFT', self.Slider.RightText, 'LEFT', 0, 0)
+--         self.Editbox:SetWidth(60);
+--     end
+
+--     -- editbox
+--     self.Editbox:SetScript('OnEscapePressed', function()
+--         self.Editbox:ClearFocus()
+--     end)
+
+--     self.Editbox:SetScript('OnTabPressed', function()
+--         self.Editbox:ClearFocus()
+--     end)
+
+--     self.Editbox:SetScript('OnEditFocusGained', function()
+--         self.Editbox:HighlightText()
+--     end)
+
+--     self.Editbox:SetScript('OnEnterPressed', function()
+--         self.Editbox:ClearFocus()
+--         local newValue = tonumber(self.Editbox:GetText()) or self.Slider:GetValue();
+--         self.Slider:SetValue(newValue)
+--         self.Editbox:SetText(self.Slider.RightText:GetText())
+--         self.Slider.RightText:Hide()
+--     end)
+
+--     self.Editbox:SetJustifyH('CENTER')
+-- end
+
 -- Slider
 DFSettingsListSliderMixin = CreateFromMixins(CallbackRegistryMixin);
 DFSettingsListSliderMixin:GenerateCallbackEvents({
