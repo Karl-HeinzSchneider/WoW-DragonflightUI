@@ -186,6 +186,22 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             |cff8080ff https://warcraft.wiki.gg/wiki/Macro_conditionals|r
         ]]
 
+    local Validate = function(t)
+        local result, target = SecureCmdOptionParse(t)
+        if result ~= 'show' and result ~= 'hide' and result ~= '' then
+            Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
+                             [['show' or 'hide'!|r]])
+            return
+        end
+
+        -- valid
+        Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. t .. '\'')
+        Module:Print('Current Value: ' .. result)
+
+        -- valid, reset
+        return true, true;
+    end
+
     StaticPopupDialogs[popupName] = {
         text = 'Set Custom Condition for ' .. displayName .. '\n\n' .. macroOptions,
         button1 = ACCEPT,
@@ -316,7 +332,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             editmode = true
         },
         hideCustomCondButton = {
-            type = 'execute',
+            type = 'editbox',
             name = 'Set Custom Condition',
             btnName = 'Update...',
             func = function()
@@ -324,6 +340,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                 StaticPopup_Show(popupName)
             end,
+            Validate = Validate,
             order = 109.5,
             group = 'headerVis',
             editmode = true

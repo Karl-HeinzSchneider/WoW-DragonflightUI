@@ -189,7 +189,7 @@ UI_shared.xsd">
 		<Frames>
 			<Frame parentKey="Slider" inherits="DFSettingsListSlider">
 			</Frame>
-			<EditBox parentKey="Editbox" inherits="DFSettingsListEditbox">
+			<EditBox parentKey="Editbox" inherits="DFSettingsListEditboxTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.Slider.RightText" relativePoint="LEFT" x="0" y="0" />
 				</Anchors>
@@ -203,7 +203,7 @@ UI_shared.xsd">
 			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Frame>
-	<EditBox name="DFSettingsListEditbox" multiLine="false" autoFocus="false" virtual="true">
+	<EditBox name="DFSettingsListEditboxTemplate" multiLine="false" autoFocus="false" virtual="true">
 		<Size>
 			<AbsDimension x="60" y="20">
 			</AbsDimension>
@@ -230,6 +230,16 @@ UI_shared.xsd">
 				</Anchors>
 				-->
 			</Button>
+		</Frames>
+	</Frame>
+	<!-- Editbox -->
+	<Frame name="DFSettingsListEditbox" inherits="DFSettingsListElementBase" mixin="DFSettingsListEditboxMixin" virtual="true">
+		<Frames>
+			<EditBox parentKey="Editbox" inherits="DFSettingsListEditboxTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="0" y="0" />
+				</Anchors>
+			</EditBox>
 		</Frames>
 	</Frame>
 	<!-- Dropdown -->

@@ -5,6 +5,7 @@ DFSettingsListMixin.ElementSize = {
     header = 45,
     range = 26,
     execute = 26,
+    editbox = 26,
     description = 26,
     toggle = 26,
     select = 26,
@@ -78,6 +79,8 @@ function DFSettingsListMixin:OnLoad()
             factory("DFSettingsListButton", Initializer);
         elseif elementType == 'select' then
             factory("DFSettingsListDropdownContainer", Initializer);
+        elseif elementType == 'editbox' then
+            factory("DFSettingsListEditbox", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -387,6 +390,7 @@ function DFSettingsListSliderContainerMixin:Init(node)
     self.Slider.Slider:SetValue(elementData.get({elementData.key}))
     self.Slider.RightText:Hide()
     self.Editbox:SetText(self.Slider.RightText:GetText())
+    self.Editbox:SetFrameLevel(self.Tooltip:GetFrameLevel() + 1)
 
     self.Slider:RegisterCallback('OnValueChanged', function(self, ...)
         local newValue = ...
@@ -508,6 +512,7 @@ function DFSettingsListButtonMixin:Init(node)
     self:SetTooltip(args.name, args.desc);
 
     self:SetBaseSmall(elementData.small);
+    self.Button:SetFrameLevel(self.Tooltip:GetFrameLevel() + 1)
 
     if elementData.small then
         self.Button:SetWidth(200);
@@ -527,6 +532,67 @@ function DFSettingsListButtonMixin:Init(node)
     self:RegisterCallback('OnClick', function(self, ...)
         args.func()
     end, self)
+end
+
+-- Editbox
+DFSettingsListEditboxMixin = {}
+
+function DFSettingsListEditboxMixin:Init(node)
+    -- print('DFSettingsListButtonMixin:Init()')
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+    local args = elementData.args;
+
+    self.Text:SetText(args.name);
+    self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    self:SetBaseSmall(elementData.small);
+
+    if elementData.small then
+        self.Editbox:SetWidth(180);
+        self.Editbox:SetPoint('LEFT', self.Text, 'RIGHT', 8 + 2, 0);
+    else
+        self.Editbox:SetWidth(200);
+        self.Editbox:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+    end
+
+    -- editbox
+    self.Editbox:SetFrameLevel(self.Tooltip:GetFrameLevel() + 1)
+
+    self.Editbox:SetText(elementData.get({elementData.key}) or '')
+
+    self.Editbox:SetScript('OnEscapePressed', function()
+        self.Editbox:ClearFocus()
+    end)
+
+    self.Editbox:SetScript('OnTabPressed', function()
+        self.Editbox:ClearFocus()
+    end)
+
+    self.Editbox:SetScript('OnEditFocusGained', function()
+        self.Editbox:HighlightText()
+    end)
+
+    self.Editbox:SetScript('OnEnterPressed', function()
+        self.Editbox:ClearFocus()
+
+        if args.Validate then
+            local text = self.Editbox:GetText();
+            local valid, reset = args.Validate(text)
+            if valid then
+                elementData.set({elementData.key}, text)
+            else
+                if reset then
+                    self.Editbox:SetText(elementData.get({elementData.key}))
+                    elementData.set({elementData.key}, elementData.get({elementData.key}))
+                end
+            end
+        end
+    end)
+
+    self.Editbox:SetJustifyH('CENTER')
 end
 
 -- Dropdown
