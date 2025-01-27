@@ -21,7 +21,14 @@ DF.Settings.OrientationTable = {
 
 function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, getDefaultStr, frameTable)
     local extraOptions = {
-        headerPosition = {type = 'header', name = 'Scale and Position', desc = '', order = 0, isExpanded = true},
+        headerPosition = {
+            type = 'header',
+            name = 'Scale and Position',
+            desc = '',
+            order = 0,
+            isExpanded = true,
+            editmode = true
+        },
         scale = {
             type = 'range',
             name = 'Scale',

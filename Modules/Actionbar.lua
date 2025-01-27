@@ -614,7 +614,7 @@ function AddButtonTable(optionTable, sub)
             new = true,
             editmode = true
         },
-        headerButtons = {type = 'header', name = 'Buttons', desc = '', order = 10, isExpanded = true},
+        headerButtons = {type = 'header', name = 'Buttons', desc = '', order = 10, isExpanded = true, editmode = true},
         buttonScale = {
             type = 'range',
             name = 'ButtonScale',
@@ -677,20 +677,22 @@ function AddButtonTable(optionTable, sub)
             group = 'headerButtons',
             editmode = true
         },
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         alwaysShow = {
             type = 'toggle',
             name = 'Always show Actionbar',
             desc = '' .. getDefaultStr('alwaysShow', sub),
             group = 'headerStyling',
-            order = 50.1
+            order = 50.1,
+            editmode = true
         },
         hideMacro = {
             type = 'toggle',
             name = 'Hide Macro Text',
             desc = '' .. getDefaultStr('hideMacro', sub),
             group = 'headerStyling',
-            order = 55
+            order = 55,
+            editmode = true
         },
         macroFontSize = {
             type = 'range',
@@ -701,14 +703,16 @@ function AddButtonTable(optionTable, sub)
             bigStep = 1,
             group = 'headerStyling',
             order = 55.1,
-            new = true
+            new = true,
+            editmode = true
         },
         hideKeybind = {
             type = 'toggle',
             name = 'Hide Keybind Text',
             desc = '' .. getDefaultStr('hideKeybind', sub),
             group = 'headerStyling',
-            order = 56
+            order = 56,
+            editmode = true
         },
         keybindFontSize = {
             type = 'range',
@@ -719,7 +723,8 @@ function AddButtonTable(optionTable, sub)
             bigStep = 1,
             group = 'headerStyling',
             order = 56.1,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 
@@ -1327,13 +1332,14 @@ local bagsOptions = {
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         expanded = {
             type = 'toggle',
             name = 'Expanded',
             desc = '' .. getDefaultStr('expanded', 'bags'),
             group = 'headerStyling',
-            order = 7
+            order = 7,
+            editmode = true
         },
         hideArrow = {
             type = 'toggle',

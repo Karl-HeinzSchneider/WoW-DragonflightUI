@@ -200,6 +200,13 @@ local frameTable = {
     {value = 'CompactRaidFrameManager', text = 'CompactRaidFrameManager', tooltip = 'descr', label = 'label'}
 }
 
+local statusTextTable = {
+    {value = 'None', text = 'None', tooltip = 'descr', label = 'label'},
+    {value = 'Percent', text = 'Percent', tooltip = 'descr', label = 'label'},
+    {value = 'Both', text = 'Both', tooltip = 'descr', label = 'label'},
+    {value = 'Numeric Value', text = 'Numeric Value', tooltip = 'descr', label = 'label'}
+}
+
 if DF.Wrath then
     table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
 end
@@ -242,7 +249,7 @@ local optionsPlayer = {
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
@@ -266,7 +273,8 @@ local optionsPlayer = {
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
             group = 'headerStyling',
-            order = 8
+            order = 8,
+            editmode = true
         },
         biggerHealthbar = {
             type = 'toggle',
@@ -283,7 +291,8 @@ local optionsPlayer = {
             desc = '' .. getDefaultStr('hideRedStatus', 'player'),
             group = 'headerStyling',
             order = 10,
-            new = true
+            new = true,
+            editmode = true
         },
         hideIndicator = {
             type = 'toggle',
@@ -291,7 +300,8 @@ local optionsPlayer = {
             desc = '' .. getDefaultStr('hideIndicator', 'player'),
             group = 'headerStyling',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -307,6 +317,7 @@ if true then
                 ['Both'] = 'Both',
                 ['Numeric Value'] = 'Numeric Value'
             },
+            dropdownValues = statusTextTable,
             group = 'headerStyling',
             order = 10,
             blizzard = true,
@@ -416,7 +427,7 @@ local optionsTarget = {
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
@@ -441,7 +452,8 @@ local optionsTarget = {
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'target'),
             group = 'headerStyling',
-            order = 8
+            order = 8,
+            editmode = true
         },
         enableNumericThreat = {
             type = 'toggle',
@@ -449,7 +461,8 @@ local optionsTarget = {
             desc = 'Enable numeric threat' .. getDefaultStr('enableNumericThreat', 'target'),
             group = 'headerStyling',
             order = 9,
-            disabled = not DF.Era
+            disabled = not DF.Era,
+            editmode = true
         },
         enableThreatGlow = {
             type = 'toggle',
@@ -457,7 +470,8 @@ local optionsTarget = {
             desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'target'),
             group = 'headerStyling',
             order = 10,
-            disabled = true
+            disabled = true,
+            editmode = true
         },
         hideNameBackground = {
             type = 'toggle',
@@ -487,7 +501,8 @@ if true then
             desc = OPTION_TOOLTIP_SHOW_TARGET_OF_TARGET,
             group = 'headerStyling',
             order = 15,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         },
         buffsOnTop = {
             type = 'toggle',
@@ -495,7 +510,8 @@ if true then
             desc = '',
             group = 'headerStyling',
             order = 16,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         }
     }
 
@@ -589,14 +605,15 @@ local optionsPet = {
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         breakUpLargeNumbers = {
             type = 'toggle',
             name = 'Break Up Large Numbers',
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'pet'),
             group = 'headerStyling',
-            order = 9
+            order = 9,
+            editmode = true
         },
         enableThreatGlow = {
             type = 'toggle',
@@ -604,14 +621,16 @@ local optionsPet = {
             desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'pet'),
             group = 'headerStyling',
             order = 8,
-            disabled = true
+            disabled = true,
+            editmode = true
         },
         hideStatusbarText = {
             type = 'toggle',
             name = 'Hide Statusbar Text',
             desc = '' .. getDefaultStr('hideStatusbarText', 'pet'),
             group = 'headerStyling',
-            order = 10
+            order = 10,
+            editmode = true
         },
         hideIndicator = {
             type = 'toggle',
@@ -619,7 +638,8 @@ local optionsPet = {
             desc = '' .. getDefaultStr('hideIndicator', 'pet'),
             group = 'headerStyling',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -681,7 +701,7 @@ local optionsFocus = {
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
@@ -706,7 +726,8 @@ local optionsFocus = {
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'focus'),
             group = 'headerStyling',
-            order = 8
+            order = 8,
+            editmode = true
         },
         hideNameBackground = {
             type = 'toggle',
@@ -761,7 +782,7 @@ local optionsParty = {
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         classcolor = {
             type = 'toggle',
             name = 'Class Color',
@@ -776,7 +797,8 @@ local optionsParty = {
             desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
                 getDefaultStr('breakUpLargeNumbers', 'party'),
             group = 'headerStyling',
-            order = 8
+            order = 8,
+            editmode = true
         }
     }
 }

@@ -86,7 +86,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
 end
 
 function DragonflightUIEditModeFrameMixin:SetupOptions(data)
-    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'SettingsListTemplateDF')
+    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'DFSettingsList')
     displayFrame:Display(data, true)
     self.DisplayFrame = displayFrame
     self.DataOptions = data;
@@ -96,7 +96,7 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data)
     -- displayFrame:SetParent(self)
     displayFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
     displayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-    displayFrame:CallRefresh()
+    -- displayFrame:CallRefresh()
     displayFrame:Show()
 
     local scrollBox = displayFrame.ScrollBox
@@ -113,7 +113,7 @@ function DragonflightUIEditModeFrameMixin:SetupAdvancedOptions(data)
 end
 
 function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
-    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'SettingsListTemplateDF')
+    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'DFSettingsList')
     displayFrame:Display(data, true)
     self.DisplayFrameExtra = displayFrame
     self.DataExtraOptions = data;
@@ -123,7 +123,7 @@ function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
     -- displayFrame:SetParent(self)
     displayFrame:SetPoint('TOPLEFT', self.DisplayFrame, 'BOTTOMLEFT', 0, 80 + 10)
     displayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-    displayFrame:CallRefresh()
+    -- displayFrame:CallRefresh()
     displayFrame:Show()
 
     local scrollBox = displayFrame.ScrollBox
@@ -701,7 +701,7 @@ function DFEditModeSystemSelectionBaseMixin:UpdateLabelVisibility()
 end
 
 function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
-    -- print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
+    print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
     -- DevTools_Dump(data)
     self.parentExtra = data.parentExtra
 
@@ -737,12 +737,21 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
         args = {}
     }
     local numOptions = 0;
+    local elementH = 0;
+    local elementSize = DFSettingsListMixin.ElementSize;
+
     for k, v in pairs(data.options.args) do
         if v.editmode then
             filteredOptions.args[k] = v
             numOptions = numOptions + 1
+            if numOptions < 11 then
+                elementH = elementH + elementSize[v.type] + 9
+            else
+            end
         end
     end
+
+    if data.sub == 'debuffs' then print('debuffs', numOptions) end
 
     filteredData.options = filteredOptions
     editModeFrame:SetupOptions(filteredData)
@@ -750,7 +759,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
 
     numOptions = math.min(numOptions, 10)
 
-    local optionsH = (26 + 9) * numOptions + 11
+    -- 9 = spacing, 11 = verticalPad + 1
+    local optionsH = elementH + 11
 
     local displayFrame = editModeFrame.DisplayFrame
     displayFrame:ClearAllPoints()
@@ -763,6 +773,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     if numOptions == 0 then displayFrame:Hide() end
 
     local extraH = 0;
+    local extraElementH = 0;
     if data.extra then
         --  
         local extraData = {name = data.name, sub = data.sub, default = data.default}
@@ -780,13 +791,14 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
             if v.editmode then
                 extraOptions.args[k] = v
                 numExtraOptions = numExtraOptions + 1
+                extraElementH = extraElementH + elementSize[v.type] + 9
             end
         end
         extraData.options = extraOptions
         editModeFrame:SetupExtraOptions(extraData)
 
         -- 16 = divider
-        extraH = 16 + (26 + 9) * numExtraOptions + 10
+        extraH = 16 + extraElementH + 11
     end
 
     local newH = 80 + optionsH + extraH
@@ -799,5 +811,5 @@ end
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
     -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
     -- self.SelectionOptions
-    self.SelectionOptions.DisplayFrame:CallRefresh()
+    -- self.SelectionOptions.DisplayFrame:CallRefresh()
 end

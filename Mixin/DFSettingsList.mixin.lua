@@ -1,9 +1,19 @@
 DFSettingsListMixin = CreateFromMixins(CallbackRegistryMixin);
 DFSettingsListMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
+DFSettingsListMixin.ElementSize = {
+    header = 45,
+    range = 26,
+    execute = 26,
+    description = 26,
+    toggle = 26,
+    select = 26,
+    divider = 16
+}
+
 function DFSettingsListMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
-    print('DFSettingsListMixin', 'OnLoad')
+    -- print('DFSettingsListMixin', 'OnLoad')
 
     local parent = self:GetParent()
     self:SetPoint('TOPLEFT', parent, 'TOPLEFT', 0, 0);
@@ -76,15 +86,7 @@ function DFSettingsListMixin:OnLoad()
 
     self.ScrollView:SetDataProvider(self.DataProvider)
 
-    local elementSize = {
-        header = 45,
-        range = 26,
-        execute = 26,
-        description = 26,
-        toggle = 26,
-        select = 26,
-        divider = 16
-    }
+    local elementSize = DFSettingsListMixin.ElementSize;
 
     self.ScrollView:SetElementExtentCalculator(function(dataIndex, node)
         local elementData = node:GetData();
@@ -234,10 +236,20 @@ function DFSettingsListElementBaseMixin:OnLoad()
     -- print('DFSettingsListElementBaseMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
-    self.Text:ClearAllPoints()
-    self.Text:SetPoint('LEFT', 37, 0)
-    self.Text:SetWidth(180);
     self.Text:SetText('');
+    self:SetBaseSmall(false);
+end
+
+function DFSettingsListElementBaseMixin:SetBaseSmall(small)
+    if small then
+        self.Text:ClearAllPoints()
+        self.Text:SetPoint('LEFT', 10, 0)
+        self.Text:SetWidth(130);
+    else
+        self.Text:ClearAllPoints()
+        self.Text:SetPoint('LEFT', 37, 0)
+        self.Text:SetWidth(180);
+    end
 end
 
 function DFSettingsListElementBaseMixin:SetTooltip(name, desc)
@@ -294,6 +306,8 @@ function DFSettingsListCheckboxContainerMixin:Init(node)
     self.Text:Show();
 
     self:SetTooltip(args.name, args.desc);
+
+    self:SetBaseSmall(elementData.small);
 
     -- self.checkbox:UnregisterCallback('OnValueChanged', self);
     self.Checkbox:UnregisterCallback('OnValueChanged', self)
@@ -381,12 +395,20 @@ function DFSettingsListSliderContainerMixin:Init(node)
         self.Editbox:SetText(self.Slider.RightText:GetText())
     end, self)
 
-    if args.small then
-        -- self.Slider:SetWidth(250);
-        -- self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    self:SetBaseSmall(elementData.small);
+
+    if elementData.small then
+        self.Slider:SetWidth(204);
+        self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+
+        self.Editbox:SetPoint('LEFT', self.Slider.RightText, 'LEFT', -5, 0)
+        self.Editbox:SetWidth(40);
     else
         self.Slider:SetWidth(250);
         self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+
+        self.Editbox:SetPoint('LEFT', self.Slider.RightText, 'LEFT', 0, 0)
+        self.Editbox:SetWidth(60);
     end
 
     -- editbox
@@ -485,9 +507,11 @@ function DFSettingsListButtonMixin:Init(node)
 
     self:SetTooltip(args.name, args.desc);
 
-    if args.small then
-        -- self.Slider:SetWidth(250);
-        -- self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    self:SetBaseSmall(elementData.small);
+
+    if elementData.small then
+        self.Button:SetWidth(200);
+        self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
     else
         self.Button:SetWidth(200);
         self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
@@ -566,12 +590,14 @@ function DFSettingsListDropdownContainerMixin:Init(node)
 
     self:SetTooltip(args.name, args.desc);
 
-    if args.small then
-        -- self.Slider:SetWidth(250);
-        -- self.Slider:SetPoint('LEFT', self.Text, 'RIGHT', 8, 3);
+    self:SetBaseSmall(elementData.small);
+
+    if elementData.small then
+        self.Button.Dropdown:SetWidth(140)
+        self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 0, 0);
     else
-        -- self.Button:SetWidth(200);
-        -- self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+        self.Button.Dropdown:SetWidth(180)
+        self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 20, 0);
     end
 
     if args.dropdownValues then

@@ -129,7 +129,7 @@ function AddCastbarTable(optionTable, sub)
         --     editmode = true
         -- },
         -- headerCastbar = {type = 'header', name = 'Castbar', desc = '', order = 10, isExpanded = true},
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
         sizeX = {
             type = 'range',
             name = 'Width',
@@ -249,7 +249,8 @@ function AddCastbarTable(optionTable, sub)
             name = 'Show Ticks',
             desc = '' .. getDefaultStr('showTicks', sub),
             group = 'headerStyling',
-            order = 18
+            order = 18,
+            editmode = true
         },
         autoAdjust = {
             type = 'toggle',
