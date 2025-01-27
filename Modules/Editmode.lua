@@ -115,46 +115,65 @@ if true then
         get = getOption,
         set = setOption,
         args = {
-            headerActionbar = {type = 'header', name = 'Actionbar', desc = '...', order = 100},
-            headerCombat = {type = 'header', name = 'Combat', desc = '...', order = 200},
-            headerFrames = {type = 'header', name = 'Frames', desc = '...', order = 300},
-            headerMisc = {type = 'header', name = 'Misc', desc = '...', order = 400}
+            headerActionbar = {
+                type = 'header',
+                name = 'Actionbar',
+                desc = '...',
+                order = 100,
+                isExpanded = true,
+                editmode = true
+            },
+            headerCombat = {
+                type = 'header',
+                name = 'Combat',
+                desc = '...',
+                order = 200,
+                isExpanded = true,
+                editmode = true
+            },
+            headerFrames = {
+                type = 'header',
+                name = 'Frames',
+                desc = '...',
+                order = 300,
+                isExpanded = true,
+                editmode = true
+            },
+            headerMisc = {type = 'header', name = 'Misc', desc = '...', order = 400, isExpanded = true, editmode = true}
         }
     }
 
-    local function AddTableToCategory(t, order)
-        table.sort(t, function(a, b)
-            return a < b
-        end)
-
+    local function AddTableToCategory(t, header)
         for k, v in ipairs(t) do
             --
             advancedOptions.args[v] = {
                 type = 'toggle',
                 name = v,
                 desc = '' .. getDefaultStr(v, 'advanced'),
-                order = order + 0.1 + k,
-                small = true
+                order = k,
+                small = true,
+                group = header,
+                editmode = true
             }
         end
     end
 
     -- actionbar
     local actionbarFrames = {'ActionBars', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
-    AddTableToCategory(actionbarFrames, 100);
+    AddTableToCategory(actionbarFrames, 'headerActionbar');
 
     -- combat
     local combatFrames = {'Buffs', 'Debuffs', 'Castbars'};
-    AddTableToCategory(combatFrames, 200);
+    AddTableToCategory(combatFrames, 'headerCombat');
 
     -- frames
     local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'PartyFrame', 'RaidFrame'}
     if DF.Wrath then table.insert(framesFrames, 'FocusFrame') end
-    AddTableToCategory(framesFrames, 300)
+    AddTableToCategory(framesFrames, 'headerFrames')
 
     -- misc
     local miscFrames = {'Bags', 'FPS', 'Minimap', 'Tracker', 'Durability'}
-    AddTableToCategory(miscFrames, 400)
+    AddTableToCategory(miscFrames, 'headerMisc')
 
     advancedOptions.set = function(...)
         -- print(...)
