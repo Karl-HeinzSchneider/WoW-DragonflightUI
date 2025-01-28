@@ -534,7 +534,10 @@ function DFEditModeSystemSelectionBaseMixin:ShowHighlighted()
     self.isSelected = false;
     self:UpdateLabelVisibility();
     self:Show();
-    if self.SelectionOptions then self.SelectionOptions:Hide() end
+    if self.SelectionOptions then
+        -- self:RefreshOptionScreen();
+        self.SelectionOptions:Hide()
+    end
 end
 
 function DFEditModeSystemSelectionBaseMixin:ShowSelected()
@@ -543,7 +546,10 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     self.isSelected = true;
     self:UpdateLabelVisibility();
     self:Show();
-    if self.SelectionOptions then self.SelectionOptions:Show() end
+    if self.SelectionOptions then
+        self:RefreshOptionScreen();
+        self.SelectionOptions:Show()
+    end
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnUpdate()
@@ -809,5 +815,5 @@ end
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
     -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
     -- self.SelectionOptions
-    -- self.SelectionOptions.DisplayFrame:CallRefresh()
+    self.SelectionOptions.DisplayFrame:CallRefresh()
 end

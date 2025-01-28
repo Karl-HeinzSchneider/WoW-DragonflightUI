@@ -110,10 +110,19 @@ function DFSettingsListMixin:FlushDisplay()
     self.ScrollView:SetDataProvider(self.DataProvider)
 end
 
+function DFSettingsListMixin:CallRefresh()
+    -- print('refresh!');
+    -- self:Display(self.Args_Data, self.Args_Data);
+    self:TriggerEvent(DFSettingsListMixin.Event.OnRefresh, true)
+end
+
 function DFSettingsListMixin:Display(data, small)
     -- self.DataProvider:Flush()
     -- self.DataProvider = CreateTreeDataProvider()
     -- self.ScrollView:SetDataProvider(self.DataProvider)
+
+    self.Args_Data = data;
+    self.Args_Small = small;
 
     self.DataProvider = CreateTreeDataProvider();
     local affectChildren = true;
