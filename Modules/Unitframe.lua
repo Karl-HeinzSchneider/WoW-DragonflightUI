@@ -4080,7 +4080,7 @@ function Module.ChangePartyFrame()
         name:SetSize(57, 12)
         name:SetPoint('TOPLEFT', 46, -6)
 
-        if DF.Era then name:SetWidth(100) end
+        if not UnitGroupRolesAssigned then name:SetWidth(100) end
 
         -- layer = 'ARTWORK' => Status
 
@@ -4134,7 +4134,7 @@ function Module.ChangePartyFrame()
         end
         updateSmallIcons()
 
-        if DF.Wrath then
+        if UnitGroupRolesAssigned then
             local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
             roleIcon:SetSize(12, 12)
             roleIcon:SetPoint('TOPRIGHT', -5, -5)
@@ -4145,12 +4145,15 @@ function Module.ChangePartyFrame()
 
             local updateRoleIcon = function()
                 local role = UnitGroupRolesAssigned(pf.unit)
+                roleIcon:Show()
                 if role == 'TANK' then
                     roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
                 elseif role == 'HEALER' then
                     roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
                 elseif role == 'DAMAGER' then
                     roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+                else
+                    roleIcon:Hide()
                 end
             end
 
