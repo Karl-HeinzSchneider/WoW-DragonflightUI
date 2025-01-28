@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Minimap'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
@@ -63,9 +64,6 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local presetDesc =
-    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
-
 local function setPreset(T, preset, sub)
     -- print('setPreset')
     -- DevTools_Dump(T)
@@ -93,60 +91,59 @@ local frameTableTracker = {
 
 local minimapOptions = {
     type = 'group',
-    name = 'Minimap',
+    name = L["MinimapName"],
     get = getOption,
     set = setOption,
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {type = 'header', name = L["MinimapStyle"], desc = '', order = 20, isExpanded = true},
         showPing = {
             type = 'toggle',
-            name = 'Show Ping',
-            desc = '(NOT YET IMPLEMENTED)' .. getDefaultStr('showPing', 'minimap'),
+            name = L["MinimapShowPing"],
+            desc = L["MinimapNotYetImplemented"] .. getDefaultStr('showPing', 'minimap'),
             group = 'headerStyling',
             order = 11
         },
         showPingChat = {
             type = 'toggle',
-            name = 'Show Ping in Chat',
-            desc = '' .. getDefaultStr('showPingChat', 'minimap'),
+            name = L["MinimapShowPingInChat"],
+            desc = getDefaultStr('showPingChat', 'minimap'),
             group = 'headerStyling',
             order = 12
         },
         hideCalendar = {
             type = 'toggle',
-            name = 'Hide Calendar',
-            desc = 'Hides the calendar button' .. getDefaultStr('hideCalendar', 'minimap'),
+            name = L["MinimapHideCalendar"],
+            desc = L["MinimapHideCalendarDesc"] .. getDefaultStr('hideCalendar', 'minimap'),
             group = 'headerStyling',
             order = 13,
             new = false
         },
         hideZoom = {
             type = 'toggle',
-            name = 'Hide Zoom Buttons',
-            desc = 'Hides the zoom buttons (+) (-)' .. getDefaultStr('hideZoom', 'minimap'),
+            name = L["MinimapHideZoomButtons"],
+            desc = L["MinimapHideZoomDesc"] .. getDefaultStr('hideZoom', 'minimap'),
             group = 'headerStyling',
             order = 14,
             new = true
         },
         skinButtons = {
             type = 'toggle',
-            name = 'Skin Minimap Buttons',
-            desc = 'Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)' ..
-                getDefaultStr('skinButtons', 'minimap'),
+            name = L["MinimapSkinMinimapButtons"],
+            desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
             group = 'headerStyling',
             order = 15,
             new = true
         },
         useStateHandler = {
             type = 'toggle',
-            name = 'Use State Handler',
-            desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
-                getDefaultStr('useStateHandler', 'minimap'),
+            name = L["MinimapUseStateHandler"],
+            desc = L["MinimapUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'minimap'),
             group = 'headerVis',
             order = 115
         }
     }
 }
+
 do
     local moreOptions = {
         rotate = {
@@ -212,9 +209,9 @@ local optionsMinimapEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.minimap
                 local defaultsTable = defaults.profile.minimap
@@ -247,9 +244,9 @@ local optionsTrackerEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.tracker
                 local defaultsTable = defaults.profile.tracker
@@ -282,9 +279,9 @@ local optionsDurabilityEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.durability
                 local defaultsTable = defaults.profile.durability

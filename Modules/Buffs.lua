@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Buffs'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -115,29 +116,35 @@ local frameTable = {
 
 local buffsOptions = {
     type = 'group',
-    name = 'Buffs',
+    name = L["BuffsOptionsName"],
     get = getOption,
     set = setOption,
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {
+            type = 'header',
+            name = L["BuffsOptionsStyle"],
+            desc = L["BuffsOptionsStyleDesc"],
+            order = 20,
+            isExpanded = true
+        },
         expanded = {
             type = 'toggle',
-            name = 'Expanded',
-            desc = '' .. getDefaultStr('expanded', 'buffs'),
+            name = L["BuffsOptionsExpanded"],
+            desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
             group = 'headerStyling',
             order = 10,
             new = true
         },
         useStateHandler = {
             type = 'toggle',
-            name = 'Use State Handler',
-            desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
-                getDefaultStr('useStateHandler', 'buffs'),
+            name = L["BuffsOptionsUseStateHandler"],
+            desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
             group = 'headerStyling',
             order = 115
         }
     }
 }
+
 -- blizz options buffs
 if DF.Cata then
     local moreOptions = {
@@ -195,9 +202,9 @@ local optionsBuffEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.buffs
                 local defaultsTable = defaults.profile.buffs
@@ -230,9 +237,9 @@ local optionsDebuffEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.debuffs
                 local defaultsTable = defaults.profile.debuffs

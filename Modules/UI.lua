@@ -1,6 +1,7 @@
 ---@class DragonflightUI
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'UI'
 ---@diagnostic disable-next-line: undefined-field
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
@@ -57,53 +58,53 @@ end
 
 local UIOptions = {
     type = 'group',
-    name = 'Utility',
+    name = L["UIUtility"],
     get = getOption,
     set = setOption,
     args = {
         changeBag = {
             type = 'toggle',
-            name = 'Change Bags',
-            desc = '' .. getDefaultStr('changeBag', 'first'),
+            name = L["UIChangeBags"],
+            desc = L["UIChangeBagsDesc"] .. getDefaultStr('changeBag', 'first'),
             order = 21
         },
         itemcolor = {
             type = 'toggle',
-            name = 'Colored Inventory Items',
-            desc = '' .. getDefaultStr('itemcolor', 'first'),
+            name = L["UIColoredInventoryItems"],
+            desc = L["UIColoredInventoryItemsDesc"] .. getDefaultStr('itemcolor', 'first'),
             order = 22
         },
         questLevel = {
             type = 'toggle',
-            name = 'Show Questlevel',
-            desc = '' .. getDefaultStr('questLevel', 'first'),
+            name = L["UIShowQuestlevel"],
+            desc = L["UIShowQuestlevelDesc"] .. getDefaultStr('questLevel', 'first'),
             order = 23
         },
-        headerFrames = {type = 'header', name = 'Frames', desc = '...', order = 100},
+        headerFrames = {type = 'header', name = L["UIFrames"], desc = L["UIFramesDesc"], order = 100},
         changeCharacterframe = {
             type = 'toggle',
-            name = 'Change CharacterFrame',
-            desc = '' .. getDefaultStr('changeCharacterframe', 'first'),
+            name = L["UIChangeCharacterFrame"],
+            desc = L["UIChangeCharacterFrameDesc"] .. getDefaultStr('changeCharacterframe', 'first'),
             order = 101,
             new = true
         },
         changeTradeskill = {
             type = 'toggle',
-            name = 'Change Profession Window',
-            desc = '' .. getDefaultStr('changeTradeskill', 'first'),
+            name = L["UIChangeProfessionWindow"],
+            desc = L["UIChangeProfessionWindowDesc"] .. getDefaultStr('changeTradeskill', 'first'),
             order = 102
         },
         changeInspect = {
             type = 'toggle',
-            name = 'Change InspectFrame',
-            desc = '' .. getDefaultStr('changeInspect', 'first'),
+            name = L["UIChangeInspectFrame"],
+            desc = L["UIChangeInspectFrameDesc"] .. getDefaultStr('changeInspect', 'first'),
             order = 104,
             new = true
         },
         changeTrainer = {
             type = 'toggle',
-            name = 'Change Trainer Window',
-            desc = '' .. getDefaultStr('changeTrainer', 'first'),
+            name = L["UIChangeTrainerWindow"],
+            desc = L["UIChangeTrainerWindowDesc"] .. getDefaultStr('changeTrainer', 'first'),
             order = 104
         }
     }
@@ -113,22 +114,22 @@ if DF.Era or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
         changeTalents = {
             type = 'toggle',
-            name = 'Change TalentFrame',
-            desc = '(Not on Wrath)' .. getDefaultStr('changeTalents', 'first'),
+            name = L["UIChangeTalentFrame"],
+            desc = L["UIChangeTalentFrameDesc"] .. getDefaultStr('changeTalents', 'first'),
             order = 103,
             new = true
         },
         changeSpellBook = {
             type = 'toggle',
-            name = 'Change SpellBook',
-            desc = '' .. getDefaultStr('changeSpellBook', 'first'),
+            name = L["UIChangeSpellBook"],
+            desc = L["UIChangeSpellBookDesc"] .. getDefaultStr('changeSpellBook', 'first'),
             order = 101.1,
             new = true
         },
         changeSpellBookProfessions = {
             type = 'toggle',
-            name = 'Change SpellBook Professions',
-            desc = '' .. getDefaultStr('changeSpellBookProfessions', 'first'),
+            name = L["UIChangeSpellBookProfessions"],
+            desc = L["UIChangeSpellBookProfessionsDesc"] .. getDefaultStr('changeSpellBookProfessions', 'first'),
             order = 101.2,
             new = true
         }
