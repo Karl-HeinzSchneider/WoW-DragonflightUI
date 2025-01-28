@@ -123,7 +123,7 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
 
     EventRegistry:RegisterCallback("DFSettingsCategoryListMixin.Event.OnSelectionChanged", function(_, newSelected, _)
         --
-        print('~~OnSelectionChanged', newSelected);
+        -- print('~~OnSelectionChanged', newSelected);
         local displayData = self.SettingsDataTable[newSelected];
         if displayData then
             -- update display

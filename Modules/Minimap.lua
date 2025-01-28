@@ -353,7 +353,7 @@ function Module:RegisterSettings()
 
     register('minimap', {order = 1, name = 'Minimap', descr = 'Minimapss', isNew = false})
     register('questtracker', {order = 1, name = 'Quest Tracker', descr = 'Trackers', isNew = false})
-    register('durability', {order = 1, name = 'Durablity', descr = 'Durablityss', isNew = false})
+    register('durability', {order = 1, name = 'Durability', descr = 'Durablityss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
