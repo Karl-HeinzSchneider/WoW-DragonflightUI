@@ -179,8 +179,13 @@ function Module:RegisterOptionScreens()
                 type = 'select',
                 name = 'Current Profile',
                 desc = L["ProfilesSetActiveProfile"],
-                -- values = profilesWithDefaults,
-                valuesFunction = Module.GetProfilesWithDefaults,
+                dropdownValuesFunc = Module:GeneratorCurrentProfilesWithDefaults(true, function(name)
+                    -- print('IsSelected', name)
+                    return Module:GetCurrentProfile() == name;
+                end, function(name)
+                    -- print('SetSelected', name)
+                    Module:SetCurrentProfile(name)
+                end),
                 order = 10
             },
             -- headerNewProfile = {type = 'header', name = 'New Profile', order = 20},
@@ -201,8 +206,11 @@ function Module:RegisterOptionScreens()
                 type = 'select',
                 name = 'Copy From',
                 desc = L["ProfilesCopyFrom"],
-                -- values = profilesWithDefaults,
-                valuesFunction = Module.GetProfiles,
+                dropdownValuesFunc = Module:GeneratorCurrentProfilesWithDefaults(false, function(name)
+                    return getOption({'toCopy'}) == name;
+                end, function(name)
+                    setOption({'toCopy'}, name)
+                end),
                 order = 31
             },
             copyFromProfile = {
@@ -222,8 +230,11 @@ function Module:RegisterOptionScreens()
                 type = 'select',
                 name = 'Profile To Delete',
                 desc = L["ProfilesDeleteProfile"],
-                -- values = profilesWithDefaults,
-                valuesFunction = Module.GetProfiles,
+                dropdownValuesFunc = Module:GeneratorCurrentProfilesWithDefaults(false, function(name)
+                    return getOption({'toDelete'}) == name;
+                end, function(name)
+                    setOption({'toDelete'}, name)
+                end),
                 order = 41
             },
             deleteProfile = {
@@ -287,6 +298,37 @@ function Module:GetProfiles()
     for k, v in ipairs(profilesT) do profiles[v] = v end
 
     return profiles
+end
+
+function Module:GeneratorCurrentProfilesWithDefaults(withDefaults, IsSelected, SetSelected)
+    -- print('Module:GeneratorCurrentProfilesWithDefaults(dropdown, rootDescription)')
+
+    local generator = function(dropdown, rootDescription)
+        -- print('generator')
+        local profiles = Module:GetProfiles()
+        -- DevTools_Dump(profiles)
+
+        -- local tmp = {DF.db.keys.char, DF.db.keys.class, DF.db.keys.faction, DF.db.keys.realm}
+        -- local defaultProfiles = {}
+        -- for k, v in ipairs(tmp) do defaultProfiles[v] = v; end
+        -- DevTools_Dump(defaultProfiles)
+
+        rootDescription:SetTag('TAG?')
+        -- rootDescription:CreateTitle('TITLETEST')      
+
+        if withDefaults then
+            local radioDefault = rootDescription:CreateRadio('Default', IsSelected, SetSelected, 'Default');
+
+            local divOne = rootDescription:CreateDivider();
+        end
+
+        for k, v in pairs(profiles) do
+            if k ~= 'Default' then local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, k); end
+        end
+
+    end
+
+    return generator;
 end
 
 function Module:GetProfilesWithDefaults()

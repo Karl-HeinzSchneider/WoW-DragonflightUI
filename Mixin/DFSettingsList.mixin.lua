@@ -741,7 +741,9 @@ function DFSettingsListDropdownContainerMixin:Init(node)
         self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 20, 0);
     end
 
-    if args.dropdownValues then
+    if args.dropdownValuesFunc then
+        self.Button.Dropdown:SetupMenu(args.dropdownValuesFunc)
+    elseif args.dropdownValues then
         -- self.Button.Dropdown:OverrideText(elementData.get({elementData.key}));
         -- self.Button.Dropdown:SetDefaultText(elementData.get({elementData.key}));
 
@@ -841,5 +843,8 @@ function DFSettingsListDropdownContainerMixin:Init(node)
             -- self.Dropdown:SetEnabled(true)
 
         end
+    else
+        self.Button.Dropdown:SetupMenu(function(_, _)
+        end)
     end
 end
