@@ -50,7 +50,7 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local frameTable = {['UIParent'] = 'UIParent'}
+local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
 
 local options = {
     type = 'group',
@@ -73,6 +73,7 @@ local options = {
             type = 'select',
             name = 'Anchorframe',
             desc = 'Anchor' .. getDefaultStr('anchorFrame'),
+            dropdownValues = frameTable,
             values = frameTable,
             order = 4,
             editmode = true
@@ -92,6 +93,7 @@ local options = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
+            dropdownValues = DF.Settings.DropdownAnchorTable,
             order = 2,
             editmode = true
         },
@@ -110,6 +112,7 @@ local options = {
                 ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
                 ['CENTER'] = 'CENTER'
             },
+            dropdownValues = DF.Settings.DropdownAnchorTable,
             order = 3,
             editmode = true
         },
@@ -160,6 +163,9 @@ local options = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
@@ -179,7 +185,7 @@ function Module:OnEnable()
     -- Module:AddEditMode()
 
     Module:ApplySettings()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Chat', {name = 'Chat', options = options, default = setDefaultValues})
+    DF.ConfigModule:RegisterSettingsData('chat', 'misc', {name = 'Chat', options = options, default = setDefaultValues})
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -189,6 +195,17 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Chat'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('chat', {order = 1, name = 'Chat', descr = 'Chatss', isNew = false})
 end
 
 function Module:RefreshOptionScreens()

@@ -186,6 +186,22 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             |cff8080ff https://warcraft.wiki.gg/wiki/Macro_conditionals|r
         ]]
 
+    local Validate = function(t)
+        local result, target = SecureCmdOptionParse(t)
+        if result ~= 'show' and result ~= 'hide' and result ~= '' then
+            Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
+                             [['show' or 'hide'!|r]])
+            return
+        end
+
+        -- valid
+        Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. t .. '\'')
+        Module:Print('Current Value: ' .. result)
+
+        -- valid, reset
+        return true, true;
+    end
+
     StaticPopupDialogs[popupName] = {
         text = 'Set Custom Condition for ' .. displayName .. '\n\n' .. macroOptions,
         button1 = ACCEPT,
@@ -222,70 +238,88 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
     end
 
     local extraOptions = {
-        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100},
+        headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100, isExpanded = true, editmode = true},
         showMouseover = {
             type = 'toggle',
             name = 'Show On Mouseover',
             desc = 'This (temporarily) overrides the hide conditions below when mouseover.' ..
                 getDefaultStr('showMouseover', sub),
             order = 100.5,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideAlways = {
             type = 'toggle',
             name = 'Always Hide',
             desc = '' .. cond('hide') .. getDefaultStr('hideAlways', sub),
             order = 101,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideCombat = {
             type = 'toggle',
             name = 'Hide In Combat',
             desc = '' .. cond('[combat]hide; show') .. getDefaultStr('hideCombat', sub),
             order = 102,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideOutOfCombat = {
             type = 'toggle',
             name = 'Hide Out Of Combat',
             desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', sub),
             order = 103,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hidePet = {
             type = 'toggle',
             name = 'Hide With Pet',
             desc = '' .. cond('[pet]hide; show') .. getDefaultStr('hidePet', sub),
             order = 104,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideNoPet = {
             type = 'toggle',
             name = 'Hide Without Pet',
             desc = '' .. cond('[nopet]hide; show') .. getDefaultStr('hideNoPet', sub),
             order = 105,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideStance = {
             type = 'toggle',
             name = 'Hide Without Stance/Form',
             desc = '' .. cond('[stance:X]hide; show') .. ' (X=1..6)' .. getDefaultStr('hideStance', sub),
             order = 106,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideStealth = {
             type = 'toggle',
             name = 'Hide In Stealth',
             desc = '' .. cond('[stealth]hide; show') .. getDefaultStr('hideStealth', sub),
             order = 107,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideNoStealth = {
             type = 'toggle',
             name = 'Hide Outside Stealth',
             desc = '' .. cond('[nostealth]hide; show') .. getDefaultStr('hideNoStealth', sub),
             order = 108,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideCustom = {
             type = 'toggle',
@@ -293,10 +327,12 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = 'Same syntax as macro conditionals\n|cFFFF0000Note: This will disable all of the above settings!|r' ..
                 getDefaultStr('hideCustom', sub),
             order = 109,
-            new = false
+            group = 'headerVis',
+            new = false,
+            editmode = true
         },
         hideCustomCondButton = {
-            type = 'execute',
+            type = 'editbox',
             name = 'Set Custom Condition',
             btnName = 'Update...',
             func = function()
@@ -304,7 +340,10 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                 StaticPopup_Show(popupName)
             end,
-            order = 109.5
+            Validate = Validate,
+            order = 109.5,
+            group = 'headerVis',
+            editmode = true
         }
     }
 

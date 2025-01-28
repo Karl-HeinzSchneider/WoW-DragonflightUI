@@ -257,6 +257,9 @@ local generalOptions = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
@@ -296,8 +299,19 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'Darkmode'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('darkmode', {order = 0, name = 'Dark Mode', descr = 'Darkmodess', isNew = false})
+end
+
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Darkmode', {
+    DF.ConfigModule:RegisterSettingsData('darkmode', 'misc', {
         name = 'Darkmode',
         sub = 'general',
         options = generalOptions,

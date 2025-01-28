@@ -129,6 +129,9 @@ end
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     -- self:SetEnabledState(DF:GetModuleEnabled(mName))
     self:SetEnabledState(true)
@@ -148,7 +151,7 @@ function Module:OnEnable()
 
     Module:ApplySettings()
 
-    DF.ConfigModule:RegisterOptionScreen('General', 'Modules', {
+    DF.ConfigModule:RegisterSettingsData('modules', 'general', {
         name = 'Modules',
         sub = 'modules',
         options = modulesOptions,
@@ -164,6 +167,19 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Config'
+    local cat = 'general'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('whatsnew', {order = 4, name = [[What's New]], descr = 'Whatsnewss', isNew = false})
+    register('modules', {order = 2, name = 'Modules', descr = 'Modulesss', isNew = false})
+    register('info', {order = 1, name = 'Info', descr = 'Infoss', isNew = false})
 end
 
 function Module:ApplySettings()
@@ -249,8 +265,7 @@ function Module:AddMainMenuButton()
     Module.UpdateMainMenuButtons()
 
     btn:SetScript('OnClick', function()
-        ---@diagnostic disable-next-line: missing-parameter
-        Module.ToggleConfigFrame()
+        Module:ToggleConfigFrame()
         -- HideUIPanel(GameMenuFrame)
     end)
 end
@@ -307,7 +322,7 @@ function Module:AddTestConfig()
         }
     }
     local config = {name = 'WhatsNew', options = options}
-    Module:RegisterOptionScreen('General', 'WhatsNew', config)
+    Module:RegisterSettingsData('whatsnew', 'general', config)
 end
 
 function Module:ToggleConfigFrame()
@@ -351,7 +366,15 @@ function Module:RegisterOptionScreen(cat, sub, data)
     -- print('RegisterOptionScreen', cat, sub)
     local config = Module.ConfigFrame
 
-    config.DFCategoryList:SetDisplayData(cat, sub, data)
+    -- config.DFCategoryList:SetDisplayData(cat, sub, data)
+end
+
+function Module:RegisterSettingsElement(id, categoryID, data, firstTime)
+    Module.ConfigFrame:RegisterSettingsElement(id, categoryID, data, firstTime)
+end
+
+function Module:RegisterSettingsData(id, categoryID, data)
+    Module.ConfigFrame:RegisterSettingsData(id, categoryID, data)
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIConfigFrame', UIParent)

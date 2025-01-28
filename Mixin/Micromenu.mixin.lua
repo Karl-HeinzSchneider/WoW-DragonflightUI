@@ -145,7 +145,7 @@ function DragonflightUIMicroMenuMixin:Update()
     self:SetClampedToScreen(true)
     self:SetScale(state.scale)
     self:ClearAllPoints()
-    self:SetPoint(state.anchor, _G[anchorFrame], state.anchorParent, state.x, state.y)
+    self:SetPoint(state.anchor, _G[state.anchorFrame], state.anchorParent, state.x, state.y)
 
     self:UpdateStateHandler(state)
 end

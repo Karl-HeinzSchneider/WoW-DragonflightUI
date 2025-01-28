@@ -35,6 +35,7 @@ local defaults = {
             padding = 2,
             -- Style
             alwaysShow = true,
+            activate = true,
             hideArt = false,
             hideScrolling = false,
             gryphons = 'DEFAULT',
@@ -304,6 +305,7 @@ local defaults = {
             padding = 2,
             -- Style
             alwaysShow = true,
+            activate = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -490,10 +492,10 @@ local defaults = {
         },
         fps = {
             scale = 1,
-            anchorFrame = 'CharacterMicroButton',
+            anchorFrame = 'DragonflightUIMicroMenuBar',
             anchor = 'RIGHT',
             anchorParent = 'LEFT',
-            x = -10,
+            x = -5,
             y = 0,
             hidden = false,
             hideDefaultFPS = true,
@@ -515,30 +517,8 @@ local defaults = {
         }
     }
 }
--- if DF.Cata then
---     defaults.profile.micro.x = -320
--- elseif DF.Wrath then
---     defaults.profile.micro.x = -294
--- elseif DF.Era then
---     defaults.profile.micro.x = -205
--- end
 
 Module:SetDefaults(defaults)
-
-local defaultsActionbarPROTO = {
-    scale = 1,
-    anchorFrame = 'UIParent',
-    anchor = 'CENTER',
-    anchorParent = 'CENTER',
-    x = 0,
-    y = 0,
-    orientation = 'horizontal',
-    buttonScale = 1,
-    rows = 1,
-    buttons = 12,
-    padding = 3,
-    alwaysShow = true
-}
 
 local function getDefaultStr(key, sub)
     return Module:GetDefaultStr(key, sub)
@@ -578,174 +558,181 @@ local function setPreset(T, preset, sub)
 end
 
 local frameTable = {
-    ['UIParent'] = 'UIParent',
-    ['DragonflightUIActionbarFrame1'] = 'Actionbar1',
-    ['DragonflightUIActionbarFrame2'] = 'Actionbar2',
-    ['DragonflightUIActionbarFrame3'] = 'Actionbar3',
-    ['DragonflightUIActionbarFrame4'] = 'Actionbar4',
-    ['DragonflightUIActionbarFrame5'] = 'Actionbar5',
-    ['DragonflightUIActionbarFrame6'] = 'Actionbar6',
-    ['DragonflightUIActionbarFrame7'] = 'Actionbar7',
-    ['DragonflightUIActionbarFrame8'] = 'Actionbar8',
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
 
-    ['DragonflightUIXPBar'] = 'XPbar',
-    ['DragonflightUIRepBar'] = 'RepBar',
-    ['DragonflightUIPetBar'] = 'PetBar',
-    ['DragonflightUIStancebar'] = 'Stancebar'
+    {value = 'DragonflightUIActionbarFrame1', text = 'Action Bar 1', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame2', text = 'Action Bar 2', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame3', text = 'Action Bar 3', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame4', text = 'Action Bar 4', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame5', text = 'Action Bar 5', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame6', text = 'Action Bar 6', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame7', text = 'Action Bar 7', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIActionbarFrame8', text = 'Action Bar 8', tooltip = 'descr', label = 'label'},
+
+    {value = 'DragonflightUIXPBar', text = 'XP Bar', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIRepBar', text = 'Reputation Bar', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIPetBar', text = 'Pet Bar', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIStancebar', text = 'Stance Bar', tooltip = 'descr', label = 'label'},
+    {value = 'PossessBarFrame', text = 'Possess Bar', tooltip = 'descr', label = 'label'},
+
+    {value = 'DragonflightUIMicroMenuBar', text = 'Micromenu', tooltip = 'descr', label = 'label'}
 }
 
-local function frameTableWithout(own)
-    local newFrameTable = {}
-    for k, v in pairs(frameTable) do
+local gryphonsTable = {
+    {value = 'DEFAULT', text = 'Default', tooltip = 'descr', label = 'label'},
+    {value = 'ALLY', text = 'Alliance', tooltip = 'descr', label = 'label'},
+    {value = 'HORDE', text = 'Horde', tooltip = 'descr', label = 'label'},
+    {value = 'NONE', text = 'None', tooltip = 'descr', label = 'label'}
+}
+
+if DF.Cata then
+    --
+    table.insert(frameTable, {value = 'MultiCastActionBarFrame', text = 'Totem Bar', tooltip = 'descr', label = 'label'})
+end
+
+local function frameTableWithout(without)
+    local newTable = {}
+
+    for k, v in ipairs(frameTable) do
         --
-        if k == own then
-        else
-            newFrameTable[k] = v
+        if v.value ~= without then
+            --      
+            table.insert(newTable, v);
         end
     end
 
-    return newFrameTable
+    return newTable
 end
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
+function AddButtonTable(optionTable, sub)
+    local extraOptions = {
+        activate = {
             type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
+            name = 'Active',
+            desc = '' .. getDefaultStr('activate', sub),
+            order = -1,
+            new = true,
+            editmode = true
         },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        config = {type = 'header', name = 'Config - Actionbar', order = 100},
-        scale = {
+        headerButtons = {type = 'header', name = 'Buttons', desc = '', order = 10, isExpanded = true, editmode = true},
+        buttonScale = {
             type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale'),
-            min = 0.2,
-            max = 1.5,
-            bigStep = 0.025,
-            order = 101,
-            disabled = true
+            name = 'ButtonScale',
+            desc = '' .. getDefaultStr('buttonScale', sub),
+            min = 0.1,
+            max = 3,
+            bigStep = 0.05,
+            order = 1,
+            group = 'headerButtons',
+            editmode = true
         },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to BOTTOM CENTER' .. getDefaultStr('x'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102,
-            disabled = true
+        orientation = {
+            type = 'select',
+            name = 'Orientation',
+            desc = 'Orientation' .. getDefaultStr('orientation', sub),
+            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            dropdownValues = DF.Settings.OrientationTable,
+            order = 7,
+            group = 'headerButtons',
+            editmode = true
         },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to BOTTOM CENTER' .. getDefaultStr('y'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102,
-            disabled = true
-        },
-        showGryphon = {
+        reverse = {
             type = 'toggle',
-            name = 'Show Gryphon Art',
-            desc = 'Shows/Hides Gryphon Art on the side' .. getDefaultStr('showGryphon'),
-            order = 105.1
+            name = 'Reverse Button order',
+            desc = '' .. getDefaultStr('reverse', sub),
+            order = 7.5,
+            group = 'headerButtons',
+            editmode = true
         },
-        changeSides = {
-            type = 'toggle',
-            name = 'Change Right Bar 1+2',
-            desc = 'Moves the Right Bar 1 + 2 to the side of the mainbar ' .. getDefaultStr('changeSides'),
-            order = 105.2
-        },
-        -- config = {type = 'header', name = 'Config - XP/Reputation Bar', order = 200},
-        alwaysShowXP = {
-            type = 'toggle',
-            name = 'Always show XP Text',
-            desc = 'Set to always show text on XP bar' .. getDefaultStr('alwaysShowXP'),
-            order = 201,
-            width = '2'
-        },
-        alwaysShowRep = {
-            type = 'toggle',
-            name = 'Always show Reputation Text',
-            desc = 'Set to always show text on Reputation bar' .. getDefaultStr('alwaysShowRep'),
-            order = 201,
-            width = '4'
-        },
-        -- config = {type = 'header', name = 'EXPERIMENTAL - Actionbar 4/5', order = 300},
-        sideRows = {
+        rows = {
             type = 'range',
             name = '# of Rows',
-            desc = '' .. getDefaultStr('sideRows'),
+            desc = '' .. getDefaultStr('rows', sub),
             min = 1,
             max = 12,
             bigStep = 1,
-            order = 301.1,
-            disabled = false
+            order = 9,
+            group = 'headerButtons',
+            editmode = true
         },
-        sideButtons = {
+        buttons = {
             type = 'range',
             name = '# of Buttons',
-            desc = '' .. getDefaultStr('sideButtons'),
+            desc = '' .. getDefaultStr('buttons', sub),
             min = 1,
             max = 12,
             bigStep = 1,
-            order = 301.2,
-            disabled = false
+            order = 10,
+            group = 'headerButtons',
+            editmode = true
+        },
+        padding = {
+            type = 'range',
+            name = 'Padding',
+            desc = '' .. getDefaultStr('padding', sub),
+            min = 0,
+            max = 10,
+            bigStep = 1,
+            order = 11,
+            group = 'headerButtons',
+            editmode = true
+        },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        alwaysShow = {
+            type = 'toggle',
+            name = 'Always show Actionbar',
+            desc = '' .. getDefaultStr('alwaysShow', sub),
+            group = 'headerStyling',
+            order = 50.1,
+            editmode = true
+        },
+        hideMacro = {
+            type = 'toggle',
+            name = 'Hide Macro Text',
+            desc = '' .. getDefaultStr('hideMacro', sub),
+            group = 'headerStyling',
+            order = 55,
+            editmode = true
+        },
+        macroFontSize = {
+            type = 'range',
+            name = 'MacroName Font Size',
+            desc = '' .. getDefaultStr('macroFontSize', sub),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 55.1,
+            new = true,
+            editmode = true
+        },
+        hideKeybind = {
+            type = 'toggle',
+            name = 'Hide Keybind Text',
+            desc = '' .. getDefaultStr('hideKeybind', sub),
+            group = 'headerStyling',
+            order = 56,
+            editmode = true
+        },
+        keybindFontSize = {
+            type = 'range',
+            name = 'Keybind Font Size',
+            desc = '' .. getDefaultStr('keybindFontSize', sub),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 56.1,
+            new = true,
+            editmode = true
         }
     }
-}
 
--- .....\BlizzardInterfaceCode\Interface\FrameXML\SettingDefinitions\ActionBarsOverrides.lua
-local actionBars = {
-    {
-        variable = "PROXY_SHOW_ACTIONBAR_2",
-        label = OPTION_SHOW_ACTION_BAR:format(2),
-        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR1,
-        uvar = "SHOW_MULTI_ACTIONBAR_1"
-    }, {
-        variable = "PROXY_SHOW_ACTIONBAR_3",
-        label = OPTION_SHOW_ACTION_BAR:format(3),
-        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR2,
-        uvar = "SHOW_MULTI_ACTIONBAR_2"
-    }, {
-        variable = "PROXY_SHOW_ACTIONBAR_4",
-        label = OPTION_SHOW_ACTION_BAR:format(4),
-        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR3,
-        uvar = "SHOW_MULTI_ACTIONBAR_3"
-    }, {
-        variable = "PROXY_SHOW_ACTIONBAR_5",
-        label = OPTION_SHOW_ACTION_BAR:format(5),
-        tooltip = OPTION_TOOLTIP_SHOW_MULTIBAR4,
-        uvar = "SHOW_MULTI_ACTIONBAR_4"
-    }
-};
+    for k, v in pairs(extraOptions) do
+        --
+        optionTable.args[k] = v
+    end
+end
 
 local function GetBarOption(n)
     local barname = 'bar' .. n
@@ -755,178 +742,12 @@ local function GetBarOption(n)
         get = getOption,
         set = setOption,
         type = 'group',
-        args = {
-            --[[    scale = {
-                type = 'range',
-                name = 'Scale',
-                desc = '' .. getDefaultStr('scale', barname),
-                min = 0.1,
-                max = 5,
-                bigStep = 0.1,
-                order = 1
-            }, ]]
-            anchorFrame = {
-                type = 'select',
-                name = 'Anchorframe',
-                desc = 'Anchor' .. getDefaultStr('anchorFrame', barname),
-                values = frameTableWithout('DragonflightUIActionbarFrame' .. n),
-                order = 4,
-                editmode = true
-            },
-            anchor = {
-                type = 'select',
-                name = 'Anchor',
-                desc = 'Anchor' .. getDefaultStr('anchor', barname),
-                values = {
-                    ['TOP'] = 'TOP',
-                    ['RIGHT'] = 'RIGHT',
-                    ['BOTTOM'] = 'BOTTOM',
-                    ['LEFT'] = 'LEFT',
-                    ['TOPRIGHT'] = 'TOPRIGHT',
-                    ['TOPLEFT'] = 'TOPLEFT',
-                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                    ['CENTER'] = 'CENTER'
-                },
-                order = 2,
-                editmode = true
-            },
-            anchorParent = {
-                type = 'select',
-                name = 'AnchorParent',
-                desc = 'AnchorParent' .. getDefaultStr('anchorParent', barname),
-                values = {
-                    ['TOP'] = 'TOP',
-                    ['RIGHT'] = 'RIGHT',
-                    ['BOTTOM'] = 'BOTTOM',
-                    ['LEFT'] = 'LEFT',
-                    ['TOPRIGHT'] = 'TOPRIGHT',
-                    ['TOPLEFT'] = 'TOPLEFT',
-                    ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                    ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                    ['CENTER'] = 'CENTER'
-                },
-                order = 3,
-                editmode = true
-            },
-            x = {
-                type = 'range',
-                name = 'X',
-                desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', barname),
-                min = -2500,
-                max = 2500,
-                bigStep = 1,
-                order = 5,
-                editmode = true
-            },
-            y = {
-                type = 'range',
-                name = 'Y',
-                desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', barname),
-                min = -2500,
-                max = 2500,
-                bigStep = 1,
-                order = 6,
-                editmode = true
-            },
-            orientation = {
-                type = 'select',
-                name = 'Orientation',
-                desc = 'Orientation' .. getDefaultStr('orientation', barname),
-                values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-                order = 7,
-                editmode = true
-            },
-            reverse = {
-                type = 'toggle',
-                name = 'Reverse Button order',
-                desc = '' .. getDefaultStr('reverse', barname),
-                order = 7.5,
-                editmode = true
-            },
-            buttonScale = {
-                type = 'range',
-                name = 'ButtonScale',
-                desc = '' .. getDefaultStr('buttonScale', barname),
-                min = 0.1,
-                max = 3,
-                bigStep = 0.05,
-                order = 1,
-                editmode = true
-            },
-            rows = {
-                type = 'range',
-                name = '# of Rows',
-                desc = '' .. getDefaultStr('rows', barname),
-                min = 1,
-                max = 12,
-                bigStep = 1,
-                order = 9,
-                editmode = true
-            },
-            buttons = {
-                type = 'range',
-                name = '# of Buttons',
-                desc = '' .. getDefaultStr('buttons', barname),
-                min = 1,
-                max = 12,
-                bigStep = 1,
-                order = 10,
-                editmode = true
-            },
-            padding = {
-                type = 'range',
-                name = 'Padding',
-                desc = '' .. getDefaultStr('padding', barname),
-                min = 0,
-                max = 10,
-                bigStep = 1,
-                order = 11,
-                editmode = true
-            },
-            headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
-            alwaysShow = {
-                type = 'toggle',
-                name = 'Always show Actionbar',
-                desc = '' .. getDefaultStr('alwaysShow', barname),
-                order = 50.1
-            },
-            hideMacro = {
-                type = 'toggle',
-                name = 'Hide Macro Text',
-                desc = '' .. getDefaultStr('hideMacro', barname),
-                order = 55
-            },
-            macroFontSize = {
-                type = 'range',
-                name = 'MacroName Font Size',
-                desc = '' .. getDefaultStr('macroFontSize', barname),
-                min = 6,
-                max = 24,
-                bigStep = 1,
-                order = 55.1,
-                new = true
-            },
-            hideKeybind = {
-                type = 'toggle',
-                name = 'Hide Keybind Text',
-                desc = '' .. getDefaultStr('hideKeybind', barname),
-                order = 56
-            },
-            keybindFontSize = {
-                type = 'range',
-                name = 'Keybind Font Size',
-                desc = '' .. getDefaultStr('keybindFontSize', barname),
-                min = 6,
-                max = 24,
-                bigStep = 1,
-                order = 56.1,
-                new = true
-            }
-
-        }
+        args = {}
     }
-
+    AddButtonTable(opt, barname)
+    DF.Settings:AddPositionTable(Module, opt, barname, 'Action Bar' .. n, getDefaultStr,
+                                 frameTableWithout('DragonflightUIActionbarFrame' .. n))
+    opt.args.scale = nil;
     if n == 1 then
         -- print('111111')
         local moreOptions = {
@@ -934,6 +755,7 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar art',
                 desc = '' .. getDefaultStr('hideArt', barname),
+                group = 'headerButtons',
                 order = 51.2,
                 editmode = true
             },
@@ -941,6 +763,7 @@ local function GetBarOption(n)
                 type = 'toggle',
                 name = 'Hide bar scrolling',
                 desc = '' .. getDefaultStr('hideScrolling', barname),
+                group = 'headerButtons',
                 order = 51.3,
                 editmode = true
             },
@@ -949,6 +772,8 @@ local function GetBarOption(n)
                 name = 'Gryphons',
                 desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
+                dropdownValues = gryphonsTable,
+                group = 'headerButtons',
                 order = 51.4,
                 editmode = true
             },
@@ -957,6 +782,7 @@ local function GetBarOption(n)
                 name = 'Icon Range Color',
                 desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
                     getDefaultStr('range', barname),
+                group = 'headerButtons',
                 order = 51.1,
                 editmode = true
             }
@@ -978,14 +804,14 @@ local function GetBarOption(n)
         -- elseif n > 5 then
     else
         local moreOptions = {
-            activate = {
-                type = 'toggle',
-                name = 'Active',
-                desc = '' .. getDefaultStr('activate', barname),
-                order = 13,
-                new = true,
-                editmode = true
-            }
+            -- activate = {
+            --     type = 'toggle',
+            --     name = 'Active',
+            --     desc = '' .. getDefaultStr('activate', barname),
+            --     order = 13,
+            --     new = true,
+            --     editmode = true
+            -- }
         }
         for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
@@ -1165,148 +991,14 @@ local function GetBarExtraOptions(n)
     return extra;
 end
 
-local petOptions = {
-    name = 'PetBar',
-    desc = 'PetBar',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
-            values = frameTableWithout('DragonflightUIPetBar'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'pet'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'pet'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
-        orientation = {
-            type = 'select',
-            name = 'Orientation',
-            desc = 'Orientation' .. getDefaultStr('orientation', 'pet'),
-            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-            order = 7,
-            editmode = true
-        },
-        buttonScale = {
-            type = 'range',
-            name = 'ButtonScale',
-            desc = '' .. getDefaultStr('buttonScale', 'pet'),
-            min = 0.1,
-            max = 3,
-            bigStep = 0.05,
-            order = 1,
-            editmode = true
-        },
-        rows = {
-            type = 'range',
-            name = '# of Rows',
-            desc = '' .. getDefaultStr('rows', 'pet'),
-            min = 1,
-            max = 12,
-            bigStep = 1,
-            order = 9,
-            editmode = true
-        },
-        buttons = {
-            type = 'range',
-            name = '# of Buttons',
-            desc = '' .. getDefaultStr('buttons', 'pet'),
-            min = 1,
-            max = 10,
-            bigStep = 1,
-            order = 10,
-            editmode = true
-        },
-        padding = {
-            type = 'range',
-            name = 'Padding',
-            desc = '' .. getDefaultStr('padding', 'pet'),
-            min = 0,
-            max = 10,
-            bigStep = 1,
-            order = 11,
-            editmode = true
-        },
-        alwaysShow = {
-            type = 'toggle',
-            name = 'Always show Actionbar',
-            desc = '' .. getDefaultStr('alwaysShow', 'pet'),
-            order = 12,
-            editmode = true
-        },
-        hideMacro = {
-            type = 'toggle',
-            name = 'Hide Macro Text',
-            desc = '' .. getDefaultStr('hideMacro', 'pet'),
-            order = 16,
-            editmode = true
-        },
-        hideKeybind = {
-            type = 'toggle',
-            name = 'Hide Keybind Text',
-            desc = '' .. getDefaultStr('hideKeybind', 'pet'),
-            order = 17,
-            editmode = true
-        }
-    }
-}
+local petOptions = {name = 'PetBar', desc = 'PetBar', get = getOption, set = setOption, type = 'group', args = {}}
+AddButtonTable(petOptions, 'pet')
+DF.Settings:AddPositionTable(Module, petOptions, 'pet', 'Pet Bar', getDefaultStr,
+                             frameTableWithout('DragonflightUIPetBar'))
+petOptions.args.scale = nil;
+petOptions.args.hideMacro = nil;
+petOptions.args.macroFontSize = nil;
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, petOptions, 'pet', 'PetBar', getDefaultStr)
 local optionsPetEdtimode = {
     name = 'pet',
@@ -1347,80 +1039,7 @@ local xpOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'xp'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'xp'),
-            values = frameTableWithout('DragonflightUIXPBar'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'xp'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'xp'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'xp'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'xp'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         width = {
             type = 'range',
             name = 'Width',
@@ -1428,6 +1047,7 @@ local xpOptions = {
             min = 1,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -1438,6 +1058,7 @@ local xpOptions = {
             min = 1,
             max = 69,
             bigStep = 1,
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -1445,6 +1066,7 @@ local xpOptions = {
             type = 'toggle',
             name = 'Always show XP text',
             desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
+            group = 'headerStyling',
             order = 12,
             editmode = true
         },
@@ -1452,11 +1074,13 @@ local xpOptions = {
             type = 'toggle',
             name = 'Show XP Percent',
             desc = '' .. getDefaultStr('showXPPercent', 'xp'),
+            group = 'headerStyling',
             order = 13,
             editmode = true
         }
     }
 }
+DF.Settings:AddPositionTable(Module, xpOptions, 'xp', 'XP Bar', getDefaultStr, frameTableWithout('DragonflightUIPetBar'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, xpOptions, 'xp', 'XPBar', getDefaultStr)
 local optionsXpEdtimode = {
     name = 'xp',
@@ -1497,80 +1121,7 @@ local repOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'rep'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'rep'),
-            values = frameTableWithout('DragonflightUIRepBar'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'rep'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'rep'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'rep'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'rep'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         width = {
             type = 'range',
             name = 'Width',
@@ -1578,6 +1129,7 @@ local repOptions = {
             min = 1,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
@@ -1588,6 +1140,7 @@ local repOptions = {
             min = 1,
             max = 69,
             bigStep = 1,
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -1595,11 +1148,14 @@ local repOptions = {
             type = 'toggle',
             name = 'Always show Rep text',
             desc = '' .. getDefaultStr('alwaysShowRep', 'rep'),
+            group = 'headerStyling',
             order = 12,
             editmode = true
         }
     }
 }
+DF.Settings:AddPositionTable(Module, repOptions, 'rep', 'Reputation Bar', getDefaultStr,
+                             frameTableWithout('DragonflightUIRepBar'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, repOptions, 'rep', 'RepBar', getDefaultStr)
 local optionsRepEdtimode = {
     name = 'rep',
@@ -1639,161 +1195,12 @@ local stanceOptions = {
     get = getOption,
     set = setOption,
     type = 'group',
-    args = {
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'stance'),
-            values = frameTableWithout('DragonflightUIStancebar'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'stance'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'stance'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'stance'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'stance'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
-        orientation = {
-            type = 'select',
-            name = 'Orientation',
-            desc = 'Orientation' .. getDefaultStr('orientation', 'stance'),
-            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
-            order = 7,
-            editmode = true
-        },
-        buttonScale = {
-            type = 'range',
-            name = 'ButtonScale',
-            desc = '' .. getDefaultStr('buttonScale', 'stance'),
-            min = 0.1,
-            max = 3,
-            bigStep = 0.05,
-            order = 1,
-            editmode = true
-        },
-        rows = {
-            type = 'range',
-            name = '# of Rows',
-            desc = '' .. getDefaultStr('rows', 'stance'),
-            min = 1,
-            max = 12,
-            bigStep = 1,
-            order = 9,
-            editmode = true
-        },
-        buttons = {
-            type = 'range',
-            name = '# of Buttons',
-            desc = '' .. getDefaultStr('buttons', 'stance'),
-            min = 1,
-            max = 10,
-            bigStep = 1,
-            order = 10,
-            editmode = true
-        },
-        padding = {
-            type = 'range',
-            name = 'Padding',
-            desc = '' .. getDefaultStr('padding', 'stance'),
-            min = 0,
-            max = 10,
-            bigStep = 1,
-            order = 11,
-            editmode = true
-        },
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 50},
-        alwaysShow = {
-            type = 'toggle',
-            name = 'Always show Actionbar',
-            desc = '' .. getDefaultStr('alwaysShow', 'stance'),
-            order = 50.1
-        },
-        hideMacro = {
-            type = 'toggle',
-            name = 'Hide Macro Text',
-            desc = '' .. getDefaultStr('hideMacro', 'stance'),
-            order = 55
-        },
-        macroFontSize = {
-            type = 'range',
-            name = 'MacroName Font Size',
-            desc = '' .. getDefaultStr('macroFontSize', 'stance'),
-            min = 6,
-            max = 24,
-            bigStep = 1,
-            order = 55.1,
-            new = true
-        },
-        hideKeybind = {
-            type = 'toggle',
-            name = 'Hide Keybind Text',
-            desc = '' .. getDefaultStr('hideKeybind', 'stance'),
-            order = 56
-        },
-        keybindFontSize = {
-            type = 'range',
-            name = 'Keybind Font Size',
-            desc = '' .. getDefaultStr('keybindFontSize', 'stance'),
-            min = 6,
-            max = 24,
-            bigStep = 1,
-            order = 56.1,
-            new = true
-        },
-        activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}
-    }
+    args = {activate = {type = 'toggle', name = 'Active', desc = '' .. getDefaultStr('activate', 'stance'), order = 13}}
 }
+AddButtonTable(stanceOptions, 'stance')
+DF.Settings:AddPositionTable(Module, stanceOptions, 'stance', 'Stance Bar', getDefaultStr,
+                             frameTableWithout('DragonflightUIStanceBar'))
+stanceOptions.args.scale = nil;
 DragonflightUIStateHandlerMixin:AddStateTable(Module, stanceOptions, 'stance', 'StanceBar', getDefaultStr)
 local optionsStanceEdtimode = {
     name = 'stance',
@@ -1827,89 +1234,9 @@ local optionsStanceEdtimode = {
     }
 }
 
-local totemOptions = {
-    name = 'Totembar',
-    desc = 'Totembar',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'totem'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'totem'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'totem'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'totem'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'totem'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'totem'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local totemOptions = {name = 'Totembar', desc = 'Totembar', get = getOption, set = setOption, type = 'group', args = {}}
+DF.Settings:AddPositionTable(Module, totemOptions, 'totem', 'Totem Bar', getDefaultStr,
+                             frameTableWithout('MultiCastActionBarFrame'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, totemOptions, 'totem', 'TotemBar', getDefaultStr)
 local optionsTotemEdtimode = {
     name = 'totem',
@@ -1950,91 +1277,21 @@ local possessOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'possess'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'possess'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'possess'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'possess'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'possess'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'possess'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         offset = {
             type = 'toggle',
             name = 'Auto adjust offset',
             desc = 'Auto add some Y offset depending on the class, e.g. on Paladin to make room for the stance bar' ..
                 getDefaultStr('offset', 'possess'),
+            group = 'headerStyling',
             order = 11,
             new = true,
             editmode = true
         }
     }
 }
+DF.Settings:AddPositionTable(Module, possessOptions, 'possess', 'Possess Bar', getDefaultStr,
+                             frameTableWithout('PossessBarFrame'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, possessOptions, 'possess', 'PossessBar', getDefaultStr)
 local optionsPossessEdtimode = {
     name = 'possess',
@@ -2075,85 +1332,20 @@ local bagsOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'bags'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        expanded = {
+            type = 'toggle',
+            name = 'Expanded',
+            desc = '' .. getDefaultStr('expanded', 'bags'),
+            group = 'headerStyling',
+            order = 7,
             editmode = true
         },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'bags'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'bags'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'bags'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'bags'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'bags'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
-        expanded = {type = 'toggle', name = 'Expanded', desc = '' .. getDefaultStr('expanded', 'bags'), order = 7},
         hideArrow = {
             type = 'toggle',
             name = 'HideArrow',
             desc = '' .. getDefaultStr('hideArrow', 'bags'),
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -2161,6 +1353,7 @@ local bagsOptions = {
             type = 'toggle',
             name = 'Hidden',
             desc = 'Backpack hidden' .. getDefaultStr('hidden', 'bags'),
+            group = 'headerStyling',
             order = 9,
             editmode = true
         },
@@ -2168,6 +1361,7 @@ local bagsOptions = {
             type = 'toggle',
             name = 'Override BagAnchor',
             desc = '' .. getDefaultStr('overrideBagAnchor', 'bags'),
+            group = 'headerStyling',
             order = 15,
             new = true
         },
@@ -2178,6 +1372,7 @@ local bagsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 16,
             new = true
         },
@@ -2188,6 +1383,7 @@ local bagsOptions = {
             min = -2500,
             max = 2500,
             bigStep = 1,
+            group = 'headerStyling',
             order = 17,
             new = true
         }
@@ -2200,6 +1396,7 @@ do
             type = 'toggle',
             name = DISPLAY_FREE_BAG_SLOTS,
             desc = OPTION_TOOLTIP_DISPLAY_FREE_BAG_SLOTS,
+            group = 'headerStyling',
             order = 13,
             blizzard = true
         }
@@ -2244,6 +1441,7 @@ do
         end
     end
 end
+DF.Settings:AddPositionTable(Module, bagsOptions, 'bags', 'Bags', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, bagsOptions, 'bags', 'Bags', getDefaultStr)
 local optionsBagsEdtimode = {
     name = 'bags',
@@ -2284,80 +1482,7 @@ local microOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'micro'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.05,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'micro'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'micro'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'micro'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'micro'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'micro'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
+
         -- hidden = {
         --     type = 'toggle',
         --     name = 'Hidden',
@@ -2366,6 +1491,7 @@ local microOptions = {
         -- },   
     }
 }
+DF.Settings:AddPositionTable(Module, microOptions, 'micro', 'Micromenu', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, microOptions, 'micro', 'Micromenu', getDefaultStr)
 local optionsMicroEditmode = {
     name = 'micro',
@@ -2406,80 +1532,7 @@ local fpsOptions = {
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'fps'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.05,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'fps'),
-            values = {['CharacterMicroButton'] = 'CharacterMicroButton', ['UIParent'] = 'UIParent'},
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'fps'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'fps'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'fps'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'fps'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         -- hidden = {
         --     type = 'toggle',
         --     name = 'Hidden',
@@ -2490,6 +1543,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'HideDefaultFPS',
             desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'fps'),
+            group = 'headerStyling',
             order = 8,
             editmode = true
         },
@@ -2497,6 +1551,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'ShowFPS',
             desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'fps'),
+            group = 'headerStyling',
             order = 10,
             editmode = true
         },
@@ -2504,6 +1559,7 @@ local fpsOptions = {
             type = 'toggle',
             name = 'AlwaysShowFPS',
             desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'fps'),
+            group = 'headerStyling',
             order = 9,
             editmode = true
         },
@@ -2511,11 +1567,14 @@ local fpsOptions = {
             type = 'toggle',
             name = 'ShowPing',
             desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'fps'),
+            group = 'headerStyling',
             order = 11,
             editmode = true
         }
     }
 }
+DF.Settings:AddPositionTable(Module, fpsOptions, 'fps', 'FPS', getDefaultStr, frameTable)
+
 local optionsFPSEditmode = {
     name = 'fps',
     desc = 'fps',
@@ -2552,9 +1611,11 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
 
-    self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
-    DF:RegisterModuleOptions(mName, options)
+    self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 end
 
 function Module:OnEnable()
@@ -2586,6 +1647,36 @@ function Module:OnEnable()
 end
 
 function Module:OnDisable()
+end
+
+function Module:RegisterSettings()
+    local moduleName = 'Actionbar'
+    local cat = 'actionbar'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('actionbar1', {order = 1, name = 'Action Bar 1', descr = 'desc', isNew = false})
+    register('actionbar2', {order = 2, name = 'Action Bar 2', descr = 'desc', isNew = false})
+    register('actionbar3', {order = 3, name = 'Action Bar 3', descr = 'desc', isNew = false})
+    register('actionbar4', {order = 4, name = 'Action Bar 4', descr = 'desc', isNew = false})
+    register('actionbar5', {order = 5, name = 'Action Bar 5', descr = 'desc', isNew = false})
+    register('actionbar6', {order = 6, name = 'Action Bar 6', descr = 'desc', isNew = false})
+    register('actionbar7', {order = 7, name = 'Action Bar 7', descr = 'desc', isNew = false})
+    register('actionbar8', {order = 8, name = 'Action Bar 8', descr = 'desc', isNew = false})
+
+    register('petbar', {order = 9, name = 'Pet Bar', descr = 'desc', isNew = false})
+    register('xpbar', {order = 10, name = 'XP Bar', descr = 'desc', isNew = false})
+    register('repbar', {order = 11, name = 'Rep Bar', descr = 'desc', isNew = false})
+    register('possessbar', {order = 12, name = 'Possess Bar', descr = 'desc', isNew = false})
+    register('stancebar', {order = 13, name = 'Stance Bar', descr = 'desc', isNew = false})
+
+    register('bags', {order = 15, name = 'Bags', descr = 'desc', isNew = false})
+    register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
+    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = true})
+
+    if DF.Cata then register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false}) end
 end
 
 function Module:SetupActionbarFrames()
@@ -2961,7 +2052,7 @@ end
 function Module:RegisterOptionScreens()
     for i = 1, 8 do
         local optionsBar = GetBarOption(i)
-        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Actionbar' .. i, {
+        DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
             name = 'Actionbar' .. i,
             sub = 'bar' .. i,
             options = optionsBar,
@@ -2971,7 +2062,7 @@ function Module:RegisterOptionScreens()
         })
     end
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Petbar', {
+    DF.ConfigModule:RegisterSettingsData('petbar', 'actionbar', {
         name = 'Petbar',
         sub = 'pet',
         options = petOptions,
@@ -2980,7 +2071,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'XPbar', {
+    DF.ConfigModule:RegisterSettingsData('xpbar', 'actionbar', {
         name = 'XPbar',
         sub = 'xp',
         options = xpOptions,
@@ -2989,7 +2080,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Repbar', {
+    DF.ConfigModule:RegisterSettingsData('repbar', 'actionbar', {
         name = 'Repbar',
         sub = 'rep',
         options = repOptions,
@@ -2998,7 +2089,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Possessbar', {
+    DF.ConfigModule:RegisterSettingsData('possessbar', 'actionbar', {
         name = 'Possessbar',
         sub = 'possess',
         options = possessOptions,
@@ -3007,7 +2098,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Stancebar', {
+    DF.ConfigModule:RegisterSettingsData('stancebar', 'actionbar', {
         name = 'Stancebar',
         sub = 'stance',
         options = stanceOptions,
@@ -3016,7 +2107,7 @@ function Module:RegisterOptionScreens()
         end
     })
     if DF.Cata then
-        DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Totembar', {
+        DF.ConfigModule:RegisterSettingsData('totembar', 'actionbar', {
             name = 'Totembar',
             sub = 'totem',
             options = totemOptions,
@@ -3025,7 +2116,7 @@ function Module:RegisterOptionScreens()
             end
         })
     end
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Bags', {
+    DF.ConfigModule:RegisterSettingsData('bags', 'actionbar', {
         name = 'Bags',
         sub = 'bags',
         options = bagsOptions,
@@ -3035,7 +2126,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'Micromenu', {
+    DF.ConfigModule:RegisterSettingsData('micromenu', 'actionbar', {
         name = 'Micromenu',
         sub = 'micro',
         options = microOptions,
@@ -3044,7 +2135,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Actionbar', 'FPS', {
+    DF.ConfigModule:RegisterSettingsData('fps', 'actionbar', {
         name = 'FPS',
         sub = 'fps',
         options = fpsOptions,

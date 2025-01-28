@@ -59,6 +59,7 @@ local function getOption(info)
 end
 
 local function setOption(info, value)
+    -- print('setOption', info[1], info[2], value)
     Module:SetOption(info, value)
 end
 
@@ -79,94 +80,16 @@ local function setPreset(T, preset, sub)
     Module:RefreshOptionScreens()
 end
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        --[[ config = {type = 'header', name = 'Config - Player', order = 100}, ]]
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale'),
-            min = 0.2,
-            max = 3,
-            bigStep = 0.025,
-            order = 101,
-            disabled = false
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to TOPRIGHT' .. getDefaultStr('x'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to TOPRIGHT' .. getDefaultStr('y'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102
-        },
-        locked = {
-            type = 'toggle',
-            name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked'),
-            order = 103
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 110
-        },
-        trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 120}
-    }
+local frameTable = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
 }
 
-local frameTable = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster'}
-local frameTableTracker = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster', ['Minimap'] = 'Minimap'}
+local frameTableTracker = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'},
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+}
 
 local minimapOptions = {
     type = 'group',
@@ -174,103 +97,26 @@ local minimapOptions = {
     get = getOption,
     set = setOption,
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'minimap'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.025,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'minimap'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'minimap'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'minimap'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'minimap'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
-        -- locked = {
-        --     type = 'toggle',
-        --     name = 'Locked',
-        --     desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-        --         getDefaultStr('locked', 'minimap'),
-        --     order = 10
-        -- },
+        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
         showPing = {
             type = 'toggle',
             name = 'Show Ping',
             desc = '(NOT YET IMPLEMENTED)' .. getDefaultStr('showPing', 'minimap'),
+            group = 'headerStyling',
             order = 11
         },
         showPingChat = {
             type = 'toggle',
             name = 'Show Ping in Chat',
             desc = '' .. getDefaultStr('showPingChat', 'minimap'),
+            group = 'headerStyling',
             order = 12
         },
         hideCalendar = {
             type = 'toggle',
             name = 'Hide Calendar',
             desc = 'Hides the calendar button' .. getDefaultStr('hideCalendar', 'minimap'),
+            group = 'headerStyling',
             order = 13,
             new = false
         },
@@ -278,6 +124,7 @@ local minimapOptions = {
             type = 'toggle',
             name = 'Hide Zoom Buttons',
             desc = 'Hides the zoom buttons (+) (-)' .. getDefaultStr('hideZoom', 'minimap'),
+            group = 'headerStyling',
             order = 14,
             new = true
         },
@@ -286,27 +133,16 @@ local minimapOptions = {
             name = 'Skin Minimap Buttons',
             desc = 'Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)' ..
                 getDefaultStr('skinButtons', 'minimap'),
+            group = 'headerStyling',
             order = 15,
             new = true
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability', 'minimap'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 20
         },
         useStateHandler = {
             type = 'toggle',
             name = 'Use State Handler',
             desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
                 getDefaultStr('useStateHandler', 'minimap'),
+            group = 'headerVis',
             order = 115
         }
     }
@@ -317,6 +153,7 @@ do
             type = 'toggle',
             name = ROTATE_MINIMAP,
             desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+            group = 'headerStyling',
             order = 13.1,
             blizzard = true
         }
@@ -328,6 +165,7 @@ do
             name = 'Move LFG Button',
             desc = 'Moves the LFG Button to the Micromenu (needs the Actionbar Module, or it does nothing)' ..
                 getDefaultStr('moveLFG', 'minimap'),
+            group = 'headerStyling',
             order = 13.2,
             new = true
         }
@@ -362,6 +200,7 @@ do
         end
     end
 end
+DF.Settings:AddPositionTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr, frameTable)
 -- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
 local optionsMinimapEditmode = {
@@ -396,88 +235,9 @@ local optionsMinimapEditmode = {
     }
 }
 
-local trackerOptions = {
-    type = 'group',
-    name = 'Tracker',
-    get = getOption,
-    set = setOption,
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'tracker'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'tracker'),
-            values = frameTableTracker,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'tracker'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'tracker'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'tracker'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'tracker'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local trackerOptions = {type = 'group', name = 'Tracker', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, trackerOptions, 'tracker', 'Tracker', getDefaultStr, frameTableTracker)
+
 local optionsTrackerEditmode = {
     name = 'Tracker',
     desc = 'Tracker',
@@ -510,88 +270,9 @@ local optionsTrackerEditmode = {
     }
 }
 
-local optionsDurability = {
-    type = 'group',
-    name = 'Durability',
-    get = getOption,
-    set = setOption,
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'durability'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'durability'),
-            values = frameTableTracker,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'durability'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'durability'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'durability'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'durability'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local optionsDurability = {type = 'group', name = 'Durability', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, optionsDurability, 'durability', 'Durability', getDefaultStr, frameTableTracker)
+
 local optionsDurabilityEditmode = {
     name = 'Durability',
     desc = 'Durability',
@@ -627,10 +308,11 @@ local optionsDurabilityEditmode = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
-
-    DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
@@ -661,8 +343,21 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'Minimap'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('minimap', {order = 1, name = 'Minimap', descr = 'Minimapss', isNew = false})
+    register('questtracker', {order = 1, name = 'Quest Tracker', descr = 'Trackers', isNew = false})
+    register('durability', {order = 1, name = 'Durability', descr = 'Durablityss', isNew = false})
+end
+
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap', {
+    DF.ConfigModule:RegisterSettingsData('minimap', 'misc', {
         name = 'Minimap',
         sub = 'minimap',
         options = minimapOptions,
@@ -671,7 +366,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
+    DF.ConfigModule:RegisterSettingsData('questtracker', 'misc', {
         name = 'Questtracker',
         sub = 'tracker',
         options = trackerOptions,
@@ -680,7 +375,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Durability', {
+    DF.ConfigModule:RegisterSettingsData('durability', 'misc', {
         name = 'Durability',
         sub = 'durability',
         options = optionsDurability,

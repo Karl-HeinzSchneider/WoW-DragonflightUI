@@ -50,6 +50,8 @@ XML\Actionbar.xml
 XML\Bossframe.xml
 XML\Castbar.xml
 XML\ConfigCategoryList.xml
+XML\DFSettingsCategory.xml
+XML\DFSettingsList.xml
 XML\Config.xml
 XML\Editmode.xml
 XML\Profession.xml
@@ -61,6 +63,7 @@ XML\Talents.xml
 XML\UI.xml
 
 # Config
+Modules\__Settings.lua
 Modules\Config.lua
 
 # Modules

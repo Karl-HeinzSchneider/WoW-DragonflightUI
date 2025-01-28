@@ -50,8 +50,10 @@ local utilityOptions = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
-    ---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     DF:RegisterModuleOptions(mName, utilityOptions)
@@ -69,8 +71,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
-    ---@diagnostic disable-next-line: missing-parameter
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -83,9 +84,19 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'Utility'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('utility', {order = 0, name = 'Utility', descr = 'Utilityss', isNew = false})
+end
+
 function Module:RegisterOptionScreens()
-    ---@diagnostic disable-next-line: undefined-field
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Utility', {
+    DF.ConfigModule:RegisterSettingsData('utility', 'misc', {
         name = 'Utility',
         sub = 'first',
         options = utilityOptions,
