@@ -215,3 +215,15 @@ L["FPSOptionsAlwaysShowFPSDesc"] = "Always Show Custom FPS Text"
 L["FPSOptionsShowPing"] = "Show Ping"
 L["FPSOptionsShowPingDesc"] = "Show Ping In MS"
 
+-- Buffs
+L["BuffsOptionsName"] = "Buffs"
+L["BuffsOptionsStyle"] = "Style"
+L["BuffsOptionsStyleDesc"] = ""
+
+L["BuffsOptionsExpanded"] = "Expanded"
+L["BuffsOptionsExpandedDesc"] = ""
+
+L["BuffsOptionsUseStateHandler"] = "Use State Handler"
+L["BuffsOptionsUseStateHandlerDesc"] =
+    "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+
