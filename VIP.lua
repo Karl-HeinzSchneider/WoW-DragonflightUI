@@ -128,5 +128,19 @@ table.insert(DF.VIPTable, {
     displayTexture = 'jag'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Baldvin',
+    level = '60',
+    class = 'PALADIN',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'TANK',
+    extra = 'worldboss',
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'baldvin'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;
