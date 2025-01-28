@@ -1,5 +1,6 @@
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Actionbar'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -540,9 +541,6 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local presetDesc =
-    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
-
 local function setPreset(T, preset, sub)
     -- print('setPreset')
     -- DevTools_Dump(T)
@@ -558,36 +556,65 @@ local function setPreset(T, preset, sub)
 end
 
 local frameTable = {
-    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
-
-    {value = 'DragonflightUIActionbarFrame1', text = 'Action Bar 1', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame2', text = 'Action Bar 2', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame3', text = 'Action Bar 3', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame4', text = 'Action Bar 4', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame5', text = 'Action Bar 5', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame6', text = 'Action Bar 6', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame7', text = 'Action Bar 7', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIActionbarFrame8', text = 'Action Bar 8', tooltip = 'descr', label = 'label'},
-
-    {value = 'DragonflightUIXPBar', text = 'XP Bar', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIRepBar', text = 'Reputation Bar', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIPetBar', text = 'Pet Bar', tooltip = 'descr', label = 'label'},
-    {value = 'DragonflightUIStancebar', text = 'Stance Bar', tooltip = 'descr', label = 'label'},
-    {value = 'PossessBarFrame', text = 'Possess Bar', tooltip = 'descr', label = 'label'},
-
-    {value = 'DragonflightUIMicroMenuBar', text = 'Micromenu', tooltip = 'descr', label = 'label'}
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}, {
+        value = 'DragonflightUIActionbarFrame1',
+        text = L["ActionbarNameFormat"]:format(1),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame2',
+        text = L["ActionbarNameFormat"]:format(2),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame3',
+        text = L["ActionbarNameFormat"]:format(3),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame4',
+        text = L["ActionbarNameFormat"]:format(4),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame5',
+        text = L["ActionbarNameFormat"]:format(5),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame6',
+        text = L["ActionbarNameFormat"]:format(6),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame7',
+        text = L["ActionbarNameFormat"]:format(7),
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = 'DragonflightUIActionbarFrame8',
+        text = L["ActionbarNameFormat"]:format(8),
+        tooltip = 'descr',
+        label = 'label'
+    }, {value = 'DragonflightUIXPBar', text = L["XPBar"], tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIRepBar', text = L["ReputationBar"], tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIPetBar', text = L["PetBar"], tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIStancebar', text = L["StanceBar"], tooltip = 'descr', label = 'label'},
+    {value = 'PossessBarFrame', text = L["PossessBar"], tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIMicroMenuBar', text = L["MicroMenu"], tooltip = 'descr', label = 'label'}
 }
 
 local gryphonsTable = {
-    {value = 'DEFAULT', text = 'Default', tooltip = 'descr', label = 'label'},
-    {value = 'ALLY', text = 'Alliance', tooltip = 'descr', label = 'label'},
-    {value = 'HORDE', text = 'Horde', tooltip = 'descr', label = 'label'},
-    {value = 'NONE', text = 'None', tooltip = 'descr', label = 'label'}
+    {value = 'DEFAULT', text = L["Default"], tooltip = 'descr', label = 'label'},
+    {value = 'ALLY', text = L["Alliance"], tooltip = 'descr', label = 'label'},
+    {value = 'HORDE', text = L["Horde"], tooltip = 'descr', label = 'label'},
+    {value = 'NONE', text = L["None"], tooltip = 'descr', label = 'label'}
 }
 
 if DF.Cata then
     --
-    table.insert(frameTable, {value = 'MultiCastActionBarFrame', text = 'Totem Bar', tooltip = 'descr', label = 'label'})
+    table.insert(frameTable,
+                 {value = 'MultiCastActionBarFrame', text = L["TotemBar"], tooltip = 'descr', label = 'label'})
 end
 
 local function frameTableWithout(without)
@@ -608,17 +635,24 @@ function AddButtonTable(optionTable, sub)
     local extraOptions = {
         activate = {
             type = 'toggle',
-            name = 'Active',
-            desc = '' .. getDefaultStr('activate', sub),
+            name = L["ButtonTableActive"],
+            desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', sub),
             order = -1,
             new = true,
             editmode = true
         },
-        headerButtons = {type = 'header', name = 'Buttons', desc = '', order = 10, isExpanded = true, editmode = true},
+        headerButtons = {
+            type = 'header',
+            name = L["ButtonTableButtons"],
+            desc = L["ButtonTableButtonsDesc"],
+            order = 10,
+            isExpanded = true,
+            editmode = true
+        },
         buttonScale = {
             type = 'range',
-            name = 'ButtonScale',
-            desc = '' .. getDefaultStr('buttonScale', sub),
+            name = L["ButtonTableButtonScale"],
+            desc = L["ButtonTableButtonScaleDesc"] .. getDefaultStr('buttonScale', sub),
             min = 0.1,
             max = 3,
             bigStep = 0.05,
@@ -628,9 +662,8 @@ function AddButtonTable(optionTable, sub)
         },
         orientation = {
             type = 'select',
-            name = 'Orientation',
-            desc = 'Orientation' .. getDefaultStr('orientation', sub),
-            values = {['horizontal'] = 'Horizontal', ['vertical'] = 'Vertical'},
+            name = L["ButtonTableOrientation"],
+            desc = L["ButtonTableOrientationDesc"] .. getDefaultStr('orientation', sub),
             dropdownValues = DF.Settings.OrientationTable,
             order = 7,
             group = 'headerButtons',
@@ -638,16 +671,16 @@ function AddButtonTable(optionTable, sub)
         },
         reverse = {
             type = 'toggle',
-            name = 'Reverse Button order',
-            desc = '' .. getDefaultStr('reverse', sub),
+            name = L["ButtonTableReverseButtonOrder"],
+            desc = L["ButtonTableReverseButtonOrderDesc"] .. getDefaultStr('reverse', sub),
             order = 7.5,
             group = 'headerButtons',
             editmode = true
         },
         rows = {
             type = 'range',
-            name = '# of Rows',
-            desc = '' .. getDefaultStr('rows', sub),
+            name = L["ButtonTableNumRows"],
+            desc = L["ButtonTableNumRowsDesc"] .. getDefaultStr('rows', sub),
             min = 1,
             max = 12,
             bigStep = 1,
@@ -657,8 +690,8 @@ function AddButtonTable(optionTable, sub)
         },
         buttons = {
             type = 'range',
-            name = '# of Buttons',
-            desc = '' .. getDefaultStr('buttons', sub),
+            name = L["ButtonTableNumButtons"],
+            desc = L["ButtonTableNumButtonsDesc"] .. getDefaultStr('buttons', sub),
             min = 1,
             max = 12,
             bigStep = 1,
@@ -668,8 +701,8 @@ function AddButtonTable(optionTable, sub)
         },
         padding = {
             type = 'range',
-            name = 'Padding',
-            desc = '' .. getDefaultStr('padding', sub),
+            name = L["ButtonTablePadding"],
+            desc = L["ButtonTablePaddingDesc"] .. getDefaultStr('padding', sub),
             min = 0,
             max = 10,
             bigStep = 1,
@@ -677,27 +710,34 @@ function AddButtonTable(optionTable, sub)
             group = 'headerButtons',
             editmode = true
         },
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["ButtonTableStyle"],
+            desc = L["ButtonTableStyleDesc"],
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         alwaysShow = {
             type = 'toggle',
-            name = 'Always show Actionbar',
-            desc = '' .. getDefaultStr('alwaysShow', sub),
+            name = L["ButtonTableAlwaysShowActionbar"],
+            desc = L["ButtonTableAlwaysShowActionbarDesc"] .. getDefaultStr('alwaysShow', sub),
             group = 'headerStyling',
             order = 50.1,
             editmode = true
         },
         hideMacro = {
             type = 'toggle',
-            name = 'Hide Macro Text',
-            desc = '' .. getDefaultStr('hideMacro', sub),
+            name = L["ButtonTableHideMacroText"],
+            desc = L["ButtonTableHideMacroTextDesc"] .. getDefaultStr('hideMacro', sub),
             group = 'headerStyling',
             order = 55,
             editmode = true
         },
         macroFontSize = {
             type = 'range',
-            name = 'MacroName Font Size',
-            desc = '' .. getDefaultStr('macroFontSize', sub),
+            name = L["ButtonTableMacroNameFontSize"],
+            desc = L["ButtonTableMacroNameFontSizeDesc"] .. getDefaultStr('macroFontSize', sub),
             min = 6,
             max = 24,
             bigStep = 1,
@@ -708,16 +748,16 @@ function AddButtonTable(optionTable, sub)
         },
         hideKeybind = {
             type = 'toggle',
-            name = 'Hide Keybind Text',
-            desc = '' .. getDefaultStr('hideKeybind', sub),
+            name = L["ButtonTableHideKeybindText"],
+            desc = L["ButtonTableHideKeybindTextDesc"] .. getDefaultStr('hideKeybind', sub),
             group = 'headerStyling',
             order = 56,
             editmode = true
         },
         keybindFontSize = {
             type = 'range',
-            name = 'Keybind Font Size',
-            desc = '' .. getDefaultStr('keybindFontSize', sub),
+            name = L["ButtonTableKeybindFontSize"],
+            desc = L["ButtonTableKeybindFontSizeDesc"] .. getDefaultStr('keybindFontSize', sub),
             min = 6,
             max = 24,
             bigStep = 1,
@@ -753,24 +793,24 @@ local function GetBarOption(n)
         local moreOptions = {
             hideArt = {
                 type = 'toggle',
-                name = 'Hide bar art',
-                desc = '' .. getDefaultStr('hideArt', barname),
+                name = L["MoreOptionsHideBarArt"],
+                desc = L["MoreOptionsHideBarArtDesc"] .. getDefaultStr('hideArt', barname),
                 group = 'headerButtons',
                 order = 51.2,
                 editmode = true
             },
             hideScrolling = {
                 type = 'toggle',
-                name = 'Hide bar scrolling',
-                desc = '' .. getDefaultStr('hideScrolling', barname),
+                name = L["MoreOptionsHideBarScrolling"],
+                desc = L["MoreOptionsHideBarScrollingDesc"] .. getDefaultStr('hideScrolling', barname),
                 group = 'headerButtons',
                 order = 51.3,
                 editmode = true
             },
             gryphons = {
                 type = 'select',
-                name = 'Gryphons',
-                desc = 'Gryphons' .. getDefaultStr('gryphons', barname),
+                name = L["MoreOptionsGryphons"],
+                desc = L["MoreOptionsGryphonsDesc"] .. getDefaultStr('gryphons', barname),
                 values = {['DEFAULT'] = 'DEFAULT', ['ALLY'] = 'ALLIANCE', ['HORDE'] = 'HORDE', ['NONE'] = 'NONE'},
                 dropdownValues = gryphonsTable,
                 group = 'headerButtons',
@@ -779,9 +819,8 @@ local function GetBarOption(n)
             },
             range = {
                 type = 'toggle',
-                name = 'Icon Range Color',
-                desc = 'Changes the Icon color when Out Of Range, similar to RedRange/tullaRange' ..
-                    getDefaultStr('range', barname),
+                name = L["MoreOptionsIconRangeColor"],
+                desc = L["MoreOptionsIconRangeColorDesc"] .. getDefaultStr('range', barname),
                 group = 'headerButtons',
                 order = 51.1,
                 editmode = true
@@ -834,9 +873,9 @@ local function GetBarExtraOptions(n)
         args = {
             resetPosition = {
                 type = 'execute',
-                name = 'Preset',
-                btnName = 'Reset to Default Position',
-                desc = presetDesc,
+                name = L["ExtraOptionsPreset"],
+                btnName = L["ExtraOptionsResetToDefaultPosition"],
+                desc = L["ExtraOptionsPresetDesc"],
                 func = function()
                     local dbTable = Module.db.profile[bar]
                     local defaultsTable = defaults.profile[bar]
@@ -862,9 +901,9 @@ local function GetBarExtraOptions(n)
         local morePresets = {
             sidebarModern = {
                 type = 'execute',
-                name = 'Preset',
-                btnName = 'modern Layout (default)',
-                desc = '',
+                name = L["ExtraOptionsPreset"],
+                btnName = L["ExtraOptionsModernLayout"],
+                desc = L["ExtraOptionsModernLayoutDesc"],
                 func = function()
                     local dbTable = Module.db.profile[bar]
                     local defaultsTable = defaults.profile[bar]
@@ -891,9 +930,9 @@ local function GetBarExtraOptions(n)
             },
             sidebarClassic = {
                 type = 'execute',
-                name = 'Preset',
-                btnName = 'classic Layout (sidebar)',
-                desc = '',
+                name = L["ExtraOptionsPreset"],
+                btnName = L["ExtraOptionsClassicLayout"],
+                desc = L["ExtraOptionsClassicLayoutDesc"],
                 func = function()
                     local dbTable = Module.db.profile[bar]
                     local defaultsTable = defaults.profile[bar]
@@ -918,7 +957,6 @@ local function GetBarExtraOptions(n)
                 editmode = true,
                 new = true
             }
-
         }
         for k, v in pairs(morePresets) do extra.args[k] = v end
 
@@ -927,9 +965,9 @@ local function GetBarExtraOptions(n)
         local morePresets = {
             sidebarModern = {
                 type = 'execute',
-                name = 'Preset',
-                btnName = 'modern Layout (default)',
-                desc = '',
+                name = L["ExtraOptionsPreset"],
+                btnName = L["ExtraOptionsModernLayout"],
+                desc = L["ExtraOptionsModernLayoutDesc"],
                 func = function()
                     local dbTable = Module.db.profile[bar]
                     local defaultsTable = defaults.profile[bar]
@@ -956,9 +994,9 @@ local function GetBarExtraOptions(n)
             },
             sidebarClassic = {
                 type = 'execute',
-                name = 'Preset',
-                btnName = 'classic Layout (sidebar)',
-                desc = '',
+                name = L["ExtraOptionsPreset"],
+                btnName = L["ExtraOptionsClassicLayout"],
+                desc = L["ExtraOptionsClassicLayoutDesc"],
                 func = function()
                     local dbTable = Module.db.profile[bar]
                     local defaultsTable = defaults.profile[bar]
@@ -1009,9 +1047,9 @@ local optionsPetEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.pet
                 local defaultsTable = defaults.profile.pet
@@ -1033,17 +1071,23 @@ local optionsPetEdtimode = {
 }
 
 local xpOptions = {
-    name = 'XP',
-    desc = 'XP',
+    name = L["XPOptionsName"],
+    desc = L["XPOptionsDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {
+            type = 'header',
+            name = L["XPOptionsStyle"],
+            desc = L["XPOptionsStyleDesc"],
+            order = 20,
+            isExpanded = true
+        },
         width = {
             type = 'range',
-            name = 'Width',
-            desc = '' .. getDefaultStr('width', 'xp'),
+            name = L["XPOptionsWidth"],
+            desc = L["XPOptionsWidthDesc"] .. getDefaultStr('width', 'xp'),
             min = 1,
             max = 2500,
             bigStep = 1,
@@ -1053,8 +1097,8 @@ local xpOptions = {
         },
         height = {
             type = 'range',
-            name = 'Height',
-            desc = '' .. getDefaultStr('height', 'xp'),
+            name = L["XPOptionsHeight"],
+            desc = L["XPOptionsHeightDesc"] .. getDefaultStr('height', 'xp'),
             min = 1,
             max = 69,
             bigStep = 1,
@@ -1064,22 +1108,23 @@ local xpOptions = {
         },
         alwaysShowXP = {
             type = 'toggle',
-            name = 'Always show XP text',
-            desc = '' .. getDefaultStr('alwaysShowXP', 'xp'),
+            name = L["XPOptionsAlwaysShowXPText"],
+            desc = L["XPOptionsAlwaysShowXPTextDesc"] .. getDefaultStr('alwaysShowXP', 'xp'),
             group = 'headerStyling',
             order = 12,
             editmode = true
         },
         showXPPercent = {
             type = 'toggle',
-            name = 'Show XP Percent',
-            desc = '' .. getDefaultStr('showXPPercent', 'xp'),
+            name = L["XPOptionsShowXPPercent"],
+            desc = L["XPOptionsShowXPPercentDesc"] .. getDefaultStr('showXPPercent', 'xp'),
             group = 'headerStyling',
             order = 13,
             editmode = true
         }
     }
 }
+
 DF.Settings:AddPositionTable(Module, xpOptions, 'xp', 'XP Bar', getDefaultStr, frameTableWithout('DragonflightUIPetBar'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, xpOptions, 'xp', 'XPBar', getDefaultStr)
 local optionsXpEdtimode = {
@@ -1091,9 +1136,9 @@ local optionsXpEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.xp
                 local defaultsTable = defaults.profile.xp
@@ -1115,17 +1160,23 @@ local optionsXpEdtimode = {
 }
 
 local repOptions = {
-    name = 'Rep',
-    desc = 'Rep',
+    name = L["RepOptionsName"],
+    desc = L["RepOptionsDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
+        headerStyling = {
+            type = 'header',
+            name = L["RepOptionsStyle"],
+            desc = L["RepOptionsStyleDesc"],
+            order = 20,
+            isExpanded = true
+        },
         width = {
             type = 'range',
-            name = 'Width',
-            desc = '' .. getDefaultStr('width', 'rep'),
+            name = L["RepOptionsWidth"],
+            desc = L["RepOptionsWidthDesc"] .. getDefaultStr('width', 'rep'),
             min = 1,
             max = 2500,
             bigStep = 1,
@@ -1135,8 +1186,8 @@ local repOptions = {
         },
         height = {
             type = 'range',
-            name = 'Height',
-            desc = '' .. getDefaultStr('height', 'rep'),
+            name = L["RepOptionsHeight"],
+            desc = L["RepOptionsHeightDesc"] .. getDefaultStr('height', 'rep'),
             min = 1,
             max = 69,
             bigStep = 1,
@@ -1146,14 +1197,15 @@ local repOptions = {
         },
         alwaysShowRep = {
             type = 'toggle',
-            name = 'Always show Rep text',
-            desc = '' .. getDefaultStr('alwaysShowRep', 'rep'),
+            name = L["RepOptionsAlwaysShowRepText"],
+            desc = L["RepOptionsAlwaysShowRepTextDesc"] .. getDefaultStr('alwaysShowRep', 'rep'),
             group = 'headerStyling',
             order = 12,
             editmode = true
         }
     }
 }
+
 DF.Settings:AddPositionTable(Module, repOptions, 'rep', 'Reputation Bar', getDefaultStr,
                              frameTableWithout('DragonflightUIRepBar'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, repOptions, 'rep', 'RepBar', getDefaultStr)
@@ -1166,9 +1218,9 @@ local optionsRepEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.rep
                 local defaultsTable = defaults.profile.rep
@@ -1211,9 +1263,9 @@ local optionsStanceEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.stance
                 local defaultsTable = defaults.profile.stance
@@ -1247,9 +1299,9 @@ local optionsTotemEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.totem
                 local defaultsTable = defaults.profile.totem
@@ -1302,9 +1354,9 @@ local optionsPossessEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.possess
                 local defaultsTable = defaults.profile.possess
@@ -1326,49 +1378,56 @@ local optionsPossessEdtimode = {
 }
 
 local bagsOptions = {
-    name = 'Bags',
-    desc = 'Bags',
+    name = L["BagsOptionsName"],
+    desc = L["BagsOptionsDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["BagsOptionsStyle"],
+            desc = L["BagsOptionsStyleDesc"],
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         expanded = {
             type = 'toggle',
-            name = 'Expanded',
-            desc = '' .. getDefaultStr('expanded', 'bags'),
+            name = L["BagsOptionsExpanded"],
+            desc = L["BagsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'bags'),
             group = 'headerStyling',
             order = 7,
             editmode = true
         },
         hideArrow = {
             type = 'toggle',
-            name = 'HideArrow',
-            desc = '' .. getDefaultStr('hideArrow', 'bags'),
+            name = L["BagsOptionsHideArrow"],
+            desc = L["BagsOptionsHideArrowDesc"] .. getDefaultStr('hideArrow', 'bags'),
             group = 'headerStyling',
             order = 8,
             editmode = true
         },
         hidden = {
             type = 'toggle',
-            name = 'Hidden',
-            desc = 'Backpack hidden' .. getDefaultStr('hidden', 'bags'),
+            name = L["BagsOptionsHidden"],
+            desc = L["BagsOptionsHiddenDesc"] .. getDefaultStr('hidden', 'bags'),
             group = 'headerStyling',
             order = 9,
             editmode = true
         },
         overrideBagAnchor = {
             type = 'toggle',
-            name = 'Override BagAnchor',
-            desc = '' .. getDefaultStr('overrideBagAnchor', 'bags'),
+            name = L["BagsOptionsOverrideBagAnchor"],
+            desc = L["BagsOptionsOverrideBagAnchorDesc"] .. getDefaultStr('overrideBagAnchor', 'bags'),
             group = 'headerStyling',
             order = 15,
             new = true
         },
         offsetX = {
             type = 'range',
-            name = 'BagAnchor OffsetX',
-            desc = '' .. getDefaultStr('offsetX', 'bags'),
+            name = L["BagsOptionsOffsetX"],
+            desc = L["BagsOptionsOffsetXDesc"] .. getDefaultStr('offsetX', 'bags'),
             min = -2500,
             max = 2500,
             bigStep = 1,
@@ -1378,8 +1437,8 @@ local bagsOptions = {
         },
         offsetY = {
             type = 'range',
-            name = 'BagAnchor OffsetY',
-            desc = '' .. getDefaultStr('offsetY', 'bags'),
+            name = L["BagsOptionsOffsetY"],
+            desc = L["BagsOptionsOffsetYDesc"] .. getDefaultStr('offsetY', 'bags'),
             min = -2500,
             max = 2500,
             bigStep = 1,
@@ -1389,6 +1448,7 @@ local bagsOptions = {
         }
     }
 }
+
 -- bag blizzard options
 do
     local moreOptions = {
@@ -1452,9 +1512,9 @@ local optionsBagsEdtimode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.bags
                 local defaultsTable = defaults.profile.bags
@@ -1502,9 +1562,9 @@ local optionsMicroEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.micro
                 local defaultsTable = defaults.profile.micro
@@ -1526,53 +1586,54 @@ local optionsMicroEditmode = {
 }
 
 local fpsOptions = {
-    name = 'FPS',
-    desc = 'FPS',
+    name = L["FPSOptionsName"],
+    desc = L["FPSOptionsDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true},
-        -- hidden = {
-        --     type = 'toggle',
-        --     name = 'Hidden',
-        --     desc = 'Hide Micromenu' .. getDefaultStr('hidden', 'micro'),
-        --     order = 7
-        -- },
+        headerStyling = {
+            type = 'header',
+            name = L["FPSOptionsStyle"],
+            desc = L["FPSOptionsStyleDesc"],
+            order = 20,
+            isExpanded = true
+        },
         hideDefaultFPS = {
             type = 'toggle',
-            name = 'HideDefaultFPS',
-            desc = 'Hide Default FPS Text' .. getDefaultStr('hideDefaultFPS', 'fps'),
+            name = L["FPSOptionsHideDefaultFPS"],
+            desc = L["FPSOptionsHideDefaultFPSDesc"] .. getDefaultStr('hideDefaultFPS', 'fps'),
             group = 'headerStyling',
             order = 8,
             editmode = true
         },
         showFPS = {
             type = 'toggle',
-            name = 'ShowFPS',
-            desc = 'Show Custom FPS Text' .. getDefaultStr('showFPS', 'fps'),
+            name = L["FPSOptionsShowFPS"],
+            desc = L["FPSOptionsShowFPSDesc"] .. getDefaultStr('showFPS', 'fps'),
             group = 'headerStyling',
             order = 10,
             editmode = true
         },
         alwaysShowFPS = {
             type = 'toggle',
-            name = 'AlwaysShowFPS',
-            desc = 'Always Show Custom FPS Text' .. getDefaultStr('alwaysShowFPS', 'fps'),
+            name = L["FPSOptionsAlwaysShowFPS"],
+            desc = L["FPSOptionsAlwaysShowFPSDesc"] .. getDefaultStr('alwaysShowFPS', 'fps'),
             group = 'headerStyling',
             order = 9,
             editmode = true
         },
         showPing = {
             type = 'toggle',
-            name = 'ShowPing',
-            desc = 'Show Ping In MS' .. getDefaultStr('showPing', 'fps'),
+            name = L["FPSOptionsShowPing"],
+            desc = L["FPSOptionsShowPingDesc"] .. getDefaultStr('showPing', 'fps'),
             group = 'headerStyling',
             order = 11,
             editmode = true
         }
     }
 }
+
 DF.Settings:AddPositionTable(Module, fpsOptions, 'fps', 'FPS', getDefaultStr, frameTable)
 
 local optionsFPSEditmode = {
@@ -1584,9 +1645,9 @@ local optionsFPSEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.fps
                 local defaultsTable = defaults.profile.fps

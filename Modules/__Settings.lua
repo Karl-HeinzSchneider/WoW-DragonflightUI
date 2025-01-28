@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 DF.Settings = DF.Settings or {}
 
@@ -23,16 +24,16 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
     local extraOptions = {
         headerPosition = {
             type = 'header',
-            name = 'Scale and Position',
-            desc = '',
+            name = L["PositionTableHeader"],
+            desc = L["PositionTableHeaderDesc"],
             order = 0,
             isExpanded = true,
             editmode = true
         },
         scale = {
             type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', sub),
+            name = L["PositionTableScale"],
+            desc = L["PositionTableScaleDesc"] .. getDefaultStr('scale', sub),
             min = 0.1,
             max = 5,
             bigStep = 0.05,
@@ -42,8 +43,8 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
         },
         anchor = {
             type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', sub),
+            name = L["PositionTableAnchor"],
+            desc = L["PositionTableAnchorDesc"] .. getDefaultStr('anchor', sub),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -62,8 +63,8 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
         },
         anchorParent = {
             type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', sub),
+            name = L["PositionTableAnchorParent"],
+            desc = L["PositionTableAnchorParentDesc"] .. getDefaultStr('anchorParent', sub),
             values = {
                 ['TOP'] = 'TOP',
                 ['RIGHT'] = 'RIGHT',
@@ -82,8 +83,8 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
         },
         anchorFrame = {
             type = 'select',
-            name = 'AnchorFrame',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', sub),
+            name = L["PositionTableAnchorFrame"],
+            desc = L["PositionTableAnchorFrameDesc"] .. getDefaultStr('anchorFrame', sub),
             values = frameTable,
             dropdownValues = frameTable,
             order = 4,
@@ -92,8 +93,8 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
         },
         x = {
             type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', sub),
+            name = L["PositionTableX"],
+            desc = L["PositionTableXDesc"] .. getDefaultStr('x', sub),
             min = -2500,
             max = 2500,
             bigStep = 1,
@@ -103,8 +104,8 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
         },
         y = {
             type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', sub),
+            name = L["PositionTableY"],
+            desc = L["PositionTableYDesc"] .. getDefaultStr('y', sub),
             min = -2500,
             max = 2500,
             bigStep = 1,

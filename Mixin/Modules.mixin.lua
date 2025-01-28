@@ -1,3 +1,5 @@
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+
 DragonflightUIModulesMixin = {}
 
 function DragonflightUIModulesMixin:SetDefaults(data)
@@ -17,7 +19,10 @@ function DragonflightUIModulesMixin:GetDefaultStr(key, sub)
     end
 
     local value = obj[key]
-    return '\n' .. '(Default: ' .. '|cff8080ff' .. tostring(value) .. '|r' .. ')'
+    -- return '\n' .. '(Default: ' .. '|cff8080ff' .. tostring(value) .. '|r' .. ')'
+
+    local defaultFormat = L["SettingsDefaultStringFormat"]
+    return string.format(defaultFormat, tostring(value))
 end
 
 function DragonflightUIModulesMixin:SetDefaultValues()
