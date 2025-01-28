@@ -1,5 +1,6 @@
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -244,24 +245,31 @@ end
 
 local optionsPlayer = {
     name = 'Player',
-    desc = 'PlayerframeDesc',
+    desc = L["PlayerFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["PlayerFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'player'),
+            name = L["PlayerFrameClassColor"],
+            desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
             group = 'headerStyling',
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
-            name = 'Class Icon Portrait',
-            desc = '' .. getDefaultStr('classicon', 'player'),
+            name = L["PlayerFrameClassIcon"],
+            desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
             group = 'headerStyling',
             order = 7.1,
             disabled = true,
@@ -270,16 +278,16 @@ local optionsPlayer = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
+            name = L["PlayerFrameBreakUpLargeNumbers"],
+            desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
             group = 'headerStyling',
             order = 8,
             editmode = true
         },
         biggerHealthbar = {
             type = 'toggle',
-            name = 'Bigger Healthbar',
-            desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
+            name = L["PlayerFrameBiggerHealthbar"],
+            desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
             group = 'headerStyling',
             order = 9,
             new = true,
@@ -287,8 +295,8 @@ local optionsPlayer = {
         },
         hideRedStatus = {
             type = 'toggle',
-            name = 'Hide In Combat Red Statusglow',
-            desc = '' .. getDefaultStr('hideRedStatus', 'player'),
+            name = L["PlayerFrameHideRedStatus"],
+            desc = L["PlayerFrameHideRedStatusDesc"] .. getDefaultStr('hideRedStatus', 'player'),
             group = 'headerStyling',
             order = 10,
             new = true,
@@ -296,8 +304,8 @@ local optionsPlayer = {
         },
         hideIndicator = {
             type = 'toggle',
-            name = 'Hide Hit Indicator',
-            desc = '' .. getDefaultStr('hideIndicator', 'player'),
+            name = L["PlayerFrameHideHitIndicator"],
+            desc = L["PlayerFrameHideHitIndicatorDesc"] .. getDefaultStr('hideIndicator', 'player'),
             group = 'headerStyling',
             order = 11,
             new = true,
@@ -305,6 +313,7 @@ local optionsPlayer = {
         }
     }
 }
+
 if true then
     local moreOptions = {
         statusText = {
@@ -397,9 +406,9 @@ local optionsPlayerEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.player
                 local defaultsTable = defaults.profile.player
@@ -422,24 +431,31 @@ local optionsPlayerEditmode = {
 
 local optionsTarget = {
     name = 'Target',
-    desc = 'TargetFrameDesc',
+    desc = L["TargetFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["TargetFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'target'),
+            name = L["TargetFrameClassColor"],
+            desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'target'),
             group = 'headerStyling',
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
-            name = 'Class Icon Portrait',
-            desc = '' .. getDefaultStr('classicon', 'target'),
+            name = L["TargetFrameClassIcon"],
+            desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'target'),
             group = 'headerStyling',
             order = 7.1,
             disabled = true,
@@ -448,17 +464,16 @@ local optionsTarget = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'target'),
+            name = L["TargetFrameBreakUpLargeNumbers"],
+            desc = L["TargetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'target'),
             group = 'headerStyling',
             order = 8,
             editmode = true
         },
         enableNumericThreat = {
             type = 'toggle',
-            name = 'Numeric Threat',
-            desc = 'Enable numeric threat' .. getDefaultStr('enableNumericThreat', 'target'),
+            name = L["TargetFrameNumericThreat"],
+            desc = L["TargetFrameNumericThreatDesc"] .. getDefaultStr('enableNumericThreat', 'target'),
             group = 'headerStyling',
             order = 9,
             disabled = not DF.Era,
@@ -466,8 +481,8 @@ local optionsTarget = {
         },
         enableThreatGlow = {
             type = 'toggle',
-            name = 'Threat Glow',
-            desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'target'),
+            name = L["TargetFrameThreatGlow"],
+            desc = L["TargetFrameThreatGlowDesc"] .. getDefaultStr('enableThreatGlow', 'target'),
             group = 'headerStyling',
             order = 10,
             disabled = true,
@@ -475,8 +490,8 @@ local optionsTarget = {
         },
         hideNameBackground = {
             type = 'toggle',
-            name = 'Hide Name Background',
-            desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'target'),
+            name = L["TargetFrameHideNameBackground"],
+            desc = L["TargetFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'target'),
             group = 'headerStyling',
             order = 11,
             new = true,
@@ -484,8 +499,8 @@ local optionsTarget = {
         },
         comboPointsOnPlayerFrame = {
             type = 'toggle',
-            name = 'ComboPoints on PlayerFrame',
-            desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
+            name = L["TargetFrameComboPointsOnPlayerFrame"],
+            desc = L["TargetFrameComboPointsOnPlayerFrameDesc"] .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
             group = 'headerStyling',
             order = 12,
             new = true,
@@ -493,6 +508,7 @@ local optionsTarget = {
         }
     }
 }
+
 if true then
     local moreOptions = {
         targetOfTarget = {
@@ -506,7 +522,7 @@ if true then
         },
         buffsOnTop = {
             type = 'toggle',
-            name = 'Buffs On Top',
+            name = BUFFS_ON_TOP,
             desc = '',
             group = 'headerStyling',
             order = 16,
@@ -575,9 +591,9 @@ local optionsTargetEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.target
                 local defaultsTable = defaults.profile.target
@@ -600,25 +616,31 @@ local optionsTargetEditmode = {
 
 local optionsPet = {
     name = 'Pet',
-    desc = 'PetFrameDesc',
+    desc = L["PetFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["PetFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'pet'),
+            name = L["PetFrameBreakUpLargeNumbers"],
+            desc = L["PetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'pet'),
             group = 'headerStyling',
             order = 9,
             editmode = true
         },
         enableThreatGlow = {
             type = 'toggle',
-            name = 'Threat Glow',
-            desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'pet'),
+            name = L["PetFrameThreatGlow"],
+            desc = L["PetFrameThreatGlowDesc"] .. getDefaultStr('enableThreatGlow', 'pet'),
             group = 'headerStyling',
             order = 8,
             disabled = true,
@@ -626,16 +648,16 @@ local optionsPet = {
         },
         hideStatusbarText = {
             type = 'toggle',
-            name = 'Hide Statusbar Text',
-            desc = '' .. getDefaultStr('hideStatusbarText', 'pet'),
+            name = L["PetFrameHideStatusbarText"],
+            desc = L["PetFrameHideStatusbarTextDesc"] .. getDefaultStr('hideStatusbarText', 'pet'),
             group = 'headerStyling',
             order = 10,
             editmode = true
         },
         hideIndicator = {
             type = 'toggle',
-            name = 'Hide Hit Indicator',
-            desc = '' .. getDefaultStr('hideIndicator', 'pet'),
+            name = L["PetFrameHideIndicator"],
+            desc = L["PetFrameHideIndicatorDesc"] .. getDefaultStr('hideIndicator', 'pet'),
             group = 'headerStyling',
             order = 11,
             new = true,
@@ -671,9 +693,9 @@ local optionsPetEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.pet
                 local defaultsTable = defaults.profile.pet
@@ -696,24 +718,31 @@ local optionsPetEditmode = {
 
 local optionsFocus = {
     name = 'Focus',
-    desc = 'FocusFrameDesc',
+    desc = L["FocusFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["FocusFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'focus'),
+            name = L["FocusFrameClassColor"],
+            desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focus'),
             group = 'headerStyling',
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
-            name = 'Class Icon Portrait',
-            desc = '' .. getDefaultStr('classicon', 'focus'),
+            name = L["FocusFrameClassIcon"],
+            desc = L["FocusFrameClassIconDesc"] .. getDefaultStr('classicon', 'focus'),
             group = 'headerStyling',
             order = 7.1,
             disabled = true,
@@ -722,17 +751,16 @@ local optionsFocus = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'focus'),
+            name = L["FocusFrameBreakUpLargeNumbers"],
+            desc = L["FocusFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'focus'),
             group = 'headerStyling',
             order = 8,
             editmode = true
         },
         hideNameBackground = {
             type = 'toggle',
-            name = 'Hide Name Background',
-            desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'focus'),
+            name = L["FocusFrameHideNameBackground"],
+            desc = L["FocusFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'focus'),
             group = 'headerStyling',
             order = 11,
             new = true,
@@ -740,6 +768,7 @@ local optionsFocus = {
         }
     }
 }
+
 DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTableWithout('FocusFrame'))
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr)
@@ -752,9 +781,9 @@ local optionsFocusEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.focus
                 local defaultsTable = defaults.profile.focus
@@ -777,31 +806,38 @@ local optionsFocusEditmode = {
 
 local optionsParty = {
     name = 'Party',
-    desc = 'PartyframeDesc',
+    desc = L["PartyFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["PartyFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'party'),
+            name = L["PartyFrameClassColor"],
+            desc = L["PartyFrameClassColorDesc"] .. getDefaultStr('classcolor', 'party'),
             group = 'headerStyling',
             order = 7,
             editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'party'),
+            name = L["PartyFrameBreakUpLargeNumbers"],
+            desc = L["PartyFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'party'),
             group = 'headerStyling',
             order = 8,
             editmode = true
         }
     }
 }
+
 if true then
     local moreOptions = {
         useCompactPartyFrames = {
@@ -873,9 +909,9 @@ local optionsPartyEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.party
                 local defaultsTable = defaults.profile.party

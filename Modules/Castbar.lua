@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Castbar'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -99,10 +100,6 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local presetDesc =
-    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
-local presetStyleDesc = 'Sets all settings that change the style of the castbar, but does not change any other setting.';
-
 local function setPreset(T, preset, sub)
     for k, v in pairs(preset) do
         --
@@ -122,21 +119,27 @@ if DF.Wrath then
 end
 
 function AddCastbarTable(optionTable, sub)
-    local extraOptions = {
+    local CastbarTable = {
         activate = {
             type = 'toggle',
-            name = 'Active',
-            desc = '' .. getDefaultStr('activate', sub),
+            name = L["CastbarTableActive"],
+            desc = L["CastbarTableActivateDesc"] .. getDefaultStr('activate', sub),
             order = -1,
             new = true,
             editmode = true
         },
-        -- headerCastbar = {type = 'header', name = 'Castbar', desc = '', order = 10, isExpanded = true},
-        headerStyling = {type = 'header', name = 'Style', desc = '', order = 20, isExpanded = true, editmode = true},
+        headerStyling = {
+            type = 'header',
+            name = L["CastbarTableStyle"],
+            desc = L["CastbarTableStyleDesc"],
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         sizeX = {
             type = 'range',
-            name = 'Width',
-            desc = getDefaultStr('sizeX', sub),
+            name = L["CastbarTableWidth"],
+            desc = L["CastbarTableWidthDesc"] .. getDefaultStr('sizeX', sub),
             min = 80,
             max = 512,
             bigStep = 1,
@@ -146,8 +149,8 @@ function AddCastbarTable(optionTable, sub)
         },
         sizeY = {
             type = 'range',
-            name = 'Height',
-            desc = getDefaultStr('sizeY', sub),
+            name = L["CastbarTableHeight"],
+            desc = L["CastbarTableHeightDesc"] .. getDefaultStr('sizeY', sub),
             min = 10,
             max = 64,
             bigStep = 1,
@@ -157,8 +160,8 @@ function AddCastbarTable(optionTable, sub)
         },
         preci = {
             type = 'range',
-            name = 'Precision (time left)',
-            desc = '...' .. getDefaultStr('preci', sub),
+            name = L["CastbarTablePrecisionTimeLeft"],
+            desc = L["CastbarTablePrecisionTimeLeftDesc"] .. getDefaultStr('preci', sub),
             min = 0,
             max = 3,
             bigStep = 1,
@@ -168,8 +171,8 @@ function AddCastbarTable(optionTable, sub)
         },
         preciMax = {
             type = 'range',
-            name = 'Precision (time max)',
-            desc = '...' .. getDefaultStr('preciMax', sub),
+            name = L["CastbarTablePrecisionTimeMax"],
+            desc = L["CastbarTablePrecisionTimeMaxDesc"] .. getDefaultStr('preciMax', sub),
             min = 0,
             max = 3,
             bigStep = 1,
@@ -179,33 +182,32 @@ function AddCastbarTable(optionTable, sub)
         },
         castTimeEnabled = {
             type = 'toggle',
-            name = 'Show cast time text',
-            desc = '' .. getDefaultStr('castTimeEnabled', sub),
+            name = L["CastbarTableShowCastTimeText"],
+            desc = L["CastbarTableShowCastTimeTextDesc"] .. getDefaultStr('castTimeEnabled', sub),
             group = 'headerStyling',
             order = 14,
             editmode = true
         },
         castTimeMaxEnabled = {
             type = 'toggle',
-            name = 'Show cast time max text',
-            desc = '' .. getDefaultStr('castTimeMaxEnabled', sub),
+            name = L["CastbarTableShowCastTimeMaxText"],
+            desc = L["CastbarTableShowCastTimeMaxTextDesc"] .. getDefaultStr('castTimeMaxEnabled', sub),
             group = 'headerStyling',
             order = 15,
             editmode = true
         },
         compactLayout = {
             type = 'toggle',
-            name = 'Compact Layout',
-            desc = '' .. getDefaultStr('compactLayout', sub),
+            name = L["CastbarTableCompactLayout"],
+            desc = L["CastbarTableCompactLayoutDesc"] .. getDefaultStr('compactLayout', sub),
             group = 'headerStyling',
             order = 16,
             editmode = true
         },
         holdTime = {
             type = 'range',
-            name = 'Hold Time (Success)',
-            desc = 'Time before the Castbar starts fading after the Cast was successful.' ..
-                getDefaultStr('holdTime', sub),
+            name = L["CastbarTableHoldTimeSuccess"],
+            desc = L["CastbarTableHoldTimeSuccessDesc"] .. getDefaultStr('holdTime', sub),
             min = 0,
             max = 2,
             bigStep = 0.05,
@@ -216,9 +218,8 @@ function AddCastbarTable(optionTable, sub)
         },
         holdTimeInterrupt = {
             type = 'range',
-            name = 'Hold Time (Interrupt)',
-            desc = 'Time before the Castbar starts fading after the Cast was interrupted.' ..
-                getDefaultStr('holdTimeInterrupt', sub),
+            name = L["CastbarTableHoldTimeInterrupt"],
+            desc = L["CastbarTableHoldTimeInterruptDesc"] .. getDefaultStr('holdTimeInterrupt', sub),
             min = 0,
             max = 2,
             bigStep = 0.05,
@@ -229,16 +230,16 @@ function AddCastbarTable(optionTable, sub)
         },
         showIcon = {
             type = 'toggle',
-            name = 'Show Icon',
-            desc = '' .. getDefaultStr('showIcon', sub),
+            name = L["CastbarTableShowIcon"],
+            desc = L["CastbarTableShowIconDesc"] .. getDefaultStr('showIcon', sub),
             group = 'headerStyling',
             order = 17,
             editmode = true
         },
         sizeIcon = {
             type = 'range',
-            name = 'Icon Size',
-            desc = getDefaultStr('sizeIcon', sub),
+            name = L["CastbarTableIconSize"],
+            desc = L["CastbarTableIconSizeDesc"] .. getDefaultStr('sizeIcon', sub),
             min = 1,
             max = 64,
             bigStep = 1,
@@ -249,24 +250,23 @@ function AddCastbarTable(optionTable, sub)
         },
         showTicks = {
             type = 'toggle',
-            name = 'Show Ticks',
-            desc = '' .. getDefaultStr('showTicks', sub),
+            name = L["CastbarTableShowTicks"],
+            desc = L["CastbarTableShowTicksDesc"] .. getDefaultStr('showTicks', sub),
             group = 'headerStyling',
             order = 18,
             editmode = true
         },
         autoAdjust = {
             type = 'toggle',
-            name = 'Auto Adjust',
-            desc = 'This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the FocusFrame' ..
-                getDefaultStr('autoAdjust', sub),
+            name = L["CastbarTableAutoAdjust"],
+            desc = L["CastbarTableAutoAdjustDesc"] .. getDefaultStr('autoAdjust', sub),
             group = 'headerStyling',
             order = 22,
             editmode = true
         }
     }
 
-    for k, v in pairs(extraOptions) do
+    for k, v in pairs(CastbarTable) do
         --
         optionTable.args[k] = v
     end
@@ -277,13 +277,14 @@ if DF.Era then
     local moreOptions = {
         showRank = {
             type = 'toggle',
-            name = 'Show Rank',
-            desc = '' .. getDefaultStr('showRank', 'player'),
+            name = L["CastbarTableShowRank"],
+            desc = L["CastbarTableShowRankDesc"] .. getDefaultStr('showRank', 'player'),
             group = 'headerStyling',
             order = 20,
             new = true,
             editmode = true
         }
+
     }
 
     for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
@@ -301,9 +302,9 @@ local optionsPlayerEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.player
                 local defaultsTable = defaults.profile.player
@@ -323,9 +324,9 @@ local optionsPlayerEditmode = {
         },
         resetStyle = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Style',
-            desc = presetStyleDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultStyle"],
+            desc = L["ExtraOptionsPresetStyleDesc"],
             func = function()
                 local dbTable = Module.db.profile.player
                 local defaultsTable = defaults.profile.player
@@ -382,9 +383,9 @@ local optionsTargetEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.target
                 local defaultsTable = defaults.profile.target
@@ -405,9 +406,9 @@ local optionsTargetEditmode = {
         },
         resetStyle = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Style',
-            desc = presetStyleDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultStyle"],
+            desc = L["ExtraOptionsPresetStyleDesc"],
             func = function()
                 local dbTable = Module.db.profile.target
                 local defaultsTable = defaults.profile.target
@@ -450,9 +451,9 @@ local optionsFocusEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.focus
                 local defaultsTable = defaults.profile.focus
@@ -473,9 +474,9 @@ local optionsFocusEditmode = {
         },
         resetStyle = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Style',
-            desc = presetStyleDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultStyle"],
+            desc = L["ExtraOptionsPresetStyleDesc"],
             func = function()
                 local dbTable = Module.db.profile.focus
                 local defaultsTable = defaults.profile.focus
