@@ -83,6 +83,11 @@ function DFSettingsCategoryListMixin:OnLoad()
 
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
 
+    local scrollBoxAnchorsWithBar = {CreateAnchor("TOPLEFT", -padLeft, 0), CreateAnchor("BOTTOMRIGHT", -16, 0)};
+    local scrollBoxAnchorsWithoutBar = {scrollBoxAnchorsWithBar[1], CreateAnchor("BOTTOMRIGHT", 0, 0)};
+    ScrollUtil.AddManagedScrollBarVisibilityBehavior(self.ScrollBox, self.ScrollBar, scrollBoxAnchorsWithBar,
+                                                     scrollBoxAnchorsWithoutBar);
+
     local function OnSelectionChanged(o, elementData, selected)
         -- print('OnSelectionChanged', o, elementData, selected)
         local button = self.ScrollBox:FindFrame(elementData);
