@@ -32,6 +32,7 @@ end
 
 local name, realm = UnitName('player')
 local showDebug = name == 'Zimtdev'
+DF.ShowDebug = showDebug;
 function DF:Debug(m, value)
     if showDebug then m:Print(value) end
 end

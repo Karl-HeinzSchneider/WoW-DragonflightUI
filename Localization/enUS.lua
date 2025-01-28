@@ -1,5 +1,7 @@
 -- print('enUS')
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
+-- local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "deDE") -- DEBUG
 
 -- modules - config.lua
 L["ModuleTooltipActionbar"] =
@@ -378,3 +380,4 @@ L["PartyFrameClassColorDesc"] = "Enable class colors for the healthbar"
 L["PartyFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
 L["PartyFrameBreakUpLargeNumbersDesc"] =
     "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
+
