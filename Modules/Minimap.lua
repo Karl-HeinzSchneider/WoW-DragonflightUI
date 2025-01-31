@@ -21,7 +21,6 @@ local defaults = {
             showPingChat = false,
             hideCalendar = false,
             hideZoom = false,
-            moveLFG = false,
             skinButtons = true,
             -- Visibility
             showMouseover = false,
@@ -38,7 +37,8 @@ local defaults = {
             useStateHandler = true
         },
         tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310},
-        durability = {scale = 1, anchorFrame = 'Minimap', anchor = 'TOP', anchorParent = 'BOTTOM', x = 0, y = -15}
+        durability = {scale = 1, anchorFrame = 'Minimap', anchor = 'TOP', anchorParent = 'BOTTOM', x = 0, y = -15},
+        lfg = {scale = 1, anchorFrame = 'Minimap', anchor = 'CENTER', anchorParent = 'CENTER', x = -62.38, y = -41.63}
     }
 }
 Module:SetDefaults(defaults)
@@ -155,19 +155,6 @@ do
             blizzard = true
         }
     }
-
-    if DF.Era then
-        local moveLFG = {
-            type = 'toggle',
-            name = 'Move LFG Button',
-            desc = 'Moves the LFG Button to the Micromenu (needs the Actionbar Module, or it does nothing)' ..
-                getDefaultStr('moveLFG', 'minimap'),
-            group = 'headerStyling',
-            order = 13.2,
-            new = true
-        }
-        moreOptions['moveLFG'] = moveLFG;
-    end
 
     for k, v in pairs(moreOptions) do minimapOptions.args[k] = v end
 
@@ -302,6 +289,41 @@ local optionsDurabilityEditmode = {
     }
 }
 
+local optionsLFG = {type = 'group', name = 'LFG', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, optionsLFG, 'lfg', 'LFG', getDefaultStr, frameTableTracker)
+
+local optionsLFGEditmode = {
+    name = 'LFG',
+    desc = 'LFG',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.lfg
+                local defaultsTable = defaults.profile.lfg
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'lfg')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -351,6 +373,7 @@ function Module:RegisterSettings()
     register('minimap', {order = 1, name = 'Minimap', descr = 'Minimapss', isNew = false})
     register('questtracker', {order = 1, name = 'Quest Tracker', descr = 'Trackers', isNew = false})
     register('durability', {order = 1, name = 'Durability', descr = 'Durablityss', isNew = false})
+    register('lfg', {order = 1, name = 'LFG', descr = 'LFGss', isNew = true})
 end
 
 function Module:RegisterOptionScreens()
@@ -380,6 +403,15 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('durability')
         end
     })
+
+    DF.ConfigModule:RegisterSettingsData('lfg', 'misc', {
+        name = 'LFG',
+        sub = 'lfg',
+        options = optionsLFG,
+        default = function()
+            setDefaultSubValues('lfg')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -390,11 +422,13 @@ function Module:RefreshOptionScreens()
     configFrame:RefreshCatSub(cat, 'Minimap')
     configFrame:RefreshCatSub(cat, 'Questtracker')
     configFrame:RefreshCatSub(cat, 'Durability')
+    configFrame:RefreshCatSub(cat, 'LFG')
 
     -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
     Minimap.DFEditModeSelection:RefreshOptionScreen();
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
     Module.DurabilityContainer.DFEditModeSelection:RefreshOptionScreen()
+    Module.LFG.DFEditModeSelection:RefreshOptionScreen()
 end
 
 function Module:ApplySettings(sub)
@@ -408,6 +442,7 @@ function Module:ApplySettings(sub)
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
     Module.UpdateDurabilityState(db.durability)
+    if Module.LFG then Module.LFG:UpdateState(db.lfg) end
 end
 
 local frame = CreateFrame('FRAME')
@@ -614,6 +649,33 @@ function Module:AddEditMode()
     -- TODO: add fake preview
     function Module.DurabilityContainer:SetEditMode()
     end
+
+    -- LFG
+    EditModeModule:AddEditModeToFrame(Module.LFG)
+
+    Module.LFG.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'LFG'
+    end)
+
+    Module.LFG.DFEditModeSelection:RegisterOptions({
+        name = 'LFG',
+        sub = 'lfg',
+        advancedName = 'LFG',
+        options = optionsLFG,
+        prio = 5,
+        extra = optionsLFGEditmode,
+        showFunction = function()
+            --
+        end,
+        hideFunction = function()
+            --
+        end,
+        default = function()
+            setDefaultSubValues('lfg')
+        end,
+        moduleRef = self
+    });
+
 end
 
 function Module.UpdateMinimapState(state)
@@ -648,15 +710,6 @@ function Module.UpdateMinimapState(state)
         Module.ChangeMinimapButtons()
     elseif not state.skinButtons and Module.SkinButtonsHooked then
         DF:Print("'Skin Minimap Buttons' was deactivated, but Buttons were already modified, please /reload.");
-    end
-
-    if DF.Era then
-        --      
-        if Module.MoveLFG then
-            Module:QueueStatusAnchor(state.moveLFG)
-        else
-            Module:QueueStatusAnchor(false)
-        end
     end
 end
 
@@ -1188,109 +1241,50 @@ function Module.MoveTrackerFunc()
     end
 end
 
-function Module.ChangeLFG()
-    MiniMapLFGFrame:ClearAllPoints()
-    -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
-    MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-    MiniMapLFGFrameBorder:Hide()
-    MiniMapLFGFrameIcon:Hide()
-
-    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', MiniMapLFGFrame)
+function Module:ChangeLFG()
+    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', Minimap)
     Mixin(lfg, DragonflightUILFGButtonMixin)
     lfg:Init()
-    lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
-
-    Module.LFG = lfg
-end
-
-function Module.CreateLFGAnimation()
-    local lfg = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
-    lfg:SetSize(33, 33)
-    lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-
+    -- lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
+    lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
     Module.LFG = lfg
 
-    do
-        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
-        searching:SetSize(33, 33)
-        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
+    if DF.Cata then
 
-        local searchingTexture = searching:CreateTexture('DragonflightUILFGSearchingFlipbookTexture')
-        searchingTexture:SetAllPoints()
-        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-searching')
-        -- searchingTexture:SetBlendMode('BLEND')
+        MiniMapLFGFrame:ClearAllPoints()
+        -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+        MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
+        MiniMapLFGFrameBorder:Hide()
+        MiniMapLFGFrameIcon:Hide()
 
-        local animationGroup = searchingTexture:CreateAnimationGroup()
-        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGSearchingFlipbookAnimation')
+        lfg:HookCata()
+    elseif DF.Era then
+        DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+            --
+            -- print('Blizzard_GroupFinder_VanillaStyle')
+            -- Module:CreateQueueStatus()
 
-        animationGroup:SetLooping('REPEAT')
+            local btn = _G.LFGMinimapFrame
+            btn:SetParent(Minimap)
+            local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 
-        animation:SetOrder(1)
-        local size = 44 * 1
-        animation:SetFlipBookFrameWidth(size)
-        animation:SetFlipBookFrameHeight(size)
-        animation:SetFlipBookRows(8)
-        animation:SetFlipBookColumns(11)
-        animation:SetFlipBookFrames(80)
-        animation:SetDuration(2)
+            local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
+            LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
+            LFGMinimapFrameBorder:SetSize(50, 50)
 
-        animationGroup:Play()
-        animationGroup:Stop()
-        searching:Hide()
+            -- DevTools_Dump(_G.LFGMinimapFrame:GetPoint(1))
+            lfg:HookEra()
 
-        searching.animation = animationGroup
-        lfg.searching = searching
+            local db = Module.db.profile
+            local state = db.lfg
+            lfg:UpdateState(state);
+
+            -- hooksecurefunc(btn, 'SetPoint', function()
+            --     print('SetPoint')
+            -- end)
+        end)
+
     end
-
-    do
-        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
-        searching:SetSize(33, 33)
-        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
-
-        local searchingTexture = searching:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
-        searchingTexture:SetAllPoints()
-        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-mouseover')
-        -- searchingTexture:SetBlendMode('BLEND')
-
-        local animationGroup = searchingTexture:CreateAnimationGroup()
-        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
-
-        animationGroup:SetLooping('NONE')
-
-        animation:SetOrder(1)
-        local size = 43 * 1
-        animation:SetFlipBookFrameWidth(size)
-        animation:SetFlipBookFrameHeight(size)
-        animation:SetFlipBookRows(1)
-        animation:SetFlipBookColumns(12)
-        animation:SetFlipBookFrames(12)
-        animation:SetDuration(0.4)
-
-        animationGroup:Play()
-        animationGroup:Stop()
-        searching:Hide()
-
-        searching.animation = animationGroup
-        lfg.mouseover = searching
-    end
-
-    lfg:SetScript('OnEnter', function()
-        lfg.searching.animation:Stop()
-        lfg.searching:Hide()
-        lfg.mouseover:Show()
-        lfg.mouseover.animation:Play()
-    end)
-
-    lfg:SetScript('OnLeave', function()
-        lfg.mouseover.animation:Stop()
-        lfg.mouseover:Hide()
-        lfg.searching:Show()
-        lfg.searching.animation:Play()
-    end)
-
-    lfg.searching:Show()
-    lfg.searching.animation:Play()
-
 end
 
 function Module.ChangeDifficulty()
@@ -1331,70 +1325,9 @@ function Module:QueueStatusReposition(_, anchorFrame)
     end
 end
 
-function Module:QueueStatusAnchor(move)
-    local lfg = Module.QueueStatus;
-    if not lfg then return end
-    if move then
-        lfg:ClearAllPoints()
-        lfg:SetParent(_G['DragonflightUIMicroMenuBar'])
-        lfg:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -70, 0)
-        lfg:SetScale(1.2)
-    else
-        lfg:ClearAllPoints()
-        lfg:SetParent(Minimap)
-        lfg:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-        lfg:SetScale(1.0)
-    end
-end
-
-function Module:CreateQueueStatus()
-    local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
-    -- f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
-    f:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-    f:SetSize(32, 32)
-    f:SetParent(Minimap)
-
-    Module.QueueStatus = f
-
-    local btn = _G.LFGMinimapFrame
-    btn:SetParent(f)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
-    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
-    LFGMinimapFrameBorder:SetSize(50, 50)
-
-    hooksecurefunc(btn, 'SetPoint', Module.QueueStatusReposition)
-    btn:SetPoint('CENTER')
-
-    local unitModule = DF:GetModule('Actionbar')
-
-    if unitModule:IsEnabled() then
-        Module.MoveLFG = true;
-
-        local db = Module.db.profile
-        local state = db.minimap
-        Module:QueueStatusAnchor(state.moveLFG)
-    else
-        hooksecurefunc(unitModule, 'OnEnable', function()
-            --
-            local db = Module.db.profile
-            local state = db.minimap
-            Module:QueueStatusAnchor(state.moveLFG)
-            Module.MoveLFG = true;
-        end)
-
-    end
-end
-
 function Module.ChangeEra()
     GameTimeFrame:Hide()
     MinimapToggleButton:Hide()
-
-    DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
-        --
-        Module:CreateQueueStatus()
-    end)
 end
 
 function Module:UpdateButton(btn)
@@ -1539,8 +1472,7 @@ function Module.Wrath()
     Module.ChangeTracking()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
-    Module.ChangeLFG()
-    -- Module.CreateLFGAnimation()
+    Module:ChangeLFG()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
@@ -1565,6 +1497,7 @@ function Module.Era()
     Module.UpdateTrackingEra()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
+    Module:ChangeLFG()
     Module.HookMouseWheel()
     Module.ChangeMail()
     -- Module.ChangeMinimapButtons()

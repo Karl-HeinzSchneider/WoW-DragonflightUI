@@ -33,6 +33,7 @@ local defaults = {
             Minimap = true,
             Tracker = true,
             Durability = true,
+            LFG = true,
             -- UI
             -- unitframes
             PlayerFrame = true,
@@ -174,7 +175,7 @@ if true then
     AddTableToCategory(framesFrames, 'headerFrames')
 
     -- misc
-    local miscFrames = {'Bags', 'FPS', 'Minimap', 'Tracker', 'Durability'}
+    local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability'}
     AddTableToCategory(miscFrames, 'headerMisc')
 
     advancedOptions.set = function(...)
