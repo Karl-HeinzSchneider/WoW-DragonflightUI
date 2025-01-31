@@ -301,20 +301,29 @@ function DragonflightUILFGButtonMixin:Init()
 
     self:OnLoad()
 
-    -- self:Show()
+    self:Show()
 
     self:RegisterEvent("LFG_PROPOSAL_SHOW");
     self:RegisterEvent("LFG_PROPOSAL_FAILED");
 
     self:SetScript('OnEvent', GenerateClosure(self.OnEvent, self))
 
+    --[[  QueueStatusFrame:HookScript('OnShow', function(frame)
+        frame:ClearAllPoints()
+        frame:SetPoint('TOPRIGHT', self, 'BOTTOMLEFT', 0, 6)
+    end) ]]
+end
+
+function DragonflightUILFGButtonMixin:HookCata()
     MiniMapLFGFrame:HookScript('OnShow', function()
         --       
+        --  self.parent.DFEditMode
         self:Show()
     end)
 
     MiniMapLFGFrame:HookScript('OnHide', function()
         --  
+        if self.DFEditMode then return; end
         self:Hide()
     end)
 
@@ -328,10 +337,61 @@ function DragonflightUILFGButtonMixin:Init()
         self:OnLeave()
     end)
 
-    --[[  QueueStatusFrame:HookScript('OnShow', function(frame)
-        frame:ClearAllPoints()
-        frame:SetPoint('TOPRIGHT', self, 'BOTTOMLEFT', 0, 6)
-    end) ]]
+    local updateInterval = 0.15;
+    self.LastUpdate = GetTime()
+
+    function self:SetEditMode(edit)
+        -- print('self:SetEditMode(edit)', edit)
+        if edit then
+            self:Show()
+
+            self:SetScript("OnUpdate", function()
+                --
+                if not self.DFEditMode then return; end
+                -- print('self:OnUpdate')
+
+                -- if self.DFEditModeSelection.isDragging then
+                --     --
+                --     local state = self.state;
+
+                --     local parent = _G[state.anchorFrame]
+                --     MiniMapLFGFrame:SetScale(state.scale)
+                --     MiniMapLFGFrame:ClearAllPoints()
+                --     MiniMapLFGFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+                -- end
+                if GetTime() - self.LastUpdate >= updateInterval then
+                    self.LastUpdate = GetTime()
+                    -- print('self:OnUpdate') 
+
+                    local state = self.state;
+
+                    local parent = _G[state.anchorFrame]
+                    MiniMapLFGFrame:SetScale(state.scale)
+                    MiniMapLFGFrame:ClearAllPoints()
+                    MiniMapLFGFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+                end
+            end)
+        else
+            self:SetShown(MiniMapLFGFrame:IsShown());
+
+            self:SetScript("OnUpdate", nil);
+        end
+    end
+end
+
+function DragonflightUILFGButtonMixin:UpdateState(state)
+    self.state = state;
+    self:Update()
+end
+
+function DragonflightUILFGButtonMixin:Update()
+    -- print('DragonflightUILFGButtonMixin:Update()')
+    local state = self.state;
+
+    local parent = _G[state.anchorFrame]
+    self:SetScale(state.scale)
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 end
 
 function DragonflightUILFGButtonMixin:OnLoad()
@@ -396,7 +456,7 @@ function DragonflightUILFGButtonMixin:OnUpdate()
 end
 
 function DragonflightUILFGButtonMixin:OnEvent(self, event, ...)
-    -- print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
+    print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
 
     if event == "LFG_PROPOSAL_SHOW" then
         self.Eye:StartFoundAnimationInit();
