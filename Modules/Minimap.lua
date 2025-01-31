@@ -21,7 +21,6 @@ local defaults = {
             showPingChat = false,
             hideCalendar = false,
             hideZoom = false,
-            moveLFG = false,
             skinButtons = true,
             -- Visibility
             showMouseover = false,
@@ -156,19 +155,6 @@ do
             blizzard = true
         }
     }
-
-    if DF.Era then
-        local moveLFG = {
-            type = 'toggle',
-            name = 'Move LFG Button',
-            desc = 'Moves the LFG Button to the Micromenu (needs the Actionbar Module, or it does nothing)' ..
-                getDefaultStr('moveLFG', 'minimap'),
-            group = 'headerStyling',
-            order = 13.2,
-            new = true
-        }
-        moreOptions['moveLFG'] = moveLFG;
-    end
 
     for k, v in pairs(moreOptions) do minimapOptions.args[k] = v end
 
@@ -456,7 +442,7 @@ function Module:ApplySettings(sub)
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
     Module.UpdateDurabilityState(db.durability)
-    Module.LFG:UpdateState(db.lfg)
+    if Module.LFG then Module.LFG:UpdateState(db.lfg) end
 end
 
 local frame = CreateFrame('FRAME')
@@ -724,15 +710,6 @@ function Module.UpdateMinimapState(state)
         Module.ChangeMinimapButtons()
     elseif not state.skinButtons and Module.SkinButtonsHooked then
         DF:Print("'Skin Minimap Buttons' was deactivated, but Buttons were already modified, please /reload.");
-    end
-
-    if DF.Era then
-        --      
-        if Module.MoveLFG then
-            Module:QueueStatusAnchor(state.moveLFG)
-        else
-            Module:QueueStatusAnchor(false)
-        end
     end
 end
 
@@ -1264,26 +1241,50 @@ function Module.MoveTrackerFunc()
     end
 end
 
-function Module.ChangeLFG()
-    MiniMapLFGFrame:ClearAllPoints()
-    -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
-    MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-    MiniMapLFGFrameBorder:Hide()
-    MiniMapLFGFrameIcon:Hide()
-
+function Module:ChangeLFG()
     local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', Minimap)
     Mixin(lfg, DragonflightUILFGButtonMixin)
     lfg:Init()
     -- lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
     lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
+    Module.LFG = lfg
 
     if DF.Cata then
+
+        MiniMapLFGFrame:ClearAllPoints()
+        -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+        MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
+        MiniMapLFGFrameBorder:Hide()
+        MiniMapLFGFrameIcon:Hide()
+
         lfg:HookCata()
-    else
+    elseif DF.Era then
+        DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+            --
+            -- print('Blizzard_GroupFinder_VanillaStyle')
+            -- Module:CreateQueueStatus()
+
+            local btn = _G.LFGMinimapFrame
+            btn:SetParent(Minimap)
+            local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+            local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
+            LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
+            LFGMinimapFrameBorder:SetSize(50, 50)
+
+            -- DevTools_Dump(_G.LFGMinimapFrame:GetPoint(1))
+            lfg:HookEra()
+
+            local db = Module.db.profile
+            local state = db.lfg
+            lfg:UpdateState(state);
+
+            -- hooksecurefunc(btn, 'SetPoint', function()
+            --     print('SetPoint')
+            -- end)
+        end)
 
     end
-
-    Module.LFG = lfg
 end
 
 function Module.ChangeDifficulty()
@@ -1324,70 +1325,9 @@ function Module:QueueStatusReposition(_, anchorFrame)
     end
 end
 
-function Module:QueueStatusAnchor(move)
-    local lfg = Module.QueueStatus;
-    if not lfg then return end
-    if move then
-        lfg:ClearAllPoints()
-        lfg:SetParent(_G['DragonflightUIMicroMenuBar'])
-        lfg:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -70, 0)
-        lfg:SetScale(1.2)
-    else
-        lfg:ClearAllPoints()
-        lfg:SetParent(Minimap)
-        lfg:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-        lfg:SetScale(1.0)
-    end
-end
-
-function Module:CreateQueueStatus()
-    local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
-    -- f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
-    f:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-    f:SetSize(32, 32)
-    f:SetParent(Minimap)
-
-    Module.QueueStatus = f
-
-    local btn = _G.LFGMinimapFrame
-    btn:SetParent(f)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
-    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
-    LFGMinimapFrameBorder:SetSize(50, 50)
-
-    hooksecurefunc(btn, 'SetPoint', Module.QueueStatusReposition)
-    btn:SetPoint('CENTER')
-
-    local unitModule = DF:GetModule('Actionbar')
-
-    if unitModule:IsEnabled() then
-        Module.MoveLFG = true;
-
-        local db = Module.db.profile
-        local state = db.minimap
-        Module:QueueStatusAnchor(state.moveLFG)
-    else
-        hooksecurefunc(unitModule, 'OnEnable', function()
-            --
-            local db = Module.db.profile
-            local state = db.minimap
-            Module:QueueStatusAnchor(state.moveLFG)
-            Module.MoveLFG = true;
-        end)
-
-    end
-end
-
 function Module.ChangeEra()
     GameTimeFrame:Hide()
     MinimapToggleButton:Hide()
-
-    DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
-        --
-        Module:CreateQueueStatus()
-    end)
 end
 
 function Module:UpdateButton(btn)
@@ -1532,7 +1472,7 @@ function Module.Wrath()
     Module.ChangeTracking()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
-    Module.ChangeLFG()
+    Module:ChangeLFG()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
@@ -1557,6 +1497,7 @@ function Module.Era()
     Module.UpdateTrackingEra()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
+    Module:ChangeLFG()
     Module.HookMouseWheel()
     Module.ChangeMail()
     -- Module.ChangeMinimapButtons()
