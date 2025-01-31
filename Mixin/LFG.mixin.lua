@@ -447,10 +447,12 @@ function DragonflightUILFGButtonMixin:HookEra()
         -- print('self:UpdateBlizzard()')
         local state = self.state;
 
+        local f = _G.LFGMinimapFrame;
+
         local parent = _G[state.anchorFrame]
-        _G.LFGMinimapFrame:SetScale(state.scale)
-        _G.LFGMinimapFrame:ClearAllPoints()
-        _G.LFGMinimapFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        f:SetScale(state.scale)
+        f:ClearAllPoints()
+        f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     end
 end
 
