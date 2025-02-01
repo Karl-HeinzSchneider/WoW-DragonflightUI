@@ -297,10 +297,13 @@ function Module:CreateGrid()
     DF:Debug(self, 'CreateGrid()')
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeFrameTemplate');
+    editModeFrame:SetupGrid();
+    editModeFrame:SetupMouseOverChecker();
     editModeFrame:Hide()
     -- editModeFrame.Grid:Hide()
     Module.IsEditMode = false;
     Module.EditModeFrame = editModeFrame;
+    Module.SelectionFrames = {}
 end
 
 function Module:SlashCommand()
