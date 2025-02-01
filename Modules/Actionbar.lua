@@ -1781,12 +1781,46 @@ function Module:SetupActionbarFrames()
     Module.bar5:HookQuickbindMode()
 
     -- bar 6
+    local cvarFrame = CreateFrame('FRAME');
+    -- VARIABLES_LOADED
+    cvarFrame:SetScript('OnEvent', function(_, event, arg1, arg2, arg3)
+        --
+        -- print('~OnEvent', event, arg1, arg2)
+        if arg1 ~= 'ActionButtonUseKeyDown' then return end
+        -- print('~~ActionButtonUseKeyDown')
+
+        if GetCVarBool("ActionButtonUseKeyDown") then
+            for n = 6, 8 do
+                local bar = Module['bar' .. n]
+                if bar then
+                    for k, v in ipairs(bar.buttonTable) do
+                        --
+                        v:RegisterForClicks("AnyUp", "AnyDown")
+                    end
+                end
+            end
+        else
+            for n = 6, 8 do
+                local bar = Module['bar' .. n]
+                if bar then
+                    for k, v in ipairs(bar.buttonTable) do
+                        --
+                        v:RegisterForClicks("AnyUp")
+                    end
+                end
+            end
+        end
+    end)
+    cvarFrame:RegisterEvent('VARIABLES_LOADED')
+    cvarFrame:RegisterEvent('CVAR_UPDATE')
 
     local createExtra = function(n)
         local btns = {}
 
         local extraParent = CreateFrame('FRAME', 'DragonflightUIMultiactionBar' .. n .. 'VisParent', UIParent)
         extraParent:SetFrameLevel(0)
+
+        local useKeydown = GetCVarBool("ActionButtonUseKeyDown");
 
         for i = 1, 12 do
             --
@@ -1807,6 +1841,12 @@ function Module:SetupActionbarFrames()
 
             btns[i] = btn
             btn:Hide()
+
+            if useKeydown then
+                btn:RegisterForClicks("AnyUp", "AnyDown")
+            else
+                btn:RegisterForClicks("AnyUp")
+            end
 
             -- btn:UpdateAction()          
         end
