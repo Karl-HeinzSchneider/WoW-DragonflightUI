@@ -699,6 +699,13 @@ function DFSettingsListDropdownContainerMixin:OnLoad()
     self.Button.Dropdown.Text:SetText('TEST')
 
     -- DevTools_Dump(self.Button.Dropdown)
+
+    self.Button.IncrementButton:HookScript('OnClick', function()
+        self.Button:UpdateSteppers()
+    end)
+    self.Button.DecrementButton:HookScript('OnClick', function()
+        self.Button:UpdateSteppers()
+    end)
 end
 
 -- hooksecurefunc(Settings, 'CreateDropdownOptionInserter', function(options)
@@ -751,6 +758,8 @@ function DFSettingsListDropdownContainerMixin:Init(node)
         self.Button.Dropdown:SetWidth(180)
         self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 20, 0);
     end
+
+    self.Button:UpdateSteppers()
 
     if args.dropdownValuesFunc then
         self.Button.Dropdown:SetupMenu(args.dropdownValuesFunc)

@@ -283,18 +283,22 @@ UI_shared.xsd">
 					</Layer>
 				</Layers>
 			</Frame>
+			<!--
 			<Button parentKey="IncrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
-				<Size x="32" y="32" />
-				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-nextbutton" />
-				<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-nextbutton-down" />
-				<DisabledTexture atlas="charactercreate-customize-nextbutton-disabled" />
+			<Size x="32" y="32" />
+			<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-nextbutton" />
+			<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-nextbutton-down" />
+			<DisabledTexture atlas="charactercreate-customize-nextbutton-disabled" />
 			</Button>
+			-->
+			<!--
 			<Button parentKey="DecrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
-				<Size x="32" y="32" />
-				<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-backbutton" />
-				<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-backbutton-down" />
-				<DisabledTexture atlas="charactercreate-customize-backbutton-disabled" />
+			<Size x="32" y="32" />
+			<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-backbutton" />
+			<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-backbutton-down" />
+			<DisabledTexture atlas="charactercreate-customize-backbutton-disabled" />
 			</Button>
+			-->
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />
