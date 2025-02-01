@@ -78,7 +78,7 @@ UI_shared.xsd">
 			<Frame parentKey="Tooltip" mixin="DefaultTooltipMixin">
 				<Anchors>
 					<Anchor point="TOPLEFT" />
-					<Anchor point="BOTTOMRIGHT" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-80" />
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
