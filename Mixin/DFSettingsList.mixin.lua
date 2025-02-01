@@ -260,10 +260,12 @@ function DFSettingsListElementBaseMixin:SetBaseSmall(small)
         self.Text:ClearAllPoints()
         self.Text:SetPoint('LEFT', 10, 0)
         self.Text:SetWidth(130);
+        self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', 150, 0)
     else
         self.Text:ClearAllPoints()
         self.Text:SetPoint('LEFT', 37, 0)
         self.Text:SetWidth(180);
+        self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', 226, 0)
     end
 end
 
