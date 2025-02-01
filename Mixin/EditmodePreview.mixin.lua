@@ -320,6 +320,7 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
     local gap = 10;
     self:SetSize(sizeX, sizeY * 4 + 3 * gap)
 
+    self.LastUpdate = GetTime()
     self.PartyFrames = {}
 
     for k = 1, 4 do
@@ -343,11 +344,62 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
     self:UpdateVisibility()
 end
 
+function DragonflightUIEditModePreviewPartyFrameMixin:OnUpdate(elapsed)
+    local updateInterval = 0.15;
+
+    if not self.DFEditMode then return; end
+
+    if GetTime() - self.LastUpdate >= updateInterval then
+        self.LastUpdate = GetTime()
+        -- print('self:OnUpdate')
+        -- if self.UpdateBlizzard then self:UpdateBlizzard() end
+    end
+end
+
+function DragonflightUIEditModePreviewPartyFrameMixin:UpdateBlizzard()
+    -- local PartyMoveFrame = self.DFEditModeSelection.ModuleRef.PartyMoveFrame;
+
+    -- local state = self.state;
+    -- local parent = _G[state.anchorFrame]
+
+    -- local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint(1)
+    -- PartyMoveFrame:ClearAllPoints();
+    -- -- self.PartyMoveFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    -- PartyMoveFrame:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs)
+    -- PartyMoveFrame:SetScale(state.scale)
+end
+
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
+    self.state = state;
+    self:Update()
+end
+
+function DragonflightUIEditModePreviewPartyFrameMixin:Update()
+    local state = self.state;
     self:ClearAllPoints()
     local parent = _G[state.anchorFrame]
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+
+    if state.orientation == 'vertical' then
+        self:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
+    else
+        self:SetSize(sizeX * 4 + 3 * state.padding, sizeY)
+    end
+
+    for i = 2, 4 do
+        local pf = self.PartyFrames[i]
+
+        if state.orientation == 'vertical' then
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', self.PartyFrames[i - 1], 'BOTTOMLEFT', 0, -state.padding)
+        else
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', self.PartyFrames[i - 1], 'TOPRIGHT', state.padding, 0)
+        end
+    end
 
     for k, v in ipairs(self.PartyFrames) do
         --

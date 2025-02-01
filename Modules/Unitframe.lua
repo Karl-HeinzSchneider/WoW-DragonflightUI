@@ -129,6 +129,8 @@ local defaults = {
             anchorParent = 'TOPRIGHT',
             x = 0,
             y = 0,
+            padding = 10,
+            orientation = 'vertical',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -861,6 +863,26 @@ if true then
             order = 16,
             blizzard = true,
             editmode = true
+        },
+        orientation = {
+            type = 'select',
+            name = L["ButtonTableOrientation"],
+            desc = L["ButtonTableOrientationDesc"] .. getDefaultStr('orientation', 'party'),
+            dropdownValues = DF.Settings.OrientationTable,
+            order = 2,
+            group = 'headerStyling',
+            editmode = true
+        },
+        padding = {
+            type = 'range',
+            name = L["ButtonTablePadding"],
+            desc = L["ButtonTablePaddingDesc"] .. getDefaultStr('padding', 'party'),
+            min = -50,
+            max = 50,
+            bigStep = 1,
+            order = 3,
+            group = 'headerStyling',
+            editmode = true
         }
     }
 
@@ -922,7 +944,9 @@ local optionsPartyEditmode = {
                     anchorParent = defaultsTable.anchorParent,
                     anchorFrame = defaultsTable.anchorFrame,
                     x = defaultsTable.x,
-                    y = defaultsTable.y
+                    y = defaultsTable.y,
+                    orientation = defaultsTable.orientation,
+                    padding = defaultsTable.padding
                 })
             end,
             order = 16,
@@ -1570,26 +1594,7 @@ function Module:ApplySettings(sub)
         local obj = db.party
         local objLocal = localSettings.party
 
-        Module.PartyMoveFrame:ClearAllPoints();
-        Module.PartyMoveFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
-        -- local party1 = _G['PartyMemberFrame' .. 1]
-        -- party1:ClearAllPoints()
-        -- party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
-
-        for i = 1, 4 do
-            local pf = _G['PartyMemberFrame' .. i]
-            -- local dfScale = 1.25
-            local dfScale = 1
-            pf:SetScale(obj.scale * dfScale)
-            Module.UpdatePartyHPBar(i)
-            TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
-            TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
-
-            pf:UpdateStateHandler(obj)
-            PartyMemberFrame_UpdateMember(pf)
-        end
-
-        Module.PreviewParty:UpdateState(obj)
+        Module:UpdatePartyState(obj)
     end
 
     if DF.Wrath then
@@ -3758,7 +3763,15 @@ end
 function Module.ChangePartyFrame()
     local PartyMoveFrame = CreateFrame('Frame', 'DraggonflightUIPartyMoveFrame', UIParent)
     PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    PartyMoveFrame:SetFrameStrata('LOW')
+    PartyMoveFrame:SetFrameLevel(2)
     Module.PartyMoveFrame = PartyMoveFrame
+
+    -- local tex = PartyMoveFrame:CreateTexture(nil, 'BACKGROUND')
+    -- tex:SetPoint('TOPLEFT')
+    -- tex:SetPoint('BOTTOMRIGHT')
+    -- tex:SetColorTexture(54 / 255, 69 / 255, 79 / 255, 0.5)
+    -- PartyMoveFrame.BackgroundTex = tex;
 
     local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
     local gap = 10;
@@ -3771,6 +3784,7 @@ function Module.ChangePartyFrame()
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
+        pf:SetParent(PartyMoveFrame)
         pf:SetSize(120, 53)
         -- pf:ClearAllPoints()
         -- pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
@@ -4030,6 +4044,49 @@ function Module.ChangePartyFrame()
             Module.UpdatePartyHPBar(i)
         end)
     end
+end
+
+function Module:UpdatePartyState(state)
+    local parent = _G[state.anchorFrame]
+    Module.PartyMoveFrame:ClearAllPoints();
+    Module.PartyMoveFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    Module.PartyMoveFrame:SetScale(state.scale)
+
+    -- local party1 = _G['PartyMemberFrame' .. 1]
+    -- party1:ClearAllPoints()
+    -- party1:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+
+    if state.orientation == 'vertical' then
+        Module.PartyMoveFrame:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
+    else
+        Module.PartyMoveFrame:SetSize(sizeX * 4 + 3 * state.padding, sizeY)
+    end
+
+    for i = 2, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+
+        if state.orientation == 'vertical' then
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'BOTTOMLEFT', 0, -state.padding)
+        else
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'TOPRIGHT', state.padding, 0)
+        end
+    end
+
+    for i = 1, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+        Module.UpdatePartyHPBar(i)
+        TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
+        TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
+
+        pf:UpdateStateHandler(state)
+        PartyMemberFrame_UpdateMember(pf)
+    end
+
+    Module.PreviewParty:UpdateState(state)
 end
 
 local function DFTextStatusBar_UpdateTextStringWithValues(statusFrame, textString, value, valueMin, valueMax)
