@@ -331,15 +331,9 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             new = false,
             editmode = true
         },
-        hideCustomCondButton = {
+        hideCustomCond = {
             type = 'editbox',
             name = 'Set Custom Condition',
-            btnName = 'Update...',
-            func = function()
-                -- Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-                StaticPopup_Show(popupName)
-            end,
             Validate = Validate,
             order = 109.5,
             group = 'headerVis',
