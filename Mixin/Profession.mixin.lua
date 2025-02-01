@@ -596,8 +596,8 @@ function DragonFlightUIProfessionMixin:GetRecipeQuality(index)
     local itemString = string.match(link, "item[%-?%d:]+")
     if not itemString then return 1; end
 
-    local _, itemId = strsplit(":", itemString)
-    itemId = tonumber(itemId)
+    local _, itemIdStr = strsplit(":", itemString)
+    local itemId = tonumber(itemIdStr)
     if not itemId or itemId == "" then return 1; end
 
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
