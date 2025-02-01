@@ -839,7 +839,7 @@ end
 DFEditModeSystemSelectionMouseOverCheckerMixin = {};
 
 function DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()
-    print('~~DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()')
+    -- print('~~DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()')
     self.timeElapsed = 0
     self.EditModeRef = DF:GetModule('Editmode');
 
