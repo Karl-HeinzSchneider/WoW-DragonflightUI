@@ -97,14 +97,14 @@ local generalOptions = {
             desc = '' .. getDefaultStr('snapGrid', 'general'),
             order = 102,
             small = true
-        },
-        snapElements = {
-            type = 'toggle',
-            name = 'Snap to Elements',
-            desc = '*NOT YET IMPLEMENTED - COMING SOON*' .. getDefaultStr('snapElements', 'general'),
-            order = 103,
-            small = true
         }
+        -- snapElements = {
+        --     type = 'toggle',
+        --     name = 'Snap to Elements',
+        --     desc = '*NOT YET IMPLEMENTED - COMING SOON*' .. getDefaultStr('snapElements', 'general'),
+        --     order = 103,
+        --     small = true
+        -- }
     }
 }
 

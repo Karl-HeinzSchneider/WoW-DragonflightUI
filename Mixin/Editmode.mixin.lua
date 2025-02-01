@@ -42,6 +42,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
 
     self:SetFrameLevel(69)
     self:SetFrameStrata('HIGH')
+    self:SetHeight(250 - 35);
 
     self.InstructionText:SetText('InstructionText')
     self.InstructionText:Hide()
@@ -82,7 +83,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
             -- switch to basic options
             advButton:SetText('Advanced Options')
             self.DisplayFrame:Display(self.DataOptions, true)
-            self:SetHeight(250);
+            self:SetHeight(250 - 35);
             self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
         else
             -- switch to advanced options
