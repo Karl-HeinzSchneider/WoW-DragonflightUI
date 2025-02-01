@@ -4033,6 +4033,18 @@ function Module.ChangePartyFrame()
             -- [07:05:37] TOPLEFT PartyMemberFrame1 TOPLEFT 47 -30
         end)
 
+        -- CompactUnitFrame_UpdateInRange
+        local function updateRange()
+            local inRange, checkedRange = UnitInRange('party' .. i);
+            if (checkedRange and not inRange) then
+                pf:SetAlpha(0.55);
+            else
+                pf:SetAlpha(1);
+            end
+        end
+
+        pf:HookScript('OnUpdate', updateRange)
+
         pf:HookScript('OnEvent', function(self, event, ...)
             local texture = _G['PartyMemberFrame' .. i .. 'Texture']
             texture:SetTexture()
@@ -4040,6 +4052,7 @@ function Module.ChangePartyFrame()
             healthbar:SetStatusBarColor(1, 1, 1, 1)
 
             updateSmallIcons()
+            updateRange()
 
             Module.UpdatePartyHPBar(i)
         end)
