@@ -637,6 +637,8 @@ function Module:UpdateActionbar(state)
     for k, bar in ipairs(barTable) do
         if not bar.DFDarkmodeUpdateBarButtons then
             bar.DFDarkmodeUpdateBarButtons = function()
+                if not state.actionbarR then return end
+
                 local buttonTable = bar.buttonTable
                 local btnCount = #buttonTable
 
@@ -683,6 +685,7 @@ function Module:UpdateActionbar(state)
         hooksecurefunc('ActionButton_UpdateUsable', function(btn)
             --
             -- print('ActionButton_UpdateUsable', btn:GetName())
+            if not state.actionbarR then return end
             if btn.DFNormalTexture then
                 btn.DFNormalTexture:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
                                                    state.actionbarB / 255)
