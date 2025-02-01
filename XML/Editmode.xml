@@ -87,6 +87,12 @@
 	</Frame>
 	<Frame name="DragonflightUIEditModeSelectionOptionsTemplate" inherits="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeSelectionOptionsMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
 	</Frame>
+	<Frame name="DFEditModeSystemSelectionMouseOverChecker" mixin="DFEditModeSystemSelectionMouseOverCheckerMixin" enableKeyboard="true" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnUpdate method="OnUpdate" />
+		</Scripts>
+	</Frame>
 	<Frame name="DFEditModeSystemSelectionBaseTemplate" parentKey="Selection" mixin="DFEditModeSystemSelectionBaseMixin" ignoreParentAlpha="true" frameStrata="MEDIUM" frameLevel="1000" toplevel="true" enableMouse="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true" hidden="true">
 		<Size x="1" y="1" />
 		<!--

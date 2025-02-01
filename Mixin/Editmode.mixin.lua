@@ -10,12 +10,23 @@ function DragonflightUIEditModeFrameMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
 
     self:SetupFrame();
+end
 
+function DragonflightUIEditModeFrameMixin:SetupGrid()
     local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
     grid:Hide()
     grid:SetAllPoints();
 
     self.Grid = grid;
+end
+
+function DragonflightUIEditModeFrameMixin:SetupMouseOverChecker()
+    local over = CreateFrame('Frame', 'DragonflightUIEditModeMouseOverChecker', self,
+                             'DFEditModeSystemSelectionMouseOverChecker');
+    -- grid:Hide()
+    over:SetAllPoints();
+
+    self.MouseOverChecker = over;
 end
 
 function DragonflightUIEditModeFrameMixin:OnDragStart()
@@ -298,6 +309,7 @@ DFEditModeSystemSelectionBaseMixin = {};
 function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self.parent = self:GetParent();
     self.parent.DFEditModeSelection = self;
+    self.IsDFEditModeSelection = true;
     -- print('DFEditModeSystemSelectionBaseMixin:OnLoad()', self.parent:GetName())
     if self.Label then
         self.Label:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium", "GameFontHighlightSmall");
@@ -316,6 +328,8 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self:SetNinesliceSelected(false)
 
     local EditModeModule = DF:GetModule('Editmode');
+    table.insert(EditModeModule.SelectionFrames, self);
+
     EditModeModule:RegisterCallback('OnEditMode', function(self, editValue)
         -- print('SELECTION: OnEditMode', value)
         local db = EditModeModule.db.profile
@@ -333,7 +347,7 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
             else
                 self.parent:Show();
             end
-            self:SetFrameLevel(self.Prio or 1000)
+            -- self:SetFrameLevel(self.Prio or 1000)
 
             if self.ModuleRef then
                 --            
@@ -369,7 +383,7 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     end, self)
 
     EditModeModule:RegisterCallback('OnSelection', function(self, value)
-        self:SetFrameLevel(self.Prio or 1000)
+        -- self:SetFrameLevel(self.Prio or 1000)
         if value and value == self then
             DF:Debug(EditModeModule, 'SELECTION', value:GetName())
             self:ShowSelected()
@@ -533,6 +547,7 @@ function DFEditModeSystemSelectionBaseMixin:ShowHighlighted()
     self:SetNinesliceSelected(false);
     self.isSelected = false;
     self:UpdateLabelVisibility();
+    -- self:SetFrameStrata('MEDIUM')
     self:Show();
     if self.SelectionOptions then
         -- self:RefreshOptionScreen();
@@ -545,6 +560,7 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     self:SetNinesliceSelected(true);
     self.isSelected = true;
     self:UpdateLabelVisibility();
+    -- self:SetFrameStrata('HIGH')
     self:Show();
     if self.SelectionOptions then
         self:RefreshOptionScreen();
@@ -809,11 +825,106 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     editModeFrame:SetHeight(newH)
 
     self.Prio = 1000 + (data.prio or 0)
-    self:SetFrameLevel(self.Prio)
+    -- self:SetFrameLevel(self.Prio)
 end
 
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
     -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
     -- self.SelectionOptions
     self.SelectionOptions.DisplayFrame:CallRefresh()
+end
+
+----------
+
+DFEditModeSystemSelectionMouseOverCheckerMixin = {};
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()
+    -- print('~~DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()')
+    self.timeElapsed = 0
+    self.EditModeRef = DF:GetModule('Editmode');
+
+    local fontStr = self:GetParent():CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
+    fontStr:SetPoint('TOP', self:GetParent(), 'BOTTOM', 0, -5);
+    fontStr:SetText('')
+    self.FontStr = fontStr;
+
+    self:SetScript("OnKeyDown", function(_, key)
+        self:KeyPress(key);
+    end)
+    self:SetPropagateKeyboardInput(true)
+end
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:KeyPress(key)
+    -- print('KeyPress(key)', key)
+    if key == 'LALT' and self.ShouldCycle then
+        --
+        -- print('cycle')
+        self:CycleFrames()
+    end
+end
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:CycleFrames()
+    -- print('CycleFrames()')
+    -- local foci = GetMouseFoci()
+    -- for k, v in ipairs(foci) do
+    --     --
+    --     print(k, v:GetName())
+    --     if v.IsDFEditModeSelection then
+    --         print('lower', v:GetName())
+    --         v:Lower()
+    --         return;
+    --     end
+    -- end
+
+    -- return;
+
+    local nextFrame;
+    for k, v in ipairs(self.OverTable) do
+        if v == self.EditModeRef.SelectedFrame then
+            --   
+            nextFrame = self.OverTable[k + 1] or self.OverTable[1]
+        end
+        -- v:SetFrameLevel(999)
+        v:Lower()
+    end
+
+    if not nextFrame then return end -- nothing selected under cursor - skip
+    -- nextFrame:SetFrameLevel(1001)
+    nextFrame:Raise()
+end
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:OnUpdate(elapsed)
+    self.timeElapsed = self.timeElapsed + elapsed
+
+    if self.timeElapsed > 0.25 then
+        self.timeElapsed = 0
+        -- do something
+        -- print('OnUpdate')
+        self:UpdateMouseover()
+    end
+end
+local mouseOverCheckerTextFormat =
+    "(|cff8080ff%d|r) frames under cursor - press (|cff8080ffleft alt|r) to cycle through them"
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:UpdateMouseover()
+    local num = #self.EditModeRef.SelectionFrames;
+    local overTable = {}
+
+    for k, v in ipairs(self.EditModeRef.SelectionFrames) do
+        --
+        if v:IsMouseOver() then
+            -- print('~over: ', v:GetName())            
+            table.insert(overTable, v)
+        end
+    end
+
+    if #overTable < 2 then
+        self.ShouldCycle = false;
+        self.FontStr:SetText('')
+        return;
+    end
+
+    self.ShouldCycle = true;
+    self.FontStr:SetText(mouseOverCheckerTextFormat:format(#overTable))
+    self.OverTable = overTable;
 end
