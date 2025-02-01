@@ -299,11 +299,19 @@ end
 function DFSettingsCategoryElementMixin:OnEnter()
     -- print(self:GetName(), 'OnEnter')
     if ButtonStateBehaviorMixin.OnEnter(self) then self:UpdateState(); end
+
+    -- @TODO
+    if not self:IsEnabled() then
+        -- GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        -- GameTooltip_AddNormalLine(GameTooltip, self.ElementData.elementInfo.module);
+        -- GameTooltip:Show();
+    end
 end
 
 function DFSettingsCategoryElementMixin:OnLeave()
     -- print(self:GetName(), 'OnLeave')
     if ButtonStateBehaviorMixin.OnLeave(self) then self:UpdateState(); end
+    -- GameTooltip_Hide();
 end
 
 function DFSettingsCategoryElementMixin:IsEnabled()
