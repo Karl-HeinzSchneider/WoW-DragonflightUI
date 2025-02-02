@@ -52,6 +52,7 @@ XML\Castbar.xml
 XML\ConfigCategoryList.xml
 XML\DFSettingsCategory.xml
 XML\DFSettingsList.xml
+XML\DFSettingsList_Compat.xml
 XML\Config.xml
 XML\Editmode.xml
 XML\Profession.xml
