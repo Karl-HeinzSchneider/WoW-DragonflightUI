@@ -253,6 +253,16 @@ function DFSettingsListElementBaseMixin:OnLoad()
 
     self.Text:SetText('');
     self:SetBaseSmall(false);
+
+    if self.Init then
+        hooksecurefunc(self, 'Init', function()
+            --
+            -- print('init')
+            if not self.ElementData then return; end
+            self.NewFeature:SetShown(self.ElementData.args.new)
+            self.Blizzard:SetShown(self.ElementData.args.blizz)
+        end)
+    end
 end
 
 function DFSettingsListElementBaseMixin:SetBaseSmall(small)
