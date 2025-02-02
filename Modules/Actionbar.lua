@@ -1082,6 +1082,7 @@ local xpOptions = {
             name = L["XPOptionsStyle"],
             desc = L["XPOptionsStyleDesc"],
             order = 20,
+            editmode = true,
             isExpanded = true
         },
         width = {
@@ -1171,6 +1172,7 @@ local repOptions = {
             name = L["RepOptionsStyle"],
             desc = L["RepOptionsStyleDesc"],
             order = 20,
+            editmode = true,
             isExpanded = true
         },
         width = {
