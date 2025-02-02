@@ -424,7 +424,7 @@ function Module:UpdateMinimap(state)
             if not f.DarkModeLFGHooked then
                 f.DarkModeLFGHooked = true
 
-                hooksecurefunc(minimapModule, 'CreateQueueStatus', function()
+                hooksecurefunc(minimapModule, 'ChangeLFGEra', function()
                     --
                     local db = Module.db.profile
                     local state = db.general

@@ -1261,30 +1261,28 @@ function Module:ChangeLFG()
     elseif DF.Era then
         DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
             --
-            -- print('Blizzard_GroupFinder_VanillaStyle')
-            -- Module:CreateQueueStatus()
-
-            local btn = _G.LFGMinimapFrame
-            btn:SetParent(Minimap)
-            local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-            local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
-            LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
-            LFGMinimapFrameBorder:SetSize(50, 50)
-
-            -- DevTools_Dump(_G.LFGMinimapFrame:GetPoint(1))
-            lfg:HookEra()
-
-            local db = Module.db.profile
-            local state = db.lfg
-            lfg:UpdateState(state);
-
-            -- hooksecurefunc(btn, 'SetPoint', function()
-            --     print('SetPoint')
-            -- end)
+            Module:ChangeLFGEra();
         end)
 
     end
+end
+
+function Module:ChangeLFGEra()
+    local lfg = Module.LFG;
+
+    local btn = _G.LFGMinimapFrame
+    btn:SetParent(Minimap)
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
+
+    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
+    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
+    LFGMinimapFrameBorder:SetSize(50, 50)
+
+    lfg:HookEra()
+
+    local db = Module.db.profile
+    local state = db.lfg
+    lfg:UpdateState(state);
 end
 
 function Module.ChangeDifficulty()
