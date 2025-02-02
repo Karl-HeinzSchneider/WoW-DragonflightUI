@@ -624,8 +624,8 @@ function DFSettingsListButtonMixin:Init(node)
         self.Button:SetWidth(200);
         self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
     else
-        self.Button:SetWidth(200);
-        self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+        self.Button:SetWidth(183);
+        self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 40, 0);
     end
 
     self.Button:SetText(args.btnName);
