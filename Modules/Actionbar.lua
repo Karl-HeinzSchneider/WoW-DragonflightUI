@@ -1795,7 +1795,7 @@ function Module:SetupActionbarFrames()
                 if bar then
                     for k, v in ipairs(bar.buttonTable) do
                         --
-                        v:RegisterForClicks("AnyUp", "AnyDown")
+                        v:RegisterForClicks("AnyDown")
                     end
                 end
             end
@@ -1843,7 +1843,7 @@ function Module:SetupActionbarFrames()
             btn:Hide()
 
             if useKeydown then
-                btn:RegisterForClicks("AnyUp", "AnyDown")
+                btn:RegisterForClicks("AnyDown")
             else
                 btn:RegisterForClicks("AnyUp")
             end
