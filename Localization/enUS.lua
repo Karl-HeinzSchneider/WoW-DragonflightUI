@@ -341,6 +341,8 @@ L["TargetFrameBreakUpLargeNumbersDesc"] =
     "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
 L["TargetFrameNumericThreat"] = "Numeric Threat"
 L["TargetFrameNumericThreatDesc"] = "Enable numeric threat display"
+L["TargetFrameNumericThreatAnchor"] = "Numeric Threat Anchor"
+L["TargetFrameNumericThreatAnchorDesc"] = "Sets the numeric threat anchor(position)"
 L["TargetFrameThreatGlow"] = "Threat Glow"
 L["TargetFrameThreatGlowDesc"] = "Enable threat glow effect"
 L["TargetFrameHideNameBackground"] = "Hide Name Background"

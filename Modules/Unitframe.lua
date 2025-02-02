@@ -71,6 +71,7 @@ local defaults = {
             classicon = false,
             breakUpLargeNumbers = true,
             enableNumericThreat = true,
+            numericThreatAnchor = 'TOP',
             enableThreatGlow = true,
             comboPointsOnPlayerFrame = false,
             hideNameBackground = false,
@@ -485,15 +486,6 @@ local optionsTarget = {
             order = 8,
             editmode = true
         },
-        enableNumericThreat = {
-            type = 'toggle',
-            name = L["TargetFrameNumericThreat"],
-            desc = L["TargetFrameNumericThreatDesc"] .. getDefaultStr('enableNumericThreat', 'target'),
-            group = 'headerStyling',
-            order = 9,
-            disabled = not DF.Era,
-            editmode = true
-        },
         enableThreatGlow = {
             type = 'toggle',
             name = L["TargetFrameThreatGlow"],
@@ -523,6 +515,28 @@ local optionsTarget = {
         }
     }
 }
+
+if DF.Era then
+    -- numericThreatAnchor
+    optionsTarget.args['enableNumericThreat'] = {
+        type = 'toggle',
+        name = L["TargetFrameNumericThreat"],
+        desc = L["TargetFrameNumericThreatDesc"] .. getDefaultStr('enableNumericThreat', 'target'),
+        group = 'headerStyling',
+        order = 9,
+        disabled = not DF.Era,
+        editmode = true
+    }
+    optionsTarget.args['numericThreatAnchor'] = {
+        type = 'select',
+        name = L["TargetFrameNumericThreatAnchor"],
+        desc = L["TargetFrameNumericThreatAnchorDesc"] .. getDefaultStr('numericThreatAnchor', 'target'),
+        dropdownValues = DF.Settings.DropdownCrossAnchorTable,
+        order = 9.5,
+        group = 'headerStyling',
+        editmode = true
+    }
+end
 
 if true then
     local moreOptions = {
@@ -4582,6 +4596,7 @@ function Module.CreatThreatIndicator()
     local function UpdateIndicator()
         local db = Module.db.profile
         local enableNumeric = db.target.enableNumericThreat
+        local threatAnchor = db.target.numericThreatAnchor
         local enableGlow = db.target.enableThreatGlow
 
         if UnitExists('TARGET') and (enableNumeric or enableGlow) then
@@ -4614,6 +4629,19 @@ function Module.CreatThreatIndicator()
                 -- hide
             end
 
+            indi:ClearAllPoints()
+            if threatAnchor == 'TOP' then
+                indi:SetPoint('BOTTOM', TargetFrameTextureFrameName, 'TOP', 0, 2)
+            elseif threatAnchor == 'RIGHT' then
+                indi:SetPoint('LEFT', TargetFramePortrait, 'RIGHT', 5, 0)
+            elseif threatAnchor == 'BOTTOM' then
+                indi:SetPoint('TOP', TargetFrameManaBar, 'BOTTOM', 0, -2)
+            elseif threatAnchor == 'LEFT' then
+                indi:SetPoint('RIGHT', TargetFrameHealthBar, 'LEFT', -2, 0)
+            else
+                -- should not happen
+                indi:SetPoint('BOTTOM', TargetFrameTextureFrameName, 'TOP', 0, 2)
+            end
         else
             indi:Hide()
             -- disable glow
