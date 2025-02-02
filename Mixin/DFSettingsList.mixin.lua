@@ -1,3 +1,5 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
 DFSettingsListMixin = CreateFromMixins(CallbackRegistryMixin);
 DFSettingsListMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
@@ -78,7 +80,11 @@ function DFSettingsListMixin:OnLoad()
         elseif elementType == 'execute' then
             factory("DFSettingsListButton", Initializer);
         elseif elementType == 'select' then
-            factory("DFSettingsListDropdownContainer", Initializer);
+            if DF.Wrath and not DF.Cata then
+                factory("DFSettingsListDropdownContainer_Compat", Initializer);
+            else
+                factory("DFSettingsListDropdownContainer", Initializer);
+            end
         elseif elementType == 'editbox' then
             factory("DFSettingsListEditbox", Initializer);
         else

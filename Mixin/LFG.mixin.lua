@@ -478,6 +478,7 @@ function DragonflightUILFGButtonMixin:OnLoad()
     -- self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
     self.glowLocks = {};
     self.angerVal = 0;
+    self.LastUpdate = GetTime()
 
     -- self:HookScript('OnClick', GenerateClosure(self.OnClick, self)) 
 
