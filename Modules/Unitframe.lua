@@ -1364,12 +1364,13 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
     register('party', {order = 0, name = 'Party', descr = 'Partyss', isNew = false})
     register('pet', {order = 0, name = 'Pet', descr = 'Petss', isNew = false})
     register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
     register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
     register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = false})
+
+    if DF.Wrath then register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false}) end
 end
 
 function Module:RegisterOptionScreens()

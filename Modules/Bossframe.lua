@@ -185,6 +185,7 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
+    if not DF.Cata then return end
     register('boss', {order = 0, name = 'Boss', descr = 'Bossss', isNew = false})
 end
 
