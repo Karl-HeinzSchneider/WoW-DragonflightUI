@@ -1,7 +1,11 @@
 -- print('enUS')
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
+local L_EN = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
 -- local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "deDE") -- DEBUG
+
+-- @TODO
+-- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
+local L = {}
 
 -- modules - config.lua
 L["ModuleTooltipActionbar"] =
@@ -142,7 +146,7 @@ L["ExtraOptionsClassicLayoutDesc"] = ""
 L["XPOptionsName"] = "XP"
 L["XPOptionsDesc"] = "XP"
 
-L["XPOptionsStyle"] = "Style"
+L["XPOptionsStyle"] = L["ButtonTableStyle"]
 L["XPOptionsStyleDesc"] = ""
 
 L["XPOptionsWidth"] = "Width"
@@ -161,14 +165,14 @@ L["XPOptionsShowXPPercentDesc"] = ""
 L["RepOptionsName"] = "Rep"
 L["RepOptionsDesc"] = "Rep"
 
-L["RepOptionsStyle"] = "Style"
+L["RepOptionsStyle"] = L["ButtonTableStyle"]
 L["RepOptionsStyleDesc"] = ""
 
-L["RepOptionsWidth"] = "Width"
-L["RepOptionsWidthDesc"] = ""
+L["RepOptionsWidth"] = L["XPOptionsWidth"]
+L["RepOptionsWidthDesc"] = L["XPOptionsWidthDesc"]
 
-L["RepOptionsHeight"] = "Height"
-L["RepOptionsHeightDesc"] = ""
+L["RepOptionsHeight"] = L["XPOptionsHeight"]
+L["RepOptionsHeightDesc"] = L["XPOptionsHeightDesc"]
 
 L["RepOptionsAlwaysShowRepText"] = "Always show Rep text"
 L["RepOptionsAlwaysShowRepTextDesc"] = ""
@@ -177,7 +181,7 @@ L["RepOptionsAlwaysShowRepTextDesc"] = ""
 L["BagsOptionsName"] = "Bags"
 L["BagsOptionsDesc"] = "Bags"
 
-L["BagsOptionsStyle"] = "Style"
+L["BagsOptionsStyle"] = L["ButtonTableStyle"]
 L["BagsOptionsStyleDesc"] = ""
 
 L["BagsOptionsExpanded"] = "Expanded"
@@ -202,7 +206,7 @@ L["BagsOptionsOffsetYDesc"] = ""
 L["FPSOptionsName"] = "FPS"
 L["FPSOptionsDesc"] = "FPS"
 
-L["FPSOptionsStyle"] = "Style"
+L["FPSOptionsStyle"] = L["ButtonTableStyle"]
 L["FPSOptionsStyleDesc"] = ""
 
 L["FPSOptionsHideDefaultFPS"] = "Hide Default FPS"
@@ -219,7 +223,7 @@ L["FPSOptionsShowPingDesc"] = "Show Ping In MS"
 
 -- Buffs
 L["BuffsOptionsName"] = "Buffs"
-L["BuffsOptionsStyle"] = "Style"
+L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
 L["BuffsOptionsStyleDesc"] = ""
 
 L["BuffsOptionsExpanded"] = "Expanded"
@@ -232,12 +236,12 @@ L["BuffsOptionsUseStateHandlerDesc"] =
 -- Castbar
 L["CastbarTableActive"] = "Active"
 L["CastbarTableActivateDesc"] = ""
-L["CastbarTableStyle"] = "Style"
+L["CastbarTableStyle"] = L["ButtonTableStyle"]
 L["CastbarTableStyleDesc"] = ""
-L["CastbarTableWidth"] = "Width"
-L["CastbarTableWidthDesc"] = ""
-L["CastbarTableHeight"] = "Height"
-L["CastbarTableHeightDesc"] = ""
+L["CastbarTableWidth"] = L["XPOptionsWidth"]
+L["CastbarTableWidthDesc"] = L["XPOptionsWidthDesc"]
+L["CastbarTableHeight"] = L["XPOptionsHeight"]
+L["CastbarTableHeightDesc"] = L["XPOptionsHeightDesc"]
 L["CastbarTablePrecisionTimeLeft"] = "Precision (time left)"
 L["CastbarTablePrecisionTimeLeftDesc"] = ""
 L["CastbarTablePrecisionTimeMax"] = "Precision (time max)"
@@ -260,7 +264,7 @@ L["CastbarTableShowTicks"] = "Show Ticks"
 L["CastbarTableShowTicksDesc"] = ""
 L["CastbarTableAutoAdjust"] = "Auto Adjust"
 L["CastbarTableAutoAdjustDesc"] =
-    "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the FocusFrame"
+    "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the Target/FocusFrame"
 L["CastbarTableShowRank"] = "Show Rank"
 L["CastbarTableShowRankDesc"] = ""
 
@@ -270,7 +274,7 @@ L["ExtraOptionsPresetStyleDesc"] =
 
 -- Minimap
 L["MinimapName"] = "Minimap"
-L["MinimapStyle"] = "Style"
+L["MinimapStyle"] = L["ButtonTableStyle"]
 L["MinimapShowPing"] = "Show Ping"
 L["MinimapNotYetImplemented"] = "(NOT YET IMPLEMENTED)"
 L["MinimapShowPingInChat"] = "Show Ping in Chat"
@@ -312,7 +316,7 @@ L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for profess
 -- Unitframes
 -- Player
 L["PlayerFrameDesc"] = "Player frame settings"
-L["PlayerFrameStyle"] = "Style"
+L["PlayerFrameStyle"] = L["ButtonTableStyle"]
 L["PlayerFrameClassColor"] = "Class Color"
 L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar"
 L["PlayerFrameClassIcon"] = "Class Icon Portrait"
@@ -331,14 +335,13 @@ L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul 
 
 -- Target
 L["TargetFrameDesc"] = "Target frame settings"
-L["TargetFrameStyle"] = "Style"
-L["TargetFrameClassColor"] = "Class Color"
+L["TargetFrameStyle"] = L["ButtonTableStyle"]
+L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
 L["TargetFrameClassColorDesc"] = "Enable class colors for the health bar"
-L["TargetFrameClassIcon"] = "Class Icon Portrait"
-L["TargetFrameClassIconDesc"] = "Enable class icon as portrait (currently disabled)"
-L["TargetFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
-L["TargetFrameBreakUpLargeNumbersDesc"] =
-    "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
+L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
+L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
+L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["TargetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 L["TargetFrameNumericThreat"] = "Numeric Threat"
 L["TargetFrameNumericThreatDesc"] = "Enable numeric threat display"
 L["TargetFrameNumericThreatAnchor"] = "Numeric Threat Anchor"
@@ -352,12 +355,11 @@ L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player 
 
 -- Pet
 L["PetFrameDesc"] = "Pet frame settings"
-L["PetFrameStyle"] = "Style"
-L["PetFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
-L["PetFrameBreakUpLargeNumbersDesc"] =
-    "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
-L["PetFrameThreatGlow"] = "Threat Glow"
-L["PetFrameThreatGlowDesc"] = "Enable threat glow effect"
+L["PetFrameStyle"] = L["ButtonTableStyle"]
+L["PetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["PetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+L["PetFrameThreatGlow"] = L["TargetFrameThreatGlow"]
+L["PetFrameThreatGlowDesc"] = L["TargetFrameThreatGlowDesc"]
 L["PetFrameHideStatusbarText"] = "Hide Statusbar Text"
 L["PetFrameHideStatusbarTextDesc"] = "Hide the statusbar text"
 L["PetFrameHideIndicator"] = "Hide Hit Indicator"
@@ -365,23 +367,23 @@ L["PetFrameHideIndicatorDesc"] = "Hide the hit indicator"
 
 -- Focus
 L["FocusFrameDesc"] = "Focus frame settings"
-L["FocusFrameStyle"] = "Style"
-L["FocusFrameClassColor"] = "Class Color"
+L["FocusFrameStyle"] = L["ButtonTableStyle"]
+L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
 L["FocusFrameClassColorDesc"] = "Enable class colors for the healthbar"
-L["FocusFrameClassIcon"] = "Class Icon Portrait"
+L["FocusFrameClassIcon"] = L["PlayerFrameClassIcon"]
 L["FocusFrameClassIconDesc"] = "Enable class icon as a portrait for the focus frame"
-L["FocusFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
-L["FocusFrameBreakUpLargeNumbersDesc"] =
-    "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
-L["FocusFrameHideNameBackground"] = "Hide Name Background"
+L["FocusFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["FocusFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+L["FocusFrameHideNameBackground"] = L["TargetFrameHideNameBackground"]
 L["FocusFrameHideNameBackgroundDesc"] = "Hide the name background"
 
 -- party
 L["PartyFrameDesc"] = "Party frame settings"
-L["PartyFrameStyle"] = "Style"
-L["PartyFrameClassColor"] = "Class Color"
+L["PartyFrameStyle"] = L["ButtonTableStyle"]
+L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
 L["PartyFrameClassColorDesc"] = "Enable class colors for the healthbar"
-L["PartyFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
-L["PartyFrameBreakUpLargeNumbersDesc"] =
-    "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
+L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 
+-- see comment above
+for k, v in pairs(L) do L_EN[k] = v; end
