@@ -260,7 +260,7 @@ function DFSettingsListElementBaseMixin:OnLoad()
             -- print('init')
             if not self.ElementData then return; end
             self.NewFeature:SetShown(self.ElementData.args.new)
-            self.Blizzard:SetShown(self.ElementData.args.blizz)
+            self.Blizzard:SetShown(self.ElementData.args.blizzard)
         end)
     end
 end
@@ -271,11 +271,15 @@ function DFSettingsListElementBaseMixin:SetBaseSmall(small)
         self.Text:SetPoint('LEFT', 10, 0)
         self.Text:SetWidth(130);
         self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', 150, 0)
+        self.NewFeature:SetPoint('RIGHT', self.Text, 'LEFT', -20, 3)
+        self.Blizzard:SetPoint('RIGHT', self.Text, 'LEFT', -20, 3)
     else
         self.Text:ClearAllPoints()
         self.Text:SetPoint('LEFT', 37, 0)
         self.Text:SetWidth(180);
         self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', 226, 0)
+        self.NewFeature:SetPoint('RIGHT', self.Text, 'LEFT', -37, 3)
+        self.Blizzard:SetPoint('RIGHT', self.Text, 'LEFT', -37, 3)
     end
 end
 
