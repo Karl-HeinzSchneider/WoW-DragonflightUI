@@ -113,7 +113,7 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
     end
 
     -- default categorys
-    list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1}, nil, true)
+    list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1}, alphaSortComparator, true)
     list:RegisterCategory('actionbar', {name = 'Action Bar', descr = 'descr..', order = 2}, nil, true)
     list:RegisterCategory('castbar', {name = 'Cast Bar', descr = 'descr..', order = 3}, alphaSortComparator, true)
     list:RegisterCategory('misc', {name = 'Misc', descr = 'descr..', order = 4}, alphaSortComparator, true)

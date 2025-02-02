@@ -151,15 +151,6 @@ function Module:OnEnable()
 
     Module:ApplySettings()
 
-    DF.ConfigModule:RegisterSettingsData('modules', 'general', {
-        name = 'Modules',
-        sub = 'modules',
-        options = modulesOptions,
-        default = function()
-            setDefaultSubValues('modules')
-        end
-    })
-
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
         Module:ApplySettings()
@@ -180,6 +171,15 @@ function Module:RegisterSettings()
     register('whatsnew', {order = 4, name = [[What's New]], descr = 'Whatsnewss', isNew = false})
     register('modules', {order = 2, name = 'Modules', descr = 'Modulesss', isNew = false})
     register('info', {order = 1, name = 'Info', descr = 'Infoss', isNew = false})
+
+    DF.ConfigModule:RegisterSettingsData('modules', 'general', {
+        name = 'Modules',
+        sub = 'modules',
+        options = modulesOptions,
+        default = function()
+            setDefaultSubValues('modules')
+        end
+    })
 end
 
 function Module:ApplySettings()
