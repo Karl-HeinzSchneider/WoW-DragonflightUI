@@ -52,6 +52,7 @@ local defaults = {
             biggerHealthbar = false,
             hideRedStatus = false,
             hideIndicator = false,
+            hideSecondaryRes = false,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -315,6 +316,18 @@ local optionsPlayer = {
         }
     }
 }
+
+if DF.Cata then
+    optionsPlayer.args['hideSecondaryRes'] = {
+        type = 'toggle',
+        name = L["PlayerFrameHideSecondaryRes"],
+        desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
+        group = 'headerStyling',
+        order = 12,
+        new = true,
+        editmode = true
+    }
+end
 
 if true then
     local moreOptions = {
@@ -1532,6 +1545,7 @@ function Module:ApplySettings(sub)
         else
             PlayerHitIndicator:SetScale(1)
         end
+        Module:HideSecondaryRes(obj.hideSecondaryRes)
 
         PlayerFrame:UpdateStateHandler(obj)
     end
@@ -2205,6 +2219,48 @@ function Module.CreatePlayerFrameTextures()
         textureSmall:SetSize(23, 23)
         textureSmall:SetScale(1)
         frame.PlayerFrameDeco = textureSmall
+    end
+end
+
+function Module:HideSecondaryRes(hide)
+    if not Module.SecondaryResToHide then return end
+
+    local _, class = UnitClass('player');
+
+    if class == 'WARLOCK' then
+        _G['ShardBarFrame']:SetShown(not hide);
+    elseif class == 'DRUID' then
+        if hide then
+            _G['EclipseBarFrame']:Hide()
+        else
+            EclipseBar_UpdateShown(_G['EclipseBarFrame'])
+        end
+    elseif class == 'PALADIN' then
+        _G['PaladinPowerBar']:SetShown(not hide);
+    elseif class == 'DEATHKNIGHT' then
+        _G['RuneFrame']:SetShown(not hide);
+    end
+end
+
+function Module:HookSecondaryRes()
+    local _, class = UnitClass('player');
+
+    if class == 'WARLOCK' then
+        Module.SecondaryResToHide = _G['ShardBarFrame'];
+    elseif class == 'DRUID' then
+        Module.SecondaryResToHide = _G['EclipseBarFrame'];
+    elseif class == 'PALADIN' then
+        Module.SecondaryResToHide = _G['PaladinPowerBar'];
+    elseif class == 'DEATHKNIGHT' then
+        Module.SecondaryResToHide = _G['RuneFrame'];
+    end
+
+    if Module.SecondaryResToHide then
+        Module.SecondaryResToHide:HookScript('OnShow', function()
+            --
+            -- print('onshow')
+            if Module.db.profile.player.hideSecondaryRes then Module.SecondaryResToHide:Hide() end
+        end)
     end
 end
 
@@ -4641,6 +4697,7 @@ function Module.Wrath()
     Module.HookEnergyBar()
     Module.HookPlayerStatus()
     Module.HookPlayerArt()
+    Module:HookSecondaryRes()
     Module.HookDrag()
 
     -- Module.ApplyPortraitMask()

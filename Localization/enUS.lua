@@ -326,6 +326,8 @@ L["PlayerFrameHideRedStatus"] = "Hide In Combat Red Statusglow"
 L["PlayerFrameHideRedStatusDesc"] = "Hide the red status glow in combat"
 L["PlayerFrameHideHitIndicator"] = "Hide Hit Indicator"
 L["PlayerFrameHideHitIndicatorDesc"] = "Hide the hit indicator on the player frame"
+L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Ressource"
+L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul shards."
 
 -- Target
 L["TargetFrameDesc"] = "Target frame settings"
