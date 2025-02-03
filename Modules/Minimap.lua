@@ -1249,8 +1249,7 @@ function Module:ChangeLFG()
     lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
     Module.LFG = lfg
 
-    if DF.Cata then
-
+    if DF.Cata or DF.Wrath then
         MiniMapLFGFrame:ClearAllPoints()
         -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
         MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
