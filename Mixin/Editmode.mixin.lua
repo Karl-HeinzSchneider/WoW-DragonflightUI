@@ -89,19 +89,19 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
     self.AdvancedOptions = false;
     local advButton = self.AdvancedButton
     advButton:Show()
-    advButton:SetText('Advanced Options')
+    advButton:SetText(L["EditModeAdvancedOptions"])
     advButton:SetScript('OnClick', function(button, buttonName, down)
         --
         -- print('onclick')
         if self.AdvancedOptions then
             -- switch to basic options
-            advButton:SetText('Advanced Options')
+            advButton:SetText(L["EditModeAdvancedOptions"])
             self.DisplayFrame:Display(self.DataOptions, true)
             self:SetHeight(windowH);
             self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
         else
             -- switch to advanced options
-            advButton:SetText('Basic Options')
+            advButton:SetText(L["EditModeBasicOptions"])
             self.DisplayFrame:Display(self.DataAdvancedOptions, true)
             self:SetHeight(windowHAdv);
             self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + 24)
@@ -968,7 +968,7 @@ function DragonflightUIEditModeLayoutDropdownMixin:OnLoad()
 
     self.Button.Label:ClearAllPoints();
     self.Button.Label:SetPoint("BOTTOMLEFT", self.Button.Dropdown, "TOPLEFT", 0, 2);
-    self.Button.Label:SetText('Layout');
+    self.Button.Label:SetText(L["EditModeLayoutDropdown"]);
 
     -- self.Button.Dropdown:SetWidth(125)
     self.Button.Dropdown.Text:SetText('*profile*')

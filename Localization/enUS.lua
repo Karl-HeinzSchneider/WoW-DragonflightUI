@@ -39,6 +39,11 @@ L["ProfilesErrorNewProfile"] = "ERROR: New profile name cant be empty!"
 L["ProfilesDialogueDeleteProfile"] = "Delete profile \'%s\'?"
 L["ProfilesDialogueCopyProfile"] = "Copy profile \'%s\'?"
 
+-- Editmode
+L["EditModeLayoutDropdown"] = HUD_EDIT_MODE_LAYOUT or "Layout"
+L["EditModeBasicOptions"] = "Basic Options"
+L["EditModeAdvancedOptions"] = "Advanced Options"
+
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
 
