@@ -975,4 +975,15 @@ function DragonflightUIEditModeLayoutDropdownMixin:OnLoad()
 
     self.Button.IncrementButton:Hide()
     self.Button.DecrementButton:Hide()
+
+    local module = DF:GetModule('Profiles')
+    self.ProfileModule = module
+
+    self.Button.Dropdown:SetupMenu(module:GeneratorEditmodeLayout(true, function(name)
+        -- print('IsSelected', name)
+        return module:GetCurrentProfile() == name;
+    end, function(name)
+        -- print('SetSelected', name)
+        module:SetCurrentProfile(name)
+    end))
 end

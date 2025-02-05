@@ -44,6 +44,17 @@ L["EditModeLayoutDropdown"] = HUD_EDIT_MODE_LAYOUT or "Layout"
 L["EditModeBasicOptions"] = "Basic Options"
 L["EditModeAdvancedOptions"] = "Advanced Options"
 
+L["EditModeCopyLayout"] = HUD_EDIT_MODE_COPY_LAYOUT or "Copy Layout"
+L["EditModeRenameLayout"] = HUD_EDIT_MODE_RENAME_LAYOUT or "Change Name"
+L["EditModeRenameOrCopyLayout"] = HUD_EDIT_MODE_RENAME_OR_COPY_LAYOUT or "Rename/Copy Layout"
+L["EditModeDeleteLayout"] = HUD_EDIT_MODE_DELETE_LAYOUT or "Delete Layout"
+L["EditModeNewLayoutDisabled"] = HUD_EDIT_MODE_NEW_LAYOUT_DISABLED or "%s New Layout"
+L["EditModeNewLayout"] = HUD_EDIT_MODE_NEW_LAYOUT or "%s |cnPURE_GREEN_COLOR:New Layout|r"
+
+L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
+L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
+L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipboard |cffffd100(to share online)|r"
+
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
 

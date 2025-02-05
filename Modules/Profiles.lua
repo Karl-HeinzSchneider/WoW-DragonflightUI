@@ -331,32 +331,128 @@ function Module:GeneratorCurrentProfilesWithDefaults(withDefaults, IsSelected, S
     return generator;
 end
 
-function Module:GetProfilesWithDefaults()
-    local profiles = Module:GetProfiles()
+function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
+    local generator = function(dropdown, rootDescription)
+        -- print('generator')
+        local profiles = Module:GetProfiles()
 
-    local char = DF.db.keys.char
-    local class = DF.db.keys.class
-    local faction = DF.db.keys.faction
-    local realm = DF.db.keys.realm
+        rootDescription:SetTag('MENU_EDIT_MODE_MANAGER')
+        -- rootDescription:CreateTitle('TITLETEST')      
 
-    profiles["Default"] = "Default"
-    profiles[char] = char
-    profiles[class] = class
-    profiles[faction] = faction
-    profiles[realm] = realm
+        if withDefaults then
+            local radioDefault = rootDescription:CreateRadio('Default', IsSelected, SetSelected, 'Default');
+            local divOne = rootDescription:CreateDivider();
+        end
 
-    -- DevTools_Dump(DF.db.keys)
-    -- DevTools_Dump(profiles)
+        for k, v in pairs(profiles) do
+            if k ~= 'Default' then
+                --
+                local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, k);
 
-    return profiles
+                local copyButton = radio:CreateButton(L["EditModeCopyLayout"], function()
+                    -- self:ShowNewLayoutDialog(layoutInfo);
+                    print('copyss')
+                end);
+
+                radio:CreateButton(L["EditModeRenameLayout"], function()
+                    -- self:ShowRenameLayoutDialog(index, layoutInfo);
+                    print('renamess')
+                end);
+
+                radio:DeactivateSubmenu();
+
+                radio:AddInitializer(function(button, description, menu)
+                    local gearButton = MenuTemplates.AttachAutoHideGearButton(button);
+                    gearButton:SetPoint("RIGHT");
+                    gearButton:SetScript("OnClick", function()
+                        description:ForceOpenSubmenu();
+                    end);
+
+                    MenuUtil.HookTooltipScripts(gearButton, function(tooltip)
+                        GameTooltip_SetTitle(tooltip, L["EditModeRenameOrCopyLayout"]);
+                    end);
+
+                    local cancelButton = MenuTemplates.AttachAutoHideCancelButton(button);
+                    cancelButton:SetPoint("RIGHT", gearButton, "LEFT", -3, 0);
+                    cancelButton:SetScript("OnClick", function()
+                        -- self:ShowDeleteLayoutDialog(index, layoutInfo);
+                        menu:Close();
+                        print('deletess')
+                    end);
+
+                    MenuUtil.HookTooltipScripts(cancelButton, function(tooltip)
+                        GameTooltip_SetTitle(tooltip, L["EditModeDeleteLayout"]);
+                    end);
+                end);
+            end
+        end
+
+        if true then
+            local divTwo = rootDescription:CreateDivider();
+
+            local presets = {'Modern (preset)', 'Classic (preset)'}
+            for k, v in ipairs(presets) do
+                local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, k);
+                radio:SetEnabled(false)
+
+                local copyButton = radio:CreateButton(L["EditModeCopyLayout"], function()
+                    -- self:ShowNewLayoutDialog(layoutInfo);
+                    print('copyss')
+                end);
+
+                radio:DeactivateSubmenu();
+
+                radio:AddInitializer(function(button, description, menu)
+                    local gearButton = MenuTemplates.AttachAutoHideGearButton(button);
+                    gearButton:SetPoint("RIGHT");
+                    gearButton:SetScript("OnClick", function()
+                        -- self:ShowNewLayoutDialog(layoutInfo);
+                        menu:Close();
+                    end);
+                    gearButton:SetEnabled(false)
+
+                    MenuUtil.HookTooltipScripts(gearButton, function(tooltip)
+                        GameTooltip_SetTitle(tooltip, L["EditModeCopyLayout"]);
+                    end);
+                end);
+            end
+        end
+
+        rootDescription:CreateDivider();
+        -- new layout    
+        -- local disabled = GetDisableReason(disableOnMaxLayouts, not disableOnActiveChanges) ~= nil;
+        local disabled = false;
+        local text = self:GetNewLayoutText(disabled);
+        local newLayoutButton = rootDescription:CreateButton(text, function()
+            -- self:ShowNewLayoutDialog();
+            print('new layoutss')
+        end);
+        -- SetPresetEnabledState(newLayoutButton, disableOnMaxLayouts, not disableOnActiveChanges);
+
+        -- import layout
+        local importLayoutButton = rootDescription:CreateButton(L["EditModeImportLayout"], function()
+            -- self:ShowImportLayoutDialog();
+        end);
+        -- SetPresetEnabledState(importLayoutButton, disableOnMaxLayouts, disableOnActiveChanges);
+
+        -- share
+        local shareSubmenu = rootDescription:CreateButton(L["EditModeShareLayout"]);
+        shareSubmenu:CreateButton(L["EditModeCopyToClipboard"], function()
+            -- self:CopyActiveLayoutToClipboard();
+        end);
+    end
+
+    return generator;
 end
 
-function Module:GetProfilesWithEmpty()
-    local profiles = Module:GetProfiles()
-
-    profiles[' '] = ' '
-
-    return profiles
+function Module:GetNewLayoutText(disabled)
+    local tex = [[Interface\AddOns\DragonflightUI\Textures\Editmode\editmodeui]]
+    if disabled then
+        return L["EditModeNewLayoutDisabled"]:format(CreateTextureMarkup(tex, 32, 256, 14, 14, 0.03125, 0.53125,
+                                                                         0.425781, 0.488281, 0, 0));
+    end
+    return L["EditModeNewLayout"]:format(CreateTextureMarkup(tex, 32, 256, 14, 14, 0.03125, 0.53125, 0.496094, 0.558594,
+                                                             0, 0));
 end
 
 local frame = CreateFrame('FRAME')
