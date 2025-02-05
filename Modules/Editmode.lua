@@ -252,7 +252,7 @@ function Module:RegisterOptionScreens()
         default = function()
             setDefaultSubValues('general')
         end
-    })
+    }, true)
 
     Module.EditModeFrame:SetupAdvancedOptions({
         name = 'EditMode',
@@ -299,6 +299,7 @@ function Module:CreateGrid()
                                       'DragonflightUIEditModeFrameTemplate');
     editModeFrame:SetupGrid();
     editModeFrame:SetupMouseOverChecker();
+    if DF.Era or DF.Cata then editModeFrame:SetupLayoutDropdown(); end
     editModeFrame:Hide()
     -- editModeFrame.Grid:Hide()
     Module.IsEditMode = false;
