@@ -31,13 +31,17 @@ L["ProfilesNewProfile"] = "Create a new profile."
 L["ProfilesCopyFrom"] = "Copy the settings from one existing profile into the currently active profile."
 L["ProfilesOpenCopyDialogue"] = "Opens copy dialogue."
 L["ProfilesDeleteProfile"] = "Delete existing profile from the database."
+L["Profiles"] = "Add New Profile"
+
 L["ProfilesOpenDeleteDialogue"] = "Opens delete dialogue."
+
+L["ProfilesAddNewProfile"] = "Add New Profile"
 
 L["ProfilesChatNewProfile"] = "new profile: "
 L["ProfilesErrorNewProfile"] = "ERROR: New profile name cant be empty!"
 
 L["ProfilesDialogueDeleteProfile"] = "Delete profile \'%s\'?"
-L["ProfilesDialogueCopyProfile"] = "Copy profile \'%s\'?"
+L["ProfilesDialogueCopyProfile"] = "Add New Profile (copy from \'|cff8080ff%s|r\')"
 
 -- Editmode
 L["EditModeLayoutDropdown"] = HUD_EDIT_MODE_LAYOUT or "Layout"
@@ -54,6 +58,8 @@ L["EditModeNewLayout"] = HUD_EDIT_MODE_NEW_LAYOUT or "%s |cnPURE_GREEN_COLOR:New
 L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
 L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
 L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipboard |cffffd100(to share online)|r"
+
+L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
