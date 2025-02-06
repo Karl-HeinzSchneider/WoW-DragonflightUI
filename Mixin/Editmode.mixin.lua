@@ -30,7 +30,7 @@ function DragonflightUIEditModeFrameMixin:SetupMouseOverChecker()
 end
 
 function DragonflightUIEditModeFrameMixin:SetupLayoutDropdown()
-    print('~~~~SetupLayoutDropdown()')
+    -- print('~~~~SetupLayoutDropdown()')
     local dd = CreateFrame('Frame', 'DragonflightUIEditModeLayoutDropdown', self,
                            'DragonflightUIEditModeLayoutDropdownTemplate');
     -- grid:Hide()
@@ -988,7 +988,7 @@ function DragonflightUIEditModeLayoutDropdownMixin:OnLoad()
     end))
 
     hooksecurefunc(DF, 'RefreshConfig', function()
-        print('ssss')
+        -- print('ssss')
         self.Button.Dropdown.Text:SetText(module:GetCurrentProfile())
     end)
 end

@@ -341,49 +341,122 @@ function Module:SetupDialogFrames()
         hasEditBox = true
     }
 
-    StaticPopupDialogs['DragonflightUIExportProfile'] = {
-        text = 'Copy profile ..',
-        button1 = CLOSE,
-        OnShow = function(self, data)
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-            local active = Module:GetCurrentProfile()
+    do
+        StaticPopupDialogs['DragonflightUIExportProfile'] = {
+            text = 'Copy profile ..',
+            button1 = CLOSE,
+            OnShow = function(self, data)
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+                local active = Module:GetCurrentProfile()
 
-            self.text:SetText(string.format(L["EditModeExportProfile"], active))
+                self.text:SetText(string.format(L["EditModeExportProfile"], active))
 
-            local str = Module:GetSerializedString(active)
-            Module.ExportFrame.Editbox:SetText(str)
-        end,
-        OnAccept = function(self, data, data2)
-            --  
-        end
-        -- hasEditBox = true,
-        -- editBoxWidth = 200
-    }
+                local str = Module:GetSerializedString(active)
+                Module.ExportFrame.Editbox:SetText(str)
+            end,
+            OnAccept = function(self, data, data2)
+                --  
+            end
+            -- hasEditBox = true,
+            -- editBoxWidth = 200
+        }
 
-    local scrollBoxWidth = 370
-    local scrollBoxHeight = 120
+        local scrollBoxWidth = 370
+        local scrollBoxHeight = 120
 
-    local outerFrame = CreateFrame("Frame")
-    outerFrame:SetSize(scrollBoxWidth + 80, scrollBoxHeight + 20)
+        local outerFrame = CreateFrame("Frame")
+        outerFrame:SetSize(scrollBoxWidth + 80, scrollBoxHeight + 20)
 
-    local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame, "UIPanelScrollFrameTemplate")
-    scrollFrame:SetPoint("CENTER", -10, 0)
-    scrollFrame:SetSize(scrollBoxWidth, scrollBoxHeight)
+        local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame, "UIPanelScrollFrameTemplate")
+        scrollFrame:SetPoint("CENTER", -10, 0)
+        scrollFrame:SetSize(scrollBoxWidth, scrollBoxHeight)
 
-    local editbox = CreateFrame("EditBox", nil, scrollFrame, "InputBoxScriptTemplate")
-    editbox:SetMultiLine(true)
-    editbox:SetAutoFocus(false)
-    editbox:SetFontObject(ChatFontNormal)
-    editbox:SetWidth(scrollBoxWidth)
-    editbox:SetText("test\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\n")
-    editbox:SetCursorPosition(0)
-    ---@diagnostic disable-next-line: param-type-mismatch
-    scrollFrame:SetScrollChild(editbox)
-    outerFrame.Editbox = editbox
+        local editbox = CreateFrame("EditBox", nil, scrollFrame, "InputBoxScriptTemplate")
+        editbox:SetMultiLine(true)
+        editbox:SetAutoFocus(false)
+        editbox:SetFontObject(ChatFontNormal)
+        editbox:SetWidth(scrollBoxWidth)
+        editbox:SetText("test\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\n")
+        editbox:SetCursorPosition(0)
+        editbox:SetScript('OnEditFocusGained', function()
+            editbox:HighlightText()
+        end)
 
-    Module.ExportFrame = outerFrame
+        ---@diagnostic disable-next-line: param-type-mismatch
+        scrollFrame:SetScrollChild(editbox)
+        outerFrame.Editbox = editbox
 
-    LoadAddOn("LibDeflate")
+        Module.ExportFrame = outerFrame
+
+        LoadAddOn("LibDeflate")
+    end
+
+    do
+        StaticPopupDialogs['DragonflightUIImportProfile'] = {
+            text = 'Copy profile ..',
+            button1 = L["EditModeImportLayout"],
+            button2 = CANCEL,
+            OnShow = function(self, data)
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+                local active = Module:GetCurrentProfile()
+
+                self.text:SetText(string.format(L["EditModeImportProfile"], active))
+
+                local dialog = self;
+                local EditBoxOnTextChanged = function(self, data)
+                    if self:GetText() ~= '' then
+                        dialog.button1:Enable()
+                    else
+                        dialog.button1:Disable()
+                    end
+                end
+
+                Module.ImportFrame.Editbox:SetScript('OnTextChanged', EditBoxOnTextChanged)
+                Module.ImportFrame.Editbox:SetText('')
+                Module.ImportFrame.Editbox:SetFocus()
+            end,
+            OnAccept = function(self, data, data2)
+                --  
+                -- local str = Module:GetSerializedString(active)
+                -- Module.ImportFrame.Editbox:SetText(str)
+                local str = Module.ImportFrame.Editbox:GetText()
+                if str == '' or str == ' ' then return; end
+
+                local prof = Module:DeSerializeString(str)
+                Module:OverrideProfileWithTable(prof)
+            end
+            -- hasEditBox = true,
+            -- editBoxWidth = 200
+        }
+
+        local scrollBoxWidth = 370
+        local scrollBoxHeight = 120
+
+        local outerFrame = CreateFrame("Frame")
+        outerFrame:SetSize(scrollBoxWidth + 80, scrollBoxHeight + 20)
+
+        local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame, "UIPanelScrollFrameTemplate")
+        scrollFrame:SetPoint("CENTER", -10, 0)
+        scrollFrame:SetSize(scrollBoxWidth, scrollBoxHeight)
+
+        local editbox = CreateFrame("EditBox", nil, scrollFrame, "InputBoxScriptTemplate")
+        editbox:SetMultiLine(true)
+        editbox:SetAutoFocus(false)
+        editbox:SetFontObject(ChatFontNormal)
+        editbox:SetWidth(scrollBoxWidth)
+        -- editbox:SetText("test\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\n")
+        editbox:SetCursorPosition(0)
+
+        editbox:SetScript('OnEditFocusGained', function()
+            editbox:HighlightText()
+        end)
+
+        ---@diagnostic disable-next-line: param-type-mismatch
+        scrollFrame:SetScrollChild(editbox)
+        outerFrame.Editbox = editbox
+
+        Module.ImportFrame = outerFrame
+    end
 end
 
 function Module:ShowNewProfileDialog(copyFrom)
@@ -403,9 +476,39 @@ function Module:ShowDeleteProfileDialog(toDelete)
 end
 
 function Module:CopyActiveProfileToClipboard(profile)
-    print('Module:CopyActiveProfileToClipboard(profile)')
+    -- print('Module:CopyActiveProfileToClipboard(profile)')
     -- CopyToClipboard(':3')
     StaticPopup_Show('DragonflightUIExportProfile', nil, nil, nil, Module.ExportFrame)
+end
+
+function Module:ShowImportProfileDialog()
+    -- print('Module:ShowImportProfileDialog()')
+    -- CopyToClipboard(':3')
+    StaticPopup_Show('DragonflightUIImportProfile', nil, nil, nil, Module.ImportFrame)
+end
+
+-- Simple shallow copy for copying defaults
+local function copyTable(src, dest)
+    if type(dest) ~= "table" then dest = {} end
+    if type(src) == "table" then
+        for k, v in pairs(src) do
+            if type(v) == "table" then
+                -- try to index the key first so that the metatable creates the defaults, if set, and use that table
+                v = copyTable(v, dest[k])
+            end
+            dest[k] = v
+        end
+    end
+    return dest
+end
+
+function Module:OverrideProfileWithTable(t)
+    -- print('Module:OverrideProfileWithTable()')
+    -- CopyToClipboard(':3')
+
+    for name, d in pairs(t.namespaces) do copyTable(d, DF.db.children[name].profile) end
+
+    DF:RefreshConfig()
 end
 
 function Module:GetSerializedString(profile)
@@ -482,7 +585,7 @@ end
 
 function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
     local generator = function(dropdown, rootDescription)
-        print('generator')
+        -- print('generator')
         local profiles = Module:GetProfiles()
 
         rootDescription:SetTag('MENU_EDIT_MODE_MANAGER')
@@ -617,6 +720,7 @@ function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
         -- import layout
         local importLayoutButton = rootDescription:CreateButton(L["EditModeImportLayout"], function()
             -- self:ShowImportLayoutDialog();
+            self:ShowImportProfileDialog()
         end);
         -- SetPresetEnabledState(importLayoutButton, disableOnMaxLayouts, disableOnActiveChanges);
 
