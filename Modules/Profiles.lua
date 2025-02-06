@@ -90,6 +90,8 @@ function Module:OnEnable()
         Module.Era()
     end
 
+    Module:SetupDialogFrames()
+
     Module:ApplySettings()
     Module:RegisterOptionScreens()
 
@@ -115,60 +117,6 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    StaticPopupDialogs['DragonflightUINewProfile'] = {
-        text = 'Add New Profile',
-        button1 = ACCEPT,
-        button2 = CANCEL,
-        OnShow = function(self, data)
-            --
-        end,
-        OnAccept = function(self, data, data2)
-            --
-            local text = self.editBox:GetText()
-            print(L["ProfilesChatNewProfile"] .. text)
-            if text == '' or text == ' ' then
-                Module:Print(L["ProfilesErrorNewProfile"])
-            else
-                Module:SetCurrentProfile(text)
-            end
-        end,
-        hasEditBox = true
-    }
-
-    StaticPopupDialogs['DragonflightUIDeleteProfile'] = {
-        text = 'Delete profile ..',
-        button1 = ACCEPT,
-        button2 = CANCEL,
-        OnShow = function(self, data)
-            local toDelete = getOption({'toDelete'})
-
-            self.text:SetText(string.format(L["ProfilesDialogueDeleteProfile"], toDelete))
-        end,
-        OnAccept = function(self, data, data2)
-            --         
-            local toDelete = getOption({'toDelete'})
-
-            Module:DeleteProfile(toDelete)
-        end
-    }
-
-    StaticPopupDialogs['DragonflightUICopyProfile'] = {
-        text = 'Copy profile ..',
-        button1 = ACCEPT,
-        button2 = CANCEL,
-        OnShow = function(self, data)
-            local toCopy = getOption({'toCopy'})
-
-            self.text:SetText(string.format(L["ProfilesDialogueCopyProfile"], toCopy))
-        end,
-        OnAccept = function(self, data, data2)
-            --         
-            local toCopy = getOption({'toCopy'})
-
-            Module:CopyProfile(toCopy)
-        end
-    }
-
     local options = {
         name = 'Profiles',
         get = getOption,
@@ -201,30 +149,30 @@ function Module:RegisterOptionScreens()
                 end,
                 order = 21
             },
-            headerCopy = {type = 'header', name = 'Copy From Profile', order = 30},
-            toCopy = {
-                type = 'select',
-                name = 'Copy From',
-                desc = L["ProfilesCopyFrom"],
-                dropdownValuesFunc = Module:GeneratorCurrentProfilesWithDefaults(false, function(name)
-                    return getOption({'toCopy'}) == name;
-                end, function(name)
-                    setOption({'toCopy'}, name)
-                end),
-                order = 31
-            },
-            copyFromProfile = {
-                type = 'execute',
-                name = 'Copy To Current Profile',
-                btnName = 'Copy',
-                desc = L["ProfilesOpenCopyDialogue"],
-                func = function()
-                    -- print('func! *CopyFromProfile*')
-                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-                    StaticPopup_Show('DragonflightUICopyProfile')
-                end,
-                order = 32
-            },
+            -- headerCopy = {type = 'header', name = 'Copy From Profile', order = 30},
+            -- toCopy = {
+            --     type = 'select',
+            --     name = 'Copy From',
+            --     desc = L["ProfilesCopyFrom"],
+            --     dropdownValuesFunc = Module:GeneratorCurrentProfilesWithDefaults(false, function(name)
+            --         return getOption({'toCopy'}) == name;
+            --     end, function(name)
+            --         setOption({'toCopy'}, name)
+            --     end),
+            --     order = 31
+            -- },
+            -- copyFromProfile = {
+            --     type = 'execute',
+            --     name = 'Copy To Current Profile',
+            --     btnName = 'Copy',
+            --     desc = L["ProfilesOpenCopyDialogue"],
+            --     func = function()
+            --         -- print('func! *CopyFromProfile*')
+            --         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            --         StaticPopup_Show('DragonflightUICopyProfile')
+            --     end,
+            --     order = 32
+            -- },
             headerDelete = {type = 'header', name = 'Delete Profile', order = 40},
             toDelete = {
                 type = 'select',
@@ -300,6 +248,207 @@ function Module:GetProfiles()
     return profiles
 end
 
+function Module:SetupDialogFrames()
+    StaticPopupDialogs['DragonflightUINewProfile'] = {
+        text = L["ProfilesAddNewProfile"],
+        button1 = ACCEPT,
+        button2 = CANCEL,
+        OnShow = function(self, data)
+            --
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            self.button1:Disable()
+
+            local EditBoxOnTextChanged = function(self, data)
+                if self:GetText() ~= '' then
+                    self:GetParent().button1:Enable()
+                else
+                    self:GetParent().button1:Disable()
+                end
+            end
+
+            self.editBox:SetScript('OnTextChanged', EditBoxOnTextChanged)
+        end,
+        OnAccept = function(self, data, data2)
+            --
+            local text = self.editBox:GetText()
+            print(L["ProfilesChatNewProfile"] .. text)
+            if text == '' or text == ' ' then
+                Module:Print(L["ProfilesErrorNewProfile"])
+            else
+                Module:SetCurrentProfile(text)
+            end
+        end,
+        hasEditBox = true
+    }
+
+    StaticPopupDialogs['DragonflightUIDeleteProfile'] = {
+        text = 'Delete profile ..',
+        button1 = ACCEPT,
+        button2 = CANCEL,
+        OnShow = function(self, data)
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            local toDelete = getOption({'toDelete'})
+
+            self.text:SetText(string.format(L["ProfilesDialogueDeleteProfile"], toDelete))
+        end,
+        OnAccept = function(self, data, data2)
+            --         
+            local toDelete = getOption({'toDelete'})
+            DF:EnableProfileCallbacks(false)
+            Module:SetCurrentProfile('Default')
+            DF:EnableProfileCallbacks(true)
+            Module:DeleteProfile(toDelete)
+        end
+    }
+
+    StaticPopupDialogs['DragonflightUICopyProfile'] = {
+        text = 'Copy profile ..',
+        button1 = ACCEPT,
+        button2 = CANCEL,
+        OnShow = function(self, data)
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            local toCopy = getOption({'toCopy'})
+
+            self.text:SetText(string.format(L["ProfilesDialogueCopyProfile"], toCopy))
+
+            self.button1:Disable()
+            local EditBoxOnTextChanged = function(self, data)
+                if self:GetText() ~= '' then
+                    self:GetParent().button1:Enable()
+                else
+                    self:GetParent().button1:Disable()
+                end
+            end
+            self.editBox:SetScript('OnTextChanged', EditBoxOnTextChanged)
+        end,
+        OnAccept = function(self, data, data2)
+            --      
+            local text = self.editBox:GetText()
+            print(L["ProfilesChatNewProfile"] .. text)
+            if text == '' or text == ' ' then
+                Module:Print(L["ProfilesErrorNewProfile"])
+                return;
+            end
+
+            local toCopy = getOption({'toCopy'})
+
+            -- print('copy: OnAccept', toCopy)
+            DF:EnableProfileCallbacks(false)
+            Module:SetCurrentProfile(text)
+            DF:EnableProfileCallbacks(true)
+            Module:CopyProfile(toCopy)
+        end,
+        hasEditBox = true
+    }
+
+    StaticPopupDialogs['DragonflightUIExportProfile'] = {
+        text = 'Copy profile ..',
+        button1 = CLOSE,
+        OnShow = function(self, data)
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+            local active = Module:GetCurrentProfile()
+
+            self.text:SetText(string.format(L["EditModeExportProfile"], active))
+
+            local str = Module:GetSerializedString(active)
+            Module.ExportFrame.Editbox:SetText(str)
+        end,
+        OnAccept = function(self, data, data2)
+            --  
+        end
+        -- hasEditBox = true,
+        -- editBoxWidth = 200
+    }
+
+    local scrollBoxWidth = 370
+    local scrollBoxHeight = 120
+
+    local outerFrame = CreateFrame("Frame")
+    outerFrame:SetSize(scrollBoxWidth + 80, scrollBoxHeight + 20)
+
+    local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame, "UIPanelScrollFrameTemplate")
+    scrollFrame:SetPoint("CENTER", -10, 0)
+    scrollFrame:SetSize(scrollBoxWidth, scrollBoxHeight)
+
+    local editbox = CreateFrame("EditBox", nil, scrollFrame, "InputBoxScriptTemplate")
+    editbox:SetMultiLine(true)
+    editbox:SetAutoFocus(false)
+    editbox:SetFontObject(ChatFontNormal)
+    editbox:SetWidth(scrollBoxWidth)
+    editbox:SetText("test\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\ntest\n")
+    editbox:SetCursorPosition(0)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    scrollFrame:SetScrollChild(editbox)
+    outerFrame.Editbox = editbox
+
+    Module.ExportFrame = outerFrame
+
+    LoadAddOn("LibDeflate")
+end
+
+function Module:ShowNewProfileDialog(copyFrom)
+    if copyFrom then
+        setOption({'toCopy'}, copyFrom)
+        StaticPopup_Show('DragonflightUICopyProfile')
+    else
+        StaticPopup_Show('DragonflightUINewProfile')
+    end
+end
+
+function Module:ShowDeleteProfileDialog(toDelete)
+    if toDelete then
+        setOption({'toDelete'}, toDelete)
+        StaticPopup_Show('DragonflightUIDeleteProfile')
+    end
+end
+
+function Module:CopyActiveProfileToClipboard(profile)
+    print('Module:CopyActiveProfileToClipboard(profile)')
+    -- CopyToClipboard(':3')
+    StaticPopup_Show('DragonflightUIExportProfile', nil, nil, nil, Module.ExportFrame)
+end
+
+function Module:GetSerializedString(profile)
+    local fullProfile = {profile = DF.db.profile, namespaces = {}}
+
+    for name, ns in pairs(DF.db.children) do
+        --
+        fullProfile.namespaces[name] = ns.profile
+    end
+    -- DevTools_Dump(fullProfile)
+
+    local serial = DF:Serialize(fullProfile)
+    -- DevTools_Dump(serial)
+
+    local libDeflate = LibStub:GetLibrary("LibDeflate")
+    local cfg = {level = 9}
+    local compressed = libDeflate:CompressDeflate(serial, cfg)
+
+    -- DevTools_Dump(compressed)
+
+    local encoded = libDeflate:EncodeForPrint(compressed)
+    -- local encoded = libDeflate:EncodeForWoWAddonChannel(compressed)
+
+    -- local test = self:DeSerializeString(encoded)
+    -- DevTools_Dump(test)
+
+    return encoded
+end
+
+function Module:DeSerializeString(str)
+    local libDeflate = LibStub:GetLibrary("LibDeflate")
+
+    local decoded = libDeflate:DecodeForPrint(str)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local decompressed = libDeflate:DecompressDeflate(decoded)
+
+    local _, fullProfile = DF:Deserialize(decompressed)
+
+    -- DevTools_Dump(fullProfile)
+
+    return fullProfile
+end
+
 function Module:GeneratorCurrentProfilesWithDefaults(withDefaults, IsSelected, SetSelected)
     -- print('Module:GeneratorCurrentProfilesWithDefaults(dropdown, rootDescription)')
 
@@ -333,14 +482,50 @@ end
 
 function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
     local generator = function(dropdown, rootDescription)
-        -- print('generator')
+        print('generator')
         local profiles = Module:GetProfiles()
 
         rootDescription:SetTag('MENU_EDIT_MODE_MANAGER')
         -- rootDescription:CreateTitle('TITLETEST')      
 
         if withDefaults then
-            local radioDefault = rootDescription:CreateRadio('Default', IsSelected, SetSelected, 'Default');
+            local radio = rootDescription:CreateRadio('Default', IsSelected, SetSelected, 'Default');
+
+            local copyButton = radio:CreateButton(L["EditModeCopyLayout"], function()
+                self:ShowNewProfileDialog('Default')
+            end);
+
+            radio:CreateButton(L["EditModeRenameLayout"], function()
+                -- self:ShowRenameLayoutDialog(index, layoutInfo);
+                self:Print('Rename profile not yet implemented - coming soon!')
+            end);
+
+            radio:DeactivateSubmenu();
+
+            radio:AddInitializer(function(button, description, menu)
+                local gearButton = MenuTemplates.AttachAutoHideGearButton(button);
+                gearButton:SetPoint("RIGHT");
+                gearButton:SetScript("OnClick", function()
+                    description:ForceOpenSubmenu();
+                end);
+
+                MenuUtil.HookTooltipScripts(gearButton, function(tooltip)
+                    GameTooltip_SetTitle(tooltip, L["EditModeRenameOrCopyLayout"]);
+                end);
+
+                local cancelButton = MenuTemplates.AttachAutoHideCancelButton(button);
+                cancelButton:SetPoint("RIGHT", gearButton, "LEFT", -3, 0);
+                cancelButton:SetScript("OnClick", function()
+                    -- self:ShowDeleteLayoutDialog(index, layoutInfo);
+                    self:ShowDeleteProfileDialog(v)
+                    menu:Close();
+                end);
+
+                MenuUtil.HookTooltipScripts(cancelButton, function(tooltip)
+                    GameTooltip_SetTitle(tooltip, L["EditModeDeleteLayout"]);
+                end);
+            end);
+
             local divOne = rootDescription:CreateDivider();
         end
 
@@ -351,12 +536,12 @@ function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
 
                 local copyButton = radio:CreateButton(L["EditModeCopyLayout"], function()
                     -- self:ShowNewLayoutDialog(layoutInfo);
-                    print('copyss')
+                    self:ShowNewProfileDialog(v)
                 end);
 
                 radio:CreateButton(L["EditModeRenameLayout"], function()
                     -- self:ShowRenameLayoutDialog(index, layoutInfo);
-                    print('renamess')
+                    self:Print('Rename profile not yet implemented - coming soon!')
                 end);
 
                 radio:DeactivateSubmenu();
@@ -376,8 +561,8 @@ function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
                     cancelButton:SetPoint("RIGHT", gearButton, "LEFT", -3, 0);
                     cancelButton:SetScript("OnClick", function()
                         -- self:ShowDeleteLayoutDialog(index, layoutInfo);
+                        self:ShowDeleteProfileDialog(v)
                         menu:Close();
-                        print('deletess')
                     end);
 
                     MenuUtil.HookTooltipScripts(cancelButton, function(tooltip)
@@ -424,8 +609,8 @@ function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
         local disabled = false;
         local text = self:GetNewLayoutText(disabled);
         local newLayoutButton = rootDescription:CreateButton(text, function()
-            -- self:ShowNewLayoutDialog();
-            print('new layoutss')
+            -- self:ShowNewLayoutDialog();      
+            self:ShowNewProfileDialog()
         end);
         -- SetPresetEnabledState(newLayoutButton, disableOnMaxLayouts, not disableOnActiveChanges);
 
@@ -439,6 +624,7 @@ function Module:GeneratorEditmodeLayout(withDefaults, IsSelected, SetSelected)
         local shareSubmenu = rootDescription:CreateButton(L["EditModeShareLayout"]);
         shareSubmenu:CreateButton(L["EditModeCopyToClipboard"], function()
             -- self:CopyActiveLayoutToClipboard();
+            self:CopyActiveProfileToClipboard()
         end);
     end
 

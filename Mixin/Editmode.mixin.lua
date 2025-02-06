@@ -986,4 +986,9 @@ function DragonflightUIEditModeLayoutDropdownMixin:OnLoad()
         -- print('SetSelected', name)
         module:SetCurrentProfile(name)
     end))
+
+    hooksecurefunc(DF, 'RefreshConfig', function()
+        print('ssss')
+        self.Button.Dropdown.Text:SetText(module:GetCurrentProfile())
+    end)
 end
