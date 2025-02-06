@@ -29,6 +29,18 @@ function DragonflightUIEditModeFrameMixin:SetupMouseOverChecker()
     self.MouseOverChecker = over;
 end
 
+function DragonflightUIEditModeFrameMixin:SetupLayoutDropdown()
+    -- print('~~~~SetupLayoutDropdown()')
+    local dd = CreateFrame('Frame', 'DragonflightUIEditModeLayoutDropdown', self,
+                           'DragonflightUIEditModeLayoutDropdownTemplate');
+    -- grid:Hide()
+    -- dd:SetAllPoints();
+    dd:SetPoint('TOPLEFT', self, 'TOPLEFT', 32, -38)
+    dd:SetSize(155, 25)
+
+    self.LayoutDropdown = dd;
+end
+
 function DragonflightUIEditModeFrameMixin:OnDragStart()
     self:StartMoving()
 end
@@ -42,7 +54,9 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
 
     self:SetFrameLevel(69)
     self:SetFrameStrata('HIGH')
-    self:SetHeight(250 - 35);
+    local windowH = 250 - 35 + 20
+    local windowHAdv = 450
+    self:SetHeight(windowH);
 
     self.InstructionText:SetText('InstructionText')
     self.InstructionText:Hide()
@@ -75,21 +89,21 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
     self.AdvancedOptions = false;
     local advButton = self.AdvancedButton
     advButton:Show()
-    advButton:SetText('Advanced Options')
+    advButton:SetText(L["EditModeAdvancedOptions"])
     advButton:SetScript('OnClick', function(button, buttonName, down)
         --
         -- print('onclick')
         if self.AdvancedOptions then
             -- switch to basic options
-            advButton:SetText('Advanced Options')
+            advButton:SetText(L["EditModeAdvancedOptions"])
             self.DisplayFrame:Display(self.DataOptions, true)
-            self:SetHeight(250 - 35);
+            self:SetHeight(windowH);
             self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
         else
             -- switch to advanced options
-            advButton:SetText('Basic Options')
+            advButton:SetText(L["EditModeBasicOptions"])
             self.DisplayFrame:Display(self.DataAdvancedOptions, true)
-            self:SetHeight(450);
+            self:SetHeight(windowHAdv);
             self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + 24)
         end
         self.AdvancedOptions = not self.AdvancedOptions;
@@ -97,7 +111,7 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
     end)
 end
 
-function DragonflightUIEditModeFrameMixin:SetupOptions(data)
+function DragonflightUIEditModeFrameMixin:SetupOptions(data, main)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'DFSettingsList')
     displayFrame:Display(data, true)
     self.DisplayFrame = displayFrame
@@ -113,7 +127,11 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data)
 
     local scrollBox = displayFrame.ScrollBox
     scrollBox:ClearAllPoints()
-    scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+    if main then
+        scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50 - 20)
+    else
+        scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+    end
     scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
     displayFrame.Header.DefaultsButton:Hide()
@@ -928,4 +946,49 @@ function DFEditModeSystemSelectionMouseOverCheckerMixin:UpdateMouseover()
     self.ShouldCycle = true;
     self.FontStr:SetText(mouseOverCheckerTextFormat:format(#overTable))
     self.OverTable = overTable;
+end
+
+-- layout dropdown
+DragonflightUIEditModeLayoutDropdownMixin = {}
+
+function DragonflightUIEditModeLayoutDropdownMixin:OnLoad()
+    -- print('OnLoad()')
+
+    -- self:SetSize(100, 20)
+
+    self.Button:ClearAllPoints()
+    -- self.Button:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+    self.Button:SetPoint('TOPLEFT')
+    self.Button:SetPoint('BOTTOMRIGHT')
+    -- self.Button:SetEnabled(false)
+
+    self.Button.Dropdown:ClearAllPoints()
+    self.Button.Dropdown:SetPoint('TOPLEFT')
+    self.Button.Dropdown:SetPoint('BOTTOMRIGHT')
+
+    self.Button.Label:ClearAllPoints();
+    self.Button.Label:SetPoint("BOTTOMLEFT", self.Button.Dropdown, "TOPLEFT", 0, 2);
+    self.Button.Label:SetText(L["EditModeLayoutDropdown"]);
+
+    -- self.Button.Dropdown:SetWidth(125)
+    self.Button.Dropdown.Text:SetText('*profile*')
+
+    self.Button.IncrementButton:Hide()
+    self.Button.DecrementButton:Hide()
+
+    local module = DF:GetModule('Profiles')
+    self.ProfileModule = module
+
+    self.Button.Dropdown:SetupMenu(module:GeneratorEditmodeLayout(true, function(name)
+        -- print('IsSelected', name)
+        return module:GetCurrentProfile() == name;
+    end, function(name)
+        -- print('SetSelected', name)
+        module:SetCurrentProfile(name)
+    end))
+
+    hooksecurefunc(DF, 'RefreshConfig', function()
+        -- print('ssss')
+        self.Button.Dropdown.Text:SetText(module:GetCurrentProfile())
+    end)
 end

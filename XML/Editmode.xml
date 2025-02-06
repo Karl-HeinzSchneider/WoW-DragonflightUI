@@ -70,7 +70,7 @@
 			<Button parentKey="AdvancedButton" inherits="UIPanelButtonTemplate" hidden="true">
 				<Size x="155" y="25" />
 				<Anchors>
-					<Anchor point="TOPRIGHT" x="-25" y="-28" />
+					<Anchor point="TOPRIGHT" x="-32" y="-38" />
 				</Anchors>
 			</Button>
 		</Frames>
@@ -83,6 +83,31 @@
 			<!-- <OnMouseWheel method="OnMouseWheel" /> -->
 			<OnDragStart method="OnDragStart" />
 			<OnDragStop method="OnDragStop" />
+		</Scripts>
+	</Frame>
+	<Frame name="DragonflightUIEditModeLayoutDropdownTemplate" mixin="DragonflightUIEditModeLayoutDropdownMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="Button" inherits="DropdownWithSteppersTemplate" mixin="DropdownWithSteppersAndLabelMixin" virtual="true">
+				<Frames>
+					<DropdownButton parentKey="Dropdown" inherits="WowStyle2DropdownTemplate">
+						<Anchors>
+							<Anchor point="CENTER" />
+						</Anchors>
+					</DropdownButton>
+				</Frames>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Label" justifyH="LEFT" font="GameFontNormal">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.Dropdown" relativePoint="TOPLEFT" x="0" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
 	<Frame name="DragonflightUIEditModeSelectionOptionsTemplate" inherits="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeSelectionOptionsMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">

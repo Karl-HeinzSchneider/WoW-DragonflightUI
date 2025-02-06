@@ -1,6 +1,7 @@
 ---@class DragonflightUI : AceAddon-3.0, AceConsole-3.0, AceComm-3.0, AceHook-3.0
 ---@diagnostic disable-next-line: assign-type-mismatch
-local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceComm-3.0', 'AceHook-3.0')
+local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceComm-3.0', 'AceHook-3.0',
+                                            'AceSerializer-3.0')
 local db
 
 DF.InterfaceVersion = select(4, GetBuildInfo())
