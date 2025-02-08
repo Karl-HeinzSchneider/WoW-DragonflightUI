@@ -105,7 +105,7 @@ local defaults = {
             anchorFrame = 'TargetFrame',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = -35,
+            x = -35 + 27,
             y = -15
         },
         pet = {
@@ -665,6 +665,37 @@ local optionsTargetOfTarget = {
     args = {}
 }
 DF.Settings:AddPositionTable(Module, optionsTargetOfTarget, 'tot', 'TargetOfTarget', getDefaultStr, frameTable)
+local optionsTargetOfTargetEditmode = {
+    name = 'TargetOfTarget',
+    desc = 'Targetframedesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.tot
+                local defaultsTable = defaults.profile.tot
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
 
 local optionsPet = {
     name = 'Pet',
@@ -1629,6 +1660,8 @@ function Module:ApplySettings(sub)
         TargetFrameToT:ClearAllPoints()
         TargetFrameToT:SetPoint(obj.anchor, anchorframe, obj.anchorParent, obj.x, obj.y)
         TargetFrameToT:SetScale(obj.scale)
+
+        Module.PreviewTargetOfTarget:UpdateState(obj);
     end
 
     -- pet
@@ -1847,6 +1880,36 @@ function Module:AddEditMode()
             -- TargetFrame.unit = 'target';
             -- TargetFrame_Update(TargetFrame);
             TargetFrame:SetAlpha(1)
+        end
+    });
+
+    -- Target of target
+    local fakeTargetOfTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                           'DFEditModePreviewTargetOfTargetTemplate')
+    fakeTargetOfTarget:OnLoad()
+    Module.PreviewTargetOfTarget = fakeTargetOfTarget;
+
+    EditModeModule:AddEditModeToFrame(fakeTargetOfTarget)
+
+    fakeTargetOfTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'TargetOfTarget'
+    end)
+
+    fakeTargetOfTarget.DFEditModeSelection:RegisterOptions({
+        name = 'TargetOfTarget',
+        sub = 'tot',
+        advancedName = 'TargetOfTargetFrame',
+        options = optionsTargetOfTarget,
+        extra = optionsTargetOfTargetEditmode,
+        default = function()
+            setDefaultSubValues('tot')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --         
+        end,
+        hideFunction = function()
+            --
         end
     });
 
@@ -3267,7 +3330,8 @@ end
 function Module.ChangeToT()
     -- TargetFrameToTTextureFrame:Hide()
     TargetFrameToT:ClearAllPoints()
-    TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35, -10 - 5)
+    TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
+    TargetFrameToT:SetSize(93 + 27, 45)
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
     -- TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
