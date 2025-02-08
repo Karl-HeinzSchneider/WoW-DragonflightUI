@@ -38,6 +38,19 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        focusTarget = {
+            classcolor = false,
+            -- classicon = false,
+            -- breakUpLargeNumbers = true,   
+            -- hideNameBackground = false,
+            scale = 1.0,
+            override = false,
+            anchorFrame = 'FocusFrame',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -35 + 27,
+            y = -15
+        },
         player = {
             classcolor = false,
             classicon = false,
@@ -887,6 +900,47 @@ local optionsFocusEditmode = {
     }
 }
 
+local optionsFocusTarget = {
+    name = 'FocusTarget',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, optionsFocusTarget, 'focusTarget', 'FocusTarget', getDefaultStr, frameTable)
+local optionsFocusTargetEditmode = {
+    name = 'FocusTarget',
+    desc = 'Targetframedesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.focusTarget
+                local defaultsTable = defaults.profile.focusTarget
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
 local optionsParty = {
     name = 'Party',
     desc = L["PartyFrameDesc"],
@@ -1521,17 +1575,19 @@ function Module:RefreshOptionScreens()
     refreshCat('Player')
     refreshCat('Raid')
     refreshCat('Target')
+    refreshCat('TargetOfTarget')
 
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
     -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
+    Module.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     if DF.Wrath then
         --  FocusFrame.DFEditModeSelection:RefreshOptionScreen();
         Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
+        Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
-
 end
 
 function Module:SaveLocalSettings()
@@ -1724,6 +1780,18 @@ function Module:ApplySettings(sub)
             FocusFrame:UpdateStateHandler(obj)
             Module.PreviewFocus:UpdateState(obj);
         end
+
+        -- focus target
+        do
+            local obj = db.focusTarget
+
+            local anchorframe = _G[obj.anchorFrame]
+            FocusFrameToT:ClearAllPoints()
+            FocusFrameToT:SetPoint(obj.anchor, anchorframe, obj.anchorParent, obj.x, obj.y)
+            FocusFrameToT:SetScale(obj.scale)
+
+            Module.PreviewFocusTarget:UpdateState(obj);
+        end
     end
 end
 
@@ -1887,6 +1955,7 @@ function Module:AddEditMode()
     local fakeTargetOfTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
                                            'DFEditModePreviewTargetOfTargetTemplate')
     fakeTargetOfTarget:OnLoad()
+    fakeTargetOfTarget:SetParent(fakeTarget)
     Module.PreviewTargetOfTarget = fakeTargetOfTarget;
 
     EditModeModule:AddEditModeToFrame(fakeTargetOfTarget)
@@ -2088,6 +2157,37 @@ function Module:AddEditMode()
                 -- FocusFrame.unit = 'focus';
                 -- TargetFrame_Update(FocusFrame);
                 FocusFrame:SetAlpha(1)
+            end
+        });
+
+        -- focus target
+        local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                            'DFEditModePreviewTargetOfTargetTemplate')
+        fakeFocusTarget:OnLoad()
+        fakeFocusTarget:SetParent(fakeFocus)
+        Module.PreviewFocusTarget = fakeFocusTarget;
+
+        EditModeModule:AddEditModeToFrame(fakeFocusTarget)
+
+        fakeFocusTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'FocusTarget'
+        end)
+
+        fakeFocusTarget.DFEditModeSelection:RegisterOptions({
+            name = 'FocusTarget',
+            sub = 'focusTarget',
+            advancedName = 'FocusTargetFrame',
+            options = optionsFocusTarget,
+            extra = optionsFocusTargetEditmode,
+            default = function()
+                setDefaultSubValues('focusTarget')
+            end,
+            moduleRef = self,
+            showFunction = function()
+                --         
+            end,
+            hideFunction = function()
+                --
             end
         });
     end
@@ -3681,7 +3781,8 @@ end
 
 function Module.ChangeFocusToT()
     FocusFrameToT:ClearAllPoints()
-    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35, -10 - 5)
+    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
+    FocusFrameToT:SetSize(93 + 27, 45)
 
     FocusFrameToTTextureFrameTexture:SetTexture('')
 
