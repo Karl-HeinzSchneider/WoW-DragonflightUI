@@ -381,7 +381,9 @@ L["TargetFrameThreatGlowDesc"] = "Enable threat glow effect"
 L["TargetFrameHideNameBackground"] = "Hide Name Background"
 L["TargetFrameHideNameBackgroundDesc"] = "Hide the background of the target's name"
 L["TargetFrameComboPointsOnPlayerFrame"] = "Combo Points on PlayerFrame"
-L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player frame"
+L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player frame."
+L["TargetFrameHideComboPoints"] = "Hide Combo Points"
+L["TargetFrameHideComboPointsDesc"] = "Hides the combo points frame."
 
 -- Pet
 L["PetFrameDesc"] = "Pet frame settings"

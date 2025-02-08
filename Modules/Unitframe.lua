@@ -87,6 +87,7 @@ local defaults = {
             numericThreatAnchor = 'TOP',
             enableThreatGlow = true,
             comboPointsOnPlayerFrame = false,
+            hideComboPoints = false,
             hideNameBackground = false,
             scale = 1.0,
             override = false,
@@ -536,6 +537,15 @@ local optionsTarget = {
             desc = L["TargetFrameComboPointsOnPlayerFrameDesc"] .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
             group = 'headerStyling',
             order = 12,
+            new = true,
+            editmode = true
+        },
+        hideComboPoints = {
+            type = 'toggle',
+            name = L["TargetFrameHideComboPoints"],
+            desc = L["TargetFrameHideComboPointsDesc"] .. getDefaultStr('hideComboPoints', 'target'),
+            group = 'headerStyling',
+            order = 12.5,
             new = true,
             editmode = true
         }
@@ -1701,7 +1711,7 @@ function Module:ApplySettings(sub)
         Module.ReApplyToT()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
-        Module.UpdateComboFrameState(obj.comboPointsOnPlayerFrame)
+        Module.UpdateComboFrameState(obj)
         TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
         UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
@@ -3353,10 +3363,10 @@ function Module.ChangeTargetComboFrame()
     end
 end
 
-function Module.UpdateComboFrameState(onPlayer)
+function Module.UpdateComboFrameState(state)
     local c = ComboFrame
 
-    if onPlayer then
+    if state.comboPointsOnPlayerFrame then
         c:SetParent(PlayerFrame)
         c:SetSize(116, 20)
         c:ClearAllPoints()
@@ -3396,6 +3406,11 @@ function Module.UpdateComboFrameState(onPlayer)
 
             point:SetScale(scaling)
         end
+    end
+
+    if state.hideComboPoints then
+        c:ClearAllPoints()
+        c:SetPoint('TOP', UIParent, 'TOP', 0, 50)
     end
 end
 
