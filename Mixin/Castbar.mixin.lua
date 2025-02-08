@@ -784,7 +784,9 @@ end
 function DragonFlightUICastbarMixin:Update()
     local state = self.state
 
-    self:SetScale(state.scale)
+    -- self:SetScale(state.scale)
+    self:SetIgnoreParentScale(true) -- TODO
+    self:SetScale(UIParent:GetScale() * state.scale) -- TODO
     self:SetSize(state.sizeX, state.sizeY)
 
     local parent = _G[state.anchorFrame]
