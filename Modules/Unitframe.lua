@@ -2838,6 +2838,126 @@ end
 -- ChangePlayerframe()
 -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
+function Module:AddAlternatePowerBar()
+    local localizedClass, englishClass, classIndex = UnitClass('player');
+    if not englishClass == 'DRUID' then return; end
+
+    local bar = CreateFrame('StatusBar', 'DragonflightUIAlternatePowerBar', PlayerFrame, 'TextStatusBar');
+    bar:SetSize(78, 12);
+    bar:SetPoint('BOTTOMLEFT', 114 + 6, 23 - 1);
+    bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar');
+    bar:SetStatusBarColor(0, 0, 1.0);
+
+    local bg = bar:CreateTexture('DragonflightUIAlternatePowerBarBackground', 'BACKGROUND');
+    bg:SetSize(78, 12);
+    bg:SetPoint('TOPLEFT', 0, 0);
+    bg:SetColorTexture(0, 0, 0, 0.5);
+
+    local border = bar:CreateTexture('DragonflightUIAlternatePowerBarBorder', 'OVERLAY');
+    border:SetSize(97, 16);
+    border:SetPoint('TOPLEFT', -10, 0);
+    border:SetTexture('Interface\\CharacterFrame\\UI-CharacterFrame-GroupIndicator');
+    border:SetTexCoord(0.0234375, 0.6875, 1.0, 0);
+
+    local text = bar:CreateFontString('DragonflightUIAlternatePowerBarText', 'OVERLAY', 'TextStatusBarText');
+    text:SetPoint('CENTER', 0, 0);
+    bar.TextString = text
+
+    local textLeft = bar:CreateFontString('DragonflightUIAlternatePowerBarTextLeft', 'OVERLAY', 'TextStatusBarText');
+    textLeft:SetPoint('LEFT', 0, 0);
+    bar.LeftText = textLeft
+
+    local textRight = bar:CreateFontString('DragonflightUIAlternatePowerBarText', 'OVERLAY', 'TextStatusBarText');
+    textRight:SetPoint('RIGHT', 0, 0);
+    bar.RightText = textRight
+
+    --
+    local ADDITIONAL_POWER_BAR_NAME = "MANA";
+    local ADDITIONAL_POWER_BAR_INDEX = 0;
+
+    local function AlternatePowerBar_Initialize(self)
+        if (not self.powerName) then
+            self.powerName = ADDITIONAL_POWER_BAR_NAME;
+            self.powerIndex = ADDITIONAL_POWER_BAR_INDEX;
+        end
+
+        self:RegisterEvent("UNIT_POWER_UPDATE"); -- "UNIT_"..self.powerName
+        self:RegisterEvent("UNIT_MAXPOWER"); -- "UNIT_MAX"..self.powerName
+        self:RegisterEvent("PLAYER_ENTERING_WORLD");
+        self:RegisterEvent("UNIT_DISPLAYPOWER");
+
+        SetTextStatusBarText(self, _G[self:GetName() .. "Text"])
+
+        local info = PowerBarColor[self.powerName];
+        self:SetStatusBarColor(info.r, info.g, info.b);
+    end
+
+    local function AlternatePowerBar_OnLoad(self)
+        self.textLockable = 1;
+        self.cvar = "StatusText"; -- DF
+        self.cvarLabel = "STATUS_TEXT_PLAYER";
+        self.capNumericDisplay = true -- DF
+        AlternatePowerBar_Initialize(self);
+        TextStatusBar_Initialize(self);
+    end
+
+    local function AlternatePowerBar_UpdateValue(self)
+        local currmana = UnitPower(self:GetParent().unit, self.powerIndex);
+        self:SetValue(currmana);
+        self.value = currmana
+    end
+
+    local function AlternatePowerBar_UpdateMaxValues(self)
+        local maxmana = UnitPowerMax(self:GetParent().unit, self.powerIndex);
+        self:SetMinMaxValues(0, maxmana);
+    end
+
+    local function AlternatePowerBar_UpdatePowerType(self)
+        if ((UnitPowerType(self:GetParent().unit) ~= self.powerIndex) and
+            (UnitPowerMax(self:GetParent().unit, self.powerIndex) ~= 0)) then
+            self.pauseUpdates = false;
+            self:Show();
+        else
+            self.pauseUpdates = true;
+            self:Hide();
+        end
+    end
+
+    local function AlternatePowerBar_OnEvent(self, event, arg1)
+        local parent = self:GetParent();
+        if (event == "UNIT_DISPLAYPOWER") then
+            AlternatePowerBar_UpdatePowerType(self);
+        elseif (event == "PLAYER_ENTERING_WORLD") then
+            AlternatePowerBar_UpdateMaxValues(self);
+            AlternatePowerBar_UpdateValue(self);
+            AlternatePowerBar_UpdatePowerType(self);
+        elseif ((event == "UNIT_MAXPOWER")) then
+            if arg1 == parent.unit then AlternatePowerBar_UpdateMaxValues(self); end
+        elseif (self:IsShown()) then
+            if ((event == "UNIT_MANA") and (arg1 == parent.unit)) then AlternatePowerBar_UpdateValue(self); end
+        end
+    end
+
+    local function AlternatePowerBar_OnUpdate(self, elapsed)
+        AlternatePowerBar_UpdateValue(self);
+    end
+
+    -- 
+    AlternatePowerBar_OnLoad(bar)
+    TextStatusBar_Initialize(bar)
+
+    bar:SetScript('OnEvent', function(self, event, ...)
+        -- 
+        AlternatePowerBar_OnEvent(self, event, ...);
+        TextStatusBar_OnEvent(self, event, ...);
+    end)
+    bar:SetScript('OnUpdate', function(self, elapsed)
+        -- 
+        AlternatePowerBar_OnUpdate(self, elapsed);
+    end)
+    -- bar:SetScript('OnMouseUp', function() end)
+end
+
 function Module.SetPlayerBiggerHealthbar(bigger)
     local border = frame.PlayerFrameBorder
     local background = frame.PlayerFrameBackground
@@ -4981,4 +5101,5 @@ function Module.Era()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
     Module.ChangePetFrame()
+    Module:AddAlternatePowerBar()
 end
