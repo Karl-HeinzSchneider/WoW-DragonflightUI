@@ -147,6 +147,8 @@
 	</Frame>
 	<Frame name="DFEditModePreviewTargetTemplate" mixin="DragonflightUIEditModePreviewTargetMixin" virtual="true" hidden="true">
 	</Frame>
+	<Frame name="DFEditModePreviewTargetOfTargetTemplate" mixin="DragonflightUIEditModePreviewTargetOfTargetMixin" virtual="true" hidden="true">
+	</Frame>
 	<Frame name="DFEditModePreviewPartyFrameTemplate" mixin="DragonflightUIEditModePreviewPartyFrameMixin" virtual="true" hidden="true">
 		<Scripts>
 			<OnUpdate method="OnUpdate" />

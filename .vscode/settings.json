@@ -467,7 +467,8 @@
         "need-check-nil",
         "undefined-field",
         "inject-field",
-        "undefined-global"
+        "undefined-global",
+        "param-type-mismatch"
     ],
     "markdown.occurrencesHighlight.enabled": true
 }

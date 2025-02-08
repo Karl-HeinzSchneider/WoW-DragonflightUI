@@ -39,7 +39,9 @@ local defaults = {
             PlayerFrame = true,
             PetFrame = true,
             TargetFrame = true,
+            TargetOfTargetFrame = true,
             FocusFrame = true,
+            FocusTargetFrame = true,
             PartyFrame = true,
             RaidFrame = true
         }
@@ -170,8 +172,11 @@ if true then
     AddTableToCategory(combatFrames, 'headerCombat');
 
     -- frames
-    local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'PartyFrame', 'RaidFrame'}
-    if DF.Wrath then table.insert(framesFrames, 'FocusFrame') end
+    local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame', 'PartyFrame', 'RaidFrame'}
+    if DF.Wrath then
+        table.insert(framesFrames, 'FocusFrame')
+        table.insert(framesFrames, 'FocusTargetFrame')
+    end
     AddTableToCategory(framesFrames, 'headerFrames')
 
     -- misc
