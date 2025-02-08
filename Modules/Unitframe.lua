@@ -95,6 +95,19 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        tot = {
+            classcolor = false,
+            -- classicon = false,
+            -- breakUpLargeNumbers = true,   
+            -- hideNameBackground = false,
+            scale = 1.0,
+            override = false,
+            anchorFrame = 'TargetFrame',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -35,
+            y = -15
+        },
         pet = {
             breakUpLargeNumbers = true,
             enableThreatGlow = true,
@@ -642,6 +655,16 @@ local optionsTargetEditmode = {
         }
     }
 }
+
+local optionsTargetOfTarget = {
+    name = 'TargetOfTarget',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, optionsTargetOfTarget, 'tot', 'TargetOfTarget', getDefaultStr, frameTable)
 
 local optionsPet = {
     name = 'Pet',
@@ -1369,8 +1392,12 @@ function Module:RegisterSettings()
     register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
     register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
     register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = false})
+    register('targetoftarget', {order = 0, name = 'TargetOfTarget', descr = 'Targetss', isNew = true})
 
-    if DF.Wrath then register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false}) end
+    if DF.Wrath then
+        register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
+        register('focustarget', {order = 0, name = 'FocusTarget', descr = 'Focusss', isNew = true})
+    end
 end
 
 function Module:RegisterOptionScreens()
@@ -1435,6 +1462,15 @@ function Module:RegisterOptionScreens()
         options = optionsTarget,
         default = function()
             setDefaultSubValues('target')
+        end
+    })
+
+    DF.ConfigModule:RegisterSettingsData('targetoftarget', 'unitframes', {
+        name = 'TargetOfTarget',
+        sub = 'tot',
+        options = optionsTargetOfTarget,
+        default = function()
+            setDefaultSubValues('tot')
         end
     })
 end
@@ -1583,6 +1619,16 @@ function Module:ApplySettings(sub)
         UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
         Module.PreviewTarget:UpdateState(obj);
+    end
+
+    -- target of target
+    do
+        local obj = db.tot
+
+        local anchorframe = _G[obj.anchorFrame]
+        TargetFrameToT:ClearAllPoints()
+        TargetFrameToT:SetPoint(obj.anchor, anchorframe, obj.anchorParent, obj.x, obj.y)
+        TargetFrameToT:SetScale(obj.scale)
     end
 
     -- pet
