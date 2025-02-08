@@ -817,4 +817,8 @@ function Module.Era()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    DF.Compatibility:FuncOrWaitframe('Ranker', function()
+        DF.Compatibility:ClassicRanker()
+    end)
 end
