@@ -7,9 +7,8 @@ function DFProfessionMixin:OnLoad()
     self:SetupFavoriteDatabase()
 
     self.minimized = false
-    self.anchored = false
-    self.currentTradeSkillName = ''
-    self.currentSkillID = nil
+    self.SelectedProfession = ''
+    self.SelectedSkillID = ''
 
     self:SetupFrameStyle()
     self:SetupSchematics()
@@ -47,7 +46,16 @@ end
 function DFProfessionMixin:OnHide()
 end
 
-function DFProfessionMixin:OnEvent()
+function DFProfessionMixin:OnEvent(event, arg1, ...)
+    print('~~', event, arg1 and arg1 or '')
+    if event == 'TRADE_SKILL_SHOW' then
+        self:Show()
+        self:Refresh(true, true)
+    elseif event == 'TRADE_SKILL_CLOSE' then
+        self:Hide()
+    elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
+        if self:IsShown() then self:Refresh(false, true) end
+    end
 end
 
 local frameWidth = 942 - 164
@@ -392,6 +400,161 @@ function DFProfessionMixin:SetupFavoriteDatabase()
     self.db = DF.db:RegisterNamespace('RecipeFavorite', {profile = {favorite = {}}})
 end
 
--- function DFProfessionMixin:OnEvent()
+function DFProfessionMixin:Refresh(force, isTradeskill)
+    print('DFProfessionMixin:Refresh(force)', force, isTradeskill and 'Tradeskill' or 'Craft')
+    -- self:SetProfessionData(isTradeskill)
+    -- self:UpdateHeader()
+    -- self:UpdateRecipe()
+    -- self:CheckFilter()
+end
+
+function DFProfessionMixin:SetProfessionData(isTradeskill)
+    print('DFProfessionMixin:SetProfessionData()', isTradeskill and 'Tradeskill' or 'Craft')
+
+end
+
+--[[ First Aid 	129										
+Blacksmithing	164	
+Leatherworking	165	
+Alchemy	171	
+Herbalism	182
+Cooking	185	
+Mining	186
+Tailoring	197	
+Engineering	202	
+Enchanting	333	
+Fishing	356
+Skinning	393	
+Jewelcrafting 	755
+Inscription 	773	
+Archeology 	794
+ ]]
+
+local professionDataTable = {}
+do
+    professionDataTable[129] = {tex = 'professionbackgroundart', bar = 'professionsfxalchemy', icon = 135966} -- first aid
+    professionDataTable[164] = {
+        tex = 'ProfessionBackgroundArtBlacksmithing',
+        bar = 'professionsfxblacksmithing',
+        icon = 136241
+    }
+    professionDataTable[165] = {
+        tex = 'ProfessionBackgroundArtLeatherworking',
+        bar = 'professionsfxleatherworking',
+        icon = 133611
+    }
+    professionDataTable[171] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136240}
+    professionDataTable[182] = {tex = 'ProfessionBackgroundArtHerbalism', bar = '', icon = 136246} -- herb
+    professionDataTable[185] = {tex = 'ProfessionBackgroundArtCooking', bar = 'professionsfxcooking', icon = 133971}
+    professionDataTable[186] = {tex = 'ProfessionBackgroundArtMining', bar = 'professionsfxmining', icon = 136248}
+    professionDataTable[197] = {tex = 'ProfessionBackgroundArtTailoring', bar = 'professionsfxtailoring', icon = 136249}
+    professionDataTable[202] = {
+        tex = 'ProfessionBackgroundArtEngineering',
+        bar = 'professionsfxengineering',
+        icon = 136243
+    }
+    professionDataTable[333] = {
+        tex = 'ProfessionBackgroundArtEnchanting',
+        bar = 'professionsfxenchanting',
+        icon = 136244
+    }
+    professionDataTable[356] = {tex = 'ProfessionBackgroundArtFishing', bar = '', icon = 136245} -- fisch
+    professionDataTable[393] = {tex = 'ProfessionBackgroundArtSkinning', bar = 'professionsfxskinning', icon = 134366} -- skinning
+    professionDataTable[755] = {
+        tex = 'ProfessionBackgroundArtJewelcrafting',
+        bar = 'professionsfxjewelcrafting',
+        icon = 134071
+    }
+    professionDataTable[773] = {
+        tex = 'ProfessionBackgroundArtInscription',
+        bar = 'professionsfxinscription',
+        icon = 237171
+    }
+    professionDataTable[794] = {
+        tex = 'ProfessionBackgroundArtLeatherworking',
+        bar = 'professionsfxleatherworking',
+        icon = 441139
+    } -- archeology
+    professionDataTable[666] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136242} -- poison
+    DFProfessionMixin.ProfessionDataTable = professionDataTable
+end
+
+function DFProfessionMixin:GetProfessionIDAndIcon(isTradeskill)
+    if DF.Cata then
+        local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
+
+        if prof1 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof1)
+            if name == nameLoc then return skillLine, icon end
+        end
+
+        if prof2 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof2)
+            if name == nameLoc then return skillLine, icon end
+        end
+
+        -- TODO: archeo, fishing
+
+        if cooking then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(cooking)
+            if name == nameLoc then return skillLine, icon end
+        end
+
+        -- first aid
+        if firstaid then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
+            if name == nameLoc then return skillLine, icon end
+        end
+
+        return nil, nil
+    elseif DF.Wrath then
+        -- TODO
+    elseif DF.Era then
+
+        if isTradeskill then
+            local nameLoc, rank, maxRank = GetTradeSkillLine();
+            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+            local profData = professionDataTable[skillID]
+
+            return skillID, profData.icon
+        else
+            -- localized...
+            local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
+
+            if nameLoc then
+                -- normal 
+            else
+                -- beast training
+                -- nameLoc = GetCraftSkillLine(1)
+                nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
+            end
+
+            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+            local profData = professionDataTable[skillID]
+
+            return skillID, profData.icon
+        end
+    end
+end
+
+function DFProfessionMixin:UpdateHeader()
+    print('DFProfessionMixin:UpdateHeader()')
+end
+
+function DFProfessionMixin:UpdateRecipe()
+    print('DFProfessionMixin:UpdateRecipeName()')
+end
+
+function DFProfessionMixin:CheckFilter()
+    print('DFProfessionMixin:CheckFilter()')
+end
+
+-- function DFProfessionMixin:IsCrafting()
+--     print('DFProfessionMixin:CheckFilter()')
 -- end
 
+-- GetTradeSkillLine()

@@ -538,7 +538,7 @@ function Module:UpdateTradeskills()
 
     local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
     prof:SetPoint('CENTER')
-    prof:Show()
+    -- prof:Show()
 
     if true then return end
 
