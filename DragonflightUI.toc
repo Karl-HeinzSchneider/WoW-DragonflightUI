@@ -57,6 +57,7 @@ XML\DFSettingsList.xml
 XML\DFSettingsList_Compat.xml
 XML\Config.xml
 XML\Editmode.xml
+XML\ProfessionFrame.xml
 XML\Profession.xml
 XML\ProfessionSpellbook.xml
 XML\ProfessionTwo.xml

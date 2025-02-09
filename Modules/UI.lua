@@ -535,6 +535,13 @@ function Module:FuncOrWaitframe(addon, func)
 end
 
 function Module:UpdateTradeskills()
+
+    local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
+    prof:SetPoint('CENTER')
+    prof:Show()
+
+    if true then return end
+
     local DFProfessionFrame = DragonflightUIMixin:CreateProfessionFrame()
 
     Module:FuncOrWaitframe('Blizzard_TradeSkillUI', function()

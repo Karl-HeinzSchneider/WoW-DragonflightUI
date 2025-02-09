@@ -1,0 +1,472 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<Script file="Mixin/ProfessionFrame.mixin.lua" />
+	<Frame name="DFProfessionFrameTemplate" mixin="DFProfessionMixin" inherits="SettingsFrameTemplate" toplevel="true" hidden="true" movable="true" enableMouse="true" resizable="true" frameStrata="HIGH" virtual="true">
+		<Size x="942" y="658" />
+		<Anchors>
+			<!-- <Anchor point="TOPRIGHT" relativePoint="CENTER" x="460" y="362" /> -->
+		</Anchors>
+		<Layers>
+			<!--
+			from config
+			<Layer level="OVERLAY" textureSubLevel="2">
+			<Texture parentKey="InnerFrame" atlas="Options_InnerFrame" useAtlasSize="true">
+			<Anchors>
+			<Anchor point="TOPLEFT" x="17" y="-64" />
+			<Anchor point="BOTTOMRIGHT" x="-17" y="42" />
+			</Anchors>
+			</Texture>
+			</Layer>
+			-->
+			<Layer level="OVERLAY" textureSubLevel="2">
+				<FontString parentKey="OutputText" inherits="GameFontWhite">
+					<Anchors>
+						<Anchor point="BOTTOM" x="0" y="24" />
+					</Anchors>
+				</FontString>
+				<Texture parentKey="TopTileStreak" hidden="false" file="Interface/AddOns/DragonflightUI/Textures/UI/uiframehorizontal">
+					<Size x="256" y="43" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="6" y="-21" />
+						<Anchor point="TOPRIGHT" x="-2" y="-21" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.0078125" bottom="0.34375" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="MinimizeButton" inherits="MaximizeMinimizeButtonFrameTemplate">
+				<Size x="32" y="32" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.ClosePanelButton" relativePoint="LEFT" x="10" y="0" />
+				</Anchors>
+			</Button>
+			<CheckButton name="DFFavoriteButton" parentKey="FavoriteButton">
+				<Size x="20" y="18" />
+				<NormalTexture parentKey="NormalTexture" />
+				<HighlightTexture parentKey="HighlightTexture" alphaMode="ADD" />
+			</CheckButton>
+			<Button name="DFTradeSkillLinkButton" parentKey="LinkButton">
+				<Size>
+					<AbsDimension x="32" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local link=GetTradeSkillListLink();
+						if (not ChatEdit_InsertLink(link) ) then
+						ChatEdit_GetLastActiveWindow():Show();
+						ChatEdit_InsertLink(link);
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self,"ANCHOR_TOPLEFT");
+						GameTooltip:SetText(LINK_TRADESKILL_TOOLTIP, nil, nil, nil, nil, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\TradeSkillFrame\UI-TradeSkill-LinkButton">
+					<TexCoords left="0" right="1.0" top="0" bottom="0.5" />
+				</NormalTexture>
+				<HighlightTexture file="Interface\TradeSkillFrame\UI-TradeSkill-LinkButton" alphaMode="ADD">
+					<TexCoords left="0" right="1.0" top="0.5" bottom="1.0" />
+				</HighlightTexture>
+			</Button>
+			<EditBox name="DragonflightUIProfessionInputBox" parentKey="InputBox" letters="3" historyLines="0" numeric="true" autoFocus="false">
+				<Size>
+					<AbsDimension x="30" y="20" />
+				</Size>
+				<!--
+				<Anchors>
+				<Anchor point="LEFT" relativeTo="TradeSkillDecrementButton" relativePoint="RIGHT">
+				<Offset>
+				<AbsDimension x="4" y="0"/>
+				</Offset>
+				</Anchor>
+				</Anchors>
+				-->
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="8" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="-5" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.0625" top="0" bottom="0.625" />
+						</Texture>
+						<Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="8" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="RIGHT">
+									<Offset>
+										<AbsDimension x="0" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625" />
+						</Texture>
+						<Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="10" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+								<Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT" />
+							</Anchors>
+							<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnterPressed>
+						self:ClearFocus();
+					</OnEnterPressed>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnTextChanged>
+						if ( self:GetText() == "0" ) then
+						self:SetText("1");
+						end
+					</OnTextChanged>
+					<OnEditFocusLost>
+						self:HighlightText(0, 0);
+					</OnEditFocusLost>
+					<OnEditFocusGained>
+						self:HighlightText();
+					</OnEditFocusGained>
+				</Scripts>
+				<FontString inherits="ChatFontNormal" />
+			</EditBox>
+			<Frame parentKey="RecipeList" inherits="ProfessionsRecipeListTemplate">
+				<Size x="274" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="5" y="-72" />
+					<Anchor point="BOTTOMLEFT" y="5" />
+				</Anchors>
+			</Frame>
+			<Frame parentKey="SchematicForm" inherits="ProfessionsRecipeSchematicFormTemplate" useParentLevel="true">
+				<!-- <Size x="793" y="553" /> -->
+				<Size x="655" y="553" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.RecipeList" relativePoint="TOPRIGHT" x="2" y="0" />
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="33" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="Background" hidden="false" file="Interface/AddOns/DragonflightUI/Textures/UI/professionbackgroundartenchanting">
+							<Size x="675" y="548" />
+							<Anchors>
+								<Anchor point="TOPLEFT" x="0" y="0" />
+								<Anchor point="BOTTOMRIGHT" x="0" y="0" />
+							</Anchors>
+							<TexCoords left="0.000976562" right="0.660156" top="0.000976562" bottom="0.536133" />
+						</Texture>
+						<Texture parentKey="MinimalBackground" hidden="true" file="Interface/AddOns/DragonflightUI/Textures/UI/professionsminimizedview">
+							<Anchors>
+								<!-- <Anchor point="TOPLEFT" x="-3" y="7" /> -->
+								<Anchor point="TOPLEFT" x="-3" y="0" />
+								<Anchor point="BOTTOMRIGHT" x="2" y="-28" />
+							</Anchors>
+							<Size x="402" y="589" />
+							<TexCoords left="0.00195312" right="0.787109" top="0.000976562" bottom="0.576172" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="NineSlice" inherits="NineSlicePanelTemplate" />
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+		</Scripts>
+	</Frame>
+	<!--
+	<Frame name="ProfessionsRecipeListTemplate" mixin="DFProfessionsRecipeListMixin" virtual="true">
+	<Size x="300" y="505" />
+	<KeyValues>
+	<KeyValue key="hideCraftableCount" value="false" type="boolean" />
+	</KeyValues>
+	<Layers>
+	
+	<Layer level="BACKGROUND">
+	<Texture parentKey="Background" atlas="Professions-background-summarylist" setAllPoints="true" />
+	</Layer>
+	
+	<Layer level="ARTWORK">
+	<FontString parentKey="NoResultsText" inherits="GameFontNormal" text="PROFESSIONS_NO_JOURNAL_ENTRIES" hidden="true">
+	<Size x="200" y="0" />
+	<Anchors>
+	<Anchor point="TOP" x="0" y="-60" />
+	</Anchors>
+	</FontString>
+	</Layer>
+	</Layers>
+	<Frames>
+	
+	<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+	<Anchors>
+	<Anchor point="TOPLEFT" />
+	<Anchor point="BOTTOMRIGHT" />
+	</Anchors>
+	</Frame>
+	
+	<DropDownToggleButton parentKey="FilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER">
+	<Size x="90" y="22" />
+	<Anchors>
+	<Anchor point="TOPRIGHT" x="-8" y="-8" />
+	</Anchors>
+	<Layers>
+	<Layer level="ARTWORK">
+	<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+	<Size x="10" y="12" />
+	<Anchors>
+	<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="RIGHT" x="-5" />
+	</Anchors>
+	</Texture>
+	</Layer>
+	</Layers>
+	<Scripts>
+	<OnClick>
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+	DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+	</OnClick>
+	</Scripts>
+	</DropDownToggleButton>
+	<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate">
+	<Scripts>
+	<OnLoad>
+	DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
+	</OnLoad>
+	</Scripts>
+	</Frame>
+	<Button parentKey="ResetButton" inherits="DFUIResetButtonTemplate">
+	<Anchors>
+	<Anchor point="CENTER" relativeKey="$parent.FilterButton" relativePoint="TOPRIGHT" x="-3" y="0" />
+	</Anchors>
+	</Button>
+	<EditBox parentKey="SearchBox" autoFocus="false" inherits="DFProfessionearchBoxTemplate">
+	<Size y="20" />
+	<Anchors>
+	<Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
+	<Anchor point="TOPLEFT" x="13" y="-8" />
+	</Anchors>
+	</EditBox>
+	<Frame parentKey="ContextMenu" inherits="UIDropDownMenuTemplate" enableMouse="true" />
+	<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+	<Anchors>
+	<Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-5" y="-7" />
+	<Anchor point="BOTTOMRIGHT" x="-20" y="5" />
+	</Anchors>
+	</Frame>
+	<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+	<Anchors>
+	<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="0" />
+	<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+	</Anchors>
+	</EventFrame>
+	</Frames>
+	<Scripts>
+	<OnLoad method="OnLoad" />
+	<OnShow method="OnShow" />
+	<OnEvent method="OnEvent" />
+	</Scripts>
+	</Frame>
+	-->
+	<!--
+	<EditBox name="DFProfessionearchBoxTemplate" inherits="SearchBoxTemplate" mixin="DFProfessionSearchBoxTemplateMixin" autoFocus="false" virtual="true">
+	<Scripts>
+	<OnHide method="OnHide" />
+	<OnTextChanged method="OnTextChanged" />
+	<OnChar method="OnChar" />
+	</Scripts>
+	</EditBox>
+	-->
+	<!--
+	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionsRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
+	<Frames>
+	<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+	<Anchors>
+	<Anchor point="TOPLEFT" />
+	<Anchor point="BOTTOMRIGHT" />
+	</Anchors>
+	</Frame>
+	</Frames>
+	<Scripts>
+	<OnLoad method="OnLoad" />
+	<OnEvent method="OnEvent" />
+	<OnShow method="OnShow" />
+	<OnHide method="OnHide" />
+	
+	<OnHyperlinkEnter method="OnHyperlinkEnter" />
+	<OnHyperlinkLeave method="OnHyperlinkLeave" />
+	
+	</Scripts>
+	</Frame>
+	-->
+	<!--
+	<Button name="ProfessionsRecipeListCategoryTemplate" mixin="DFProfessionsRecipeListCategoryMixin" virtual="true">
+	<Size y="25" />
+	<Layers>
+	<Layer level="OVERLAY" textureSubLevel="1">
+	<FontString parentKey="Label" inherits="GameFontNormal_NoShadow" justifyH="LEFT">
+	<Size y="10" />
+	<Anchors>
+	<Anchor point="LEFT" x="10" y="2" />
+	</Anchors>
+	</FontString>
+	</Layer>
+	<Layer level="BACKGROUND">
+	<Texture parentKey="LeftPiece" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+	<Size x="14" y="26" />
+	<TexCoords left="0.432129" right="0.438965" top="0.0273438" bottom="0.0527344" />
+	<Anchors>
+	<Anchor point="LEFT" y="2" />
+	</Anchors>
+	</Texture>
+	<Texture parentKey="RightPiece" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+	<Size x="14" y="26" />
+	<TexCoords left="0.455078" right="0.461914" top="0.0449219" bottom="0.0703125" />
+	<Anchors>
+	<Anchor point="RIGHT" y="2" />
+	</Anchors>
+	</Texture>
+	<Texture parentKey="CenterPiece" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+	<Size x="1" y="26" />
+	<TexCoords left="0.346191" right="0.34668" top="0.0419922" bottom="0.0673828" />
+	<Anchors>
+	<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeKey="$parent.LeftPiece" />
+	<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" relativeKey="$parent.RightPiece" />
+	</Anchors>
+	</Texture>
+	</Layer>
+	<Layer level="ARTWORK">
+	<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+	<Size x="11" y="8" />
+	<Anchors>
+	<Anchor point="RIGHT" x="-10" y="2" />
+	</Anchors>
+	</Texture>
+	</Layer>
+	<Layer level="HIGHLIGHT">
+	<Texture parentKey="CollapseIconAlphaAdd" alphaMode="ADD" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+	<Size x="11" y="8" />
+	<Anchors>
+	<Anchor point="CENTER" relativeKey="$parent.CollapseIcon" />
+	</Anchors>
+	</Texture>
+	</Layer>
+	</Layers>
+	<Scripts>
+	<OnEnter method="OnEnter" />
+	<OnLeave method="OnLeave" />
+	</Scripts>
+	</Button>
+	-->
+	<!--
+	<Button name="ProfessionsRecipeListRecipeTemplate" mixin="DFProfessionsRecipeListRecipeMixin" registerForClicks="RightButtonUp, LeftButtonUp" virtual="true">
+	<Size y="20" />
+	<Frames>
+	<Button parentKey="SkillUps">
+	<Size x="26" y="15" />
+	<Anchors>
+	<Anchor point="LEFT" x="-9" />
+	</Anchors>
+	<Layers>
+	<Layer level="OVERLAY">
+	<Texture parentKey="Icon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+	<Size x="13" y="15" />
+	<Anchors>
+	<Anchor point="RIGHT" x="0" y="-1" />
+	</Anchors>
+	</Texture>
+	<FontString parentKey="Text" inherits="GameFontHighlightSmall">
+	<Size x="0" y="13" />
+	<Anchors>
+	<Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="0" y="1" />
+	</Anchors>
+	</FontString>
+	</Layer>
+	</Layers>
+	</Button>
+	<Button parentKey="LockedIcon" hidden="true">
+	<Size x="17" y="16" />
+	<Layers>
+	<Layer level="OVERLAY">
+	
+	</Layer>
+	</Layers>
+	</Button>
+	</Frames>
+	<Layers>
+	<Layer level="OVERLAY" textureSubLevel="1">
+	<FontString parentKey="Label" inherits="SystemFont_Med1" justifyH="LEFT">
+	<Size y="12" />
+	<Anchors>
+	<Anchor point="LEFT" relativeKey="$parent.SkillUps" relativePoint="RIGHT" x="4" />
+	</Anchors>
+	</FontString>
+	<FontString parentKey="Count" inherits="SystemFont_Med1" justifyH="LEFT">
+	<Size y="12" />
+	<Anchors>
+	<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" />
+	</Anchors>
+	</FontString>
+	</Layer>
+	<Layer level="OVERLAY" textureSubLevel="2">
+	<Texture parentKey="SelectedOverlay" file="Interface/AddOns/DragonflightUI/Textures/UI/professions" hidden="true">
+	<Size x="267" y="19" />
+	<TexCoords left="0.788086" right="0.918457" top="0.0380859" bottom="0.0566406" />
+	<Anchors>
+	<Anchor point="CENTER" x="0" y="-1" />
+	</Anchors>
+	</Texture>
+	</Layer>
+	<Layer level="HIGHLIGHT">
+	<Texture parentKey="HighlightOverlay" file="Interface/AddOns/DragonflightUI/Textures/UI/professions" alpha="0.5">
+	<Size x="309" y="21" />
+	<TexCoords left="0.622559" right="0.773438" top="0.0380859" bottom="0.0585938" />
+	<Anchors>
+	<Anchor point="CENTER" x="0" y="-1" />
+	</Anchors>
+	</Texture>
+	</Layer>
+	</Layers>
+	<Scripts>
+	<OnLoad method="OnLoad" />
+	<OnEnter method="OnEnter" />
+	<OnLeave method="OnLeave" />
+	</Scripts>
+	</Button>
+	-->
+	<!--
+	<Button name="DFUIResetButtonTemplate" hidden="true" virtual="true">
+	<Size x="23" y="23" />
+	<NormalTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" setAllPoints="true">
+	<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
+	</NormalTexture>
+	<HighlightTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" alphaMode="ADD" alpha="0.4" setAllPoints="true">
+	<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
+	</HighlightTexture>
+	</Button>
+	-->
+</Ui>
