@@ -12,6 +12,7 @@ function DFProfessionMixin:OnLoad()
     self.currentSkillID = nil
 
     self:SetupFrameStyle()
+    self:SetupSchematics()
     self:Minimize(self.minimized)
 
     self:RegisterEvent("TRADE_SKILL_SHOW");
@@ -275,6 +276,114 @@ function DFProfessionMixin:SetupFrameStyle()
             editbox:ClearFocus()
         end)
 
+    end
+
+end
+
+local MAX_TRADE_SKILL_REAGENTS = 6 -- 8
+
+function DFProfessionMixin:SetupSchematics()
+    local frame = self.SchematicForm
+
+    local icon = CreateFrame('Button', 'DragonflightUIProfessionSkillIcon', frame)
+    icon:SetSize(37, 37)
+    icon:SetPoint('TOPLEFT', frame, 'TOPLEFT', 28 - 400 + 400, -28)
+    frame.SkillIcon = icon
+
+    -- TODO iconcount
+
+    local name = frame:CreateFontString('DragonflightUIProfession' .. 'SkillName', 'BACKGROUND', 'GameFontNormal')
+    name:SetSize(244, 10)
+    name:SetText('Skill Name')
+    name:SetJustifyH('LEFT')
+    -- name:SetPoint('LEFT', icon, 'RIGHT', 14, 17)
+    name:SetPoint('TOPLEFT', icon, 'TOPRIGHT', 14, 0)
+    frame.SkillName = name
+
+    local req = frame:CreateFontString('DragonflightUIProfession' .. 'RequirementLabel', 'BACKGROUND',
+                                       'GameFontHighlightSmall')
+    req:SetPoint('TOPLEFT', name, 'BOTTOMLEFT', 0, -4)
+    req:SetText(REQUIRES_LABEL)
+    frame.RequirementLabel = req
+
+    local reqText = frame:CreateFontString('DragonflightUIProfession' .. 'RequirementText', 'BACKGROUND',
+                                           'GameFontHighlightSmall')
+    reqText:SetSize(250, 9.9)
+    reqText:SetJustifyH("LEFT");
+    reqText:SetPoint('LEFT', req, 'RIGHT', 4, 0)
+    frame.RequirementText = reqText
+
+    local cooldown = frame:CreateFontString('DragonflightUIProfession' .. 'SkillCooldown', 'BACKGROUND',
+                                            'GameFontRedSmall')
+    cooldown:SetPoint('TOPLEFT', req, 'BOTTOMLEFT', 0, 0)
+    frame.SkillCooldown = cooldown
+
+    local descr = frame:CreateFontString('DragonflightUIProfession' .. 'SkillDescription', 'BACKGROUND',
+                                         'GameFontHighlightSmall')
+    descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    descr:SetText('*descr*')
+    frame.SkillDescription = descr
+
+    -- reagents
+    local reagentLabel = frame:CreateFontString('DragonflightUIProfession' .. 'ReagentLabel', 'BACKGROUND',
+                                                'GameFontNormalSmall')
+    reagentLabel:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    reagentLabel:SetText(SPELL_REAGENTS)
+    frame.RegentLabel = reagentLabel
+
+    frame.ReagentTable = {}
+    for i = 1, MAX_TRADE_SKILL_REAGENTS do
+        --
+        local reagent = CreateFrame('BUTTON', 'DragonflightUIProfession' .. 'Reagent' .. i, frame, 'QuestItemTemplate')
+        reagent:SetPoint('TOPLEFT', reagentLabel, 'TOPLEFT', 1, -23 - (i - 1) * 45)
+        reagent:SetSize(180, 50)
+        frame.ReagentTable[i] = reagent
+
+        local reagentIcon = _G[reagent:GetName() .. 'IconTexture']
+        -- reagentIcon:SetSize() 
+        reagentIcon:ClearAllPoints()
+        reagentIcon:SetPoint('LEFT', reagent, 'LEFT', 0, 0)
+
+        local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(reagent)
+        overlay:SetPoint('TOPLEFT', reagentIcon, 'TOPLEFT', 0, 0)
+        overlay:SetPoint('BOTTOMRIGHT', reagentIcon, 'BOTTOMRIGHT', 0, 0)
+
+        local reagentCountText = _G[reagent:GetName() .. "Count"];
+        reagentCountText:Hide()
+
+        local reagentNameText = _G[reagent:GetName() .. 'Name']
+        reagentNameText:ClearAllPoints()
+        reagentNameText:SetPoint('LEFT', reagent, 'LEFT', 46, 0)
+        reagentNameText:SetSize(142, 36)
+        reagentNameText:SetJustifyH("LEFT");
+        reagentNameText:SetText('*Reagent' .. i .. '*')
+
+        -- local updateText = function()
+        --     local index = GetTradeSkillSelectionIndex()
+        --     local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(index, i);
+
+        --     if (not reagentName or not reagentTexture) then return end
+
+        --     local newText = playerReagentCount .. "/" .. reagentCount .. ' ' .. reagentName
+
+        --     reagentNameText:SetText(newText)
+
+        --     local link = GetTradeSkillReagentItemLink(index, i)
+
+        --     if link then
+        --         local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+        --         if (classId == 12) then quality = 0; end
+        --         DragonflightUIItemColorMixin:UpdateOverlayQuality(reagent, quality)
+        --     end
+        -- end
+
+        -- hooksecurefunc(reagentCountText, 'SetText', function()
+        --     updateText()
+        -- end)
+        -- updateText()
+
+        local reagentNameFrame = _G[reagent:GetName() .. 'NameFrame']
+        reagentNameFrame:Hide()
     end
 
 end
