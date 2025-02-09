@@ -32,6 +32,15 @@ function DFProfessionMixin:OnLoad()
     self:RegisterEvent("TRADE_SKILL_UPDATE");
     self:RegisterEvent("TRADE_SKILL_FILTER_UPDATE");
 
+    self:RegisterEvent("CRAFT_SHOW");
+    self:RegisterEvent("CRAFT_CLOSE");
+    self:RegisterEvent("CRAFT_UPDATE");
+    self:RegisterEvent("SPELLS_CHANGED");
+    self:RegisterEvent("UNIT_PET_TRAINING_POINTS");
+
+    -- UIParent:UnregisterEvent("TRADE_SKILL_SHOW")
+    -- UIParent:UnregisterEvent("CRAFT_SHOW")
+
     self.MinimizeButton:SetOnMaximizedCallback(function(btn)
         -- print('SetOnMaximizedCallback')
         self:Minimize(false)
@@ -64,12 +73,25 @@ end
 function DFProfessionMixin:OnEvent(event, arg1, ...)
     print('~~', event, arg1 and arg1 or '')
     if event == 'TRADE_SKILL_SHOW' then
-        -- self:Show()
-        self:Refresh(true, true)
+        self.TradeSkillOpen = true;
+        self.CraftOpen = false;
+        CloseCraft()
+        self:Show()
+        self:Refresh(true)
+    elseif event == 'CRAFT_SHOW' then
+        self.TradeSkillOpen = false;
+        self.CraftOpen = true;
+        CloseTradeSkill()
+        self:Show()
+        self:Refresh(true)
     elseif event == 'TRADE_SKILL_CLOSE' then
-        -- self:Hide()
-    elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
-        if self:IsShown() then self:Refresh(false, true) end
+        self.TradeSkillOpen = false;
+        if not self.CraftOpen then self:Hide() end
+    elseif event == 'CRAFT_CLOSE' then
+        self.CraftOpen = false;
+        if not self.TradeSkillOpen then self:Hide() end
+    elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' or event == 'CRAFT_UPDATE' then
+        if self:IsShown() then self:Refresh(false) end
     elseif event == 'PLAYER_REGEN_ENABLED' then
         if self.ShouldUpdate then self:UpdateTabs() end
     end
@@ -563,8 +585,28 @@ function DFProfessionMixin:SetupFavoriteDatabase()
     self.db = DF.db:RegisterNamespace('RecipeFavorite', {profile = {favorite = {}}})
 end
 
-function DFProfessionMixin:Refresh(force, isTradeskill)
-    print('DFProfessionMixin:Refresh(force)', force, isTradeskill and 'Tradeskill' or 'Craft')
+function DFProfessionMixin:SetRecipeFavorite(info, checked)
+    local db = self.db.profile
+
+    if checked then
+        db.favorite[info] = true
+    else
+        db.favorite[info] = nil
+    end
+end
+
+function DFProfessionMixin:IsRecipeFavorite(info)
+    local db = self.db.profile
+
+    if db.favorite[info] then
+        return true
+    else
+        return false
+    end
+end
+
+function DFProfessionMixin:Refresh(force)
+    print('DFProfessionMixin:Refresh(force)', force)
     self:UpdateProfessionData()
 
     if InCombatLockdown() then
@@ -574,15 +616,46 @@ function DFProfessionMixin:Refresh(force, isTradeskill)
         self.ShouldUpdate = false
         self:UpdateTabs()
     end
-    -- self:SetProfessionData(isTradeskill)
-    -- self:UpdateHeader()
+
+    self:SetCurrentProfession()
+    if not self.SelectedProfession then
+        print('-- no self.SelectedProfession')
+        return
+    end
+
+    self:UpdateHeader()
+    self:UpdateRecipeList()
     -- self:UpdateRecipe()
     -- self:CheckFilter()
 end
 
-function DFProfessionMixin:SetProfessionData(isTradeskill)
-    print('DFProfessionMixin:SetProfessionData()', isTradeskill and 'Tradeskill' or 'Craft')
+function DFProfessionMixin:SetCurrentProfession()
+    print('DFProfessionMixin:SetCurrentProfession()')
+    local nameLoc;
 
+    if self.TradeSkillOpen then
+        nameLoc, _, _ = GetTradeSkillLine();
+    elseif self.CraftOpen then
+        nameLoc, _, _ = GetCraftDisplaySkillLine();
+
+        if nameLoc then
+            -- normal 
+        else
+            -- beast training
+            -- nameLoc = GetCraftSkillLine(1)
+            nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
+        end
+    end
+
+    for k, v in pairs(self.ProfessionTable) do
+        if v.nameLoc == nameLoc then
+            self.SelectedProfession = k;
+            return k
+        end
+    end
+
+    self.SelectedProfession = nil;
+    return nil;
 end
 
 --[[ First Aid 	129										
@@ -679,7 +752,8 @@ function DFProfessionMixin:UpdateProfessionData()
                 icon = icon,
                 skillID = skillLine,
                 skill = skillLevel,
-                maxSkill = maxSkillLevel
+                maxSkill = maxSkillLevel,
+                profData = professionDataTable[skillLine]
             }
         end
 
@@ -691,7 +765,8 @@ function DFProfessionMixin:UpdateProfessionData()
                 icon = icon,
                 skillID = skillLine,
                 skill = skillLevel,
-                maxSkill = maxSkillLevel
+                maxSkill = maxSkillLevel,
+                profData = professionDataTable[skillLine]
             }
         end
 
@@ -705,7 +780,8 @@ function DFProfessionMixin:UpdateProfessionData()
                 icon = icon,
                 skillID = skillLine,
                 skill = skillLevel,
-                maxSkill = maxSkillLevel
+                maxSkill = maxSkillLevel,
+                profData = professionDataTable[skillLine]
             }
         end
 
@@ -718,7 +794,8 @@ function DFProfessionMixin:UpdateProfessionData()
                 icon = icon,
                 skillID = skillLine,
                 skill = skillLevel,
-                maxSkill = maxSkillLevel
+                maxSkill = maxSkillLevel,
+                profData = professionDataTable[skillLine]
             }
         end
     elseif DF.Wrath then
@@ -756,7 +833,8 @@ function DFProfessionMixin:UpdateProfessionData()
                     lineID = i,
                     skill = skillRank,
                     maxSkill = skillMaxRank,
-                    skillModifier = skillModifier -- only era= @TODO
+                    skillModifier = skillModifier, -- only era= @TODO
+                    profData = professionDataTable[skillID]
                 }
 
                 if profs.primary[skillID] then
@@ -787,70 +865,39 @@ function DFProfessionMixin:UpdateProfessionData()
     return skillTable;
 end
 
-function DFProfessionMixin:GetProfessionIDAndIcon(isTradeskill)
-    if DF.Cata then
-        local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
+function DFProfessionMixin:UpdateHeader()
+    print('DFProfessionMixin:UpdateHeader()', self.SelectedProfession)
 
-        if prof1 then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(prof1)
-            if name == nameLoc then return skillLine, icon end
-        end
+    local prof = self.ProfessionTable[self.SelectedProfession]
 
-        if prof2 then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(prof2)
-            if name == nameLoc then return skillLine, icon end
-        end
+    self.Icon:SetTexture(prof.profData.icon)
+    SetPortraitToTexture(self.Icon, self.Icon:GetTexture())
 
-        -- TODO: archeo, fishing
+    local isLink, playerName = IsTradeSkillLinked()
+    if isLink then
+        --
+        self.NineSlice.Text:SetText(prof.nameLoc .. ' (' .. playerName .. ')')
+        self.LinkButton:Hide()
+    else
+        self.NineSlice.Text:SetText(prof.nameLoc)
 
-        if cooking then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(cooking)
-            if name == nameLoc then return skillLine, icon end
-        end
-
-        -- first aid
-        if firstaid then
-            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
-                  specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
-            if name == nameLoc then return skillLine, icon end
-        end
-
-        return nil, nil
-    elseif DF.Wrath then
-        -- TODO
-    elseif DF.Era then
-
-        if isTradeskill then
-            local nameLoc, rank, maxRank = GetTradeSkillLine();
-            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
-            local profData = professionDataTable[skillID]
-
-            return skillID, profData.icon
+        if DF.Era then
+            self.LinkButton:Hide()
         else
-            -- localized...
-            local nameLoc, rank, maxRank = GetCraftDisplaySkillLine();
-
-            if nameLoc then
-                -- normal 
-            else
-                -- beast training
-                -- nameLoc = GetCraftSkillLine(1)
-                nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
-            end
-
-            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
-            local profData = professionDataTable[skillID]
-
-            return skillID, profData.icon
+            self.LinkButton:Show()
         end
     end
-end
+    self.LinkButton:Hide() -- @TODO
 
-function DFProfessionMixin:UpdateHeader()
-    print('DFProfessionMixin:UpdateHeader()')
+    self.SchematicForm.Background:SetTexture(base .. prof.profData.tex)
+
+    local newStatusTexture = base .. prof.profData.bar
+    if newStatusTexture ~= self.RankFrame.DFStatusTexture then
+        self.RankFrameBar:SetStatusBarTexture(base .. prof.profData.bar)
+        self.RankFrame.DFStatusTexture = base .. prof.profData.bar
+    end
+
+    self.RankFrame:UpdateRankFrame(prof.skill, 0, prof.maxSkill)
 end
 
 function DFProfessionMixin:UpdateRecipe()
@@ -861,8 +908,578 @@ function DFProfessionMixin:CheckFilter()
     print('DFProfessionMixin:CheckFilter()')
 end
 
--- function DFProfessionMixin:IsCrafting()
---     print('DFProfessionMixin:CheckFilter()')
--- end
+function DFProfessionMixin:UpdateRecipeList()
+    print('DFProfessionMixin:UpdateRecipeList()')
+    if self.TradeSkillOpen then
+        self.RecipeList:UpdateRecipeListTradeskill()
+    elseif self.CraftOpen then
+        -- self.RecipeList:ClearList()
+    else
+        self.RecipeList:ClearList()
+    end
+end
 
--- GetTradeSkillLine()
+-- FILTER
+local DFFilter = {}
+
+do
+    local DFFilter_HasSkillUp = function(elementData)
+        local skillType = elementData.recipeInfo.skillType
+        local filter = DFFilter['DFFilter_HasSkillUp'].filter
+
+        -- print('DFFilter_HasSkillUp', elementData.recipeInfo.skillType, filter[skillType])
+
+        if filter[skillType] then
+            return true
+        else
+            return false
+        end
+    end
+
+    DFFilter['DFFilter_HasSkillUp'] = {
+        name = 'DFFilter_HasSkillUp',
+        filterDefault = {trivial = true, easy = true, medium = true, optimal = true, difficult = true},
+        filter = {},
+        func = DFFilter_HasSkillUp,
+        enabled = false
+    }
+    DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
+end
+
+-- have materials
+do
+    local DFFilter_HaveMaterials = function(elementData)
+        return elementData.recipeInfo.numAvailable > 0
+    end
+
+    DFFilter['DFFilter_HaveMaterials'] = {
+        name = 'DFFilter_HaveMaterials',
+        func = DFFilter_HaveMaterials,
+        enabled = false
+    }
+end
+
+-- searchbox
+do
+    local match = function(str, text)
+        return strfind(strupper(str), strupper(text))
+    end
+
+    local DFFilter_Searchbox = function(elementData, searchBoxRef)
+        --[[     local data = {
+            id = i,
+            isFavorite = isFavorite,
+            recipeInfo = {
+                name = skillName,
+                skillType = skillType,
+                numAvailable = numAvailable,
+                isExpanded = isExpanded,
+                altVerb = altVerb,
+                numSkills = numSkills
+            }
+        } ]]
+        local searchText = strupper(searchBoxRef:GetText())
+
+        if searchText == '' then return true end
+
+        local id = elementData.id
+        local info = elementData.recipeInfo
+
+        if match(info.name, searchText) then return true end
+
+        local numReagents = GetTradeSkillNumReagents(id);
+
+        for i = 1, numReagents do
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(id, i);
+            if reagentName and match(reagentName, searchText) then return true end
+        end
+
+        return false
+    end
+
+    DFFilter['DFFilter_Searchbox'] = {name = 'DFFilter_Searchbox', func = DFFilter_Searchbox, enabled = true}
+end
+
+------------------------------
+
+DFProfessionFrameRecipeListMixin = CreateFromMixins(CallbackRegistryMixin);
+DFProfessionFrameRecipeListMixin:GenerateCallbackEvents({"OnRecipeSelected"});
+
+function DFProfessionFrameRecipeListMixin:OnLoad()
+    -- print('DFProfessionFrameRecipeListTemplateMixin:OnLoad()')
+    CallbackRegistryMixin.OnLoad(self);
+
+    self.selectedSkill = GetTradeSkillSelectionIndex() or 2
+    -- print('self.selectedSkill', self.selectedSkill)
+    self.DataProvider = CreateTreeDataProvider()
+
+    local indent = 10;
+    local padLeft = 0;
+    local pad = 5;
+    local spacing = 1;
+    local view = CreateScrollBoxListTreeListView(indent, pad, pad, padLeft, pad, spacing);
+    self.View = view
+
+    view:SetElementFactory(function(factory, node)
+        local elementData = node:GetData();
+        if elementData.categoryInfo then
+            local function Initializer(button, node)
+                button:Init(node);
+                -- print('initCats', elementData.id, self.selectedSkill)
+
+                button:SetScript("OnClick", function(button, buttonName)
+                    node:ToggleCollapsed();
+                    button:SetCollapseState(node:IsCollapsed());
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+
+                    if elementData.categoryInfo.isExpanded then
+                        -- CollapseTradeSkillSubClass(elementData.id)
+                    else
+                        -- ExpandTradeSkillSubClass(elementData.id)
+                    end
+                end);
+            end
+            factory("DFProfessionFrameRecipeCategoryTemplate", Initializer);
+        elseif elementData.recipeInfo then
+            local function Initializer(button, node)
+                button:Init(node, false);
+
+                -- print('init', elementData.id, self.selectedSkill)
+                if elementData.id == self.selectedSkill then self.selectionBehavior:Select(button) end
+                local selected = self.selectionBehavior:IsElementDataSelected(node);
+                button:SetSelected(selected);
+
+                button:SetScript("OnClick", function(button, buttonName, down)
+
+                    if buttonName == "LeftButton" then
+                        if IsModifiedClick() then
+                            if elementData.isTradeskill then
+                                HandleModifiedItemClick(GetTradeSkillRecipeLink(elementData.id));
+                            elseif elementData.isCraft then
+                            end
+                        else
+                            self.selectionBehavior:Select(button);
+                        end
+                    elseif buttonName == "RightButton" then
+                    end
+
+                    -- PlaySound(SOUNDKIT.UI_90_BLACKSMITHING_TREEITEMCLICK);
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+                end);
+
+            end
+            factory("DFProfessionFrameRecipeTemplate", Initializer);
+        elseif elementData.isDivider then
+            factory("ProfessionsRecipeListDividerTemplate");
+        else
+            factory("Frame");
+        end
+    end);
+
+    view:SetDataProvider(self.DataProvider)
+
+    view:SetElementExtentCalculator(function(dataIndex, node)
+        local elementData = node:GetData();
+        local baseElementHeight = 20;
+        local categoryPadding = 5;
+
+        if elementData.recipeInfo then return baseElementHeight; end
+
+        if elementData.categoryInfo then return baseElementHeight + categoryPadding; end
+
+        if elementData.dividerHeight then return elementData.dividerHeight; end
+
+        if elementData.topPadding then return 1; end
+
+        if elementData.bottomPadding then return 10; end
+    end);
+
+    ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
+
+    local function OnSelectionChanged(o, elementData, selected)
+        -- print('OnSelectionChanged', o, elementData, selected)
+        local button = self.ScrollBox:FindFrame(elementData);
+        if button then button:SetSelected(selected); end
+
+        if selected then
+            local data = elementData:GetData();
+
+            local newRecipeID = data.id
+            local changed = data.id ~= self.selectedSkill
+            if changed then
+                -- print('OnSelectionChanged-changed', data.id)
+                self.selectedSkill = newRecipeID
+                -- EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", newRecipeID, self);
+
+                -- TradeSkillFrame_SetSelection(newRecipeID)
+                self:SelectRecipe(newRecipeID, false)
+            end
+        end
+    end
+
+    self.selectionBehavior = ScrollUtil.AddSelectionBehavior(self.ScrollBox);
+    self.selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, OnSelectionChanged, self);
+end
+
+function DFProfessionFrameRecipeListMixin:OnEvent(event, ...)
+    -- print('DFProfessionsRecipeListMixin:OnEvent(event, ...)', event, ...)
+end
+
+function DFProfessionFrameRecipeListMixin:OnShow()
+    -- print('DFProfessionsRecipeListMixin:OnShow()')    
+    -- self:Refresh()
+    -- EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", self.selectedSkill, self);
+end
+
+function DFProfessionFrameRecipeListMixin:SelectRecipe(id, scrollToRecipe)
+    local elementData = self.selectionBehavior:SelectElementDataByPredicate(function(node)
+        local data = node:GetData();
+        return data.recipeInfo and data.id == id
+    end);
+
+    if scrollToRecipe then
+        self.ScrollBox:ScrollToElementData(elementData);
+        -- ScrollBoxConstants.AlignCenter,  ScrollBoxConstants.RetainScrollPosition
+    end
+
+    return elementData;
+end
+
+function DFProfessionFrameRecipeListMixin:ClearList()
+    local dataProvider = CreateTreeDataProvider();
+    self.ScrollBox:SetDataProvider(dataProvider);
+end
+
+function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
+    local dataProvider = CreateTreeDataProvider();
+
+    local filterTable = DFFilter
+    local numSkills = GetNumTradeSkills()
+    local headerID = 0
+
+    do
+        local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
+        dataProvider:Insert(data)
+    end
+
+    for i = 1, numSkills do
+        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
+
+        if skillType == 'header' then
+            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            dataProvider:Insert(data)
+            headerID = i
+        else
+            -- print('--', skillName)
+            local isFavorite = self:GetParent():IsRecipeFavorite(skillName)
+
+            local data = {
+                id = i,
+                isFavorite = isFavorite,
+                isTradeskill = true,
+                recipeInfo = {
+                    name = skillName,
+                    skillType = skillType,
+                    numAvailable = numAvailable,
+                    isExpanded = isExpanded,
+                    altVerb = altVerb,
+                    numSkills = numSkills
+                }
+            }
+
+            local filtered = true
+
+            for k, filter in pairs(filterTable) do
+                --
+                if filter.enabled then
+                    --
+                    if not filter.func(data, self.SearchBox) then
+                        --
+                        filtered = false
+                    end
+                end
+            end
+
+            if filtered then
+                --
+                dataProvider:InsertInParentByPredicate(data, function(node)
+                    local nodeData = node:GetData()
+
+                    if data.isFavorite then
+                        return nodeData.id == 0
+                    else
+                        return nodeData.id == headerID
+                    end
+                end)
+            end
+        end
+    end
+
+    -- DevTools_Dump(dataProvider)
+
+    local nodes = dataProvider:GetChildrenNodes()
+    local nodesToRemove = {}
+    -- print('NODES', #nodes)
+
+    for k, child in ipairs(nodes) do
+        --
+        local numChildNodes = #child:GetNodes()
+        -- print('numChildNodes', numChildNodes)
+        if numChildNodes < 1 then
+            --
+            -- print('remove node')
+            -- dataProvider:Remove(child)
+            table.insert(nodesToRemove, child)
+        end
+    end
+
+    for k, node in ipairs(nodesToRemove) do
+        --
+        -- print('to remove', k, node)
+        dataProvider:Remove(node)
+    end
+
+    -- print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
+    self.ScrollBox:SetDataProvider(dataProvider);
+end
+
+------------------------------
+
+DFProfessionFrameRecipeCategoryMixin = {}
+
+function DFProfessionFrameRecipeCategoryMixin:OnEnter()
+    self.Label:SetFontObject(GameFontHighlight_NoShadow);
+end
+
+function DFProfessionFrameRecipeCategoryMixin:OnLeave()
+    self.Label:SetFontObject(GameFontNormal_NoShadow);
+end
+
+function DFProfessionFrameRecipeCategoryMixin:Init(node)
+    local elementData = node:GetData();
+
+    local categoryInfo = elementData.categoryInfo;
+    self.Label:SetText(categoryInfo.name);
+
+    -- local color = categoryInfo.unlearned and DISABLED_FONT_COLOR or NORMAL_FONT_COLOR;
+    -- self.Label:SetVertexColor(color:GetRGB());
+
+    if categoryInfo.isExpanded then
+        node:SetCollapsed(false, true, false)
+    else
+        node:SetCollapsed(true, true, false)
+    end
+
+    self:SetCollapseState(node:IsCollapsed());
+end
+
+function DFProfessionFrameRecipeCategoryMixin:SetCollapseState(collapsed)
+    if collapsed then
+        self.CollapseIcon:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+    else
+        self.CollapseIcon:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+    end
+
+    if true then return end
+
+    local atlas = collapsed and "Professions-recipe-header-expand" or "Professions-recipe-header-collapse";
+    self.CollapseIcon:SetAtlas(atlas, TextureKitConstants.UseAtlasSize);
+    self.CollapseIconAlphaAdd:SetAtlas(atlas, TextureKitConstants.UseAtlasSize);
+end
+
+------------------------------
+
+DFProfessionFrameRecipeMixin = {}
+
+function DFProfessionFrameRecipeMixin:OnLoad()
+    local function OnLeave()
+        self:OnLeave();
+        GameTooltip_Hide();
+    end
+
+    self.LockedIcon:SetScript("OnLeave", OnLeave);
+    self.SkillUps:SetScript("OnLeave", OnLeave);
+end
+
+local PROFESSION_RECIPE_COLOR = CreateColor(0.88627457618713, 0.86274516582489, 0.83921575546265, 1)
+
+function DFProfessionFrameRecipeMixin:GetLabelColor()
+    return PROFESSION_RECIPE_COLOR
+    -- return self.learned and PROFESSION_RECIPE_COLOR or DISABLED_FONT_COLOR;
+end
+
+local PROFESSIONS_SKILL_UP_EASY = "Low chance of gaining skill"
+local PROFESSIONS_SKILL_UP_MEDIUM = "High chance of gaining skill"
+local PROFESSIONS_SKILL_UP_OPTIMAL = "Guaranteed chance of gaining %d skill ups"
+
+function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
+    local elementData = node:GetData();
+    local recipeInfo = elementData.recipeInfo
+    -- local recipeInfo = Professions.GetHighestLearnedRecipe(elementData.recipeInfo) or elementData.recipeInfo;
+
+    self.Label:SetText(recipeInfo.name);
+    -- self.learned = recipeInfo.learned;
+    self:SetLabelFontColors(self:GetLabelColor());
+
+    -- if true then return end
+    --[[ 
+    local rightFrames = {};
+
+    self.LockedIcon:Hide();
+
+    local function OnClick(button, buttonName, down)
+        self:Click(buttonName, down);
+    end
+  ]]
+
+    --[[ 
+  ["Professions-Icon-Skill-High"]={13, 15, 0.263184, 0.269531, 0.0537109, 0.0683594, false, false, "1x"},
+  ["Professions-Icon-Skill-Low"]={13, 15, 0.255859, 0.262207, 0.0537109, 0.0683594, false, false, "1x"},
+  ["Professions-Icon-Skill-Medium"]={13, 15, 0.294922, 0.30127, 0.0537109, 0.0683594, false, false, "1x"}, ]]
+
+    -- self.SkillUps:Hide();
+    local tooltipSkillUpString = nil;
+
+    local tex = base .. 'professions'
+    local xOfs = -9;
+    local yOfs = 0;
+
+    local icon = self.SkillUps.Icon
+    -- icon:ClearAllPoints()
+    -- icon:SetPoint('LEFT', self, 'LEFT', -9, 1)
+    icon:Show()
+
+    local skillType = recipeInfo.skillType
+
+    if skillType == 'trivial' then
+        --       
+        icon:Hide()
+    elseif skillType == 'easy' then
+        --
+        icon:SetTexCoord(0.255859, 0.262207, 0.0537109, 0.0683594)
+        tooltipSkillUpString = PROFESSIONS_SKILL_UP_EASY
+    elseif skillType == 'medium' then
+        icon:SetTexCoord(0.294922, 0.30127, 0.0537109, 0.0683594)
+        tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM
+    elseif skillType == 'optimal' then
+        icon:SetTexCoord(0.263184, 0.269531, 0.0537109, 0.0683594)
+        tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL
+    elseif skillType == 'difficult' then
+        --
+        icon:Hide()
+    end
+
+    if tooltipSkillUpString then
+        local isDifficultyOptimal = skillType == 'optimal'
+        local numSkillUps = recipeInfo.numSkillUps and recipeInfo.numSkillUps or 1;
+        local hasMultipleSkillUps = numSkillUps > 1;
+        local hasSkillUps = numSkillUps > 0;
+        local showText = hasMultipleSkillUps and isDifficultyOptimal;
+        self.SkillUps.Text:SetShown(showText);
+        -- print('->', isDifficultyOptimal, numSkillUps, hasMultipleSkillUps, hasSkillUps, showText)
+        if hasSkillUps then
+            if showText then
+                self.SkillUps.Text:SetText(numSkillUps);
+                -- self.SkillUps.Text:SetVertexColor(DifficultyColors[recipeInfo.relativeDifficulty]:GetRGB());
+            end
+
+            self.SkillUps:SetScript("OnEnter", function()
+                self:OnEnter();
+                GameTooltip:SetOwner(self.SkillUps, "ANCHOR_RIGHT");
+                GameTooltip_AddNormalLine(GameTooltip, tooltipSkillUpString:format(numSkillUps));
+                GameTooltip:Show();
+            end);
+        else
+            self.SkillUps:SetScript("OnEnter", nil);
+        end
+
+    end
+
+    local count = recipeInfo.numAvailable -- + 69
+    local hasCount = count > 0;
+    if hasCount then
+        self.Count:SetFormattedText(" [%d] ", count);
+        self.Count:Show();
+    else
+        self.Count:Hide();
+    end
+
+    local padding = 10;
+    local countWidth = hasCount and self.Count:GetStringWidth() or 0;
+    local width = self:GetWidth() - (countWidth + padding + self.SkillUps:GetWidth());
+    self.Label:SetWidth(self:GetWidth());
+    self.Label:SetWidth(math.min(width, self.Label:GetStringWidth()));
+end
+
+function DFProfessionFrameRecipeMixin:SetLabelFontColors(color)
+    self.Label:SetVertexColor(color:GetRGB());
+    self.Count:SetVertexColor(color:GetRGB());
+end
+
+function DFProfessionFrameRecipeMixin:OnEnter()
+    self:SetLabelFontColors(HIGHLIGHT_FONT_COLOR);
+    local elementData = self:GetElementData();
+    local recipeID = elementData.data.recipeInfo.recipeID;
+    local name = elementData.data.recipeInfo.name;
+    local iconID = elementData.data.recipeInfo.icon;
+
+    if self.Label:IsTruncated() then
+        GameTooltip:SetOwner(self.Label, "ANCHOR_RIGHT");
+        local wrap = false;
+        GameTooltip_AddHighlightLine(GameTooltip, name, wrap);
+        GameTooltip:Show();
+    end
+
+    -- EventRegistry:TriggerEvent("Professions.RecipeListOnEnter", self, elementData.data);
+end
+
+function DFProfessionFrameRecipeMixin:OnLeave()
+    self:SetLabelFontColors(self:GetLabelColor());
+    GameTooltip:Hide();
+end
+
+function DFProfessionFrameRecipeMixin:SetSelected(selected)
+    self.SelectedOverlay:SetShown(selected);
+    self.HighlightOverlay:SetShown(not selected);
+end
+
+------------------------------
+DFProfessionFrameSearchBoxMixin = {}
+
+function DFProfessionFrameSearchBoxMixin:OnLoad()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnLoad()')
+end
+
+function DFProfessionFrameSearchBoxMixin:OnHide()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnHide()')
+    self.clearButton:Click();
+    SearchBoxTemplate_OnTextChanged(self);
+end
+
+function DFProfessionFrameSearchBoxMixin:OnTextChanged()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnTextChanged()')
+    SearchBoxTemplate_OnTextChanged(self);
+    -- frameRef:OnEvent('TRADE_SKILL_FILTER_UPDATE')
+    self:GetParent():GetParent():OnEvent('TRADE_SKILL_FILTER_UPDATE')
+end
+
+function DFProfessionFrameSearchBoxMixin:OnChar()
+    -- print('DFProfessionSearchBoxTemplateMixin:OnChar()')
+    -- clear focus if the player is repeating keys (ie - trying to move)
+    -- TODO: move into base editbox code?
+    local MIN_REPEAT_CHARACTERS = 4;
+    local searchString = self:GetText();
+    if (string.len(searchString) >= MIN_REPEAT_CHARACTERS) then
+        local repeatChar = true;
+        for i = 1, MIN_REPEAT_CHARACTERS - 1, 1 do
+            if (string.sub(searchString, (0 - i), (0 - i)) ~= string.sub(searchString, (-1 - i), (-1 - i))) then
+                repeatChar = false;
+                break
+            end
+        end
+        if (repeatChar) then self:ClearFocus(); end
+    end
+end
+
