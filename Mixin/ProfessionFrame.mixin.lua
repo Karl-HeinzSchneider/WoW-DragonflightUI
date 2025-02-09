@@ -7,12 +7,25 @@ function DFProfessionMixin:OnLoad()
     self:SetupFavoriteDatabase()
 
     self.minimized = false
+    self.ProfessionTable = {}
     self.SelectedProfession = ''
     self.SelectedSkillID = ''
 
     self:SetupFrameStyle()
     self:SetupSchematics()
+    self:SetupTabs()
     self:Minimize(self.minimized)
+
+    self:Refresh(true)
+    self:Show()
+
+    hooksecurefunc('SpellBookFrame_Update', function()
+        --
+        -- print('SpellBookFrame_Update')
+        self:Refresh(true)
+    end)
+
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
 
     self:RegisterEvent("TRADE_SKILL_SHOW");
     self:RegisterEvent("TRADE_SKILL_CLOSE");
@@ -49,12 +62,14 @@ end
 function DFProfessionMixin:OnEvent(event, arg1, ...)
     print('~~', event, arg1 and arg1 or '')
     if event == 'TRADE_SKILL_SHOW' then
-        self:Show()
+        -- self:Show()
         self:Refresh(true, true)
     elseif event == 'TRADE_SKILL_CLOSE' then
-        self:Hide()
+        -- self:Hide()
     elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' then
         if self:IsShown() then self:Refresh(false, true) end
+    elseif event == 'PLAYER_REGEN_ENABLED' then
+        if self.ShouldUpdate then self:UpdateTabs() end
     end
 end
 
@@ -396,12 +411,167 @@ function DFProfessionMixin:SetupSchematics()
 
 end
 
+function DFProfessionMixin:SetupTabs()
+    local tabFrame = CreateFrame('FRAME', 'DragonflightUIProfessionFrameTabFrame', self)
+
+    self.DFTabFrame = tabFrame
+    local numTabs = 6
+    tabFrame.numTabs = numTabs
+    tabFrame.Tabs = {}
+
+    for i = 1, numTabs do
+        --
+        local tab = CreateFrame('BUTTON', 'DragonflightUIProfessionFrameTabButton' .. i, tabFrame,
+                                'DFProfessionTabTemplate', i)
+        tab:SetParent(tabFrame)
+        local text = _G[tab:GetName() .. 'Text']
+        tab.Text = text;
+        function tab:SetText(str)
+            text:SetText(str)
+        end
+        tinsert(tabFrame.Tabs, i, tab)
+
+        DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab, true, true)
+
+        tab:SetAttribute('type', 'macro')
+        tab:SetScript('PostClick', function(self, button, down)
+            --        
+            DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
+        end)
+
+        if i == 1 then
+            tab:ClearAllPoints()
+            tab:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 1)
+            text:SetText('*Prof1*')
+            tab:SetScript('OnEnter', function(self)
+                --
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                -- GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), 'TOGGLESPELLBOOK'), 1.0, 1.0, 1.0);
+                GameTooltip:SetText('1', 1.0, 1.0, 1.0);
+            end)
+        else
+            tab.DFChangePoint = true
+            tab:ClearAllPoints()
+            tab:SetPoint('LEFT', tabFrame.Tabs[i - 1], 'RIGHT', 0, 0)
+            text:SetText('*Prof' .. i .. '*')
+            tab:SetScript('OnEnter', function(self)
+                --
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                -- GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), ''), 1.0, 1.0, 1.0);
+                GameTooltip:SetText(i, 1.0, 1.0, 1.0);
+            end)
+        end
+
+        tab:SetScript('OnClick', function()
+            --
+            -- print('onclick', i)
+            local profIndex = ''
+            if i == 1 then
+                profIndex = 'primary1'
+            elseif i == 2 then
+                profIndex = 'primary2'
+            elseif i == 3 then
+                profIndex = 'cooking'
+            elseif i == 4 then
+                profIndex = 'firstaid'
+            elseif i == 5 then
+                profIndex = 'poison'
+            elseif i == 6 then
+                -- profIndex= 'primary1'
+            end
+
+            local prof = self.ProfessionTable[profIndex]
+            if not prof then return end
+
+            if tabFrame.selectedTab == i then return end
+            -- print('cast:', prof.nameLoc)
+            CastSpellByName(prof.nameLoc)
+        end)
+
+        DragonflightUIMixin:TabResize(tab)
+    end
+end
+
+function DFProfessionMixin:UpdateTabs()
+    local tabFrame = self.DFTabFrame;
+
+    if InCombatLockdown() then return end
+
+    local tabs = tabFrame.Tabs;
+    local tab;
+
+    local prof1 = self.ProfessionTable['primary1'];
+    tab = tabs[1]
+    if prof1 then
+        tab:Enable()
+        tab:SetText(prof1.nameLoc)
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
+    local prof2 = self.ProfessionTable['primary2'];
+    tab = tabs[2]
+    if prof2 then
+        tab:Enable()
+        tab:SetText(prof2.nameLoc)
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
+    local prof3 = self.ProfessionTable['cooking'];
+    tab = tabs[3]
+    if prof3 then
+        tab:Enable()
+        tab:SetText(prof3.nameLoc)
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
+    local prof4 = self.ProfessionTable['firstaid'];
+    tab = tabs[4]
+    if prof4 then
+        tab:Enable()
+        tab:SetText(prof4.nameLoc)
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
+    -- TODO or hunter pet
+    local prof5 = self.ProfessionTable['poison'];
+    tab = tabs[5]
+    if prof5 then
+        tab:Enable()
+        tab:SetText(prof5.nameLoc)
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
+    -- 
+    local prof6 = self.ProfessionTable[''];
+    tab = tabs[6]
+    tab:Hide()
+end
+
 function DFProfessionMixin:SetupFavoriteDatabase()
     self.db = DF.db:RegisterNamespace('RecipeFavorite', {profile = {favorite = {}}})
 end
 
 function DFProfessionMixin:Refresh(force, isTradeskill)
     print('DFProfessionMixin:Refresh(force)', force, isTradeskill and 'Tradeskill' or 'Craft')
+    self:UpdateProfessionData()
+
+    if InCombatLockdown() then
+        -- prevent unsecure update in combat TODO: message?
+        self.ShouldUpdate = true
+    else
+        self.ShouldUpdate = false
+        self:UpdateTabs()
+    end
     -- self:SetProfessionData(isTradeskill)
     -- self:UpdateHeader()
     -- self:UpdateRecipe()
@@ -477,6 +647,142 @@ do
     } -- archeology
     professionDataTable[666] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136242} -- poison
     DFProfessionMixin.ProfessionDataTable = professionDataTable
+end
+
+if not PROFESSION_RANKS then
+    PROFESSION_RANKS = {};
+    PROFESSION_RANKS[1] = {75, APPRENTICE};
+    PROFESSION_RANKS[2] = {150, JOURNEYMAN};
+    PROFESSION_RANKS[3] = {225, EXPERT};
+    PROFESSION_RANKS[4] = {300, ARTISAN};
+    PROFESSION_RANKS[5] = {375, MASTER};
+    PROFESSION_RANKS[6] = {450, GRAND_MASTER};
+    PROFESSION_RANKS[7] = {525, ILLUSTRIOUS};
+end
+
+local primary = {164, 165, 171, 182, 186, 197, 202, 333, 393, 755, 773}
+local profs = {primary = {}, poison = 666, fishing = 356, cooking = 185, firstaid = 129}
+for k, v in ipairs(primary) do profs.primary[v] = true end
+
+function DFProfessionMixin:UpdateProfessionData()
+    local skillTable = {}
+    if DF.Cata then
+        local prof1, prof2, archaeology, fishing, cooking, firstaid = GetProfessions()
+
+        if prof1 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof1)
+            skillTable['primary1'] = {
+                nameLoc = name,
+                icon = icon,
+                skillID = skillLine,
+                skill = skillLevel,
+                maxSkill = maxSkillLevel
+            }
+        end
+
+        if prof2 then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(prof2)
+            skillTable['primary2'] = {
+                nameLoc = name,
+                icon = icon,
+                skillID = skillLine,
+                skill = skillLevel,
+                maxSkill = maxSkillLevel
+            }
+        end
+
+        -- TODO: archeo, fishing
+
+        if cooking then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(cooking)
+            skillTable['cooking'] = {
+                nameLoc = name,
+                icon = icon,
+                skillID = skillLine,
+                skill = skillLevel,
+                maxSkill = maxSkillLevel
+            }
+        end
+
+        -- first aid
+        if firstaid then
+            local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier,
+                  specializationIndex, specializationOffset = GetProfessionInfo(firstaid)
+            skillTable['firstaid'] = {
+                nameLoc = name,
+                icon = icon,
+                skillID = skillLine,
+                skill = skillLevel,
+                maxSkill = maxSkillLevel
+            }
+        end
+    elseif DF.Wrath then
+    elseif DF.Era then
+        for i = 1, GetNumSkillLines() do
+            local nameLoc, _, _, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost,
+                  rankCost, minLevel, skillCostType, skillDescription = GetSkillLineInfo(i)
+
+            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+
+            if skillID then
+                --
+                -- print(nameLoc, skillRank, skillID)
+
+                local profDataTable = self.ProfessionDataTable[skillID]
+                local texture = profDataTable.icon
+                local spellIcon = texture
+
+                if skillID == 182 then
+                    -- herbalism
+                    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2383)
+                    nameLoc = name
+                    spellIcon = icon
+                elseif skillID == 186 then
+                    -- mining
+                    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2580)
+                    nameLoc = name
+                    spellIcon = icon
+                end
+
+                local data = {
+                    nameLoc = nameLoc,
+                    icon = texture,
+                    skillID = skillID, -- only era @TODO
+                    lineID = i,
+                    skill = skillRank,
+                    maxSkill = skillMaxRank,
+                    skillModifier = skillModifier -- only era= @TODO
+                }
+
+                if profs.primary[skillID] then
+                    --
+                    if skillTable['primary1'] then
+                        skillTable['primary2'] = data
+                    else
+                        skillTable['primary1'] = data
+                    end
+                else
+                    --
+                    if skillID == profs.poison then
+                        skillTable['poison'] = data
+                    elseif skillID == profs.fishing then
+                        skillTable['fishing'] = data
+                    elseif skillID == profs.cooking then
+                        skillTable['cooking'] = data
+                    elseif skillID == profs.firstaid then
+                        skillTable['firstaid'] = data
+                    end
+                end
+            end
+        end
+    end
+
+    self.ProfessionTable = skillTable
+
+    return skillTable;
 end
 
 function DFProfessionMixin:GetProfessionIDAndIcon(isTradeskill)
