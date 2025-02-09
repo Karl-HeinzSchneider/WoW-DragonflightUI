@@ -3370,8 +3370,16 @@ function Module.UpdateComboFrameState(state)
         c:SetParent(PlayerFrame)
         c:SetSize(116, 20)
         c:ClearAllPoints()
-        c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
+        -- c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
         -- ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1)   
+
+        local localizedClass, englishClass, classIndex = UnitClass('player');
+        if englishClass == 'DRUID' then
+            local deltaY = 16;
+            c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4 - deltaY)
+        else
+            c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
+        end
 
         for i = 1, 5 do
             --
