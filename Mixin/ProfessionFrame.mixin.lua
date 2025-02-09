@@ -41,10 +41,12 @@ function DFProfessionMixin:OnLoad()
         self:Minimize(true)
     end)
 
-    -- self.ClosePanelButton:SetScript("OnClick", function(btn)
-    --     --     
-    --     HideUIPanel(TradeSkillFrame)
-    -- end);
+    self.ClosePanelButton:HookScript("OnClick", function(btn)
+        --     
+        -- HideUIPanel(TradeSkillFrame)
+        CloseTradeSkill()
+        CloseCraft()
+    end);
 
     -- self.RecipeList.ResetButton:SetScript('OnClick', function(btn)
     --     --
