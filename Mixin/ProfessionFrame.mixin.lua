@@ -1058,6 +1058,18 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         frame.SkillDescription:Show();
 
+        -- DF
+        self.CreateButton:SetScript('OnClick', function()
+            DoTradeSkill(id, self.InputBox:GetNumber());
+            self.InputBox:ClearFocus();
+        end)
+
+        self.CreateAllButton:SetScript('OnClick', function()
+            local _, _, numAvailable, _, _, _ = GetTradeSkillInfo(id);
+            self.InputBox:SetNumber(numAvailable);
+            DoTradeSkill(id, numAvailable);
+            self.InputBox:ClearFocus();
+        end)
     elseif self.CraftOpen then
     end
 end
