@@ -504,7 +504,7 @@ function DFProfessionMixin:SetupTabs()
                 -- profIndex= 'primary1'
             end
 
-            if self.SelectedProfession == profIndex then return end
+            -- if self.SelectedProfession == profIndex then return end
 
             local prof = self.ProfessionTable[profIndex]
             if not prof then return end
@@ -620,6 +620,8 @@ function DFProfessionMixin:Refresh(force)
     print('DFProfessionMixin:Refresh(force)', force)
     self:UpdateProfessionData()
 
+    self:SetCurrentProfession()
+
     if InCombatLockdown() then
         -- prevent unsecure update in combat TODO: message?
         self.ShouldUpdate = true
@@ -628,7 +630,6 @@ function DFProfessionMixin:Refresh(force)
         self:UpdateTabs()
     end
 
-    self:SetCurrentProfession()
     if not self.SelectedProfession then
         print('-- no self.SelectedProfession')
         return
@@ -747,8 +748,10 @@ if not PROFESSION_RANKS then
 end
 
 local primary = {164, 165, 171, 182, 186, 197, 202, 333, 393, 755, 773}
-local profs = {primary = {}, poison = 666, fishing = 356, cooking = 185, firstaid = 129}
+local ignoredPrimary = {182, 186}
+local profs = {primary = {}, ignoredPrimary = {}, poison = 666, fishing = 356, cooking = 185, firstaid = 129}
 for k, v in ipairs(primary) do profs.primary[v] = true end
+for k, v in ipairs(ignoredPrimary) do profs.ignoredPrimary[v] = true end
 
 function DFProfessionMixin:UpdateProfessionData()
     local skillTable = {}
@@ -848,7 +851,7 @@ function DFProfessionMixin:UpdateProfessionData()
                     profData = professionDataTable[skillID]
                 }
 
-                if profs.primary[skillID] then
+                if profs.primary[skillID] and not profs.ignoredPrimary[skillID] then
                     --
                     if skillTable['primary1'] then
                         skillTable['primary2'] = data
