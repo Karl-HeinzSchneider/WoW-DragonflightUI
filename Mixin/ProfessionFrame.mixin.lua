@@ -586,6 +586,17 @@ function DFProfessionMixin:UpdateTabs()
     local prof6 = self.ProfessionTable[''];
     tab = tabs[6]
     tab:Hide()
+
+    for k, v in ipairs(tabs) do
+        --
+        local w = v.Text:GetWrappedWidth()
+        local newW = math.max(w + 16, 78)
+        if v:IsShown() then
+            v:SetWidth(newW)
+        else
+            v:SetWidth(0.01)
+        end
+    end
 end
 
 function DFProfessionMixin:SetupFavoriteDatabase()
