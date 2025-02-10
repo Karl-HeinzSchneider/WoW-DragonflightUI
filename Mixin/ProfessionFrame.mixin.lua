@@ -1,5 +1,9 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
+
+-- filter
+local DFFilter = {}
 
 DFProfessionMixin = {}
 
@@ -13,6 +17,7 @@ function DFProfessionMixin:OnLoad()
 
     self:SetupFrameStyle()
     self:SetupSchematics()
+    self:SetupDropdown()
     self:SetupTabs()
     self:Minimize(self.minimized)
 
@@ -57,16 +62,14 @@ function DFProfessionMixin:OnLoad()
     end)
 
     self.ClosePanelButton:HookScript("OnClick", function(btn)
-        --     
-        -- HideUIPanel(TradeSkillFrame)
+        --
         CloseTradeSkill()
         CloseCraft()
     end);
 
     self.RecipeList.ResetButton:SetScript('OnClick', function(btn)
         --
-        -- self:ResetFilter()
-        -- self:FilterDropdownRefresh()
+        self:ResetFilter()
     end)
 end
 
@@ -432,7 +435,178 @@ function DFProfessionMixin:SetupSchematics()
             ResetCursor();
         end)
     end
+end
 
+function DFProfessionMixin:SetupDropdown()
+    local drop = self.RecipeList.FilterButton
+    DevTools_Dump(drop.SetupMenu or 'NOTS')
+
+    local generator = function(dropdown, rootDescription)
+        rootDescription:SetTag("MENU_PROFESSIONS_FILTER");
+        -- rootDescription:CreateTitle('TITLETEST')
+
+        -- DFFilter_HasSkillUp
+        do
+            local function IsSelected()
+                return DFFilter['DFFilter_HasSkillUp'].enabled;
+            end
+
+            local function SetChecked(checked)
+                if checked then
+                    DFFilter['DFFilter_HasSkillUp'].enabled = true
+                    DFFilter['DFFilter_HasSkillUp'].filter = {easy = true, medium = true, optimal = true}
+                else
+                    DFFilter['DFFilter_HasSkillUp'].enabled = false
+                    DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
+                end
+            end
+
+            rootDescription:CreateCheckbox(L["ProfessionFrameHasSkillUp"], IsSelected, function()
+                SetChecked(not DFFilter['DFFilter_HasSkillUp'].enabled)
+                self:UpdateRecipeList()
+                self:CheckFilter()
+            end);
+        end
+
+        -- DFFilter_HaveMaterials
+        do
+            local function IsSelected()
+                return DFFilter['DFFilter_HaveMaterials'].enabled;
+            end
+
+            local function SetChecked(checked)
+                if checked then
+                    DFFilter['DFFilter_HaveMaterials'].enabled = true
+                else
+                    DFFilter['DFFilter_HaveMaterials'].enabled = false
+                end
+            end
+
+            rootDescription:CreateCheckbox(L["ProfessionFrameHasMaterials"], IsSelected, function()
+                SetChecked(not DFFilter['DFFilter_HaveMaterials'].enabled)
+                self:UpdateRecipeList()
+                self:CheckFilter()
+            end);
+        end
+
+        rootDescription:CreateDivider();
+
+        -- subclass
+        do
+            local subclassMenu = rootDescription:CreateButton(L["ProfessionFrameSubclass"]);
+            -- subclassMenu:CreateButton(L["ProfessionCheckAll"], function()
+            --     --
+            -- end);
+            -- subclassMenu:CreateButton(L["ProfessionUnCheckAll"], function()
+            --     --
+            -- end);
+            local subClasses;
+            local IsSelected;
+            local SetSelected;
+
+            if self.TradeSkillOpen then
+                subClasses = {GetTradeSkillSubClasses()}
+
+                local dropDown = TradeSkillSubClassDropDown or TradeSkillSubClassDropdown -- TODO: blizzard changed this in SoD for some reason..
+
+                function IsSelected(k)
+                    local allCheckedSub = GetTradeSkillSubClassFilter(0);
+
+                    if k == 0 then
+                        local selectedIDSub = UIDropDownMenu_GetSelectedID(dropDown) or 1;
+                        return allCheckedSub and (selectedIDSub == nil or selectedIDSub == 1)
+                    else
+                        local checked
+
+                        if allCheckedSub then
+                            checked = false
+                        else
+                            checked = GetTradeSkillSubClassFilter(k)
+                        end
+                        return checked;
+                    end
+                end
+
+                function SetSelected(k)
+                    if GetTradeSkillSubClassFilter(k) then
+                        SetTradeSkillSubClassFilter(k, 0, 1)
+                    else
+                        SetTradeSkillSubClassFilter(k, 1, 1)
+                    end
+                    self:UpdateRecipeList()
+                    self:CheckFilter()
+                end
+            elseif self.CraftOpen then
+            end
+
+            if subClasses then
+                local radioAll = subclassMenu:CreateRadio(ALL_SUBCLASSES, IsSelected, SetSelected, 0);
+
+                for k, v in ipairs(subClasses) do
+                    -- 
+                    local radio = subclassMenu:CreateRadio(v, IsSelected, SetSelected, k);
+                end
+            end
+
+        end
+
+        -- slot
+        do
+            local slotMenu = rootDescription:CreateButton(L["ProfessionFrameSlot"]);
+            -- subclassMenu:CreateButton(L["ProfessionCheckAll"], function()
+            --     --
+            -- end);
+            -- subclassMenu:CreateButton(L["ProfessionUnCheckAll"], function()
+            --     --
+            -- end);
+            local subInv;
+            local IsSelected;
+            local SetSelected;
+
+            if self.TradeSkillOpen then
+                subInv = {GetTradeSkillInvSlots()}
+
+                function IsSelected(k)
+                    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
+
+                    if k == 0 then
+                        return allCheckedInv
+                    else
+                        local checked
+
+                        if allCheckedInv then
+                            checked = nil
+                        else
+                            checked = GetTradeSkillInvSlotFilter(k)
+                        end
+                        return checked;
+                    end
+                end
+
+                function SetSelected(k)
+                    if GetTradeSkillInvSlotFilter(k) then
+                        SetTradeSkillInvSlotFilter(k, 0, 1)
+                    else
+                        SetTradeSkillInvSlotFilter(k, 1, 1)
+                    end
+                    self:UpdateRecipeList()
+                    self:CheckFilter()
+                end
+            elseif self.CraftOpen then
+            end
+
+            if subInv then
+                local radioAll = slotMenu:CreateRadio(ALL_INVENTORY_SLOTS, IsSelected, SetSelected, 0);
+
+                for k, v in ipairs(subInv) do
+                    -- 
+                    local radio = slotMenu:CreateRadio(v, IsSelected, SetSelected, k);
+                end
+            end
+
+        end
+    end
+    drop:SetupMenu(generator)
 end
 
 function DFProfessionMixin:SetupTabs()
@@ -666,7 +840,7 @@ function DFProfessionMixin:Refresh(force)
     self:UpdateHeader()
     self:UpdateRecipeList()
     -- self:UpdateRecipe()
-    -- self:CheckFilter()
+    self:CheckFilter()
 end
 
 function DFProfessionMixin:SetCurrentProfession()
@@ -1117,8 +1291,33 @@ function DFProfessionMixin:UpdateRecipe(id)
     end
 end
 
+function DFProfessionMixin:ResetFilter()
+    DFFilter['DFFilter_HasSkillUp'].enabled = false
+    DFFilter['DFFilter_HaveMaterials'].enabled = false
+    SetTradeSkillSubClassFilter(0, true, 1)
+    SetTradeSkillInvSlotFilter(0, true, 1)
+
+    self:UpdateRecipeList()
+    self:CheckFilter()
+end
+
+function DFProfessionMixin:AreFilterDefault()
+    local allCheckedSub = GetTradeSkillSubClassFilter(0);
+    if not allCheckedSub then return false end
+    local allCheckedInv = GetTradeSkillInvSlotFilter(0);
+    if not allCheckedInv then return false end
+
+    if DFFilter['DFFilter_HasSkillUp'].enabled then return false end
+    if DFFilter['DFFilter_HaveMaterials'].enabled then return false end
+
+    return true
+end
+
 function DFProfessionMixin:CheckFilter()
     print('DFProfessionMixin:CheckFilter()')
+    local def = self:AreFilterDefault()
+
+    self.RecipeList.ResetButton:SetShown(not def)
 end
 
 function DFProfessionMixin:UpdateRecipeList()
@@ -1153,8 +1352,6 @@ function DFProfessionMixin:UpdateRecipeList()
 end
 
 -- FILTER
-local DFFilter = {}
-
 do
     local DFFilter_HasSkillUp = function(elementData)
         local skillType = elementData.recipeInfo.skillType

@@ -222,30 +222,32 @@ UI_shared.xsd">
 					<Anchor point="BOTTOMRIGHT" />
 				</Anchors>
 			</Frame>
-			<DropDownToggleButton parentKey="FilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER">
-				<Size x="90" y="22" />
+			<DropdownButton parentKey="FilterButton" inherits="WowStyle1FilterDropdownTemplate" text="FILTER">
+				<Size x="90" y="20" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-8" y="-8" />
 				</Anchors>
 				<Layers>
+					<!--
 					<Layer level="ARTWORK">
-						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
-							<Size x="10" y="12" />
-							<Anchors>
-								<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="RIGHT" x="-5" />
-							</Anchors>
-						</Texture>
+					<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+					<Size x="10" y="12" />
+					<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="RIGHT" x="-5" />
+					</Anchors>
+					</Texture>
 					</Layer>
+					-->
 				</Layers>
 				<Scripts>
+					<!--
 					<OnClick>
-						<!--
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-						DragonFlightUIProfessionMixin:ToggleFilterDropdown()
-						-->
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+					DragonFlightUIProfessionMixin:ToggleFilterDropdown()
 					</OnClick>
+					-->
 				</Scripts>
-			</DropDownToggleButton>
+			</DropdownButton>
 			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate">
 				<Scripts>
 					<OnLoad>
