@@ -465,7 +465,7 @@ function DFProfessionMixin:SetupTabs()
 
         if i == 1 then
             tab:ClearAllPoints()
-            tab:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 1)
+            tab:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 2)
             text:SetText('*Prof1*')
             tab:SetScript('OnEnter', function(self)
                 --
