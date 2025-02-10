@@ -493,7 +493,6 @@ function DFProfessionMixin:SetupDropdown()
 
         -- subclass
         do
-            local subclassMenu = rootDescription:CreateButton(L["ProfessionFrameSubclass"]);
             -- subclassMenu:CreateButton(L["ProfessionCheckAll"], function()
             --     --
             -- end);
@@ -540,19 +539,21 @@ function DFProfessionMixin:SetupDropdown()
             end
 
             if subClasses then
-                local radioAll = subclassMenu:CreateRadio(ALL_SUBCLASSES, IsSelected, SetSelected, 0);
+                if #subClasses > 0 then
+                    local subclassMenu = rootDescription:CreateButton(L["ProfessionFrameSubclass"]);
 
-                for k, v in ipairs(subClasses) do
-                    -- 
-                    local radio = subclassMenu:CreateRadio(v, IsSelected, SetSelected, k);
+                    local radioAll = subclassMenu:CreateRadio(ALL_SUBCLASSES, IsSelected, SetSelected, 0);
+
+                    for k, v in ipairs(subClasses) do
+                        -- 
+                        local radio = subclassMenu:CreateRadio(v, IsSelected, SetSelected, k);
+                    end
                 end
             end
-
         end
 
         -- slot
         do
-            local slotMenu = rootDescription:CreateButton(L["ProfessionFrameSlot"]);
             -- subclassMenu:CreateButton(L["ProfessionCheckAll"], function()
             --     --
             -- end);
@@ -596,11 +597,14 @@ function DFProfessionMixin:SetupDropdown()
             end
 
             if subInv then
-                local radioAll = slotMenu:CreateRadio(ALL_INVENTORY_SLOTS, IsSelected, SetSelected, 0);
+                if #subInv > 0 then
+                    local slotMenu = rootDescription:CreateButton(L["ProfessionFrameSlot"]);
 
-                for k, v in ipairs(subInv) do
-                    -- 
-                    local radio = slotMenu:CreateRadio(v, IsSelected, SetSelected, k);
+                    local radioAll = slotMenu:CreateRadio(ALL_INVENTORY_SLOTS, IsSelected, SetSelected, 0);
+                    for k, v in ipairs(subInv) do
+                        -- 
+                        local radio = slotMenu:CreateRadio(v, IsSelected, SetSelected, k);
+                    end
                 end
             end
 
@@ -675,7 +679,7 @@ function DFProfessionMixin:SetupTabs()
             elseif i == 5 then
                 profIndex = 'poison'
             elseif i == 6 then
-                -- profIndex= 'primary1'
+                profIndex = 'beast'
             end
 
             -- if self.SelectedProfession == profIndex then return end
@@ -764,7 +768,7 @@ function DFProfessionMixin:UpdateTabs()
         tab:SetText('***')
     end
 
-    -- TODO or hunter pet
+    -- 
     local prof5 = self.ProfessionTable['poison'];
     tab = tabs[5]
     if prof5 then
@@ -778,9 +782,17 @@ function DFProfessionMixin:UpdateTabs()
     end
 
     -- 
-    local prof6 = self.ProfessionTable[''];
+    local prof6 = self.ProfessionTable['beast'];
     tab = tabs[6]
-    tab:Hide()
+    if prof6 then
+        tab:Enable()
+        tab:SetText(prof6.nameLoc)
+        setupTooltip(tab, prof6)
+        if self.SelectedProfession == 'beast' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
 
     for k, v in ipairs(tabs) do
         --
@@ -935,6 +947,7 @@ do
         icon = 441139
     } -- archeology
     professionDataTable[666] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136242} -- poison
+    professionDataTable[667] = {tex = 'professionbackgroundart', bar = 'professionsfxskinning', icon = 132162} -- beast training
     DFProfessionMixin.ProfessionDataTable = professionDataTable
 end
 
@@ -950,8 +963,16 @@ if not PROFESSION_RANKS then
 end
 
 local primary = {164, 165, 171, 182, 186, 197, 202, 333, 393, 755, 773}
-local ignoredPrimary = {182, 186}
-local profs = {primary = {}, ignoredPrimary = {}, poison = 666, fishing = 356, cooking = 185, firstaid = 129}
+local ignoredPrimary = {182, 186, 393}
+local profs = {
+    primary = {},
+    ignoredPrimary = {},
+    poison = 666,
+    fishing = 356,
+    cooking = 185,
+    firstaid = 129,
+    beast = 667
+}
 for k, v in ipairs(primary) do profs.primary[v] = true end
 for k, v in ipairs(ignoredPrimary) do profs.ignoredPrimary[v] = true end
 
@@ -1024,8 +1045,6 @@ function DFProfessionMixin:UpdateProfessionData()
 
             if skillID then
                 --
-                -- print(nameLoc, skillRank, skillID)
-
                 local profDataTable = self.ProfessionDataTable[skillID]
                 local texture = profDataTable.icon
                 local spellIcon = texture
@@ -1073,6 +1092,28 @@ function DFProfessionMixin:UpdateProfessionData()
                     end
                 end
             end
+        end
+
+        -- beast training rip
+        if IsSpellKnown(5149) or IsSpellKnown(5300) then
+            -- beast training
+
+            local nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
+            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+            local profData = professionDataTable[skillID]
+
+            local data = {
+                nameLoc = nameLoc,
+                icon = profData.icon,
+                skillID = skillID, -- only era @TODO
+                -- lineID = i,
+                skill = 1,
+                maxSkill = 1,
+                -- skillModifier = skillModifier, -- only era= @TODO
+                profData = profData
+            }
+
+            skillTable['beast'] = data
         end
     end
 
@@ -1346,6 +1387,23 @@ function DFProfessionMixin:UpdateRecipeList()
 
     elseif self.CraftOpen then
         -- self.RecipeList:ClearList()
+        local numSkills = GetNumCrafts()
+        local index = recipeList.selectedSkill
+        if index > numSkills then index = 2 end
+        local changed = recipeList.selectedSkill ~= index
+        recipeList.selectedSkill = index
+
+        local oldScroll = recipeList.ScrollBox:GetScrollPercentage()
+
+        recipeList:UpdateRecipeListCraft()
+
+        recipeList:SelectRecipe(index, true)
+        -- frameRef.FavoriteButton:UpdateFavoriteState()
+
+        if (not changed) and (not force) then
+            -- print('set old scroll')
+            recipeList.ScrollBox:SetScrollPercentage(oldScroll, ScrollBoxConstants.NoScrollInterpolation)
+        end
     else
         recipeList:ClearList()
     end
@@ -1676,6 +1734,107 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     self.ScrollBox:SetDataProvider(dataProvider);
 end
 
+function DFProfessionFrameRecipeListMixin:UpdateRecipeListCraft()
+    local dataProvider = CreateTreeDataProvider();
+
+    local filterTable = DFFilter
+    local numSkills = GetNumCrafts()
+    local headerID = 0
+
+    do
+        local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
+        dataProvider:Insert(data)
+    end
+
+    for i = 1, numSkills do
+        local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
+            GetCraftInfo(i)
+
+        if skillType == "none" then
+            skillType = "easy"
+        elseif skillType == "used" then
+            skillType = "trivial"
+        end
+
+        if false then
+            -- local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            -- dataProvider:Insert(data)
+            -- headerID = i
+        else
+            -- print('--', skillName)
+            local isFavorite = self:GetParent():IsRecipeFavorite(skillName)
+
+            local data = {
+                id = i,
+                isFavorite = isFavorite,
+                isCraft = true,
+                recipeInfo = {
+                    name = skillName,
+                    craftSubSpellName = craftSubSpellName,
+                    skillType = skillType,
+                    numAvailable = numAvailable,
+                    isExpanded = isExpanded,
+                    trainingPointCost = trainingPointCost,
+                    requiredLevel = requiredLevel
+                }
+            }
+
+            local filtered = true
+
+            for k, filter in pairs(filterTable) do
+                --
+                if filter.enabled then
+                    --
+                    if not filter.func(data, self.SearchBox) then
+                        --
+                        filtered = false
+                    end
+                end
+            end
+
+            if filtered then
+                --
+                dataProvider:InsertInParentByPredicate(data, function(node)
+                    local nodeData = node:GetData()
+
+                    if data.isFavorite then
+                        return nodeData.id == 0
+                    else
+                        return nodeData.id == headerID
+                    end
+                end)
+            end
+        end
+    end
+
+    -- DevTools_Dump(dataProvider)
+
+    local nodes = dataProvider:GetChildrenNodes()
+    local nodesToRemove = {}
+    -- print('NODES', #nodes)
+
+    for k, child in ipairs(nodes) do
+        --
+        local numChildNodes = #child:GetNodes()
+        -- print('numChildNodes', numChildNodes)
+        if numChildNodes < 1 then
+            --
+            -- print('remove node')
+            -- dataProvider:Remove(child)
+            table.insert(nodesToRemove, child)
+        end
+    end
+
+    for k, node in ipairs(nodesToRemove) do
+        --
+        -- print('to remove', k, node)
+        dataProvider:Remove(node)
+    end
+
+    -- print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
+    self.ScrollBox:SetDataProvider(dataProvider);
+end
+
 ------------------------------
 
 DFProfessionFrameRecipeCategoryMixin = {}
@@ -1752,25 +1911,13 @@ function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
     local recipeInfo = elementData.recipeInfo
     -- local recipeInfo = Professions.GetHighestLearnedRecipe(elementData.recipeInfo) or elementData.recipeInfo;
 
-    self.Label:SetText(recipeInfo.name);
+    if recipeInfo.craftSubSpellName then
+        self.Label:SetText(recipeInfo.name .. ' (' .. recipeInfo.craftSubSpellName .. ')');
+    else
+        self.Label:SetText(recipeInfo.name);
+    end
     -- self.learned = recipeInfo.learned;
     self:SetLabelFontColors(self:GetLabelColor());
-
-    -- if true then return end
-    --[[ 
-    local rightFrames = {};
-
-    self.LockedIcon:Hide();
-
-    local function OnClick(button, buttonName, down)
-        self:Click(buttonName, down);
-    end
-  ]]
-
-    --[[ 
-  ["Professions-Icon-Skill-High"]={13, 15, 0.263184, 0.269531, 0.0537109, 0.0683594, false, false, "1x"},
-  ["Professions-Icon-Skill-Low"]={13, 15, 0.255859, 0.262207, 0.0537109, 0.0683594, false, false, "1x"},
-  ["Professions-Icon-Skill-Medium"]={13, 15, 0.294922, 0.30127, 0.0537109, 0.0683594, false, false, "1x"}, ]]
 
     -- self.SkillUps:Hide();
     local tooltipSkillUpString = nil;
@@ -1843,6 +1990,12 @@ function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
     local countWidth = hasCount and self.Count:GetStringWidth() or 0;
     local width = self:GetWidth() - (countWidth + padding + self.SkillUps:GetWidth());
     self.Label:SetWidth(self:GetWidth());
+
+    if recipeInfo.trainingPointCost and recipeInfo.trainingPointCost > 0 then
+        width = width - 10;
+        self.Count:SetFormattedText(" - %d TP", recipeInfo.trainingPointCost)
+        self.Count:Show()
+    end
     self.Label:SetWidth(math.min(width, self.Label:GetStringWidth()));
 end
 
