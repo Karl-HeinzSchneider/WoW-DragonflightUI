@@ -527,6 +527,18 @@ function DFProfessionMixin:UpdateTabs()
 
     if InCombatLockdown() then return end
 
+    local function setupTooltip(tab, prof)
+        tab:SetScript('OnEnter', function(self)
+            --
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+            GameTooltip:SetText(prof.nameLoc, 1.0, 1.0, 1.0);
+            GameTooltip:AddDoubleLine(' ')
+            GameTooltip:AddDoubleLine('Skill: ', '|cFFFFFFFF' .. prof.skill .. '/' .. prof.maxSkill .. '|r')
+
+            GameTooltip:Show()
+        end)
+    end
+
     local tabs = tabFrame.Tabs;
     local tab;
 
@@ -535,6 +547,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof1 then
         tab:Enable()
         tab:SetText(prof1.nameLoc)
+        setupTooltip(tab, prof1)
         if self.SelectedProfession == 'primary1' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
@@ -546,6 +559,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof2 then
         tab:Enable()
         tab:SetText(prof2.nameLoc)
+        setupTooltip(tab, prof2)
         if self.SelectedProfession == 'primary2' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
@@ -557,6 +571,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof3 then
         tab:Enable()
         tab:SetText(prof3.nameLoc)
+        setupTooltip(tab, prof3)
         if self.SelectedProfession == 'cooking' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
@@ -568,6 +583,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof4 then
         tab:Enable()
         tab:SetText(prof4.nameLoc)
+        setupTooltip(tab, prof4)
         if self.SelectedProfession == 'firstaid' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
@@ -580,6 +596,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof5 then
         tab:Enable()
         tab:SetText(prof5.nameLoc)
+        setupTooltip(tab, prof5)
         if self.SelectedProfession == 'poison' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
