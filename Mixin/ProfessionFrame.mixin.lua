@@ -274,6 +274,7 @@ function DFProfessionMixin:SetupFrameStyle()
         local create = CreateFrame('Button', 'DragonflightUIProfessionCreateButton', self, 'UIPanelButtonTemplate')
         create:SetSize(80, 22)
         create:SetText(CREATE)
+        create:SetFrameLevel(10)
         self.CreateButton = create
 
         local createAll =
@@ -379,6 +380,19 @@ function DFProfessionMixin:SetupSchematics()
     reqText:SetJustifyH("LEFT");
     reqText:SetPoint('LEFT', req, 'RIGHT', 4, 0)
     frame.RequirementText = reqText
+
+    local cost = frame:CreateFontString('DragonflightUIProfession' .. 'CostLabel', 'BACKGROUND',
+                                        'GameFontHighlightSmall')
+    cost:SetPoint('TOPLEFT', req, 'BOTTOMLEFT', 0, -4)
+    cost:SetText(COSTS_LABEL)
+    frame.CostLabel = cost
+
+    local costText = frame:CreateFontString('DragonflightUIProfession' .. 'CostText', 'BACKGROUND',
+                                            'GameFontHighlightSmall')
+    costText:SetSize(250, 9.9)
+    costText:SetJustifyH("LEFT");
+    costText:SetPoint('LEFT', cost, 'RIGHT', 4, 0)
+    frame.CostText = costText
 
     local cooldown = frame:CreateFontString('DragonflightUIProfession' .. 'SkillCooldown', 'BACKGROUND',
                                             'GameFontRedSmall')
@@ -835,6 +849,7 @@ function DFProfessionMixin:Refresh(force)
     self:UpdateProfessionData()
 
     self:SetCurrentProfession()
+    print('==', self.SelectedProfession)
 
     if InCombatLockdown() then
         -- prevent unsecure update in combat TODO: message?
@@ -1268,6 +1283,8 @@ function DFProfessionMixin:UpdateRecipe(id)
             frame.RequirementLabel:Hide();
             frame.RequirementText:SetText("");
         end
+        frame.CostLabel:Hide()
+        frame.CostText:SetText('')
 
         self.CreateButton:SetText(altVerb or CREATE);
 
@@ -1278,6 +1295,7 @@ function DFProfessionMixin:UpdateRecipe(id)
             self.CreateButton:Disable();
             self.CreateAllButton:Disable();
         end
+        self.CreateButton:Show();
 
         -- self.InputBox:SetNumber(GetTradeskillRepeatCount());
         self.InputBox:SetNumber(1);
@@ -1329,6 +1347,209 @@ function DFProfessionMixin:UpdateRecipe(id)
             self.InputBox:ClearFocus();
         end)
     elseif self.CraftOpen then
+        local craftName, craftSubSpellName, craftType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
+            GetCraftInfo(id);
+
+        if craftSubSpellName then
+            frame.SkillName:SetText(craftName .. ' (' .. craftSubSpellName .. ')')
+        else
+            frame.SkillName:SetText(craftName)
+        end
+
+        if (GetCraftCooldown(id)) then
+            frame.SkillCooldown:SetText(COOLDOWN_REMAINING .. " " .. SecondsToTime(GetCraftCooldown(id)));
+        else
+            frame.SkillCooldown:SetText("");
+        end
+
+        local icon = GetCraftIcon(id);
+        if (icon) then
+            frame.SkillIcon:SetNormalTexture(icon);
+        else
+            frame.SkillIcon:ClearNormalTexture();
+        end
+
+        local minMade, maxMade = GetCraftNumMade(id);
+        if (maxMade > 1) then
+            if (minMade == maxMade) then
+                frame.SKillIconCount:SetText(minMade);
+            else
+                frame.SKillIconCount:SetText(minMade .. "-" .. maxMade);
+            end
+            if (frame.SKillIconCount:GetWidth() > 39) then
+                frame.SKillIconCount:SetText("~" .. floor((minMade + maxMade) / 2));
+            end
+        else
+            frame.SKillIconCount:SetText("");
+        end
+
+        local creatable = true;
+        local numReagents = GetCraftNumReagents(id);
+
+        if (numReagents > 0) then
+            frame.RegentLabel:Show();
+        else
+            frame.RegentLabel:Hide();
+        end
+
+        for i = 1, numReagents do
+            local reagentName, reagentTexture, reagentCount, playerReagentCount = GetCraftReagentInfo(id, i);
+
+            local reagent = frame.ReagentTable[i]
+            local name = _G[reagent:GetName() .. 'Name']
+            local count = _G[reagent:GetName() .. "Count"];
+
+            if (not reagentName or not reagentTexture) then
+                reagent:Hide();
+            else
+                reagent:Show();
+                SetItemButtonTexture(reagent, reagentTexture);
+                name:SetText(reagentName);
+                -- Grayout items
+                if (playerReagentCount < reagentCount) then
+                    SetItemButtonTextureVertexColor(reagent, 0.5, 0.5, 0.5);
+                    name:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+                    creatable = false;
+                else
+                    SetItemButtonTextureVertexColor(reagent, 1.0, 1.0, 1.0);
+                    name:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                end
+                if (playerReagentCount >= 100) then playerReagentCount = "*"; end
+                count:SetText(playerReagentCount .. " /" .. reagentCount);
+
+                -- DF
+                local newText = playerReagentCount .. "/" .. reagentCount .. ' ' .. reagentName
+                name:SetText(newText)
+
+                local link = GetCraftReagentItemLink(id, i)
+
+                if link then
+                    local quality, _, _, _, _, _, _, _, _, classId = select(3, C_Item.GetItemInfo(link));
+                    if (classId == 12) then quality = 0; end
+                    DragonflightUIItemColorMixin:UpdateOverlayQuality(reagent, quality)
+                end
+
+                local function UpdateTooltip(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
+                    GameTooltip:SetCraftItem(id, self:GetID());
+                    CursorUpdate(self);
+                end
+                reagent:SetScript('OnEnter', UpdateTooltip)
+
+                local function OnClick(self)
+                    HandleModifiedItemClick(GetCraftReagentItemLink(id, self:GetID()));
+                end
+                reagent:SetScript('OnClick', OnClick)
+            end
+        end
+
+        for i = numReagents + 1, MAX_TRADE_SKILL_REAGENTS do
+            local reagent = frame.ReagentTable[i]
+            reagent:Hide()
+        end
+
+        local spellFocus = BuildColoredListString(GetCraftSpellFocus(id));
+        if (spellFocus) then
+            frame.RequirementLabel:Show();
+            frame.RequirementText:SetText(spellFocus);
+        elseif requiredLevel and requiredLevel > 0 then
+            frame.RequirementLabel:Show();
+            if (UnitLevel("pet") >= requiredLevel) then
+                frame.RequirementText:SetText(format(TRAINER_REQ_LEVEL --[[TRAINER_PET_LEVEL]] , requiredLevel));
+            else
+                frame.RequirementText:SetText(format(TRAINER_REQ_LEVEL --[[TRAINER_PET_LEVEL_RED]] , requiredLevel));
+            end
+        else
+            frame.RequirementLabel:Hide();
+            frame.RequirementText:SetText("");
+        end
+
+        if (trainingPointCost > 0) then
+            local totalPoints, spent = GetPetTrainingPoints();
+            local usablePoints = totalPoints - spent;
+            if (usablePoints >= trainingPointCost) then
+                frame.CostText:SetText(trainingPointCost .. " " .. TRAINING_POINTS_LABEL);
+            else
+                frame.CostText:SetText(RED_FONT_COLOR_CODE .. trainingPointCost .. FONT_COLOR_CODE_CLOSE .. " " ..
+                                           TRAINING_POINTS_LABEL);
+            end
+
+            frame.CostLabel:Show()
+            frame.CostText:Show();
+        else
+            frame.CostText:Hide();
+        end
+
+        -- CraftCreateButton:SetText(getglobal(GetCraftButtonToken()));
+        self.CreateButton:SetText(getglobal(GetCraftButtonToken()));
+        -- self.CreateButton:SetText(CraftCreateButton:GetText()); -- @TODO
+
+        if (craftType == "used") then creatable = false; end
+
+        if (creatable) then
+            self.CreateButton:Enable();
+            -- self.CreateAllButton:Enable();
+        else
+            self.CreateButton:Disable();
+            -- self.CreateAllButton:Disable();
+        end
+
+        -- -- self.InputBox:SetNumber(GetTradeskillRepeatCount());
+        -- self.InputBox:SetNumber(1);
+
+        if (true) then
+            self.CreateAllButton:Hide();
+            self.DecrementButton:Hide();
+            self.InputBox:Hide();
+            self.Incrementbutton:Hide();
+            -- else
+            --     -- DF
+            --     self.CreateAllButton:Show();
+            --     self.DecrementButton:Show();
+            --     self.InputBox:Show();
+            --     self.Incrementbutton:Show();
+        end
+
+        -- @TODO
+        self.CreateButton:Hide();
+        CraftCreateButton:SetParent(self)
+        CraftCreateButton:ClearAllPoints()
+        CraftCreateButton:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
+        CraftCreateButton:SetFrameLevel(8)
+
+        if (GetCraftDescription(id)) then
+            frame.SkillDescription:SetText(GetCraftDescription(id))
+            frame.RegentLabel:SetPoint("TOPLEFT", frame.SkillDescription, "BOTTOMLEFT", 0, -10);
+        else
+            frame.SkillDescription:SetText(" ");
+            frame.RegentLabel:SetPoint("TOPLEFT", frame.SkillDescription, "TOPLEFT", 0, 0);
+        end
+
+        frame.SkillDescription:Show();
+
+        -- DF
+        local function UpdateTooltip(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
+            GameTooltip:SetCraftSpell(id);
+            CursorUpdate(self);
+        end
+        frame.SkillIcon:SetScript('OnEnter', UpdateTooltip)
+
+        frame.SkillIcon:SetScript('OnClick', function(self)
+            HandleModifiedItemClick(GetCraftItemLink(id));
+        end)
+
+        self.CreateButton:SetScript('OnClick', function()
+            DoCraft(id);
+            -- self.InputBox:ClearFocus();
+        end)
+
+        -- self.CreateAllButton:SetScript('OnClick', function()
+        --     local _, _, numAvailable, _, _, _ = GetTradeSkillInfo(id);
+        --     self.InputBox:SetNumber(numAvailable);
+        --     DoCraft(id);
+        --     self.InputBox:ClearFocus();
+        -- end)
     end
 end
 
@@ -1369,6 +1590,10 @@ function DFProfessionMixin:UpdateRecipeList()
     if self.TradeSkillOpen then
         local numSkills = GetNumTradeSkills()
         local index = recipeList.selectedSkill
+        do
+            local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(index);
+            if skillType == 'header' then index = GetFirstTradeSkill() end
+        end
         if index > numSkills then index = GetFirstTradeSkill() end
         local changed = recipeList.selectedSkill ~= index
         recipeList.selectedSkill = index
@@ -1389,6 +1614,7 @@ function DFProfessionMixin:UpdateRecipeList()
         -- self.RecipeList:ClearList()
         local numSkills = GetNumCrafts()
         local index = recipeList.selectedSkill
+        index = GetCraftSelectionIndex()
         if index > numSkills then index = 2 end
         local changed = recipeList.selectedSkill ~= index
         recipeList.selectedSkill = index
@@ -1601,6 +1827,7 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
                 -- EventRegistry:TriggerEvent("DFProfessionsRecipeListMixin.Event.OnRecipeSelected", newRecipeID, self);
 
                 -- TradeSkillFrame_SetSelection(newRecipeID)
+                if self:GetParent().CraftOpen then CraftFrame_SetSelection(newRecipeID) end
                 self:SelectRecipe(newRecipeID, false)
             end
         end
