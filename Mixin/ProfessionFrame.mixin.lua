@@ -924,12 +924,30 @@ end
 
 function DFProfessionMixin:UpdateRecipeList()
     print('DFProfessionMixin:UpdateRecipeList()')
+    local selectedKey = self.ProfessionTable[self.SelectedProfession]
+    local recipeList = self.RecipeList
+
     if self.TradeSkillOpen then
-        self.RecipeList:UpdateRecipeListTradeskill()
+        local numSkills = GetNumTradeSkills()
+        local index = recipeList.selectedSkill
+        if index > numSkills then index = GetFirstTradeSkill() end
+        local changed = recipeList.selectedSkill ~= index
+        recipeList.selectedSkill = index
+
+        local oldScroll = recipeList.ScrollBox:GetScrollPercentage()
+
+        recipeList:UpdateRecipeListTradeskill()
+        -- frameRef.FavoriteButton:UpdateFavoriteState()
+
+        if (not changed) and (not force) then
+            -- print('set old scroll')
+            recipeList.ScrollBox:SetScrollPercentage(oldScroll, ScrollBoxConstants.NoScrollInterpolation)
+        end
+
     elseif self.CraftOpen then
         -- self.RecipeList:ClearList()
     else
-        self.RecipeList:ClearList()
+        recipeList:ClearList()
     end
 end
 
@@ -1023,7 +1041,8 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
     -- print('DFProfessionFrameRecipeListTemplateMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
-    self.selectedSkill = GetTradeSkillSelectionIndex() or 2
+    self.selectedSkill = 2
+    self.selectedSkillTable = {}
     -- print('self.selectedSkill', self.selectedSkill)
     self.DataProvider = CreateTreeDataProvider()
 
