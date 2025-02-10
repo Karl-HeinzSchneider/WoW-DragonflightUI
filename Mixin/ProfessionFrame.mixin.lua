@@ -63,11 +63,11 @@ function DFProfessionMixin:OnLoad()
         CloseCraft()
     end);
 
-    -- self.RecipeList.ResetButton:SetScript('OnClick', function(btn)
-    --     --
-    --     self:ResetFilter()
-    --     self:FilterDropdownRefresh()
-    -- end)
+    self.RecipeList.ResetButton:SetScript('OnClick', function(btn)
+        --
+        -- self:ResetFilter()
+        -- self:FilterDropdownRefresh()
+    end)
 end
 
 function DFProfessionMixin:OnShow()

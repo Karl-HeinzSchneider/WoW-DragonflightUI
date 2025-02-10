@@ -253,13 +253,11 @@ UI_shared.xsd">
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<!--
-			<Button parentKey="ResetButton" inherits="DFUIResetButtonTemplate">
-			<Anchors>
-			<Anchor point="CENTER" relativeKey="$parent.FilterButton" relativePoint="TOPRIGHT" x="-3" y="0" />
-			</Anchors>
+			<Button parentKey="ResetButton" inherits="DFProfessionFrameResetButtonTemplate">
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.FilterButton" relativePoint="TOPRIGHT" x="-3" y="0" />
+				</Anchors>
 			</Button>
-			-->
 			<EditBox parentKey="SearchBox" autoFocus="false" inherits="DFProfessionFrameSearchBoxTemplate">
 				<Size y="20" />
 				<Anchors>
@@ -446,17 +444,15 @@ UI_shared.xsd">
 			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Button>
-	<!--
-	<Button name="DFUIResetButtonTemplate" hidden="true" virtual="true">
-	<Size x="23" y="23" />
-	<NormalTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" setAllPoints="true">
-	<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
-	</NormalTexture>
-	<HighlightTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" alphaMode="ADD" alpha="0.4" setAllPoints="true">
-	<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
-	</HighlightTexture>
+	<Button name="DFProfessionFrameResetButtonTemplate" hidden="true" virtual="true">
+		<Size x="23" y="23" />
+		<NormalTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" setAllPoints="true">
+			<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
+		</NormalTexture>
+		<HighlightTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" alphaMode="ADD" alpha="0.4" setAllPoints="true">
+			<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
+		</HighlightTexture>
 	</Button>
-	-->
 	<Button name="DFProfessionTabTemplate" motionScriptsWhileDisabled="true" virtual="true">
 		<Size>
 			<AbsDimension x="10" y="32" />
