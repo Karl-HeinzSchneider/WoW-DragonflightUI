@@ -343,7 +343,11 @@ function DFProfessionMixin:SetupSchematics()
     icon:SetPoint('TOPLEFT', frame, 'TOPLEFT', 28 - 400 + 400, -28)
     frame.SkillIcon = icon
 
-    -- TODO iconcount
+    icon.hasItem = 1;
+    icon:SetScript('OnLeave', function()
+        GameTooltip:Hide();
+        ResetCursor();
+    end)
 
     local iconCount = icon:CreateFontString('DragonflightUIProfession' .. 'IconCount', 'BACKGROUND', 'NumberFontNormal')
     -- iconCount:SetSize(244, 10)
@@ -1070,6 +1074,17 @@ function DFProfessionMixin:UpdateRecipe(id)
         frame.SkillDescription:Show();
 
         -- DF
+        local function UpdateTooltip(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
+            GameTooltip:SetTradeSkillItem(id);
+            CursorUpdate(self);
+        end
+        frame.SkillIcon:SetScript('OnEnter', UpdateTooltip)
+
+        frame.SkillIcon:SetScript('OnClick', function(self)
+            HandleModifiedItemClick(GetTradeSkillItemLink(id));
+        end)
+
         self.CreateButton:SetScript('OnClick', function()
             DoTradeSkill(id, self.InputBox:GetNumber());
             self.InputBox:ClearFocus();
