@@ -439,7 +439,7 @@ end
 
 function DFProfessionMixin:SetupDropdown()
     local drop = self.RecipeList.FilterButton
-    DevTools_Dump(drop.SetupMenu or 'NOTS')
+    drop.Text:SetPoint('TOP', drop, 'TOP', 0, 0)
 
     local generator = function(dropdown, rootDescription)
         rootDescription:SetTag("MENU_PROFESSIONS_FILTER");
