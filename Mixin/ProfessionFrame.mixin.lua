@@ -345,6 +345,13 @@ function DFProfessionMixin:SetupSchematics()
 
     -- TODO iconcount
 
+    local iconCount = icon:CreateFontString('DragonflightUIProfession' .. 'IconCount', 'BACKGROUND', 'NumberFontNormal')
+    -- iconCount:SetSize(244, 10)
+    iconCount:SetText('*1*')
+    iconCount:SetJustifyH('RIGHT')
+    iconCount:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', -5, 2)
+    frame.SKillIconCount = iconCount
+
     local name = frame:CreateFontString('DragonflightUIProfession' .. 'SkillName', 'BACKGROUND', 'GameFontNormal')
     name:SetSize(244, 10)
     name:SetText('Skill Name')
@@ -926,19 +933,19 @@ function DFProfessionMixin:UpdateRecipe(id)
             frame.SkillIcon:ClearNormalTexture();
         end
 
-        -- local minMade,maxMade = GetTradeSkillNumMade(id);
-        -- if ( maxMade > 1 ) then
-        --     if ( minMade == maxMade ) then
-        --         TradeSkillSkillIconCount:SetText(minMade);
-        --     else
-        --         TradeSkillSkillIconCount:SetText(minMade.."-"..maxMade);
-        --     end
-        --     if ( TradeSkillSkillIconCount:GetWidth() > 39 ) then
-        --         TradeSkillSkillIconCount:SetText("~"..floor((minMade + maxMade)/2));
-        --     end
-        -- else
-        --     TradeSkillSkillIconCount:SetText("");
-        -- end
+        local minMade, maxMade = GetTradeSkillNumMade(id);
+        if (maxMade > 1) then
+            if (minMade == maxMade) then
+                frame.SKillIconCount:SetText(minMade);
+            else
+                frame.SKillIconCount:SetText(minMade .. "-" .. maxMade);
+            end
+            if (frame.SKillIconCount:GetWidth() > 39) then
+                frame.SKillIconCount:SetText("~" .. floor((minMade + maxMade) / 2));
+            end
+        else
+            frame.SKillIconCount:SetText("");
+        end
 
         local creatable = true;
         local numReagents = GetTradeSkillNumReagents(id);
