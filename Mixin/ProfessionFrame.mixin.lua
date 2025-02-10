@@ -486,7 +486,7 @@ function DFProfessionMixin:SetupTabs()
             end)
         end
 
-        tab:SetScript('OnClick', function()
+        local function onClick()
             --
             -- print('onclick', i)
             local profIndex = ''
@@ -504,13 +504,19 @@ function DFProfessionMixin:SetupTabs()
                 -- profIndex= 'primary1'
             end
 
+            if self.SelectedProfession == profIndex then return end
+
             local prof = self.ProfessionTable[profIndex]
             if not prof then return end
 
             if tabFrame.selectedTab == i then return end
             -- print('cast:', prof.nameLoc)
+
             CastSpellByName(prof.nameLoc)
-        end)
+        end
+
+        tab:SetScript('OnClick', onClick)
+        tab.DFOnClick = onClick
 
         DragonflightUIMixin:TabResize(tab)
     end
@@ -529,6 +535,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof1 then
         tab:Enable()
         tab:SetText(prof1.nameLoc)
+        if self.SelectedProfession == 'primary1' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
         tab:SetText('***')
@@ -539,6 +546,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof2 then
         tab:Enable()
         tab:SetText(prof2.nameLoc)
+        if self.SelectedProfession == 'primary2' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
         tab:SetText('***')
@@ -549,6 +557,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof3 then
         tab:Enable()
         tab:SetText(prof3.nameLoc)
+        if self.SelectedProfession == 'cooking' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
         tab:SetText('***')
@@ -559,6 +568,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof4 then
         tab:Enable()
         tab:SetText(prof4.nameLoc)
+        if self.SelectedProfession == 'firstaid' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
         tab:SetText('***')
@@ -570,6 +580,7 @@ function DFProfessionMixin:UpdateTabs()
     if prof5 then
         tab:Enable()
         tab:SetText(prof5.nameLoc)
+        if self.SelectedProfession == 'poison' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
         tab:SetText('***')
