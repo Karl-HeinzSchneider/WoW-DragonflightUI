@@ -154,11 +154,11 @@ L["MoreOptionsHideBarArtDesc"] = ""
 L["MoreOptionsHideBarScrolling"] = "Ocultar desplazamiento de barra"
 L["MoreOptionsHideBarScrollingDesc"] = ""
 
-L["MoreOptionsGryphons"] = "Gárgolas"
-L["MoreOptionsGryphonsDesc"] = "Gárgolas"
+L["MoreOptionsGryphons"] = "Grifos"
+L["MoreOptionsGryphonsDesc"] = "Grifos"
 
-L["MoreOptionsIconRangeColor"] = "Color del icono por rango"
-L["MoreOptionsIconRangeColorDesc"] = "Cambia el color del icono cuando esté fuera de rango, similar a RedRange/tullaRange"
+L["MoreOptionsIconRangeColor"] = "Color del icono por alcance"
+L["MoreOptionsIconRangeColorDesc"] = "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
 
 L["ExtraOptionsPreset"] = "Preajuste"
 L["ExtraOptionsResetToDefaultPosition"] = "Restablecer a la posición predeterminada"
