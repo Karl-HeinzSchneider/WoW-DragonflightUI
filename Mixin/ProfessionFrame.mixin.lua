@@ -19,6 +19,7 @@ function DFProfessionMixin:OnLoad()
     self:SetupSchematics()
     self:SetupDropdown()
     self:SetupTabs()
+    self:SetupFavorite()
     self:Minimize(self.minimized)
 
     self:Refresh(true)
@@ -822,11 +823,100 @@ function DFProfessionMixin:UpdateTabs()
     end
 end
 
+function DFProfessionMixin:SetupFavorite()
+    local fav = self.FavoriteButton
+    fav:SetPoint('LEFT', self.SchematicForm.SkillName, 'RIGHT', 4, 1)
+    -- fav:SetPoint('LEFT', self, 'RIGHT', 20, 0)
+
+    fav:GetNormalTexture():SetTexture(base .. 'auctionhouse')
+    -- fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+    fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+    fav:GetHighlightTexture():SetTexture(base .. 'auctionhouse')
+    fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+
+    function fav:SetIsFavorite(isFavorite)
+        if isFavorite then
+            fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+            fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.0957031, 0.166016)
+            fav:GetHighlightTexture():SetAlpha(0.2)
+        else
+            fav:GetNormalTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+            fav:GetHighlightTexture():SetTexCoord(0.94043, 0.979492, 0.169922, 0.240234)
+            fav:GetHighlightTexture():SetAlpha(0.4)
+        end
+        fav.IsFavorite = isFavorite
+        fav:SetChecked(isFavorite)
+    end
+    -- fav:SetIsFavorite(false)  
+
+    local frame = self;
+
+    function fav:UpdateFavoriteState()
+        -- print('fav:UpdateFavoriteState()')
+        -- local tradeSkillIndex = GetTradeSkillSelectionIndex();
+        -- local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(tradeSkillIndex)
+        -- fav:SetIsFavorite(self:IsRecipeFavorite(skillName))
+        if frame.TradeSkillOpen then
+            local index = frame.RecipeList.selectedSkill
+            local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(index)
+            fav:SetIsFavorite(frame:IsRecipeFavorite(skillName))
+        elseif frame.CraftOpen then
+            local craftIndex = GetCraftSelectionIndex();
+            local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost, requiredLevel =
+                GetCraftInfo(craftIndex)
+            fav:SetIsFavorite(frame:IsRecipeFavorite(skillName))
+        else
+            fav:SetIsFavorite(false)
+        end
+    end
+    fav:UpdateFavoriteState()
+
+    local function SetFavoriteTooltip(button)
+        GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+        GameTooltip_AddHighlightLine(GameTooltip, button:GetChecked() and BATTLE_PET_UNFAVORITE or BATTLE_PET_FAVORITE);
+        GameTooltip:Show();
+    end
+
+    fav:SetScript('OnClick', function(button, buttonName, down)
+        local checked = button:GetChecked();
+        -- C_TradeSkillUI.SetRecipeFavorite(currentRecipeInfo.recipeID, checked);
+        do
+            local info;
+            if self.TradeSkillOpen then
+                local index = self.RecipeList.selectedSkill
+                local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(index)
+                info = skillName
+            elseif self.CraftOpen then
+                local craftIndex = GetCraftSelectionIndex();
+                local skillName, craftSubSpellName, skillType, numAvailable, isExpanded, trainingPointCost,
+                      requiredLevel = GetCraftInfo(craftIndex)
+                info = skillName
+            else
+                return;
+            end
+
+            frame:SetRecipeFavorite(info, checked)
+            frame:Refresh(false)
+        end
+        button:SetIsFavorite(checked)
+        SetFavoriteTooltip(button)
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+    end)
+
+    fav:SetScript("OnEnter", function(button)
+        SetFavoriteTooltip(button);
+    end);
+
+    fav:SetScript("OnLeave", GameTooltip_Hide);
+end
+
 function DFProfessionMixin:SetupFavoriteDatabase()
     self.db = DF.db:RegisterNamespace('RecipeFavorite', {profile = {favorite = {}}})
 end
 
 function DFProfessionMixin:SetRecipeFavorite(info, checked)
+    -- print('SetRecipeFavorite', info, checked)
     local db = self.db.profile
 
     if checked then
@@ -837,9 +927,11 @@ function DFProfessionMixin:SetRecipeFavorite(info, checked)
 end
 
 function DFProfessionMixin:IsRecipeFavorite(info)
+    -- print('IsRecipeFav', info)
     local db = self.db.profile
 
     if db.favorite[info] then
+        -- print('~true')
         return true
     else
         return false
@@ -1553,6 +1645,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         --     self.InputBox:ClearFocus();
         -- end)
     end
+    self.FavoriteButton:UpdateFavoriteState()
 end
 
 function DFProfessionMixin:ResetFilter()
@@ -1605,7 +1698,7 @@ function DFProfessionMixin:UpdateRecipeList()
         recipeList:UpdateRecipeListTradeskill()
 
         recipeList:SelectRecipe(index, true)
-        -- frameRef.FavoriteButton:UpdateFavoriteState()
+        self.FavoriteButton:UpdateFavoriteState()
 
         if (not changed) and (not force) then
             -- print('set old scroll')
@@ -1626,7 +1719,7 @@ function DFProfessionMixin:UpdateRecipeList()
         recipeList:UpdateRecipeListCraft()
 
         recipeList:SelectRecipe(index, true)
-        -- frameRef.FavoriteButton:UpdateFavoriteState()
+        self.FavoriteButton:UpdateFavoriteState()
 
         if (not changed) and (not force) then
             -- print('set old scroll')
@@ -1878,7 +1971,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     local headerID = 0
 
     do
-        local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
+        local data = {id = 0, categoryInfo = {name = L["ProfessionFavorites"], isExpanded = true}}
         dataProvider:Insert(data)
     end
 

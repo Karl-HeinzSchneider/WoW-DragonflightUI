@@ -350,6 +350,7 @@ L["ProfessionFrameSubclass"] = "Subclass"
 L["ProfessionFrameSlot"] = "Slot"
 L["ProfessionCheckAll"] = "Check All"
 L["ProfessionUnCheckAll"] = "Uncheck All"
+L["ProfessionFavorites"] = "Favorites"
 
 -- Unitframes
 -- Player
