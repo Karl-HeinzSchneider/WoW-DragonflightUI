@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+local rc = LibStub("LibRangeCheck-3.0")
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -3327,6 +3328,26 @@ function Module.ChangeTargetFrame()
         end
 
         frame.PortraitExtra = extra
+    end
+
+    if not TargetFrame.DFRangeHooked then
+        TargetFrame.DFRangeHooked = true;
+
+        if not rc then return end
+        local function updateRange()
+            local minRange, maxRange = rc:GetRange('target')
+            -- print(minRange, maxRange)
+            if minRange and minRange >= 40 then
+                TargetFrame:SetAlpha(0.55);
+                -- elseif maxRange and maxRange >= 40 then
+                --     TargetFrame:SetAlpha(0.55);
+            else
+                TargetFrame:SetAlpha(1);
+            end
+        end
+
+        TargetFrame:HookScript('OnUpdate', updateRange)
+        TargetFrame:HookScript('OnEvent', updateRange)
     end
 end
 
