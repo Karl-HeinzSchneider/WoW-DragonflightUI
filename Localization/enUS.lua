@@ -343,6 +343,15 @@ L["UIChangeSpellBookDesc"] = "Change the appearance of the SpellBook."
 L["UIChangeSpellBookProfessions"] = "Change SpellBook Professions"
 L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for professions."
 
+-- ProfessionFrame
+L["ProfessionFrameHasSkillUp"] = "Has skill up"
+L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE
+L["ProfessionFrameSubclass"] = "Subclass"
+L["ProfessionFrameSlot"] = "Slot"
+L["ProfessionCheckAll"] = "Check All"
+L["ProfessionUnCheckAll"] = "Uncheck All"
+L["ProfessionFavorites"] = "Favorites"
+
 -- Unitframes
 -- Player
 L["PlayerFrameDesc"] = "Player frame settings"

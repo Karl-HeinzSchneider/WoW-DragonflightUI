@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
-	<Script file="Mixin/Profession.mixin.lua" />
-	<Frame name="DragonflightUIProfessionFrameTemplate" mixin="DragonFlightUIProfessionMixin" inherits="SettingsFrameTemplate" toplevel="true" hidden="true" movable="true" enableMouse="true" resizable="true" frameStrata="HIGH" virtual="true">
+	<Script file="Mixin/ProfessionFrame.mixin.lua" />
+	<Frame name="DFProfessionFrameTemplate" mixin="DFProfessionMixin" inherits="SettingsFrameTemplate" toplevel="true" hidden="true" movable="true" enableMouse="true" resizable="true" frameStrata="HIGH" virtual="true">
 		<Size x="942" y="658" />
 		<Anchors>
 			<!-- <Anchor point="TOPRIGHT" relativePoint="CENTER" x="460" y="362" /> -->
@@ -79,7 +79,81 @@ UI_shared.xsd">
 					<TexCoords left="0" right="1.0" top="0.5" bottom="1.0" />
 				</HighlightTexture>
 			</Button>
-			<Frame parentKey="RecipeList" inherits="ProfessionsRecipeListTemplate">
+			<EditBox name="DragonflightUIProfessionInputBox" parentKey="InputBox" letters="3" historyLines="0" numeric="true" autoFocus="false">
+				<Size>
+					<AbsDimension x="30" y="20" />
+				</Size>
+				<!--
+				<Anchors>
+				<Anchor point="LEFT" relativeTo="TradeSkillDecrementButton" relativePoint="RIGHT">
+				<Offset>
+				<AbsDimension x="4" y="0"/>
+				</Offset>
+				</Anchor>
+				</Anchors>
+				-->
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="8" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="-5" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.0625" top="0" bottom="0.625" />
+						</Texture>
+						<Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="8" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="RIGHT">
+									<Offset>
+										<AbsDimension x="0" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625" />
+						</Texture>
+						<Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="10" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+								<Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT" />
+							</Anchors>
+							<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnterPressed>
+						self:ClearFocus();
+					</OnEnterPressed>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnTextChanged>
+						if ( self:GetText() == "0" ) then
+						self:SetText("1");
+						end
+					</OnTextChanged>
+					<OnEditFocusLost>
+						self:HighlightText(0, 0);
+					</OnEditFocusLost>
+					<OnEditFocusGained>
+						self:HighlightText();
+					</OnEditFocusGained>
+				</Scripts>
+				<FontString inherits="ChatFontNormal" />
+			</EditBox>
+			<Frame parentKey="RecipeList" inherits="DFProfessionFrameRecipeListTemplate">
 				<Size x="274" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="5" y="-72" />
@@ -126,17 +200,32 @@ UI_shared.xsd">
 			<OnHide method="OnHide" />
 		</Scripts>
 	</Frame>
-	<Frame name="ProfessionsRecipeListTemplate" mixin="DFProfessionsRecipeListMixin" virtual="true">
+	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionFrameRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
+		<Frames>
+			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<!--
+			<OnHyperlinkEnter method="OnHyperlinkEnter" />
+			<OnHyperlinkLeave method="OnHyperlinkLeave" />
+			-->
+		</Scripts>
+	</Frame>
+	<Frame name="DFProfessionFrameRecipeListTemplate" mixin="DFProfessionFrameRecipeListMixin" virtual="true">
 		<Size x="300" y="505" />
 		<KeyValues>
 			<KeyValue key="hideCraftableCount" value="false" type="boolean" />
 		</KeyValues>
 		<Layers>
-			<!--
-			<Layer level="BACKGROUND">
-			<Texture parentKey="Background" atlas="Professions-background-summarylist" setAllPoints="true" />
-			</Layer>
-			-->
 			<Layer level="ARTWORK">
 				<FontString parentKey="NoResultsText" inherits="GameFontNormal" text="PROFESSIONS_NO_JOURNAL_ENTRIES" hidden="true">
 					<Size x="200" y="0" />
@@ -147,49 +236,51 @@ UI_shared.xsd">
 			</Layer>
 		</Layers>
 		<Frames>
-			<!-- changed a b it -->
 			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" />
 					<Anchor point="BOTTOMRIGHT" />
 				</Anchors>
 			</Frame>
-			<!-- inherits="UIResettableDropdownButtonTemplate" -->
-			<DropDownToggleButton parentKey="FilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER">
-				<Size x="90" y="22" />
+			<DropdownButton parentKey="FilterButton" inherits="WowStyle1FilterDropdownTemplate" text="FILTER">
+				<Size x="90" y="20" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-8" y="-8" />
 				</Anchors>
 				<Layers>
+					<!--
 					<Layer level="ARTWORK">
-						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
-							<Size x="10" y="12" />
-							<Anchors>
-								<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="RIGHT" x="-5" />
-							</Anchors>
-						</Texture>
+					<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+					<Size x="10" y="12" />
+					<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="RIGHT" x="-5" />
+					</Anchors>
+					</Texture>
 					</Layer>
+					-->
 				</Layers>
 				<Scripts>
+					<!--
 					<OnClick>
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-						DragonFlightUIProfessionMixin:ToggleFilterDropdown()
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+					DragonFlightUIProfessionMixin:ToggleFilterDropdown()
 					</OnClick>
+					-->
 				</Scripts>
-			</DropDownToggleButton>
+			</DropdownButton>
 			<Frame parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate">
 				<Scripts>
 					<OnLoad>
-						DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self)
+						<!-- DragonFlightUIProfessionMixin:FilterDropdownOnLoad(self) -->
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<Button parentKey="ResetButton" inherits="DFUIResetButtonTemplate">
+			<Button parentKey="ResetButton" inherits="DFProfessionFrameResetButtonTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativeKey="$parent.FilterButton" relativePoint="TOPRIGHT" x="-3" y="0" />
 				</Anchors>
 			</Button>
-			<EditBox parentKey="SearchBox" autoFocus="false" inherits="DFProfessionearchBoxTemplate">
+			<EditBox parentKey="SearchBox" autoFocus="false" inherits="DFProfessionFrameSearchBoxTemplate">
 				<Size y="20" />
 				<Anchors>
 					<Anchor point="RIGHT" relativeKey="$parent.FilterButton" relativePoint="LEFT" x="-4" y="0" />
@@ -216,34 +307,36 @@ UI_shared.xsd">
 			<OnEvent method="OnEvent" />
 		</Scripts>
 	</Frame>
-	<EditBox name="DFProfessionearchBoxTemplate" inherits="SearchBoxTemplate" mixin="DFProfessionSearchBoxTemplateMixin" autoFocus="false" virtual="true">
+	<EditBox name="DFProfessionFrameSearchBoxTemplate" inherits="SearchBoxTemplate" mixin="DFProfessionFrameSearchBoxMixin" autoFocus="false" virtual="true">
 		<Scripts>
 			<OnHide method="OnHide" />
 			<OnTextChanged method="OnTextChanged" />
 			<OnChar method="OnChar" />
 		</Scripts>
 	</EditBox>
+	<!--
 	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionsRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
-		<Frames>
-			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
-				<Anchors>
-					<Anchor point="TOPLEFT" />
-					<Anchor point="BOTTOMRIGHT" />
-				</Anchors>
-			</Frame>
-		</Frames>
-		<Scripts>
-			<OnLoad method="OnLoad" />
-			<OnEvent method="OnEvent" />
-			<OnShow method="OnShow" />
-			<OnHide method="OnHide" />
-			<!--
-			<OnHyperlinkEnter method="OnHyperlinkEnter" />
-			<OnHyperlinkLeave method="OnHyperlinkLeave" />
-			-->
-		</Scripts>
+	<Frames>
+	<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+	<Anchors>
+	<Anchor point="TOPLEFT" />
+	<Anchor point="BOTTOMRIGHT" />
+	</Anchors>
 	</Frame>
-	<Button name="ProfessionsRecipeListCategoryTemplate" mixin="DFProfessionsRecipeListCategoryMixin" virtual="true">
+	</Frames>
+	<Scripts>
+	<OnLoad method="OnLoad" />
+	<OnEvent method="OnEvent" />
+	<OnShow method="OnShow" />
+	<OnHide method="OnHide" />
+	
+	<OnHyperlinkEnter method="OnHyperlinkEnter" />
+	<OnHyperlinkLeave method="OnHyperlinkLeave" />
+	
+	</Scripts>
+	</Frame>
+	-->
+	<Button name="DFProfessionFrameRecipeCategoryTemplate" mixin="DFProfessionFrameRecipeCategoryMixin" virtual="true">
 		<Size y="25" />
 		<Layers>
 			<Layer level="OVERLAY" textureSubLevel="1">
@@ -300,7 +393,7 @@ UI_shared.xsd">
 			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Button>
-	<Button name="ProfessionsRecipeListRecipeTemplate" mixin="DFProfessionsRecipeListRecipeMixin" registerForClicks="RightButtonUp, LeftButtonUp" virtual="true">
+	<Button name="DFProfessionFrameRecipeTemplate" mixin="DFProfessionFrameRecipeMixin" registerForClicks="RightButtonUp, LeftButtonUp" virtual="true">
 		<Size y="20" />
 		<Frames>
 			<Button parentKey="SkillUps">
@@ -329,14 +422,6 @@ UI_shared.xsd">
 				<Size x="17" y="16" />
 				<Layers>
 					<Layer level="OVERLAY">
-						<!--
-						<Texture file="Interface\LFGFrame\UI-LFG-ICON-LOCK">
-						<Size x="16" y="16" />
-						<Anchors>
-						<Anchor point="RIGHT" x="0" y="-1" />
-						</Anchors>
-						</Texture>
-						-->
 					</Layer>
 				</Layers>
 			</Button>
@@ -381,13 +466,152 @@ UI_shared.xsd">
 			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Button>
-	<Button name="DFUIResetButtonTemplate" hidden="true" virtual="true">
+	<Button name="DFProfessionFrameResetButtonTemplate" hidden="true" virtual="true">
 		<Size x="23" y="23" />
 		<NormalTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" setAllPoints="true">
 			<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
 		</NormalTexture>
 		<HighlightTexture file="Interface/AddOns/DragonflightUI/Textures/UI/auctionhouse" alphaMode="ADD" alpha="0.4" setAllPoints="true">
 			<TexCoords left="0.94043" right="0.985352" top="0.00195312" bottom="0.0917969" />
+		</HighlightTexture>
+	</Button>
+	<Button name="DFProfessionTabTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size>
+			<AbsDimension x="10" y="32" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentLeftDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="4" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.15625" top="0" bottom="1.0" />
+				</Texture>
+				<Texture name="$parentMiddleDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size>
+						<AbsDimension x="88" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentLeftDisabled" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0" />
+				</Texture>
+				<Texture name="$parentRightDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentMiddleDisabled" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.84375" right="1.0" top="0" bottom="1.0" />
+				</Texture>
+				<Texture name="$parentLeft" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="0" />
+					</Anchors>
+					<TexCoords left="0" right="0.15625" top="0" bottom="1.0" />
+				</Texture>
+				<Texture name="$parentMiddle" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size>
+						<AbsDimension x="88" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0" />
+				</Texture>
+				<Texture name="$parentRight" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.84375" right="1.0" top="0" bottom="1.0" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				<!--
+				self.selectedTextY = 4;
+				self:SetFrameLevel(self:GetFrameLevel() + 4);
+				self:RegisterEvent("DISPLAY_SIZE_CHANGED");
+				-->
+			</OnLoad>
+			<OnEvent>
+				<!--
+				if (self:IsVisible()) then
+				PanelTemplates_TabResize(self, 0, nil, 36, self:GetParent().maxTabWidth or 88);
+				end
+				-->
+			</OnEvent>
+			<!--
+			<OnClick>
+			PanelTemplates_Tab_OnClick(self, CharacterFrame);
+			CharacterFrameTab_OnClick(self, button);
+			
+			PanelTemplates_Tab_OnClick(self, self:GetParent());
+			SpellBookFrameTabButton_OnClick(_G['SpellBookFrameTabButton' .. self:GetID()],button,down)
+			</OnClick>
+			-->
+			<OnShow>
+				<!--
+				PanelTemplates_TabResize(self, 0, nil, 36, self:GetParent().maxTabWidth or 88);
+				CharacterFrame_TabBoundsCheck(self);
+				-->
+			</OnShow>
+			<OnEnter>
+				<!--
+				local buttonText = _G[self:GetName().."Text"];
+				if (buttonText and buttonText:IsTruncated()) then
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(buttonText:GetText());
+				end
+				-->
+			</OnEnter>
+			<OnLeave>
+				GameTooltip_Hide();
+			</OnLeave>
+		</Scripts>
+		<ButtonText name="$parentText">
+			<Size>
+				<AbsDimension x="0" y="10" />
+			</Size>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="2" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormalSmall" />
+		<HighlightFont style="GameFontHighlightSmall" />
+		<DisabledFont style="GameFontHighlightSmall" />
+		<HighlightTexture name="$parentHighlightTexture" parentKey="HighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-RealHighlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="3" y="5" />
+					</Offset>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT">
+					<Offset>
+						<AbsDimension x="-3" y="0" />
+					</Offset>
+				</Anchor>
+			</Anchors>
 		</HighlightTexture>
 	</Button>
 </Ui>

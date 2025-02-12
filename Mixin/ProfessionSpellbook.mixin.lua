@@ -52,7 +52,7 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
             --
             -- print(nameLoc, skillRank, skillID)
 
-            local profDataTable = DragonFlightUIProfessionMixin.ProfessionDataTable[skillID]
+            local profDataTable = DFProfessionMixin.ProfessionDataTable[skillID]
             local texture = profDataTable.icon
             local spellIcon = texture
 
