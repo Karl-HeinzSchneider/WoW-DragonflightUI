@@ -81,7 +81,7 @@ function DFProfessionMixin:OnHide()
 end
 
 function DFProfessionMixin:ShouldShow(should)
-    print('~~~~~ should show', should)
+    -- print('~~~~~ should show', should)
     if should then
         self:Show()
 
@@ -108,7 +108,7 @@ function DFProfessionMixin:ShouldShow(should)
 end
 
 function DFProfessionMixin:OnEvent(event, arg1, ...)
-    print('~~', event, arg1 and arg1 or '')
+    -- print('~~', event, arg1 and arg1 or '')
     if event == 'TRADE_SKILL_SHOW' then
         self.TradeSkillOpen = true;
         self.CraftOpen = false;
@@ -992,11 +992,11 @@ function DFProfessionMixin:IsRecipeFavorite(info)
 end
 
 function DFProfessionMixin:Refresh(force)
-    print('DFProfessionMixin:Refresh(force)', force)
+    -- print('DFProfessionMixin:Refresh(force)', force)
     self:UpdateProfessionData()
 
     self:SetCurrentProfession()
-    print('==', self.SelectedProfession)
+    -- print('==', self.SelectedProfession)
 
     if InCombatLockdown() then
         -- prevent unsecure update in combat TODO: message?
@@ -1007,7 +1007,7 @@ function DFProfessionMixin:Refresh(force)
     end
 
     if not self.SelectedProfession then
-        print('-- no self.SelectedProfession')
+        -- print('-- no self.SelectedProfession')
         return
     end
 
@@ -1018,7 +1018,7 @@ function DFProfessionMixin:Refresh(force)
 end
 
 function DFProfessionMixin:SetCurrentProfession()
-    print('DFProfessionMixin:SetCurrentProfession()')
+    -- print('DFProfessionMixin:SetCurrentProfession()')
     local nameLoc;
 
     if self.TradeSkillOpen then
@@ -1285,7 +1285,7 @@ function DFProfessionMixin:UpdateProfessionData()
 end
 
 function DFProfessionMixin:UpdateHeader()
-    print('DFProfessionMixin:UpdateHeader()', self.SelectedProfession)
+    -- print('DFProfessionMixin:UpdateHeader()', self.SelectedProfession)
 
     local prof = self.ProfessionTable[self.SelectedProfession]
 
@@ -1357,7 +1357,7 @@ function DFProfessionMixin:GetRecipeQuality(index)
 end
 
 function DFProfessionMixin:UpdateRecipe(id)
-    print('DFProfessionMixin:UpdateRecipe()', id)
+    -- print('DFProfessionMixin:UpdateRecipe()', id)
     local frame = self.SchematicForm
 
     if self.TradeSkillOpen then
@@ -1775,14 +1775,14 @@ function DFProfessionMixin:AreFilterDefault()
 end
 
 function DFProfessionMixin:CheckFilter()
-    print('DFProfessionMixin:CheckFilter()')
+    -- print('DFProfessionMixin:CheckFilter()')
     local def = self:AreFilterDefault()
 
     self.RecipeList.ResetButton:SetShown(not def)
 end
 
 function DFProfessionMixin:UpdateRecipeList()
-    print('DFProfessionMixin:UpdateRecipeList()')
+    -- print('DFProfessionMixin:UpdateRecipeList()')
     local selectedKey = self.ProfessionTable[self.SelectedProfession]
     local recipeList = self.RecipeList
 
