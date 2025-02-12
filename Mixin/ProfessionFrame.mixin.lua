@@ -402,7 +402,9 @@ function DFProfessionMixin:SetupSchematics()
     local descr = frame:CreateFontString('DragonflightUIProfession' .. 'SkillDescription', 'BACKGROUND',
                                          'GameFontHighlightSmall')
     descr:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    descr:SetPoint('RIGHT', frame, 'RIGHT', -28, 0)
     descr:SetText('*descr*')
+    descr:SetJustifyH('LEFT')
     frame.SkillDescription = descr
 
     -- reagents
