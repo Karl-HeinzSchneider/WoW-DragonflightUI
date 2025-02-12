@@ -131,6 +131,8 @@ function DFProfessionMixin:OnEvent(event, arg1, ...)
         if self:IsShown() then self:Refresh(false) end
     elseif event == 'PLAYER_REGEN_ENABLED' then
         if self.ShouldUpdate then self:UpdateTabs() end
+    elseif event == 'UNIT_PET_TRAINING_POINTS' then
+        self:UpdateTrainingPoints()
     end
 end
 
@@ -382,9 +384,57 @@ function DFProfessionMixin:SetupFrameStyle()
             decrementClicked()
             editbox:ClearFocus()
         end)
-
     end
 
+    -- pet training points @ERA
+    if DF.Era then
+        local trainingFrame = CreateFrame('Frame', 'DragonflightUIProfessionTrainingPointFrame', self)
+        trainingFrame:SetSize(120, 18)
+        -- trainigFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 280, -40) 
+        trainingFrame:SetPoint('RIGHT', CraftCreateButton, 'LEFT', -12, 0)
+        self.TrainingFrame = trainingFrame
+
+        local trainingLabel = trainingFrame:CreateFontString('', 'ARTWORK', 'GameFontNormalSmall')
+        trainingLabel:SetPoint('LEFT', trainingFrame, 'LEFT', 10, 0)
+        trainingLabel:SetText(TRAINING_POINTS)
+        self.TrainingFrameLabel = trainingLabel
+
+        local trainingText = trainingFrame:CreateFontString('', 'ARTWORK', 'GameFontHighlightSmall')
+        trainingText:SetPoint('LEFT', trainingLabel, 'RIGHT', 6, 0)
+        trainingText:SetText('69 TP')
+        self.TrainingFrameText = trainingText
+
+        local newW = trainingLabel:GetUnboundedStringWidth() + trainingText:GetUnboundedStringWidth() + 10 + 6
+        trainingFrame:SetWidth(newW)
+    end
+
+end
+
+function DFProfessionMixin:UpdateTrainingPoints()
+    -- print('..UpdateTrainingPoints()')
+    if not self.TrainingFrame then return end
+
+    if self.TradeSkillOpen then
+        self.TrainingFrame:Hide()
+    elseif self.CraftOpen then
+        if self.SelectedProfession == 'beast' then
+            self.TrainingFrame:Show()
+
+            local totalPoints, spent = GetPetTrainingPoints();
+            if (totalPoints > 0) then
+                self.TrainingFrameLabel:Show();
+                self.TrainingFrameText:Show();
+                self.TrainingFrameText:SetText(totalPoints - spent);
+            else
+                self.TrainingFrameLabel:Hide();
+                self.TrainingFrameText:Hide();
+            end
+        else
+            self.TrainingFrame:Hide()
+        end
+    else
+        self.TrainingFrame:Hide()
+    end
 end
 
 local MAX_TRADE_SKILL_REAGENTS = 6 -- 8
@@ -1749,6 +1799,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         --     self.InputBox:ClearFocus();
         -- end)
     end
+    self:UpdateTrainingPoints()
     self.FavoriteButton:UpdateFavoriteState()
 end
 
