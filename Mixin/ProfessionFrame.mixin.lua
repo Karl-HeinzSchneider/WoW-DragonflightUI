@@ -2495,3 +2495,22 @@ function DFProfessionFrameSearchBoxMixin:OnChar()
     end
 end
 
+------------------------------
+DFProfessionFrameRecipeSchematicFormMixin = {}
+
+function DFProfessionFrameRecipeSchematicFormMixin:OnLoad()
+    -- print('DFProfessionFrameRecipeSchematicFormMixin:OnLoad()')
+end
+
+function DFProfessionFrameRecipeSchematicFormMixin:OnShow()
+    -- print('DFProfessionFrameRecipeSchematicFormMixin:OnShow()')
+end
+
+function DFProfessionFrameRecipeSchematicFormMixin:OnHide()
+    -- print('DFProfessionFrameRecipeSchematicFormMixin:OnHide()')
+end
+
+function DFProfessionFrameRecipeSchematicFormMixin:OnEvent()
+    -- print('DFProfessionFrameRecipeSchematicFormMixin:OnEvent()')
+end
+

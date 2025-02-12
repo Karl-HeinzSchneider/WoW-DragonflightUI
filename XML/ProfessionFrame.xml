@@ -200,6 +200,26 @@ UI_shared.xsd">
 			<OnHide method="OnHide" />
 		</Scripts>
 	</Frame>
+	<Frame name="ProfessionsRecipeSchematicFormTemplate" mixin="DFProfessionFrameRecipeSchematicFormMixin" hyperlinksEnabled="true" virtual="true">
+		<Frames>
+			<Frame parentKey="BackgroundNineSlice" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<!--
+			<OnHyperlinkEnter method="OnHyperlinkEnter" />
+			<OnHyperlinkLeave method="OnHyperlinkLeave" />
+			-->
+		</Scripts>
+	</Frame>
 	<Frame name="DFProfessionFrameRecipeListTemplate" mixin="DFProfessionFrameRecipeListMixin" virtual="true">
 		<Size x="300" y="505" />
 		<KeyValues>
