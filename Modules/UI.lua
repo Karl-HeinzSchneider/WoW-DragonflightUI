@@ -535,10 +535,17 @@ function Module:FuncOrWaitframe(addon, func)
 end
 
 function Module:UpdateTradeskills()
+    do
+        local loaded, reason = LoadAddOn('Blizzard_TradeSkillUI')
+        -- print('--', loaded, reason)    
+    end
+    do
+        local loaded, reason = LoadAddOn('Blizzard_CraftUI')
+        -- print('--', loaded, reason)
+    end
 
     local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
-    prof:SetPoint('CENTER')
-    -- prof:Show()
+    Module.ProfessionFrame = prof
 
     if true then return end
 

@@ -80,26 +80,53 @@ end
 function DFProfessionMixin:OnHide()
 end
 
+function DFProfessionMixin:ShouldShow(should)
+    print('~~~~~ should show', should)
+    if should then
+        self:Show()
+
+        if self.TradeSkillOpen then
+            self:ClearAllPoints()
+            self:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 12, -12)
+
+            TradeSkillFrame:SetFrameStrata('BACKGROUND')
+            self:SetFrameStrata('MEDIUM')
+
+            self:UpdateUIPanelWindows(not self.minimized)
+        elseif self.CraftOpen then
+            self:ClearAllPoints()
+            self:SetPoint('TOPLEFT', CraftFrame, 'TOPLEFT', 12, -12)
+
+            CraftFrame:SetFrameStrata('BACKGROUND')
+            self:SetFrameStrata('MEDIUM')
+
+            self:UpdateUIPanelWindows(not self.minimized)
+        end
+    else
+        self:Hide()
+    end
+end
+
 function DFProfessionMixin:OnEvent(event, arg1, ...)
     print('~~', event, arg1 and arg1 or '')
     if event == 'TRADE_SKILL_SHOW' then
         self.TradeSkillOpen = true;
         self.CraftOpen = false;
         CloseCraft()
-        self:Show()
+        self:ShouldShow(true)
         self:Refresh(true)
     elseif event == 'CRAFT_SHOW' then
         self.TradeSkillOpen = false;
         self.CraftOpen = true;
         CloseTradeSkill()
-        self:Show()
+        self:ShouldShow(true)
         self:Refresh(true)
     elseif event == 'TRADE_SKILL_CLOSE' then
         self.TradeSkillOpen = false;
-        if not self.CraftOpen then self:Hide() end
+        if not self.CraftOpen then self:ShouldShow(false) end
     elseif event == 'CRAFT_CLOSE' then
         self.CraftOpen = false;
-        if not self.TradeSkillOpen then self:Hide() end
+        if not self.TradeSkillOpen then self:ShouldShow(false) end
     elseif event == 'TRADE_SKILL_UPDATE' or event == 'TRADE_SKILL_FILTER_UPDATE' or event == 'CRAFT_UPDATE' then
         if self:IsShown() then self:Refresh(false) end
     elseif event == 'PLAYER_REGEN_ENABLED' then
@@ -116,7 +143,7 @@ function DFProfessionMixin:Minimize(mini)
     if mini then
         -- 
         self:SetWidth(frameWidthSmall)
-        -- self:UpdateUIPanelWindows(false)
+        self:UpdateUIPanelWindows(false)
 
         self.RecipeList:Hide()
         self.RecipeList:SetWidth(0.1)
@@ -137,7 +164,7 @@ function DFProfessionMixin:Minimize(mini)
         self:SetWidth(frameWidth)
         self:SetHeight(525)
 
-        -- self:UpdateUIPanelWindows(true)
+        self:UpdateUIPanelWindows(true)
 
         self.RecipeList:Show()
         self.RecipeList:SetWidth(274)
@@ -155,6 +182,28 @@ function DFProfessionMixin:Minimize(mini)
         self.CreateButton:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -9, 7)
 
         -- self:Refresh(true)
+    end
+end
+
+function DFProfessionMixin:UpdateUIPanelWindows(big)
+    if TradeSkillFrame then
+        -- print('UIPanel', 'TradeSkillFrame', big)
+        if big then
+            TradeSkillFrame:SetAttribute("UIPanelLayout-width", frameWidth);
+        else
+            TradeSkillFrame:SetAttribute("UIPanelLayout-width", frameWidthSmall);
+        end
+        UpdateUIPanelPositions(TradeSkillFrame)
+    end
+
+    if CraftFrame then
+        -- print('UIPanel', 'CraftFrame', big)
+        if big then
+            CraftFrame:SetAttribute("UIPanelLayout-width", frameWidth);
+        else
+            CraftFrame:SetAttribute("UIPanelLayout-width", frameWidthSmall);
+        end
+        UpdateUIPanelPositions(CraftFrame)
     end
 end
 
@@ -1318,7 +1367,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         frame.SkillName:SetText(skillName)
         frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
 
-        local quality = DragonFlightUIProfessionMixin:GetRecipeQuality(id)
+        local quality = DFProfessionMixin:GetRecipeQuality(id)
         local r, g, b, hex = C_Item.GetItemQualityColor(quality)
         frame.SkillName:SetTextColor(r, g, b)
 
@@ -1499,7 +1548,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         end
         frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
 
-        local quality = DragonFlightUIProfessionMixin:GetRecipeQuality(id)
+        local quality = DFProfessionMixin:GetRecipeQuality(id)
         local r, g, b, hex = C_Item.GetItemQualityColor(quality)
         frame.SkillName:SetTextColor(r, g, b)
 
