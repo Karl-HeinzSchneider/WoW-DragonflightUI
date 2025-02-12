@@ -406,6 +406,8 @@ function DFProfessionMixin:SetupFrameStyle()
 
         local newW = trainingLabel:GetUnboundedStringWidth() + trainingText:GetUnboundedStringWidth() + 10 + 6
         trainingFrame:SetWidth(newW)
+
+        trainingFrame:Hide()
     end
 
 end
