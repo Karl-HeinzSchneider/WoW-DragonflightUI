@@ -354,6 +354,10 @@ function DFProfessionMixin:SetupSchematics()
         ResetCursor();
     end)
 
+    local iconOverlay = DragonflightUIItemColorMixin:AddOverlayToFrame(icon)
+    iconOverlay:SetPoint('TOPLEFT', icon, 'TOPLEFT', 0, 0)
+    iconOverlay:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', 0, 0)
+
     local iconCount = icon:CreateFontString('DragonflightUIProfession' .. 'IconCount', 'BACKGROUND', 'NumberFontNormal')
     -- iconCount:SetSize(244, 10)
     iconCount:SetText('*1*')
@@ -1266,6 +1270,43 @@ function DFProfessionMixin:UpdateHeader()
     self.RankFrame:UpdateRankFrame(prof.skill, 0, prof.maxSkill)
 end
 
+function DFProfessionMixin:GetRecipeQuality(index)
+    if not self.ScanningTooltip then
+        local tt = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
+        tt:SetOwner(WorldFrame, "ANCHOR_NONE");
+        self.ScanningTooltip = tt
+    end
+
+    if not index or index == 0 then return 1 end
+
+    local tooltip = self.ScanningTooltip
+
+    if self.TradeSkillOpen then
+        tooltip:SetTradeSkillItem(index)
+    elseif self.CraftOpen then
+        tooltip:SetCraftSpell(index)
+    else
+        return 1
+    end
+
+    local name, link = tooltip:GetItem()
+
+    if not link then return 1 end
+
+    local itemString = string.match(link, "item[%-?%d:]+")
+    if not itemString then return 1; end
+
+    local _, itemIdStr = strsplit(":", itemString)
+    local itemId = tonumber(itemIdStr)
+    if not itemId or itemId == "" then return 1; end
+
+    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
+          itemTexture, itemSellPrice, classID = C_Item.GetItemInfo(link)
+    if not itemLevel or not itemId then return 1 end
+
+    return itemRarity
+end
+
 function DFProfessionMixin:UpdateRecipe(id)
     print('DFProfessionMixin:UpdateRecipe()', id)
     local frame = self.SchematicForm
@@ -1275,6 +1316,13 @@ function DFProfessionMixin:UpdateRecipe(id)
               currentRank, maxRank, startingRank = GetTradeSkillInfo(id)
 
         frame.SkillName:SetText(skillName)
+        frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+
+        local quality = DragonFlightUIProfessionMixin:GetRecipeQuality(id)
+        local r, g, b, hex = C_Item.GetItemQualityColor(quality)
+        frame.SkillName:SetTextColor(r, g, b)
+
+        DragonflightUIItemColorMixin:UpdateOverlayQuality(frame.SkillIcon, quality)
 
         if (GetTradeSkillCooldown(id)) then
             frame.SkillCooldown:SetText(COOLDOWN_REMAINING .. " " .. SecondsToTime(GetTradeSkillCooldown(id)));
@@ -1449,6 +1497,13 @@ function DFProfessionMixin:UpdateRecipe(id)
         else
             frame.SkillName:SetText(craftName)
         end
+        frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+
+        local quality = DragonFlightUIProfessionMixin:GetRecipeQuality(id)
+        local r, g, b, hex = C_Item.GetItemQualityColor(quality)
+        frame.SkillName:SetTextColor(r, g, b)
+
+        DragonflightUIItemColorMixin:UpdateOverlayQuality(frame.SkillIcon, quality)
 
         if (GetCraftCooldown(id)) then
             frame.SkillCooldown:SetText(COOLDOWN_REMAINING .. " " .. SecondsToTime(GetCraftCooldown(id)));
