@@ -831,6 +831,7 @@ function DFProfessionMixin:SetupTabs()
 end
 
 function DFProfessionMixin:UpdateTabs()
+    -- print('DFProfessionMixin:UpdateTabs()')
     local tabFrame = self.DFTabFrame;
 
     if InCombatLockdown() then return end
@@ -854,6 +855,7 @@ function DFProfessionMixin:UpdateTabs()
     tab = tabs[1]
     if prof1 then
         tab:Enable()
+        tab:Show()
         tab:SetText(prof1.nameLoc)
         setupTooltip(tab, prof1)
         if self.SelectedProfession == 'primary1' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
@@ -866,6 +868,7 @@ function DFProfessionMixin:UpdateTabs()
     tab = tabs[2]
     if prof2 then
         tab:Enable()
+        tab:Show()
         tab:SetText(prof2.nameLoc)
         setupTooltip(tab, prof2)
         if self.SelectedProfession == 'primary2' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
@@ -878,6 +881,7 @@ function DFProfessionMixin:UpdateTabs()
     tab = tabs[3]
     if prof3 then
         tab:Enable()
+        tab:Show()
         tab:SetText(prof3.nameLoc)
         setupTooltip(tab, prof3)
         if self.SelectedProfession == 'cooking' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
@@ -890,6 +894,7 @@ function DFProfessionMixin:UpdateTabs()
     tab = tabs[4]
     if prof4 then
         tab:Enable()
+        tab:Show()
         tab:SetText(prof4.nameLoc)
         setupTooltip(tab, prof4)
         if self.SelectedProfession == 'firstaid' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
@@ -903,6 +908,7 @@ function DFProfessionMixin:UpdateTabs()
     tab = tabs[5]
     if prof5 then
         tab:Enable()
+        tab:Show()
         tab:SetText(prof5.nameLoc)
         setupTooltip(tab, prof5)
         if self.SelectedProfession == 'poison' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
@@ -916,6 +922,7 @@ function DFProfessionMixin:UpdateTabs()
     tab = tabs[6]
     if prof6 then
         tab:Enable()
+        tab:Show()
         tab:SetText(prof6.nameLoc)
         setupTooltip(tab, prof6)
         if self.SelectedProfession == 'beast' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
@@ -924,12 +931,21 @@ function DFProfessionMixin:UpdateTabs()
         tab:SetText('***')
     end
 
+    local tmp;
+
     for k, v in ipairs(tabs) do
         --
         local w = v.Text:GetWrappedWidth()
         local newW = math.max(w + 16, 78)
         if v:IsShown() then
             v:SetWidth(newW)
+            v:ClearAllPoints()
+            if tmp then
+                v:SetPoint('LEFT', tmp, 'RIGHT', 4, 0)
+            else
+                v:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 2)
+                tmp = v
+            end
         else
             v:SetWidth(0.01)
         end
