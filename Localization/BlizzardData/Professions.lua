@@ -28,6 +28,7 @@ local DF_PROFESSIONS_FISHING
 
 local DF_PROFESSIONS_POISON
 local DF_PROFESSIONS_BEAST
+local DF_PROFESSIONS_SMELTING
 
 -- https://github.com/tekkub/wow-globalstrings/blob/master/GlueStrings/deDE.lua
 if locale == 'deDE' then
@@ -50,6 +51,7 @@ if locale == 'deDE' then
 
     DF_PROFESSIONS_POISON = "Gifte"
     DF_PROFESSIONS_BEAST = "Wildtierausbildung"
+    DF_PROFESSIONS_SMELTING = "Verhüttung"
 elseif locale == 'enUS' then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alchemy";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Blacksmithing";
@@ -69,6 +71,7 @@ elseif locale == 'enUS' then
 
     DF_PROFESSIONS_POISON = "Poisons"
     DF_PROFESSIONS_BEAST = "Beast Training"
+    DF_PROFESSIONS_SMELTING = "Smelting"
 elseif locale == 'esMX' or (not DF.Era and locale == 'esES') then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alquimia";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Herrería";
@@ -88,6 +91,7 @@ elseif locale == 'esMX' or (not DF.Era and locale == 'esES') then
 
     DF_PROFESSIONS_POISON = "Venenos"
     DF_PROFESSIONS_BEAST = "Doma de bestias"
+    DF_PROFESSIONS_SMELTING = "Fundición"
 elseif (DF.Era and locale == 'esES') then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alquimia";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Herrería";
@@ -107,6 +111,7 @@ elseif (DF.Era and locale == 'esES') then
 
     DF_PROFESSIONS_POISON = "Venenos"
     DF_PROFESSIONS_BEAST = "Doma de bestias"
+    DF_PROFESSIONS_SMELTING = "Fundición"
 elseif locale == 'frFR' then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alchimie";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Forge";
@@ -126,6 +131,7 @@ elseif locale == 'frFR' then
 
     DF_PROFESSIONS_POISON = "Poisons"
     DF_PROFESSIONS_BEAST = "Dressage des bêtes"
+    DF_PROFESSIONS_SMELTING = "Fondre"
 elseif locale == 'itIT' then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alchimia";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Forgiatura";
@@ -145,6 +151,7 @@ elseif locale == 'itIT' then
 
     DF_PROFESSIONS_POISON = "Poisons"
     DF_PROFESSIONS_BEAST = "Beast Training"
+    DF_PROFESSIONS_SMELTING = "Smelting"
 elseif locale == 'koKR' then
     DF_CHARACTER_PROFESSIONALCHEMY = "연금술";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "대장기술";
@@ -164,6 +171,7 @@ elseif locale == 'koKR' then
 
     DF_PROFESSIONS_POISON = "독 조제"
     DF_PROFESSIONS_BEAST = "야수 조련"
+    DF_PROFESSIONS_SMELTING = "제련술"
 elseif locale == 'ptBR' then
     DF_CHARACTER_PROFESSIONALCHEMY = "Alquimia";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Ferraria";
@@ -183,6 +191,7 @@ elseif locale == 'ptBR' then
 
     DF_PROFESSIONS_POISON = "Venenos"
     DF_PROFESSIONS_BEAST = "Treinamento de Feras"
+    DF_PROFESSIONS_SMELTING = "Fundição"
 elseif locale == 'ruRU' then
     DF_CHARACTER_PROFESSIONALCHEMY = "Алхимия";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "Кузнечное дело";
@@ -202,6 +211,7 @@ elseif locale == 'ruRU' then
 
     DF_PROFESSIONS_POISON = "Яды"
     DF_PROFESSIONS_BEAST = "Дрессировка"
+    DF_PROFESSIONS_SMELTING = "Выплавка металлов"
 elseif locale == 'zhCN' then
     DF_CHARACTER_PROFESSIONALCHEMY = "炼金术";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "锻造";
@@ -221,6 +231,7 @@ elseif locale == 'zhCN' then
 
     DF_PROFESSIONS_POISON = "毒药"
     DF_PROFESSIONS_BEAST = "训练野兽"
+    DF_PROFESSIONS_SMELTING = "熔炼"
 elseif locale == 'zhTW' then
     DF_CHARACTER_PROFESSIONALCHEMY = "鍊金術";
     DF_CHARACTER_PROFESSIONBLACKSMITHING = "鍛造";
@@ -240,6 +251,7 @@ elseif locale == 'zhTW' then
 
     DF_PROFESSIONS_POISON = "毒藥"
     DF_PROFESSIONS_BEAST = "訓練野獸"
+    DF_PROFESSIONS_SMELTING = "熔炼"
 end
 
 --[[ First Aid 	129										
@@ -284,3 +296,5 @@ end
 
 -- fix beast training
 DragonflightUILocalizationData.DF_PROFESSIONS_BEAST = DF_PROFESSIONS_BEAST
+DragonflightUILocalizationData.DF_CHARACTER_PROFESSIONMINING = DF_CHARACTER_PROFESSIONMINING
+DragonflightUILocalizationData.DF_PROFESSIONS_SMELTING = DF_PROFESSIONS_SMELTING

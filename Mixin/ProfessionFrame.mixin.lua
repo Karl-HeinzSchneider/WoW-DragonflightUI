@@ -133,6 +133,8 @@ function DFProfessionMixin:OnEvent(event, arg1, ...)
         if self.ShouldUpdate then self:UpdateTabs() end
     elseif event == 'UNIT_PET_TRAINING_POINTS' then
         self:UpdateTrainingPoints()
+    elseif event == 'SPELLS_CHANGED' then
+        self:Refresh(true)
     end
 end
 
@@ -812,7 +814,13 @@ function DFProfessionMixin:SetupTabs()
             if tabFrame.selectedTab == i then return end
             -- print('cast:', prof.nameLoc)
 
-            CastSpellByName(prof.nameLoc)
+            local spellToCast = prof.nameLoc
+
+            if spellToCast == DragonflightUILocalizationData.DF_CHARACTER_PROFESSIONMINING then
+                spellToCast = DragonflightUILocalizationData.DF_PROFESSIONS_SMELTING
+            end
+
+            CastSpellByName(spellToCast)
         end
 
         tab:SetScript('OnClick', onClick)
@@ -1177,7 +1185,7 @@ if not PROFESSION_RANKS then
 end
 
 local primary = {164, 165, 171, 182, 186, 197, 202, 333, 393, 755, 773}
-local ignoredPrimary = {182, 186, 393}
+local ignoredPrimary = {182, 393}
 local profs = {
     primary = {},
     ignoredPrimary = {},
@@ -1270,9 +1278,9 @@ function DFProfessionMixin:UpdateProfessionData()
                     spellIcon = icon
                 elseif skillID == 186 then
                     -- mining
-                    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2580)
-                    nameLoc = name
-                    spellIcon = icon
+                    -- local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2580)
+                    -- nameLoc = name
+                    -- spellIcon = icon
                 end
 
                 local data = {
