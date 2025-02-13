@@ -741,7 +741,7 @@ function DFProfessionMixin:SetupTabs()
     local tabFrame = CreateFrame('FRAME', 'DragonflightUIProfessionFrameTabFrame', self)
 
     self.DFTabFrame = tabFrame
-    local numTabs = 6
+    local numTabs = 8
     tabFrame.numTabs = numTabs
     tabFrame.Tabs = {}
 
@@ -804,6 +804,8 @@ function DFProfessionMixin:SetupTabs()
                 profIndex = 'poison'
             elseif i == 6 then
                 profIndex = 'beast'
+            elseif i == 7 then
+                profIndex = 'runeforging'
             end
 
             -- if self.SelectedProfession == profIndex then return end
@@ -931,6 +933,36 @@ function DFProfessionMixin:UpdateTabs()
         tab:SetText('***')
     end
 
+    -- 
+    local prof7 = self.ProfessionTable['runeforging'];
+    tab = tabs[7]
+    if prof7 then
+        tab:Enable()
+        tab:Show()
+        tab:SetText(prof7.nameLoc)
+        setupTooltip(tab, prof7)
+        if self.SelectedProfession == 'runeforging' then
+            DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame)
+        end
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
+    -- 
+    local prof8 = nil;
+    tab = tabs[8]
+    if prof8 then
+        tab:Enable()
+        tab:Show()
+        tab:SetText(prof8.nameLoc)
+        setupTooltip(tab, prof8)
+        if self.SelectedProfession == 'beast' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
+    else
+        tab:Hide()
+        tab:SetText('***')
+    end
+
     local tmp;
 
     for k, v in ipairs(tabs) do
@@ -944,8 +976,8 @@ function DFProfessionMixin:UpdateTabs()
                 v:SetPoint('LEFT', tmp, 'RIGHT', 4, 0)
             else
                 v:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 2)
-                tmp = v
             end
+            tmp = v
         else
             v:SetWidth(0.01)
         end
@@ -1186,6 +1218,7 @@ do
     } -- archeology
     professionDataTable[666] = {tex = 'ProfessionBackgroundArtAlchemy', bar = 'professionsfxalchemy', icon = 136242} -- poison
     professionDataTable[667] = {tex = 'professionbackgroundart', bar = 'professionsfxskinning', icon = 132162} -- beast training
+    professionDataTable[668] = {tex = 'professionbackgroundart', bar = 'professionsfxskinning', icon = 237523} -- cata: runeforging
     DFProfessionMixin.ProfessionDataTable = professionDataTable
 end
 
@@ -1209,7 +1242,8 @@ local profs = {
     fishing = 356,
     cooking = 185,
     firstaid = 129,
-    beast = 667
+    beast = 667,
+    runeforging = 668
 }
 for k, v in ipairs(primary) do profs.primary[v] = true end
 for k, v in ipairs(ignoredPrimary) do profs.ignoredPrimary[v] = true end
@@ -1270,6 +1304,20 @@ function DFProfessionMixin:UpdateProfessionData()
                 skillID = skillLine,
                 skill = skillLevel,
                 maxSkill = maxSkillLevel,
+                profData = professionDataTable[skillLine]
+            }
+        end
+        -- runeforging
+        local localizedClass, englishClass, classIndex = UnitClass('player')
+        if englishClass == 'DEATHKNIGHT' then
+            local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(53428)
+            local skillLine = 668
+            skillTable['runeforging'] = {
+                nameLoc = name,
+                icon = icon,
+                skillID = skillLine,
+                skill = 1,
+                maxSkill = 1,
                 profData = professionDataTable[skillLine]
             }
         end

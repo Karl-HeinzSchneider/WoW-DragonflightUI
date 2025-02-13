@@ -29,6 +29,7 @@ local DF_PROFESSIONS_FISHING
 local DF_PROFESSIONS_POISON
 local DF_PROFESSIONS_BEAST
 local DF_PROFESSIONS_SMELTING
+local DF_PROFESSIONS_RUNEFORGING
 
 -- https://github.com/tekkub/wow-globalstrings/blob/master/GlueStrings/deDE.lua
 if locale == 'deDE' then
@@ -289,6 +290,12 @@ ProfessionNamesToSkillID[DF_PROFESSIONS_FISHING] = 356
 
 ProfessionNamesToSkillID[DF_PROFESSIONS_POISON] = 666 -- custom
 ProfessionNamesToSkillID[DF_PROFESSIONS_BEAST] = 667 -- custom
+
+if DF.Cata then
+    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(53428)
+    DF_PROFESSIONS_RUNEFORGING = name;
+    ProfessionNamesToSkillID[DF_PROFESSIONS_RUNEFORGING] = 668 -- custom
+end
 
 function DragonflightUILocalizationData:GetSkillIDFromProfessionName(name)
     return ProfessionNamesToSkillID[name]
