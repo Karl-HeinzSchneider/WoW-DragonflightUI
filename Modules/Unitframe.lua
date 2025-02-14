@@ -80,6 +80,7 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        altpower = {scale = 1.0, anchorFrame = 'UIParent', anchor = 'CENTER', anchorParent = 'CENTER', x = 0, y = -220},
         target = {
             classcolor = false,
             classicon = false,
@@ -456,6 +457,47 @@ local optionsPlayerEditmode = {
             func = function()
                 local dbTable = Module.db.profile.player
                 local defaultsTable = defaults.profile.player
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
+local optionsAltPower = {
+    name = 'AltPower',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, optionsAltPower, 'altpower', 'AltPower', getDefaultStr, frameTable)
+local optionsAltPowerEditmode = {
+    name = 'AltPower',
+    desc = '.',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.altpower
+                local defaultsTable = defaults.profile.altpower
                 -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
                 setPreset(dbTable, {
                     scale = defaultsTable.scale,
@@ -1494,6 +1536,7 @@ function Module:RegisterSettings()
         register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
         register('focustarget', {order = 0, name = 'FocusTarget', descr = 'Focusss', isNew = true})
     end
+    if DF.Cata then register('altpower', {order = 0, name = 'Player_PowerBarAlt', descr = 'Focusss', isNew = true}) end
 end
 
 function Module:RegisterOptionScreens()
@@ -1552,6 +1595,17 @@ function Module:RegisterOptionScreens()
         end
     })
 
+    if DF.Cata then
+        DF.ConfigModule:RegisterSettingsData('altpower', 'unitframes', {
+            name = 'Altpower',
+            sub = 'altpower',
+            options = optionsAltPower,
+            default = function()
+                setDefaultSubValues('altpower')
+            end
+        })
+    end
+
     DF.ConfigModule:RegisterSettingsData('target', 'unitframes', {
         name = 'Target',
         sub = 'target',
@@ -1599,6 +1653,7 @@ function Module:RefreshOptionScreens()
         Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
         Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
+    if DF.Cata then Module.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 end
 
 function Module:SaveLocalSettings()
@@ -1697,6 +1752,15 @@ function Module:ApplySettings(sub)
         Module:HideSecondaryRes(obj.hideSecondaryRes)
 
         PlayerFrame:UpdateStateHandler(obj)
+    end
+    -- altpower
+    if DF.Cata then
+        local state = db.altpower;
+        local parent = _G[state.anchorFrame]
+
+        Module.PowerBarAltPreview:ClearAllPoints()
+        Module.PowerBarAltPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        Module.PowerBarAltPreview:SetScale(state.scale)
     end
 
     -- target
@@ -1904,6 +1968,32 @@ function Module:AddEditMode()
         end,
         moduleRef = self
     });
+
+    if DF.Cata then
+        -- powerbaralt
+        local f = Module.PowerBarAltPreview
+        EditModeModule:AddEditModeToFrame(f)
+
+        f.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Player_PowerBarAlt'
+        end)
+
+        f.DFEditModeSelection:RegisterOptions({
+            name = 'Player_PowerBarAlt',
+            sub = 'altpower',
+            advancedName = 'Player_PowerBarAlt',
+            options = optionsAltPower,
+            extra = optionsAltPowerEditmode,
+            default = function()
+                setDefaultSubValues('altpower')
+            end,
+            moduleRef = self,
+            hideFunction = function()
+                --
+                f:Show()
+            end
+        });
+    end
 
     -- Pet
     EditModeModule:AddEditModeToFrame(PetFrame)
@@ -2967,6 +3057,27 @@ function Module:AddAlternatePowerBar()
         AlternatePowerBar_OnUpdate(self, elapsed);
     end)
     -- bar:SetScript('OnMouseUp', function() end)
+end
+
+function Module:AddPowerBarAlt()
+    if not DF.Cata then return end
+    local f = CreateFrame('FRAME', 'DragonflightUIPlayerPowerBarAlt', UIParent)
+    f:SetPoint('CENTER', UIParent, 'CENTER', 0, -180)
+    f:SetSize(50, 50)
+    f:SetClampedToScreen(true)
+
+    Module.PowerBarAltPreview = f
+
+    hooksecurefunc('UnitPowerBarAlt_SetUp', function(bar, barID)
+        --
+        -- print('UnitPowerBarAlt_SetUp')
+        if bar.unit and UnitIsUnit(bar.unit, 'player') then
+            -- print('~~player')
+            bar:ClearAllPoints()
+            bar:SetParent(f)
+            bar:SetPoint('CENTER', f, 'CENTER', 0, 0)
+        end
+    end)
 end
 
 function Module.SetPlayerBiggerHealthbar(bigger)
@@ -5108,6 +5219,7 @@ function Module.Wrath()
     Module.HookClassIcon()
     Module.ChangePartyFrame()
     Module.ChangePetFrame()
+    if DF.Cata then Module:AddPowerBarAlt() end
 end
 
 function Module.Era()

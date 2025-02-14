@@ -37,6 +37,7 @@ local defaults = {
             -- UI
             -- unitframes
             PlayerFrame = true,
+            Player_PowerBarAlt = true,
             PetFrame = true,
             TargetFrame = true,
             TargetOfTargetFrame = true,
@@ -181,6 +182,7 @@ if true then
 
     -- misc
     local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability'}
+    if DF.Cata then table.insert(miscFrames, 'Player_PowerBarAlt') end
     AddTableToCategory(miscFrames, 'headerMisc')
 
     advancedOptions.set = function(...)
