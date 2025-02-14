@@ -547,58 +547,6 @@ function Module:UpdateTradeskills()
     local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
     Module.ProfessionFrame = prof
 
-    if true then return end
-
-    local DFProfessionFrame = DragonflightUIMixin:CreateProfessionFrame()
-
-    Module:FuncOrWaitframe('Blizzard_TradeSkillUI', function()
-        --[[      local default = {
-            whileDead = 1,
-            height = 424,
-            width = 353,
-            bottomClampOverride = 152,
-            xoffset = -16,
-            yoffset = 12,
-            pushable = 3,
-            area = "left"
-        } ]]
-        UIPanelWindows["TradeSkillFrame"] = {
-            whileDead = 1,
-            height = 424,
-            width = 942,
-            bottomClampOverride = 152,
-            xoffset = -16 + 4,
-            yoffset = 12,
-            pushable = 3,
-            area = "left"
-        }
-
-        if IsAddOnLoaded('Leatrix_Plus') then
-            --
-            if TradeSkillFrame:GetWidth() > 700 then
-                --
-                DF:Print(
-                    "Leatrix_Plus detected with 'Interface -> Enhance professions' activated - please deactivate or you might encounter bugs.")
-            end
-        end
-    end)
-
-    Module:FuncOrWaitframe('Blizzard_CraftUI', function()
-        -- print('Blizzard_CraftUI')
-        local DFProfessionCraftFrame = DragonflightUIMixin:CreateProfessionCraftFrame()
-
-        UIPanelWindows["CraftFrame"] = {
-            whileDead = 1,
-            height = 424,
-            width = 942,
-            bottomClampOverride = 152,
-            xoffset = -16 + 4,
-            yoffset = 12,
-            pushable = 3,
-            area = "left"
-        }
-    end)
-
     if IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
 end
 

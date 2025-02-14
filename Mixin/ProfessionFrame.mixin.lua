@@ -1922,11 +1922,15 @@ function DFProfessionMixin:UpdateRecipeList()
     if self.TradeSkillOpen then
         local numSkills = GetNumTradeSkills()
         local index = recipeList.selectedSkill
+        index = GetTradeSkillSelectionIndex()
         do
             local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(index);
             if skillType == 'header' then index = GetFirstTradeSkill() end
         end
-        if index > numSkills then index = GetFirstTradeSkill() end
+        if index > numSkills then
+            index = GetFirstTradeSkill()
+            TradeSkillFrame_SetSelection(index)
+        end
         local changed = recipeList.selectedSkill ~= index
         recipeList.selectedSkill = index
 
@@ -2160,6 +2164,7 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
 
                 -- TradeSkillFrame_SetSelection(newRecipeID)
                 if self:GetParent().CraftOpen then CraftFrame_SetSelection(newRecipeID) end
+                if self:GetParent().TradeSkillOpen then TradeSkillFrame_SetSelection(newRecipeID) end
                 self:SelectRecipe(newRecipeID, false)
             end
         end
