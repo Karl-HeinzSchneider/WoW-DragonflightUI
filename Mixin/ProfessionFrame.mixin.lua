@@ -516,10 +516,17 @@ function DFProfessionMixin:SetupSchematics()
     descr:SetJustifyH('LEFT')
     frame.SkillDescription = descr
 
+    local extra = CreateFrame("Frame", 'DragonflightUIProfessionFrameExtraDataFrame', self)
+    extra:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    extra:SetPoint('RIGHT', frame, 'RIGHT', -28, 0)
+    extra:SetHeight(1)
+    frame.ExtraDataFrame = extra
+
     -- reagents
     local reagentLabel = frame:CreateFontString('DragonflightUIProfession' .. 'ReagentLabel', 'BACKGROUND',
                                                 'GameFontNormalSmall')
-    reagentLabel:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    -- reagentLabel:SetPoint('TOPLEFT', icon, 'BOTTOMLEFT', -1, -12)
+    reagentLabel:SetPoint('TOPLEFT', extra, 'BOTTOMLEFT', -1, 0)
     reagentLabel:SetText(SPELL_REAGENTS)
     frame.RegentLabel = reagentLabel
 
@@ -1631,10 +1638,10 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         if (GetTradeSkillDescription(id)) then
             frame.SkillDescription:SetText(GetTradeSkillDescription(id))
-            frame.RegentLabel:SetPoint("TOPLEFT", frame.SkillDescription, "BOTTOMLEFT", 0, -10);
+            frame.ExtraDataFrame:SetPoint("TOPLEFT", frame.SkillDescription, "BOTTOMLEFT", 0, -10);
         else
             frame.SkillDescription:SetText(" ");
-            frame.RegentLabel:SetPoint("TOPLEFT", frame.SkillDescription, "TOPLEFT", 0, 0);
+            frame.ExtraDataFrame:SetPoint("TOPLEFT", frame.SkillDescription, "TOPLEFT", 0, 0);
         end
 
         frame.SkillDescription:Show();
@@ -1842,10 +1849,10 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         if (GetCraftDescription(id)) then
             frame.SkillDescription:SetText(GetCraftDescription(id))
-            frame.RegentLabel:SetPoint("TOPLEFT", frame.SkillDescription, "BOTTOMLEFT", 0, -10);
+            frame.ExtraDataFrame:SetPoint("TOPLEFT", frame.SkillDescription, "BOTTOMLEFT", 0, -10);
         else
             frame.SkillDescription:SetText(" ");
-            frame.RegentLabel:SetPoint("TOPLEFT", frame.SkillDescription, "TOPLEFT", 0, 0);
+            frame.ExtraDataFrame:SetPoint("TOPLEFT", frame.SkillDescription, "TOPLEFT", 0, 0);
         end
 
         frame.SkillDescription:Show();
