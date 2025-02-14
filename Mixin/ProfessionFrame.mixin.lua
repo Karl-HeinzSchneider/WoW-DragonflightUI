@@ -484,9 +484,10 @@ function DFProfessionMixin:SetupSchematics()
 
     local reqText = frame:CreateFontString('DragonflightUIProfession' .. 'RequirementText', 'BACKGROUND',
                                            'GameFontHighlightSmall')
-    reqText:SetSize(250, 9.9)
+    -- reqText:SetSize(250, 9.9)
     reqText:SetJustifyH("LEFT");
-    reqText:SetPoint('LEFT', req, 'RIGHT', 4, 0)
+    reqText:SetPoint('TOPLEFT', req, 'TOPRIGHT', 4, 0)
+    reqText:SetPoint('RIGHT', frame, 'RIGHT', -28, 0)
     frame.RequirementText = reqText
 
     local cost = frame:CreateFontString('DragonflightUIProfession' .. 'CostLabel', 'BACKGROUND',
