@@ -393,6 +393,8 @@ L["TargetFrameComboPointsOnPlayerFrame"] = "Combo Points on PlayerFrame"
 L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player frame."
 L["TargetFrameHideComboPoints"] = "Hide Combo Points"
 L["TargetFrameHideComboPointsDesc"] = "Hides the combo points frame."
+L["TargetFrameFadeOut"] = "Fadeout"
+L["TargetFrameFadeOutDesc"] = "Fades the TargetFrame when the target is more than 40y away."
 
 -- Pet
 L["PetFrameDesc"] = "Pet frame settings"

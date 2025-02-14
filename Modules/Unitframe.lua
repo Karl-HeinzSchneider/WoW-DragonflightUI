@@ -91,6 +91,7 @@ local defaults = {
             comboPointsOnPlayerFrame = false,
             hideComboPoints = false,
             hideNameBackground = false,
+            fadeOut = true,
             scale = 1.0,
             override = false,
             anchorFrame = 'UIParent',
@@ -323,7 +324,7 @@ local optionsPlayer = {
             desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
             group = 'headerStyling',
             order = 9,
-            new = true,
+            new = false,
             editmode = true
         },
         hideRedStatus = {
@@ -332,7 +333,7 @@ local optionsPlayer = {
             desc = L["PlayerFrameHideRedStatusDesc"] .. getDefaultStr('hideRedStatus', 'player'),
             group = 'headerStyling',
             order = 10,
-            new = true,
+            new = false,
             editmode = true
         },
         hideIndicator = {
@@ -341,7 +342,7 @@ local optionsPlayer = {
             desc = L["PlayerFrameHideHitIndicatorDesc"] .. getDefaultStr('hideIndicator', 'player'),
             group = 'headerStyling',
             order = 11,
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -571,7 +572,7 @@ local optionsTarget = {
             desc = L["TargetFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'target'),
             group = 'headerStyling',
             order = 11,
-            new = true,
+            new = false,
             editmode = true
         },
         comboPointsOnPlayerFrame = {
@@ -580,7 +581,7 @@ local optionsTarget = {
             desc = L["TargetFrameComboPointsOnPlayerFrameDesc"] .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
             group = 'headerStyling',
             order = 12,
-            new = true,
+            new = false,
             editmode = true
         },
         hideComboPoints = {
@@ -589,6 +590,15 @@ local optionsTarget = {
             desc = L["TargetFrameHideComboPointsDesc"] .. getDefaultStr('hideComboPoints', 'target'),
             group = 'headerStyling',
             order = 12.5,
+            new = false,
+            editmode = true
+        },
+        fadeOut = {
+            type = 'toggle',
+            name = L["TargetFrameFadeOut"],
+            desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'target'),
+            group = 'headerStyling',
+            order = 9.5,
             new = true,
             editmode = true
         }
@@ -3444,10 +3454,18 @@ function Module.ChangeTargetFrame()
     if not TargetFrame.DFRangeHooked then
         TargetFrame.DFRangeHooked = true;
 
+        local state = Module.db.profile.target
+
         if not rc then return end
         local function updateRange()
             local minRange, maxRange = rc:GetRange('target')
             -- print(minRange, maxRange)
+
+            if not state.fadeOut then
+                TargetFrame:SetAlpha(1);
+                return;
+            end
+
             if minRange and minRange >= 40 then
                 TargetFrame:SetAlpha(0.55);
                 -- elseif maxRange and maxRange >= 40 then
