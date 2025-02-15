@@ -366,8 +366,7 @@ function Module:UpdateMinimap(state)
                     local state = db.general
                     if _G['LFGMinimapFrameBorder'] then
                         _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
-                        _G['LFGMinimapFrameBorder']:SetVertexColor(state.minimapR / 255, state.minimapG / 255,
-                                                                   state.minimapB / 255)
+                        _G['LFGMinimapFrameBorder']:SetVertexColor(c:GetRGB())
                     end
                 end)
             end
