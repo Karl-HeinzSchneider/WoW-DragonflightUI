@@ -380,6 +380,13 @@ function DFSettingsListCheckboxContainerMixin:Init(node)
         self.Checkbox:SetValue(not self.Checkbox:GetChecked())
         self.Checkbox:TriggerEvent(DFSettingsListCheckboxMixin.Event.OnValueChanged, self.Checkbox:GetChecked())
     end)
+
+    self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    self.Tooltip:HookScript('OnEnter', function()
+        SettingsTooltip:SetOwner(self.Checkbox, 'ANCHOR_RIGHT', 0, 0);
+        self.TooltipFunc()
+        SettingsTooltip:Show();
+    end)
 end
 
 -- Checkbox
