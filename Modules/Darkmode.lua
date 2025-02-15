@@ -15,6 +15,7 @@ local defaults = {
             unitframeR = 77, -- 0.3 * 255 = 67.5
             unitframeG = 77,
             unitframeB = 77,
+            unitframeColor = CreateColor(77 / 255, 77 / 255, 77 / 255):GenerateHexColorNoAlpha(),
             -- Minimap
             minimapDesaturate = true,
             minimapR = 0.4 * 255,
@@ -40,8 +41,8 @@ local defaults = {
 }
 Module:SetDefaults(defaults)
 
-local function getDefaultStr(key, sub)
-    return Module:GetDefaultStr(key, sub)
+local function getDefaultStr(key, sub, extra)
+    return Module:GetDefaultStr(key, sub, extra)
 end
 
 local function setDefaultValues()
@@ -114,6 +115,14 @@ local generalOptions = {
             max = 255,
             bigStep = 1,
             order = 103
+        },
+        unitframeColor = {
+            type = 'color',
+            name = 'UnitFrame',
+            desc = '' .. getDefaultStr('unitframeColor', 'general', '#'),
+            swatchFunc = function()
+            end,
+            order = 105
         },
         headerMinimap = {type = 'header', name = 'Minimap', desc = '...', order = 200},
         minimapDesaturate = {

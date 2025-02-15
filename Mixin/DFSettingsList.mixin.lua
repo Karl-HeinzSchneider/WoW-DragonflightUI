@@ -11,6 +11,7 @@ DFSettingsListMixin.ElementSize = {
     description = 26,
     toggle = 26,
     select = 26,
+    color = 26,
     divider = 16 + 10
 }
 
@@ -87,6 +88,8 @@ function DFSettingsListMixin:OnLoad()
             end
         elseif elementType == 'editbox' then
             factory("DFSettingsListEditbox", Initializer);
+        elseif elementType == 'color' then
+            factory("DFSettingsListColorPicker", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -638,6 +641,143 @@ function DFSettingsListButtonMixin:Init(node)
     self:RegisterCallback('OnClick', function(self, ...)
         args.func()
     end, self)
+end
+
+-- ColorPicker
+-- DFSettingsListButtonMixin = CreateFromMixins(CallbackRegistryMixin);
+-- DFSettingsListButtonMixin:GenerateCallbackEvents({"OnButtonClicked"});
+DFSettingsListColorPickerMixin = {}
+
+function DFSettingsListColorPickerMixin:Init(node)
+    -- print('DFSettingsListButtonMixin:Init()')
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+    local args = elementData.args;
+
+    self.Text:SetText(args.name);
+    self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    self:SetBaseSmall(elementData.small);
+
+    self.Color:SetColorHex(elementData.get({elementData.key}))
+
+    self.Color:SetScript('OnEnter', function()
+        --
+        print('OnEnter!')
+    end)
+    self.Color:SetScript('OnLeave', function()
+        --
+        print('OnLeave!')
+    end)
+    self.Color:SetScript('OnClick', function()
+        --
+        print('clicks!')
+        local currentColor = CreateColorFromRGBHexString(elementData.get({elementData.key}))
+
+        local info = {
+            r = currentColor.r,
+            g = currentColor.g,
+            b = currentColor.b,
+            swatchFunc = function()
+                --
+                -- print('swatchFunc')
+                local newR, newG, newB = _G['DragonflightUIColorPicker']:GetColorRGB()
+                local newA = _G['DragonflightUIColorPicker']:GetColorAlpha()
+                local newC = CreateColor(newR, newG, newB, newA)
+                -- print('~', newC:GenerateHexColorNoAlpha())
+                elementData.set({elementData.key}, newC:GenerateHexColorNoAlpha())
+
+                self.Color:SetColorHex(elementData.get({elementData.key}))
+            end,
+            hasOpacity = false,
+            opacityFunc = nil,
+            opacity = 1.0,
+            cancelFunc = function(previousValues)
+                --          
+                local prevC = CreateColor(previousValues.r, previousValues.g, previousValues.b, previousValues.a)
+                elementData.set({elementData.key}, prevC:GenerateHexColorNoAlpha())
+
+                self.Color:SetColorHex(elementData.get({elementData.key}))
+            end,
+            extraInfo = {}
+        }
+
+        _G['DragonflightUIColorPicker']:SetupColorPickerAndShow(info)
+    end)
+
+    -- DragonflightUIColorPicker
+
+    -- self.Button:SetFrameLevel(self.Tooltip:GetFrameLevel() + 1)
+
+    -- if elementData.small then
+    --     self.Button:SetWidth(200);
+    --     self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+    -- else
+    --     self.Button:SetWidth(183);
+    --     self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 40, 0);
+    -- end
+
+    -- self.Button:SetText(args.btnName);
+    -- self.Button:SetScript('OnClick', function(button, buttonName)
+    --     -- print('OnClick')
+    --     self:TriggerEvent(DFSettingsListElementBaseMixin.Event.OnClick, true)
+    -- end)
+
+    -- self:UnregisterCallback('OnClick', self)
+    -- self:RegisterCallback('OnClick', function(self, ...)
+    --     args.func()
+    -- end, self)
+end
+
+DFSettingsListColorMixin = {}
+
+function DFSettingsListColorMixin:OnLoad()
+    print('~~DFSettingsListColorMixin:OnLoad()')
+
+    local colorSwatch = self:CreateTexture(nil, "OVERLAY")
+    colorSwatch:SetWidth(19)
+    colorSwatch:SetHeight(19)
+    colorSwatch:SetTexture(130939) -- Interface\\ChatFrame\\ChatFrameColorSwatch
+    colorSwatch:SetPoint("LEFT")
+    -- colorSwatch:Hide()
+    self.ColorSwatch = colorSwatch
+
+    local texture = self:CreateTexture(nil, "BACKGROUND")
+    colorSwatch.background = texture
+    texture:SetWidth(16)
+    texture:SetHeight(16)
+    texture:SetColorTexture(1, 1, 1)
+    texture:SetPoint("CENTER", colorSwatch)
+    -- texture:Hide()
+    self.Texture = texture
+
+    local checkers = self:CreateTexture(nil, "BACKGROUND")
+    colorSwatch.checkers = checkers
+    checkers:SetWidth(14)
+    checkers:SetHeight(14)
+    checkers:SetTexture(188523) -- Tileset\\Generic\\Checkers
+    checkers:SetTexCoord(.25, 0, 0.5, .25)
+    checkers:SetDesaturated(true)
+    checkers:SetVertexColor(1, 1, 1, 0.75)
+    checkers:SetPoint("CENTER", colorSwatch)
+    -- checkers:Hide()
+    self.Checkers = checkers
+
+    local text = self:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    text:SetHeight(24)
+    text:SetJustifyH("LEFT")
+    text:SetTextColor(1, 1, 1)
+    text:SetPoint("LEFT", colorSwatch, "RIGHT", 2, 0)
+    text:SetPoint("RIGHT")
+    self.Text = text
+end
+
+function DFSettingsListColorMixin:SetColorHex(hex)
+    -- print('DFSettingsListColorMixin:SetColorHex(hex)')
+    local c = CreateColorFromRGBHexString(hex)
+    self.ColorSwatch:SetVertexColor(c.r, c.g, c.b, 1.0)
 end
 
 -- Editbox
