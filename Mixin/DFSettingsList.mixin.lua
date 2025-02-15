@@ -751,7 +751,7 @@ end
 DFSettingsListColorMixin = {}
 
 function DFSettingsListColorMixin:OnLoad()
-    print('~~DFSettingsListColorMixin:OnLoad()')
+    -- print('~~DFSettingsListColorMixin:OnLoad()')
 
     local colorSwatch = self:CreateTexture(nil, "OVERLAY")
     colorSwatch:SetWidth(19)
