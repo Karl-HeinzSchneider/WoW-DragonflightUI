@@ -682,15 +682,15 @@ function DFSettingsListColorPickerMixin:Init(node)
 
     self.Color:SetScript('OnEnter', function()
         --
-        print('OnEnter!')
+        -- print('OnEnter!')
     end)
     self.Color:SetScript('OnLeave', function()
         --
-        print('OnLeave!')
+        -- print('OnLeave!')
     end)
     self.Color:SetScript('OnClick', function()
         --
-        print('clicks!')
+        -- print('clicks!')
         local currentColor = CreateColorFromRGBHexString(elementData.get({elementData.key}))
 
         local info = {
