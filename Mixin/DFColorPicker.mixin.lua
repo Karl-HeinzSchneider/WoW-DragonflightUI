@@ -2,7 +2,7 @@ DFColorPickerMixin = {}
 
 function DFColorPickerMixin:OnLoad()
     print('DFColorPickermixin:OnLoad()')
-    self:Show()
+    -- self:Show()
     self:SetScale(UIParent:GetEffectiveScale())
 
     self.Header.Text:SetText(COLOR_PICKER)
