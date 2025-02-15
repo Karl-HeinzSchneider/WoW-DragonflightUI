@@ -7,6 +7,30 @@ function DFColorPickerMixin:OnLoad()
 
     self.Header.Text:SetText(COLOR_PICKER)
 
+    self.CopyString = ''
+    self.Content.PasteButton:SetText('paste')
+    self.Content.PasteButton:SetEnabled(self.CopyString ~= '')
+    self.Content.PasteButton:SetScript("OnClick", function()
+        if (self.CopyString ~= '') then
+            -- local color = CreateColorFromRGBAHexString(self.CopyString .. "ff");
+            -- self.Content.ColorPicker:SetColorRGB(color:GetRGB());
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+
+            self.Content.HexBox:SetText(self.CopyString)
+            self.Content.HexBox:OnEnterPressed()
+        else
+            self:SetEnabled(false)
+        end
+    end);
+
+    self.Content.CopyButton:SetText('copy')
+    self.Content.CopyButton:SetScript("OnClick", function()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        self.CopyString = self.Content.HexBox:GetText()
+        self.Content.PasteButton:SetEnabled(self.CopyString ~= '')
+    end);
+
+    -- blizz
     self.Content.ColorPicker:SetScript("OnColorSelect", function(colorPicker, r, g, b)
         self.Content.ColorSwatchCurrent:SetColorTexture(r, g, b);
         self.Content.HexBox:OnColorSelect(r, g, b);

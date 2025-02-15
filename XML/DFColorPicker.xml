@@ -123,6 +123,18 @@ UI_shared.xsd">
 							<OnEnterPressed method="OnEnterPressed" />
 						</Scripts>
 					</EditBox>
+					<Button parentKey="PasteButton" inherits="UIPanelButtonTemplate" text="PASTE">
+						<Size x="79" y="22" />
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HexBox" relativePoint="TOPRIGHT" y="1" />
+						</Anchors>
+					</Button>
+					<Button parentKey="CopyButton" inherits="UIPanelButtonTemplate" text="COPY">
+						<Size x="79" y="22" />
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.PasteButton" relativePoint="TOPRIGHT" y="1" />
+						</Anchors>
+					</Button>
 				</Frames>
 			</Frame>
 			<Frame parentKey="Footer">
