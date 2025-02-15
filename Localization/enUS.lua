@@ -93,6 +93,7 @@ L["DarkmodeColor"] = "Color"
 L["DarkmodeDesaturate"] = "Desaturate"
 
 -- actionbar
+L["ActionbarName"] = "Action Bar"
 L["ActionbarNameFormat"] = "Action Bar %d"
 
 -- bar names
@@ -268,6 +269,8 @@ L["BuffsOptionsUseStateHandlerDesc"] =
     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
 
 -- Castbar
+L["CastbarName"] = "Cast Bar"
+L["CastbarNameFormat"] = "%s Cast Bar"
 L["CastbarTableActive"] = "Active"
 L["CastbarTableActivateDesc"] = ""
 L["CastbarTableStyle"] = L["ButtonTableStyle"]
@@ -357,6 +360,7 @@ L["ProfessionUnCheckAll"] = "Uncheck All"
 L["ProfessionFavorites"] = "Favorites"
 
 -- Unitframes
+L["UnitFramesName"] = "Unitframes"
 -- Player
 L["PlayerFrameDesc"] = "Player frame settings"
 L["PlayerFrameStyle"] = L["ButtonTableStyle"]

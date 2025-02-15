@@ -68,7 +68,7 @@ local generalOptions = {
         -- }   
         headerUnitframes = {
             type = 'header',
-            name = 'Unitframes',
+            name = L["UnitFramesName"],
             desc = '...',
             order = 100,
             isExpanded = true,
@@ -97,7 +97,7 @@ local generalOptions = {
         },
         headerMinimap = {
             type = 'header',
-            name = 'Minimap',
+            name = L["MinimapName"],
             desc = '...',
             order = 200,
             isExpanded = true,
@@ -119,7 +119,7 @@ local generalOptions = {
         },
         headerActionbar = {
             type = 'header',
-            name = 'Actionbar',
+            name = L["ActionbarName"],
             desc = '...',
             order = 300,
             isExpanded = true,
@@ -141,7 +141,7 @@ local generalOptions = {
         },
         headerBuff = {
             type = 'header',
-            name = 'Buffs',
+            name = L["BuffsOptionsName"],
             desc = '...',
             order = 400,
             isExpanded = true,
@@ -163,7 +163,7 @@ local generalOptions = {
         },
         headerCastbar = {
             type = 'header',
-            name = 'Castbar',
+            name = L["CastbarName"],
             desc = '...',
             order = 500,
             isExpanded = true,
