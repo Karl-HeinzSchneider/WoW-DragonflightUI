@@ -55,6 +55,7 @@ local generalOptions = {
     name = 'Darkmode',
     get = getOption,
     set = setOption,
+    sortComparator = DFSettingsListMixin.AlphaSortComparator,
     args = {
         -- scale = {
         --     type = 'range',
@@ -65,11 +66,19 @@ local generalOptions = {
         --     bigStep = 0.1,
         --     order = 1
         -- }   
-        headerUnitframes = {type = 'header', name = 'Unitframes', desc = '...', order = 100},
+        headerUnitframes = {
+            type = 'header',
+            name = 'Unitframes',
+            desc = '...',
+            order = 100,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         unitframeDesaturate = {
             type = 'toggle',
             name = 'Desaturate',
             desc = '' .. getDefaultStr('unitframeDesaturate', 'general'),
+            group = 'headerUnitframes',
             order = 100.5
         },
         -- unitframeHealthDesaturate = {
@@ -83,58 +92,95 @@ local generalOptions = {
             type = 'color',
             name = L["DarkmodeColor"],
             desc = '' .. getDefaultStr('unitframeColor', 'general', '#'),
+            group = 'headerUnitframes',
             order = 105
         },
-        headerMinimap = {type = 'header', name = 'Minimap', desc = '...', order = 200},
+        headerMinimap = {
+            type = 'header',
+            name = 'Minimap',
+            desc = '...',
+            order = 200,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         minimapDesaturate = {
             type = 'toggle',
             name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('minimapDesaturate', 'general'),
+            group = 'headerMinimap',
             order = 200.5
         },
         minimapColor = {
             type = 'color',
             name = L["DarkmodeColor"],
             desc = '' .. getDefaultStr('minimapColor', 'general', '#'),
+            group = 'headerMinimap',
             order = 201
         },
-        headerActionbar = {type = 'header', name = 'Actionbar', desc = '...', order = 300},
+        headerActionbar = {
+            type = 'header',
+            name = 'Actionbar',
+            desc = '...',
+            order = 300,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         actionbarDesaturate = {
             type = 'toggle',
             name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('actionbarDesaturate', 'general'),
+            group = 'headerActionbar',
             order = 300.5
         },
         actionbarColor = {
             type = 'color',
             name = L["DarkmodeColor"],
             desc = '' .. getDefaultStr('actionbarColor', 'general', '#'),
+            group = 'headerActionbar',
             order = 301
         },
-        headerBuff = {type = 'header', name = 'Buffs', desc = '...', order = 400},
+        headerBuff = {
+            type = 'header',
+            name = 'Buffs',
+            desc = '...',
+            order = 400,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         buffDesaturate = {
             type = 'toggle',
             name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('buffDesaturate', 'general'),
+            group = 'headerBuff',
             order = 400.5
         },
         buffColor = {
             type = 'color',
             name = L["DarkmodeColor"],
             desc = '' .. getDefaultStr('buffColor', 'general', '#'),
+            group = 'headerBuff',
             order = 401
         },
-        headerCastbar = {type = 'header', name = 'Castbar', desc = '...', order = 500},
+        headerCastbar = {
+            type = 'header',
+            name = 'Castbar',
+            desc = '...',
+            order = 500,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         castbarDesaturate = {
             type = 'toggle',
             name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('castbarDesaturate', 'general'),
+            group = 'headerCastbar',
             order = 500.1
         },
         castbarColor = {
             type = 'color',
             name = L["DarkmodeColor"],
             desc = '' .. getDefaultStr('castbarColor', 'general', '#'),
+            group = 'headerCastbar',
             order = 501
         }
     }
@@ -201,6 +247,7 @@ function Module:RegisterOptionScreens()
         name = 'Darkmode',
         sub = 'general',
         options = generalOptions,
+        sortComparator = generalOptions.sortComparator,
         default = function()
             setDefaultSubValues('general')
         end

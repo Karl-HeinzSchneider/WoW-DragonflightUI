@@ -15,6 +15,14 @@ DFSettingsListMixin.ElementSize = {
     divider = 16 + 10
 }
 
+DFSettingsListMixin.OrderSortComparator = function(a, b)
+    return b.data.order > a.data.order
+end
+
+DFSettingsListMixin.AlphaSortComparator = function(a, b)
+    return b.data.name > a.data.name
+end
+
 function DFSettingsListMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
     -- print('DFSettingsListMixin', 'OnLoad')
@@ -25,9 +33,7 @@ function DFSettingsListMixin:OnLoad()
     self:Show()
 
     self.DataProvider = CreateTreeDataProvider();
-    self.sortComparator = function(a, b)
-        return b.data.order > a.data.order
-    end
+    self.sortComparator = DFSettingsListMixin.OrderSortComparator
     local affectChildren = true;
     local skipSort = true;
     self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
@@ -136,7 +142,12 @@ function DFSettingsListMixin:Display(data, small)
     self.DataProvider = CreateTreeDataProvider();
     local affectChildren = true;
     local skipSort = true;
-    self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
+
+    if data.sortComparator then
+        self.DataProvider:SetSortComparator(data.sortComparator, false, false)
+    else
+        self.DataProvider:SetSortComparator(DFSettingsListMixin.OrderSortComparator, false, false)
+    end
 
     if not data then
         print('DFSettingsListMixin:Display', 'no data')
@@ -192,12 +203,17 @@ function DFSettingsListMixin:Display(data, small)
 
         if v.type == 'header' then
             -- print('header', k)
-            local elementData = {key = k, order = (v.order or 9999), args = v, small = small}
+            local elementData = {key = k, order = (v.order or 9999), name = (v.name or ''), args = v, small = small}
             local node = self.DataProvider:Insert(elementData);
 
             -- local affectChildren = true;
             -- local skipSort = false;
-            node:SetSortComparator(self.sortComparator, true, false)
+            if v.sortComparator then
+                node:SetSortComparator(v.sortComparator, true, false)
+            else
+                node:SetSortComparator(DFSettingsListMixin.OrderSortComparator, true, false)
+            end
+            -- node:SetSortComparator(self.sortComparator, true, false)
         end
     end
 
@@ -211,6 +227,7 @@ function DFSettingsListMixin:Display(data, small)
             local elementData = {
                 key = k,
                 order = (v.order or 9999),
+                name = (v.name or ''),
                 args = v,
                 get = getFunc,
                 set = setFunc,
