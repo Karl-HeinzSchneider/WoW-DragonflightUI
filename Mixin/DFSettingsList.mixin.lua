@@ -754,8 +754,8 @@ function DFSettingsListColorMixin:OnLoad()
     -- print('~~DFSettingsListColorMixin:OnLoad()')
 
     local colorSwatch = self:CreateTexture(nil, "OVERLAY")
-    colorSwatch:SetWidth(19)
-    colorSwatch:SetHeight(19)
+    colorSwatch:SetWidth(26)
+    colorSwatch:SetHeight(26)
     colorSwatch:SetTexture(130939) -- Interface\\ChatFrame\\ChatFrameColorSwatch
     colorSwatch:SetPoint("LEFT")
     -- colorSwatch:Hide()
@@ -763,8 +763,8 @@ function DFSettingsListColorMixin:OnLoad()
 
     local texture = self:CreateTexture(nil, "BACKGROUND")
     colorSwatch.background = texture
-    texture:SetWidth(16)
-    texture:SetHeight(16)
+    texture:SetWidth(23)
+    texture:SetHeight(23)
     texture:SetColorTexture(1, 1, 1)
     texture:SetPoint("CENTER", colorSwatch)
     -- texture:Hide()
@@ -772,8 +772,8 @@ function DFSettingsListColorMixin:OnLoad()
 
     local checkers = self:CreateTexture(nil, "BACKGROUND")
     colorSwatch.checkers = checkers
-    checkers:SetWidth(14)
-    checkers:SetHeight(14)
+    checkers:SetWidth(21)
+    checkers:SetHeight(21)
     checkers:SetTexture(188523) -- Tileset\\Generic\\Checkers
     checkers:SetTexCoord(.25, 0, 0.5, .25)
     checkers:SetDesaturated(true)
