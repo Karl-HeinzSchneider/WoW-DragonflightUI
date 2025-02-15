@@ -65,6 +65,8 @@ XML\SettingsList.xml
 XML\Talents.xml
 XML\UI.xml
 
+XML\DFColorPicker.xml
+
 # Config
 Modules\__Settings.lua
 Modules\Config.lua
