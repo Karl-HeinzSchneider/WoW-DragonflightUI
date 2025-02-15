@@ -252,6 +252,35 @@ UI_shared.xsd">
 			</Button>
 		</Frames>
 	</Frame>
+	<!-- Colorpicker -->
+	<Frame name="DFSettingsListColorPicker" inherits="DFSettingsListElementBase" mixin="DFSettingsListColorPickerMixin" virtual="true">
+		<Layers>
+			<!--
+			<Layer level="ARTWORK">
+			<Texture parentKey="ColorCurrent">
+			<Size x="47" y="25" />
+			<Anchors>
+			<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="30" y="0" />
+			</Anchors>
+			<Color r="1.0" g="1.0" b="1.0" a="1.0" />
+			</Texture>
+			</Layer>
+			-->
+		</Layers>
+		<Frames>
+			<Button parentKey="Color" inherits="DFSettingsListColor">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="10" y="0" />
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>
+	<Button name="DFSettingsListColor" mixin="DFSettingsListColorMixin" virtual="true">
+		<Size x="26" y="26" />
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Button>
 	<!-- Editbox -->
 	<Frame name="DFSettingsListEditbox" inherits="DFSettingsListElementBase" mixin="DFSettingsListEditboxMixin" virtual="true">
 		<Frames>

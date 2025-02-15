@@ -12,36 +12,26 @@ local defaults = {
             -- Unitframes
             unitframeDesaturate = true,
             -- unitframeHealthDesaturate = true,
-            unitframeR = 77, -- 0.3 * 255 = 67.5
-            unitframeG = 77,
-            unitframeB = 77,
+            unitframeColor = CreateColor(77 / 255, 77 / 255, 77 / 255):GenerateHexColorNoAlpha(),
             -- Minimap
             minimapDesaturate = true,
-            minimapR = 0.4 * 255,
-            minimapG = 0.4 * 255,
-            minimapB = 0.4 * 255,
+            minimapColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
             -- Actionbar
             actionbarDesaturate = true,
-            actionbarR = 0.4 * 255,
-            actionbarG = 0.4 * 255,
-            actionbarB = 0.4 * 255,
+            actionbarColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
             -- Buffs
             buffDesaturate = true,
-            buffR = 0.4 * 255,
-            buffG = 0.4 * 255,
-            buffB = 0.4 * 255,
+            buffColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
             -- Castbar
             castbarDesaturate = true,
-            castbarR = 0.4 * 255,
-            castbarG = 0.4 * 255,
-            castbarB = 0.4 * 255
+            castbarColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha()
         }
     }
 }
 Module:SetDefaults(defaults)
 
-local function getDefaultStr(key, sub)
-    return Module:GetDefaultStr(key, sub)
+local function getDefaultStr(key, sub, extra)
+    return Module:GetDefaultStr(key, sub, extra)
 end
 
 local function setDefaultValues()
@@ -65,6 +55,7 @@ local generalOptions = {
     name = 'Darkmode',
     get = getOption,
     set = setOption,
+    sortComparator = DFSettingsListMixin.AlphaSortComparator,
     args = {
         -- scale = {
         --     type = 'range',
@@ -75,11 +66,19 @@ local generalOptions = {
         --     bigStep = 0.1,
         --     order = 1
         -- }   
-        headerUnitframes = {type = 'header', name = 'Unitframes', desc = '...', order = 100},
+        headerUnitframes = {
+            type = 'header',
+            name = L["UnitFramesName"],
+            desc = '...',
+            order = 100,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         unitframeDesaturate = {
             type = 'toggle',
             name = 'Desaturate',
             desc = '' .. getDefaultStr('unitframeDesaturate', 'general'),
+            group = 'headerUnitframes',
             order = 100.5
         },
         -- unitframeHealthDesaturate = {
@@ -88,168 +87,101 @@ local generalOptions = {
         --     desc = '' .. getDefaultStr('unitframeHealthDesaturate', 'general'),
         --     order = 100.6
         -- },
-        unitframeR = {
-            type = 'range',
-            name = 'r',
-            desc = '' .. getDefaultStr('unitframeR', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 101
+
+        unitframeColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('unitframeColor', 'general', '#'),
+            group = 'headerUnitframes',
+            order = 105
         },
-        unitframeG = {
-            type = 'range',
-            name = 'g',
-            desc = '' .. getDefaultStr('unitframeG', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 102
+        headerMinimap = {
+            type = 'header',
+            name = L["MinimapName"],
+            desc = '...',
+            order = 200,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
         },
-        unitframeB = {
-            type = 'range',
-            name = 'b',
-            desc = '' .. getDefaultStr('unitframeB', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 103
-        },
-        headerMinimap = {type = 'header', name = 'Minimap', desc = '...', order = 200},
         minimapDesaturate = {
             type = 'toggle',
-            name = 'Desaturate',
+            name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('minimapDesaturate', 'general'),
+            group = 'headerMinimap',
             order = 200.5
         },
-        minimapR = {
-            type = 'range',
-            name = 'r',
-            desc = '' .. getDefaultStr('minimapR', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
+        minimapColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('minimapColor', 'general', '#'),
+            group = 'headerMinimap',
             order = 201
         },
-        minimapG = {
-            type = 'range',
-            name = 'g',
-            desc = '' .. getDefaultStr('minimapG', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 202
+        headerActionbar = {
+            type = 'header',
+            name = L["ActionbarName"],
+            desc = '...',
+            order = 300,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
         },
-        minimapB = {
-            type = 'range',
-            name = 'b',
-            desc = '' .. getDefaultStr('minimapB', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 203
-        },
-        headerActionbar = {type = 'header', name = 'Actionbar', desc = '...', order = 300},
         actionbarDesaturate = {
             type = 'toggle',
-            name = 'Desaturate',
+            name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('actionbarDesaturate', 'general'),
+            group = 'headerActionbar',
             order = 300.5
         },
-        actionbarR = {
-            type = 'range',
-            name = 'r',
-            desc = '' .. getDefaultStr('actionbarR', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
+        actionbarColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('actionbarColor', 'general', '#'),
+            group = 'headerActionbar',
             order = 301
         },
-        actionbarG = {
-            type = 'range',
-            name = 'g',
-            desc = '' .. getDefaultStr('actionbarG', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 302
+        headerBuff = {
+            type = 'header',
+            name = L["BuffsOptionsName"],
+            desc = '...',
+            order = 400,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
         },
-        actionbarB = {
-            type = 'range',
-            name = 'b',
-            desc = '' .. getDefaultStr('actionbarB', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 303
-        },
-        headerBuff = {type = 'header', name = 'Buffs', desc = '...', order = 400},
         buffDesaturate = {
             type = 'toggle',
-            name = 'Desaturate',
+            name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('buffDesaturate', 'general'),
+            group = 'headerBuff',
             order = 400.5
         },
-        buffR = {
-            type = 'range',
-            name = 'r',
-            desc = '' .. getDefaultStr('buffR', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
+        buffColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('buffColor', 'general', '#'),
+            group = 'headerBuff',
             order = 401
         },
-        buffG = {
-            type = 'range',
-            name = 'g',
-            desc = '' .. getDefaultStr('buffG', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 402
+        headerCastbar = {
+            type = 'header',
+            name = L["CastbarName"],
+            desc = '...',
+            order = 500,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
         },
-        buffB = {
-            type = 'range',
-            name = 'b',
-            desc = '' .. getDefaultStr('buffB', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 403
-        },
-        headerCastbar = {type = 'header', name = 'Castbar', desc = '...', order = 500},
         castbarDesaturate = {
             type = 'toggle',
-            name = 'Desaturate',
+            name = L["DarkmodeDesaturate"],
             desc = '' .. getDefaultStr('castbarDesaturate', 'general'),
+            group = 'headerCastbar',
             order = 500.1
         },
-        castbarR = {
-            type = 'range',
-            name = 'r',
-            desc = '' .. getDefaultStr('castbarR', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 500.5
-        },
-        castbarG = {
-            type = 'range',
-            name = 'g',
-            desc = '' .. getDefaultStr('castbarG', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 500.6
-        },
-        castbarB = {
-            type = 'range',
-            name = 'b',
-            desc = '' .. getDefaultStr('castbarB', 'general'),
-            min = 0,
-            max = 255,
-            bigStep = 1,
-            order = 500.7
+        castbarColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('castbarColor', 'general', '#'),
+            group = 'headerCastbar',
+            order = 501
         }
     }
 }
@@ -315,6 +247,7 @@ function Module:RegisterOptionScreens()
         name = 'Darkmode',
         sub = 'general',
         options = generalOptions,
+        sortComparator = generalOptions.sortComparator,
         default = function()
             setDefaultSubValues('general')
         end
@@ -346,9 +279,10 @@ function Module:UpdateMinimapButton(btn)
     if not border then return end
 
     local state = Module.db.profile.general
+    local c = CreateColorFromRGBHexString(state.minimapColor)
 
     border:SetDesaturated(state.minimapDesaturate)
-    border:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    border:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateMinimap(state)
@@ -365,21 +299,23 @@ function Module:UpdateMinimap(state)
     local minimapBorderTex = minimapModule.Frame.minimap
     if not minimapBorderTex then return end -- TODO: HACK
 
+    local c = CreateColorFromRGBHexString(state.minimapColor)
+
     -- minimapBorderTex:SetDesaturated(true)
     -- minimapBorderTex:SetVertexColor(0.4, 0.4, 0.4)  
 
     minimapBorderTex:SetDesaturated(state.minimapDesaturate)
-    minimapBorderTex:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    minimapBorderTex:SetVertexColor(c:GetRGB())
 
     MinimapZoomIn:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
-    MinimapZoomIn:GetNormalTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomIn:GetNormalTexture():SetVertexColor(c:GetRGB())
     MinimapZoomIn:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
-    MinimapZoomIn:GetDisabledTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomIn:GetDisabledTexture():SetVertexColor(c:GetRGB())
 
     MinimapZoomOut:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
-    MinimapZoomOut:GetNormalTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomOut:GetNormalTexture():SetVertexColor(c:GetRGB())
     MinimapZoomOut:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
-    MinimapZoomOut:GetDisabledTexture():SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+    MinimapZoomOut:GetDisabledTexture():SetVertexColor(c:GetRGB())
 
     -- TODO: minimap buttons
 
@@ -419,7 +355,7 @@ function Module:UpdateMinimap(state)
     if DF.Era then
         if _G['LFGMinimapFrameBorder'] then
             _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
-            _G['LFGMinimapFrameBorder']:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+            _G['LFGMinimapFrameBorder']:SetVertexColor(c:GetRGB())
         else
             if not f.DarkModeLFGHooked then
                 f.DarkModeLFGHooked = true
@@ -439,7 +375,7 @@ function Module:UpdateMinimap(state)
 
         if _G['MiniMapTrackingBorder'] then
             _G['MiniMapTrackingBorder']:SetDesaturated(state.minimapDesaturate)
-            _G['MiniMapTrackingBorder']:SetVertexColor(state.minimapR / 255, state.minimapG / 255, state.minimapB / 255)
+            _G['MiniMapTrackingBorder']:SetVertexColor(c:GetRGB())
         end
     end
 end
@@ -450,6 +386,7 @@ function Module:UpdateUnitframe(state)
 
     local unitModule = DF:GetModule(moduleName)
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     -- player
     if not f.DarkmodePlayerStatusHooked then
@@ -497,6 +434,7 @@ end
 function Module:UpdatePlayerFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     if not f.PlayerFrameDeco then return end
 
@@ -504,10 +442,10 @@ function Module:UpdatePlayerFrame(state)
     local playerFrameDeco = f.PlayerFrameDeco
 
     playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    playerFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    playerFrameBorder:SetVertexColor(c:GetRGB())
 
     playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
-    playerFrameDeco:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    playerFrameDeco:SetVertexColor(c:GetRGB())
 
     -- PlayerFrameHealthBar:GetStatusBarTexture():SetDesaturated(state.unitframeHealthDesaturate)
 end
@@ -515,6 +453,7 @@ end
 function Module:UpdatePetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     if not f.PetFrameBackground then return end
 
@@ -522,15 +461,16 @@ function Module:UpdatePetFrame(state)
     local petBorder = f.PetFrameBorder
 
     petBackground:SetDesaturated(state.unitframeDesaturate)
-    petBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    petBackground:SetVertexColor(c:GetRGB())
 
     petBorder:SetDesaturated(state.unitframeDesaturate)
-    petBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    petBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateTargetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     if not f.TargetFrameBorder then return end
 
@@ -539,10 +479,10 @@ function Module:UpdateTargetFrame(state)
     local targetOfTargetBorder = f.TargetFrameToTBorder
 
     targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    targetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    targetFrameBorder:SetVertexColor(c:GetRGB())
 
     targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
-    targetOfTargetBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    targetOfTargetBorder:SetVertexColor(c:GetRGB())
 
     -- TODO
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
@@ -550,12 +490,13 @@ function Module:UpdateTargetFrame(state)
     -- editmode
     local e = unitModule.PreviewTarget
     e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdatePartyFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
@@ -563,7 +504,7 @@ function Module:UpdatePartyFrame(state)
         if pf.PartyFrameBorder then
             -- print('yes')
             pf.PartyFrameBorder:SetDesaturated(state.unitframeDesaturate)
-            pf.PartyFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+            pf.PartyFrameBorder:SetVertexColor(c:GetRGB())
         else
             -- print('not')
         end
@@ -574,7 +515,7 @@ function Module:UpdatePartyFrame(state)
     for k, v in ipairs(e.PartyFrames) do
         --
         v.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-        v.TargetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+        v.TargetFrameBorder:SetVertexColor(c:GetRGB())
     end
 end
 
@@ -589,14 +530,16 @@ function Module:UpdateFocusFrame(state)
     local focusPortExtra = f.FocusExtra
     local focusToTBorder = f.FocusFrameToTBorder
 
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
+
     focusBorder:SetDesaturated(state.unitframeDesaturate)
-    focusBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    focusBorder:SetVertexColor(c:GetRGB())
 
     focusBackground:SetDesaturated(state.unitframeDesaturate)
-    focusBackground:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    focusBackground:SetVertexColor(c:GetRGB())
 
     focusToTBorder:SetDesaturated(state.unitframeDesaturate)
-    focusToTBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    focusToTBorder:SetVertexColor(c:GetRGB())
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
@@ -604,7 +547,7 @@ function Module:UpdateFocusFrame(state)
     -- editmode
     local e = unitModule.PreviewFocus
     e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(state.unitframeR / 255, state.unitframeG / 255, state.unitframeB / 255)
+    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateActionbar(state)
@@ -613,6 +556,7 @@ function Module:UpdateActionbar(state)
 
     local unitModule = DF:GetModule(moduleName)
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.actionbarColor)
 
     local mainbar = unitModule.bar1
     if not mainbar then return end
@@ -621,10 +565,10 @@ function Module:UpdateActionbar(state)
     local gryphonRight = mainbar.gryphonRight.texture
 
     gryphonLeft:SetDesaturated(state.actionbarDesaturate)
-    gryphonLeft:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+    gryphonLeft:SetVertexColor(c:GetRGB())
 
     gryphonRight:SetDesaturated(state.actionbarDesaturate)
-    gryphonRight:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+    gryphonRight:SetVertexColor(c:GetRGB())
 
     local barTable = {}
     for i = 1, 8 do
@@ -638,6 +582,7 @@ function Module:UpdateActionbar(state)
         if not bar.DFDarkmodeUpdateBarButtons then
             bar.DFDarkmodeUpdateBarButtons = function()
                 if not state.actionbarR then return end
+                local c = CreateColorFromRGBHexString(state.actionbarColor)
 
                 local buttonTable = bar.buttonTable
                 local btnCount = #buttonTable
@@ -646,11 +591,9 @@ function Module:UpdateActionbar(state)
                     --
                     local btn = buttonTable[j]
                     if btn.DFNormalTexture then
-                        btn.DFNormalTexture:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                           state.actionbarB / 255)
+                        btn.DFNormalTexture:SetVertexColor(c:GetRGB())
                     else
-                        btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                              state.actionbarB / 255)
+                        btn:GetNormalTexture():SetVertexColor(c:GetRGB())
                     end
                 end
             end
@@ -686,44 +629,14 @@ function Module:UpdateActionbar(state)
             --
             -- print('ActionButton_UpdateUsable', btn:GetName())
             if not state.actionbarR then return end
+            local c = CreateColorFromRGBHexString(state.actionbarColor)
             if btn.DFNormalTexture then
-                btn.DFNormalTexture:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                   state.actionbarB / 255)
+                btn.DFNormalTexture:SetVertexColor(c:GetRGB())
             else
-                btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                      state.actionbarB / 255)
+                btn:GetNormalTexture():SetVertexColor(c:GetRGB())
             end
         end)
     end
-
-    -- for i = 0, 8 do
-    --     local bar = unitModule['bar' .. i]
-    --     if i == 0 then bar = unitModule['petbar'] end
-    --     if bar then
-    --         --     
-    --         if not bar.DFDarkmodeUpdateBarButtons then
-    --             bar.DFDarkmodeUpdateBarButtons = function()
-    --                 local buttonTable = bar.buttonTable
-    --                 local btnCount = #buttonTable
-
-    --                 for j = 1, btnCount do
-    --                     --
-    --                     local btn = buttonTable[j]
-    --                     btn:GetNormalTexture():SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-    --                                                           state.actionbarB / 255)
-    --                 end
-    --             end
-
-    --             hooksecurefunc(bar, 'Update', function()
-    --                 --
-    --                 -- print('updatehook', i)
-    --                 bar.DFDarkmodeUpdateBarButtons()
-    --             end)
-    --         end
-
-    --         bar.DFDarkmodeUpdateBarButtons()
-    --     end
-    -- end
 
     if true then
         --   
@@ -732,20 +645,19 @@ function Module:UpdateActionbar(state)
         --                                 state.actionbarB / 255)
 
         MainMenuBarBackpackButton.Border:SetDesaturated(state.actionbarDesaturate)
-        MainMenuBarBackpackButton.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255,
-                                                        state.actionbarB / 255)
+        MainMenuBarBackpackButton.Border:SetVertexColor(c:GetRGB())
 
         for i = 0, 3 do
             --
             local slot = _G['CharacterBag' .. i .. 'Slot']
             slot.Border:SetDesaturated(state.actionbarDesaturate)
-            slot.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+            slot.Border:SetVertexColor(c:GetRGB())
         end
 
         if KeyRingButton and KeyRingButton.Border then
             --       
             KeyRingButton.Border:SetDesaturated(state.actionbarDesaturate)
-            KeyRingButton.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+            KeyRingButton.Border:SetVertexColor(c:GetRGB())
         end
     end
 
@@ -754,13 +666,13 @@ function Module:UpdateActionbar(state)
     if XPBar and XPBar.Border then
         --
         XPBar.Border:SetDesaturated(state.actionbarDesaturate)
-        XPBar.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+        XPBar.Border:SetVertexColor(c:GetRGB())
     end
     local RepBar = unitModule.repbar
     if RepBar and RepBar.Border then
         --
         RepBar.Border:SetDesaturated(state.actionbarDesaturate)
-        RepBar.Border:SetVertexColor(state.actionbarR / 255, state.actionbarG / 255, state.actionbarB / 255)
+        RepBar.Border:SetVertexColor(c:GetRGB())
     end
 end
 
@@ -769,11 +681,12 @@ function Module:UpdateBuff(state)
     local f = unitModule.Frame
 
     if not unitModule:IsEnabled() then return end
+    local c = CreateColorFromRGBHexString(state.buffColor)
 
     -- update defaults
-    unitModule.BuffVertexColorR = state.buffR / 255;
-    unitModule.BuffVertexColorG = state.buffG / 255;
-    unitModule.BuffVertexColorB = state.buffB / 255;
+    unitModule.BuffVertexColorR = c.r;
+    unitModule.BuffVertexColorG = c.g;
+    unitModule.BuffVertexColorB = c.b;
 
     local buff;
     -- player
@@ -783,8 +696,7 @@ function Module:UpdateBuff(state)
         if buff and buff.DFIconBorder then
             --
             buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
-            buff.DFIconBorder:SetVertexColor(unitModule.BuffVertexColorR, unitModule.BuffVertexColorG,
-                                             unitModule.BuffVertexColorB)
+            buff.DFIconBorder:SetVertexColor(c:GetRGB())
         end
     end
     -- target 
@@ -794,8 +706,7 @@ function Module:UpdateBuff(state)
         if buff and buff.DFIconBorder then
             --
             buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
-            buff.DFIconBorder:SetVertexColor(unitModule.BuffVertexColorR, unitModule.BuffVertexColorG,
-                                             unitModule.BuffVertexColorB)
+            buff.DFIconBorder:SetVertexColor(c:GetRGB())
         end
     end
     -- focus 
@@ -806,8 +717,7 @@ function Module:UpdateBuff(state)
             if buff and buff.DFIconBorder then
                 --
                 buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
-                buff.DFIconBorder:SetVertexColor(unitModule.BuffVertexColorR, unitModule.BuffVertexColorG,
-                                                 unitModule.BuffVertexColorB)
+                buff.DFIconBorder:SetVertexColor(c:GetRGB())
             end
         end
     end
@@ -816,6 +726,7 @@ end
 function Module:UpdateCastbar(state)
     local unitModule = DF:GetModule('Castbar')
     local f = unitModule.Frame
+    local c = CreateColorFromRGBHexString(state.castbarColor)
 
     if not unitModule:IsEnabled() then return end
 
@@ -827,16 +738,16 @@ function Module:UpdateCastbar(state)
 
     for k, v in pairs(frameTable) do
         v.Background:SetDesaturated(state.castbarDesaturate)
-        v.Background:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+        v.Background:SetVertexColor(c:GetRGB())
 
         v.Border:SetDesaturated(state.castbarDesaturate)
-        v.Border:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+        v.Border:SetVertexColor(c:GetRGB())
 
         v.BorderShield:SetDesaturated(state.castbarDesaturate)
-        v.BorderShield:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+        v.BorderShield:SetVertexColor(c:GetRGB())
 
         v.Icon.Border:SetDesaturated(state.castbarDesaturate)
-        v.Icon.Border:SetVertexColor(state.castbarR / 255, state.castbarG / 255, state.castbarB / 255)
+        v.Icon.Border:SetVertexColor(c:GetRGB())
     end
 end
 
