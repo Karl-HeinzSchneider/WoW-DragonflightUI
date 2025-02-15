@@ -88,6 +88,10 @@ L["PositionTableXDesc"] = ""
 L["PositionTableY"] = "Y"
 L["PositionTableYDesc"] = ""
 
+-- darkmode
+L["DarkmodeColor"] = "Color"
+L["DarkmodeDesaturate"] = "Desaturate"
+
 -- actionbar
 L["ActionbarNameFormat"] = "Action Bar %d"
 
