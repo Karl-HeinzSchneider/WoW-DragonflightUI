@@ -4886,6 +4886,32 @@ function Module.HookRestFunctions()
     end)
 end
 
+function Module:AddRaidframeRoleIcons()
+    local function updateRoleIcons(f)
+        if not f.roleIcon then
+            return
+        else
+            f.roleIcon:SetDrawLayer('OVERLAY')
+            local size = f.roleIcon:GetHeight();
+            local role = UnitGroupRolesAssigned(f.unit);
+            if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
+                f.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");
+                f.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role));
+                f.roleIcon:Show();
+                f.roleIcon:SetSize(size, size);
+            else
+                f.roleIcon:Hide();
+                f.roleIcon:SetSize(1, size);
+            end
+        end
+    end
+    hooksecurefunc("CompactUnitFrame_UpdateRoleIcon", function(f)
+        --
+        -- print('CompactUnitFrame_UpdateRoleIcon')
+        updateRoleIcons(f)
+    end)
+end
+
 function Module.ChangeFonts()
     local newFont = 'Fonts\\FRIZQT__.ttf'
 
@@ -5276,4 +5302,5 @@ function Module.Era()
     Module.CreatThreatIndicator()
     Module.ChangePetFrame()
     Module:AddAlternatePowerBar()
+    Module:AddRaidframeRoleIcons()
 end
