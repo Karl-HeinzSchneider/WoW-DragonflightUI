@@ -1,7 +1,7 @@
 DFColorPickerMixin = {}
 
 function DFColorPickerMixin:OnLoad()
-    print('DFColorPickermixin:OnLoad()')
+    -- print('DFColorPickermixin:OnLoad()')
     -- self:Show()
     self:SetScale(UIParent:GetEffectiveScale())
 
@@ -54,11 +54,11 @@ function DFColorPickerMixin:OnLoad()
 end
 
 function DFColorPickerMixin:OnEvent()
-    print('DFColorPickermixin:OnEvent()')
+    -- print('DFColorPickermixin:OnEvent()')
 end
 
 function DFColorPickerMixin:OnShow()
-    print('DFColorPickermixin:OnShow()')
+    -- print('DFColorPickermixin:OnShow()')
     if self.hasOpacity then
         self.Content.ColorPicker.Alpha:Show();
         self.Content.ColorPicker.AlphaThumb:Show();
@@ -78,7 +78,7 @@ function DFColorPickerMixin:OnShow()
 end
 
 function DFColorPickerMixin:OnKeyDown(key)
-    print('DFColorPickermixin:OnKeyDown()')
+    -- print('DFColorPickermixin:OnKeyDown()')
     if GetBindingFromClick(key) == "TOGGLEGAMEMENU" then
         if self.cancelFunc then self.cancelFunc(self.previousValues); end
         self:Hide();
@@ -96,7 +96,7 @@ function DFColorPickerMixin:OnDragStop()
 end
 
 function DFColorPickerMixin:SetupColorPickerAndShow(info)
-    print('DFColorPickermixin:SetupColorPickerAndShow()')
+    -- print('DFColorPickermixin:SetupColorPickerAndShow()')
     self.swatchFunc = info.swatchFunc;
     self.hasOpacity = info.hasOpacity;
     self.opacityFunc = info.opacityFunc;
