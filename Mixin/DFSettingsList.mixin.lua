@@ -331,6 +331,8 @@ function DFSettingsListHeaderMixin:Init(node)
     end
 
     self:SetCollapseState(node:IsCollapsed());
+
+    self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
 end
 
 function DFSettingsListHeaderMixin:SetCollapseState(collapsed)
