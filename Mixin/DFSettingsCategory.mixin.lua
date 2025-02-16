@@ -234,6 +234,9 @@ DFSettingsCategoryHeaderMixin = {}
 function DFSettingsCategoryHeaderMixin:OnLoad()
     -- print('DFSettingsCategoryHeaderMixin:OnLoad()')
     self.Background:SetAtlas('Options_CategoryHeader_1', true)
+
+    self.Background:SetDrawLayer('BACKGROUND', -1)
+    self.CollapseIcon:SetDrawLayer('ARTWORK', 2)
 end
 
 function DFSettingsCategoryHeaderMixin:Init(node)

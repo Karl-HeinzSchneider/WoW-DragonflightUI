@@ -42,7 +42,7 @@ UI_shared.xsd">
 		<Size x="175" y="30" />
 		<Layers>
 			<Layer level="ARTWORK">
-				<Texture parentKey="Background" textureSubLevel="-1">
+				<Texture parentKey="Background">
 					<Anchors>
 						<Anchor point="TOPLEFT" />
 					</Anchors>
@@ -55,7 +55,7 @@ UI_shared.xsd">
 					</Anchors>
 				</FontString>
 			</Layer>
-			<Layer level="ARTWORK" textureSubLevel="2">
+			<Layer level="ARTWORK">
 				<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
 					<Size x="16.5" y="12" />
 					<Anchors>
