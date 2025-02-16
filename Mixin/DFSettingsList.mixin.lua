@@ -27,6 +27,9 @@ function DFSettingsListMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
     -- print('DFSettingsListMixin', 'OnLoad')
 
+    -- TODO
+    SettingsTooltip:SetScale(UIParent:GetEffectiveScale())
+
     local parent = self:GetParent()
     self:SetPoint('TOPLEFT', parent, 'TOPLEFT', 0, 0);
     self:SetPoint('BOTTOMRIGHT', parent, 'BOTTOMRIGHT', 0, 0);
