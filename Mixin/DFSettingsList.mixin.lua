@@ -677,6 +677,20 @@ end
 -- DFSettingsListButtonMixin:GenerateCallbackEvents({"OnButtonClicked"});
 DFSettingsListColorPickerMixin = {}
 
+-- Wrath
+local COLOR_FORMAT_RGBA = COLOR_FORMAT_RGBA or "RRGGBBAA";
+local COLOR_FORMAT_RGB = COLOR_FORMAT_RGB or "RRGGBB";
+
+local CreateColorFromRGBHexString = CreateColorFromRGBHexString or function(hexColor)
+    if #hexColor == #COLOR_FORMAT_RGB then
+        local r, g, b = ExtractColorValueFromHex(hexColor, 1), ExtractColorValueFromHex(hexColor, 3),
+                        ExtractColorValueFromHex(hexColor, 5);
+        return CreateColor(r, g, b, 1);
+    else
+        GMError("CreateColorFromRGBHexString input must be hexadecimal digits in this format: RRGGBB.");
+    end
+end
+
 function DFSettingsListColorPickerMixin:Init(node)
     -- print('DFSettingsListButtonMixin:Init()')
     local elementData = node:GetData();

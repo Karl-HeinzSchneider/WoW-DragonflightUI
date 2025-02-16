@@ -19,13 +19,15 @@ UI_shared.xsd">
 				<Layers>
 					<Layer level="ARTWORK">
 						<!-- atlas="colorpicker-checkerboard" -->
+						<!--
 						<Texture parentKey="AlphaBackground" file="Interface/AddOns/DragonflightUI/Textures/Colorpicker">
-							<Size x="32" y="128" />
-							<TexCoords left="0.015625" right="0.515625" top="0.00390625" bottom="0.503906" />
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-157" y="-37" />
-							</Anchors>
+						<Size x="32" y="128" />
+						<TexCoords left="0.015625" right="0.515625" top="0.00390625" bottom="0.503906" />
+						<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-157" y="-37" />
+						</Anchors>
 						</Texture>
+						-->
 						<Texture parentKey="ColorSwatchCurrent">
 							<Size x="47" y="25" />
 							<Anchors>
@@ -68,16 +70,18 @@ UI_shared.xsd">
 							<Size x="48" y="14" />
 							<TexCoords left="0.25" right="1.0" top="0" bottom="0.875" />
 						</ColorValueThumbTexture>
+						<!--
 						<ColorAlphaTexture parentKey="Alpha">
-							<Size x="32" y="128" />
-							<Anchors>
-								<Anchor point="LEFT" relativeKey="$parent.Value" relativePoint="RIGHT" x="24" />
-							</Anchors>
+						<Size x="32" y="128" />
+						<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Value" relativePoint="RIGHT" x="24" />
+						</Anchors>
 						</ColorAlphaTexture>
 						<ColorAlphaThumbTexture parentKey="AlphaThumb" file="Interface\Buttons\UI-ColorPicker-Buttons">
-							<Size x="48" y="14" />
-							<TexCoords left="0.25" right="1.0" top="0" bottom="0.875" />
+						<Size x="48" y="14" />
+						<TexCoords left="0.25" right="1.0" top="0" bottom="0.875" />
 						</ColorAlphaThumbTexture>
+						-->
 					</ColorSelect>
 					<!--
 					<EditBox parentKey="AlphaBox" inherits="InputBoxInstructionsTemplate" mixin="DFColorPickerAlphaBoxMixin" autoFocus="false" bytes="7">

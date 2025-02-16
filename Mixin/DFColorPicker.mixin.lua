@@ -1,3 +1,13 @@
+-- Wrath color
+if not ColorMixin.GenerateHexColorNoAlpha then
+    -- print('NO COLORMIXIN')
+    function ColorMixin:GenerateHexColorNoAlpha()
+        return ("%.2X%.2X%.2X"):format(self:GetRGBAsBytes());
+    end
+end
+
+------------------
+
 DFColorPickerMixin = {}
 
 function DFColorPickerMixin:OnLoad()
@@ -60,17 +70,17 @@ end
 function DFColorPickerMixin:OnShow()
     -- print('DFColorPickermixin:OnShow()')
     if self.hasOpacity then
-        self.Content.ColorPicker.Alpha:Show();
-        self.Content.ColorPicker.AlphaThumb:Show();
-        self.Content.AlphaBackground:Show();
+        -- self.Content.ColorPicker.Alpha:Show();
+        -- self.Content.ColorPicker.AlphaThumb:Show();
+        -- self.Content.AlphaBackground:Show();
         self.Content.ColorPicker:SetColorAlpha(self.opacity);
 
         self.Content.ColorPicker:SetWidth(255);
         self:SetWidth(388);
     else
-        self.Content.ColorPicker.Alpha:Hide();
-        self.Content.ColorPicker.AlphaThumb:Hide();
-        self.Content.AlphaBackground:Hide();
+        -- self.Content.ColorPicker.Alpha:Hide();
+        -- self.Content.ColorPicker.AlphaThumb:Hide();
+        -- self.Content.AlphaBackground:Hide();
 
         self.Content.ColorPicker:SetWidth(200);
         self:SetWidth(331);
@@ -118,7 +128,8 @@ function DFColorPickerMixin:GetColorRGB()
 end
 
 function DFColorPickerMixin:GetColorAlpha()
-    return self.Content.ColorPicker:GetColorAlpha();
+    -- return self.Content.ColorPicker:GetColorAlpha(); TODO
+    return 1.0
 end
 
 function DFColorPickerMixin:GetExtraInfo()
