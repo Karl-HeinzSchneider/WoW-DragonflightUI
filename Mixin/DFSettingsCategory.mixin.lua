@@ -257,9 +257,11 @@ function DFSettingsCategoryHeaderMixin:SetCollapseState(collapsed)
     if collapsed then
         self.CollapseIcon:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
         self.CollapseIconAlphaAdd:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+        -- self.Background:Show()
     else
         self.CollapseIcon:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
         self.CollapseIconAlphaAdd:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+        -- self.Background:Hide() -- TODO
     end
 end
 
