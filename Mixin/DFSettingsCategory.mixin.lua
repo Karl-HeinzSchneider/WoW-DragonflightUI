@@ -33,9 +33,9 @@ function DFSettingsCategoryListMixin:OnLoad()
                 button:Init(node);
 
                 button:SetScript("OnClick", function(button, buttonName)
-                    -- node:ToggleCollapsed();
-                    -- button:SetCollapseState(node:IsCollapsed());
-                    -- PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+                    node:ToggleCollapsed();
+                    button:SetCollapseState(node:IsCollapsed());
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                 end);
             end
             factory("DFSettingsCategoryHeader", Initializer);
@@ -133,6 +133,7 @@ function DFSettingsCategoryListMixin:RegisterCategory(id, info, sortComparator, 
     local data = {
         id = id,
         order = info.order or 666,
+        isExpanded = info.isExpanded or true,
         categoryInfo = {
             name = info.name,
             isExpanded = true,
@@ -242,6 +243,24 @@ function DFSettingsCategoryHeaderMixin:Init(node)
 
     self.Label:SetText(elementData.categoryInfo.name)
     self.Description = elementData.categoryInfo.descr
+
+    if elementData.isExpanded then
+        node:SetCollapsed(false, true, false)
+    else
+        node:SetCollapsed(true, true, false)
+    end
+
+    self:SetCollapseState(node:IsCollapsed());
+end
+
+function DFSettingsCategoryHeaderMixin:SetCollapseState(collapsed)
+    if collapsed then
+        self.CollapseIcon:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
+    else
+        self.CollapseIcon:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+        self.CollapseIconAlphaAdd:SetTexCoord(0.270508, 0.28125, 0.0537109, 0.0693359)
+    end
 end
 
 -- Element
