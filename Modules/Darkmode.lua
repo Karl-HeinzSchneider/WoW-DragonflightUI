@@ -641,7 +641,7 @@ function Module:UpdateActionbar(state)
         hooksecurefunc('ActionButton_UpdateUsable', function(btn)
             --
             -- print('ActionButton_UpdateUsable', btn:GetName())
-            if not state.actionbarR then return end
+            if not state.actionbarColor then return end
             local c = CreateColorFromRGBHexString(state.actionbarColor)
             if btn.DFNormalTexture then
                 btn.DFNormalTexture:SetVertexColor(c:GetRGB())
