@@ -1,6 +1,6 @@
--- print('enUS')
+-- print('esES, esMX')
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES", "esMX")
+local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES", "esMX")
 
 -- @TODO
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
@@ -10,7 +10,8 @@ local L = {}
 L["ModuleTooltipActionbar"] =
     "Este módulo mejora la barra de acción predeterminada, incluyendo el micromenú y los botones de bolsas.\nAñade opciones separadas para las barras de acción 1-8, barra de mascotas, XP, reputación, posesión, actitud, tótems, bolsas y micromenú."
 L["ModuleTooltipBossframe"] = "Este módulo añade marcos personalizados para los jefes.\nEN DESARROLLO."
-L["ModuleTooltipBuffs"] = "Este módulo modifica el marco de beneficios predeterminado.\nAñade opciones separadas para Beneficios y Perjuicios."
+L["ModuleTooltipBuffs"] =
+    "Este módulo modifica el marco de beneficios predeterminado.\nAñade opciones separadas para Beneficios y Perjuicios."
 L["ModuleTooltipCastbar"] =
     "Este módulo modifica la barra de lanzamiento predeterminada.\nAñade opciones separadas para la barra de lanzamiento del Jugador, Enfoque y Objetivo."
 L["ModuleTooltipChat"] = "Este módulo modifica la ventana de bate-papo predeterminada.\nEN DESARROLLO."
@@ -158,11 +159,12 @@ L["MoreOptionsGryphons"] = "Grifos"
 L["MoreOptionsGryphonsDesc"] = "Grifos"
 
 L["MoreOptionsIconRangeColor"] = "Color del icono por alcance"
-L["MoreOptionsIconRangeColorDesc"] = "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
+L["MoreOptionsIconRangeColorDesc"] =
+    "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
 
 L["ExtraOptionsPreset"] = "Preajuste"
 L["ExtraOptionsResetToDefaultPosition"] = "Restablecer a la posición predeterminada"
-L["ExtraOptionsPresetDesc"] = 
+L["ExtraOptionsPresetDesc"] =
     "Establece la escala, anclaje, anchorparent, anchorframe, X y Y al preajuste elegido, pero no cambia ninguna otra configuración."
 
 L["ExtraOptionsModernLayout"] = "Diseño moderno (predeterminado)"
@@ -282,9 +284,11 @@ L["CastbarTableShowCastTimeMaxTextDesc"] = ""
 L["CastbarTableCompactLayout"] = "Diseño compacto"
 L["CastbarTableCompactLayoutDesc"] = ""
 L["CastbarTableHoldTimeSuccess"] = "Tiempo de retención (éxito)"
-L["CastbarTableHoldTimeSuccessDesc"] = "Tiempo antes de que la barra de lanzamiento comience a desvanecerse tras un lanzamiento exitoso."
+L["CastbarTableHoldTimeSuccessDesc"] =
+    "Tiempo antes de que la barra de lanzamiento comience a desvanecerse tras un lanzamiento exitoso."
 L["CastbarTableHoldTimeInterrupt"] = "Tiempo de retención (interrupción)"
-L["CastbarTableHoldTimeInterruptDesc"] = "Tiempo antes de que la barra de lanzamiento comience a desvanecerse tras una interrupción."
+L["CastbarTableHoldTimeInterruptDesc"] =
+    "Tiempo antes de que la barra de lanzamiento comience a desvanecerse tras una interrupción."
 L["CastbarTableShowIcon"] = "Mostrar icono"
 L["CastbarTableShowIconDesc"] = ""
 L["CastbarTableIconSize"] = "Tamaño del icono"
@@ -311,7 +315,8 @@ L["MinimapHideCalendarDesc"] = "Oculta el botón del calendario"
 L["MinimapHideZoomButtons"] = "Ocultar botones de zoom"
 L["MinimapHideZoomDesc"] = "Oculta los botones de zoom (+) (-)"
 L["MinimapSkinMinimapButtons"] = "Personalizar botones del minimapa"
-L["MinimapSkinMinimapButtonsDesc"] = "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
+L["MinimapSkinMinimapButtonsDesc"] =
+    "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
 L["MinimapUseStateHandler"] = "Usar controlador de estado"
 L["MinimapUseStateHandlerDesc"] =
     "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."
@@ -416,4 +421,4 @@ L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
 L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 
 -- see comment above
-for k, v in pairs(L) do L[k] = v; end
+for k, v in pairs(L) do L_ES[k] = v; end
