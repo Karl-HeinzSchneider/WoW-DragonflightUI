@@ -594,7 +594,7 @@ function Module:UpdateActionbar(state)
     for k, bar in ipairs(barTable) do
         if not bar.DFDarkmodeUpdateBarButtons then
             bar.DFDarkmodeUpdateBarButtons = function()
-                if not state.actionbarR then return end
+                if not state.actionbarColor then return end
                 local c = CreateColorFromRGBHexString(state.actionbarColor)
 
                 local buttonTable = bar.buttonTable
