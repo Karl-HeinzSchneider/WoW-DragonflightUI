@@ -11,12 +11,24 @@ DFSettingsListMixin.ElementSize = {
     description = 26,
     toggle = 26,
     select = 26,
+    color = 26,
     divider = 16 + 10
 }
+
+DFSettingsListMixin.OrderSortComparator = function(a, b)
+    return b.data.order > a.data.order
+end
+
+DFSettingsListMixin.AlphaSortComparator = function(a, b)
+    return b.data.name > a.data.name
+end
 
 function DFSettingsListMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
     -- print('DFSettingsListMixin', 'OnLoad')
+
+    -- TODO
+    SettingsTooltip:SetScale(UIParent:GetEffectiveScale())
 
     local parent = self:GetParent()
     self:SetPoint('TOPLEFT', parent, 'TOPLEFT', 0, 0);
@@ -24,9 +36,7 @@ function DFSettingsListMixin:OnLoad()
     self:Show()
 
     self.DataProvider = CreateTreeDataProvider();
-    self.sortComparator = function(a, b)
-        return b.data.order > a.data.order
-    end
+    self.sortComparator = DFSettingsListMixin.OrderSortComparator
     local affectChildren = true;
     local skipSort = true;
     self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
@@ -87,6 +97,8 @@ function DFSettingsListMixin:OnLoad()
             end
         elseif elementType == 'editbox' then
             factory("DFSettingsListEditbox", Initializer);
+        elseif elementType == 'color' then
+            factory("DFSettingsListColorPicker", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -133,7 +145,12 @@ function DFSettingsListMixin:Display(data, small)
     self.DataProvider = CreateTreeDataProvider();
     local affectChildren = true;
     local skipSort = true;
-    self.DataProvider:SetSortComparator(self.sortComparator, affectChildren, skipSort)
+
+    if data.sortComparator then
+        self.DataProvider:SetSortComparator(data.sortComparator, false, false)
+    else
+        self.DataProvider:SetSortComparator(DFSettingsListMixin.OrderSortComparator, false, false)
+    end
 
     if not data then
         print('DFSettingsListMixin:Display', 'no data')
@@ -189,12 +206,17 @@ function DFSettingsListMixin:Display(data, small)
 
         if v.type == 'header' then
             -- print('header', k)
-            local elementData = {key = k, order = (v.order or 9999), args = v, small = small}
+            local elementData = {key = k, order = (v.order or 9999), name = (v.name or ''), args = v, small = small}
             local node = self.DataProvider:Insert(elementData);
 
             -- local affectChildren = true;
             -- local skipSort = false;
-            node:SetSortComparator(self.sortComparator, true, false)
+            if v.sortComparator then
+                node:SetSortComparator(v.sortComparator, true, false)
+            else
+                node:SetSortComparator(DFSettingsListMixin.OrderSortComparator, true, false)
+            end
+            -- node:SetSortComparator(self.sortComparator, true, false)
         end
     end
 
@@ -208,6 +230,7 @@ function DFSettingsListMixin:Display(data, small)
             local elementData = {
                 key = k,
                 order = (v.order or 9999),
+                name = (v.name or ''),
                 args = v,
                 get = getFunc,
                 set = setFunc,
@@ -311,6 +334,8 @@ function DFSettingsListHeaderMixin:Init(node)
     end
 
     self:SetCollapseState(node:IsCollapsed());
+
+    self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
 end
 
 function DFSettingsListHeaderMixin:SetCollapseState(collapsed)
@@ -357,6 +382,13 @@ function DFSettingsListCheckboxContainerMixin:Init(node)
     self.Tooltip:SetScript('OnMouseDown', function()
         self.Checkbox:SetValue(not self.Checkbox:GetChecked())
         self.Checkbox:TriggerEvent(DFSettingsListCheckboxMixin.Event.OnValueChanged, self.Checkbox:GetChecked())
+    end)
+
+    self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    self.Tooltip:HookScript('OnEnter', function()
+        SettingsTooltip:SetOwner(self.Checkbox, 'ANCHOR_RIGHT', 0, 0);
+        self.TooltipFunc()
+        SettingsTooltip:Show();
     end)
 end
 
@@ -638,6 +670,157 @@ function DFSettingsListButtonMixin:Init(node)
     self:RegisterCallback('OnClick', function(self, ...)
         args.func()
     end, self)
+end
+
+-- ColorPicker
+-- DFSettingsListButtonMixin = CreateFromMixins(CallbackRegistryMixin);
+-- DFSettingsListButtonMixin:GenerateCallbackEvents({"OnButtonClicked"});
+DFSettingsListColorPickerMixin = {}
+
+-- Wrath
+local COLOR_FORMAT_RGBA = COLOR_FORMAT_RGBA or "RRGGBBAA";
+local COLOR_FORMAT_RGB = COLOR_FORMAT_RGB or "RRGGBB";
+
+local CreateColorFromRGBHexString = CreateColorFromRGBHexString or function(hexColor)
+    if #hexColor == #COLOR_FORMAT_RGB then
+        local r, g, b = ExtractColorValueFromHex(hexColor, 1), ExtractColorValueFromHex(hexColor, 3),
+                        ExtractColorValueFromHex(hexColor, 5);
+        return CreateColor(r, g, b, 1);
+    else
+        GMError("CreateColorFromRGBHexString input must be hexadecimal digits in this format: RRGGBB.");
+    end
+end
+
+function DFSettingsListColorPickerMixin:Init(node)
+    -- print('DFSettingsListButtonMixin:Init()')
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+    local args = elementData.args;
+
+    self.Text:SetText(args.name);
+    self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    self:SetBaseSmall(elementData.small);
+
+    self.Color:SetColorHex(elementData.get({elementData.key}))
+
+    self.Color:SetScript('OnEnter', function()
+        --
+        -- print('OnEnter!')
+    end)
+    self.Color:SetScript('OnLeave', function()
+        --
+        -- print('OnLeave!')
+    end)
+    self.Color:SetScript('OnClick', function()
+        --
+        -- print('clicks!')
+        local currentColor = CreateColorFromRGBHexString(elementData.get({elementData.key}))
+
+        local info = {
+            r = currentColor.r,
+            g = currentColor.g,
+            b = currentColor.b,
+            swatchFunc = function()
+                --
+                -- print('swatchFunc')
+                local newR, newG, newB = _G['DragonflightUIColorPicker']:GetColorRGB()
+                local newA = _G['DragonflightUIColorPicker']:GetColorAlpha()
+                local newC = CreateColor(newR, newG, newB, newA)
+                -- print('~', newC:GenerateHexColorNoAlpha())
+                elementData.set({elementData.key}, newC:GenerateHexColorNoAlpha())
+
+                self.Color:SetColorHex(elementData.get({elementData.key}))
+            end,
+            hasOpacity = false,
+            opacityFunc = nil,
+            opacity = 1.0,
+            cancelFunc = function(previousValues)
+                --          
+                local prevC = CreateColor(previousValues.r, previousValues.g, previousValues.b, previousValues.a)
+                elementData.set({elementData.key}, prevC:GenerateHexColorNoAlpha())
+
+                self.Color:SetColorHex(elementData.get({elementData.key}))
+            end,
+            extraInfo = {}
+        }
+
+        _G['DragonflightUIColorPicker']:SetupColorPickerAndShow(info)
+    end)
+
+    -- DragonflightUIColorPicker
+
+    -- self.Button:SetFrameLevel(self.Tooltip:GetFrameLevel() + 1)
+
+    -- if elementData.small then
+    --     self.Button:SetWidth(200);
+    --     self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 8, 0);
+    -- else
+    --     self.Button:SetWidth(183);
+    --     self.Button:SetPoint('LEFT', self.Text, 'RIGHT', 40, 0);
+    -- end
+
+    -- self.Button:SetText(args.btnName);
+    -- self.Button:SetScript('OnClick', function(button, buttonName)
+    --     -- print('OnClick')
+    --     self:TriggerEvent(DFSettingsListElementBaseMixin.Event.OnClick, true)
+    -- end)
+
+    -- self:UnregisterCallback('OnClick', self)
+    -- self:RegisterCallback('OnClick', function(self, ...)
+    --     args.func()
+    -- end, self)
+end
+
+DFSettingsListColorMixin = {}
+
+function DFSettingsListColorMixin:OnLoad()
+    -- print('~~DFSettingsListColorMixin:OnLoad()')
+
+    local colorSwatch = self:CreateTexture(nil, "OVERLAY")
+    colorSwatch:SetWidth(26)
+    colorSwatch:SetHeight(26)
+    colorSwatch:SetTexture(130939) -- Interface\\ChatFrame\\ChatFrameColorSwatch
+    colorSwatch:SetPoint("LEFT")
+    -- colorSwatch:Hide()
+    self.ColorSwatch = colorSwatch
+
+    local texture = self:CreateTexture(nil, "BACKGROUND")
+    colorSwatch.background = texture
+    texture:SetWidth(23)
+    texture:SetHeight(23)
+    texture:SetColorTexture(1, 1, 1)
+    texture:SetPoint("CENTER", colorSwatch)
+    -- texture:Hide()
+    self.Texture = texture
+
+    local checkers = self:CreateTexture(nil, "BACKGROUND")
+    colorSwatch.checkers = checkers
+    checkers:SetWidth(21)
+    checkers:SetHeight(21)
+    checkers:SetTexture(188523) -- Tileset\\Generic\\Checkers
+    checkers:SetTexCoord(.25, 0, 0.5, .25)
+    checkers:SetDesaturated(true)
+    checkers:SetVertexColor(1, 1, 1, 0.75)
+    checkers:SetPoint("CENTER", colorSwatch)
+    -- checkers:Hide()
+    self.Checkers = checkers
+
+    local text = self:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    text:SetHeight(24)
+    text:SetJustifyH("LEFT")
+    text:SetTextColor(1, 1, 1)
+    text:SetPoint("LEFT", colorSwatch, "RIGHT", 2, 0)
+    text:SetPoint("RIGHT")
+    self.Text = text
+end
+
+function DFSettingsListColorMixin:SetColorHex(hex)
+    -- print('DFSettingsListColorMixin:SetColorHex(hex)')
+    local c = CreateColorFromRGBHexString(hex)
+    self.ColorSwatch:SetVertexColor(c.r, c.g, c.b, 1.0)
 end
 
 -- Editbox

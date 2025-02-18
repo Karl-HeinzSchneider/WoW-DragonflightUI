@@ -37,6 +37,7 @@ local defaults = {
             -- UI
             -- unitframes
             PlayerFrame = true,
+            Player_PowerBarAlt = true,
             PetFrame = true,
             TargetFrame = true,
             TargetOfTargetFrame = true,
@@ -125,6 +126,7 @@ if true then
                 name = 'Actionbar',
                 desc = '...',
                 order = 100,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
                 isExpanded = true,
                 editmode = true
             },
@@ -133,6 +135,7 @@ if true then
                 name = 'Combat',
                 desc = '...',
                 order = 200,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
                 isExpanded = true,
                 editmode = true
             },
@@ -141,10 +144,19 @@ if true then
                 name = 'Frames',
                 desc = '...',
                 order = 300,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
                 isExpanded = true,
                 editmode = true
             },
-            headerMisc = {type = 'header', name = 'Misc', desc = '...', order = 400, isExpanded = true, editmode = true}
+            headerMisc = {
+                type = 'header',
+                name = 'Misc',
+                desc = '...',
+                order = 400,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
+                isExpanded = true,
+                editmode = true
+            }
         }
     }
 
@@ -181,6 +193,7 @@ if true then
 
     -- misc
     local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability'}
+    if DF.Cata then table.insert(miscFrames, 'Player_PowerBarAlt') end
     AddTableToCategory(miscFrames, 'headerMisc')
 
     advancedOptions.set = function(...)

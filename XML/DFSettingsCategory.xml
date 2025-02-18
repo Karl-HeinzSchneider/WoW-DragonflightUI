@@ -55,6 +55,22 @@ UI_shared.xsd">
 					</Anchors>
 				</FontString>
 			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="16.5" y="12" />
+					<Anchors>
+						<Anchor point="RIGHT" x="-16" y="-1" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="CollapseIconAlphaAdd" alphaMode="ADD" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="16.5" y="12" />
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.CollapseIcon" />
+					</Anchors>
+				</Texture>
+			</Layer>
 		</Layers>
 		<Scripts>
 			<OnLoad inherit="prepend" method="OnLoad" />

@@ -113,11 +113,15 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
     end
 
     -- default categorys
-    list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1}, alphaSortComparator, true)
-    list:RegisterCategory('actionbar', {name = 'Action Bar', descr = 'descr..', order = 2}, nil, true)
-    list:RegisterCategory('castbar', {name = 'Cast Bar', descr = 'descr..', order = 3}, alphaSortComparator, true)
-    list:RegisterCategory('misc', {name = 'Misc', descr = 'descr..', order = 4}, alphaSortComparator, true)
-    list:RegisterCategory('unitframes', {name = 'Unitframes', descr = 'descr..', order = 5}, alphaSortComparator, true)
+    list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1, isExpanded = true},
+                          alphaSortComparator, true)
+    list:RegisterCategory('actionbar', {name = 'Action Bar', descr = 'descr..', order = 2, isExpanded = true}, nil, true)
+    list:RegisterCategory('castbar', {name = 'Cast Bar', descr = 'descr..', order = 3, isExpanded = true},
+                          alphaSortComparator, true)
+    list:RegisterCategory('misc', {name = 'Misc', descr = 'descr..', order = 4, isExpanded = true}, alphaSortComparator,
+                          true)
+    list:RegisterCategory('unitframes', {name = 'Unitframes', descr = 'descr..', order = 5, isExpanded = true},
+                          alphaSortComparator, true)
 
     self.SettingsDataTable = {}
 

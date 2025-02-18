@@ -31,6 +31,7 @@ Libs\LibDeflate\lib.xml
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\lib.xml
 Libs\LibQuestXP\LibQuestXP-Classic.xml
+Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
 Libs\TaintLess\TaintLess.xml
 
 Core.lua
@@ -58,13 +59,14 @@ XML\DFSettingsList.xml
 XML\DFSettingsList_Compat.xml
 XML\Config.xml
 XML\Editmode.xml
-XML\Profession.xml
+XML\ProfessionFrame.xml
 XML\ProfessionSpellbook.xml
-XML\ProfessionTwo.xml
 XML\QuickKeybind.xml
 XML\SettingsList.xml
 XML\Talents.xml
 XML\UI.xml
+
+XML\DFColorPicker.xml
 
 # Config
 Modules\__Settings.lua

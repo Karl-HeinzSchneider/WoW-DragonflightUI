@@ -1453,3 +1453,14 @@ function DragonflightUIEditModePreviewRaidMixin:UpdateState(state)
         frame.horizDivider:Hide();
     end
 end
+
+DragonflightUIEditModePreviewAltPowerBarMixin = {}
+
+function DragonflightUIEditModePreviewAltPowerBarMixin:OnLoad()
+    -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewRaidMixin:OnLoad()')
+
+    -- local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    -- self:SetSize(sizeX, sizeY)
+    -- self:SetupFrame()
+    -- self:SetRandomUnit()
+end

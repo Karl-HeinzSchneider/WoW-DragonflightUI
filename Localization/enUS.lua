@@ -88,7 +88,12 @@ L["PositionTableXDesc"] = ""
 L["PositionTableY"] = "Y"
 L["PositionTableYDesc"] = ""
 
+-- darkmode
+L["DarkmodeColor"] = "Color"
+L["DarkmodeDesaturate"] = "Desaturate"
+
 -- actionbar
+L["ActionbarName"] = "Action Bar"
 L["ActionbarNameFormat"] = "Action Bar %d"
 
 -- bar names
@@ -264,6 +269,8 @@ L["BuffsOptionsUseStateHandlerDesc"] =
     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
 
 -- Castbar
+L["CastbarName"] = "Cast Bar"
+L["CastbarNameFormat"] = "%s Cast Bar"
 L["CastbarTableActive"] = "Active"
 L["CastbarTableActivateDesc"] = ""
 L["CastbarTableStyle"] = L["ButtonTableStyle"]
@@ -343,7 +350,17 @@ L["UIChangeSpellBookDesc"] = "Change the appearance of the SpellBook."
 L["UIChangeSpellBookProfessions"] = "Change SpellBook Professions"
 L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for professions."
 
+-- ProfessionFrame
+L["ProfessionFrameHasSkillUp"] = "Has skill up"
+L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE
+L["ProfessionFrameSubclass"] = "Subclass"
+L["ProfessionFrameSlot"] = "Slot"
+L["ProfessionCheckAll"] = "Check All"
+L["ProfessionUnCheckAll"] = "Uncheck All"
+L["ProfessionFavorites"] = "Favorites"
+
 -- Unitframes
+L["UnitFramesName"] = "Unitframes"
 -- Player
 L["PlayerFrameDesc"] = "Player frame settings"
 L["PlayerFrameStyle"] = L["ButtonTableStyle"]
@@ -384,6 +401,8 @@ L["TargetFrameComboPointsOnPlayerFrame"] = "Combo Points on PlayerFrame"
 L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player frame."
 L["TargetFrameHideComboPoints"] = "Hide Combo Points"
 L["TargetFrameHideComboPointsDesc"] = "Hides the combo points frame."
+L["TargetFrameFadeOut"] = "Fadeout"
+L["TargetFrameFadeOutDesc"] = "Fades the TargetFrame when the target is more than 40y away."
 
 -- Pet
 L["PetFrameDesc"] = "Pet frame settings"
