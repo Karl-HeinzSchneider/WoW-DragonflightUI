@@ -1,5 +1,7 @@
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+local rc = LibStub("LibRangeCheck-3.0")
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -37,6 +39,19 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        focusTarget = {
+            classcolor = false,
+            -- classicon = false,
+            -- breakUpLargeNumbers = true,   
+            -- hideNameBackground = false,
+            scale = 1.0,
+            override = false,
+            anchorFrame = 'FocusFrame',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -35 + 27,
+            y = -15
+        },
         player = {
             classcolor = false,
             classicon = false,
@@ -51,6 +66,7 @@ local defaults = {
             biggerHealthbar = false,
             hideRedStatus = false,
             hideIndicator = false,
+            hideSecondaryRes = false,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -64,14 +80,18 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        altpower = {scale = 1.0, anchorFrame = 'UIParent', anchor = 'CENTER', anchorParent = 'CENTER', x = 0, y = -220},
         target = {
             classcolor = false,
             classicon = false,
             breakUpLargeNumbers = true,
             enableNumericThreat = true,
+            numericThreatAnchor = 'TOP',
             enableThreatGlow = true,
             comboPointsOnPlayerFrame = false,
+            hideComboPoints = false,
             hideNameBackground = false,
+            fadeOut = false,
             scale = 1.0,
             override = false,
             anchorFrame = 'UIParent',
@@ -91,6 +111,19 @@ local defaults = {
             hideNoStealth = false,
             hideCustom = false,
             hideCustomCond = ''
+        },
+        tot = {
+            classcolor = false,
+            -- classicon = false,
+            -- breakUpLargeNumbers = true,   
+            -- hideNameBackground = false,
+            scale = 1.0,
+            override = false,
+            anchorFrame = 'TargetFrame',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -35 + 27,
+            y = -15
         },
         pet = {
             breakUpLargeNumbers = true,
@@ -128,6 +161,8 @@ local defaults = {
             anchorParent = 'TOPRIGHT',
             x = 0,
             y = 0,
+            padding = 10,
+            orientation = 'vertical',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -194,17 +229,33 @@ local function setOption(info, value)
 end
 
 local frameTable = {
-    ['UIParent'] = 'UIParent',
-    ['PlayerFrame'] = 'PlayerFrame',
-    ['TargetFrame'] = 'TargetFrame',
-    ['CompactRaidFrameManager'] = 'CompactRaidFrameManager'
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'PlayerFrame', text = 'PlayerFrame', tooltip = 'descr', label = 'label'},
+    {value = 'TargetFrame', text = 'TargetFrame', tooltip = 'descr', label = 'label'},
+    {value = 'CompactRaidFrameManager', text = 'CompactRaidFrameManager', tooltip = 'descr', label = 'label'}
 }
-if DF.Wrath then frameTable['FocusFrame'] = 'FocusFrame' end
+
+local statusTextTable = {
+    {value = 'None', text = 'None', tooltip = 'descr', label = 'label'},
+    {value = 'Percent', text = 'Percent', tooltip = 'descr', label = 'label'},
+    {value = 'Both', text = 'Both', tooltip = 'descr', label = 'label'},
+    {value = 'Numeric Value', text = 'Numeric Value', tooltip = 'descr', label = 'label'}
+}
+
+if DF.Wrath then
+    table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
+end
 
 local function frameTableWithout(without)
     local newTable = {}
 
-    for k, v in pairs(frameTable) do if k ~= without then newTable[k] = v end end
+    for k, v in ipairs(frameTable) do
+        --
+        if v.value ~= without then
+            --      
+            table.insert(newTable, v);
+        end
+    end
 
     return newTable
 end
@@ -228,96 +279,32 @@ end
 
 local optionsPlayer = {
     name = 'Player',
-    desc = 'PlayerframeDesc',
+    desc = L["PlayerFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'player'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'player'),
-            values = frameTableWithout('PlayerFrame'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'player'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'player'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'player'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'player'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
+        headerStyling = {
+            type = 'header',
+            name = L["PlayerFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
             editmode = true
         },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'player'),
+            name = L["PlayerFrameClassColor"],
+            desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
-            name = 'Class Icon Portrait',
-            desc = '' .. getDefaultStr('classicon', 'player'),
+            name = L["PlayerFrameClassIcon"],
+            desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
+            group = 'headerStyling',
             order = 7.1,
             disabled = true,
             new = false,
@@ -325,34 +312,54 @@ local optionsPlayer = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000',
-            order = 8
+            name = L["PlayerFrameBreakUpLargeNumbers"],
+            desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
+            group = 'headerStyling',
+            order = 8,
+            editmode = true
         },
         biggerHealthbar = {
             type = 'toggle',
-            name = 'Bigger Healthbar',
-            desc = '' .. getDefaultStr('biggerHealthbar', 'player'),
+            name = L["PlayerFrameBiggerHealthbar"],
+            desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
+            group = 'headerStyling',
             order = 9,
-            new = true,
+            new = false,
             editmode = true
         },
         hideRedStatus = {
             type = 'toggle',
-            name = 'Hide In Combat Red Statusglow',
-            desc = '' .. getDefaultStr('hideRedStatus', 'player'),
+            name = L["PlayerFrameHideRedStatus"],
+            desc = L["PlayerFrameHideRedStatusDesc"] .. getDefaultStr('hideRedStatus', 'player'),
+            group = 'headerStyling',
             order = 10,
-            new = true
+            new = false,
+            editmode = true
         },
         hideIndicator = {
             type = 'toggle',
-            name = 'Hide Hit Indicator',
-            desc = '' .. getDefaultStr('hideIndicator', 'player'),
+            name = L["PlayerFrameHideHitIndicator"],
+            desc = L["PlayerFrameHideHitIndicatorDesc"] .. getDefaultStr('hideIndicator', 'player'),
+            group = 'headerStyling',
             order = 11,
-            new = true
+            new = false,
+            editmode = true
         }
     }
 }
+
+if DF.Cata then
+    optionsPlayer.args['hideSecondaryRes'] = {
+        type = 'toggle',
+        name = L["PlayerFrameHideSecondaryRes"],
+        desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
+        group = 'headerStyling',
+        order = 12,
+        new = true,
+        editmode = true
+    }
+end
+
 if true then
     local moreOptions = {
         statusText = {
@@ -365,6 +372,8 @@ if true then
                 ['Both'] = 'Both',
                 ['Numeric Value'] = 'Numeric Value'
             },
+            dropdownValues = statusTextTable,
+            group = 'headerStyling',
             order = 10,
             blizzard = true,
             editmode = true
@@ -431,6 +440,8 @@ if true then
         end
     end
 end
+DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr, frameTableWithout('PlayerFrame'))
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
 local optionsPlayerEditmode = {
     name = 'Player',
@@ -441,9 +452,9 @@ local optionsPlayerEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.player
                 local defaultsTable = defaults.profile.player
@@ -464,98 +475,75 @@ local optionsPlayerEditmode = {
     }
 }
 
-local optionsTarget = {
-    name = 'Target',
-    desc = 'TargetFrameDesc',
+local optionsAltPower = {
+    name = 'AltPower',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, optionsAltPower, 'altpower', 'AltPower', getDefaultStr, frameTable)
+local optionsAltPowerEditmode = {
+    name = 'AltPower',
+    desc = '.',
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'target'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'target'),
-            values = frameTableWithout('TargetFrame'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'target'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'target'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'target'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'target'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.altpower
+                local defaultsTable = defaults.profile.altpower
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
+local optionsTarget = {
+    name = 'Target',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        headerStyling = {
+            type = 'header',
+            name = L["TargetFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
             editmode = true
         },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'target'),
+            name = L["TargetFrameClassColor"],
+            desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'target'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
-            name = 'Class Icon Portrait',
-            desc = '' .. getDefaultStr('classicon', 'target'),
+            name = L["TargetFrameClassIcon"],
+            desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'target'),
+            group = 'headerStyling',
             order = 7.1,
             disabled = true,
             new = false,
@@ -563,53 +551,102 @@ local optionsTarget = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'target'),
-            order = 8
-        },
-        enableNumericThreat = {
-            type = 'toggle',
-            name = 'Numeric Threat',
-            desc = 'Enable numeric threat' .. getDefaultStr('enableNumericThreat', 'target'),
-            order = 9,
-            disabled = not DF.Era
+            name = L["TargetFrameBreakUpLargeNumbers"],
+            desc = L["TargetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'target'),
+            group = 'headerStyling',
+            order = 8,
+            editmode = true
         },
         enableThreatGlow = {
             type = 'toggle',
-            name = 'Threat Glow',
-            desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'target'),
+            name = L["TargetFrameThreatGlow"],
+            desc = L["TargetFrameThreatGlowDesc"] .. getDefaultStr('enableThreatGlow', 'target'),
+            group = 'headerStyling',
             order = 10,
-            disabled = true
+            disabled = true,
+            editmode = true
         },
         hideNameBackground = {
             type = 'toggle',
-            name = 'Hide Name Background',
-            desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'target'),
+            name = L["TargetFrameHideNameBackground"],
+            desc = L["TargetFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'target'),
+            group = 'headerStyling',
             order = 11,
-            new = true,
+            new = false,
             editmode = true
         },
         comboPointsOnPlayerFrame = {
             type = 'toggle',
-            name = 'ComboPoints on PlayerFrame',
-            desc = '' .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
+            name = L["TargetFrameComboPointsOnPlayerFrame"],
+            desc = L["TargetFrameComboPointsOnPlayerFrameDesc"] .. getDefaultStr('comboPointsOnPlayerFrame', 'target'),
+            group = 'headerStyling',
             order = 12,
+            new = false,
+            editmode = true
+        },
+        hideComboPoints = {
+            type = 'toggle',
+            name = L["TargetFrameHideComboPoints"],
+            desc = L["TargetFrameHideComboPointsDesc"] .. getDefaultStr('hideComboPoints', 'target'),
+            group = 'headerStyling',
+            order = 12.5,
+            new = false,
+            editmode = true
+        },
+        fadeOut = {
+            type = 'toggle',
+            name = L["TargetFrameFadeOut"],
+            desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'target'),
+            group = 'headerStyling',
+            order = 9.5,
             new = true,
             editmode = true
         }
     }
 }
+
+if DF.Era then
+    -- numericThreatAnchor
+    optionsTarget.args['enableNumericThreat'] = {
+        type = 'toggle',
+        name = L["TargetFrameNumericThreat"],
+        desc = L["TargetFrameNumericThreatDesc"] .. getDefaultStr('enableNumericThreat', 'target'),
+        group = 'headerStyling',
+        order = 9,
+        disabled = not DF.Era,
+        editmode = true
+    }
+    optionsTarget.args['numericThreatAnchor'] = {
+        type = 'select',
+        name = L["TargetFrameNumericThreatAnchor"],
+        desc = L["TargetFrameNumericThreatAnchorDesc"] .. getDefaultStr('numericThreatAnchor', 'target'),
+        dropdownValues = DF.Settings.DropdownCrossAnchorTable,
+        order = 9.5,
+        group = 'headerStyling',
+        editmode = true
+    }
+end
+
 if true then
     local moreOptions = {
         targetOfTarget = {
             type = 'toggle',
             name = SHOW_TARGET_OF_TARGET_TEXT,
             desc = OPTION_TOOLTIP_SHOW_TARGET_OF_TARGET,
+            group = 'headerStyling',
             order = 15,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         },
-        buffsOnTop = {type = 'toggle', name = 'Buffs On Top', desc = '', order = 16, blizzard = true}
+        buffsOnTop = {
+            type = 'toggle',
+            name = BUFFS_ON_TOP,
+            desc = '',
+            group = 'headerStyling',
+            order = 16,
+            blizzard = true,
+            editmode = true
+        }
     }
 
     for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
@@ -660,6 +697,8 @@ if true then
         end
     end
 end
+DF.Settings:AddPositionTable(Module, optionsTarget, 'target', 'Target', getDefaultStr, frameTableWithout('TargetFrame'))
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsTarget, 'target', 'Target', getDefaultStr)
 local optionsTargetEditmode = {
     name = 'Target',
@@ -670,9 +709,9 @@ local optionsTargetEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.target
                 local defaultsTable = defaults.profile.target
@@ -693,113 +732,95 @@ local optionsTargetEditmode = {
     }
 }
 
-local optionsPet = {
-    name = 'Pet',
-    desc = 'PetFrameDesc',
+local optionsTargetOfTarget = {
+    name = 'TargetOfTarget',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, optionsTargetOfTarget, 'tot', 'TargetOfTarget', getDefaultStr, frameTable)
+local optionsTargetOfTargetEditmode = {
+    name = 'TargetOfTarget',
+    desc = 'Targetframedesc',
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'pet'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'pet'),
-            values = frameTableWithout('PetFrame'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'pet'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'pet'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'pet'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'pet'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.tot
+                local defaultsTable = defaults.profile.tot
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
+local optionsPet = {
+    name = 'Pet',
+    desc = L["PetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        headerStyling = {
+            type = 'header',
+            name = L["PetFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
             editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'pet'),
-            order = 9
+            name = L["PetFrameBreakUpLargeNumbers"],
+            desc = L["PetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'pet'),
+            group = 'headerStyling',
+            order = 9,
+            editmode = true
         },
         enableThreatGlow = {
             type = 'toggle',
-            name = 'Threat Glow',
-            desc = 'Enable threat glow' .. getDefaultStr('enableThreatGlow', 'pet'),
+            name = L["PetFrameThreatGlow"],
+            desc = L["PetFrameThreatGlowDesc"] .. getDefaultStr('enableThreatGlow', 'pet'),
+            group = 'headerStyling',
             order = 8,
-            disabled = true
+            disabled = true,
+            editmode = true
         },
         hideStatusbarText = {
             type = 'toggle',
-            name = 'Hide Statusbar Text',
-            desc = '' .. getDefaultStr('hideStatusbarText', 'pet'),
-            order = 10
+            name = L["PetFrameHideStatusbarText"],
+            desc = L["PetFrameHideStatusbarTextDesc"] .. getDefaultStr('hideStatusbarText', 'pet'),
+            group = 'headerStyling',
+            order = 10,
+            editmode = true
         },
         hideIndicator = {
             type = 'toggle',
-            name = 'Hide Hit Indicator',
-            desc = '' .. getDefaultStr('hideIndicator', 'pet'),
+            name = L["PetFrameHideIndicator"],
+            desc = L["PetFrameHideIndicatorDesc"] .. getDefaultStr('hideIndicator', 'pet'),
+            group = 'headerStyling',
             order = 11,
-            new = true
+            new = true,
+            editmode = true
         }
     }
 }
@@ -811,6 +832,7 @@ if DF.Cata then
             name = 'Auto adjust offset',
             desc = 'Auto add some Y offset depending on the class, e.g. on Deathknight to make room for the rune display' ..
                 getDefaultStr('offset', 'pet'),
+            group = 'headerStyling',
             order = 11,
             new = true
         }
@@ -818,6 +840,8 @@ if DF.Cata then
 
     for k, v in pairs(moreOptions) do optionsPet.args[k] = v end
 end
+DF.Settings:AddPositionTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr, frameTableWithout('PetFrame'))
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr)
 local optionsPetEditmode = {
     name = 'Pet',
@@ -828,9 +852,9 @@ local optionsPetEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.pet
                 local defaultsTable = defaults.profile.pet
@@ -853,96 +877,32 @@ local optionsPetEditmode = {
 
 local optionsFocus = {
     name = 'Focus',
-    desc = 'FocusFrameDesc',
+    desc = L["FocusFrameDesc"],
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'focus'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'focus'),
-            values = frameTableWithout('FocusFrame'),
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'focus'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'focus'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'focus'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'focus'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
+        headerStyling = {
+            type = 'header',
+            name = L["FocusFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
             editmode = true
         },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'focus'),
+            name = L["FocusFrameClassColor"],
+            desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focus'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
         classicon = {
             type = 'toggle',
-            name = 'Class Icon Portrait',
-            desc = '' .. getDefaultStr('classicon', 'focus'),
+            name = L["FocusFrameClassIcon"],
+            desc = L["FocusFrameClassIconDesc"] .. getDefaultStr('classicon', 'focus'),
+            group = 'headerStyling',
             order = 7.1,
             disabled = true,
             new = false,
@@ -950,21 +910,26 @@ local optionsFocus = {
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'focus'),
-            order = 8
+            name = L["FocusFrameBreakUpLargeNumbers"],
+            desc = L["FocusFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'focus'),
+            group = 'headerStyling',
+            order = 8,
+            editmode = true
         },
         hideNameBackground = {
             type = 'toggle',
-            name = 'Hide Name Background',
-            desc = 'Hide Name Background' .. getDefaultStr('hideNameBackground', 'focus'),
+            name = L["FocusFrameHideNameBackground"],
+            desc = L["FocusFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'focus'),
+            group = 'headerStyling',
             order = 11,
             new = true,
             editmode = true
         }
     }
 }
+
+DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTableWithout('FocusFrame'))
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr)
 local optionsFocusEditmode = {
     name = 'Focus',
@@ -975,9 +940,9 @@ local optionsFocusEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.focus
                 local defaultsTable = defaults.profile.focus
@@ -998,109 +963,88 @@ local optionsFocusEditmode = {
     }
 }
 
-local optionsParty = {
-    name = 'Party',
-    desc = 'PartyframeDesc',
+local optionsFocusTarget = {
+    name = 'FocusTarget',
+    desc = L["TargetFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, optionsFocusTarget, 'focusTarget', 'FocusTarget', getDefaultStr, frameTable)
+local optionsFocusTargetEditmode = {
+    name = 'FocusTarget',
+    desc = 'Targetframedesc',
     get = getOption,
     set = setOption,
     type = 'group',
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'party'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'party'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'party'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'party'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'party'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'party'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.focusTarget
+                local defaultsTable = defaults.profile.focusTarget
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
+local optionsParty = {
+    name = 'Party',
+    desc = L["PartyFrameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        headerStyling = {
+            type = 'header',
+            name = L["PartyFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
             editmode = true
         },
         classcolor = {
             type = 'toggle',
-            name = 'Class Color',
-            desc = 'Enable classcolors for the healthbar' .. getDefaultStr('classcolor', 'party'),
+            name = L["PartyFrameClassColor"],
+            desc = L["PartyFrameClassColorDesc"] .. getDefaultStr('classcolor', 'party'),
+            group = 'headerStyling',
             order = 7,
             editmode = true
         },
         breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Break Up Large Numbers',
-            desc = 'Enable breaking up large numbers of the StatusText, e.g. 7588 K instead of 7588000' ..
-                getDefaultStr('breakUpLargeNumbers', 'party'),
-            order = 8
+            name = L["PartyFrameBreakUpLargeNumbers"],
+            desc = L["PartyFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'party'),
+            group = 'headerStyling',
+            order = 8,
+            editmode = true
         }
     }
 }
+
 if true then
     local moreOptions = {
         useCompactPartyFrames = {
             type = 'toggle',
             name = USE_RAID_STYLE_PARTY_FRAMES,
             desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
+            group = 'headerStyling',
             order = 15,
             blizzard = true,
             editmode = true
@@ -1113,8 +1057,29 @@ if true then
                 Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             end,
+            group = 'headerStyling',
             order = 16,
             blizzard = true,
+            editmode = true
+        },
+        orientation = {
+            type = 'select',
+            name = L["ButtonTableOrientation"],
+            desc = L["ButtonTableOrientationDesc"] .. getDefaultStr('orientation', 'party'),
+            dropdownValues = DF.Settings.OrientationTable,
+            order = 2,
+            group = 'headerStyling',
+            editmode = true
+        },
+        padding = {
+            type = 'range',
+            name = L["ButtonTablePadding"],
+            desc = L["ButtonTablePaddingDesc"] .. getDefaultStr('padding', 'party'),
+            min = -50,
+            max = 50,
+            bigStep = 1,
+            order = 3,
+            group = 'headerStyling',
             editmode = true
         }
     }
@@ -1152,6 +1117,8 @@ if true then
         end
     end
 end
+DF.Settings:AddPositionTable(Module, optionsParty, 'party', 'Party', getDefaultStr, frameTable)
+
 DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsParty, 'party', 'Party', getDefaultStr)
 local optionsPartyEditmode = {
     name = 'party',
@@ -1162,9 +1129,9 @@ local optionsPartyEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.party
                 local defaultsTable = defaults.profile.party
@@ -1175,7 +1142,9 @@ local optionsPartyEditmode = {
                     anchorParent = defaultsTable.anchorParent,
                     anchorFrame = defaultsTable.anchorFrame,
                     x = defaultsTable.x,
-                    y = defaultsTable.y
+                    y = defaultsTable.y,
+                    orientation = defaultsTable.orientation,
+                    padding = defaultsTable.padding
                 })
             end,
             order = 16,
@@ -1270,14 +1239,14 @@ local optionsRaid = {
 }
 if true then
     local moreOptions = {
-        useCompactPartyFrames = {
-            type = 'toggle',
-            name = USE_RAID_STYLE_PARTY_FRAMES,
-            desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
-            order = 15,
-            blizzard = true,
-            editmode = false
-        },
+        -- useCompactPartyFrames = {
+        --     type = 'toggle',
+        --     name = USE_RAID_STYLE_PARTY_FRAMES,
+        --     desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
+        --     order = 15,
+        --     blizzard = true,
+        --     editmode = false
+        -- },
         raidFrameBtn = {
             type = 'execute',
             name = 'Raid Frame Settings',
@@ -1288,6 +1257,13 @@ if true then
             end,
             order = 5,
             blizzard = true,
+            editmode = false
+        },
+        headerTaint = {
+            type = 'header',
+            name = 'Use the blizzard settings, as setting them through addons taints the UI.',
+            desc = '',
+            order = 1,
             editmode = false
         }
         -- headerTaint = {type = 'header', name = 'May Cause Taint Issues - /reload after setup', desc = '', order = 10},
@@ -1508,55 +1484,15 @@ local optionsRaidEditmode = {
     }
 }
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        focus = optionsFocus,
-        player = optionsPlayer,
-        target = optionsTarget,
-        pet = optionsPet,
-        party = optionsParty
-    }
-}
-
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     -- db = self.db.profile
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
-
-    DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
@@ -1591,6 +1527,28 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'Unitframe'
+    local cat = 'unitframes'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('party', {order = 0, name = 'Party', descr = 'Partyss', isNew = false})
+    register('pet', {order = 0, name = 'Pet', descr = 'Petss', isNew = false})
+    register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
+    register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
+    register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = false})
+    register('targetoftarget', {order = 0, name = 'TargetOfTarget', descr = 'Targetss', isNew = true})
+
+    if DF.Wrath then
+        register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
+        register('focustarget', {order = 0, name = 'FocusTarget', descr = 'Focusss', isNew = true})
+    end
+    if DF.Cata then register('altpower', {order = 0, name = 'Player_PowerBarAlt', descr = 'Focusss', isNew = true}) end
+end
+
 function Module:RegisterOptionScreens()
     local function filterTableByFunction(opts, fnc)
         local newOpts = {}
@@ -1601,7 +1559,7 @@ function Module:RegisterOptionScreens()
     end
 
     if DF.Wrath then
-        DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Focus', {
+        DF.ConfigModule:RegisterSettingsData('focus', 'unitframes', {
             name = 'Focus',
             sub = 'focus',
             options = optionsFocus,
@@ -1611,7 +1569,7 @@ function Module:RegisterOptionScreens()
         })
     end
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Party', {
+    DF.ConfigModule:RegisterSettingsData('party', 'unitframes', {
         name = 'Party',
         sub = 'party',
         options = optionsParty,
@@ -1620,7 +1578,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Raid', {
+    DF.ConfigModule:RegisterSettingsData('raid', 'unitframes', {
         name = 'Raid',
         sub = 'raid',
         options = optionsRaid
@@ -1629,7 +1587,7 @@ function Module:RegisterOptionScreens()
         -- end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Pet', {
+    DF.ConfigModule:RegisterSettingsData('pet', 'unitframes', {
         name = 'Pet',
         sub = 'pet',
         options = optionsPet,
@@ -1638,7 +1596,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Player', {
+    DF.ConfigModule:RegisterSettingsData('player', 'unitframes', {
         name = 'Player',
         sub = 'player',
         options = optionsPlayer,
@@ -1647,12 +1605,32 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Unitframes', 'Target', {
+    if DF.Cata then
+        DF.ConfigModule:RegisterSettingsData('altpower', 'unitframes', {
+            name = 'Altpower',
+            sub = 'altpower',
+            options = optionsAltPower,
+            default = function()
+                setDefaultSubValues('altpower')
+            end
+        })
+    end
+
+    DF.ConfigModule:RegisterSettingsData('target', 'unitframes', {
         name = 'Target',
         sub = 'target',
         options = optionsTarget,
         default = function()
             setDefaultSubValues('target')
+        end
+    })
+
+    DF.ConfigModule:RegisterSettingsData('targetoftarget', 'unitframes', {
+        name = 'TargetOfTarget',
+        sub = 'tot',
+        options = optionsTargetOfTarget,
+        default = function()
+            setDefaultSubValues('tot')
         end
     })
 end
@@ -1672,17 +1650,20 @@ function Module:RefreshOptionScreens()
     refreshCat('Player')
     refreshCat('Raid')
     refreshCat('Target')
+    refreshCat('TargetOfTarget')
 
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
     -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
+    Module.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     if DF.Wrath then
         --  FocusFrame.DFEditModeSelection:RefreshOptionScreen();
         Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
+        Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
-
+    if DF.Cata then Module.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 end
 
 function Module:SaveLocalSettings()
@@ -1778,8 +1759,18 @@ function Module:ApplySettings(sub)
         else
             PlayerHitIndicator:SetScale(1)
         end
+        Module:HideSecondaryRes(obj.hideSecondaryRes)
 
         PlayerFrame:UpdateStateHandler(obj)
+    end
+    -- altpower
+    if DF.Cata then
+        local state = db.altpower;
+        local parent = _G[state.anchorFrame]
+
+        Module.PowerBarAltPreview:ClearAllPoints()
+        Module.PowerBarAltPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        Module.PowerBarAltPreview:SetScale(state.scale)
     end
 
     -- target
@@ -1795,11 +1786,23 @@ function Module:ApplySettings(sub)
         Module.ReApplyToT()
         TargetFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
-        Module.UpdateComboFrameState(obj.comboPointsOnPlayerFrame)
+        Module.UpdateComboFrameState(obj)
         TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
         UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
         Module.PreviewTarget:UpdateState(obj);
+    end
+
+    -- target of target
+    do
+        local obj = db.tot
+
+        local anchorframe = _G[obj.anchorFrame]
+        TargetFrameToT:ClearAllPoints()
+        TargetFrameToT:SetPoint(obj.anchor, anchorframe, obj.anchorParent, obj.x, obj.y)
+        TargetFrameToT:SetScale(obj.scale)
+
+        Module.PreviewTargetOfTarget:UpdateState(obj);
     end
 
     -- pet
@@ -1840,26 +1843,7 @@ function Module:ApplySettings(sub)
         local obj = db.party
         local objLocal = localSettings.party
 
-        Module.PartyMoveFrame:ClearAllPoints();
-        Module.PartyMoveFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
-        -- local party1 = _G['PartyMemberFrame' .. 1]
-        -- party1:ClearAllPoints()
-        -- party1:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y)
-
-        for i = 1, 4 do
-            local pf = _G['PartyMemberFrame' .. i]
-            -- local dfScale = 1.25
-            local dfScale = 1
-            pf:SetScale(obj.scale * dfScale)
-            Module.UpdatePartyHPBar(i)
-            TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
-            TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
-
-            pf:UpdateStateHandler(obj)
-            PartyMemberFrame_UpdateMember(pf)
-        end
-
-        Module.PreviewParty:UpdateState(obj)
+        Module:UpdatePartyState(obj)
     end
 
     if DF.Wrath then
@@ -1880,6 +1864,18 @@ function Module:ApplySettings(sub)
 
             FocusFrame:UpdateStateHandler(obj)
             Module.PreviewFocus:UpdateState(obj);
+        end
+
+        -- focus target
+        do
+            local obj = db.focusTarget
+
+            local anchorframe = _G[obj.anchorFrame]
+            FocusFrameToT:ClearAllPoints()
+            FocusFrameToT:SetPoint(obj.anchor, anchorframe, obj.anchorParent, obj.x, obj.y)
+            FocusFrameToT:SetScale(obj.scale)
+
+            Module.PreviewFocusTarget:UpdateState(obj);
         end
     end
 end
@@ -1974,6 +1970,7 @@ function Module:AddEditMode()
     PlayerFrame.DFEditModeSelection:RegisterOptions({
         name = 'Player',
         sub = 'player',
+        advancedName = 'PlayerFrame',
         options = optionsPlayer,
         extra = optionsPlayerEditmode,
         default = function()
@@ -1981,6 +1978,32 @@ function Module:AddEditMode()
         end,
         moduleRef = self
     });
+
+    if DF.Cata then
+        -- powerbaralt
+        local f = Module.PowerBarAltPreview
+        EditModeModule:AddEditModeToFrame(f)
+
+        f.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Player_PowerBarAlt'
+        end)
+
+        f.DFEditModeSelection:RegisterOptions({
+            name = 'Player_PowerBarAlt',
+            sub = 'altpower',
+            advancedName = 'Player_PowerBarAlt',
+            options = optionsAltPower,
+            extra = optionsAltPowerEditmode,
+            default = function()
+                setDefaultSubValues('altpower')
+            end,
+            moduleRef = self,
+            hideFunction = function()
+                --
+                f:Show()
+            end
+        });
+    end
 
     -- Pet
     EditModeModule:AddEditModeToFrame(PetFrame)
@@ -1992,6 +2015,7 @@ function Module:AddEditMode()
     PetFrame.DFEditModeSelection:RegisterOptions({
         name = 'Pet',
         sub = 'pet',
+        advancedName = 'PetFrame',
         options = optionsPet,
         extra = optionsPetEditmode,
         default = function()
@@ -2015,6 +2039,7 @@ function Module:AddEditMode()
     fakeTarget.DFEditModeSelection:RegisterOptions({
         name = 'Target',
         sub = 'target',
+        advancedName = 'TargetFrame',
         options = optionsTarget,
         extra = optionsTargetEditmode,
         parentExtra = TargetFrame,
@@ -2037,6 +2062,37 @@ function Module:AddEditMode()
         end
     });
 
+    -- Target of target
+    local fakeTargetOfTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                           'DFEditModePreviewTargetOfTargetTemplate')
+    fakeTargetOfTarget:OnLoad()
+    fakeTargetOfTarget:SetParent(fakeTarget)
+    Module.PreviewTargetOfTarget = fakeTargetOfTarget;
+
+    EditModeModule:AddEditModeToFrame(fakeTargetOfTarget)
+
+    fakeTargetOfTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'TargetOfTarget'
+    end)
+
+    fakeTargetOfTarget.DFEditModeSelection:RegisterOptions({
+        name = 'TargetOfTarget',
+        sub = 'tot',
+        advancedName = 'TargetOfTargetFrame',
+        options = optionsTargetOfTarget,
+        extra = optionsTargetOfTargetEditmode,
+        default = function()
+            setDefaultSubValues('tot')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --         
+        end,
+        hideFunction = function()
+            --
+        end
+    });
+
     -- party 
     local fakeParty = CreateFrame('Frame', 'DragonflightUIEditModePartyFramePreview', UIParent,
                                   'DFEditModePreviewPartyFrameTemplate')
@@ -2053,6 +2109,7 @@ function Module:AddEditMode()
     fakeParty.DFEditModeSelection:RegisterOptions({
         name = 'Party',
         sub = 'party',
+        advancedName = 'PartyFrame',
         options = optionsParty,
         extra = optionsPartyEditmode,
         -- parentExtra = Module.PartyMoveFrame,
@@ -2085,6 +2142,7 @@ function Module:AddEditMode()
         local initRaid = function()
             --         
             local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+            _G['CompactRaidFrameManagerContainerResizeFrameResizer']:SetFrameLevel(15)
 
             local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
                                          'DFEditModePreviewRaidFrameTemplate')
@@ -2113,6 +2171,7 @@ function Module:AddEditMode()
             f.DFEditModeSelection:RegisterOptions({
                 name = 'Raid',
                 sub = 'raid',
+                advancedName = 'RaidFrame',
                 options = optionsRaid,
                 extra = optionsRaidEditmode,
                 -- parentExtra = FocusFrame,
@@ -2189,6 +2248,7 @@ function Module:AddEditMode()
         fakeFocus.DFEditModeSelection:RegisterOptions({
             name = 'Focus',
             sub = 'focus',
+            advancedName = 'FocusFrame',
             options = optionsFocus,
             extra = optionsFocusEditmode,
             parentExtra = FocusFrame,
@@ -2208,6 +2268,37 @@ function Module:AddEditMode()
                 -- FocusFrame.unit = 'focus';
                 -- TargetFrame_Update(FocusFrame);
                 FocusFrame:SetAlpha(1)
+            end
+        });
+
+        -- focus target
+        local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                            'DFEditModePreviewTargetOfTargetTemplate')
+        fakeFocusTarget:OnLoad()
+        fakeFocusTarget:SetParent(fakeFocus)
+        Module.PreviewFocusTarget = fakeFocusTarget;
+
+        EditModeModule:AddEditModeToFrame(fakeFocusTarget)
+
+        fakeFocusTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'FocusTarget'
+        end)
+
+        fakeFocusTarget.DFEditModeSelection:RegisterOptions({
+            name = 'FocusTarget',
+            sub = 'focusTarget',
+            advancedName = 'FocusTargetFrame',
+            options = optionsFocusTarget,
+            extra = optionsFocusTargetEditmode,
+            default = function()
+                setDefaultSubValues('focusTarget')
+            end,
+            moduleRef = self,
+            showFunction = function()
+                --         
+            end,
+            hideFunction = function()
+                --
             end
         });
     end
@@ -2463,6 +2554,48 @@ function Module.CreatePlayerFrameTextures()
         textureSmall:SetSize(23, 23)
         textureSmall:SetScale(1)
         frame.PlayerFrameDeco = textureSmall
+    end
+end
+
+function Module:HideSecondaryRes(hide)
+    if not Module.SecondaryResToHide then return end
+
+    local _, class = UnitClass('player');
+
+    if class == 'WARLOCK' then
+        _G['ShardBarFrame']:SetShown(not hide);
+    elseif class == 'DRUID' then
+        if hide then
+            _G['EclipseBarFrame']:Hide()
+        else
+            EclipseBar_UpdateShown(_G['EclipseBarFrame'])
+        end
+    elseif class == 'PALADIN' then
+        _G['PaladinPowerBar']:SetShown(not hide);
+    elseif class == 'DEATHKNIGHT' then
+        _G['RuneFrame']:SetShown(not hide);
+    end
+end
+
+function Module:HookSecondaryRes()
+    local _, class = UnitClass('player');
+
+    if class == 'WARLOCK' then
+        Module.SecondaryResToHide = _G['ShardBarFrame'];
+    elseif class == 'DRUID' then
+        Module.SecondaryResToHide = _G['EclipseBarFrame'];
+    elseif class == 'PALADIN' then
+        Module.SecondaryResToHide = _G['PaladinPowerBar'];
+    elseif class == 'DEATHKNIGHT' then
+        Module.SecondaryResToHide = _G['RuneFrame'];
+    end
+
+    if Module.SecondaryResToHide then
+        Module.SecondaryResToHide:HookScript('OnShow', function()
+            --
+            -- print('onshow')
+            if Module.db.profile.player.hideSecondaryRes then Module.SecondaryResToHide:Hide() end
+        end)
     end
 end
 
@@ -2816,6 +2949,147 @@ end
 -- ChangePlayerframe()
 -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 
+function Module:AddAlternatePowerBar()
+    local localizedClass, englishClass, classIndex = UnitClass('player');
+    if not englishClass == 'DRUID' then return; end
+
+    local bar = CreateFrame('StatusBar', 'DragonflightUIAlternatePowerBar', PlayerFrame, 'TextStatusBar');
+    bar:SetSize(78, 12);
+    bar:SetPoint('BOTTOMLEFT', 114 + 6, 23 - 1);
+    bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar');
+    bar:SetStatusBarColor(0, 0, 1.0);
+
+    local bg = bar:CreateTexture('DragonflightUIAlternatePowerBarBackground', 'BACKGROUND');
+    bg:SetSize(78, 12);
+    bg:SetPoint('TOPLEFT', 0, 0);
+    bg:SetColorTexture(0, 0, 0, 0.5);
+
+    local border = bar:CreateTexture('DragonflightUIAlternatePowerBarBorder', 'OVERLAY');
+    border:SetSize(97, 16);
+    border:SetPoint('TOPLEFT', -10, 0);
+    border:SetTexture('Interface\\CharacterFrame\\UI-CharacterFrame-GroupIndicator');
+    border:SetTexCoord(0.0234375, 0.6875, 1.0, 0);
+
+    local text = bar:CreateFontString('DragonflightUIAlternatePowerBarText', 'OVERLAY', 'TextStatusBarText');
+    text:SetPoint('CENTER', 0, 0);
+    bar.TextString = text
+
+    local textLeft = bar:CreateFontString('DragonflightUIAlternatePowerBarTextLeft', 'OVERLAY', 'TextStatusBarText');
+    textLeft:SetPoint('LEFT', 0, 0);
+    bar.LeftText = textLeft
+
+    local textRight = bar:CreateFontString('DragonflightUIAlternatePowerBarText', 'OVERLAY', 'TextStatusBarText');
+    textRight:SetPoint('RIGHT', 0, 0);
+    bar.RightText = textRight
+
+    --
+    local ADDITIONAL_POWER_BAR_NAME = "MANA";
+    local ADDITIONAL_POWER_BAR_INDEX = 0;
+
+    local function AlternatePowerBar_Initialize(self)
+        if (not self.powerName) then
+            self.powerName = ADDITIONAL_POWER_BAR_NAME;
+            self.powerIndex = ADDITIONAL_POWER_BAR_INDEX;
+        end
+
+        self:RegisterEvent("UNIT_POWER_UPDATE"); -- "UNIT_"..self.powerName
+        self:RegisterEvent("UNIT_MAXPOWER"); -- "UNIT_MAX"..self.powerName
+        self:RegisterEvent("PLAYER_ENTERING_WORLD");
+        self:RegisterEvent("UNIT_DISPLAYPOWER");
+
+        SetTextStatusBarText(self, _G[self:GetName() .. "Text"])
+
+        local info = PowerBarColor[self.powerName];
+        self:SetStatusBarColor(info.r, info.g, info.b);
+    end
+
+    local function AlternatePowerBar_OnLoad(self)
+        self.textLockable = 1;
+        self.cvar = "StatusText"; -- DF
+        self.cvarLabel = "STATUS_TEXT_PLAYER";
+        self.capNumericDisplay = true -- DF
+        AlternatePowerBar_Initialize(self);
+        TextStatusBar_Initialize(self);
+    end
+
+    local function AlternatePowerBar_UpdateValue(self)
+        local currmana = UnitPower(self:GetParent().unit, self.powerIndex);
+        self:SetValue(currmana);
+        self.value = currmana
+    end
+
+    local function AlternatePowerBar_UpdateMaxValues(self)
+        local maxmana = UnitPowerMax(self:GetParent().unit, self.powerIndex);
+        self:SetMinMaxValues(0, maxmana);
+    end
+
+    local function AlternatePowerBar_UpdatePowerType(self)
+        if ((UnitPowerType(self:GetParent().unit) ~= self.powerIndex) and
+            (UnitPowerMax(self:GetParent().unit, self.powerIndex) ~= 0)) then
+            self.pauseUpdates = false;
+            self:Show();
+        else
+            self.pauseUpdates = true;
+            self:Hide();
+        end
+    end
+
+    local function AlternatePowerBar_OnEvent(self, event, arg1)
+        local parent = self:GetParent();
+        if (event == "UNIT_DISPLAYPOWER") then
+            AlternatePowerBar_UpdatePowerType(self);
+        elseif (event == "PLAYER_ENTERING_WORLD") then
+            AlternatePowerBar_UpdateMaxValues(self);
+            AlternatePowerBar_UpdateValue(self);
+            AlternatePowerBar_UpdatePowerType(self);
+        elseif ((event == "UNIT_MAXPOWER")) then
+            if arg1 == parent.unit then AlternatePowerBar_UpdateMaxValues(self); end
+        elseif (self:IsShown()) then
+            if ((event == "UNIT_MANA") and (arg1 == parent.unit)) then AlternatePowerBar_UpdateValue(self); end
+        end
+    end
+
+    local function AlternatePowerBar_OnUpdate(self, elapsed)
+        AlternatePowerBar_UpdateValue(self);
+    end
+
+    -- 
+    AlternatePowerBar_OnLoad(bar)
+    TextStatusBar_Initialize(bar)
+
+    bar:SetScript('OnEvent', function(self, event, ...)
+        -- 
+        AlternatePowerBar_OnEvent(self, event, ...);
+        TextStatusBar_OnEvent(self, event, ...);
+    end)
+    bar:SetScript('OnUpdate', function(self, elapsed)
+        -- 
+        AlternatePowerBar_OnUpdate(self, elapsed);
+    end)
+    -- bar:SetScript('OnMouseUp', function() end)
+end
+
+function Module:AddPowerBarAlt()
+    if not DF.Cata then return end
+    local f = CreateFrame('FRAME', 'DragonflightUIPlayerPowerBarAlt', UIParent)
+    f:SetPoint('CENTER', UIParent, 'CENTER', 0, -180)
+    f:SetSize(50, 50)
+    f:SetClampedToScreen(true)
+
+    Module.PowerBarAltPreview = f
+
+    hooksecurefunc('UnitPowerBarAlt_SetUp', function(bar, barID)
+        --
+        -- print('UnitPowerBarAlt_SetUp')
+        if bar.unit and UnitIsUnit(bar.unit, 'player') then
+            -- print('~~player')
+            bar:ClearAllPoints()
+            bar:SetParent(f)
+            bar:SetPoint('CENTER', f, 'CENTER', 0, 0)
+        end
+    end)
+end
+
 function Module.SetPlayerBiggerHealthbar(bigger)
     local border = frame.PlayerFrameBorder
     local background = frame.PlayerFrameBackground
@@ -3022,14 +3296,17 @@ function Module.ChangeTargetFrame()
     TargetFrameManaBar:SetSize(134, 10)
     TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
-    local manaMask = TargetFrameManaBar:CreateMaskTexture()
-    manaMask:SetPoint('TOPLEFT', TargetFrameManaBar, 'TOPLEFT', -61, 3)
-    manaMask:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-        'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    manaMask:SetTexCoord(0, 1, 0, 1)
-    manaMask:SetSize(256, 16)
-    TargetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+    if not TargetFrameManaBar.DFMask then
+        local manaMask = TargetFrameManaBar:CreateMaskTexture()
+        manaMask:SetPoint('TOPLEFT', TargetFrameManaBar, 'TOPLEFT', -61, 3)
+        manaMask:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(256, 16)
+        TargetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        TargetFrameManaBar.DFMask = manaMask
+    end
 
     TargetFrameNameBackground:SetTexture(base)
     TargetFrameNameBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
@@ -3173,6 +3450,34 @@ function Module.ChangeTargetFrame()
 
         frame.PortraitExtra = extra
     end
+
+    if not TargetFrame.DFRangeHooked then
+        TargetFrame.DFRangeHooked = true;
+
+        local state = Module.db.profile.target
+
+        if not rc then return end
+        local function updateRange()
+            local minRange, maxRange = rc:GetRange('target')
+            -- print(minRange, maxRange)
+
+            if not state.fadeOut then
+                TargetFrame:SetAlpha(1);
+                return;
+            end
+
+            if minRange and minRange >= 40 then
+                TargetFrame:SetAlpha(0.55);
+                -- elseif maxRange and maxRange >= 40 then
+                --     TargetFrame:SetAlpha(0.55);
+            else
+                TargetFrame:SetAlpha(1);
+            end
+        end
+
+        TargetFrame:HookScript('OnUpdate', updateRange)
+        TargetFrame:HookScript('OnEvent', updateRange)
+    end
 end
 
 function Module.ChangeTargetComboFrame()
@@ -3208,15 +3513,23 @@ function Module.ChangeTargetComboFrame()
     end
 end
 
-function Module.UpdateComboFrameState(onPlayer)
+function Module.UpdateComboFrameState(state)
     local c = ComboFrame
 
-    if onPlayer then
+    if state.comboPointsOnPlayerFrame then
         c:SetParent(PlayerFrame)
         c:SetSize(116, 20)
         c:ClearAllPoints()
-        c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
+        -- c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
         -- ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1)   
+
+        local localizedClass, englishClass, classIndex = UnitClass('player');
+        if englishClass == 'DRUID' then
+            local deltaY = 16;
+            c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4 - deltaY)
+        else
+            c:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50 - 8, 34 + 4)
+        end
 
         for i = 1, 5 do
             --
@@ -3251,6 +3564,11 @@ function Module.UpdateComboFrameState(onPlayer)
 
             point:SetScale(scaling)
         end
+    end
+
+    if state.hideComboPoints then
+        c:ClearAllPoints()
+        c:SetPoint('TOP', UIParent, 'TOP', 0, 50)
     end
 end
 
@@ -3405,7 +3723,8 @@ end
 function Module.ChangeToT()
     -- TargetFrameToTTextureFrame:Hide()
     TargetFrameToT:ClearAllPoints()
-    TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35, -10 - 5)
+    TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
+    TargetFrameToT:SetSize(93 + 27, 45)
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
     -- TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
@@ -3549,14 +3868,17 @@ function Module.ChangeFocusFrame()
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
     FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
-    local manaMask = FocusFrameManaBar:CreateMaskTexture()
-    manaMask:SetPoint('TOPLEFT', FocusFrameManaBar, 'TOPLEFT', -61, 3)
-    manaMask:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-        'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    manaMask:SetTexCoord(0, 1, 0, 1)
-    manaMask:SetSize(256, 16)
-    FocusFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+    if not FocusFrameManaBar.DFMask then
+        local manaMask = FocusFrameManaBar:CreateMaskTexture()
+        manaMask:SetPoint('TOPLEFT', FocusFrameManaBar, 'TOPLEFT', -61, 3)
+        manaMask:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(256, 16)
+        FocusFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        FocusFrameManaBar.DFMask = manaMask;
+    end
 
     -- CUSTOM HealthText
     if not frame.FocusFrameHealthBarText then
@@ -3752,7 +4074,8 @@ end
 
 function Module.ChangeFocusToT()
     FocusFrameToT:ClearAllPoints()
-    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35, -10 - 5)
+    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
+    FocusFrameToT:SetSize(93 + 27, 45)
 
     FocusFrameToTTextureFrameTexture:SetTexture('')
 
@@ -4015,7 +4338,15 @@ end
 function Module.ChangePartyFrame()
     local PartyMoveFrame = CreateFrame('Frame', 'DraggonflightUIPartyMoveFrame', UIParent)
     PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    PartyMoveFrame:SetFrameStrata('LOW')
+    PartyMoveFrame:SetFrameLevel(2)
     Module.PartyMoveFrame = PartyMoveFrame
+
+    -- local tex = PartyMoveFrame:CreateTexture(nil, 'BACKGROUND')
+    -- tex:SetPoint('TOPLEFT')
+    -- tex:SetPoint('BOTTOMRIGHT')
+    -- tex:SetColorTexture(54 / 255, 69 / 255, 79 / 255, 0.5)
+    -- PartyMoveFrame.BackgroundTex = tex;
 
     local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
     local gap = 10;
@@ -4028,6 +4359,7 @@ function Module.ChangePartyFrame()
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
+        pf:SetParent(PartyMoveFrame)
         pf:SetSize(120, 53)
         -- pf:ClearAllPoints()
         -- pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
@@ -4060,7 +4392,7 @@ function Module.ChangePartyFrame()
         name:SetSize(57, 12)
         name:SetPoint('TOPLEFT', 46, -6)
 
-        if DF.Era then name:SetWidth(100) end
+        if not UnitGroupRolesAssigned then name:SetWidth(100) end
 
         -- layer = 'ARTWORK' => Status
 
@@ -4114,7 +4446,7 @@ function Module.ChangePartyFrame()
         end
         updateSmallIcons()
 
-        if DF.Wrath then
+        if UnitGroupRolesAssigned then
             local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
             roleIcon:SetSize(12, 12)
             roleIcon:SetPoint('TOPRIGHT', -5, -5)
@@ -4125,12 +4457,15 @@ function Module.ChangePartyFrame()
 
             local updateRoleIcon = function()
                 local role = UnitGroupRolesAssigned(pf.unit)
+                roleIcon:Show()
                 if role == 'TANK' then
                     roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
                 elseif role == 'HEALER' then
                     roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
                 elseif role == 'DAMAGER' then
                     roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+                else
+                    roleIcon:Hide()
                 end
             end
 
@@ -4273,6 +4608,18 @@ function Module.ChangePartyFrame()
             -- [07:05:37] TOPLEFT PartyMemberFrame1 TOPLEFT 47 -30
         end)
 
+        -- CompactUnitFrame_UpdateInRange
+        local function updateRange()
+            local inRange, checkedRange = UnitInRange('party' .. i);
+            if (checkedRange and not inRange) then
+                pf:SetAlpha(0.55);
+            else
+                pf:SetAlpha(1);
+            end
+        end
+
+        pf:HookScript('OnUpdate', updateRange)
+
         pf:HookScript('OnEvent', function(self, event, ...)
             local texture = _G['PartyMemberFrame' .. i .. 'Texture']
             texture:SetTexture()
@@ -4280,10 +4627,54 @@ function Module.ChangePartyFrame()
             healthbar:SetStatusBarColor(1, 1, 1, 1)
 
             updateSmallIcons()
+            updateRange()
 
             Module.UpdatePartyHPBar(i)
         end)
     end
+end
+
+function Module:UpdatePartyState(state)
+    local parent = _G[state.anchorFrame]
+    Module.PartyMoveFrame:ClearAllPoints();
+    Module.PartyMoveFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    Module.PartyMoveFrame:SetScale(state.scale)
+
+    -- local party1 = _G['PartyMemberFrame' .. 1]
+    -- party1:ClearAllPoints()
+    -- party1:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+
+    if state.orientation == 'vertical' then
+        Module.PartyMoveFrame:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
+    else
+        Module.PartyMoveFrame:SetSize(sizeX * 4 + 3 * state.padding, sizeY)
+    end
+
+    for i = 2, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+
+        if state.orientation == 'vertical' then
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'BOTTOMLEFT', 0, -state.padding)
+        else
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'TOPRIGHT', state.padding, 0)
+        end
+    end
+
+    for i = 1, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+        Module.UpdatePartyHPBar(i)
+        TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
+        TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
+
+        pf:UpdateStateHandler(state)
+        PartyMemberFrame_UpdateMember(pf)
+    end
+
+    Module.PreviewParty:UpdateState(state)
 end
 
 local function DFTextStatusBar_UpdateTextStringWithValues(statusFrame, textString, value, valueMin, valueMax)
@@ -4492,6 +4883,32 @@ function Module.HookRestFunctions()
             frame.RestIcon:Hide()
             frame.RestIconAnimation:Stop()
         end
+    end)
+end
+
+function Module:AddRaidframeRoleIcons()
+    local function updateRoleIcons(f)
+        if not f.roleIcon then
+            return
+        else
+            f.roleIcon:SetDrawLayer('OVERLAY')
+            local size = f.roleIcon:GetHeight();
+            local role = UnitGroupRolesAssigned(f.unit);
+            if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
+                f.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");
+                f.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role));
+                f.roleIcon:Show();
+                f.roleIcon:SetSize(size, size);
+            else
+                f.roleIcon:Hide();
+                f.roleIcon:SetSize(1, size);
+            end
+        end
+    end
+    hooksecurefunc("CompactUnitFrame_UpdateRoleIcon", function(f)
+        --
+        -- print('CompactUnitFrame_UpdateRoleIcon')
+        updateRoleIcons(f)
     end)
 end
 
@@ -4710,6 +5127,7 @@ function Module.CreatThreatIndicator()
     local function UpdateIndicator()
         local db = Module.db.profile
         local enableNumeric = db.target.enableNumericThreat
+        local threatAnchor = db.target.numericThreatAnchor
         local enableGlow = db.target.enableThreatGlow
 
         if UnitExists('TARGET') and (enableNumeric or enableGlow) then
@@ -4742,6 +5160,19 @@ function Module.CreatThreatIndicator()
                 -- hide
             end
 
+            indi:ClearAllPoints()
+            if threatAnchor == 'TOP' then
+                indi:SetPoint('BOTTOM', TargetFrameTextureFrameName, 'TOP', 0, 2)
+            elseif threatAnchor == 'RIGHT' then
+                indi:SetPoint('LEFT', TargetFramePortrait, 'RIGHT', 5, 0)
+            elseif threatAnchor == 'BOTTOM' then
+                indi:SetPoint('TOP', TargetFrameManaBar, 'BOTTOM', 0, -2)
+            elseif threatAnchor == 'LEFT' then
+                indi:SetPoint('RIGHT', TargetFrameHealthBar, 'LEFT', -2, 0)
+            else
+                -- should not happen
+                indi:SetPoint('BOTTOM', TargetFrameTextureFrameName, 'TOP', 0, 2)
+            end
         else
             indi:Hide()
             -- disable glow
@@ -4825,12 +5256,14 @@ function Module.Wrath()
     Module.HookEnergyBar()
     Module.HookPlayerStatus()
     Module.HookPlayerArt()
+    Module:HookSecondaryRes()
     Module.HookDrag()
 
     -- Module.ApplyPortraitMask()
     Module.HookClassIcon()
     Module.ChangePartyFrame()
     Module.ChangePetFrame()
+    if DF.Cata then Module:AddPowerBarAlt() end
 end
 
 function Module.Era()
@@ -4868,4 +5301,6 @@ function Module.Era()
     Module.AddMobhealth()
     Module.CreatThreatIndicator()
     Module.ChangePetFrame()
+    Module:AddAlternatePowerBar()
+    Module:AddRaidframeRoleIcons()
 end

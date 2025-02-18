@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Minimap'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
@@ -20,9 +21,7 @@ local defaults = {
             showPingChat = false,
             hideCalendar = false,
             hideZoom = false,
-            moveLFG = false,
             skinButtons = true,
-            durability = 'BOTTOM',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -37,7 +36,9 @@ local defaults = {
             hideCustomCond = '',
             useStateHandler = true
         },
-        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310}
+        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310},
+        durability = {scale = 1, anchorFrame = 'Minimap', anchor = 'TOP', anchorParent = 'BOTTOM', x = 0, y = -15},
+        lfg = {scale = 1, anchorFrame = 'Minimap', anchor = 'CENTER', anchorParent = 'CENTER', x = -62.38, y = -41.63}
     }
 }
 Module:SetDefaults(defaults)
@@ -59,11 +60,9 @@ local function getOption(info)
 end
 
 local function setOption(info, value)
+    -- print('setOption', info[1], info[2], value)
     Module:SetOption(info, value)
 end
-
-local presetDesc =
-    'Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.';
 
 local function setPreset(T, preset, sub)
     -- print('setPreset')
@@ -79,260 +78,83 @@ local function setPreset(T, preset, sub)
     Module:RefreshOptionScreens()
 end
 
-local options = {
-    type = 'group',
-    name = 'DragonflightUI - ' .. mName,
-    get = getOption,
-    set = setOption,
-    args = {
-        toggle = {
-            type = 'toggle',
-            name = 'Enable',
-            get = function()
-                return DF:GetModuleEnabled(mName)
-            end,
-            set = function(info, v)
-                DF:SetModuleEnabled(mName, v)
-            end,
-            order = 1
-        },
-        reload = {
-            type = 'execute',
-            name = '/reload',
-            desc = 'reloads UI',
-            func = function()
-                ReloadUI()
-            end,
-            order = 1.1
-        },
-        defaults = {
-            type = 'execute',
-            name = 'Defaults',
-            desc = 'Sets Config to default values',
-            func = setDefaultValues,
-            order = 1.1
-        },
-        --[[ config = {type = 'header', name = 'Config - Player', order = 100}, ]]
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale'),
-            min = 0.2,
-            max = 3,
-            bigStep = 0.025,
-            order = 101,
-            disabled = false
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to TOPRIGHT' .. getDefaultStr('x'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to TOPRIGHT' .. getDefaultStr('y'),
-            min = -2500,
-            max = 2500,
-            bigStep = 0.50,
-            order = 102
-        },
-        locked = {
-            type = 'toggle',
-            name = 'Locked',
-            desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-                getDefaultStr('locked'),
-            order = 103
-        },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 110
-        },
-        trackerHeader = {type = 'header', name = 'Questtracker', desc = '', order = 120}
-    }
+local frameTable = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
 }
 
-local frameTable = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster'}
-local frameTableTracker = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster', ['Minimap'] = 'Minimap'}
+local frameTableTracker = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'},
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+}
 
 local minimapOptions = {
     type = 'group',
-    name = 'Minimap',
+    name = L["MinimapName"],
     get = getOption,
     set = setOption,
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'minimap'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.025,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'minimap'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'minimap'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'minimap'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'minimap'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'minimap'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        },
-        -- locked = {
-        --     type = 'toggle',
-        --     name = 'Locked',
-        --     desc = 'Lock the Minimap. Unlocked Minimap can be moved with shift-click and drag ' ..
-        --         getDefaultStr('locked', 'minimap'),
-        --     order = 10
-        -- },
+        headerStyling = {type = 'header', name = L["MinimapStyle"], desc = '', order = 20, isExpanded = true},
         showPing = {
             type = 'toggle',
-            name = 'Show Ping',
-            desc = '(NOT YET IMPLEMENTED)' .. getDefaultStr('showPing', 'minimap'),
+            name = L["MinimapShowPing"],
+            desc = L["MinimapNotYetImplemented"] .. getDefaultStr('showPing', 'minimap'),
+            group = 'headerStyling',
             order = 11
         },
         showPingChat = {
             type = 'toggle',
-            name = 'Show Ping in Chat',
-            desc = '' .. getDefaultStr('showPingChat', 'minimap'),
+            name = L["MinimapShowPingInChat"],
+            desc = getDefaultStr('showPingChat', 'minimap'),
+            group = 'headerStyling',
             order = 12
         },
         hideCalendar = {
             type = 'toggle',
-            name = 'Hide Calendar',
-            desc = 'Hides the calendar button' .. getDefaultStr('hideCalendar', 'minimap'),
+            name = L["MinimapHideCalendar"],
+            desc = L["MinimapHideCalendarDesc"] .. getDefaultStr('hideCalendar', 'minimap'),
+            group = 'headerStyling',
             order = 13,
             new = false
         },
         hideZoom = {
             type = 'toggle',
-            name = 'Hide Zoom Buttons',
-            desc = 'Hides the zoom buttons (+) (-)' .. getDefaultStr('hideZoom', 'minimap'),
+            name = L["MinimapHideZoomButtons"],
+            desc = L["MinimapHideZoomDesc"] .. getDefaultStr('hideZoom', 'minimap'),
+            group = 'headerStyling',
             order = 14,
             new = true
         },
         skinButtons = {
             type = 'toggle',
-            name = 'Skin Minimap Buttons',
-            desc = 'Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)' ..
-                getDefaultStr('skinButtons', 'minimap'),
+            name = L["MinimapSkinMinimapButtons"],
+            desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
+            group = 'headerStyling',
             order = 15,
             new = true
         },
-        durability = {
-            type = 'select',
-            name = 'Durability',
-            desc = 'Durability' .. getDefaultStr('durability', 'minimap'),
-            values = {
-                ['HIDDEN'] = 'HIDDEN',
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT'
-            },
-            order = 20
-        },
         useStateHandler = {
             type = 'toggle',
-            name = 'Use State Handler',
-            desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
-                getDefaultStr('useStateHandler', 'minimap'),
+            name = L["MinimapUseStateHandler"],
+            desc = L["MinimapUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'minimap'),
+            group = 'headerVis',
             order = 115
         }
     }
 }
+
 do
     local moreOptions = {
         rotate = {
             type = 'toggle',
             name = ROTATE_MINIMAP,
             desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+            group = 'headerStyling',
             order = 13.1,
             blizzard = true
         }
     }
-
-    if DF.Era then
-        local moveLFG = {
-            type = 'toggle',
-            name = 'Move LFG Button',
-            desc = 'Moves the LFG Button to the Micromenu (needs the Actionbar Module, or it does nothing)' ..
-                getDefaultStr('moveLFG', 'minimap'),
-            order = 13.2,
-            new = true
-        }
-        moreOptions['moveLFG'] = moveLFG;
-    end
 
     for k, v in pairs(moreOptions) do minimapOptions.args[k] = v end
 
@@ -362,6 +184,7 @@ do
         end
     end
 end
+DF.Settings:AddPositionTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr, frameTable)
 -- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
 local optionsMinimapEditmode = {
@@ -373,9 +196,9 @@ local optionsMinimapEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.minimap
                 local defaultsTable = defaults.profile.minimap
@@ -396,88 +219,9 @@ local optionsMinimapEditmode = {
     }
 }
 
-local trackerOptions = {
-    type = 'group',
-    name = 'Tracker',
-    get = getOption,
-    set = setOption,
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'tracker'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'tracker'),
-            values = frameTableTracker,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'tracker'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'tracker'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'tracker'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'tracker'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local trackerOptions = {type = 'group', name = 'Tracker', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, trackerOptions, 'tracker', 'Tracker', getDefaultStr, frameTableTracker)
+
 local optionsTrackerEditmode = {
     name = 'Tracker',
     desc = 'Tracker',
@@ -487,9 +231,9 @@ local optionsTrackerEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.tracker
                 local defaultsTable = defaults.profile.tracker
@@ -510,13 +254,84 @@ local optionsTrackerEditmode = {
     }
 }
 
+local optionsDurability = {type = 'group', name = 'Durability', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, optionsDurability, 'durability', 'Durability', getDefaultStr, frameTableTracker)
+
+local optionsDurabilityEditmode = {
+    name = 'Durability',
+    desc = 'Durability',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.durability
+                local defaultsTable = defaults.profile.durability
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'durability')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
+local optionsLFG = {type = 'group', name = 'LFG', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, optionsLFG, 'lfg', 'LFG', getDefaultStr, frameTableTracker)
+
+local optionsLFGEditmode = {
+    name = 'LFG',
+    desc = 'LFG',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.lfg
+                local defaultsTable = defaults.profile.lfg
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'lfg')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
-
-    DF:RegisterModuleOptions(mName, options)
 end
 
 function Module:OnEnable()
@@ -547,8 +362,22 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'Minimap'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('minimap', {order = 1, name = 'Minimap', descr = 'Minimapss', isNew = false})
+    register('questtracker', {order = 1, name = 'Quest Tracker', descr = 'Trackers', isNew = false})
+    register('durability', {order = 1, name = 'Durability', descr = 'Durablityss', isNew = false})
+    register('lfg', {order = 1, name = 'LFG', descr = 'LFGss', isNew = true})
+end
+
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Minimap', {
+    DF.ConfigModule:RegisterSettingsData('minimap', 'misc', {
         name = 'Minimap',
         sub = 'minimap',
         options = minimapOptions,
@@ -557,12 +386,30 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Questtracker', {
+    DF.ConfigModule:RegisterSettingsData('questtracker', 'misc', {
         name = 'Questtracker',
         sub = 'tracker',
         options = trackerOptions,
         default = function()
             setDefaultSubValues('tracker')
+        end
+    })
+
+    DF.ConfigModule:RegisterSettingsData('durability', 'misc', {
+        name = 'Durability',
+        sub = 'durability',
+        options = optionsDurability,
+        default = function()
+            setDefaultSubValues('durability')
+        end
+    })
+
+    DF.ConfigModule:RegisterSettingsData('lfg', 'misc', {
+        name = 'LFG',
+        sub = 'lfg',
+        options = optionsLFG,
+        default = function()
+            setDefaultSubValues('lfg')
         end
     })
 end
@@ -574,10 +421,14 @@ function Module:RefreshOptionScreens()
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Minimap')
     configFrame:RefreshCatSub(cat, 'Questtracker')
+    configFrame:RefreshCatSub(cat, 'Durability')
+    configFrame:RefreshCatSub(cat, 'LFG')
 
     -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
     Minimap.DFEditModeSelection:RefreshOptionScreen();
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
+    Module.DurabilityContainer.DFEditModeSelection:RefreshOptionScreen()
+    Module.LFG.DFEditModeSelection:RefreshOptionScreen()
 end
 
 function Module:ApplySettings(sub)
@@ -590,6 +441,8 @@ function Module:ApplySettings(sub)
 
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
+    Module.UpdateDurabilityState(db.durability)
+    if Module.LFG then Module.LFG:UpdateState(db.lfg) end
 end
 
 local frame = CreateFrame('FRAME')
@@ -721,6 +574,7 @@ function Module:AddEditMode()
     Minimap.DFEditModeSelection:RegisterOptions({
         name = 'Minimap',
         sub = 'minimap',
+        advancedName = 'Minimap',
         options = minimapOptions,
         extra = optionsMinimapEditmode,
         default = function()
@@ -746,6 +600,7 @@ function Module:AddEditMode()
         trackerFrame.DFEditModeSelection:RegisterOptions({
             name = 'Questtracker',
             sub = 'tracker',
+            advancedName = 'Tracker',
             options = trackerOptions,
             extra = optionsTrackerEditmode,
             default = function()
@@ -754,7 +609,73 @@ function Module:AddEditMode()
             moduleRef = self,
             prio = -5
         });
+
+        if trackerFrame:GetHeight() > 500 then
+            trackerFrame.DFEditModeSelection:ClearAllPoints()
+            trackerFrame.DFEditModeSelection:SetPoint('TOPLEFT', trackerFrame, 'TOPLEFT', 0, 0)
+            trackerFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', trackerFrame, 'TOPRIGHT', 0, -500)
+        end
+
+        -- TODO: add fake preview
+        function Module.TrackerFrameRef:SetEditMode()
+        end
     end
+
+    -- durablity
+    EditModeModule:AddEditModeToFrame(Module.DurabilityContainer)
+
+    Module.DurabilityContainer.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Durability'
+    end)
+
+    Module.DurabilityContainer.DFEditModeSelection:RegisterOptions({
+        name = 'Durability',
+        sub = 'durability',
+        advancedName = 'Durability',
+        options = optionsDurability,
+        extra = optionsDurabilityEditmode,
+        showFunction = function()
+            -- 
+        end,
+        hideFunction = function()
+            -- DurabilityFrame_SetAlerts()
+        end,
+        default = function()
+            setDefaultSubValues('durability')
+        end,
+        moduleRef = self
+    });
+
+    -- TODO: add fake preview
+    function Module.DurabilityContainer:SetEditMode()
+    end
+
+    -- LFG
+    EditModeModule:AddEditModeToFrame(Module.LFG)
+
+    Module.LFG.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'LFG'
+    end)
+
+    Module.LFG.DFEditModeSelection:RegisterOptions({
+        name = 'LFG',
+        sub = 'lfg',
+        advancedName = 'LFG',
+        options = optionsLFG,
+        prio = 5,
+        extra = optionsLFGEditmode,
+        showFunction = function()
+            --
+        end,
+        hideFunction = function()
+            --
+        end,
+        default = function()
+            setDefaultSubValues('lfg')
+        end,
+        moduleRef = self
+    });
+
 end
 
 function Module.UpdateMinimapState(state)
@@ -767,7 +688,6 @@ function Module.UpdateMinimapState(state)
     local dfScale = 1.25
     Minimap:SetScale(state.scale * dfScale)
     -- Module.LockMinimap(state.locked)
-    Module.UpdateDurabilityState(state)
 
     if state.hideCalendar then
         frame.CalendarButton:Hide()
@@ -790,15 +710,6 @@ function Module.UpdateMinimapState(state)
         Module.ChangeMinimapButtons()
     elseif not state.skinButtons and Module.SkinButtonsHooked then
         DF:Print("'Skin Minimap Buttons' was deactivated, but Buttons were already modified, please /reload.");
-    end
-
-    if DF.Era then
-        --      
-        if Module.MoveLFG then
-            Module:QueueStatusAnchor(state.moveLFG)
-        else
-            Module:QueueStatusAnchor(false)
-        end
     end
 end
 
@@ -877,29 +788,11 @@ function Module.MoveDefaultStuff()
 end
 
 function Module.UpdateDurabilityState(state)
-    local dur = state.durability
     local container = Module.DurabilityContainer
 
-    if dur == 'HIDDEN' then
-        container:Hide()
-        return
-    end
-
-    container:Show()
-    container:ClearAllPoints()
-    local delta = 15
-
     container:SetScale(state.scale)
-
-    if dur == 'TOP' then
-        container:SetPoint('BOTTOM', Minimap, 'TOP', 0, delta + 20)
-    elseif dur == 'RIGHT' then
-        container:SetPoint('LEFT', Minimap, 'RIGHT', delta, 0)
-    elseif dur == 'BOTTOM' then
-        container:SetPoint('TOP', Minimap, 'BOTTOM', 0, -delta)
-    elseif dur == 'LEFT' then
-        container:SetPoint('RIGHT', Minimap, 'LEFT', -delta, 0)
-    end
+    container:ClearAllPoints()
+    container:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
 end
 
 function Module.MoveMinimap(x, y)
@@ -1348,109 +1241,47 @@ function Module.MoveTrackerFunc()
     end
 end
 
-function Module.ChangeLFG()
-    MiniMapLFGFrame:ClearAllPoints()
-    -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
-    MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-    MiniMapLFGFrameBorder:Hide()
-    MiniMapLFGFrameIcon:Hide()
-
-    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', MiniMapLFGFrame)
+function Module:ChangeLFG()
+    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', Minimap)
     Mixin(lfg, DragonflightUILFGButtonMixin)
     lfg:Init()
-    lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
-
+    -- lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
+    lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
     Module.LFG = lfg
+
+    if DF.Cata or DF.Wrath then
+        MiniMapLFGFrame:ClearAllPoints()
+        -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+        MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
+        MiniMapLFGFrameBorder:Hide()
+        MiniMapLFGFrameIcon:Hide()
+
+        lfg:HookCata()
+    elseif DF.Era then
+        DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+            --
+            Module:ChangeLFGEra();
+        end)
+
+    end
 end
 
-function Module.CreateLFGAnimation()
-    local lfg = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
-    lfg:SetSize(33, 33)
-    lfg:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+function Module:ChangeLFGEra()
+    local lfg = Module.LFG;
 
-    Module.LFG = lfg
+    local btn = _G.LFGMinimapFrame
+    btn:SetParent(Minimap)
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 
-    do
-        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
-        searching:SetSize(33, 33)
-        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
+    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
+    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
+    LFGMinimapFrameBorder:SetSize(50, 50)
 
-        local searchingTexture = searching:CreateTexture('DragonflightUILFGSearchingFlipbookTexture')
-        searchingTexture:SetAllPoints()
-        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-searching')
-        -- searchingTexture:SetBlendMode('BLEND')
+    lfg:HookEra()
 
-        local animationGroup = searchingTexture:CreateAnimationGroup()
-        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGSearchingFlipbookAnimation')
-
-        animationGroup:SetLooping('REPEAT')
-
-        animation:SetOrder(1)
-        local size = 44 * 1
-        animation:SetFlipBookFrameWidth(size)
-        animation:SetFlipBookFrameHeight(size)
-        animation:SetFlipBookRows(8)
-        animation:SetFlipBookColumns(11)
-        animation:SetFlipBookFrames(80)
-        animation:SetDuration(2)
-
-        animationGroup:Play()
-        animationGroup:Stop()
-        searching:Hide()
-
-        searching.animation = animationGroup
-        lfg.searching = searching
-    end
-
-    do
-        local searching = CreateFrame('Frame', 'DragonflightUILFGFlipbookFrame')
-        searching:SetSize(33, 33)
-        searching:SetPoint('CENTER', lfg, 'CENTER', 0, 0)
-
-        local searchingTexture = searching:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
-        searchingTexture:SetAllPoints()
-        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-mouseover')
-        -- searchingTexture:SetBlendMode('BLEND')
-
-        local animationGroup = searchingTexture:CreateAnimationGroup()
-        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
-
-        animationGroup:SetLooping('NONE')
-
-        animation:SetOrder(1)
-        local size = 43 * 1
-        animation:SetFlipBookFrameWidth(size)
-        animation:SetFlipBookFrameHeight(size)
-        animation:SetFlipBookRows(1)
-        animation:SetFlipBookColumns(12)
-        animation:SetFlipBookFrames(12)
-        animation:SetDuration(0.4)
-
-        animationGroup:Play()
-        animationGroup:Stop()
-        searching:Hide()
-
-        searching.animation = animationGroup
-        lfg.mouseover = searching
-    end
-
-    lfg:SetScript('OnEnter', function()
-        lfg.searching.animation:Stop()
-        lfg.searching:Hide()
-        lfg.mouseover:Show()
-        lfg.mouseover.animation:Play()
-    end)
-
-    lfg:SetScript('OnLeave', function()
-        lfg.mouseover.animation:Stop()
-        lfg.mouseover:Hide()
-        lfg.searching:Show()
-        lfg.searching.animation:Play()
-    end)
-
-    lfg.searching:Show()
-    lfg.searching.animation:Play()
-
+    local db = Module.db.profile
+    local state = db.lfg
+    lfg:UpdateState(state);
 end
 
 function Module.ChangeDifficulty()
@@ -1491,70 +1322,9 @@ function Module:QueueStatusReposition(_, anchorFrame)
     end
 end
 
-function Module:QueueStatusAnchor(move)
-    local lfg = Module.QueueStatus;
-    if not lfg then return end
-    if move then
-        lfg:ClearAllPoints()
-        lfg:SetParent(_G['DragonflightUIMicroMenuBar'])
-        lfg:SetPoint('RIGHT', CharacterMicroButton, 'LEFT', -70, 0)
-        lfg:SetScale(1.2)
-    else
-        lfg:ClearAllPoints()
-        lfg:SetParent(Minimap)
-        lfg:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-        lfg:SetScale(1.0)
-    end
-end
-
-function Module:CreateQueueStatus()
-    local f = CreateFrame('FRAME', 'DragonflightUIQueueStatus', UIParent)
-    -- f:SetPoint('CENTER', Minimap, 'CENTER', -83 - 2.5, -35)
-    f:SetPoint('CENTER', Minimap, 'CENTER', -69.61, -27.92)
-    f:SetSize(32, 32)
-    f:SetParent(Minimap)
-
-    Module.QueueStatus = f
-
-    local btn = _G.LFGMinimapFrame
-    btn:SetParent(f)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
-    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
-    LFGMinimapFrameBorder:SetSize(50, 50)
-
-    hooksecurefunc(btn, 'SetPoint', Module.QueueStatusReposition)
-    btn:SetPoint('CENTER')
-
-    local unitModule = DF:GetModule('Actionbar')
-
-    if unitModule:IsEnabled() then
-        Module.MoveLFG = true;
-
-        local db = Module.db.profile
-        local state = db.minimap
-        Module:QueueStatusAnchor(state.moveLFG)
-    else
-        hooksecurefunc(unitModule, 'OnEnable', function()
-            --
-            local db = Module.db.profile
-            local state = db.minimap
-            Module:QueueStatusAnchor(state.moveLFG)
-            Module.MoveLFG = true;
-        end)
-
-    end
-end
-
 function Module.ChangeEra()
     GameTimeFrame:Hide()
     MinimapToggleButton:Hide()
-
-    DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
-        --
-        Module:CreateQueueStatus()
-    end)
 end
 
 function Module:UpdateButton(btn)
@@ -1699,8 +1469,7 @@ function Module.Wrath()
     Module.ChangeTracking()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
-    Module.ChangeLFG()
-    -- Module.CreateLFGAnimation()
+    Module:ChangeLFG()
     Module.ChangeDifficulty()
     Module.HookMouseWheel()
     Module.ChangeMail()
@@ -1725,6 +1494,7 @@ function Module.Era()
     Module.UpdateTrackingEra()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
+    Module:ChangeLFG()
     Module.HookMouseWheel()
     Module.ChangeMail()
     -- Module.ChangeMinimapButtons()

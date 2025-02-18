@@ -10,12 +10,35 @@ function DragonflightUIEditModeFrameMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
 
     self:SetupFrame();
+end
 
+function DragonflightUIEditModeFrameMixin:SetupGrid()
     local grid = CreateFrame('Frame', 'DragonflightUIGridFrame', UIParent, 'DragonflightUIEditModeGrid');
     grid:Hide()
     grid:SetAllPoints();
 
     self.Grid = grid;
+end
+
+function DragonflightUIEditModeFrameMixin:SetupMouseOverChecker()
+    local over = CreateFrame('Frame', 'DragonflightUIEditModeMouseOverChecker', self,
+                             'DFEditModeSystemSelectionMouseOverChecker');
+    -- grid:Hide()
+    over:SetAllPoints();
+
+    self.MouseOverChecker = over;
+end
+
+function DragonflightUIEditModeFrameMixin:SetupLayoutDropdown()
+    -- print('~~~~SetupLayoutDropdown()')
+    local dd = CreateFrame('Frame', 'DragonflightUIEditModeLayoutDropdown', self,
+                           'DragonflightUIEditModeLayoutDropdownTemplate');
+    -- grid:Hide()
+    -- dd:SetAllPoints();
+    dd:SetPoint('TOPLEFT', self, 'TOPLEFT', 32, -38)
+    dd:SetSize(155, 25)
+
+    self.LayoutDropdown = dd;
 end
 
 function DragonflightUIEditModeFrameMixin:OnDragStart()
@@ -31,6 +54,9 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
 
     self:SetFrameLevel(69)
     self:SetFrameStrata('HIGH')
+    local windowH = 250 - 35 + 20
+    local windowHAdv = 450
+    self:SetHeight(windowH);
 
     self.InstructionText:SetText('InstructionText')
     self.InstructionText:Hide()
@@ -59,41 +85,75 @@ function DragonflightUIEditModeFrameMixin:SetupFrame()
         -- print('onclick')
         self.EditmodeModule:SetEditMode(false);
     end)
+
+    self.AdvancedOptions = false;
+    local advButton = self.AdvancedButton
+    advButton:Show()
+    advButton:SetText(L["EditModeAdvancedOptions"])
+    advButton:SetScript('OnClick', function(button, buttonName, down)
+        --
+        -- print('onclick')
+        if self.AdvancedOptions then
+            -- switch to basic options
+            advButton:SetText(L["EditModeAdvancedOptions"])
+            self.DisplayFrame:Display(self.DataOptions, true)
+            self:SetHeight(windowH);
+            self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+        else
+            -- switch to advanced options
+            advButton:SetText(L["EditModeBasicOptions"])
+            self.DisplayFrame:Display(self.DataAdvancedOptions, true)
+            self:SetHeight(windowHAdv);
+            self.DisplayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + 24)
+        end
+        self.AdvancedOptions = not self.AdvancedOptions;
+
+    end)
 end
 
-function DragonflightUIEditModeFrameMixin:SetupOptions(data)
-    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'SettingsListTemplateDF')
+function DragonflightUIEditModeFrameMixin:SetupOptions(data, main)
+    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'DFSettingsList')
     displayFrame:Display(data, true)
     self.DisplayFrame = displayFrame
+    self.DataOptions = data;
 
     displayFrame:ClearAllPoints()
     -- -@diagnostic disable-next-line: param-type-mismatch
     -- displayFrame:SetParent(self)
     displayFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
     displayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-    displayFrame:CallRefresh()
+    -- displayFrame:CallRefresh()
     displayFrame:Show()
 
     local scrollBox = displayFrame.ScrollBox
     scrollBox:ClearAllPoints()
-    scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+    if main then
+        scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50 - 20)
+    else
+        scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+    end
     scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
-    -- displayFrame.Header.DefaultsButton:Hide()
+    displayFrame.Header.DefaultsButton:Hide()
     displayFrame.Header:Hide()
 end
 
+function DragonflightUIEditModeFrameMixin:SetupAdvancedOptions(data)
+    self.DataAdvancedOptions = data;
+end
+
 function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
-    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'SettingsListTemplateDF')
+    local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'DFSettingsList')
     displayFrame:Display(data, true)
     self.DisplayFrameExtra = displayFrame
+    self.DataExtraOptions = data;
 
     displayFrame:ClearAllPoints()
     -- -@diagnostic disable-next-line: param-type-mismatch
     -- displayFrame:SetParent(self)
     displayFrame:SetPoint('TOPLEFT', self.DisplayFrame, 'BOTTOMLEFT', 0, 80 + 10)
     displayFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-    displayFrame:CallRefresh()
+    -- displayFrame:CallRefresh()
     displayFrame:Show()
 
     local scrollBox = displayFrame.ScrollBox
@@ -101,7 +161,7 @@ function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
     scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
     scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
 
-    -- displayFrame.Header.DefaultsButton:Hide()
+    displayFrame.Header.DefaultsButton:Hide()
     displayFrame.Header:Hide()
 end
 
@@ -268,6 +328,7 @@ DFEditModeSystemSelectionBaseMixin = {};
 function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self.parent = self:GetParent();
     self.parent.DFEditModeSelection = self;
+    self.IsDFEditModeSelection = true;
     -- print('DFEditModeSystemSelectionBaseMixin:OnLoad()', self.parent:GetName())
     if self.Label then
         self.Label:SetFontObjectsToTry("GameFontHighlightLarge", "GameFontHighlightMedium", "GameFontHighlightSmall");
@@ -286,8 +347,15 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     self:SetNinesliceSelected(false)
 
     local EditModeModule = DF:GetModule('Editmode');
-    EditModeModule:RegisterCallback('OnEditMode', function(self, value)
+    table.insert(EditModeModule.SelectionFrames, self);
+
+    EditModeModule:RegisterCallback('OnEditMode', function(self, editValue)
         -- print('SELECTION: OnEditMode', value)
+        local db = EditModeModule.db.profile
+        local state = db.advanced
+
+        local value = editValue and state[self.AdvancedName]
+
         self:ShowHighlighted()
         self:SetShown(value)
 
@@ -298,7 +366,7 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
             else
                 self.parent:Show();
             end
-            self:SetFrameLevel(self.Prio or 1000)
+            -- self:SetFrameLevel(self.Prio or 1000)
 
             if self.ModuleRef then
                 --            
@@ -334,12 +402,20 @@ function DFEditModeSystemSelectionBaseMixin:OnLoad()
     end, self)
 
     EditModeModule:RegisterCallback('OnSelection', function(self, value)
-        self:SetFrameLevel(self.Prio or 1000)
+        -- self:SetFrameLevel(self.Prio or 1000)
         if value and value == self then
             DF:Debug(EditModeModule, 'SELECTION', value:GetName())
             self:ShowSelected()
         else
-            self:ShowHighlighted()
+            local db = EditModeModule.db.profile
+            local state = db.advanced
+
+            if state[self.AdvancedName] then
+                -- 
+                self:ShowHighlighted()
+            else
+                -- deactivated ~> dont change
+            end
         end
     end, self)
 
@@ -490,8 +566,12 @@ function DFEditModeSystemSelectionBaseMixin:ShowHighlighted()
     self:SetNinesliceSelected(false);
     self.isSelected = false;
     self:UpdateLabelVisibility();
+    -- self:SetFrameStrata('MEDIUM')
     self:Show();
-    if self.SelectionOptions then self.SelectionOptions:Hide() end
+    if self.SelectionOptions then
+        -- self:RefreshOptionScreen();
+        self.SelectionOptions:Hide()
+    end
 end
 
 function DFEditModeSystemSelectionBaseMixin:ShowSelected()
@@ -499,8 +579,12 @@ function DFEditModeSystemSelectionBaseMixin:ShowSelected()
     self:SetNinesliceSelected(true);
     self.isSelected = true;
     self:UpdateLabelVisibility();
+    -- self:SetFrameStrata('HIGH')
     self:Show();
-    if self.SelectionOptions then self.SelectionOptions:Show() end
+    if self.SelectionOptions then
+        self:RefreshOptionScreen();
+        self.SelectionOptions:Show()
+    end
 end
 
 function DFEditModeSystemSelectionBaseMixin:OnUpdate()
@@ -662,6 +746,7 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     -- DevTools_Dump(data)
     self.parentExtra = data.parentExtra
 
+    self.AdvancedName = data.advancedName;
     self.ModuleRef = data.moduleRef;
     self.ModuleSub = data.sub;
 
@@ -675,6 +760,10 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
 
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeSelectionOptionsTemplate');
+    editModeFrame:ClearAllPoints()
+    editModeFrame:SetPoint('TOP', UIParent, 'TOP', 0, -100)
+    local dx = 4 + editModeFrame:GetWidth() / 2
+    editModeFrame:SetPoint('LEFT', UIParent, 'CENTER', dx, 0)
     editModeFrame.Header.Text:SetText(data.name)
     editModeFrame.BG.Bg:SetVertexColor(1, 0, 0, 1) -- TODO?
     self.SelectionOptions = editModeFrame
@@ -689,10 +778,17 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
         args = {}
     }
     local numOptions = 0;
+    local elementH = 0;
+    local elementSize = DFSettingsListMixin.ElementSize;
+
     for k, v in pairs(data.options.args) do
         if v.editmode then
             filteredOptions.args[k] = v
             numOptions = numOptions + 1
+            if numOptions < 11 then
+                elementH = elementH + elementSize[v.type] + 9
+            else
+            end
         end
     end
 
@@ -702,7 +798,8 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
 
     numOptions = math.min(numOptions, 10)
 
-    local optionsH = (26 + 9) * numOptions + 11
+    -- 9 = spacing, 11 = verticalPad + 1
+    local optionsH = elementH + 11
 
     local displayFrame = editModeFrame.DisplayFrame
     displayFrame:ClearAllPoints()
@@ -715,9 +812,10 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     if numOptions == 0 then displayFrame:Hide() end
 
     local extraH = 0;
+    local extraElementH = 0;
     if data.extra then
         --  
-        local extraData = {name = data.name, sub = data.sub, default = data.default}
+        local extraData = {name = data.name, sub = data.sub, default = data.default, hideDefault = true}
 
         local extraOptions = {
             type = data.extra.type,
@@ -732,24 +830,165 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
             if v.editmode then
                 extraOptions.args[k] = v
                 numExtraOptions = numExtraOptions + 1
+                extraElementH = extraElementH + elementSize[v.type] + 9
             end
         end
         extraData.options = extraOptions
         editModeFrame:SetupExtraOptions(extraData)
 
-        -- 16 = divider
-        extraH = 16 + (26 + 9) * numExtraOptions + 10
+        -- 26 = divider
+        extraH = 26 + extraElementH + 11
     end
 
     local newH = 80 + optionsH + extraH
     editModeFrame:SetHeight(newH)
 
     self.Prio = 1000 + (data.prio or 0)
-    self:SetFrameLevel(self.Prio)
+    -- self:SetFrameLevel(self.Prio)
 end
 
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
     -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
     -- self.SelectionOptions
     self.SelectionOptions.DisplayFrame:CallRefresh()
+end
+
+----------
+
+DFEditModeSystemSelectionMouseOverCheckerMixin = {};
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()
+    -- print('~~DFEditModeSystemSelectionMouseOverCheckerMixin:OnLoad()')
+    self.timeElapsed = 0
+    self.EditModeRef = DF:GetModule('Editmode');
+
+    local fontStr = self:GetParent():CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
+    fontStr:SetPoint('TOP', self:GetParent(), 'BOTTOM', 0, -5);
+    fontStr:SetText('')
+    self.FontStr = fontStr;
+
+    self:SetScript("OnKeyDown", function(_, key)
+        self:KeyPress(key);
+    end)
+    self:SetPropagateKeyboardInput(true)
+end
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:KeyPress(key)
+    -- print('KeyPress(key)', key)
+    if key == 'LALT' and self.ShouldCycle then
+        --
+        -- print('cycle')
+        self:CycleFrames()
+    end
+end
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:CycleFrames()
+    -- print('CycleFrames()')
+    -- local foci = GetMouseFoci()
+    -- for k, v in ipairs(foci) do
+    --     --
+    --     print(k, v:GetName())
+    --     if v.IsDFEditModeSelection then
+    --         print('lower', v:GetName())
+    --         v:Lower()
+    --         return;
+    --     end
+    -- end
+
+    -- return;
+
+    local nextFrame;
+    for k, v in ipairs(self.OverTable) do
+        if v == self.EditModeRef.SelectedFrame then
+            --   
+            nextFrame = self.OverTable[k + 1] or self.OverTable[1]
+        end
+        -- v:SetFrameLevel(999)
+        v:Lower()
+    end
+
+    if not nextFrame then return end -- nothing selected under cursor - skip
+    -- nextFrame:SetFrameLevel(1001)
+    nextFrame:Raise()
+end
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:OnUpdate(elapsed)
+    self.timeElapsed = self.timeElapsed + elapsed
+
+    if self.timeElapsed > 0.25 then
+        self.timeElapsed = 0
+        -- do something
+        -- print('OnUpdate')
+        self:UpdateMouseover()
+    end
+end
+local mouseOverCheckerTextFormat =
+    "(|cff8080ff%d|r) frames under cursor - press (|cff8080ffleft alt|r) to cycle through them"
+
+function DFEditModeSystemSelectionMouseOverCheckerMixin:UpdateMouseover()
+    local num = #self.EditModeRef.SelectionFrames;
+    local overTable = {}
+
+    for k, v in ipairs(self.EditModeRef.SelectionFrames) do
+        --
+        if v:IsMouseOver() then
+            -- print('~over: ', v:GetName())            
+            table.insert(overTable, v)
+        end
+    end
+
+    if #overTable < 2 then
+        self.ShouldCycle = false;
+        self.FontStr:SetText('')
+        return;
+    end
+
+    self.ShouldCycle = true;
+    self.FontStr:SetText(mouseOverCheckerTextFormat:format(#overTable))
+    self.OverTable = overTable;
+end
+
+-- layout dropdown
+DragonflightUIEditModeLayoutDropdownMixin = {}
+
+function DragonflightUIEditModeLayoutDropdownMixin:OnLoad()
+    -- print('OnLoad()')
+
+    -- self:SetSize(100, 20)
+
+    self.Button:ClearAllPoints()
+    -- self.Button:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+    self.Button:SetPoint('TOPLEFT')
+    self.Button:SetPoint('BOTTOMRIGHT')
+    -- self.Button:SetEnabled(false)
+
+    self.Button.Dropdown:ClearAllPoints()
+    self.Button.Dropdown:SetPoint('TOPLEFT')
+    self.Button.Dropdown:SetPoint('BOTTOMRIGHT')
+
+    self.Button.Label:ClearAllPoints();
+    self.Button.Label:SetPoint("BOTTOMLEFT", self.Button.Dropdown, "TOPLEFT", 0, 2);
+    self.Button.Label:SetText(L["EditModeLayoutDropdown"]);
+
+    -- self.Button.Dropdown:SetWidth(125)
+    self.Button.Dropdown.Text:SetText('*profile*')
+
+    self.Button.IncrementButton:Hide()
+    self.Button.DecrementButton:Hide()
+
+    local module = DF:GetModule('Profiles')
+    self.ProfileModule = module
+
+    self.Button.Dropdown:SetupMenu(module:GeneratorEditmodeLayout(true, function(name)
+        -- print('IsSelected', name)
+        return module:GetCurrentProfile() == name;
+    end, function(name)
+        -- print('SetSelected', name)
+        module:SetCurrentProfile(name)
+    end))
+
+    hooksecurefunc(DF, 'RefreshConfig', function()
+        -- print('ssss')
+        self.Button.Dropdown.Text:SetText(module:GetCurrentProfile())
+    end)
 end

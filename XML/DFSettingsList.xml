@@ -1,0 +1,336 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<Script file="Mixin/DFSettingsList.mixin.lua" />
+	<!-- List -->
+	<Frame name="DFSettingsList" mixin="DFSettingsListMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="Header">
+				<Size y="50" />
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Title" inherits="GameFontHighlightHuge" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" x="7" y="-22" />
+							</Anchors>
+						</FontString>
+						<Texture parentKey="HorizontalDivider" atlas="Options_HorizontalDivider" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="TOP" y="-50" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button parentKey="DefaultsButton" inherits="UIPanelButtonTemplate" hidden="true">
+						<Size x="96" y="22" />
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="-36" y="-16" />
+						</Anchors>
+					</Button>
+					<Button parentKey="TutorialButton" inherits="MainHelpPlateButton" hidden="true">
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="15" y="5" />
+						</Anchors>
+						<HighlightTexture file="Interface\common\help-i" alphaMode="ADD" hidden="true">
+							<Size x="46" y="46" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<Color r="1" g="1" b="1" a=".2" />
+						</HighlightTexture>
+					</Button>
+				</Frames>
+			</Frame>
+			<Button parentKey="SmallDefaultsButton" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="155" y="25" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-28" />
+				</Anchors>
+			</Button>
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Frames>
+					<Button parentKey="InputBlocker" clipChildren="true" setAllPoints="true" hidden="true" />
+				</Frames>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="-4" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-1" y="7" />
+				</Anchors>
+			</EventFrame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Element -->
+	<Frame name="DFSettingsListElementBase" mixin="DFSettingsListElementBaseMixin" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Text" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false" hidden="true" />
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Tooltip" mixin="DefaultTooltipMixin">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-80" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="HoverBackground" inherits="DFHoverBackgroundTemplate" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad method="OnLoad" />
+				</Scripts>
+			</Frame>
+			<Frame parentKey="NewFeature" inherits="DFSettingsNewFeatureLabelNoAnimateTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Text" relativePoint="LEFT" x="-37" y="3" />
+				</Anchors>
+			</Frame>
+			<Frame parentKey="Blizzard" inherits="DFSettingsBlizzardLabelNoAnimateTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Text" relativePoint="LEFT" x="-37" y="3" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Background texture -->
+	<Texture name="DFHoverBackgroundTemplate" virtual="true" hidden="true">
+		<Anchors>
+			<Anchor relativeKey="$parent.$parent" point="TOPLEFT" x="-10" />
+			<Anchor relativeKey="$parent.$parent" point="BOTTOMRIGHT" x="-5" />
+		</Anchors>
+		<Color a="0.1" r="1" g="1" b="1" />
+	</Texture>
+	<!-- Header -->
+	<Frame name="DFSettingsListHeader" inherits="DFSettingsListElementBase" mixin="DFSettingsListHeaderMixin" virtual="true">
+		<Size y="45" />
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Title" inherits="GameFontHighlightLarge" justifyH="LEFT" justifyV="TOP">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="7" y="-16" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="16.5" y="12" />
+					<Anchors>
+						<Anchor point="RIGHT" x="-16" y="0" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="CollapseIconAlphaAdd" alphaMode="ADD" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="16.5" y="12" />
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.CollapseIcon" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	<!-- Divider -->
+	<Frame name="DFSettingsListDivider" inherits="DFSettingsListElementBase" mixin="DFSettingsListDividerMixin" virtual="true">
+		<Size y="16" />
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Texture" file="Interface\AddOns\DragonflightUI\Textures\Editmode\ui-friendsframe-onlinedivider">
+					<!-- <Size x="330" y="8" /> -->
+					<!-- <Anchor point="TOPLEFT" x="7" y="-16" /> -->
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="0" />
+						<Anchor point="BOTTOMRIGHT" x="0" y="0" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	<!-- Checkbox -->
+	<Frame name="DFSettingsListCheckboxContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListCheckboxContainerMixin" virtual="true">
+		<Frames>
+			<CheckButton parentKey="Checkbox" inherits="DFSettingsListCheckbox">
+			</CheckButton>
+		</Frames>
+	</Frame>
+	<CheckButton name="DFSettingsListCheckbox" mixin="DFSettingsListCheckboxMixin" motionScriptsWhileDisabled="true" virtual="true">
+		<Size x="30" y="29" />
+		<!--
+		<Layers>
+		<Layer level="BACKGROUND">
+		<Texture parentKey="HoverBackground" inherits="HoverBackgroundTemplateDF" />
+		</Layer>
+		</Layers>
+		-->
+		<Anchors>
+			<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="8" y="0" />
+		</Anchors>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
+		</Scripts>
+		<NormalTexture atlas="checkbox-minimal" useAtlasSize="true" />
+		<PushedTexture atlas="checkbox-minimal" useAtlasSize="true" />
+		<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true" />
+		<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true" />
+	</CheckButton>
+	<!-- Slider -->
+	<Frame name="DFSettingsListSliderContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListSliderContainerMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="Slider" inherits="DFSettingsListSlider">
+			</Frame>
+			<EditBox parentKey="Editbox" inherits="DFSettingsListEditboxTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Slider.RightText" relativePoint="LEFT" x="0" y="0" />
+				</Anchors>
+			</EditBox>
+		</Frames>
+	</Frame>
+	<Frame name="DFSettingsListSlider" inherits="MinimalSliderWithSteppersTemplate" mixin="DFSettingsListSliderMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Frame>
+	<EditBox name="DFSettingsListEditboxTemplate" multiLine="false" autoFocus="false" virtual="true">
+		<Size>
+			<AbsDimension x="60" y="20">
+			</AbsDimension>
+		</Size>
+		<TextInsets left="1" right="1" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="HoverBackground">
+					<Color a="0.42" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<FontString inherits="GameFontNormal">
+		</FontString>
+	</EditBox>
+	<!--
+	Slider with checkbox
+	<Frame name="DFSettingsListSliderWithChexboxContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListSliderWithCheckboxContainerMixin" virtual="true">
+	<Frames>
+	<Frame parentKey="Slider" inherits="DFSettingsListSlider">
+	</Frame>
+	<EditBox parentKey="Editbox" inherits="DFSettingsListEditboxTemplate">
+	<Anchors>
+	<Anchor point="LEFT" relativeKey="$parent.Slider.RightText" relativePoint="LEFT" x="0" y="0" />
+	</Anchors>
+	</EditBox>
+	</Frames>
+	</Frame>
+	-->
+	<!-- Button -->
+	<Frame name="DFSettingsListButton" inherits="DFSettingsListElementBase" mixin="DFSettingsListButtonMixin" virtual="true">
+		<Frames>
+			<Button parentKey="Button" inherits="UIPanelButtonTemplate" hidden="false">
+				<Size x="200" y="26" />
+				<!--
+				<Anchors>
+				<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="0" y="0" />
+				</Anchors>
+				-->
+			</Button>
+		</Frames>
+	</Frame>
+	<!-- Colorpicker -->
+	<Frame name="DFSettingsListColorPicker" inherits="DFSettingsListElementBase" mixin="DFSettingsListColorPickerMixin" virtual="true">
+		<Layers>
+			<!--
+			<Layer level="ARTWORK">
+			<Texture parentKey="ColorCurrent">
+			<Size x="47" y="25" />
+			<Anchors>
+			<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="30" y="0" />
+			</Anchors>
+			<Color r="1.0" g="1.0" b="1.0" a="1.0" />
+			</Texture>
+			</Layer>
+			-->
+		</Layers>
+		<Frames>
+			<Button parentKey="Color" inherits="DFSettingsListColor">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="10" y="0" />
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>
+	<Button name="DFSettingsListColor" mixin="DFSettingsListColorMixin" virtual="true">
+		<Size x="26" y="26" />
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Button>
+	<!-- Editbox -->
+	<Frame name="DFSettingsListEditbox" inherits="DFSettingsListElementBase" mixin="DFSettingsListEditboxMixin" virtual="true">
+		<Frames>
+			<EditBox parentKey="Editbox" inherits="DFSettingsListEditboxTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="0" y="0" />
+				</Anchors>
+			</EditBox>
+		</Frames>
+	</Frame>
+	<!-- Dropdown -->
+	<Frame name="DFSettingsListDropdownContainer" inherits="DFSettingsListElementBase" mixin="DFSettingsListDropdownContainerMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="Button" inherits="DropdownWithSteppersTemplate" mixin="DropdownWithSteppersAndLabelMixin" virtual="true">
+				<Frames>
+					<DropdownButton parentKey="Dropdown" inherits="WowStyle2DropdownTemplate">
+						<Anchors>
+							<Anchor point="CENTER" />
+						</Anchors>
+					</DropdownButton>
+				</Frames>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Label" font="GameFontHighlightMed2">
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.DecrementButton" relativePoint="LEFT" x="-34" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<!--
+			<Button parentKey="IncrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
+			<Size x="32" y="32" />
+			<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-nextbutton" />
+			<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-nextbutton-down" />
+			<DisabledTexture atlas="charactercreate-customize-nextbutton-disabled" />
+			</Button>
+			-->
+			<!--
+			<Button parentKey="DecrementButton" inherits="AlphaHighlightButtonTemplate" motionScriptsWhileDisabled="true">
+			<Size x="32" y="32" />
+			<NormalTexture parentKey="NormalTexture" atlas="charactercreate-customize-backbutton" />
+			<PushedTexture parentKey="PushedTexture" atlas="charactercreate-customize-backbutton-down" />
+			<DisabledTexture atlas="charactercreate-customize-backbutton-disabled" />
+			</Button>
+			-->
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+</Ui>

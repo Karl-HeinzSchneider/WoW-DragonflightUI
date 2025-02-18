@@ -34,6 +34,8 @@ function ScrollableListItemMixinDF:Init(elementData)
         self.Item.Slider:RegisterCallback('OnValueChanged', function(self, ...)
             local newValue = ...
             set({key}, newValue)
+            self.Item.Slider.RightText:Hide();
+            self.Item.Slider.Editbox:SetText(self.Item.Slider.RightText:GetText())
         end, self)
         list:RegisterCallback('OnDefaults', function(self, ...)
             self:SetSlider(get({key}), data.min, data.max, data.bigStep)
@@ -133,6 +135,9 @@ function ScrollableListItemMixinDF:Reset()
     self.Item.Slider:SetPoint("LEFT", self, "CENTER", -80, 3)
     self.Item.Slider:Hide()
     self.Item.Slider:UnregisterCallback('OnValueChanged', self)
+    -- self.Item.Slider.Editbox:SetJustifyH('CENTER')
+    self.Item.Slider.Editbox:SetWidth(60)
+    self.Item.Slider.Editbox:SetPoint('LEFT', self.Item.Slider.RightText, 'LEFT', 0, 0)
 
     self.Item.Dropdown:SetParent(self)
     self.Item.Dropdown:SetPoint("LEFT", self, "CENTER", -40, 3)
@@ -157,7 +162,10 @@ function ScrollableListItemMixinDF:SetSmall(small)
 
     self.Item.Checkbox:SetPoint("LEFT", self, "CENTER", -60, 0) -- 80,0
 
-    self.Item.Slider:SetWidth(235) -- 250
+    self.Item.Slider:SetWidth(228) -- 250
+    -- self.Item.Slider.Editbox:SetJustifyH('LEFT')
+    self.Item.Slider.Editbox:SetWidth(48) -- 60
+    self.Item.Slider.Editbox:SetPoint('LEFT', self.Item.Slider.RightText, 'LEFT', -5, 0)
 
     self.Item.Dropdown.Button:SetWidth(204) -- 250
     self.Item.Dropdown:SetPoint("LEFT", self, "CENTER", -64, 3) -- -40
@@ -185,7 +193,7 @@ function ScrollableListItemMixinDF:SetTooltip(name, desc)
 end
 
 function ScrollableListItemMixinDF:SetCheckbox(checked)
-    self.Item.Checkbox:SetValue(checked)
+    self.Item.Checkbox:SetValue(checked, true)
     self.Item.Checkbox:Show()
 end
 
@@ -195,6 +203,9 @@ function ScrollableListItemMixinDF:SetSlider(value, minValue, maxValue, step)
     self.Item.Slider.Slider:SetMinMaxValues(minValue, maxValue)
     self.Item.Slider.Slider:SetValueStep(step)
     self.Item.Slider.Slider:SetValue(value)
+
+    self.Item.Slider.RightText:Hide();
+    self.Item.Slider.Editbox:SetText(self.Item.Slider.RightText:GetText())
 end
 
 function ScrollableListItemMixinDF:SetDropdown(options)
@@ -245,8 +256,9 @@ function SettingsCheckBoxMixinDF:OnLeave()
     SettingsTooltip:Hide();
 end
 
-function SettingsCheckBoxMixinDF:SetValue(value)
+function SettingsCheckBoxMixinDF:SetValue(value, muted)
     self:SetChecked(value)
+    if muted then return end
     if value then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
     else
@@ -294,6 +306,42 @@ function SettingsSliderMixinDF:OnLoad()
     self.Slider:HookScript('OnLeave', function()
         self:OnLeave()
     end)
+
+    local editbox = CreateFrame('EditBox', 'EditBox', self, 'SettingsSliderEditboxTemplateDF')
+    editbox:SetPoint('LEFT', self.RightText, 'LEFT', 0, 0)
+    self.Editbox = editbox
+
+    editbox:SetScript('OnEscapePressed', function()
+        editbox:ClearFocus()
+    end)
+
+    editbox:SetScript('OnTabPressed', function()
+        editbox:ClearFocus()
+    end)
+
+    editbox:SetScript('OnEditFocusGained', function()
+        editbox:HighlightText()
+    end)
+
+    editbox:SetScript('OnEnterPressed', function()
+        editbox:ClearFocus()
+        local newValue = tonumber(editbox:GetText()) or self.Slider:GetValue();
+        self.Slider:SetValue(newValue)
+        editbox:SetText(self.RightText:GetText())
+        self.RightText:Hide()
+    end)
+
+    self.RightText:Hide()
+    editbox:SetJustifyH('CENTER')
+
+    -- self:HookScript('SetValue', function(test, value)
+    --     print('SetValue', test, value)
+    -- end)
+
+    -- editbox:SetScript('OnClick', function()
+    --     editbox.Text:HighlightText() -- parameters (start, end) or default all
+    --     editbox.Text:SetFocus()
+    -- end)
 
     --[[ self.lastValue = nil
 

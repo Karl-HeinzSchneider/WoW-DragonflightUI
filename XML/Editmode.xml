@@ -24,7 +24,7 @@
 	<Frame name="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeFrameMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
 		<Size x="450" y="250" />
 		<Anchors>
-			<Anchor point="CENTER" y="150" />
+			<Anchor point="TOP" y="-100" />
 		</Anchors>
 		<Layers>
 			<Layer level="BORDER">
@@ -67,6 +67,12 @@
 					<Anchor point="BOTTOMRIGHT" x="-25" y="18" />
 				</Anchors>
 			</Button>
+			<Button parentKey="AdvancedButton" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="155" y="25" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-32" y="-38" />
+				</Anchors>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />
@@ -79,7 +85,38 @@
 			<OnDragStop method="OnDragStop" />
 		</Scripts>
 	</Frame>
+	<Frame name="DragonflightUIEditModeLayoutDropdownTemplate" mixin="DragonflightUIEditModeLayoutDropdownMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="Button" inherits="DropdownWithSteppersTemplate" mixin="DropdownWithSteppersAndLabelMixin" virtual="true">
+				<Frames>
+					<DropdownButton parentKey="Dropdown" inherits="WowStyle2DropdownTemplate">
+						<Anchors>
+							<Anchor point="CENTER" />
+						</Anchors>
+					</DropdownButton>
+				</Frames>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Label" justifyH="LEFT" font="GameFontNormal">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.Dropdown" relativePoint="TOPLEFT" x="0" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
 	<Frame name="DragonflightUIEditModeSelectionOptionsTemplate" inherits="DragonflightUIEditModeFrameTemplate" mixin="DragonflightUIEditModeSelectionOptionsMixin" enableKeyboard="true" enableMouse="true" movable="true" clampedToScreen="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true">
+	</Frame>
+	<Frame name="DFEditModeSystemSelectionMouseOverChecker" mixin="DFEditModeSystemSelectionMouseOverCheckerMixin" enableKeyboard="true" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnUpdate method="OnUpdate" />
+		</Scripts>
 	</Frame>
 	<Frame name="DFEditModeSystemSelectionBaseTemplate" parentKey="Selection" mixin="DFEditModeSystemSelectionBaseMixin" ignoreParentAlpha="true" frameStrata="MEDIUM" frameLevel="1000" toplevel="true" enableMouse="true" registerForDrag="LeftButton" dontSavePosition="true" virtual="true" hidden="true">
 		<Size x="1" y="1" />
@@ -110,7 +147,12 @@
 	</Frame>
 	<Frame name="DFEditModePreviewTargetTemplate" mixin="DragonflightUIEditModePreviewTargetMixin" virtual="true" hidden="true">
 	</Frame>
+	<Frame name="DFEditModePreviewTargetOfTargetTemplate" mixin="DragonflightUIEditModePreviewTargetOfTargetMixin" virtual="true" hidden="true">
+	</Frame>
 	<Frame name="DFEditModePreviewPartyFrameTemplate" mixin="DragonflightUIEditModePreviewPartyFrameMixin" virtual="true" hidden="true">
+		<Scripts>
+			<OnUpdate method="OnUpdate" />
+		</Scripts>
 	</Frame>
 	<Frame name="DFEditModePreviewPartyTemplate" mixin="DragonflightUIEditModePreviewPartyMixin" virtual="true">
 	</Frame>

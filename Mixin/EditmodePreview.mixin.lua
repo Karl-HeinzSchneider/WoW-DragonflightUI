@@ -84,7 +84,7 @@ function DragonflightUIEditModePreviewTargetMixin:UpdateState(state)
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
 
-    self.NameBackground:SetShown(not state.hideNameBackground)
+    if self.NameBackground then self.NameBackground:SetShown(not state.hideNameBackground) end
 
     if state.classcolor then
         self.HealthBar:SetClass(self.Unit.class)
@@ -311,6 +311,179 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     self.NameBackground = nameBackground
 end
 
+------ target of target
+DragonflightUIEditModePreviewTargetOfTargetMixin = {}
+Mixin(DragonflightUIEditModePreviewTargetOfTargetMixin, DragonflightUIEditModePreviewTargetMixin)
+
+function DragonflightUIEditModePreviewTargetOfTargetMixin:OnLoad()
+    -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewRaidMixin:OnLoad()')
+
+    -- local sizeX, sizeY = _G['TargetFrameToT']:GetSize()
+    local sizeX, sizeY = 120, 45;
+    self:SetSize(sizeX, sizeY)
+    self:SetupFrame()
+    self:SetRandomUnit()
+end
+
+function DragonflightUIEditModePreviewTargetOfTargetMixin:SetupFrame()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+
+    local textureFrame = CreateFrame('Frame', 'DragonflightUITargetOfTargetTextureFrame', self)
+    textureFrame:SetPoint('CENTER')
+    textureFrame:SetFrameLevel(3)
+    self.TextureFrame = textureFrame
+    local totDelta = 1
+
+    local portrait = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetOfTargetFramePortrait')
+    portrait:SetDrawLayer('ARTWORK', 1)
+    portrait:SetSize(35, 35)
+
+    portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', 6, -6)
+    self.TargetFramePortrait = portrait
+    function portrait:UpdatePortrait(id)
+        if not id then return end
+        -- SetPortraitTexture(self.TargetFramePortrait, unit)   
+        SetPortraitTextureFromCreatureDisplayID(portrait, tonumber(id) or 0);
+    end
+    portrait:UpdatePortrait('player')
+
+    local background = self:CreateTexture('DragonflightUITargetOfTargetFrameBackground')
+    background:SetDrawLayer('BACKGROUND', 2)
+    background:SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    background:SetPoint('LEFT', portrait, 'CENTER', -25 + 1, -10 + totDelta)
+    self.TargetFrameBackground = background
+
+    local border = self.TextureFrame:CreateTexture('DragonflightUITargetOfTargetFrameBorder')
+    border:SetDrawLayer('ARTWORK', 2)
+    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    border:SetPoint('LEFT', portrait, 'CENTER', -25 + 1, -10 + totDelta)
+    self.TargetFrameBorder = border
+
+    local healthBar = CreateFrame("StatusBar", nil, self)
+    healthBar:SetSize(70.5, 10)
+    healthBar:SetPoint('LEFT', portrait, 'RIGHT', 1 + 1, 0 + totDelta)
+
+    healthBar:SetStatusBarTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+    healthBar:SetStatusBarColor(1, 1, 1, 1)
+    healthBar:SetMinMaxValues(0, 100)
+    healthBar:SetValue(69)
+    self.HealthBar = healthBar
+    function healthBar:SetClass(class)
+        if class == '' then
+            healthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+            healthBar:SetStatusBarColor(1, 1, 1, 1)
+        else
+            healthBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
+            -- local localizedClass, englishClass, classIndex = UnitClass('focus')
+            healthBar:SetStatusBarColor(DF:GetClassColor(class, 1))
+        end
+    end
+    self.HealthBar:SetClass('PRIEST')
+
+    local manaBar = CreateFrame("StatusBar", nil, self)
+    manaBar:SetPoint('LEFT', portrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1 + totDelta)
+    manaBar:SetSize(74, 7.5)
+    manaBar:SetStatusBarTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+    manaBar:SetStatusBarColor(1, 1, 1, 1)
+    manaBar:SetMinMaxValues(0, 100)
+    manaBar:SetValue(100)
+
+    -- local manaMask = manaBar:CreateMaskTexture()
+    -- manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -61, 3)
+    -- manaMask:SetTexture(
+    --     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+    --     'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    -- manaMask:SetTexCoord(0, 1, 0, 1)
+    -- manaMask:SetSize(256, 16)
+    -- manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+
+    self.ManaBar = manaBar
+    function manaBar:SetPowerType(powerTypeString)
+        if powerTypeString == 'MANA' then
+            manaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+        elseif powerTypeString == 'FOCUS' then
+            manaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+        elseif powerTypeString == 'RAGE' then
+            manaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+        elseif powerTypeString == 'ENERGY' then
+            manaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+        elseif powerTypeString == 'RUNIC_POWER' then
+            manaBar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+        end
+    end
+    self.ManaBar:SetPowerType('MANA')
+
+    -- -- TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', TargetFramePortrait, 'TOP', 0, 2)
+    -- local targetIcon = self.TextureFrame:CreateTexture('DragonflightUIRaidTarget')
+    -- targetIcon:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcons')
+    -- targetIcon:SetDrawLayer('ARTWORK', 5)
+    -- targetIcon:SetSize(26, 26)
+    -- targetIcon:ClearAllPoints()
+    -- targetIcon:SetPoint('CENTER', portrait, 'TOP', 0, 2)
+    -- targetIcon:Hide()
+    -- self.RaidTargetIcon = targetIcon
+    -- function targetIcon:UpdateTargetIcon(index)
+    --     -- local index = GetRaidTargetIndex(unit);
+    --     if (index > 0) then
+    --         SetRaidTargetIconTexture(targetIcon, index);
+    --         targetIcon:Show();
+    --     else
+    --         targetIcon:Hide();
+    --     end
+    -- end
+    -- targetIcon:UpdateTargetIcon(0)
+
+    local fontName = self:CreateFontString('**', 'OVERLAY', 'GameFontNormalSmall')
+    fontName:SetPoint('LEFT', portrait, 'RIGHT', 1 + 1, 2 + 12 - 1 + totDelta)
+    fontName:SetSize(100, 10)
+    fontName:SetJustifyH('LEFT')
+    self.FontName = fontName
+    function fontName:SetName(name)
+        fontName:SetText(name)
+    end
+    fontName:SetName('Zimtschnecke')
+
+    -- local fontLevel = self:CreateFontString('**', 'OVERLAY', 'GameFontNormalSmall')
+    -- fontLevel:SetPoint('BOTTOMRIGHT', healthBar, 'TOPLEFT', 16, 3 - 2)
+    -- fontLevel:SetHeight(12);
+    -- self.FontLevel = fontLevel
+    -- function fontLevel:SetLevel(lvl)
+    --     fontLevel:SetText(lvl)
+    -- end
+    -- fontLevel:SetLevel('69')
+
+    -- local nameBackground = self:CreateTexture('')
+    -- nameBackground:SetTexture(base)
+    -- nameBackground:SetTexCoord(0.7939453125, 0.92578125, 0.3125, 0.34765625)
+    -- nameBackground:SetSize(135, 18)
+    -- nameBackground:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', -2, -4 - 1)
+    -- function nameBackground:SetColor(type)
+    --     if type == 'white' then
+    --         nameBackground:SetVertexColor(1, 1, 1, 1);
+    --     elseif type == 'blue' then
+    --         nameBackground:SetVertexColor(0, 0, 1, 1);
+    --     elseif type == 'green' then
+    --         nameBackground:SetVertexColor(0, 1, 0, 1);
+    --     elseif type == 'red' then
+    --         nameBackground:SetVertexColor(1, 0, 0, 1);
+    --     elseif type == 'yellow' then
+    --         nameBackground:SetVertexColor(1, 1, 0, 1);
+    --     end
+    -- end
+    -- nameBackground:SetColor('blue')
+    -- self.NameBackground = nameBackground
+end
+
 ------- party frame
 DragonflightUIEditModePreviewPartyFrameMixin = {}
 function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
@@ -320,6 +493,7 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
     local gap = 10;
     self:SetSize(sizeX, sizeY * 4 + 3 * gap)
 
+    self.LastUpdate = GetTime()
     self.PartyFrames = {}
 
     for k = 1, 4 do
@@ -343,11 +517,62 @@ function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
     self:UpdateVisibility()
 end
 
+function DragonflightUIEditModePreviewPartyFrameMixin:OnUpdate(elapsed)
+    local updateInterval = 0.15;
+
+    if not self.DFEditMode then return; end
+
+    if GetTime() - self.LastUpdate >= updateInterval then
+        self.LastUpdate = GetTime()
+        -- print('self:OnUpdate')
+        -- if self.UpdateBlizzard then self:UpdateBlizzard() end
+    end
+end
+
+function DragonflightUIEditModePreviewPartyFrameMixin:UpdateBlizzard()
+    -- local PartyMoveFrame = self.DFEditModeSelection.ModuleRef.PartyMoveFrame;
+
+    -- local state = self.state;
+    -- local parent = _G[state.anchorFrame]
+
+    -- local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint(1)
+    -- PartyMoveFrame:ClearAllPoints();
+    -- -- self.PartyMoveFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    -- PartyMoveFrame:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs)
+    -- PartyMoveFrame:SetScale(state.scale)
+end
+
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateState(state)
+    self.state = state;
+    self:Update()
+end
+
+function DragonflightUIEditModePreviewPartyFrameMixin:Update()
+    local state = self.state;
     self:ClearAllPoints()
     local parent = _G[state.anchorFrame]
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
+
+    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+
+    if state.orientation == 'vertical' then
+        self:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
+    else
+        self:SetSize(sizeX * 4 + 3 * state.padding, sizeY)
+    end
+
+    for i = 2, 4 do
+        local pf = self.PartyFrames[i]
+
+        if state.orientation == 'vertical' then
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', self.PartyFrames[i - 1], 'BOTTOMLEFT', 0, -state.padding)
+        else
+            pf:ClearAllPoints()
+            pf:SetPoint('TOPLEFT', self.PartyFrames[i - 1], 'TOPRIGHT', state.padding, 0)
+        end
+    end
 
     for k, v in ipairs(self.PartyFrames) do
         --
@@ -1227,4 +1452,15 @@ function DragonflightUIEditModePreviewRaidMixin:UpdateState(state)
 
         frame.horizDivider:Hide();
     end
+end
+
+DragonflightUIEditModePreviewAltPowerBarMixin = {}
+
+function DragonflightUIEditModePreviewAltPowerBarMixin:OnLoad()
+    -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewRaidMixin:OnLoad()')
+
+    -- local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    -- self:SetSize(sizeX, sizeY)
+    -- self:SetupFrame()
+    -- self:SetRandomUnit()
 end

@@ -1106,6 +1106,7 @@ function DragonflightUIStancebarMixinCode:Update()
     local modulo = state.buttons % state.rows
 
     local buttons = state.buttons
+    -- local buttons = math.min(state.buttons, GetNumShapeshiftForms())
     local rows = state.rows
     if rows > state.buttons then rows = buttons end
 
@@ -1287,3 +1288,127 @@ function DragonflightUIStancebarMixinCode:Update()
 end
 
 DragonflightUIStancebarMixin = CreateFromMixins(DragonflightUIActionbarMixin, DragonflightUIStancebarMixinCode)
+
+-- FPS
+DragonflightUIFPSMixin = {}
+
+function DragonflightUIFPSMixin:OnLoad()
+    UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
+
+    self:SetupFrame()
+
+    self.fpsTime = 0;
+    self:Hide()
+
+    hooksecurefunc('ToggleFramerate', function()
+        --
+        self:Update()
+    end)
+end
+
+function DragonflightUIFPSMixin:SetupFrame()
+    local Path, Size, Flags = FramerateText:GetFont()
+
+    do
+        local t = self:CreateFontString('FPSLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPLEFT', 0, 0)
+        t:SetText('FPS:')
+        t:SetFont(Path, Size, Flags)
+
+        self.FPSLabel = t
+    end
+
+    do
+        local t = self:CreateFontString('PingLabel', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPLEFT', self.FPSLabel, 'BOTTOMLEFT', 0, 0)
+        t:SetText('MS:')
+        t:SetFont(Path, Size, Flags)
+
+        self.PingLabel = t
+    end
+
+    do
+        local t = self:CreateFontString('FPSText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, 0)
+        t:SetText('')
+        t:SetFont(Path, Size, Flags)
+
+        self.FPSText = t
+    end
+
+    do
+        local t = self:CreateFontString('PingText', 'OVERLAY', 'SystemFont_Shadow_Med1')
+        t:SetPoint('TOPRIGHT', self.FPSText, 'BOTTOMRIGHT', 0, 0)
+        t:SetText('')
+        t:SetFont(Path, Size, Flags)
+
+        self.PingText = t
+    end
+end
+
+function DragonflightUIFPSMixin:OnUpdate(elapsed)
+    if not self:IsShown() then return end
+
+    local timeLeft = self.fpsTime - elapsed
+    if (timeLeft <= 0) then
+        -- 0.25
+        self.fpsTime = FRAMERATE_FREQUENCY;
+
+        local framerate = GetFramerate();
+        self.FPSText:SetFormattedText("%.1f", framerate);
+
+        local down, up, lagHome, lagWorld = GetNetStats()
+        -- local str = 'MS: ' .. lagHome .. '|' .. lagWorld
+        local str = tostring(math.max(lagHome, lagWorld))
+        self.PingText:SetText(str)
+    else
+        self.fpsTime = timeLeft;
+    end
+end
+
+function DragonflightUIFPSMixin:SetState(state)
+    self.state = state
+    self:Update()
+end
+
+function DragonflightUIFPSMixin:Update()
+    local state = self.state;
+
+    local parent = _G[state.anchorFrame]
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    self:SetScale(state.scale)
+
+    -- self:UpdateStateHandler(state)
+
+    FramerateLabel:ClearAllPoints()
+    if state.hideDefaultFPS then
+        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117 - 500)
+    else
+        FramerateLabel:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 117)
+    end
+
+    if state.showPing then
+        self.PingLabel:Show()
+        self.PingText:Show()
+    else
+        self.PingLabel:Hide()
+        self.PingText:Hide()
+    end
+
+    if state.showFPS then
+        self.FPSLabel:Show()
+        self.FPSText:Show()
+    else
+        self.FPSLabel:Hide()
+        self.FPSText:Hide()
+    end
+
+    self:SetShown(FramerateLabel:IsShown())
+
+    if state.alwaysShowFPS then self:Show() end
+
+    if state.EditModeActive then self:Show() end
+end
+

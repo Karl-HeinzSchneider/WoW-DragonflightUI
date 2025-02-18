@@ -3713,6 +3713,11 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                     tab.DFFirstOffsetX = 4
                     tab.DFTabWidth = 62.8
 
+                    if i == 1 then
+                        tab:ClearAllPoints()
+                        tab:SetPoint('TOPLEFT', FriendsFrame, 'BOTTOMLEFT', 6, -1)
+                    end
+
                     if i == 4 then
                         -- raid 
                         -- tab:SetText('Schlachtzug')
@@ -3728,6 +3733,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                         if tabHigh then tabHigh:Hide() end
                     end
                 end
+            end
+
+            -- title text bug @BLIZZBUG
+            do
+                -- local title = _G['FriendsFrameTitleText']
+                hooksecurefunc('FriendsFrame_Update', function()
+                    --
+                    -- print('FriendsFrame_Update')
+                    if FriendsFrame.TitleText then FriendsFrame.TitleText:Hide() end
+                end)
             end
 
             -- guild 
@@ -3803,6 +3818,11 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 if tab then
                     local text = _G['FriendsFrameTab' .. i .. 'Text']
                     tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+
+                    if i == 1 then
+                        tab:ClearAllPoints()
+                        tab:SetPoint('TOPLEFT', FriendsFrame, 'BOTTOMLEFT', 6, -1)
+                    end
                 end
             end
         end

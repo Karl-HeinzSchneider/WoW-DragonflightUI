@@ -1,6 +1,7 @@
 ---@class DragonflightUI
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'UI'
 ---@diagnostic disable-next-line: undefined-field
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
@@ -57,53 +58,53 @@ end
 
 local UIOptions = {
     type = 'group',
-    name = 'Utility',
+    name = L["UIUtility"],
     get = getOption,
     set = setOption,
     args = {
         changeBag = {
             type = 'toggle',
-            name = 'Change Bags',
-            desc = '' .. getDefaultStr('changeBag', 'first'),
+            name = L["UIChangeBags"],
+            desc = L["UIChangeBagsDesc"] .. getDefaultStr('changeBag', 'first'),
             order = 21
         },
         itemcolor = {
             type = 'toggle',
-            name = 'Colored Inventory Items',
-            desc = '' .. getDefaultStr('itemcolor', 'first'),
+            name = L["UIColoredInventoryItems"],
+            desc = L["UIColoredInventoryItemsDesc"] .. getDefaultStr('itemcolor', 'first'),
             order = 22
         },
         questLevel = {
             type = 'toggle',
-            name = 'Show Questlevel',
-            desc = '' .. getDefaultStr('questLevel', 'first'),
+            name = L["UIShowQuestlevel"],
+            desc = L["UIShowQuestlevelDesc"] .. getDefaultStr('questLevel', 'first'),
             order = 23
         },
-        headerFrames = {type = 'header', name = 'Frames', desc = '...', order = 100},
+        headerFrames = {type = 'header', name = L["UIFrames"], desc = L["UIFramesDesc"], order = 100},
         changeCharacterframe = {
             type = 'toggle',
-            name = 'Change CharacterFrame',
-            desc = '' .. getDefaultStr('changeCharacterframe', 'first'),
+            name = L["UIChangeCharacterFrame"],
+            desc = L["UIChangeCharacterFrameDesc"] .. getDefaultStr('changeCharacterframe', 'first'),
             order = 101,
             new = true
         },
         changeTradeskill = {
             type = 'toggle',
-            name = 'Change Profession Window',
-            desc = '' .. getDefaultStr('changeTradeskill', 'first'),
+            name = L["UIChangeProfessionWindow"],
+            desc = L["UIChangeProfessionWindowDesc"] .. getDefaultStr('changeTradeskill', 'first'),
             order = 102
         },
         changeInspect = {
             type = 'toggle',
-            name = 'Change InspectFrame',
-            desc = '' .. getDefaultStr('changeInspect', 'first'),
+            name = L["UIChangeInspectFrame"],
+            desc = L["UIChangeInspectFrameDesc"] .. getDefaultStr('changeInspect', 'first'),
             order = 104,
             new = true
         },
         changeTrainer = {
             type = 'toggle',
-            name = 'Change Trainer Window',
-            desc = '' .. getDefaultStr('changeTrainer', 'first'),
+            name = L["UIChangeTrainerWindow"],
+            desc = L["UIChangeTrainerWindowDesc"] .. getDefaultStr('changeTrainer', 'first'),
             order = 104
         }
     }
@@ -113,22 +114,22 @@ if DF.Era or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
         changeTalents = {
             type = 'toggle',
-            name = 'Change TalentFrame',
-            desc = '(Not on Wrath)' .. getDefaultStr('changeTalents', 'first'),
+            name = L["UIChangeTalentFrame"],
+            desc = L["UIChangeTalentFrameDesc"] .. getDefaultStr('changeTalents', 'first'),
             order = 103,
             new = true
         },
         changeSpellBook = {
             type = 'toggle',
-            name = 'Change SpellBook',
-            desc = '' .. getDefaultStr('changeSpellBook', 'first'),
+            name = L["UIChangeSpellBook"],
+            desc = L["UIChangeSpellBookDesc"] .. getDefaultStr('changeSpellBook', 'first'),
             order = 101.1,
             new = true
         },
         changeSpellBookProfessions = {
             type = 'toggle',
-            name = 'Change SpellBook Professions',
-            desc = '' .. getDefaultStr('changeSpellBookProfessions', 'first'),
+            name = L["UIChangeSpellBookProfessions"],
+            desc = L["UIChangeSpellBookProfessionsDesc"] .. getDefaultStr('changeSpellBookProfessions', 'first'),
             order = 101.2,
             new = true
         }
@@ -180,6 +181,9 @@ frame:SetScript('OnEvent', frame.OnEvent)
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     ---@diagnostic disable-next-line: undefined-field
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
@@ -199,8 +203,7 @@ function Module:OnEnable()
         Module.Era()
     end
 
-    ---@diagnostic disable-next-line: missing-parameter
-    Module.ApplySettings()
+    Module:ApplySettings()
     Module:RegisterOptionScreens()
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -213,9 +216,19 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'UI'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('ui', {order = 0, name = 'UI', descr = 'UIsss', isNew = false})
+end
+
 function Module:RegisterOptionScreens()
-    ---@diagnostic disable-next-line: undefined-field
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'UI', {
+    DF.ConfigModule:RegisterSettingsData('ui', 'misc', {
         name = 'UI',
         sub = 'first',
         options = UIOptions,
@@ -228,7 +241,6 @@ end
 function Module:RefreshOptionScreens()
     -- print('Module:RefreshOptionScreens()')
 
-    ---@diagnostic disable-next-line: undefined-field
     local configFrame = DF.ConfigModule.ConfigFrame
 
     local refreshCat = function(name)
@@ -523,55 +535,17 @@ function Module:FuncOrWaitframe(addon, func)
 end
 
 function Module:UpdateTradeskills()
-    local DFProfessionFrame = DragonflightUIMixin:CreateProfessionFrame()
+    do
+        local loaded, reason = LoadAddOn('Blizzard_TradeSkillUI')
+        -- print('--', loaded, reason)    
+    end
+    do
+        local loaded, reason = LoadAddOn('Blizzard_CraftUI')
+        -- print('--', loaded, reason)
+    end
 
-    Module:FuncOrWaitframe('Blizzard_TradeSkillUI', function()
-        --[[      local default = {
-            whileDead = 1,
-            height = 424,
-            width = 353,
-            bottomClampOverride = 152,
-            xoffset = -16,
-            yoffset = 12,
-            pushable = 3,
-            area = "left"
-        } ]]
-        UIPanelWindows["TradeSkillFrame"] = {
-            whileDead = 1,
-            height = 424,
-            width = 942,
-            bottomClampOverride = 152,
-            xoffset = -16 + 4,
-            yoffset = 12,
-            pushable = 3,
-            area = "left"
-        }
-
-        if IsAddOnLoaded('Leatrix_Plus') then
-            --
-            if TradeSkillFrame:GetWidth() > 700 then
-                --
-                DF:Print(
-                    "Leatrix_Plus detected with 'Interface -> Enhance professions' activated - please deactivate or you might encounter bugs.")
-            end
-        end
-    end)
-
-    Module:FuncOrWaitframe('Blizzard_CraftUI', function()
-        -- print('Blizzard_CraftUI')
-        local DFProfessionCraftFrame = DragonflightUIMixin:CreateProfessionCraftFrame()
-
-        UIPanelWindows["CraftFrame"] = {
-            whileDead = 1,
-            height = 424,
-            width = 942,
-            bottomClampOverride = 152,
-            xoffset = -16 + 4,
-            yoffset = 12,
-            pushable = 3,
-            area = "left"
-        }
-    end)
+    local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
+    Module.ProfessionFrame = prof
 
     if IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
 end
@@ -805,4 +779,8 @@ function Module.Era()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    DF.Compatibility:FuncOrWaitframe('Ranker', function()
+        DF.Compatibility:ClassicRanker()
+    end)
 end

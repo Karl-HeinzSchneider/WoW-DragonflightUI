@@ -1,0 +1,186 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<Script file="Mixin/DFSettingsCategory.mixin.lua" />
+	<!-- List -->
+	<Frame name="DFSettingsCategoryList" mixin="DFSettingsCategoryListMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Anchors>
+					<!-- Note this is overwritten by the managed scroll bar visibility behavior in OnLoad. -->
+					<Anchor point="TOPLEFT" x="-50" y="0" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="2" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-1" y="7" />
+				</Anchors>
+			</EventFrame>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend" method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Element -->
+	<!--
+	<Frame name="DragonflightUIConfigCategoryListElementTemplate" mixin="DragonFlightUIConfigCategoryListElementMixin" virtual="true">
+	<Frames>
+	<Frame parentKey="Header" inherits="DragonflightUIConfigCategoryListHeaderTemplate" hidden="false" setAllPoints="true">
+	</Frame>
+	<Frame parentKey="Button" inherits="DragonflightUIConfigCategoryListButtonTemplate" hidden="true" setAllPoints="true">
+	</Frame>
+	</Frames>
+	<Scripts>
+	<OnLoad inherit="prepend" method="OnLoad" />
+	<OnMouseUp method="OnMouseUp" />
+	</Scripts>
+	</Frame>
+	-->
+	<!-- Header -->
+	<Button name="DFSettingsCategoryHeader" mixin="DFSettingsCategoryHeaderMixin" virtual="true">
+		<Size x="175" y="30" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Background">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Label" inherits="GameFontHighlightMedium" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="LEFT" x="20" y="-1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="16.5" y="12" />
+					<Anchors>
+						<Anchor point="RIGHT" x="-16" y="-1" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="CollapseIconAlphaAdd" alphaMode="ADD" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="16.5" y="12" />
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.CollapseIcon" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad inherit="prepend" method="OnLoad" />
+		</Scripts>
+	</Button>
+	<!-- Button -->
+	<Button name="DFSettingsCategoryElement" mixin="DFSettingsCategoryElementMixin" virtual="true">
+		<Size x="175" y="20" />
+		<!--
+		<Frames>
+		<EventButton parentKey="Toggle" hidden="true">
+		<Size x="22" y="22" />
+		<Anchors>
+		<Anchor point="LEFT" x="9" />
+		</Anchors>
+		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-MinusButton-UP" />
+		<PushedTexture name="$parentPushedTexture" file="Interface\Buttons\UI-MinusButton-DOWN" />
+		<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
+		</EventButton>
+		</Frames>
+		-->
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Texture">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="36" y="1" />
+						<Anchor point="BOTTOMRIGHT" y="1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="NewFeature" inherits="DFSettingsNewFeatureLabelNoAnimateTemplate" frameStrata="HIGH" scale=".8" frameLevel="100" hidden="true">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Label" relativePoint="LEFT" x="-37" y="3" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Button>
+	<!-- Used to call out a new feature. Includes a pulsing animation to call player's attention. Use NewFeatureLabelNoAnimateTemplate if you don't want the animation -->
+	<Frame name="DFSettingsNewFeatureLabelTemplate" inherits="ResizeLayoutFrame" mixin="DFSettingsNewFeatureLabelMixin" virtual="true" hidden="true">
+		<KeyValues>
+			<KeyValue key="animateGlow" value="true" type="boolean" />
+			<KeyValue key="label" value="NEW" type="string" />
+			<KeyValue key="justifyH" value="CENTER" type="string" />
+		</KeyValues>
+		<Layers>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<FontString parentKey="BGLabel" inherits="GameFontNormal_NoShadow" maxLines="1" justifyH="CENTER" text="NEW_CAPS">
+					<KeyValues>
+						<KeyValue key="ignoreInLayout" value="true" type="boolean" />
+					</KeyValues>
+					<Color color="NEW_FEATURE_SHADOW_COLOR" />
+					<Anchors>
+						<Anchor point="CENTER" x="0.5" y="-0.5" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Label" inherits="GameFontHighlight" maxLines="1" justifyH="CENTER" text="NEW_CAPS">
+					<Shadow>
+						<Color color="NEW_FEATURE_SHADOW_COLOR" />
+					</Shadow>
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</FontString>
+				<Texture parentKey="Glow" file="Interface\AddOns\DragonflightUI\Textures\collections">
+					<Size x="59" y="37" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Label" x="-20" y="10" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Label" x="20" y="-10" />
+					</Anchors>
+					<TexCoords left="0.511719" right="0.626953" top="0.0136719" bottom="0.0859375" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Animations>
+			<AnimationGroup parentKey="Fade" looping="REPEAT">
+				<Alpha childKey="Glow" duration="1.0" order="1" fromAlpha="1" toAlpha=".5" />
+				<Alpha childKey="Glow" duration="1.0" order="2" fromAlpha=".5" toAlpha="1" />
+			</AnimationGroup>
+		</Animations>
+		<Scripts>
+			<OnShow inherit="prepend" method="OnShow" />
+			<OnLoad inherit="prepend" method="OnLoad" />
+			<OnHide method="OnHide" />
+		</Scripts>
+	</Frame>
+	<!-- Inherit this if you don't want the glow texture to pulse -->
+	<Frame name="DFSettingsNewFeatureLabelNoAnimateTemplate" inherits="DFSettingsNewFeatureLabelTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="animateGlow" value="false" type="boolean" />
+		</KeyValues>
+	</Frame>
+	<Frame name="DFSettingsBlizzardLabelNoAnimateTemplate" inherits="DFSettingsNewFeatureLabelTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="animateGlow" value="false" type="boolean" />
+			<KeyValue key="label" value="BLIZZ" type="string" />
+		</KeyValues>
+	</Frame>
+</Ui>

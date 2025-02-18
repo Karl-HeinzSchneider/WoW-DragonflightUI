@@ -14,7 +14,7 @@ local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 function DragonflightUIItemColorMixin:AddOverlayToFrame(frame)
     if frame.DFQuality then
         --
-        print('already frame.DFQuality', frame:GetName())
+        -- print('already frame.DFQuality', frame:GetName())
         return frame.DFQuality
     end
 
@@ -59,7 +59,7 @@ DF_BAG_ITEM_QUALITY_COLORS[DF_LE_ITEM_QUALITY_QUEST] = {r = 1.0, g = 1.0, b = 0}
 
 function DragonflightUIItemColorMixin:UpdateOverlayQuality(frame, quality)
     if not frame.DFQuality then
-        print('No frame.DFQuality:', frame:GetName(), quality)
+        -- print('No frame.DFQuality:', frame:GetName(), quality)
         return
     end
     frame.DFQuality:Show()

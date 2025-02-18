@@ -7,7 +7,46 @@ Mixin(Module, DragonflightUIModulesMixin)
 Mixin(Module, CallbackRegistryMixin)
 
 local defaults = {
-    profile = {scale = 1, general = {showGrid = true, gridSize = 20, snapGrid = true, snapElements = true}}
+    profile = {
+        scale = 1,
+        general = {showGrid = true, gridSize = 20, snapGrid = true, snapElements = true},
+        advanced = {
+            -- actionbar
+            ActionBars = true,
+            StanceBar = true,
+            PossessBar = true,
+            PetBar = true,
+            TotemBar = true,
+            Bags = true,
+            MicroMenu = true,
+            FPS = true,
+            XPBar = true,
+            RepBar = true,
+            -- Bossframe
+            BossFrames = true,
+            -- buffs,
+            Buffs = true,
+            Debuffs = true,
+            -- castbar
+            Castbars = true,
+            -- minimap
+            Minimap = true,
+            Tracker = true,
+            Durability = true,
+            LFG = true,
+            -- UI
+            -- unitframes
+            PlayerFrame = true,
+            Player_PowerBarAlt = true,
+            PetFrame = true,
+            TargetFrame = true,
+            TargetOfTargetFrame = true,
+            FocusFrame = true,
+            FocusTargetFrame = true,
+            PartyFrame = true,
+            RaidFrame = true
+        }
+    }
 }
 Module:SetDefaults(defaults)
 
@@ -36,6 +75,7 @@ local generalOptions = {
     name = 'EditMode',
     get = getOption,
     set = setOption,
+    hideDefault = true,
     args = {
         showGrid = {
             type = 'toggle',
@@ -60,16 +100,108 @@ local generalOptions = {
             desc = '' .. getDefaultStr('snapGrid', 'general'),
             order = 102,
             small = true
-        },
-        snapElements = {
-            type = 'toggle',
-            name = 'Snap to Elements',
-            desc = '*NOT YET IMPLEMENTED - COMING SOON*' .. getDefaultStr('snapElements', 'general'),
-            order = 103,
-            small = true
         }
+        -- snapElements = {
+        --     type = 'toggle',
+        --     name = 'Snap to Elements',
+        --     desc = '*NOT YET IMPLEMENTED - COMING SOON*' .. getDefaultStr('snapElements', 'general'),
+        --     order = 103,
+        --     small = true
+        -- }
     }
 }
+
+local advancedOptions;
+if true then
+    --
+    advancedOptions = {
+        type = 'group',
+        name = 'EditMode',
+        get = getOption,
+        set = setOption,
+        hideDefault = true,
+        args = {
+            headerActionbar = {
+                type = 'header',
+                name = 'Actionbar',
+                desc = '...',
+                order = 100,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
+                isExpanded = true,
+                editmode = true
+            },
+            headerCombat = {
+                type = 'header',
+                name = 'Combat',
+                desc = '...',
+                order = 200,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
+                isExpanded = true,
+                editmode = true
+            },
+            headerFrames = {
+                type = 'header',
+                name = 'Frames',
+                desc = '...',
+                order = 300,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
+                isExpanded = true,
+                editmode = true
+            },
+            headerMisc = {
+                type = 'header',
+                name = 'Misc',
+                desc = '...',
+                order = 400,
+                sortComparator = DFSettingsListMixin.AlphaSortComparator,
+                isExpanded = true,
+                editmode = true
+            }
+        }
+    }
+
+    local function AddTableToCategory(t, header)
+        for k, v in ipairs(t) do
+            --
+            advancedOptions.args[v] = {
+                type = 'toggle',
+                name = v,
+                desc = '' .. getDefaultStr(v, 'advanced'),
+                order = k,
+                small = true,
+                group = header,
+                editmode = true
+            }
+        end
+    end
+
+    -- actionbar
+    local actionbarFrames = {'ActionBars', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
+    AddTableToCategory(actionbarFrames, 'headerActionbar');
+
+    -- combat
+    local combatFrames = {'Buffs', 'Debuffs', 'Castbars'};
+    AddTableToCategory(combatFrames, 'headerCombat');
+
+    -- frames
+    local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame', 'PartyFrame', 'RaidFrame'}
+    if DF.Wrath then
+        table.insert(framesFrames, 'FocusFrame')
+        table.insert(framesFrames, 'FocusTargetFrame')
+    end
+    AddTableToCategory(framesFrames, 'headerFrames')
+
+    -- misc
+    local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability'}
+    if DF.Cata then table.insert(miscFrames, 'Player_PowerBarAlt') end
+    AddTableToCategory(miscFrames, 'headerMisc')
+
+    advancedOptions.set = function(...)
+        -- print(...)
+        setOption(...)
+        Module:SetEditMode(Module.IsEditMode)
+    end
+end
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -138,6 +270,15 @@ function Module:RegisterOptionScreens()
         default = function()
             setDefaultSubValues('general')
         end
+    }, true)
+
+    Module.EditModeFrame:SetupAdvancedOptions({
+        name = 'EditMode',
+        sub = 'advanced',
+        options = advancedOptions,
+        default = function()
+            setDefaultSubValues('advanced')
+        end
     })
 end
 
@@ -174,10 +315,14 @@ function Module:CreateGrid()
     DF:Debug(self, 'CreateGrid()')
     local editModeFrame = CreateFrame('Frame', 'DragonflightUIEditModeFrame', UIParent,
                                       'DragonflightUIEditModeFrameTemplate');
+    editModeFrame:SetupGrid();
+    editModeFrame:SetupMouseOverChecker();
+    if DF.Era or DF.Cata then editModeFrame:SetupLayoutDropdown(); end
     editModeFrame:Hide()
     -- editModeFrame.Grid:Hide()
     Module.IsEditMode = false;
     Module.EditModeFrame = editModeFrame;
+    Module.SelectionFrames = {}
 end
 
 function Module:SlashCommand()

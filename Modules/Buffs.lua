@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Buffs'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -108,100 +109,37 @@ local generalOptions = {
     }
 }
 
-local frameTable = {['UIParent'] = 'UIParent', ['MinimapCluster'] = 'MinimapCluster'}
+local frameTable = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
+}
 
 local buffsOptions = {
     type = 'group',
-    name = 'Buffs',
+    name = L["BuffsOptionsName"],
     get = getOption,
     set = setOption,
     args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'buffs'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'buffs'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'buffs'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'buffs'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'buffs'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'buffs'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
+        headerStyling = {
+            type = 'header',
+            name = L["BuffsOptionsStyle"],
+            desc = L["BuffsOptionsStyleDesc"],
+            order = 20,
+            isExpanded = true
         },
         expanded = {
             type = 'toggle',
-            name = 'Expanded',
-            desc = '' .. getDefaultStr('expanded', 'buffs'),
+            name = L["BuffsOptionsExpanded"],
+            desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
+            group = 'headerStyling',
             order = 10,
             new = true
         },
         useStateHandler = {
             type = 'toggle',
-            name = 'Use State Handler',
-            desc = 'Without this, the visibility settings above wont work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure.  ' ..
-                getDefaultStr('useStateHandler', 'buffs'),
+            name = L["BuffsOptionsUseStateHandler"],
+            desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
+            group = 'headerStyling',
             order = 115
         }
     }
@@ -214,6 +152,7 @@ if DF.Cata then
             type = 'toggle',
             name = CONSOLIDATE_BUFFS_TEXT,
             desc = OPTION_TOOLTIP_CONSOLIDATE_BUFFS,
+            group = 'headerStyling',
             order = 13,
             blizzard = true
         }
@@ -252,6 +191,7 @@ if DF.Cata then
         end
     end
 end
+DF.Settings:AddPositionTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr)
 local optionsBuffEditmode = {
     name = 'Buff',
@@ -262,9 +202,9 @@ local optionsBuffEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.buffs
                 local defaultsTable = defaults.profile.buffs
@@ -285,88 +225,8 @@ local optionsBuffEditmode = {
     }
 }
 
-local debuffsOptions = {
-    type = 'group',
-    name = 'Debuffs',
-    get = getOption,
-    set = setOption,
-    args = {
-        scale = {
-            type = 'range',
-            name = 'Scale',
-            desc = '' .. getDefaultStr('scale', 'debuffs'),
-            min = 0.1,
-            max = 5,
-            bigStep = 0.1,
-            order = 1,
-            editmode = true
-        },
-        anchorFrame = {
-            type = 'select',
-            name = 'Anchorframe',
-            desc = 'Anchor' .. getDefaultStr('anchorFrame', 'debuffs'),
-            values = frameTable,
-            order = 4,
-            editmode = true
-        },
-        anchor = {
-            type = 'select',
-            name = 'Anchor',
-            desc = 'Anchor' .. getDefaultStr('anchor', 'debuffs'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 2,
-            editmode = true
-        },
-        anchorParent = {
-            type = 'select',
-            name = 'AnchorParent',
-            desc = 'AnchorParent' .. getDefaultStr('anchorParent', 'debuffs'),
-            values = {
-                ['TOP'] = 'TOP',
-                ['RIGHT'] = 'RIGHT',
-                ['BOTTOM'] = 'BOTTOM',
-                ['LEFT'] = 'LEFT',
-                ['TOPRIGHT'] = 'TOPRIGHT',
-                ['TOPLEFT'] = 'TOPLEFT',
-                ['BOTTOMLEFT'] = 'BOTTOMLEFT',
-                ['BOTTOMRIGHT'] = 'BOTTOMRIGHT',
-                ['CENTER'] = 'CENTER'
-            },
-            order = 3,
-            editmode = true
-        },
-        x = {
-            type = 'range',
-            name = 'X',
-            desc = 'X relative to *ANCHOR*' .. getDefaultStr('x', 'debuffs'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 5,
-            editmode = true
-        },
-        y = {
-            type = 'range',
-            name = 'Y',
-            desc = 'Y relative to *ANCHOR*' .. getDefaultStr('y', 'debuffs'),
-            min = -2500,
-            max = 2500,
-            bigStep = 1,
-            order = 6,
-            editmode = true
-        }
-    }
-}
+local debuffsOptions = {type = 'group', name = 'Debuffs', get = getOption, set = setOption, args = {}}
+DF.Settings:AddPositionTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr)
 local optionsDebuffEditmode = {
     name = 'Debuff',
@@ -377,9 +237,9 @@ local optionsDebuffEditmode = {
     args = {
         resetPosition = {
             type = 'execute',
-            name = 'Preset',
-            btnName = 'Reset to Default Position',
-            desc = presetDesc,
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
             func = function()
                 local dbTable = Module.db.profile.debuffs
                 local defaultsTable = defaults.profile.debuffs
@@ -403,6 +263,9 @@ local optionsDebuffEditmode = {
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
+        Module:RegisterSettings()
+    end)
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
@@ -437,8 +300,20 @@ end
 function Module:OnDisable()
 end
 
+function Module:RegisterSettings()
+    local moduleName = 'Buffs'
+    local cat = 'misc'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
+
+    register('buffs', {order = 1, name = 'Buffs', descr = 'Buffsss', isNew = false})
+    register('debuffs', {order = 1, name = 'Debuffs', descr = 'Debuffsss', isNew = false})
+end
+
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Buffs', {
+    DF.ConfigModule:RegisterSettingsData('buffs', 'misc', {
         name = 'Buffs',
         sub = 'buffs',
         options = buffsOptions,
@@ -447,7 +322,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    DF.ConfigModule:RegisterOptionScreen('Misc', 'Debuffs', {
+    DF.ConfigModule:RegisterSettingsData('debuffs', 'misc', {
         name = 'Debuffs',
         sub = 'debuffs',
         options = debuffsOptions,
@@ -512,6 +387,7 @@ function Module:AddEditMode()
     Module.DFBuffFrame.DFEditModeSelection:RegisterOptions({
         name = 'Buffs',
         sub = 'buffs',
+        advancedName = 'Buffs',
         options = buffsOptions,
         extra = optionsBuffEditmode,
         default = function()
@@ -533,6 +409,7 @@ function Module:AddEditMode()
     Module.DFDebuffFrame.DFEditModeSelection:RegisterOptions({
         name = 'Debuffs',
         sub = 'debuffs',
+        advancedName = 'Debuffs',
         options = debuffsOptions,
         extra = optionsDebuffEditmode,
         default = function()
