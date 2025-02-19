@@ -23,7 +23,11 @@ local defaults = {
             showSpellSource = true,
             showSpellIconID = false,
             showSpellIcon = true,
-            showStealable = false
+            showStealable = false,
+            -- item
+            showItemQuality = true,
+            showItemQualityBackdrop = false,
+            showItemStackCount = true
         }
     }
 }
@@ -53,6 +57,9 @@ end
 local GetItemInfo = (C_Item and C_Item.GetItemInfo) and C_Item.GetItemInfo or GetItemInfo
 local GetItemQualityColor = (C_Item and C_Item.GetItemQualityColor) and C_Item.GetItemQualityColor or
                                 GetItemQualityColor
+
+local sourceColor = "|cffffc000%s|r"
+local whiteColor = "|cffffffff%s|r"
 
 local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
 
@@ -141,6 +148,39 @@ local generalOptions = {
             order = 1,
             editmode = true,
             group = 'headerSpellTooltip'
+        },
+        headerItemTooltip = {
+            type = 'header',
+            name = L["TooltipHeaderItemTooltip"],
+            desc = L["TooltipHeaderItemTooltipDesc"],
+            order = 3,
+            isExpanded = true,
+            editmode = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        showItemQuality = {
+            type = 'toggle',
+            name = L["TooltipShowItemQuality"],
+            desc = L["TooltipShowItemQualityDesc"] .. getDefaultStr('showItemQuality', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerItemTooltip'
+        },
+        showItemQualityBackdrop = {
+            type = 'toggle',
+            name = L["TooltipShowItemQualityBackdrop"],
+            desc = L["TooltipShowItemQualityBackdropDesc"] .. getDefaultStr('showItemQualityBackdrop', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerItemTooltip'
+        },
+        showItemStackCount = {
+            type = 'toggle',
+            name = L["TooltipshowItemStackCount"],
+            desc = L["TooltipshowItemStackCountDesc"] .. getDefaultStr('showItemStackCount', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerItemTooltip'
         }
     }
 }
@@ -355,6 +395,7 @@ function Module:AddBackdrops()
         GameTooltip, WorldMapTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefTooltip, ItemRefShoppingTooltip1,
         ItemRefShoppingTooltip2, FriendsTooltip
     }
+    Module.Tooltips = tooltips
 
     -- TODO config
     local backdrop = {
@@ -373,81 +414,125 @@ function Module:AddBackdrops()
             Mixin(v, BackdropTemplateMixin)
         end
         v:SetBackdrop(backdrop)
-
-        v:HookScript('OnShow', function(self)
-            --
-            self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
-            self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config
-
-            if self.GetItem then
-                --
-                Module:SetItemQuality(self)
-            end
-        end)
     end
 end
 
+function Module:HookFunctions()
+    for k, v in ipairs(Module.Tooltips) do
+        if v:HasScript('OnTooltipSetSpell') then
+            v:HookScript('OnTooltipSetSpell', function(self)
+                --
+                Module:SetDefaultBackdrop(self)
+                Module:OnTooltipSetSpell(self)
+            end)
+        end
+        if v:HasScript('OnTooltipSetItem') then
+            v:HookScript('OnTooltipSetItem', function(self)
+                --
+                Module:SetDefaultBackdrop(self)
+                Module:OnTooltipSetItem(self)
+            end)
+        end
+        if v:HasScript('OnTooltipSetUnit') then
+            v:HookScript('OnTooltipSetUnit', function(self)
+                --
+                Module:SetDefaultBackdrop(self)
+                Module:OnTooltipSetUnit(self)
+            end)
+        end
+        if v:HasScript('OnTooltipSetQuest') then
+            v:HookScript('OnTooltipSetQuest', function(self)
+                --
+                Module:SetDefaultBackdrop(self)
+                Module:OnTooltipSetQuest(self)
+            end)
+        end
+        if v:HasScript('OnTooltipCleared') then
+            v:HookScript('OnTooltipCleared', function(self)
+                --
+                Module:SetDefaultBackdrop(self)
+                Module:OnTooltipCleared(self)
+            end)
+        end
+    end
+end
+
+function Module:SetDefaultBackdrop(self)
+    self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
+    self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config    
+end
+
+function Module:OnTooltipSetSpell(self)
+    -- print('OnTooltipSetSpell', tip:GetName())
+    local state = Module.db.profile.general;
+
+    local spellName, spellId = self:GetSpell();
+
+    if not spellId then return end
+
+    local strTable = {}
+
+    if state.showSpellID then
+        local spellIDLine = string.format(whiteColor, "Spell ID: ") .. string.format(sourceColor, spellId);
+        table.insert(strTable, spellIDLine);
+    end
+
+    -- if state.showSpellSource and source then
+    --     local localizedClass, englishClass, classIndex = UnitClass(source);
+    --     local nameString = DF:GetClassColoredText(UnitName(source), englishClass);
+
+    --     local sourceStr = string.format(whiteColor, "Source: ") .. nameString;
+    --     table.insert(strTable, sourceStr);
+    -- end
+
+    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(spellId)
+    if state.showSpellIcon then
+        local texture = GetSpellTexture(spellId)
+
+        local line = _G[self:GetName() .. 'TextLeft1']
+        local text = line:GetText()
+
+        line:SetFormattedText('|T%s:16:16:0:0:32:32:2:30:2:30|t %s', texture, text)
+    end
+
+    if state.showSpellIconID then
+        local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, icon);
+        table.insert(strTable, iconStr);
+    end
+
+    local numStrings = #strTable
+    if numStrings == 0 then return end
+
+    self:AddLine(" ")
+
+    for i = 1, numStrings, 2 do
+        -- 
+        -- print('..', i, ' / ', numStrings)
+
+        if strTable[i + 1] then
+            self:AddLine(strTable[i] .. string.format(whiteColor, ', ') .. strTable[i + 1])
+        else
+            self:AddLine(strTable[i])
+        end
+    end
+    self:Show()
+end
+
+function Module:OnTooltipSetItem(self)
+    -- print('Module:OnTooltipSetItem(self)')
+    Module:SetItemQuality(self)
+end
+
+function Module:OnTooltipSetUnit(self)
+end
+
+function Module:OnTooltipSetQuest(self)
+end
+
+function Module:OnTooltipCleared(self)
+end
+
 function Module:HookSpellTooltip()
-    local sourceColor = "|cffffc000%s|r"
-    local whiteColor = "|cffffffff%s|r"
-
-    GameTooltip:HookScript('OnTooltipSetSpell', function(self)
-        --
-        -- print('OnTooltipSetSpell', tip:GetName())
-        local state = Module.db.profile.general;
-
-        local spellName, spellId = self:GetSpell();
-
-        if not spellId then return end
-
-        local strTable = {}
-
-        if state.showSpellID then
-            local spellIDLine = string.format(whiteColor, "Spell ID: ") .. string.format(sourceColor, spellId);
-            table.insert(strTable, spellIDLine);
-        end
-
-        -- if state.showSpellSource and source then
-        --     local localizedClass, englishClass, classIndex = UnitClass(source);
-        --     local nameString = DF:GetClassColoredText(UnitName(source), englishClass);
-
-        --     local sourceStr = string.format(whiteColor, "Source: ") .. nameString;
-        --     table.insert(strTable, sourceStr);
-        -- end
-
-        local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(spellId)
-        if state.showSpellIcon then
-            local texture = GetSpellTexture(spellId)
-
-            local line = _G[self:GetName() .. 'TextLeft1']
-            local text = line:GetText()
-
-            line:SetFormattedText('|T%s:16:16:0:0:32:32:2:30:2:30|t %s', texture, text)
-        end
-
-        if state.showSpellIconID then
-            local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, icon);
-            table.insert(strTable, iconStr);
-        end
-
-        local numStrings = #strTable
-        if numStrings == 0 then return end
-
-        self:AddLine(" ")
-
-        for i = 1, numStrings, 2 do
-            -- 
-            -- print('..', i, ' / ', numStrings)
-
-            if strTable[i + 1] then
-                self:AddLine(strTable[i] .. string.format(whiteColor, ', ') .. strTable[i + 1])
-            else
-                self:AddLine(strTable[i])
-            end
-        end
-        self:Show()
-    end)
-
     local function attachSpellTooltip(self, unit, slotNumber, auraType)
         --
         -- print('~attachSpellTooltip~', self:GetName(), unit, slotNumber, auraType)
@@ -527,6 +612,8 @@ end
 
 function Module:SetItemQuality(tip)
     -- print('SetItemQuality', tip:GetName())
+    local state = Module.db.profile.general;
+
     local name, link = tip:GetItem();
 
     if not link then return end
@@ -539,30 +626,9 @@ function Module:SetItemQuality(tip)
 
     local r, g, b = GetItemQualityColor(itemQuality);
 
-    if true then
-        -- TODO config
-        tip:SetBackdropBorderColor(r, g, b);
-    end
+    if state.showItemQuality then tip:SetBackdropBorderColor(r, g, b); end
 
-    if false then
-        -- TODO config
-        tip:SetBackdropColor(r, g, b, 0.2);
-    end
-end
-
-function Module:HookItemRefTooltip()
-    -- item from chat etc
-    ItemRefTooltip:HookScript('OnTooltipSetItem', function(self)
-        --
-        -- print('OnTooltipSetItem'  
-        Module:SetItemQuality(self)
-    end)
-    ItemRefTooltip:HookScript('OnTooltipCleared', function(self)
-        --
-        -- print('OnTooltipCleared')   
-        self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
-        self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config
-    end)
+    if state.showItemQualityBackdrop then tip:SetBackdropColor(r, g, b, 0.2); end
 end
 
 local frame = CreateFrame('FRAME')
@@ -590,6 +656,6 @@ function Module.Era()
     Module:HookDefaultAnchor()
     Module:AddBackdrops()
 
+    Module:HookFunctions()
     Module:HookSpellTooltip()
-    Module:HookItemRefTooltip()
 end

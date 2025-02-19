@@ -384,6 +384,15 @@ L["TooltipShowIconIDDesc"] = ""
 L["TooltipShowIcon"] = "Show Icon"
 L["TooltipShowIconDesc"] = ""
 
+L["TooltipHeaderItemTooltip"] = "ItemTooltip"
+L["TooltipHeaderItemTooltipDesc"] = ""
+L["TooltipShowItemQuality"] = "Item Quality Border"
+L["TooltipShowItemQualityDesc"] = ""
+L["TooltipShowItemQualityBackdrop"] = "Item Quality Backdrop"
+L["TooltipShowItemQualityBackdropDesc"] = ""
+L["TooltipshowItemStackCount"] = "Show Stack Count"
+L["TooltipshowItemStackCountDesc"] = ""
+
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player
