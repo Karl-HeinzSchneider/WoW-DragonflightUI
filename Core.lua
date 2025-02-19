@@ -66,3 +66,27 @@ function DF:GetClassColor(class, alpha)
         return r, g, b, 1
     end
 end
+
+do
+    local classColor = {
+        SHAMAN = "2459FF",
+        MAGE = "69CCF0",
+        WARLOCK = "9482C9",
+        HUNTER = "ABD473",
+        ROGUE = "FFF569",
+        PRIEST = "FFFFFF",
+        DRUID = "FF7D0A",
+        DEATHKNIGHT = "C41F3B",
+        WARRIOR = "C79C6E",
+        PALADIN = "F58CBA"
+    }
+
+    function DF:GetClassColorText(class)
+        return classColor[class] or classColor['PRIEST']
+    end
+
+    function DF:GetClassColoredText(str, class)
+        return "|cff" .. DF:GetClassColorText(class) .. str .. "|r"
+    end
+end
+
