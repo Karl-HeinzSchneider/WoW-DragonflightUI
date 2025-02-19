@@ -8,6 +8,8 @@ local L_EN = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
 local L = {}
 
 -- modules - config.lua
+L["ModuleModules"] = "Modules"
+
 L["ModuleTooltipActionbar"] =
     "This module overhauls the default Actionbar including the Micromenu and Bagbuttons.\nAdds seperate options for Actionbar1-8, Pet-/XP-/Rep-/Possess-/Stance-/Totembar, Bags and Micromenu."
 L["ModuleTooltipBossframe"] = "This module adds custom BossFrames.\nWORK IN PROGRESS."
@@ -19,6 +21,7 @@ L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
 L["ModuleTooltipMinimap"] =
     "This module overhauls the default Minimap and Questtracker.\nAdds seperate options for Minimap and Questtracker."
+L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
 L["ModuleTooltipUI"] =
     "This module adds the modern UI style to different windows like the CharacterFrame. Also adds Era specific reworks with the new Spellbook, Talentframe or Professionwindow."
 L["ModuleTooltipUnitframe"] =

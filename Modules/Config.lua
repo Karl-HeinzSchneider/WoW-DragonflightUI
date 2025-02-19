@@ -51,64 +51,90 @@ local modulesOptions = {
     get = getOption,
     set = setOption,
     args = {
+        headerModules = {
+            type = 'header',
+            name = L["ModuleModules"],
+            desc = L["ModuleModules"],
+            order = 0,
+            isExpanded = true,
+            editmode = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
         Actionbar = {
             type = 'toggle',
             name = 'Actionbar',
             desc = L["ModuleTooltipActionbar"] .. getDefaultStr('Actionbar', 'modules'),
-            order = 1
+            order = 1,
+            group = 'headerModules'
         },
         Castbar = {
             type = 'toggle',
             name = 'Castbar',
             desc = L["ModuleTooltipCastbar"] .. getDefaultStr('Castbar', 'modules'),
             order = 3,
-            new = false
+            new = false,
+            group = 'headerModules'
         },
         Chat = {
             type = 'toggle',
             name = 'Chat',
             desc = L["ModuleTooltipChat"] .. getDefaultStr('Chat', 'modules'),
-            order = 4
+            order = 4,
+            group = 'headerModules'
         },
         Buffs = {
             type = 'toggle',
             name = 'Buffs',
             desc = L["ModuleTooltipBuffs"] .. getDefaultStr('Buffs', 'modules'),
             order = 2.1,
-            new = false
+            new = false,
+            group = 'headerModules'
         },
         Darkmode = {
             type = 'toggle',
             name = 'Darkmode',
             desc = L["ModuleTooltipDarkmode"] .. getDefaultStr('Darkmode', 'modules'),
             order = 4.1,
-            new = true
+            new = true,
+            group = 'headerModules'
         },
         Minimap = {
             type = 'toggle',
             name = 'Minimap',
             desc = L["ModuleTooltipMinimap"] .. getDefaultStr('Minimap', 'modules'),
-            order = 5
+            order = 5,
+            group = 'headerModules'
+        },
+        Tooltip = {
+            type = 'toggle',
+            name = 'Tooltip',
+            desc = L["ModuleTooltipTooltip"] .. getDefaultStr('Tooltip', 'modules'),
+            order = 8,
+            new = false,
+            group = 'headerModules'
         },
         UI = {
             type = 'toggle',
             name = 'UI',
             desc = L["ModuleTooltipUI"] .. getDefaultStr('UI', 'modules'),
             order = 6,
-            new = false
+            new = false,
+            group = 'headerModules'
         },
         Unitframe = {
             type = 'toggle',
             name = 'Unitframe',
             desc = L["ModuleTooltipUnitframe"] .. getDefaultStr('Unitframe', 'modules'),
-            order = 7
+            order = 7,
+            group = 'headerModules'
         },
         Utility = {
             type = 'toggle',
             name = 'Utility',
             desc = L["ModuleTooltipUtility"] .. getDefaultStr('Utility', 'modules'),
             order = 8,
-            new = false
+            new = false,
+            group = 'headerModules'
         }
     }
 }
