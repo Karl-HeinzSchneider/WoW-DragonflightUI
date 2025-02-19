@@ -21,7 +21,8 @@ local defaults = {
             anchorSpells = true,
             showSpellID = true,
             showSpellSource = true,
-            showIconID = true,
+            showSpellIconID = false,
+            showSpellIcon = true,
             showStealable = false
         }
     }
@@ -125,10 +126,18 @@ local generalOptions = {
             editmode = true,
             group = 'headerSpellTooltip'
         },
-        showIconID = {
+        showSpellIconID = {
             type = 'toggle',
             name = L["TooltipShowIconID"],
-            desc = L["TooltipShowIconIDDesc"] .. getDefaultStr('showIconID', 'general'),
+            desc = L["TooltipShowIconIDDesc"] .. getDefaultStr('showSpellIconID', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerSpellTooltip'
+        },
+        showSpellIcon = {
+            type = 'toggle',
+            name = L["TooltipShowSpellIcon"],
+            desc = L["TooltipShowSpellIconDesc"] .. getDefaultStr('showSpellIcon', 'general'),
             order = 1,
             editmode = true,
             group = 'headerSpellTooltip'
@@ -406,8 +415,17 @@ function Module:HookSpellTooltip()
         --     table.insert(strTable, sourceStr);
         -- end
 
-        if state.showIconID then
-            local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(spellId)
+        local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(spellId)
+        if state.showSpellIcon then
+            local texture = GetSpellTexture(spellId)
+
+            local line = _G[self:GetName() .. 'TextLeft1']
+            local text = line:GetText()
+
+            line:SetFormattedText('|T%s:16:16:0:0:32:32:2:30:2:30|t %s', texture, text)
+        end
+
+        if state.showSpellIconID then
             local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, icon);
             table.insert(strTable, iconStr);
         end
@@ -458,7 +476,16 @@ function Module:HookSpellTooltip()
             table.insert(strTable, sourceStr);
         end
 
-        if state.showIconID and icon then
+        if state.showSpellIcon then
+            local texture = GetSpellTexture(spellId)
+
+            local line = _G[self:GetName() .. 'TextLeft1']
+            local text = line:GetText()
+
+            line:SetFormattedText('|T%s:16:16:0:0:32:32:2:30:2:30|t %s', texture, text)
+        end
+
+        if state.showSpellIconID and icon then
             local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, icon);
             table.insert(strTable, iconStr);
         end

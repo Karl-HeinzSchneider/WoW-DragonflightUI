@@ -376,8 +376,13 @@ L["TooltipShowSpellID"] = "Show Spell ID"
 L["TooltipShowSpellIDDesc"] = ""
 L["TooltipShowSpellSource"] = "Show Spell Source"
 L["TooltipShowSpellSourceDesc"] = ""
+L["TooltipShowSpellIcon"] = "Show Spell Icon"
+L["TooltipShowSpellIconDesc"] = ""
 L["TooltipShowIconID"] = "Show Icon ID"
 L["TooltipShowIconIDDesc"] = ""
+
+L["TooltipShowIcon"] = "Show Icon"
+L["TooltipShowIconDesc"] = ""
 
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
