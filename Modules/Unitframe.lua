@@ -67,6 +67,7 @@ local defaults = {
             hideRedStatus = false,
             hideIndicator = false,
             hideSecondaryRes = false,
+            hideAlternatePowerBar = false,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -358,6 +359,20 @@ if DF.Cata then
         new = true,
         editmode = true
     }
+end
+if DF.Era then
+    local localizedClass, englishClass, classIndex = UnitClass('player');
+    if englishClass == 'DRUID' then
+        optionsPlayer.args['hideAlternatePowerBar'] = {
+            type = 'toggle',
+            name = L["PlayerFrameHideAlternatePowerBar"],
+            desc = L["PlayerFrameHideAlternatePowerBarDesc"] .. getDefaultStr('hideAlternatePowerBar', 'player'),
+            group = 'headerStyling',
+            order = 13,
+            new = true,
+            editmode = true
+        }
+    end
 end
 
 if true then
@@ -1760,6 +1775,7 @@ function Module:ApplySettings(sub)
             PlayerHitIndicator:SetScale(1)
         end
         Module:HideSecondaryRes(obj.hideSecondaryRes)
+        Module:HideAlternatePowerBar(obj.hideAlternatePowerBar)
 
         PlayerFrame:UpdateStateHandler(obj)
     end
@@ -2958,6 +2974,7 @@ function Module:AddAlternatePowerBar()
     bar:SetPoint('BOTTOMLEFT', 114 + 6, 23 - 1);
     bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar');
     bar:SetStatusBarColor(0, 0, 1.0);
+    Module.AlternatePowerBar = bar;
 
     local bg = bar:CreateTexture('DragonflightUIAlternatePowerBarBackground', 'BACKGROUND');
     bg:SetSize(78, 12);
@@ -3067,6 +3084,18 @@ function Module:AddAlternatePowerBar()
         AlternatePowerBar_OnUpdate(self, elapsed);
     end)
     -- bar:SetScript('OnMouseUp', function() end)
+end
+
+function Module:HideAlternatePowerBar(hide)
+    if not Module.AlternatePowerBar then return end
+
+    if hide then
+        Module.AlternatePowerBar:ClearAllPoints()
+        Module.AlternatePowerBar:SetPoint('BOTTOM', UIParent, 'TOP', 0, 500);
+    else
+        Module.AlternatePowerBar:ClearAllPoints()
+        Module.AlternatePowerBar:SetPoint('BOTTOMLEFT', PlayerFrame, 'BOTTOMLEFT', 114 + 6, 23 - 1);
+    end
 end
 
 function Module:AddPowerBarAlt()

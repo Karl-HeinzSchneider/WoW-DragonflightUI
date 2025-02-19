@@ -379,6 +379,8 @@ L["PlayerFrameHideHitIndicator"] = "Hide Hit Indicator"
 L["PlayerFrameHideHitIndicatorDesc"] = "Hide the hit indicator on the player frame"
 L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Ressource"
 L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul shards."
+L["PlayerFrameHideAlternatePowerBar"] = "Hide Druid Alternate Power Bar"
+L["PlayerFrameHideAlternatePowerBarDesc"] = "Hide the Druid Alternate Power Bar (Mana Bar while Bear/Cat form)."
 
 -- Target
 L["TargetFrameDesc"] = "Target frame settings"
