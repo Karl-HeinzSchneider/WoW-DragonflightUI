@@ -845,6 +845,26 @@ function Module:UnitNPCTooltip(self)
             if line and index > 2 then
                 --
                 titleLine = Module:GetLine(self, 2);
+
+                local guid = UnitGUID(unit) or ""
+                local id = tonumber(guid:match("-(%d+)-%x+$"), 10)
+                if (id) and (guid:match("%a+") == "Pet") then
+                    -- print('pets', id, guid)
+                    local owner, _ = string.split("'", titleLine:GetText())
+                    if UnitExists(owner) then
+                        --
+                        local _, englishClass, _ = UnitClass(owner);
+                        if englishClass then
+                            -- 
+                            local coloredOwner = DF:GetClassColoredText(owner, englishClass)
+                            -- print('owner:', owner, coloredOwner)
+
+                            local text = titleLine:GetText() or '';
+                            text = text:gsub(owner, coloredOwner);
+                            titleLine:SetText(text)
+                        end
+                    end
+                end
             end
         end
 
