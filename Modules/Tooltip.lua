@@ -727,7 +727,6 @@ function Module:UnitPlayerTooltip(self)
 
     local name, unit = self:GetUnit()
 
-    local guildName, guildRankName, guildRankIndex, guildRealm = GetGuildInfo(unit)
     local localizedClass, englishClass, classIndex = UnitClass(unit);
     if not class then return end -- TODO
 
