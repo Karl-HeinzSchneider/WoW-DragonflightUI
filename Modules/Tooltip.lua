@@ -40,6 +40,11 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+-- 
+local GetItemInfo = (C_Item and C_Item.GetItemInfo) and C_Item.GetItemInfo or GetItemInfo
+local GetItemQualityColor = (C_Item and C_Item.GetItemQualityColor) and C_Item.GetItemQualityColor or
+                                GetItemQualityColor
+
 local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
 
 local function setPreset(T, preset, sub)
@@ -253,17 +258,82 @@ function Module:HookDefaultAnchor()
     end)
 end
 
+function Module:AddBackdrops()
+    local state = Module.db.profile.general
+
+    local tooltips = {
+        GameTooltip, WorldMapTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefTooltip, ItemRefShoppingTooltip1,
+        ItemRefShoppingTooltip2, FriendsTooltip
+    }
+
+    -- TODO config
+    local backdrop = {
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 14,
+        insets = {left = 2, right = 2, top = 2, bottom = 2}
+    }
+
+    for k, v in ipairs(tooltips) do
+        v:SetScale(state.scale)
+
+        if not v.SetBackdrop then
+            -- 
+            -- print(v:GetName(), 'no Setbackdrop')
+            Mixin(v, BackdropTemplateMixin)
+        end
+        v:SetBackdrop(backdrop)
+
+        v:HookScript('OnShow', function(self)
+            --
+            self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
+            self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config
+
+            if self.GetItem then
+                --
+                Module:SetItemQuality(self)
+            end
+        end)
+    end
+end
+
+function Module:SetItemQuality(tip)
+    -- print('SetItemQuality', tip:GetName())
+    local name, link = tip:GetItem();
+
+    if not link then return end
+    -- local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
+    --       itemTexture, sellPrice, classID, subclassID, bindType, expansionID, setID, isCraftingReagent = GetItemInfo(
+    --                                                                                                          link)
+    local itemName, itemLink, itemQuality = GetItemInfo(link);
+
+    if not itemQuality then return end
+
+    local r, g, b = GetItemQualityColor(itemQuality);
+
+    if true then
+        -- TODO config
+        tip:SetBackdropBorderColor(r, g, b);
+    end
+
+    if false then
+        -- TODO config
+        tip:SetBackdropColor(r, g, b, 0.2);
+    end
+end
+
 function Module:HookItemRefTooltip()
     -- item from chat etc
     ItemRefTooltip:HookScript('OnTooltipSetItem', function(self)
         --
-        -- print('OnTooltipSetItem')
-        -- TODO backdrop?
+        -- print('OnTooltipSetItem'  
+        Module:SetItemQuality(self)
     end)
     ItemRefTooltip:HookScript('OnTooltipCleared', function(self)
         --
-        -- print('OnTooltipCleared')
-        -- TODO remove backdrop?
+        -- print('OnTooltipCleared')   
+        self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
+        self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config
     end)
 end
 
@@ -280,6 +350,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 -- Cata
 function Module.Cata()
     Module:HookDefaultAnchor()
+    Module:AddBackdrops()
     Module:HookItemRefTooltip()
 end
 
