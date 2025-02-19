@@ -5,7 +5,19 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, general = {}}}
+local defaults = {
+    profile = {
+        scale = 1,
+        general = {
+            scale = 1.0,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOMRIGHT',
+            anchorParent = 'BOTTOMRIGHT',
+            x = -97,
+            y = 132
+        }
+    }
+}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub, extra)
@@ -28,13 +40,64 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
 local generalOptions = {
     type = 'group',
-    name = 'Tooltip',
+    name = 'GameTooltip',
     get = getOption,
     set = setOption,
     sortComparator = DFSettingsListMixin.AlphaSortComparator,
     args = {}
+}
+DF.Settings:AddPositionTable(Module, generalOptions, 'general', 'GameTooltip', getDefaultStr, frameTable)
+
+local optionsGeneralEditmode = {
+    name = 'party',
+    desc = 'party',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.general
+                local defaultsTable = defaults.profile.general
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y,
+                    orientation = defaultsTable.orientation,
+                    padding = defaultsTable.padding
+                })
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
 }
 
 function Module:OnInitialize()
@@ -60,6 +123,8 @@ function Module:OnEnable()
     else
         Module.Era()
     end
+
+    Module:AddEditMode()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -103,11 +168,60 @@ function Module:RefreshOptionScreens()
     local configFrame = DF.ConfigModule.ConfigFrame
     local cat = 'Misc'
     configFrame:RefreshCatSub(cat, 'Tooltip')
+
+    Module.GametooltipPreview.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub)
     local db = Module.db.profile
     local state = db.general
+
+    local parent = _G[state.anchorFrame]
+
+    Module.GametooltipPreview:ClearAllPoints()
+    Module.GametooltipPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    Module.GametooltipPreview:SetScale(state.scale)
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+
+    local f = CreateFrame('FRAME', 'DragonflightUIGameTooltipPreviewFrame', UIParent)
+    f:SetSize(250, 90)
+
+    Module.GametooltipPreview = f;
+
+    EditModeModule:AddEditModeToFrame(f)
+
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'GameTooltip'
+    end)
+
+    f.DFEditModeSelection:RegisterOptions({
+        name = 'GameTooltip',
+        sub = 'general',
+        advancedName = 'GameTooltip',
+        options = generalOptions,
+        extra = optionsGeneralEditmode,
+        -- parentExtra = TargetFrame,
+        default = function()
+            setDefaultSubValues('general')
+        end,
+        moduleRef = self
+        -- showFunction = function()
+        --     --
+        --     -- TargetFrame.unit = 'player';
+        --     -- TargetFrame_Update(TargetFrame);
+        --     -- TargetFrame:Show()
+        --     TargetFrame:SetAlpha(0)
+        -- end,
+        -- hideFunction = function()
+        --     --        
+        --     -- TargetFrame.unit = 'target';
+        --     -- TargetFrame_Update(TargetFrame);
+        --     TargetFrame:SetAlpha(1)
+        -- end
+    });
 end
 
 local frame = CreateFrame('FRAME')
