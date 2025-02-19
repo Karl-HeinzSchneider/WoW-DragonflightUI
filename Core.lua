@@ -61,32 +61,13 @@ end
 function DF:GetClassColor(class, alpha)
     local r, g, b, hex = GetClassColor(class)
     if alpha then
-        return r, g, b, alpha
+        return r, g, b, alpha, hex
     else
-        return r, g, b, 1
+        return r, g, b, 1, hex
     end
 end
 
-do
-    local classColor = {
-        SHAMAN = "2459FF",
-        MAGE = "69CCF0",
-        WARLOCK = "9482C9",
-        HUNTER = "ABD473",
-        ROGUE = "FFF569",
-        PRIEST = "FFFFFF",
-        DRUID = "FF7D0A",
-        DEATHKNIGHT = "C41F3B",
-        WARRIOR = "C79C6E",
-        PALADIN = "F58CBA"
-    }
-
-    function DF:GetClassColorText(class)
-        return classColor[class] or classColor['PRIEST']
-    end
-
-    function DF:GetClassColoredText(str, class)
-        return "|cff" .. DF:GetClassColorText(class) .. str .. "|r"
-    end
+function DF:GetClassColoredText(str, class)
+    local r, g, b, a, hex = DF:GetClassColor(class)
+    return "|c" .. hex .. str .. "|r"
 end
-

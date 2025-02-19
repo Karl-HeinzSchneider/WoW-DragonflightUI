@@ -29,7 +29,19 @@ local defaults = {
             showItemQualityBackdrop = false,
             showItemStackCount = false,
             showItemID = false,
-            showItemIconID = false
+            showItemIconID = false,
+            -- unit
+            unitClassBorder = true,
+            unitClassBackdrop = false,
+            unitReactionBorder = true,
+            unitReactionBackdrop = false,
+            unitClassName = true,
+            unitTitle = true,
+            unitRealm = true,
+            unitGuild = true,
+            unitGuildRank = true,
+            unitGuildRankIndex = true,
+            unitGrayoutOnDeath = true
         }
     }
 }
@@ -62,6 +74,12 @@ local GetItemQualityColor = (C_Item and C_Item.GetItemQualityColor) and C_Item.G
 
 local sourceColor = "|cffffc000%s|r"
 local whiteColor = "|cffffffff%s|r"
+
+local youText = format(">>%s<<", strupper(YOU))
+local afkText = "|cff909090 <AFK>"
+local dndText = "|cff909090 <DND>"
+local offlineText = "|cff909090 <DC>"
+local targetText = "|cffffffff@"
 
 local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
 
@@ -102,6 +120,7 @@ local generalOptions = {
             editmode = true,
             group = 'headerGameTooltip'
         },
+        -- Spelltooltip
         headerSpellTooltip = {
             type = 'header',
             name = L["TooltipHeaderSpellTooltip"],
@@ -151,6 +170,7 @@ local generalOptions = {
             editmode = true,
             group = 'headerSpellTooltip'
         },
+        -- Itemtooltip
         headerItemTooltip = {
             type = 'header',
             name = L["TooltipHeaderItemTooltip"],
@@ -199,6 +219,104 @@ local generalOptions = {
             order = 1,
             editmode = true,
             group = 'headerItemTooltip'
+        },
+        -- UnitTooltip
+        headerUnitTooltip = {
+            type = 'header',
+            name = L["TooltipUnitTooltip"],
+            desc = L["TooltipUnitTooltipDesc"],
+            order = 4,
+            isExpanded = true,
+            editmode = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        unitClassBorder = {
+            type = 'toggle',
+            name = L["TooltipUnitClassBorder"],
+            desc = L["TooltipUnitClassBorderDesc"] .. getDefaultStr('unitClassBorder', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitClassBackdrop = {
+            type = 'toggle',
+            name = L["TooltipUnitClassBackdrop"],
+            desc = L["TooltipUnitClassBackdropDesc"] .. getDefaultStr('unitClassBackdrop', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitReactionBorder = {
+            type = 'toggle',
+            name = L["TooltipUnitReactionBorder"],
+            desc = L["TooltipUnitReactionBorderDesc"] .. getDefaultStr('unitReactionBorder', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitReactionBackdrop = {
+            type = 'toggle',
+            name = L["TooltipUnitReactionBackdrop"],
+            desc = L["TooltipUnitReactionBackdropDesc"] .. getDefaultStr('unitReactionBackdrop', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitClassName = {
+            type = 'toggle',
+            name = L["TooltipUnitClassName"],
+            desc = L["TooltipUnitClassNameDesc"] .. getDefaultStr('unitClassName', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitTitle = {
+            type = 'toggle',
+            name = L["TooltipUnitTitle"],
+            desc = L["TooltipUnitTitleDesc"] .. getDefaultStr('unitTitle', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitRealm = {
+            type = 'toggle',
+            name = L["TooltipUnitRealm"],
+            desc = L["TooltipUnitRealmDesc"] .. getDefaultStr('unitRealm', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitGuild = {
+            type = 'toggle',
+            name = L["TooltipUnitGuild"],
+            desc = L["TooltipUnitGuildDesc"] .. getDefaultStr('unitGuild', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitGuildRank = {
+            type = 'toggle',
+            name = L["TooltipUnitGuildRank"],
+            desc = L["TooltipUnitGuildRankDesc"] .. getDefaultStr('unitGuildRank', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitGuildRankIndex = {
+            type = 'toggle',
+            name = L["TooltipUnitGuildRankIndex"],
+            desc = L["TooltipUnitGuildRankIndexDesc"] .. getDefaultStr('unitGuildRankIndex', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitGrayoutOnDeath = {
+            type = 'toggle',
+            name = L["TooltipUnitGrayOutOnDeath"],
+            desc = L["TooltipUnitGrayOutOnDeathDesc"] .. getDefaultStr('unitGrayoutOnDeath', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
         }
     }
 }
@@ -476,6 +594,7 @@ function Module:HookFunctions()
 end
 
 function Module:SetDefaultBackdrop(self)
+    -- print('Module:SetDefaultBackdrop(self)')
     self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
     self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config    
 end
@@ -584,6 +703,234 @@ function Module:OnTooltipSetItem(self)
 end
 
 function Module:OnTooltipSetUnit(self)
+    -- print('Module:OnTooltipSetUnit(self)')
+    local state = Module.db.profile.general;
+
+    local name, unit = self:GetUnit()
+
+    if not name or not unit then return end
+    local guid = UnitGUID(unit) or ""
+    local id = tonumber(guid:match("-(%d+)-%x+$"), 10)
+
+    -- print(name, unit)
+    -- print(guid, id)  
+
+    if UnitIsPlayer(unit) then
+        Module:UnitPlayerTooltip(self)
+    else
+        Module:UnitNPCTooltip(self)
+    end
+end
+
+function Module:UnitPlayerTooltip(self)
+    local state = Module.db.profile.general;
+
+    local name, unit = self:GetUnit()
+
+    local guildName, guildRankName, guildRankIndex, guildRealm = GetGuildInfo(unit)
+    local localizedClass, englishClass, classIndex = UnitClass(unit);
+    if not class then return end -- TODO
+
+    local r, g, b = GameTooltip_UnitColor(unit)
+    local cr, cg, cb, ca, chex = DF:GetClassColor(englishClass);
+
+    -- self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
+    -- self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config   
+
+    if state.unitClassBorder then
+        self:SetBackdropBorderColor(cr, cg, cb);
+    elseif state.unitReactionBorder then
+        self:SetBackdropBorderColor(r, g, b);
+    end
+
+    if state.unitClassBackdrop then
+        self:SetBackdropColor(cr, cg, cb, 0.2);
+    elseif state.unitReactionBackdrop then
+        self:SetBackdropColor(r, g, b, 0.2);
+    end
+
+    local name, realm = UnitName(unit)
+    if state.unitTitle then
+        --
+        name = UnitPVPName(unit) or name
+    end
+
+    local line = _G[self:GetName() .. 'TextLeft1']
+    if realm and realm ~= '' and state.unitRealm then
+        --  
+        name = name .. ' (' .. realm .. ')';
+    end
+
+    if state.unitClassName then
+        line:SetText(DF:GetClassColoredText(name, englishClass));
+    else
+        line:SetText(name);
+    end
+
+    if UnitIsAFK(unit) then
+        self:AppendText(afkText);
+    elseif UnitIsDND(unit) then
+        self:AppendText(dndText);
+    elseif not UnitIsConnected(unit) then
+        self:AppendText(dcText);
+    end
+
+    Module:HideLines(self, 2, 3);
+    Module:HideLine(self, "^" .. LEVEL);
+    Module:HideLine(self, "^" .. FACTION_ALLIANCE);
+    Module:HideLine(self, "^" .. FACTION_HORDE);
+    Module:HideLine(self, "^" .. PVP);
+
+    local guild, rank, index = GetGuildInfo(unit)
+    if guild and state.unitGuild then
+        --
+        local guildLine = Module:GetLine(self, 2);
+
+        if UnitIsInMyGuild(unit) and UnitIsSameServer(unit) and UnitIsFriend(unit, 'player') then
+            guildLine:SetTextColor(1.0, 0.3, 1.0)
+        else
+            guildLine:SetTextColor(r, g, b)
+        end
+
+        if state.unitGuildRank then
+            local rankColor = "|cff909090"
+
+            if state.unitGuildRankIndex then
+                guildLine:SetFormattedText("<%s> %s%s (%d)", guild, rankColor, rank, index)
+            else
+                guildLine:SetFormattedText("<%s> %s%s", guild, rankColor, rank)
+            end
+        else
+            guildLine:SetFormattedText("<%s>", guild)
+        end
+    end
+
+    if guild then
+        Module:AddUnitLine(self, unit, 3)
+    else
+        Module:AddUnitLine(self, unit, 2)
+    end
+
+    if state.unitGrayoutOnDeath then
+        --
+        Module:GrayOutOnDeath(self, unit)
+    end
+end
+
+function Module:UnitNPCTooltip(self)
+    local state = Module.db.profile.general;
+
+    local name, unit = self:GetUnit()
+
+    local r, g, b = GameTooltip_UnitColor(unit)
+    local level = UnitLevel(unit)
+
+    if state.unitReactionBorder then
+        --
+        self:SetBackdropBorderColor(r, g, b)
+    end
+
+    if state.unitReactionBackdrop then
+        --
+        self:SetBackdropColor(r, g, b, 0.2)
+    end
+
+    local levelLine = Module:FindLine(self, '^' .. LEVEL)
+
+    if levelLine or self:NumLines() > 1 then
+        --
+
+        local titleLine;
+        do
+            local line, index = Module:FindLine(self, '^' .. LEVEL);
+            if line and index > 2 then
+                --
+                titleLine = Module:GetLine(self, 2);
+            end
+        end
+
+        if titleLine then
+            Module:AddUnitLine(self, unit, 3)
+        else
+            Module:AddUnitLine(self, unit, 2)
+        end
+    end
+
+    if state.unitGrayoutOnDeath then
+        --
+        Module:GrayOutOnDeath(self, unit)
+    end
+
+    -- Module:HideLines(self, 2, 3);
+    Module:HideLine(self, "^" .. LEVEL);
+    -- Module:HideLine(self, "^" .. FACTION_ALLIANCE);
+    -- Module:HideLine(self, "^" .. FACTION_HORDE);
+    Module:HideLine(self, "^" .. PVP);
+end
+
+function Module:AddUnitLine(self, unit, index)
+    -- print('AddUnitLine', unit, index)
+    local unitLine = Module:GetLine(self, index);
+    unitLine:SetTextColor(1.0, 1.0, 1.0)
+
+    local level = UnitLevel(unit)
+    local questColor = GetQuestDifficultyColor(level)
+    local levelColor = CreateColor(questColor.r, questColor.g, questColor.b)
+    local levelHex = levelColor:GenerateHexColor()
+    local levelString = '|c' .. levelHex .. level .. '|r'
+
+    if UnitIsPlayer(unit) then
+        local localizedClass, englishClass, classIndex = UnitClass(unit);
+
+        -- print(levelString, UnitRace(unit), DF:GetClassColoredText(localizedClass, englishClass))
+
+        unitLine:SetFormattedText("%s %s %s", levelString, UnitRace(unit),
+                                  DF:GetClassColoredText(localizedClass, englishClass))
+    else
+        local class = UnitClassification(unit)
+        --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+        if class == 'worldboss' then
+            class = '|r|cffff0000??'
+        elseif class == 'rareelite' then
+            class = format("+ |cffff00da%s", ITEM_QUALITY3_DESC)
+        elseif class == 'elite' then
+            class = '+'
+        elseif class == 'rare' then
+            class = format(" |cffff00da%s", ITEM_QUALITY3_DESC)
+            -- elseif class == 'normal' then
+            -- elseif class == 'trivial' then
+            -- elseif class == 'minus' then
+        else
+            class = ''
+        end
+
+        local creature = UnitCreatureFamily(unit) or UnitCreatureType(unit) or ''
+        -- TODO: localization    if 'Non-Combat Pet' => 'Pet' etc
+
+        if class ~= '' then
+            unitLine:SetFormattedText("%s %s |r|cffffffff%s", levelString, class, creature)
+        else
+            unitLine:SetFormattedText("%s |r|cffffffff%s", levelString, creature)
+        end
+    end
+
+    self:Show()
+end
+
+function Module:GrayOutOnDeath(self, unit)
+    if not UnitIsDeadOrGhost(unit) then return end
+
+    self:SetBackdropBorderColor(0.6, 0.6, 0.6)
+    self:SetBackdropColor(0.1, 0.1, 0.1, 0.2)
+
+    local line, text;
+    for i = 2, self:NumLines() do
+        line = _G[self:GetName() .. 'TextLeft' .. i];
+        text = line:GetText() or '';
+        text = text:gsub("|cff%x%x%x%x%x%x", "|cffaaaaaa");
+        line:SetTextColor(0.7, 0.7, 0.7);
+        line:SetText(text)
+    end
 end
 
 function Module:OnTooltipSetQuest(self)
@@ -668,6 +1015,58 @@ function Module:HookSpellTooltip()
     hooksecurefunc(GameTooltip, "SetUnitDebuff", function(self, unit, slotNumber)
         attachSpellTooltip(self, unit, slotNumber, "HARMFUL")
     end)
+end
+
+function Module:FindLine(self, searching)
+    local line, text;
+
+    for i = 2, self:NumLines() do
+        --
+        line = _G[self:GetName() .. 'TextLeft' .. i];
+        text = line:GetText() or '';
+        if strfind(text, searching) then
+            --
+            return line, i;
+        end
+    end
+end
+
+function Module:GetLine(self, index)
+    local num = self:NumLines()
+    if index > self:NumLines() then
+        --
+        self:AddLine(' ');
+        return Module:GetLine(self, num + 1)
+    end
+    return _G[self:GetName() .. 'TextLeft' .. index], _G[self:GetName() .. 'TextRight' .. index]
+
+end
+
+function Module:HideLine(self, searching)
+    local line, text;
+
+    for i = 2, self:NumLines() do
+        --
+        line = _G[self:GetName() .. 'TextLeft' .. i];
+        text = line:GetText() or '';
+        if strfind(text, searching) then
+            --
+            line:SetText(nil);
+            return;
+        end
+    end
+end
+
+function Module:HideLines(self, number, numberEnd)
+    numberEnd = numberEnd or 666;
+
+    for i = number, self:NumLines() do
+        --
+        if i <= numberEnd then
+            --
+            _G[self:GetName() .. 'TextLeft' .. i]:SetText(nil)
+        end
+    end
 end
 
 local frame = CreateFrame('FRAME')

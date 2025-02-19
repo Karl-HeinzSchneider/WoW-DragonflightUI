@@ -370,6 +370,7 @@ L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
 L["TooltipAnchorMouse"] = "Anchor on Mouse"
 L["TooltipAnchorMouseDesc"] = ""
 
+-- spelltooltip
 L["TooltipAnchorSpells"] = "Anchor Spells"
 L["TooltipAnchorSpellsDesc"] = ""
 L["TooltipShowSpellID"] = "Show Spell ID"
@@ -384,8 +385,10 @@ L["TooltipShowIconIDDesc"] = ""
 L["TooltipShowIcon"] = "Show Icon"
 L["TooltipShowIconDesc"] = ""
 
+-- itemtooltip
 L["TooltipHeaderItemTooltip"] = "ItemTooltip"
 L["TooltipHeaderItemTooltipDesc"] = ""
+
 L["TooltipShowItemQuality"] = "Item Quality Border"
 L["TooltipShowItemQualityDesc"] = ""
 L["TooltipShowItemQualityBackdrop"] = "Item Quality Backdrop"
@@ -395,6 +398,34 @@ L["TooltipShowItemStackCountDesc"] = ""
 L["TooltipShowItemID"] = "Show Item ID"
 L["TooltipShowItemIDDesc"] = ""
 
+-- unittooltip
+L["TooltipUnitTooltip"] = "UnitTooltip"
+L["TooltipUnitTooltipDesc"] = ""
+
+L["TooltipUnitClassBorder"] = "Class Border"
+L["TooltipUnitClassBorderDesc"] = ""
+L["TooltipUnitClassBackdrop"] = "Class  Backdrop"
+L["TooltipUnitClassBackdropDesc"] = ""
+
+L["TooltipUnitReactionBorder"] = "Reaction Border"
+L["TooltipUnitReactionBorderDesc"] = ""
+L["TooltipUnitReactionBackdrop"] = "Reaction  Backdrop"
+L["TooltipUnitReactionBackdropDesc"] = ""
+
+L["TooltipUnitClassName"] = "Class Name"
+L["TooltipUnitClassNameDesc"] = ""
+L["TooltipUnitTitle"] = "Show Title"
+L["TooltipUnitTitleDesc"] = ""
+L["TooltipUnitRealm"] = "Show Realm"
+L["TooltipUnitRealmDesc"] = ""
+L["TooltipUnitGuild"] = "Show Guild"
+L["TooltipUnitGuildDesc"] = ""
+L["TooltipUnitGuildRank"] = "Show Guild Rank"
+L["TooltipUnitGuildRankDesc"] = ""
+L["TooltipUnitGuildRankIndex"] = "Show Guild Rank Index"
+L["TooltipUnitGuildRankIndexDesc"] = ""
+L["TooltipUnitGrayOutOnDeath"] = "Gray Out On Death"
+L["TooltipUnitGrayOutOnDeathDesc"] = ""
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player
