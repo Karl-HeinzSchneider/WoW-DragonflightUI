@@ -4941,7 +4941,7 @@ function Module:AddRaidframeRoleIcons()
     end)
 end
 
-function Module.ChangeFonts()
+function Module:ChangeFonts()
     local newFont = 'Fonts\\FRIZQT__.ttf'
 
     local locale = GetLocale()
@@ -5039,7 +5039,7 @@ function frame:OnEvent(event, arg1)
             Module.ChangeFocusFrame()
             Module.ChangeFocusToT()
         end
-        Module.ChangeFonts()
+        Module:ChangeFonts()
         Module:ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         -- Module.ApplySettings()
