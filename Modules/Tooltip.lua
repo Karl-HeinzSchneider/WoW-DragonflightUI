@@ -224,6 +224,35 @@ function Module:AddEditMode()
     });
 end
 
+function Module:HookDefaultAnchor()
+    hooksecurefunc("GameTooltip_SetDefaultAnchor", function(self, parent)
+        --
+        -- DF:Debug(Module, 'GameTooltip_SetDefaultAnchor', self:GetName(), parent:GetName())
+
+        local db = Module.db.profile
+        local state = db.general
+
+        local foci = GetMouseFoci()
+        -- print('~', foci[1]:GetName())
+        local useMouseAnchor = true;
+
+        self:ClearAllPoints()
+        self:SetScale(state.scale)
+
+        if useMouseAnchor and foci[1] == WorldFrame then
+            -- units etc
+            self:SetOwner(parent, 'ANCHOR_CURSOR_RIGHT', 24, 5) -- TODO config
+
+            -- -- actionbar etc
+            -- self:SetOwner(parent, 'ANCHOR_NONE')
+            -- self:SetPoint('BOTTOMLEFT', foci[1], 'TOPRIGHT', 0, 0)
+        else
+            self:SetOwner(parent, 'ANCHOR_NONE')
+            self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0)
+        end
+    end)
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
@@ -236,6 +265,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 -- Cata
 function Module.Cata()
+    Module:HookDefaultAnchor()
 end
 
 -- Wrath
