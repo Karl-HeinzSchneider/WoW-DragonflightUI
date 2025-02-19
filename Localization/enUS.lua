@@ -362,6 +362,23 @@ L["ProfessionCheckAll"] = "Check All"
 L["ProfessionUnCheckAll"] = "Uncheck All"
 L["ProfessionFavorites"] = "Favorites"
 
+-- Tooltip
+L["TooltipName"] = "Tooltip"
+L["TooltipHeaderGameToltip"] = "GameTooltip"
+L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
+
+L["TooltipAnchorMouse"] = "Anchor on Mouse"
+L["TooltipAnchorMouseDesc"] = ""
+
+L["TooltipAnchorSpells"] = "Anchor Spells"
+L["TooltipAnchorSpellsDesc"] = ""
+L["TooltipShowSpellID"] = "Show Spell ID"
+L["TooltipShowSpellIDDesc"] = ""
+L["TooltipShowSpellSource"] = "Show Spell Source"
+L["TooltipShowSpellSourceDesc"] = ""
+L["TooltipShowIconID"] = "Show Icon ID"
+L["TooltipShowIconIDDesc"] = ""
+
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player

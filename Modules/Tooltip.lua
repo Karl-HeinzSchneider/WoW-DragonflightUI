@@ -14,7 +14,15 @@ local defaults = {
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
             x = -97,
-            y = 132
+            y = 132,
+            -- gametooltip
+            anchorMouse = false,
+            -- spell
+            anchorSpells = true,
+            showSpellID = true,
+            showSpellSource = true,
+            showIconID = true,
+            showStealable = false
         }
     }
 }
@@ -66,8 +74,66 @@ local generalOptions = {
     name = 'GameTooltip',
     get = getOption,
     set = setOption,
-    sortComparator = DFSettingsListMixin.AlphaSortComparator,
-    args = {}
+    args = {
+        headerGameTooltip = {
+            type = 'header',
+            name = L["TooltipHeaderGameToltip"],
+            desc = L["TooltipHeaderGameToltip"],
+            order = 1,
+            isExpanded = true,
+            editmode = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        anchorMouse = {
+            type = 'toggle',
+            name = L["TooltipAnchorMouse"],
+            desc = L["TooltipAnchorMouseDesc"] .. getDefaultStr('anchorMouse', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerGameTooltip'
+        },
+        headerSpellTooltip = {
+            type = 'header',
+            name = L["TooltipHeaderSpellTooltip"],
+            desc = L["TooltipHeaderSpellTooltip"],
+            order = 2,
+            isExpanded = true,
+            editmode = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        anchorSpells = {
+            type = 'toggle',
+            name = L["TooltipAnchorSpells"],
+            desc = L["TooltipAnchorSpellsDesc"] .. getDefaultStr('anchorSpells', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerSpellTooltip'
+        },
+        showSpellID = {
+            type = 'toggle',
+            name = L["TooltipShowSpellID"],
+            desc = L["TooltipShowSpellIDDesc"] .. getDefaultStr('showSpellID', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerSpellTooltip'
+        },
+        showSpellSource = {
+            type = 'toggle',
+            name = L["TooltipShowSpellSource"],
+            desc = L["TooltipShowSpellSourceDesc"] .. getDefaultStr('showSpellSource', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerSpellTooltip'
+        },
+        showIconID = {
+            type = 'toggle',
+            name = L["TooltipShowIconID"],
+            desc = L["TooltipShowIconIDDesc"] .. getDefaultStr('showIconID', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerSpellTooltip'
+        }
+    }
 }
 DF.Settings:AddPositionTable(Module, generalOptions, 'general', 'GameTooltip', getDefaultStr, frameTable)
 
@@ -234,27 +300,42 @@ function Module:HookDefaultAnchor()
         --
         -- DF:Debug(Module, 'GameTooltip_SetDefaultAnchor', self:GetName(), parent:GetName())
 
-        local db = Module.db.profile
-        local state = db.general
+        local state = Module.db.profile.general;
 
-        local foci = GetMouseFoci()
-        -- print('~', foci[1]:GetName())
-        local useMouseAnchor = true;
+        -- spells
+        if state.anchorSpells then
+            local parentparent = parent and parent:GetParent();
 
-        self:ClearAllPoints()
-        self:SetScale(state.scale)
-
-        if useMouseAnchor and foci[1] == WorldFrame then
-            -- units etc
-            self:SetOwner(parent, 'ANCHOR_CURSOR_RIGHT', 24, 5) -- TODO config
-
-            -- -- actionbar etc
-            -- self:SetOwner(parent, 'ANCHOR_NONE')
-            -- self:SetPoint('BOTTOMLEFT', foci[1], 'TOPRIGHT', 0, 0)
-        else
-            self:SetOwner(parent, 'ANCHOR_NONE')
-            self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0)
+            if (parent.action or parent.spellId) or (parentparent and parentparent.action) or
+                (parentparent and parentparent.spellId) then
+                self:SetOwner(parent, 'ANCHOR_RIGHT');
+                return;
+            end
         end
+
+        --
+        if state.anchorMouse then
+            --
+            local focused;
+            if GetMouseFoci then
+                local foci = GetMouseFoci()
+                focused = foci[1]
+            else
+                focused = GetMouseFocus()
+            end
+
+            if focused == WorldFrame then
+                -- units etc
+                self:ClearAllPoints();
+                self:SetOwner(parent, 'ANCHOR_CURSOR_RIGHT', 24, 5); -- TODO config           
+                return;
+            end
+        end
+
+        -- default
+        self:SetOwner(parent, 'ANCHOR_NONE');
+        self:ClearAllPoints();
+        self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
     end)
 end
 
@@ -295,6 +376,126 @@ function Module:AddBackdrops()
             end
         end)
     end
+end
+
+function Module:HookSpellTooltip()
+    local sourceColor = "|cffffc000%s|r"
+    local whiteColor = "|cffffffff%s|r"
+
+    GameTooltip:HookScript('OnTooltipSetSpell', function(self)
+        --
+        -- print('OnTooltipSetSpell', tip:GetName())
+        local state = Module.db.profile.general;
+
+        local spellName, spellId = self:GetSpell();
+
+        if not spellId then return end
+
+        local strTable = {}
+
+        if state.showSpellID then
+            local spellIDLine = string.format(whiteColor, "Spell ID: ") .. string.format(sourceColor, spellId);
+            table.insert(strTable, spellIDLine);
+        end
+
+        -- if state.showSpellSource and source then
+        --     local localizedClass, englishClass, classIndex = UnitClass(source);
+        --     local nameString = DF:GetClassColoredText(UnitName(source), englishClass);
+
+        --     local sourceStr = string.format(whiteColor, "Source: ") .. nameString;
+        --     table.insert(strTable, sourceStr);
+        -- end
+
+        if state.showIconID then
+            local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(spellId)
+            local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, icon);
+            table.insert(strTable, iconStr);
+        end
+
+        local numStrings = #strTable
+        if numStrings == 0 then return end
+
+        self:AddLine(" ")
+
+        for i = 1, numStrings, 2 do
+            -- 
+            -- print('..', i, ' / ', numStrings)
+
+            if strTable[i + 1] then
+                self:AddLine(strTable[i] .. string.format(whiteColor, ', ') .. strTable[i + 1])
+            else
+                self:AddLine(strTable[i])
+            end
+        end
+        self:Show()
+    end)
+
+    local function attachSpellTooltip(self, unit, slotNumber, auraType)
+        --
+        -- print('~attachSpellTooltip~', self:GetName(), unit, slotNumber, auraType)
+        -- local name = select(1, UnitAura(unit, slotNumber, auraType))
+        -- local id = select(10, UnitAura(unit, slotNumber, auraType))
+        local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal,
+              spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura(unit, slotNumber,
+                                                                                                      auraType)
+        if not name or not spellId then return end
+        -- print('~~', name, spellId)
+
+        local state = Module.db.profile.general;
+
+        local strTable = {}
+
+        if state.showSpellID then
+            local spellIDLine = string.format(whiteColor, "Spell ID: ") .. string.format(sourceColor, spellId);
+            table.insert(strTable, spellIDLine);
+        end
+
+        if state.showSpellSource and source then
+            local localizedClass, englishClass, classIndex = UnitClass(source);
+            local nameString = DF:GetClassColoredText(UnitName(source), englishClass);
+
+            local sourceStr = string.format(whiteColor, "Source: ") .. nameString;
+            table.insert(strTable, sourceStr);
+        end
+
+        if state.showIconID and icon then
+            local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, icon);
+            table.insert(strTable, iconStr);
+        end
+
+        if state.showStealable then
+            local stealStr = string.format(whiteColor, "Stealable: ") ..
+                                 string.format(sourceColor, tostring(isStealable));
+            table.insert(strTable, stealStr);
+        end
+
+        local numStrings = #strTable
+        if numStrings == 0 then return end
+
+        self:AddLine(" ")
+
+        for i = 1, numStrings, 2 do
+            -- 
+            -- print('..', i, ' / ', numStrings)
+
+            if strTable[i + 1] then
+                self:AddLine(strTable[i] .. string.format(whiteColor, ', ') .. strTable[i + 1])
+            else
+                self:AddLine(strTable[i])
+            end
+        end
+        self:Show()
+    end
+
+    hooksecurefunc(GameTooltip, 'SetUnitAura', function(self, unit, slotNumber, auraType)
+        attachSpellTooltip(self, unit, slotNumber, auraType)
+    end)
+    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self, unit, slotNumber)
+        attachSpellTooltip(self, unit, slotNumber, "HELPFUL")
+    end)
+    hooksecurefunc(GameTooltip, "SetUnitDebuff", function(self, unit, slotNumber)
+        attachSpellTooltip(self, unit, slotNumber, "HARMFUL")
+    end)
 end
 
 function Module:SetItemQuality(tip)
@@ -349,15 +550,19 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 -- Cata
 function Module.Cata()
-    Module:HookDefaultAnchor()
-    Module:AddBackdrops()
-    Module:HookItemRefTooltip()
+    Module.Era()
 end
 
 -- Wrath
 function Module.Wrath()
+    Module.Era()
 end
 
 -- Era
 function Module.Era()
+    Module:HookDefaultAnchor()
+    Module:AddBackdrops()
+
+    Module:HookSpellTooltip()
+    Module:HookItemRefTooltip()
 end
