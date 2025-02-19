@@ -40,7 +40,7 @@ local defaults = {
             unitRealm = true,
             unitGuild = true,
             unitGuildRank = true,
-            unitGuildRankIndex = true,
+            unitGuildRankIndex = false,
             unitGrayoutOnDeath = true
         }
     }
