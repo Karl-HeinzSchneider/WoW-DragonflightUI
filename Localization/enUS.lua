@@ -390,8 +390,10 @@ L["TooltipShowItemQuality"] = "Item Quality Border"
 L["TooltipShowItemQualityDesc"] = ""
 L["TooltipShowItemQualityBackdrop"] = "Item Quality Backdrop"
 L["TooltipShowItemQualityBackdropDesc"] = ""
-L["TooltipshowItemStackCount"] = "Show Stack Count"
-L["TooltipshowItemStackCountDesc"] = ""
+L["TooltipShowItemStackCount"] = "Show Stack Size"
+L["TooltipShowItemStackCountDesc"] = ""
+L["TooltipShowItemID"] = "Show Item ID"
+L["TooltipShowItemIDDesc"] = ""
 
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"

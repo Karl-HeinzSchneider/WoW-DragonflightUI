@@ -27,7 +27,9 @@ local defaults = {
             -- item
             showItemQuality = true,
             showItemQualityBackdrop = false,
-            showItemStackCount = true
+            showItemStackCount = false,
+            showItemID = false,
+            showItemIconID = false
         }
     }
 }
@@ -176,8 +178,24 @@ local generalOptions = {
         },
         showItemStackCount = {
             type = 'toggle',
-            name = L["TooltipshowItemStackCount"],
-            desc = L["TooltipshowItemStackCountDesc"] .. getDefaultStr('showItemStackCount', 'general'),
+            name = L["TooltipShowItemStackCount"],
+            desc = L["TooltipShowItemStackCountDesc"] .. getDefaultStr('showItemStackCount', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerItemTooltip'
+        },
+        showItemID = {
+            type = 'toggle',
+            name = L["TooltipShowItemID"],
+            desc = L["TooltipShowItemIDDesc"] .. getDefaultStr('showItemID', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerItemTooltip'
+        },
+        showItemIconID = {
+            type = 'toggle',
+            name = L["TooltipShowIconID"],
+            desc = L["TooltipShowIconIDDesc"] .. getDefaultStr('showItemIconID', 'general'),
             order = 1,
             editmode = true,
             group = 'headerItemTooltip'
@@ -314,7 +332,7 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(f)
 
     f.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'GameTooltip'
+        return 'Tooltip Anchor'
     end)
 
     f.DFEditModeSelection:RegisterOptions({
@@ -462,6 +480,25 @@ function Module:SetDefaultBackdrop(self)
     self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config    
 end
 
+function Module:SetExtraStringTable(self, strTable)
+    local numStrings = #strTable
+    if numStrings == 0 then return end
+
+    self:AddLine(" ")
+
+    for i = 1, numStrings, 2 do
+        -- 
+        -- print('..', i, ' / ', numStrings)
+
+        if strTable[i + 1] then
+            self:AddLine(strTable[i] .. string.format(whiteColor, ', ') .. strTable[i + 1])
+        else
+            self:AddLine(strTable[i])
+        end
+    end
+    self:Show()
+end
+
 function Module:OnTooltipSetSpell(self)
     -- print('OnTooltipSetSpell', tip:GetName())
     local state = Module.db.profile.general;
@@ -500,27 +537,50 @@ function Module:OnTooltipSetSpell(self)
         table.insert(strTable, iconStr);
     end
 
-    local numStrings = #strTable
-    if numStrings == 0 then return end
-
-    self:AddLine(" ")
-
-    for i = 1, numStrings, 2 do
-        -- 
-        -- print('..', i, ' / ', numStrings)
-
-        if strTable[i + 1] then
-            self:AddLine(strTable[i] .. string.format(whiteColor, ', ') .. strTable[i + 1])
-        else
-            self:AddLine(strTable[i])
-        end
-    end
-    self:Show()
+    Module:SetExtraStringTable(self, strTable)
 end
 
 function Module:OnTooltipSetItem(self)
     -- print('Module:OnTooltipSetItem(self)')
-    Module:SetItemQuality(self)
+    -- print('SetItemQuality', tip:GetName())
+    local state = Module.db.profile.general;
+
+    local name, link = self:GetItem();
+
+    if not link then return end
+    local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
+          itemTexture, sellPrice, classID, subclassID, bindType, expansionID, setID, isCraftingReagent = GetItemInfo(
+                                                                                                             link)
+
+    if not itemQuality then return end
+
+    local r, g, b = GetItemQualityColor(itemQuality);
+
+    if state.showItemQuality then self:SetBackdropBorderColor(r, g, b); end
+    if state.showItemQualityBackdrop then self:SetBackdropColor(r, g, b, 0.2); end
+
+    local strTable = {}
+
+    if state.showItemID then
+        local id = string.match(link, "item:(%d*)")
+        -- print('id', id)
+        local idLine = string.format(whiteColor, "Item ID: ") .. string.format(sourceColor, id);
+        table.insert(strTable, idLine);
+    end
+
+    if state.showItemStackCount then
+        if itemStackCount then
+            local stackLine = string.format(whiteColor, "Stack Size: ") .. string.format(sourceColor, itemStackCount);
+            table.insert(strTable, stackLine);
+        end
+    end
+
+    if state.showItemIconID then
+        local iconStr = string.format(whiteColor, "Icon ID: ") .. string.format(sourceColor, itemTexture);
+        table.insert(strTable, iconStr);
+    end
+
+    Module:SetExtraStringTable(self, strTable)
 end
 
 function Module:OnTooltipSetUnit(self)
@@ -608,27 +668,6 @@ function Module:HookSpellTooltip()
     hooksecurefunc(GameTooltip, "SetUnitDebuff", function(self, unit, slotNumber)
         attachSpellTooltip(self, unit, slotNumber, "HARMFUL")
     end)
-end
-
-function Module:SetItemQuality(tip)
-    -- print('SetItemQuality', tip:GetName())
-    local state = Module.db.profile.general;
-
-    local name, link = tip:GetItem();
-
-    if not link then return end
-    -- local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
-    --       itemTexture, sellPrice, classID, subclassID, bindType, expansionID, setID, isCraftingReagent = GetItemInfo(
-    --                                                                                                          link)
-    local itemName, itemLink, itemQuality = GetItemInfo(link);
-
-    if not itemQuality then return end
-
-    local r, g, b = GetItemQualityColor(itemQuality);
-
-    if state.showItemQuality then tip:SetBackdropBorderColor(r, g, b); end
-
-    if state.showItemQualityBackdrop then tip:SetBackdropColor(r, g, b, 0.2); end
 end
 
 local frame = CreateFrame('FRAME')
