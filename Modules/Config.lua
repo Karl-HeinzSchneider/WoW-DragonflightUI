@@ -15,6 +15,7 @@ local defaults = {
             ['Chat'] = false,
             ['Darkmode'] = false,
             ['Minimap'] = true,
+            ['Tooltip'] = true,
             ['UI'] = true,
             ['Unitframe'] = true,
             ['Utility'] = false
