@@ -253,6 +253,20 @@ function Module:HookDefaultAnchor()
     end)
 end
 
+function Module:HookItemRefTooltip()
+    -- item from chat etc
+    ItemRefTooltip:HookScript('OnTooltipSetItem', function(self)
+        --
+        -- print('OnTooltipSetItem')
+        -- TODO backdrop?
+    end)
+    ItemRefTooltip:HookScript('OnTooltipCleared', function(self)
+        --
+        -- print('OnTooltipCleared')
+        -- TODO remove backdrop?
+    end)
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
@@ -266,6 +280,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 -- Cata
 function Module.Cata()
     Module:HookDefaultAnchor()
+    Module:HookItemRefTooltip()
 end
 
 -- Wrath
