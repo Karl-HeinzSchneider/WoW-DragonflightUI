@@ -646,7 +646,13 @@ function Module:UpdateActionbar(state)
             if btn.DFNormalTexture then
                 btn.DFNormalTexture:SetVertexColor(c:GetRGB())
             else
-                btn:GetNormalTexture():SetVertexColor(c:GetRGB())
+                -- btn:GetNormalTexture():SetVertexColor(c:GetRGB())
+                local normal = btn:GetNormalTexture();
+                if normal then
+                    normal:SetVertexColor(c:GetRGB())
+                else
+                    -- print('else', btn:GetName(), c)
+                end
             end
         end)
     end
