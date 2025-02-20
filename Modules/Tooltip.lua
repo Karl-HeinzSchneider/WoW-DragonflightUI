@@ -13,8 +13,8 @@ local defaults = {
             anchorFrame = 'UIParent',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = -97,
-            y = 132,
+            x = -30,
+            y = 120,
             -- backdrop
             backdropAlpha = 0.2,
             -- gametooltip
