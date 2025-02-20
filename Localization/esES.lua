@@ -1,6 +1,6 @@
 -- print('esES, esMX')
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES", "esMX")
+local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES") or LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esMX")
 
 -- @TODO
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
