@@ -15,7 +15,7 @@ L["ModuleTooltipBuffs"] =
     "Este módulo modifica el marco de beneficios predeterminado.\nAñade opciones separadas para Beneficios y Perjuicios."
 L["ModuleTooltipCastbar"] =
     "Este módulo modifica la barra de lanzamiento predeterminada.\nAñade opciones separadas para la barra de lanzamiento del Jugador, Enfoque y Objetivo."
-L["ModuleTooltipChat"] = "Este módulo modifica la ventana de bate-papo predeterminada.\nEN DESARROLLO."
+L["ModuleTooltipChat"] = "Este módulo modifica la ventana de chat predeterminada.\nEN DESARROLLO."
 L["ModuleTooltipDarkmode"] =
     "Este módulo añade un modo oscuro a múltiples marcos de la interfaz de Dragonflight.\nEN DESARROLLO - ¡por favor, envía tus comentarios!"
 L["ModuleTooltipMinimap"] =
