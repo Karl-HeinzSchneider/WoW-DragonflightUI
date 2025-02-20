@@ -759,6 +759,19 @@ function Module:OnTooltipSetSpell(self)
     Module:SetExtraStringTable(self, strTable)
 end
 
+function Module:CheckForRecipe(self, classID)
+    if classID == LE_ITEM_CLASS_RECIPE then
+        if not self.inner then
+            self.inner = true
+            return false
+        else
+            return true
+        end
+    else
+        return false
+    end
+end
+
 function Module:OnTooltipSetItem(self)
     -- print('Module:OnTooltipSetItem(self)')
     -- print('SetItemQuality', tip:GetName())
@@ -799,7 +812,11 @@ function Module:OnTooltipSetItem(self)
         table.insert(strTable, iconStr);
     end
 
-    Module:SetExtraStringTable(self, strTable)
+    if not Module:CheckForRecipe(self, classID) then
+        Module:SetExtraStringTable(self, strTable)
+    else
+        -- print('~~', itemName, classID)
+    end
 end
 
 function Module:OnTooltipSetUnit(self)
