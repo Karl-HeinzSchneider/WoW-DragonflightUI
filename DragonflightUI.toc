@@ -4,6 +4,8 @@
 ## Interface-Classic: 11505
 ## Title: DragonflightUI |cff8080ff@project-version@|r
 ## Notes: Brings the modern retail UI to classic.|n|cffbbbbbbBy Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
+## Notes-esES: La interfaz moderna para la versión clásica.|n|cffbbbbbbPor Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
+## Notes-esMX: La interfaz moderna para la versión clásica.|n|cffbbbbbbPor Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## X-Curse-Project-ID: 819757
@@ -44,6 +46,7 @@ LocalizationData.lua
 Localization\Bindings.lua
 Localization\BlizzardData\Professions.lua
 Localization\enUS.lua
+Localization\esES.lua
 
 XML\Includes.xml
 ## Bindings.xml
