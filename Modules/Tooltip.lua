@@ -812,6 +812,8 @@ function Module:OnTooltipSetUnit(self)
     else
         Module:UnitNPCTooltip(self)
     end
+
+    Module:AddTargetLine(self, unit, nil)
 end
 
 function Module:UnitPlayerTooltip(self)
@@ -1025,6 +1027,36 @@ function Module:AddUnitLine(self, unit, index)
         end
     end
 
+    self:Show()
+end
+
+function Module:AddTargetLine(self, unit, index)
+    local tot = unit .. 'target'
+
+    if not UnitExists(tot) then return; end
+
+    local name, _ = UnitName(tot)
+    local _, englishClass, _ = UnitClass(tot);
+
+    local prefix = '|cffffffffT:';
+    local text;
+    local tt;
+    local col;
+    if UnitIsUnit('player', tot) then
+        local r, g, b = GameTooltip_UnitColor(unit)
+        col = format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
+        tt = format(">>%s<<", strupper(YOU))
+        text = format('%s %s%s', prefix, col, tt)
+        self:AddLine(text)
+    elseif UnitIsPlayer(tot) then
+        text = format('%s %s', prefix, DF:GetClassColoredText(name, englishClass))
+        self:AddLine(text)
+    else
+        local r, g, b = GameTooltip_UnitColor(tot)
+        col = format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
+        text = format('%s %s%s', prefix, col, name)
+        self:AddLine(text)
+    end
     self:Show()
 end
 
