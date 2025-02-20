@@ -404,12 +404,12 @@ L["TooltipUnitTooltipDesc"] = ""
 
 L["TooltipUnitClassBorder"] = "Class Border"
 L["TooltipUnitClassBorderDesc"] = ""
-L["TooltipUnitClassBackdrop"] = "Class  Backdrop"
+L["TooltipUnitClassBackdrop"] = "Class Backdrop"
 L["TooltipUnitClassBackdropDesc"] = ""
 
 L["TooltipUnitReactionBorder"] = "Reaction Border"
 L["TooltipUnitReactionBorderDesc"] = ""
-L["TooltipUnitReactionBackdrop"] = "Reaction  Backdrop"
+L["TooltipUnitReactionBackdrop"] = "Reaction Backdrop"
 L["TooltipUnitReactionBackdropDesc"] = ""
 
 L["TooltipUnitClassName"] = "Class Name"
