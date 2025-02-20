@@ -110,7 +110,7 @@ local modulesOptions = {
             name = 'Tooltip',
             desc = L["ModuleTooltipTooltip"] .. getDefaultStr('Tooltip', 'modules'),
             order = 8,
-            new = false,
+            new = true,
             group = 'headerModules'
         },
         UI = {
