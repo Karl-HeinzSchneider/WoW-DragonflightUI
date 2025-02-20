@@ -15,8 +15,12 @@ local defaults = {
             anchorParent = 'BOTTOMRIGHT',
             x = -97,
             y = 132,
+            -- backdrop
+            backdropAlpha = 0.2,
             -- gametooltip
             anchorMouse = false,
+            -- statusbar
+            statusbarHeight = 9,
             -- spell
             anchorSpells = true,
             showSpellID = true,
@@ -595,8 +599,96 @@ end
 
 function Module:SetDefaultBackdrop(self)
     -- print('Module:SetDefaultBackdrop(self)')
-    self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
+    local state = Module.db.profile.general;
+    self:SetBackdropColor(0, 0, 0, state.backdropAlpha) -- TODO config
     self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config    
+end
+
+function Module:HookStatusBar()
+    local state = Module.db.profile.general;
+
+    GameTooltipStatusBar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+    -- print('h', GameTooltipStatusBar:GetHeight())
+    GameTooltipStatusBar:SetHeight(state.statusbarHeight)
+
+    local padding = 2;
+    local dx = 8;
+    local dy = state.statusbarHeight;
+
+    local bar = GameTooltipStatusBar
+    bar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", dx, dy - padding)
+    bar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -dx, dy - padding)
+
+    -- bar.TextString = bar:CreateFontString('DragonflightUIStatusBarText', 'OVERLAY', 'NumberFontNormal')
+    -- bar.TextString:SetPoint('CENTER', bar, 'CENTER', 0, 0);
+    -- bar.TextString:SetFont(DAMAGE_TEXT_FONT, 11, 'OUTLINE')
+
+    local text = bar:CreateFontString('DragonflightUIStatusBarText', 'OVERLAY', 'TextStatusBarText');
+    text:SetPoint('CENTER', 0, 0);
+    bar.TextString = text
+
+    local textLeft = bar:CreateFontString('DragonflightUIStatusBarTextLeft', 'OVERLAY', 'TextStatusBarText');
+    textLeft:SetPoint('LEFT', 1, 0);
+    bar.LeftText = textLeft
+
+    local textRight = bar:CreateFontString('DragonflightUIStatusBarTextRight', 'OVERLAY', 'TextStatusBarText');
+    textRight:SetPoint('RIGHT', -1, 0);
+    bar.RightText = textRight
+
+    bar.capNumericDisplay = true;
+    bar.lockShow = 1;
+
+    -- bar:HookScript('OnShow', function(self) 
+    --     -- 
+    -- end)
+
+    bar:HookScript('OnValueChanged', function(self, value)
+        --       
+        if value <= 0 then
+            bar.TextString:SetText('DEADS')
+        else
+            -- bar.TextString:SetText(value)
+            TextStatusBar_UpdateTextString(self)
+        end
+    end)
+
+    GameTooltip:HookScript('OnShow', function(self)
+        --
+        -- print('GameTooltip OnShow')
+        if not GameTooltipStatusBar:IsShown() then
+            self.NineSlice:ClearAllPoints()
+            self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+            self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0);
+
+            self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0)
+            self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+
+            self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+            return
+        end
+        -- print('statusbar')
+
+        local dyyy = dy + padding;
+
+        self.NineSlice:ClearAllPoints()
+        self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+        self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy);
+
+        self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, -dyyy)
+        self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
+
+        self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
+    end)
+
+    -- if (SharedTooltip_SetBackdropStyle) then
+    --     hooksecurefunc("SharedTooltip_SetBackdropStyle", function(self, style, embedded)
+    --         -- print('SharedTooltip_SetBackdropStyle', self:GetName())
+    --         if self.NineSlice then
+    --             --
+    --             -- self.NineSlice:Hide()              
+    --         end
+    --     end)
+    -- end
 end
 
 function Module:SetExtraStringTable(self, strTable)
@@ -676,7 +768,7 @@ function Module:OnTooltipSetItem(self)
     local r, g, b = GetItemQualityColor(itemQuality);
 
     if state.showItemQuality then self:SetBackdropBorderColor(r, g, b); end
-    if state.showItemQualityBackdrop then self:SetBackdropColor(r, g, b, 0.2); end
+    if state.showItemQualityBackdrop then self:SetBackdropColor(r, g, b, state.backdropAlpha); end
 
     local strTable = {}
 
@@ -733,7 +825,7 @@ function Module:UnitPlayerTooltip(self)
     local r, g, b = GameTooltip_UnitColor(unit)
     local cr, cg, cb, ca, chex = DF:GetClassColor(englishClass);
 
-    -- self:SetBackdropColor(0, 0, 0, 0.2) -- TODO config
+    -- self:SetBackdropColor(0, 0, 0, state.backdropAlpha) -- TODO config
     -- self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config   
 
     if state.unitClassBorder then
@@ -743,9 +835,9 @@ function Module:UnitPlayerTooltip(self)
     end
 
     if state.unitClassBackdrop then
-        self:SetBackdropColor(cr, cg, cb, 0.2);
+        self:SetBackdropColor(cr, cg, cb, state.backdropAlpha);
     elseif state.unitReactionBackdrop then
-        self:SetBackdropColor(r, g, b, 0.2);
+        self:SetBackdropColor(r, g, b, state.backdropAlpha);
     end
 
     local name, realm = UnitName(unit)
@@ -831,7 +923,7 @@ function Module:UnitNPCTooltip(self)
 
     if state.unitReactionBackdrop then
         --
-        self:SetBackdropColor(r, g, b, 0.2)
+        self:SetBackdropColor(r, g, b, state.backdropAlpha)
     end
 
     local levelLine = Module:FindLine(self, '^' .. LEVEL)
@@ -938,9 +1030,10 @@ end
 
 function Module:GrayOutOnDeath(self, unit)
     if not UnitIsDeadOrGhost(unit) then return end
+    local state = Module.db.profile.general;
 
     self:SetBackdropBorderColor(0.6, 0.6, 0.6)
-    self:SetBackdropColor(0.1, 0.1, 0.1, 0.2)
+    self:SetBackdropColor(0.1, 0.1, 0.1, state.backdropAlpha)
 
     local line, text;
     for i = 2, self:NumLines() do
@@ -1115,4 +1208,5 @@ function Module.Era()
 
     Module:HookFunctions()
     Module:HookSpellTooltip()
+    Module:HookStatusBar()
 end
