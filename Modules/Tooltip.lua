@@ -500,11 +500,13 @@ function Module:HookDefaultAnchor()
                 self:SetOwner(parent, 'ANCHOR_RIGHT');
                 return;
             end
-            if string.match(parent:GetName(), "^PetActionButton") then
+
+            local parentName = parent:GetName() or ''
+            if string.match(parentName, "^PetActionButton") then
                 self:SetOwner(parent, 'ANCHOR_RIGHT');
                 return;
             end
-            if string.match(parent:GetName(), "^StanceButton") then
+            if string.match(parentName, "^StanceButton") then
                 self:SetOwner(parent, 'ANCHOR_RIGHT');
                 return;
             end
