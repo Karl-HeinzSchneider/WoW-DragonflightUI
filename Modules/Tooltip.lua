@@ -525,7 +525,7 @@ function Module:HookDefaultAnchor()
             if focused == WorldFrame then
                 -- units etc
                 self:ClearAllPoints();
-                self:SetOwner(parent, 'ANCHOR_CURSOR_RIGHT', 24, 5); -- TODO config           
+                self:SetOwner(parent, 'ANCHOR_CURSOR_RIGHT', 16, 8); -- TODO config           
                 return;
             end
         end
