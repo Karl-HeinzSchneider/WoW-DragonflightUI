@@ -1582,6 +1582,14 @@ function Module:RegisterOptionScreens()
                 setDefaultSubValues('focus')
             end
         })
+        DF.ConfigModule:RegisterSettingsData('focustarget', 'unitframes', {
+            name = 'FocusTarget',
+            sub = 'focusTarget',
+            options = optionsFocusTarget,
+            default = function()
+                setDefaultSubValues('focusTarget')
+            end
+        })
     end
 
     DF.ConfigModule:RegisterSettingsData('party', 'unitframes', {
