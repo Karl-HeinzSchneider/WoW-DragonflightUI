@@ -500,6 +500,15 @@ function Module:HookDefaultAnchor()
                 self:SetOwner(parent, 'ANCHOR_RIGHT');
                 return;
             end
+            if string.match(parent:GetName(), "^PetActionButton") then
+                self:SetOwner(parent, 'ANCHOR_RIGHT');
+                return;
+            end
+            if string.match(parent:GetName(), "^StanceButton") then
+                self:SetOwner(parent, 'ANCHOR_RIGHT');
+                return;
+            end
+            -- print('ss', parent:GetName())
         end
 
         --
@@ -1046,7 +1055,7 @@ function Module:AddUnitLine(self, unit, index)
         -- TODO: localization    if 'Non-Combat Pet' => 'Pet' etc
 
         if class ~= '' then
-            unitLine:SetFormattedText("%s %s |r|cffffffff%s", levelString, class, creature)
+            unitLine:SetFormattedText("%s%s |r|cffffffff%s", levelString, class, creature)
         else
             unitLine:SetFormattedText("%s |r|cffffffff%s", levelString, creature)
         end
