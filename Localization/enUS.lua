@@ -8,6 +8,8 @@ local L_EN = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
 local L = {}
 
 -- modules - config.lua
+L["ModuleModules"] = "Modules"
+
 L["ModuleTooltipActionbar"] =
     "This module overhauls the default Actionbar including the Micromenu and Bagbuttons.\nAdds seperate options for Actionbar1-8, Pet-/XP-/Rep-/Possess-/Stance-/Totembar, Bags and Micromenu."
 L["ModuleTooltipBossframe"] = "This module adds custom BossFrames.\nWORK IN PROGRESS."
@@ -19,6 +21,7 @@ L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
 L["ModuleTooltipMinimap"] =
     "This module overhauls the default Minimap and Questtracker.\nAdds seperate options for Minimap and Questtracker."
+L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
 L["ModuleTooltipUI"] =
     "This module adds the modern UI style to different windows like the CharacterFrame. Also adds Era specific reworks with the new Spellbook, Talentframe or Professionwindow."
 L["ModuleTooltipUnitframe"] =
@@ -359,6 +362,70 @@ L["ProfessionCheckAll"] = "Check All"
 L["ProfessionUnCheckAll"] = "Uncheck All"
 L["ProfessionFavorites"] = "Favorites"
 
+-- Tooltip
+L["TooltipName"] = "Tooltip"
+L["TooltipHeaderGameToltip"] = "GameTooltip"
+L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
+
+L["TooltipAnchorMouse"] = "Anchor on Mouse"
+L["TooltipAnchorMouseDesc"] = ""
+
+-- spelltooltip
+L["TooltipAnchorSpells"] = "Anchor Spells"
+L["TooltipAnchorSpellsDesc"] = ""
+L["TooltipShowSpellID"] = "Show Spell ID"
+L["TooltipShowSpellIDDesc"] = ""
+L["TooltipShowSpellSource"] = "Show Spell Source"
+L["TooltipShowSpellSourceDesc"] = ""
+L["TooltipShowSpellIcon"] = "Show Spell Icon"
+L["TooltipShowSpellIconDesc"] = ""
+L["TooltipShowIconID"] = "Show Icon ID"
+L["TooltipShowIconIDDesc"] = ""
+
+L["TooltipShowIcon"] = "Show Icon"
+L["TooltipShowIconDesc"] = ""
+
+-- itemtooltip
+L["TooltipHeaderItemTooltip"] = "ItemTooltip"
+L["TooltipHeaderItemTooltipDesc"] = ""
+
+L["TooltipShowItemQuality"] = "Item Quality Border"
+L["TooltipShowItemQualityDesc"] = ""
+L["TooltipShowItemQualityBackdrop"] = "Item Quality Backdrop"
+L["TooltipShowItemQualityBackdropDesc"] = ""
+L["TooltipShowItemStackCount"] = "Show Stack Size"
+L["TooltipShowItemStackCountDesc"] = ""
+L["TooltipShowItemID"] = "Show Item ID"
+L["TooltipShowItemIDDesc"] = ""
+
+-- unittooltip
+L["TooltipUnitTooltip"] = "UnitTooltip"
+L["TooltipUnitTooltipDesc"] = ""
+
+L["TooltipUnitClassBorder"] = "Class Border"
+L["TooltipUnitClassBorderDesc"] = ""
+L["TooltipUnitClassBackdrop"] = "Class Backdrop"
+L["TooltipUnitClassBackdropDesc"] = ""
+
+L["TooltipUnitReactionBorder"] = "Reaction Border"
+L["TooltipUnitReactionBorderDesc"] = ""
+L["TooltipUnitReactionBackdrop"] = "Reaction Backdrop"
+L["TooltipUnitReactionBackdropDesc"] = ""
+
+L["TooltipUnitClassName"] = "Class Name"
+L["TooltipUnitClassNameDesc"] = ""
+L["TooltipUnitTitle"] = "Show Title"
+L["TooltipUnitTitleDesc"] = ""
+L["TooltipUnitRealm"] = "Show Realm"
+L["TooltipUnitRealmDesc"] = ""
+L["TooltipUnitGuild"] = "Show Guild"
+L["TooltipUnitGuildDesc"] = ""
+L["TooltipUnitGuildRank"] = "Show Guild Rank"
+L["TooltipUnitGuildRankDesc"] = ""
+L["TooltipUnitGuildRankIndex"] = "Show Guild Rank Index"
+L["TooltipUnitGuildRankIndexDesc"] = ""
+L["TooltipUnitGrayOutOnDeath"] = "Gray Out On Death"
+L["TooltipUnitGrayOutOnDeathDesc"] = ""
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player

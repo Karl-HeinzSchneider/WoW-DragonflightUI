@@ -34,6 +34,8 @@ local defaults = {
             Tracker = true,
             Durability = true,
             LFG = true,
+            -- tooltip
+            GameTooltip = true,
             -- UI
             -- unitframes
             PlayerFrame = true,
@@ -192,7 +194,7 @@ if true then
     AddTableToCategory(framesFrames, 'headerFrames')
 
     -- misc
-    local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability'}
+    local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability', 'GameTooltip'}
     if DF.Cata then table.insert(miscFrames, 'Player_PowerBarAlt') end
     AddTableToCategory(miscFrames, 'headerMisc')
 

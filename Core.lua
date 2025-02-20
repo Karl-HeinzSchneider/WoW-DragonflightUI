@@ -34,8 +34,8 @@ end
 local name, realm = UnitName('player')
 local showDebug = name == 'Zimtdev'
 DF.ShowDebug = showDebug;
-function DF:Debug(m, value)
-    if showDebug then m:Print(value) end
+function DF:Debug(m, ...)
+    if showDebug then m:Print(...) end
 end
 
 function DF:Dump(value)
@@ -61,8 +61,13 @@ end
 function DF:GetClassColor(class, alpha)
     local r, g, b, hex = GetClassColor(class)
     if alpha then
-        return r, g, b, alpha
+        return r, g, b, alpha, hex
     else
-        return r, g, b, 1
+        return r, g, b, 1, hex
     end
+end
+
+function DF:GetClassColoredText(str, class)
+    local r, g, b, a, hex = DF:GetClassColor(class)
+    return "|r|c" .. hex .. str .. "|r"
 end
