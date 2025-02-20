@@ -69,5 +69,5 @@ end
 
 function DF:GetClassColoredText(str, class)
     local r, g, b, a, hex = DF:GetClassColor(class)
-    return "|c" .. hex .. str .. "|r"
+    return "|r|c" .. hex .. str .. "|r"
 end
