@@ -645,7 +645,15 @@ function Module:HookStatusBar()
     bar:HookScript('OnValueChanged', function(self, value)
         --       
         if value <= 0 then
-            bar.TextString:SetText('DEADS')
+            -- bar.TextString:SetText('DEADS')
+            -- TextStatusBar_UpdateTextString(self)
+            local _, maxValue = self:GetMinMaxValues()
+            bar.LeftText:SetFormattedText('|cffffcc33<%s>|r', DEAD)
+            bar.RightText:SetFormattedText('|cff999999%s|r', AbbreviateLargeNumbers(maxValue))
+
+            bar.LeftText:Show()
+            bar.RightText:Show()
+            bar.TextString:Hide()
         else
             -- bar.TextString:SetText(value)
             TextStatusBar_UpdateTextString(self)
