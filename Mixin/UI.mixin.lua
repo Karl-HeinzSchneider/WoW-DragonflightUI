@@ -3968,6 +3968,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             bg:SetPoint('BOTTOMRIGHT', FriendsFrame, 'BOTTOMRIGHT', 0, 3)
             -- bg:SetDrawLayer('BACKGROUND', 2)
         end
+
+        -- title text bug @BLIZZBUG
+        do
+            -- local title = _G['FriendsFrameTitleText']
+            hooksecurefunc('FriendsFrame_Update', function()
+                --
+                -- print('FriendsFrame_Update')
+                if FriendsFrame.TitleText then FriendsFrame.TitleText:Hide() end
+            end)
+        end
     elseif name == 'MailFrame' then
         --
         for i = 1, 5 do
