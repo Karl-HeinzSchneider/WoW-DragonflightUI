@@ -2723,6 +2723,7 @@ function Module.HookClassIcon()
         if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
             self.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
             SetPortraitTexture(self.portrait, unit)
+            if self.portrait.fixClassSize then self.portrait:fixClassSize(false) end
             return
         end
 
@@ -2730,6 +2731,7 @@ function Module.HookClassIcon()
         if texCoords then
             self.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
             self.portrait:SetTexCoord(unpack(texCoords))
+            if self.portrait.fixClassSize then self.portrait:fixClassSize(true) end
         end
     end)
 end
@@ -2902,6 +2904,25 @@ function Module.ChangePlayerframe()
         PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
         PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
         PlayerPortrait:SetSize(56, 56)
+
+        function PlayerPortrait:fixClassSize(class)
+            --
+            -- print('fixClassSize', class)
+            if class then
+                local delta = 4.5;
+                PlayerPortrait:SetVertexOffset(1, -delta, delta)
+                PlayerPortrait:SetVertexOffset(2, -delta, -delta)
+                PlayerPortrait:SetVertexOffset(3, delta, delta)
+                PlayerPortrait:SetVertexOffset(4, delta, -delta)
+            else
+                PlayerPortrait:SetVertexOffset(1, 0, 0)
+                PlayerPortrait:SetVertexOffset(2, 0, 0)
+                PlayerPortrait:SetVertexOffset(3, 0, 0)
+                PlayerPortrait:SetVertexOffset(4, 0, 0)
+            end
+
+        end
+        PlayerPortrait:fixClassSize(false)
     end
 
     -- @TODO: change text spacing
