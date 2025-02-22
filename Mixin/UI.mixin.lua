@@ -1291,7 +1291,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     end)
 
     -- add characterstats panel
-    if true then
+    if DF.Era then
         --
         local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
                                 'DFCharacterFrameExpandButton')
