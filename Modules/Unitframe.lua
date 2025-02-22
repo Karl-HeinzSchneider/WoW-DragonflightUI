@@ -4936,6 +4936,7 @@ function Module:AddRaidframeRoleIcons()
                 f.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role));
                 f.roleIcon:Show();
                 f.roleIcon:SetSize(size, size);
+                if strmatch(tostring(f.unit), 'target') then f.roleIcon:Hide() end
             else
                 f.roleIcon:Hide();
                 f.roleIcon:SetSize(1, size);
