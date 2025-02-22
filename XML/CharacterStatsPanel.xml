@@ -1,0 +1,228 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<Script file="Mixin/CharacterStatsPanel.mixin.lua" />
+	<Frame name="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsPanelMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Frames>
+					<Button parentKey="InputBlocker" clipChildren="true" setAllPoints="true" hidden="true" />
+				</Frames>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="-4" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-1" y="7" />
+				</Anchors>
+			</EventFrame>
+		</Frames>
+		<Scripts>
+			<!-- <OnShow inherit="prepend" method="OnShow" /> -->
+			<OnLoad inherit="prepend" method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<!-- <OnHide method="OnHide" /> -->
+		</Scripts>
+	</Frame>
+	<Button name="DFCharacterFrameExpandButton" mixin="DragonflightUICharacterFrameExpandButtonMixin" virtual="true">
+		<Size x="32" y="32" />
+		<!--
+		<Anchors>
+		<Anchor point="BOTTOMRIGHT" relativeKey="$parent.DFInset" x="-2" y="-1" />
+		</Anchors>
+		-->
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+		<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+		<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+		<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+	</Button>
+	<!-- Header -->
+	<Frame name="DFCharacterStatsPanelHeader" mixin="DFCharacterStatsPanelHeaderMixin" virtual="true">
+		<Size x="169" y="30" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture inherits="Char-Stat-Top" parentKey="BgTop">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+				<Texture inherits="Char-Stat-Bottom" parentKey="BgBottom">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" />
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\CharacterFrame\Char-Stat-Middle" parentKey="BgMiddle" vertTile="true">
+					<Size x="169" y="8" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.BgTop" relativePoint="BOTTOMLEFT" x="1" />
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.BgBottom" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0.00390625" right="0.66406250" top="0.00000000" bottom="1.00000000" />
+				</Texture>
+				<Texture inherits="Char-Stat-Minimized" parentKey="BgMinimized" hidden="true">
+					<Size x="169" y="18" />
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+				<FontString inherits="GameFontHighlight" justifyH="LEFT" parentKey="NameText">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="15" y="-3" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="CollapsedIcon" inherits="Char-Stat-Plus" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="5" y="-5" />
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ExpandedIcon" inherits="Char-Stat-Minus">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="5" y="-7" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="Toolbar">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="-20" />
+				</Anchors>
+				<Frames>
+					<!--
+					<Button name="$parentSortUpArrow" parentKey="SortUpArrow" hidden="true">
+					<Size x="16" y="8"/>
+					<Anchors>
+					<Anchor point="TOPRIGHT" x="-1" y="-1"/>
+					</Anchors>
+					<Layers>
+					<Layer level="BACKGROUND">
+					<Texture name="$parentArrow" file="Interface\PaperDollInfoFrame\StatSortArrows" parentKey="Arrow" alpha="0.4" setAllPoints="true">
+					<TexCoords left="0" right="1" top="0" bottom="0.5"/>
+					</Texture>
+					</Layer>
+					</Layers>
+					<Scripts>
+					<OnEnter>
+					self:Show();
+					self.Arrow:SetAlpha(0.6);
+					self:GetParent().SortDownArrow:Show();
+					</OnEnter>
+					<OnLeave>
+					self.Arrow:SetAlpha(0.4);
+					if ( not self:GetParent():IsMouseOver() ) then
+					self:Hide();
+					self:GetParent().SortDownArrow:Hide();
+					end
+					</OnLeave>
+					<OnClick>
+					PaperDoll_MoveCategoryUp(self:GetParent():GetParent());
+					</OnClick>
+					</Scripts>
+					</Button>
+					-->
+					<!--
+					<Button name="$parentSortDownArrow" parentKey="SortDownArrow" hidden="true">
+					<Size x="16" y="8"/>
+					<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSortUpArrow" relativePoint="BOTTOMLEFT"/>
+					</Anchors>
+					<Layers>
+					<Layer level="BACKGROUND">
+					<Texture name="$parentArrow" file="Interface\PaperDollInfoFrame\StatSortArrows" parentKey="Arrow" alpha="0.4" setAllPoints="true">
+					<TexCoords left="0" right="1" top="0.5" bottom="1"/>
+					</Texture>
+					</Layer>
+					</Layers>
+					<Scripts>
+					<OnEnter>
+					self:Show();
+					self.Arrow:SetAlpha(0.6);
+					self:GetParent().SortUpArrow:Show();
+					</OnEnter>
+					<OnLeave>
+					self.Arrow:SetAlpha(0.4);
+					if ( not self:GetParent():IsMouseOver() ) then
+					self:Hide();
+					self:GetParent().SortUpArrow:Hide();
+					end
+					</OnLeave>
+					<OnClick>
+					PaperDoll_MoveCategoryDown(self:GetParent():GetParent());
+					</OnClick>
+					</Scripts>
+					</Button>
+					-->
+				</Frames>
+			</Button>
+			<!--
+			<Frame name="$parentStat1" inherits="CharacterStatFrameTemplate">
+			<Anchors>
+			<Anchor point="TOPLEFT" x="16" y="-19" />
+			<Anchor point="RIGHT" x="-4" />
+			</Anchors>
+			</Frame>
+			-->
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Stat -->
+	<Frame name="DFCharacterStatsStatTemplate" mixin="DFCharacterStatsStatTemplateMixin" virtual="true">
+		<Size x="104" y="13" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString parentKey="Label" name="$parentLabel" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="LEFT" x="16" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Value" name="$parentStatText" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT" x="166" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnClick method="OnClick" /> -->
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Frame>
+	<!-- Stat -->
+	<Frame name="DFCharacterStatsSpacer" mixin="DFCharacterStatsSpacerMixin" virtual="true">
+		<Size x="104" y="4" />
+	</Frame>
+	<!-- Textures -->
+	<!--
+	<Texture name="Char-Stat-Bottom" file="Interface\CharacterFrame\Char-Paperdoll-Parts" virtual="true">
+	<Size x="169" y="46" />
+	<TexCoords left="0.00390625" right="0.66406250" top="0.00781250" bottom="0.36718750" />
+	</Texture>
+	<Texture name="Char-Stat-Minimized" file="Interface\CharacterFrame\Char-Paperdoll-Parts" virtual="true">
+	<Size x="169" y="14" />
+	<TexCoords left="0.00390625" right="0.66406250" top="0.38281250" bottom="0.49218750" />
+	</Texture>
+	<Texture name="Char-Stat-Top" file="Interface\CharacterFrame\Char-Paperdoll-Parts" virtual="true">
+	<Size x="169" y="9" />
+	<TexCoords left="0.00390625" right="0.66406250" top="0.50781250" bottom="0.57812500" />
+	</Texture>
+	<Texture name="Char-Stat-Minus" file="Interface\CharacterFrame\Char-Paperdoll-Parts" virtual="true">
+	<Size x="7" y="3" />
+	<TexCoords left="0.00390625" right="0.03125000" top="0.95312500" bottom="0.97656250" />
+	</Texture>
+	<Texture name="Char-Stat-Plus" file="Interface\CharacterFrame\Char-Paperdoll-Parts" virtual="true">
+	<Size x="7" y="7" />
+	<TexCoords left="0.40625000" right="0.43359375" top="0.87500000" bottom="0.92968750" />
+	</Texture>
+	-->
+</Ui>
