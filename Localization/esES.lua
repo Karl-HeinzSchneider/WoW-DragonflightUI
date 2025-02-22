@@ -11,8 +11,10 @@ if not L_ES and not L_MX then return end
 local L = {}
 
 -- modules - config.lua
+L["ModuleModules"] = "Módulos"
+
 L["ModuleTooltipActionbar"] =
-    "Este módulo mejora la barra de acción predeterminada, incluyendo el micromenú y los botones de bolsas.\nAñade opciones separadas para las barras de acción 1-8, barra de mascotas, XP, reputación, posesión, actitud, tótems, bolsas y micromenú."
+    "Este módulo mejora la barra de acción predeterminada, incluyendo el micromenú y los botones de bolsas.\nAñade opciones separadas para las barras de acción 1-8, barra de mascotas, EXP, reputación, posesión, actitud, tótems, bolsas y micromenú."
 L["ModuleTooltipBossframe"] = "Este módulo añade marcos personalizados para los jefes.\nEN DESARROLLO."
 L["ModuleTooltipBuffs"] =
     "Este módulo modifica el marco de beneficios predeterminado.\nAñade opciones separadas para Beneficios y Perjuicios."
@@ -96,7 +98,7 @@ L["PositionTableYDesc"] = ""
 L["ActionbarNameFormat"] = "Barra de acción %d"
 
 -- bar names
-L["XPBar"] = "Barra de XP"
+L["XPBar"] = "Barra de EXP"
 L["ReputationBar"] = "Barra de reputación"
 L["PetBar"] = "Barra de mascota"
 L["StanceBar"] = "Barra de actitud"
@@ -178,8 +180,8 @@ L["ExtraOptionsClassicLayout"] = "Diseño clásico (barra lateral)"
 L["ExtraOptionsClassicLayoutDesc"] = ""
 
 -- XP
-L["XPOptionsName"] = "XP"
-L["XPOptionsDesc"] = "XP"
+L["XPOptionsName"] = "EXP"
+L["XPOptionsDesc"] = "EXP"
 
 L["XPOptionsStyle"] = L["ButtonTableStyle"]
 L["XPOptionsStyleDesc"] = ""
@@ -190,10 +192,10 @@ L["XPOptionsWidthDesc"] = ""
 L["XPOptionsHeight"] = "Altura"
 L["XPOptionsHeightDesc"] = ""
 
-L["XPOptionsAlwaysShowXPText"] = "Mostrar siempre el texto de XP"
+L["XPOptionsAlwaysShowXPText"] = "Mostrar siempre el texto de EXP"
 L["XPOptionsAlwaysShowXPTextDesc"] = ""
 
-L["XPOptionsShowXPPercent"] = "Mostrar porcentaje de XP"
+L["XPOptionsShowXPPercent"] = "Mostrar porcentaje de EXP"
 L["XPOptionsShowXPPercentDesc"] = ""
 
 -- Reputación
@@ -350,19 +352,101 @@ L["UIChangeSpellBookDesc"] = "Cambia la apariencia del libro de hechizos."
 L["UIChangeSpellBookProfessions"] = "Cambiar profesiones en el libro de hechizos"
 L["UIChangeSpellBookProfessionsDesc"] = "Modifica el diseño del libro de hechizos para las profesiones."
 
+-- ProfessionFrame
+L["ProfessionFrameHasSkillUp"] = "Has subido de habilidad"
+L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE
+L["ProfessionFrameSubclass"] = "Subclase"
+L["ProfessionFrameSlot"] = "Ranura"
+L["ProfessionCheckAll"] = "Marcar todo"
+L["ProfessionUnCheckAll"] = "Desmarcar todo"
+L["ProfessionFavorites"] = "Favoritos"
+
+-- Tooltip
+L["TooltipName"] = "Información sobre tooltips"
+L["TooltipHeaderGameToltip"] = "Tooltip de juego"
+L["TooltipHeaderSpellTooltip"] = "Tooltip de hechizo"
+
+L["TooltipCursorAnchorHeader"] = "Anclaje del cursor"
+L["TooltipCursorAnchorHeaderDesc"] = ""
+L["TooltipAnchorToMouse"] = "Anclar al cursor"
+L["TooltipAnchorToMouseDesc"] = "Ancla algunas herramientas (por ejemplo, UnitTooltip en WorldFrame) al cursor del ratón."
+L["TooltipMouseAnchor"] = "Anclaje del cursor"
+L["TooltipMouseAnchorDesc"] = ""
+L["TooltipMouseX"] = "X"
+L["TooltipMouseXDesc"] = ""
+L["TooltipMouseY"] = "Y"
+L["TooltipMouseYDesc"] = ""
+
+-- spelltooltip
+L["TooltipAnchorSpells"] = "Anclar hechizos"
+L["TooltipAnchorSpellsDesc"] = ""
+L["TooltipShowSpellID"] = "Mostrar ID del hechizo"
+L["TooltipShowSpellIDDesc"] = ""
+L["TooltipShowSpellSource"] = "Mostrar fuente del hechizo"
+L["TooltipShowSpellSourceDesc"] = ""
+L["TooltipShowSpellIcon"] = "Mostrar icono del hechizo"
+L["TooltipShowSpellIconDesc"] = ""
+L["TooltipShowIconID"] = "Mostrar ID del icono"
+L["TooltipShowIconIDDesc"] = ""
+
+L["TooltipShowIcon"] = "Mostrar icono"
+L["TooltipShowIconDesc"] = ""
+
+-- itemtooltip
+L["TooltipHeaderItemTooltip"] = "Tooltip de objeto"
+L["TooltipHeaderItemTooltipDesc"] = ""
+
+L["TooltipShowItemQuality"] = "Bordes de calidad del objeto"
+L["TooltipShowItemQualityDesc"] = ""
+L["TooltipShowItemQualityBackdrop"] = "Fondo de calidad del objeto"
+L["TooltipShowItemQualityBackdropDesc"] = ""
+L["TooltipShowItemStackCount"] = "Mostrar tamaño de pila"
+L["TooltipShowItemStackCountDesc"] = ""
+L["TooltipShowItemID"] = "Mostrar ID del objeto"
+L["TooltipShowItemIDDesc"] = ""
+
+-- unittooltip
+L["TooltipUnitTooltip"] = "Tooltip de unidad"
+L["TooltipUnitTooltipDesc"] = ""
+
+L["TooltipUnitClassBorder"] = "Borde de clase"
+L["TooltipUnitClassBorderDesc"] = ""
+L["TooltipUnitClassBackdrop"] = "Fondo de clase"
+L["TooltipUnitClassBackdropDesc"] = ""
+
+L["TooltipUnitReactionBorder"] = "Borde de reacción"
+L["TooltipUnitReactionBorderDesc"] = ""
+L["TooltipUnitReactionBackdrop"] = "Fondo de reacción"
+L["TooltipUnitReactionBackdropDesc"] = ""
+
+L["TooltipUnitClassName"] = "Nombre de clase"
+L["TooltipUnitClassNameDesc"] = ""
+L["TooltipUnitTitle"] = "Mostrar título"
+L["TooltipUnitTitleDesc"] = ""
+L["TooltipUnitRealm"] = "Mostrar reino"
+L["TooltipUnitRealmDesc"] = ""
+L["TooltipUnitGuild"] = "Mostrar hermandad"
+L["TooltipUnitGuildDesc"] = ""
+L["TooltipUnitGuildRank"] = "Mostrar rango de hermandad"
+L["TooltipUnitGuildRankDesc"] = ""
+L["TooltipUnitGuildRankIndex"] = "Mostrar índice de rango de hermandad"
+L["TooltipUnitGuildRankIndexDesc"] = ""
+L["TooltipUnitGrayOutOnDeath"] = "Aturdir al morir"
+L["TooltipUnitGrayOutOnDeathDesc"] = ""
+
 -- unit frames
 -- player
 L["PlayerFrameDesc"] = "Configuración del marco del jugador"
 L["PlayerFrameStyle"] = L["ButtonTableStyle"]
 L["PlayerFrameClassColor"] = "Color de clase"
-L["PlayerFrameClassColorDesc"] = "Habilita los colores de clase para la barra de vida"
+L["PlayerFrameClassColorDesc"] = "Activa los colores de clase para la barra de vida"
 L["PlayerFrameClassIcon"] = "Retrato con icono de clase"
-L["PlayerFrameClassIconDesc"] = "Habilita el icono de clase como retrato (actualmente deshabilitado)"
+L["PlayerFrameClassIconDesc"] = "Activa el icono de clase como retrato (actualmente desactivado)"
 L["PlayerFrameBreakUpLargeNumbers"] = "Separar números grandes"
 L["PlayerFrameBreakUpLargeNumbersDesc"] =
-    "Habilita la separación de números grandes en el texto de estado (por ejemplo, 7588 K en lugar de 7588000)"
+    "Activa la separación de números grandes en el texto de estado (por ejemplo, 7588 K en lugar de 7588000)"
 L["PlayerFrameBiggerHealthbar"] = "Barra de vida más grande"
-L["PlayerFrameBiggerHealthbarDesc"] = "Habilita una barra de vida más grande"
+L["PlayerFrameBiggerHealthbarDesc"] = "Activa una barra de vida más grande"
 L["PlayerFrameHideRedStatus"] = "Ocultar resplandor rojo en combate"
 L["PlayerFrameHideRedStatusDesc"] = "Oculta el resplandor rojo de estado en combate"
 L["PlayerFrameHideHitIndicator"] = "Ocultar indicador de golpe"
@@ -374,17 +458,17 @@ L["PlayerFrameHideSecondaryResDesc"] = "Oculta el recurso secundario, por ejempl
 L["TargetFrameDesc"] = "Configuraciones del marco del objetivo"
 L["TargetFrameStyle"] = L["ButtonTableStyle"]
 L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
-L["TargetFrameClassColorDesc"] = "Habilitar colores de clase para la barra de vida"
+L["TargetFrameClassColorDesc"] = "Activar colores de clase para la barra de vida"
 L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
 L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
 L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
 L["TargetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 L["TargetFrameNumericThreat"] = "Amenaza numérica"
-L["TargetFrameNumericThreatDesc"] = "Habilitar visualización numérica de amenaza"
+L["TargetFrameNumericThreatDesc"] = "Activar visualización numérica de amenaza"
 L["TargetFrameNumericThreatAnchor"] = "Ancla de amenaza numérica"
 L["TargetFrameNumericThreatAnchorDesc"] = "Establece la posición del ancla de amenaza numérica"
 L["TargetFrameThreatGlow"] = "Resplandor de amenaza"
-L["TargetFrameThreatGlowDesc"] = "Habilitar efecto de resplandor de amenaza"
+L["TargetFrameThreatGlowDesc"] = "Activar efecto de resplandor de amenaza"
 L["TargetFrameHideNameBackground"] = "Ocultar fondo del nombre"
 L["TargetFrameHideNameBackgroundDesc"] = "Ocultar el fondo del nombre del objetivo"
 L["TargetFrameComboPointsOnPlayerFrame"] = "Puntos de combo en el marco del jugador"
@@ -408,9 +492,9 @@ L["PetFrameHideIndicatorDesc"] = "Ocultar el indicador de golpe"
 L["FocusFrameDesc"] = "Configuraciones del marco de enfoque"
 L["FocusFrameStyle"] = L["ButtonTableStyle"]
 L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
-L["FocusFrameClassColorDesc"] = "Habilitar colores de clase para la barra de vida"
+L["FocusFrameClassColorDesc"] = "Activar colores de clase para la barra de vida"
 L["FocusFrameClassIcon"] = L["PlayerFrameClassIcon"]
-L["FocusFrameClassIconDesc"] = "Habilitar icono de clase como retrato para el marco de enfoque"
+L["FocusFrameClassIconDesc"] = "Activar icono de clase como retrato para el marco de enfoque"
 L["FocusFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
 L["FocusFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 L["FocusFrameHideNameBackground"] = L["TargetFrameHideNameBackground"]
@@ -420,7 +504,7 @@ L["FocusFrameHideNameBackgroundDesc"] = "Ocultar el fondo del nombre"
 L["PartyFrameDesc"] = "Configuraciones del marco de grupo"
 L["PartyFrameStyle"] = L["ButtonTableStyle"]
 L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
-L["PartyFrameClassColorDesc"] = "Habilitar colores de clase para la barra de vida"
+L["PartyFrameClassColorDesc"] = "Activar colores de clase para la barra de vida"
 L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
 L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 
