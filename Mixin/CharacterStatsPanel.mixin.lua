@@ -638,7 +638,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('crit', 'melee', {
             order = 7,
-            name = 'Crit Chance',
+            name = STAT_CRITICAL_STRIKE,
             descr = '..',
             func = function()
                 local crit = GetCritChance()
@@ -649,7 +649,214 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
     end
     -- ranged
-    do self:RegisterElement('health', 'ranged', {order = 1, name = 'Health', descr = '..'}) end
+    do
+        local function checkNoRange()
+            return IsRangedWeapon();
+        end
+
+        local function range()
+            local frameText; -- df
+            local tooltip; -- df
+            local tooltip2; -- df
+            local tooltipTable = {}
+
+            local rangedAttackSpeed, minDamage, maxDamage, physicalBonusPos, physicalBonusNeg, percent =
+                UnitRangedDamage('player');
+            local displayMin = max(floor(minDamage), 1);
+            local displayMax = max(ceil(maxDamage), 1);
+
+            minDamage = (minDamage / percent) - physicalBonusPos - physicalBonusNeg;
+            maxDamage = (maxDamage / percent) - physicalBonusPos - physicalBonusNeg;
+
+            local baseDamage = (minDamage + maxDamage) * 0.5;
+            local fullDamage = (baseDamage + physicalBonusPos + physicalBonusNeg) * percent;
+            local totalBonus = (fullDamage - baseDamage);
+            local damagePerSecond;
+            if (rangedAttackSpeed == 0) then
+                -- Egan's Blaster!!!
+                damagePerSecond = math.huge;
+            else
+                damagePerSecond = (max(fullDamage, 1) / rangedAttackSpeed);
+            end
+
+            tooltip = max(floor(minDamage), 1) .. " - " .. max(ceil(maxDamage), 1);
+
+            if (totalBonus == 0) then
+                if ((displayMin < 100) and (displayMax < 100)) then
+                    frameText = displayMin .. " - " .. displayMax;
+                else
+                    frameText = displayMin .. "-" .. displayMax;
+                end
+            else
+                local colorPos = "|cff20ff20";
+                local colorNeg = "|cffff2020";
+                local color;
+                if (totalBonus > 0) then
+                    color = colorPos;
+                else
+                    color = colorNeg;
+                end
+                if ((displayMin < 100) and (displayMax < 100)) then
+                    frameText = color .. displayMin .. " - " .. displayMax .. "|r";
+                else
+                    frameText = color .. displayMin .. "-" .. displayMax .. "|r";
+                end
+                if (physicalBonusPos > 0) then
+                    tooltip = tooltip .. colorPos .. " +" .. physicalBonusPos .. "|r";
+                end
+                if (physicalBonusNeg < 0) then
+                    tooltip = tooltip .. colorNeg .. " " .. physicalBonusNeg .. "|r";
+                end
+                if (percent > 1) then
+                    tooltip = tooltip .. colorPos .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
+                elseif (percent < 1) then
+                    tooltip = tooltip .. colorNeg .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
+                end
+                tooltipTable.tooltip = tooltip .. " " .. format(DPS_TEMPLATE, damagePerSecond);
+            end
+            tooltipTable.attackSpeed = rangedAttackSpeed;
+            tooltipTable.damage = tooltip;
+            tooltipTable.dps = damagePerSecond;
+
+            return frameText, tooltip, tooltip2, tooltipTable
+        end
+
+        self:RegisterElement('damage', 'ranged', {
+            order = 1,
+            name = 'Damage',
+            descr = '..',
+            func = function()
+                local frameText; -- df
+                local tooltip; -- df
+                local tooltip2; -- df
+                local tooltipTable = {}
+
+                if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
+
+                frameText, tooltip, tooltip2, tooltipTable = range()
+                -- DevTools_Dump(tooltipTable)
+
+                local newTable = {} -- df
+
+                newTable[1] = {left = 'Ranged'}
+                newTable[2] = {left = 'Attack Speed (seconds)', right = string.format('%.2f', tooltipTable.attackSpeed)}
+                newTable[3] = {left = 'Damage', right = tooltipTable.damage}
+                newTable[4] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.dps)}
+
+                -- print(frameText, tooltip, tooltip2)
+                return frameText, nil, nil, newTable
+            end
+        })
+
+        self:RegisterElement('dps', 'ranged', {
+            order = 2,
+            name = 'DPS',
+            descr = '..',
+            func = function()
+                if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
+
+                local frameText; -- df
+                local tooltip; -- df
+                local tooltip2; -- df
+                local tooltipTable = {}
+
+                local newTable = {} -- df
+
+                frameText, tooltip, tooltip2, tooltipTable = range()
+                frameText = string.format('%.1f', tooltipTable.dps);
+
+                newTable[1] = {left = 'Damage Per Second'}
+                newTable[2] = {left = 'Ranged', right = frameText}
+
+                return frameText, nil, nil, newTable
+            end
+        })
+
+        self:RegisterElement('ap', 'ranged', {
+            order = 3,
+            name = 'Attack Power',
+            descr = '..',
+            func = function()
+                if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
+
+                -- if (HasWandEquipped()) then return '--', nil, nil end
+                if (HasWandEquipped()) then return NOT_APPLICABLE, nil, nil end
+
+                local base, posBuff, negBuff = UnitRangedAttackPower('player');
+                local frameText, tooltip, tooltip2 = PaperDollFormatStat(RANGED_ATTACK_POWER, base, posBuff, negBuff);
+                tooltip2 = format(RANGED_ATTACK_POWER_TOOLTIP,
+                                  max((base + posBuff + negBuff), 0) / ATTACK_POWER_MAGIC_NUMBER);
+
+                return frameText, tooltip, tooltip2;
+            end
+        })
+
+        self:RegisterElement('attackspeed', 'ranged', {
+            order = 4,
+            name = 'Attack Speed',
+            descr = '..',
+            func = function()
+                if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
+
+                local frameText; -- df
+                local tooltip; -- df
+                local tooltip2; -- df
+                local tooltipTable = {}
+
+                local speed, lowDmg, hiDmg, posBuff, negBuff, percent = UnitRangedDamage('player');
+                frameText = string.format('%.2f', speed);
+
+                local newTable = {} -- df         
+
+                newTable[1] = {left = 'Ranged'}
+                newTable[2] = {left = 'Attack Speed (seconds)', right = frameText}
+
+                -- print(frameText, tooltip, tooltip2)
+                return frameText, nil, nil, newTable
+            end
+        })
+
+        local extraHit = function()
+            local link = GetInventoryItemLink('player', 18);
+
+            if link then
+                local itemID, enchantID = link:match("item:(%d+):(%d*)");
+                if enchantID and tonumber(enchantID) == 2523 then return 3; end
+            end
+
+            return 0;
+        end
+
+        self:RegisterElement('hit', 'ranged', {
+            order = 6,
+            name = STAT_HIT_CHANCE,
+            descr = '..',
+            func = function()
+                if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
+
+                local hit = GetHitModifier()
+                if not hit then hit = 0; end
+
+                hit = hit + extraHit()
+
+                local str = string.format(' %.2F', hit) .. '%';
+                return str, STAT_HIT_CHANCE .. str, 'Reduces your chance to miss.'
+            end
+        })
+
+        self:RegisterElement('crit', 'ranged', {
+            order = 7,
+            name = STAT_CRITICAL_STRIKE,
+            descr = '..',
+            func = function()
+                if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
+
+                local crit = GetRangedCritChance()
+                local str = string.format(' %.2F', crit) .. '%';
+                return str, 'Crit Chance' .. str, 'Chance of attacks doing extra damage.'
+            end
+        })
+    end
 
     -- spell
     do self:RegisterElement('health', 'spell', {order = 1, name = 'Health', descr = '..'}) end
