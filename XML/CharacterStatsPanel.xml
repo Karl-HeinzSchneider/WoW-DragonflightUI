@@ -173,6 +173,34 @@ UI_shared.xsd">
 			<OnLoad method="OnLoad" />
 		</Scripts>
 	</Frame>
+	<!-- Stat -->
+	<Frame name="DFCharacterStatsStatTemplate" mixin="DFCharacterStatsStatTemplateMixin" virtual="true">
+		<Size x="104" y="13" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString parentKey="Label" name="$parentLabel" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="LEFT" x="16" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Value" name="$parentStatText" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT" x="166" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnClick method="OnClick" /> -->
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Frame>
+	<!-- Stat -->
+	<Frame name="DFCharacterStatsSpacer" mixin="DFCharacterStatsSpacerMixin" virtual="true">
+		<Size x="104" y="4" />
+	</Frame>
 	<!-- Textures -->
 	<!--
 	<Texture name="Char-Stat-Bottom" file="Interface\CharacterFrame\Char-Paperdoll-Parts" virtual="true">

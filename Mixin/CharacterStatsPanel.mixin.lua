@@ -7,6 +7,9 @@ function DragonflightUICharacterStatsPanelMixin:OnLoad()
 
     self:SetupScrollBox()
     self:AddDefaultCategorys()
+    self:AddDefaultStats()
+    -- self.DataProvider:Sort()
+    self:CallRefresh()
 end
 
 function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
@@ -52,7 +55,9 @@ function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
         if elementData.categoryInfo then
             factory("DFCharacterStatsPanelHeader", Initializer);
         elseif elementData.elementInfo then
-            -- factory("DFCharacterStatsPanelHeader", Initializer);
+            factory("DFCharacterStatsStatTemplate", Initializer);
+        elseif elementData.spacer then
+            factory("DFCharacterStatsSpacer", Initializer);
         else
             print('~no factory: ', elementType, ' ~')
             factory("Frame");
@@ -64,34 +69,44 @@ function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
     local elementSize = DFSettingsListMixin.ElementSize;
 
     self.ScrollView:SetElementExtentCalculator(function(dataIndex, node)
-        print('extend', dataIndex, node:GetData())
+        -- print('extend', dataIndex, node:GetData())
         local elementData = node:GetData();
-        local baseElementHeight = 20;
+        local baseElementHeight = 13;
         local baseHeaderHeight = 18;
 
         if elementData.elementInfo then return baseElementHeight; end
 
         if elementData.categoryInfo then
-            if node:IsCollapsed() then
-                return baseHeaderHeight;
-            else
-                return 50
-            end
+            return baseHeaderHeight;
+
+            -- if node:IsCollapsed() then
+            --     return baseHeaderHeight;
+            -- else
+            --     return 50
+            -- end
         end
 
-        if elementData.dividerHeight then return elementData.dividerHeight; end
+        return 4; -- spacer
 
-        if elementData.topPadding then return 1; end
+        -- if elementData.dividerHeight then return elementData.dividerHeight; end
 
-        if elementData.bottomPadding then return 10; end
+        -- if elementData.topPadding then return 1; end
+
+        -- if elementData.bottomPadding then return 10; end
     end);
 
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, self.ScrollView);
 
     local scrollBoxAnchorsWithBar = {CreateAnchor("TOPLEFT", 4, -4), CreateAnchor("BOTTOMRIGHT", -16, 0)};
-    local scrollBoxAnchorsWithoutBar = {scrollBoxAnchorsWithBar[1], CreateAnchor("BOTTOMRIGHT", 0, 0)};
+    -- local scrollBoxAnchorsWithoutBar = {scrollBoxAnchorsWithBar[1], CreateAnchor("BOTTOMRIGHT", 0, 0)};
     ScrollUtil.AddManagedScrollBarVisibilityBehavior(self.ScrollBox, self.ScrollBar, scrollBoxAnchorsWithBar,
-                                                     scrollBoxAnchorsWithoutBar);
+                                                     scrollBoxAnchorsWithBar);
+
+    -- always show scroll 
+    self.DataProvider:RegisterCallback("OnSizeChanged", function()
+        --     
+        self.ScrollBar:Show()
+    end)
 end
 
 function DragonflightUICharacterStatsPanelMixin:FlushDisplay()
@@ -225,16 +240,43 @@ end
 -- end
 
 function DragonflightUICharacterStatsPanelMixin:AddDefaultCategorys()
-    -- list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1, isExpanded = true},
-    --                       alphaSortComparator, true)
-
-    self:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1, isExpanded = true})
+    self:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1, isExpanded = false})
     self:RegisterCategory('attributes', {name = 'Attributes', descr = 'descr..', order = 2, isExpanded = true})
     self:RegisterCategory('melee', {name = 'Melee', descr = 'descr..', order = 3, isExpanded = true})
     self:RegisterCategory('ranged', {name = 'Ranged', descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('spell', {name = 'Spell', descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('defense', {name = 'Defense', descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('resistance', {name = 'Resistance', descr = 'descr..', order = 4, isExpanded = true})
+end
+
+function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
+    -- general
+    do
+        self:RegisterElement('health', 'general', {order = 1, name = 'Health', descr = '..'})
+        self:RegisterElement('itemlvl', 'general', {order = 2, name = 'Item Level', descr = '..'})
+        self:RegisterElement('movement', 'general', {order = 3, name = 'Movement Speed', descr = '..'})
+        self:RegisterElement('health', 'general', {order = 4, name = 'Health', descr = '..'})
+        self:RegisterElement('health', 'general', {order = 5, name = 'Health', descr = '..'})
+
+    end
+
+    -- attributes
+    do self:RegisterElement('health', 'attributes', {order = 1, name = 'Health', descr = '..'}) end
+
+    -- melee
+    do self:RegisterElement('health', 'melee', {order = 1, name = 'Health', descr = '..'}) end
+
+    -- ranged
+    do self:RegisterElement('health', 'ranged', {order = 1, name = 'Health', descr = '..'}) end
+
+    -- spell
+    do self:RegisterElement('health', 'spell', {order = 1, name = 'Health', descr = '..'}) end
+
+    -- defense
+    do self:RegisterElement('health', 'defense', {order = 1, name = 'Health', descr = '..'}) end
+
+    -- resistance
+    do self:RegisterElement('health', 'resistance', {order = 1, name = 'Health', descr = '..'}) end
 end
 
 function DragonflightUICharacterStatsPanelMixin:RegisterCategory(id, info, sortComparator)
@@ -249,8 +291,8 @@ function DragonflightUICharacterStatsPanelMixin:RegisterCategory(id, info, sortC
 
     local node = dataProvider:Insert(data)
 
-    local affectChildren = false;
-    local skipSort = true;
+    local affectChildren = true;
+    local skipSort = false;
 
     if sortComparator then
         node:SetSortComparator(sortComparator, affectChildren, skipSort)
@@ -259,6 +301,38 @@ function DragonflightUICharacterStatsPanelMixin:RegisterCategory(id, info, sortC
             return b.data.order > a.data.order
         end
         node:SetSortComparator(orderSortComparator, affectChildren, skipSort)
+    end
+    node:Sort()
+
+    local spacerData = {id = 'spacer', key = id .. '_' .. 'spacer', order = info.order + 0.1, spacer = true}
+    dataProvider:Insert(spacerData)
+end
+
+function DragonflightUICharacterStatsPanelMixin:RegisterElement(id, categoryID, info)
+    local dataProvider = self.DataProvider;
+
+    local data = {
+        id = id,
+        categoryID = categoryID,
+        key = categoryID .. '_' .. id,
+        order = info.order or 99999,
+        elementInfo = {name = info.name, descr = info.descr or ''}
+    }
+
+    -- dataProvider:Insert(data)
+    -- dataProvider:InsertInParentByPredicate(data, function(node)
+    --     local nodeData = node:GetData()
+
+    --     return nodeData.id == data.categoryID
+    -- end)
+
+    local parentNode = self.DataProvider:FindElementDataByPredicate(function(node)
+        local d = node:GetData();
+        return d.id == categoryID;
+    end, false)
+    if parentNode then
+        parentNode:Insert(data)
+        parentNode:Sort()
     end
 end
 
@@ -338,11 +412,12 @@ end
 DFCharacterStatsPanelHeaderMixin = {}
 
 function DFCharacterStatsPanelHeaderMixin:OnLoad()
-    print('DFCharacterStatsPanelHeaderMixin:OnLoad()')
+    -- print('DFCharacterStatsPanelHeaderMixin:OnLoad()')
 end
 
 function DFCharacterStatsPanelHeaderMixin:Init(node)
     -- print('DFCharacterStatsPanelHeaderMixin:Init()')
+    self.Node = node;
     local elementData = node:GetData();
     self.ElementData = elementData;
     -- print('DFSettingsCategoryHeaderMixin:Init()', elementData.categoryInfo.name)
@@ -365,6 +440,7 @@ function DFCharacterStatsPanelHeaderMixin:SetCollapseState(collapsed)
         -- self.CollapseIcon:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
         -- self.CollapseIconAlphaAdd:SetTexCoord(0.302246, 0.312988, 0.0537109, 0.0693359)
         -- self.Background:Show()
+        self.collapsed = true;
         self.CollapsedIcon:Show();
         self.ExpandedIcon:Hide();
         -- self:SetHeight(18);
@@ -386,5 +462,61 @@ function DFCharacterStatsPanelHeaderMixin:SetCollapseState(collapsed)
         self.BgTop:Show();
         self.BgMiddle:Show();
         self.BgBottom:Show();
+
+        local childNodes = self.Node:GetNodes();
+        local numChilds = #childNodes - 1 + 1;
+        local dy = 18 + (13 + 4) * numChilds + 4;
+
+        if dy - 18 < 46 then
+            self.BgBottom:SetHeight(dy - 18)
+        else
+            self.BgBottom:SetHeight(46)
+        end
+
+        -- self.BgBottom:ClearAllPoints()
+        self.BgBottom:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 0, -dy)
+
+        -- print('~children', #childNodes)
     end
+end
+
+-- stat
+DFCharacterStatsStatTemplateMixin = {}
+
+function DFCharacterStatsStatTemplateMixin:OnLoad()
+end
+
+function DFCharacterStatsStatTemplateMixin:Init(node)
+    -- print('DFCharacterStatsStatTemplateMixin:Init()')
+    local elementData = node:GetData();
+    self.ElementData = elementData;
+
+    self.Label:SetText(elementData.elementInfo.name)
+    self.Description = elementData.elementInfo.descr
+
+    self.Value:SetText('*VALUE*')
+end
+
+-- function DFCharacterStatsStatTemplateMixin:OnClick()
+-- end
+
+function DFCharacterStatsStatTemplateMixin:OnEnter()
+end
+
+function DFCharacterStatsStatTemplateMixin:OnLeave()
+end
+
+-- spacer
+
+DFCharacterStatsSpacerMixin = {}
+
+function DFCharacterStatsSpacerMixin:Init(node)
+    -- print('DFCharacterStatsStatTemplateMixin:Init()')
+    -- local elementData = node:GetData();
+    -- self.ElementData = elementData;
+
+    -- self.Label:SetText(elementData.elementInfo.name)
+    -- self.Description = elementData.elementInfo.descr
+
+    -- self.Value:SetText('*VALUE*')
 end
