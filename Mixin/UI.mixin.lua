@@ -1343,7 +1343,9 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             local deltaInset = 0.0;
             inset:SetPoint('TOPLEFT', model, 'TOPLEFT', -0, 0)
             inset:SetPoint('BOTTOMRIGHT', model, 'BOTTOMRIGHT', 0, -0)
-            inset:SetFrameLevel(5)
+            inset:SetFrameLevel(3)
+
+            _G[inset:GetName() .. 'Bg']:Hide()
 
             local tl = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'TopLeft', 'BACKGROUND')
             tl:SetSize(212, 245)
