@@ -358,16 +358,26 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
         --     end
         -- })
 
-        local function normalize(d)
+        local function normalize(d, pad)
             -- return d          
-            return string.format(" %.2f", (d / BASE_MOVEMENT_SPEED * 100)) .. '%'
+            return string.format("%s %.2f", pad or '', (d / BASE_MOVEMENT_SPEED * 100)) .. '%'
         end
 
         local function GetMovementTable()
             local newTable = {}
             local currentSpeed, runSpeed, flightSpeed, swimSpeed = GetUnitSpeed('player');
 
-            newTable[1] = {left = 'Movement Speed' .. normalize(currentSpeed)}
+            local pad = '';
+            local currentNormal = (currentSpeed / BASE_MOVEMENT_SPEED * 100);
+
+            if currentNormal < 10 then
+                pad = '     '
+            elseif currentNormal < 100 then
+                pad = '   '
+            end
+            -- print('pad', strlen(pad))
+
+            newTable[1] = {left = 'Movement Speed' .. normalize(currentSpeed, pad)}
             newTable[2] = {left = 'Run Speed', right = normalize(runSpeed)}
             newTable[3] = {left = 'Flight Speed', right = normalize(flightSpeed)}
             newTable[4] = {left = 'Swim Speed', right = normalize(swimSpeed)}
