@@ -308,12 +308,33 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         --     end
         -- })
+
+        local function normalize(d)
+            -- return d
+            return string.format(" %.2f", d / BASE_MOVEMENT_SPEED * 100) .. '%'
+        end
+
+        local function GetMovementTable()
+            local newTable = {}
+            local currentSpeed, runSpeed, flightSpeed, swimSpeed = GetUnitSpeed('player');
+
+            newTable[1] = {left = 'Movement Speed' .. normalize(currentSpeed)}
+            newTable[2] = {left = 'Run Speed', right = normalize(runSpeed)}
+            newTable[3] = {left = 'Flight Speed', right = normalize(flightSpeed)}
+            newTable[4] = {left = 'Swim Speed', right = normalize(swimSpeed)}
+
+            return newTable, currentSpeed;
+        end
+
         self:RegisterElement('movement', 'general', {
             order = 3,
             name = 'Movement Speed',
             descr = '..',
             func = function()
+                local moveTable, currentSpeed = GetMovementTable()
 
+                local str = normalize(currentSpeed);
+                return str, nil, nil, moveTable;
             end
         })
     end
