@@ -1293,7 +1293,28 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     -- add characterstats panel
     if true then
         --
-        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', frame, 'DFCharacterStatsPanel')
+        local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', CharacterFrame,
+                                'DFCharacterFrameExpandButton')
+        btn:SetPoint('BOTTOMRIGHT', CharacterFrame.DFInset, 'BOTTOMRIGHT', -2, -1)
+        CharacterFrame.DFExpandButton = btn;
+
+        local insetRight = CreateFrame('Frame', 'DragonflightUICharacterFrameInsetRight', CharacterFrame,
+                                       'InsetFrameTemplate')
+        insetRight:ClearAllPoints()
+        insetRight:SetPoint('TOPLEFT', CharacterFrame.DFInset, 'TOPLEFT', 1, 0)
+        insetRight:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', -4, 4)
+        CharacterFrame.DFInsetRight = insetRight
+
+        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', UIParent, 'DFCharacterStatsPanel')
+        p:SetSize(100, 100)
+        -- p:SetPoint('TOPLEFT', CharacterFrame.DFInsetRight, 'TOPLEFT', 0, 0);
+        -- p:SetPoint('BOTTOMRIGHT', CharacterFrame.DFInsetRight, 'BOTTOMRIGHT', 0, 0);
+
+        -- self:ClearAllPoints()
+        -- self:SetPoint('TOPLEFT', CharacterFrame.DFInsetRight, 'TOPLEFT', 0, 0);
+        -- self:SetPoint('BOTTOMRIGHT', CharacterFrame.DFInsetRight, 'BOTTOMRIGHT', 0, 0);
+        -- self:Show()
+        CharacterFrame:Expand()
     end
 
     -- rep

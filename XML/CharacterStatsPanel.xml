@@ -3,6 +3,17 @@ UI_shared.xsd">
 	<Script file="Mixin/CharacterStatsPanel.mixin.lua" />
 	<Frame name="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsPanelMixin" virtual="true">
 		<Frames>
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Frames>
+					<Button parentKey="InputBlocker" clipChildren="true" setAllPoints="true" hidden="true" />
+				</Frames>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="-4" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-1" y="7" />
+				</Anchors>
+			</EventFrame>
 		</Frames>
 		<Scripts>
 			<!-- <OnShow inherit="prepend" method="OnShow" /> -->
