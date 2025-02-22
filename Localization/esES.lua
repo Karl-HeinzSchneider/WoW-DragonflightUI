@@ -1,7 +1,8 @@
 -- print('esES, esMX')
 -- Spanish Translations by Woopy
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES") or LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esMX")
+local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES")
+local L_MX = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esMX")
 
 -- @TODO
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
@@ -422,4 +423,7 @@ L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
 L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 
 -- see comment above
-for k, v in pairs(L) do L_ES[k] = v; end
+for k, v in pairs(L) do
+    L_ES[k] = v;
+    L_MX[k] = v;
+end
