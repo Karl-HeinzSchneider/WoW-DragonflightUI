@@ -3835,7 +3835,6 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         end
     elseif name == 'FriendsFrame' then
         -- DFFirstOffsetX
-
         if DF.Era then
             --
             for i = 1, 5 do
@@ -3977,6 +3976,21 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 -- print('FriendsFrame_Update')
                 if FriendsFrame.TitleText then FriendsFrame.TitleText:Hide() end
             end)
+        end
+
+        local conv = RaidFrameConvertToRaidButton
+        if conv then
+            -- print('conv!')
+            conv:SetHeight(22)
+            conv:SetPoint('BOTTOMRIGHT', RaidFrame, 'BOTTOMRIGHT', -6, 4)
+
+            local btnText = _G[conv:GetName() .. 'Text'];
+            if btnText then
+                local fontName, fontHeight, fontFlags = btnText:GetFont()
+                btnText:SetFont(fontName, 12, fontFlags)
+            end
+        else
+            -- print(':(((')
         end
     elseif name == 'MailFrame' then
         --
