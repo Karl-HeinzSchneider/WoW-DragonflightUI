@@ -190,20 +190,28 @@ end
 
 function DF.Compatibility:TacoTipInspect()
     local text = _G['InspectGearScoreText']
-    text:ClearAllPoints()
-    text:SetPoint('BOTTOMLEFT', InspectModelFrame, 'BOTTOMLEFT', 10, 30)
-
+    if text ~= nil then
+        text:ClearAllPoints()
+        text:SetPoint('BOTTOMLEFT', InspectModelFrame, 'BOTTOMLEFT', 10, 30)
+    end
+    
     local score = _G['InspectGearScore']
-    score:ClearAllPoints()
-    score:SetPoint('BOTTOMLEFT', text, 'TOPLEFT', 0, 2)
+    if score ~= nil then
+        score:ClearAllPoints()
+        score:SetPoint('BOTTOMLEFT', text, 'TOPLEFT', 0, 2)
+    end
 
     local itemlvltext = _G['InspectAvgItemLvlText']
-    itemlvltext:ClearAllPoints()
-    itemlvltext:SetPoint('BOTTOMRIGHT', InspectModelFrame, 'BOTTOMRIGHT', -10, 30)
-
+    if itemlvltext ~= nil then
+        itemlvltext:ClearAllPoints()
+        itemlvltext:SetPoint('BOTTOMRIGHT', InspectModelFrame, 'BOTTOMRIGHT', -10, 30)
+    end
+    
     local itemlvl = _G['InspectAvgItemLvl']
-    itemlvl:ClearAllPoints()
-    itemlvl:SetPoint('BOTTOMRIGHT', itemlvltext, 'TOPRIGHT', 0, 2)
+    if itemlvl ~= nil then
+        itemlvl:ClearAllPoints()
+        itemlvl:SetPoint('BOTTOMRIGHT', itemlvltext, 'TOPRIGHT', 0, 2)
+    end
 end
 
 function DF.Compatibility:LFGBulletinBoard(func)
