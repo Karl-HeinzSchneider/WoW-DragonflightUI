@@ -565,6 +565,7 @@ function Module:AddBackdrops()
             Mixin(v, BackdropTemplateMixin)
         end
         v:SetBackdrop(backdrop)
+        Module:SetDefaultBackdrop(v)
     end
 end
 
