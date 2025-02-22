@@ -86,7 +86,7 @@ function DragonflightUIXPBarMixin:CreateBar()
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
     f.Bar:EnableMouse(true)
 
-    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
+    f.Text = f.Bar:CreateFontString('XPBarText', 'HIGHLIGHT', 'GameFontNormal')
     -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
 
     local newFont = 'Fonts\\FRIZQT__.ttf'
@@ -198,7 +198,7 @@ function DragonflightUIXPBarMixin:Update()
         self.TextPercent:SetDrawLayer('HIGHLIGHT')
     end
 
-    if state.showXPPercent then
+    if state.showXPPercent and showXP then
         self.TextPercent:Show()
     else
         self.TextPercent:Hide()
