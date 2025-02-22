@@ -941,7 +941,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
         local function GetSpellDamageTable()
             local newTable = {}
             newTable[1] = {left = STAT_SPELLPOWER}
-            newTable[2] = {left = 'Increases the damage and healing of spells.'}
+            newTable[2] = {left = STAT_SPELLPOWER_TOOLTIP}
             newTable[3] = {left = ' '}
 
             local maxDamage = GetSpellBonusDamage(2);
@@ -1135,6 +1135,20 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
     -- resistance
     do
+        local tex = 'Interface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons';
+        local resIcons = {}
+        local resCoords = {
+            {0, 1.0, 0, 0.11328125}, -- fire
+            {0, 1.0, 0.11328125, 0.2265625}, -- nature
+            {0, 1.0, 0.33984375, 0.453125}, -- frost
+            {0, 1.0, 0.453125, 0.56640625}, -- shadow  
+            {0, 1.0, 0.2265625, 0.33984375} -- arcane
+        }
+        for k, v in ipairs(resCoords) do
+            resIcons[k] = string.format('%s:%s:%s:%s', v[1] * 32, v[2] * 32, v[3] * 256, v[4] * 256)
+        end
+        -- local resIcons = {'0:1.0:0.2265625:0.33984375'}
+
         local res = function(i)
             local frameText; -- df
             local tooltip; -- df
@@ -1187,14 +1201,20 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             end
             tooltip2 = format(RESISTANCE_TOOLTIP_SUBTEXT, _G["RESISTANCE_TYPE" .. i], unitLevel, resistanceLevel);
 
+            tooltip = string.format('|T%s:16:16:0:0:32:256:%s|t %s', tex, resIcons[i - 1], tooltip)
+
             return frameText, tooltip, tooltip2;
         end
 
         -- local resTable = {'Holy', 'Fire', 'Nature', 'Frost', 'Shadow', 'Arcane'}
 
-        self:RegisterElement(SCHOOL_STRINGS[6], 'resistance', {
+        local function resName(i)
+            return string.format('|T%s:16:16:0:0:32:256:%s|t %s', tex, resIcons[i - 2], SCHOOL_STRINGS[i])
+        end
+
+        self:RegisterElement(SCHOOL_STRINGS[7], 'resistance', {
             order = 1,
-            name = SCHOOL_STRINGS[6],
+            name = resName(7),
             descr = '..',
             func = function()
                 return res(6)
@@ -1202,17 +1222,15 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
         })
         -- 1 = holy
         for k = 2, NUM_RESISTANCE_TYPES do
-            self:RegisterElement(SCHOOL_STRINGS[k], 'resistance', {
+            self:RegisterElement(SCHOOL_STRINGS[k + 1], 'resistance', {
                 order = k,
-                name = SCHOOL_STRINGS[k],
+                name = resName(k + 1),
                 descr = '..',
                 func = function()
                     return res(k)
                 end
             })
         end
-
-        -- self:RegisterElement('health', 'resistance', {order = 1, name = 'Health', descr = '..'}) end
     end
 end
 
