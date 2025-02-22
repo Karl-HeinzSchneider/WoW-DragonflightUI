@@ -18,6 +18,7 @@ UI_shared.xsd">
 		<Scripts>
 			<!-- <OnShow inherit="prepend" method="OnShow" /> -->
 			<OnLoad inherit="prepend" method="OnLoad" />
+			<OnEvent method="OnEvent" />
 			<!-- <OnHide method="OnHide" /> -->
 		</Scripts>
 	</Frame>

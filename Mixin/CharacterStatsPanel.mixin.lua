@@ -10,7 +10,55 @@ function DragonflightUICharacterStatsPanelMixin:OnLoad()
     self:AddDefaultCategorys()
     self:AddDefaultStats()
     -- self.DataProvider:Sort()
-    self:CallRefresh()
+    -- self:CallRefresh()
+
+    self:RegisterEvent("PLAYER_ENTERING_WORLD");
+    self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
+    self:RegisterEvent("UNIT_AURA");
+    self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS");
+    self:RegisterEvent("SKILL_LINES_CHANGED");
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
+    self:RegisterEvent("UNIT_DAMAGE");
+    self:RegisterEvent("UNIT_ATTACK_SPEED");
+    self:RegisterEvent("UNIT_RANGEDDAMAGE");
+    self:RegisterEvent("UNIT_ATTACK");
+    self:RegisterEvent("UNIT_RESISTANCES");
+    self:RegisterEvent("UNIT_STATS");
+    self:RegisterEvent("UNIT_MAXHEALTH");
+    self:RegisterEvent("UNIT_ATTACK_POWER");
+    self:RegisterEvent("UNIT_RANGED_ATTACK_POWER");
+    self:RegisterEvent("COMBAT_RATING_UPDATE");
+    self:RegisterEvent("VARIABLES_LOADED");
+
+    self:SetScript("OnUpdate", function(_, elapsed)
+        self:OnUpdate(elapsed)
+    end)
+
+    self.LastUpdate = GetTime()
+    self.ForceUpdate = true;
+end
+
+function DragonflightUICharacterStatsPanelMixin:OnEvent(event, arg1, arg2, arg3)
+    -- print('~', event, arg1)
+    self.ForceUpdate = true;
+end
+
+local updateInterval = 5;
+
+function DragonflightUICharacterStatsPanelMixin:OnUpdate(elapsed)
+    if self.ForceUpdate then
+        -- print('~ForceUpdate!')
+        self.LastUpdate = GetTime()
+        self:CallRefresh()
+        self.ForceUpdate = false;
+        return
+    end
+
+    if GetTime() - self.LastUpdate >= updateInterval then
+        self.LastUpdate = GetTime()
+        -- print('self:OnUpdate')
+        self:CallRefresh()
+    end
 end
 
 function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
@@ -310,8 +358,8 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
         -- })
 
         local function normalize(d)
-            -- return d
-            return string.format(" %.2f", d / BASE_MOVEMENT_SPEED * 100) .. '%'
+            -- return d          
+            return string.format(" %.2f", (d / BASE_MOVEMENT_SPEED * 100)) .. '%'
         end
 
         local function GetMovementTable()
@@ -335,7 +383,8 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 local str = normalize(currentSpeed);
                 return str, nil, nil, moveTable;
-            end
+            end,
+            hookOnUpdate = true
         })
     end
 
@@ -1202,7 +1251,7 @@ function DragonflightUICharacterStatsPanelMixin:RegisterElement(id, categoryID, 
         categoryID = categoryID,
         key = categoryID .. '_' .. id,
         order = info.order or 99999,
-        elementInfo = {name = info.name, descr = info.descr or '', func = info.func}
+        elementInfo = {name = info.name, descr = info.descr or '', func = info.func, hookOnUpdate = info.hookOnUpdate}
     }
 
     -- dataProvider:Insert(data)
@@ -1370,9 +1419,11 @@ end
 DFCharacterStatsStatTemplateMixin = {}
 
 function DFCharacterStatsStatTemplateMixin:OnLoad()
+    self.updateInterval = 0.2;
+    self.LastUpdate = GetTime()
 end
 
-function DFCharacterStatsStatTemplateMixin:Init(node)
+function DFCharacterStatsStatTemplateMixin:Init(node, skipHook)
     -- print('DFCharacterStatsStatTemplateMixin:Init()')
     local elementData = node:GetData();
     self.ElementData = elementData;
@@ -1389,6 +1440,27 @@ function DFCharacterStatsStatTemplateMixin:Init(node)
         self.tooltip = tt;
         self.tooltip2 = tt2;
         self.tooltipTable = tooltipTable;
+    end
+
+    if skipHook then
+        -- print('skiphook')
+        return
+    end
+
+    if elementData.elementInfo.hookOnUpdate then
+        -- print('hook!')
+        self:SetScript("OnUpdate", function(_, elapsed)
+            -- print('OnUpdate')           
+            if GetTime() - self.LastUpdate >= self.updateInterval then
+                self.LastUpdate = GetTime()
+                -- print('self:OnUpdate')
+                self:Init(node, true)
+
+                if (GameTooltip:GetOwner() == self) then self:OnEnter(); end
+            end
+        end)
+    else
+        self:SetScript('OnUpdate', nil);
     end
 end
 
