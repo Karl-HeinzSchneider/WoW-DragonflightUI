@@ -56,6 +56,7 @@ XML\Includes.xml
 XML\Actionbar.xml
 XML\Bossframe.xml
 XML\Castbar.xml
+XML\CharacterStatsPanel.xml
 XML\ConfigCategoryList.xml
 XML\DFSettingsCategory.xml
 XML\DFSettingsList.xml

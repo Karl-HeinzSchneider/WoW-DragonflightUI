@@ -1193,6 +1193,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     inset:ClearAllPoints()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
+    frame.DFInset = inset
     -- _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
 
     local head = CharacterHeadSlot
@@ -1225,7 +1226,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
 
     local att = CharacterAttributesFrame
-    attX = (inset:GetWidth() - att:GetWidth()) / 2
+    local attX = (inset:GetWidth() - att:GetWidth()) / 2
     att:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', attX + 4, -291 + 12)
 
     local main = CharacterMainHandSlot
@@ -1273,12 +1274,27 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         _G['CharacterFrameTab2']:HookScript('OnHide', updateTabs)
     end
 
-    frame:HookScript('OnShow', function()
-        frame:SetAttribute("UIPanelLayout-width", frame:GetWidth());
+    local PANEL_DEFAULT_WIDTH = frame:GetWidth();
+    local CHARACTERFRAME_EXPANDED_WIDTH = 540;
+
+    function frame:DFUpdateFrameWidth(expanded)
+        local frameW = expanded and CHARACTERFRAME_EXPANDED_WIDTH or PANEL_DEFAULT_WIDTH;
+        frame:SetWidth(frameW)
+        frame:SetAttribute("UIPanelLayout-width", frameW);
         frame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
         frame:SetAttribute("UIPanelLayout-" .. "yoffset", 0);
         UpdateUIPanelPositions(frame)
+    end
+
+    frame:HookScript('OnShow', function()
+        frame:DFUpdateFrameWidth(frame.Expanded)
     end)
+
+    -- add characterstats panel
+    if true then
+        --
+        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', frame, 'DFCharacterStatsPanel')
+    end
 
     -- rep
     do

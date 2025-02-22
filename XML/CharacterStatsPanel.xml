@@ -1,0 +1,31 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<Script file="Mixin/CharacterStatsPanel.mixin.lua" />
+	<Frame name="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsPanelMixin" virtual="true">
+		<Frames>
+		</Frames>
+		<Scripts>
+			<!-- <OnShow inherit="prepend" method="OnShow" /> -->
+			<OnLoad inherit="prepend" method="OnLoad" />
+			<!-- <OnHide method="OnHide" /> -->
+		</Scripts>
+	</Frame>
+	<Button name="DFCharacterFrameExpandButton" mixin="DragonflightUICharacterFrameExpandButtonMixin" virtual="true">
+		<Size x="32" y="32" />
+		<!--
+		<Anchors>
+		<Anchor point="BOTTOMRIGHT" relativeKey="$parent.DFInset" x="-2" y="-1" />
+		</Anchors>
+		-->
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+		<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+		<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+		<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+	</Button>
+</Ui>
