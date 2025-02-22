@@ -1,3 +1,4 @@
+---@diagnostic disable: redundant-parameter
 DragonflightUICharacterStatsPanelMixin = CreateFromMixins(CallbackRegistryMixin);
 DragonflightUICharacterStatsPanelMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
@@ -859,7 +860,104 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
     end
 
     -- spell
-    do self:RegisterElement('health', 'spell', {order = 1, name = 'Health', descr = '..'}) end
+    do
+        local cap = {
+            SPELL_SCHOOL1_CAP, SPELL_SCHOOL2_CAP, SPELL_SCHOOL3_CAP, SPELL_SCHOOL4_CAP, SPELL_SCHOOL5_CAP,
+            SPELL_SCHOOL6_CAP, SPELL_SCHOOL7_CAP
+        }
+
+        local function GetSpellDamageTable()
+            local newTable = {}
+            newTable[1] = {left = STAT_SPELLPOWER}
+            newTable[2] = {left = 'Increases the damage and healing of spells.'}
+            newTable[3] = {left = ' '}
+
+            local maxDamage = GetSpellBonusDamage(2);
+            local spellDamage;
+
+            for i = 2, 7 do
+                spellDamage = GetSpellBonusDamage(i);
+                -- minCrit = min(minCrit, spellCrit);
+                maxDamage = max(maxDamage, spellDamage);
+                -- spellDamage = 5;
+                if spellDamage > 0 then
+                    table.insert(newTable,
+                                 {left = cap[i - 1] .. ' ' .. DAMAGE, right = string.format('%d', spellDamage)})
+                end
+            end
+
+            if #newTable == 3 then newTable[3] = nil; end
+
+            return newTable, maxDamage;
+        end
+
+        self:RegisterElement('damage', 'spell', {
+            order = 5,
+            name = STAT_SPELLPOWER,
+            descr = '..',
+            func = function()
+                local spellTable, dmg = GetSpellDamageTable()
+
+                local str = string.format(' %d', dmg);
+                return str, nil, nil, spellTable;
+            end
+        })
+
+        self:RegisterElement('hit', 'spell', {
+            order = 6,
+            name = STAT_HIT_CHANCE,
+            descr = '..',
+            func = function()
+                local hit = GetSpellHitModifier()
+                if not hit then hit = 0; end
+
+                local str = string.format(' %.2F', hit) .. '%';
+                return str, STAT_HIT_CHANCE .. str, 'Reduces your chance to miss.'
+            end
+        })
+
+        local function GetRealSpellCrit()
+            local minCrit = GetSpellCritChance(2);
+            local spellCrit;
+
+            for i = 2, 7 do
+                spellCrit = GetSpellCritChance(i);
+                -- minCrit = min(minCrit, spellCrit);
+                minCrit = max(minCrit, spellCrit);
+            end
+
+            return minCrit;
+        end
+
+        self:RegisterElement('crit', 'spell', {
+            order = 7,
+            name = STAT_CRITICAL_STRIKE,
+            descr = '..',
+            func = function()
+                local crit = GetRealSpellCrit()
+                local str = string.format(' %.2f', crit) .. '%';
+                return str, 'Crit Chance' .. str, 'Chance of spells doing extra damage.'
+            end
+        })
+
+        self:RegisterElement('mana', 'spell', {
+            order = 8,
+            name = MANA_REGEN,
+            descr = '..',
+            func = function()
+                local base, casting = GetManaRegen()
+
+                local newTable = {}
+                newTable[1] = {left = MANA_REGEN}
+                -- newTable[2] = {left = 'Mana every 5s', right = string.format(' %.2f', base * 5)}
+                -- newTable[3] = {left = 'Mana every 5s while casting', right = string.format(' %.2f', casting * 5)}
+                newTable[2] = {left = 'Mana every 5s while casting', right = BreakUpLargeNumbers(casting * 5)}
+                newTable[3] = {left = 'Mana every 5s while not casting', right = BreakUpLargeNumbers(base * 5)}
+
+                return newTable[3].right, nil, nil, newTable;
+            end
+        })
+    end
 
     -- defense
     do
@@ -1296,9 +1394,14 @@ function DFCharacterStatsStatTemplateMixin:OnEnter()
                 if k == 1 then
                     GameTooltip:SetText(v.left, 1.0, 1.0, 1.0);
                 else
-                    GameTooltip:AddDoubleLine(v.left, v.right, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g,
-                                              NORMAL_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g,
-                                              HIGHLIGHT_FONT_COLOR.b)
+                    if v.right then
+                        GameTooltip:AddDoubleLine(v.left, v.right, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g,
+                                                  NORMAL_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g,
+                                                  HIGHLIGHT_FONT_COLOR.b)
+                    else
+                        GameTooltip:AddLine(v.left, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                    end
+
                     -- print(k, v.left, v.right)
                 end
             end
