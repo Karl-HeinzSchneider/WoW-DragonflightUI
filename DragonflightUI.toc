@@ -47,6 +47,7 @@ Localization\Bindings.lua
 Localization\BlizzardData\Professions.lua
 Localization\enUS.lua
 Localization\esES.lua
+Localization\ruRU.lua
 
 XML\Includes.xml
 ## Bindings.xml
