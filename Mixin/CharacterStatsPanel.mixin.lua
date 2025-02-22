@@ -18,7 +18,7 @@ function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
     local indent = 0;
     local verticalPad = 4;
     local padLeft, padRight = 1, 0;
-    local spacing = 4;
+    local spacing = 2;
 
     self.ScrollView = CreateScrollBoxListTreeListView(indent, verticalPad, verticalPad, padLeft, padRight, spacing);
 
@@ -250,18 +250,179 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultCategorys()
 end
 
 function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
+
+    local function PaperDollFormatStat(name, base, posBuff, negBuff)
+        -- print('PaperDollFormatStat', name, base, posBuff, negBuff)
+        local frameText; -- df
+        local tooltip; -- df
+        local tooltip2; -- df
+
+        local effective = max(0, base + posBuff + negBuff);
+        local text = HIGHLIGHT_FONT_COLOR_CODE .. name .. " " .. effective;
+
+        if ((posBuff == 0) and (negBuff == 0)) then
+            text = text .. FONT_COLOR_CODE_CLOSE;
+            frameText = effective;
+        else
+            if (posBuff > 0 or negBuff < 0) then text = text .. " (" .. base .. FONT_COLOR_CODE_CLOSE; end
+            if (posBuff > 0) then
+                text = text .. FONT_COLOR_CODE_CLOSE .. GREEN_FONT_COLOR_CODE .. "+" .. posBuff .. FONT_COLOR_CODE_CLOSE;
+            end
+            if (negBuff < 0) then
+                text = text .. RED_FONT_COLOR_CODE .. " " .. negBuff .. FONT_COLOR_CODE_CLOSE;
+            end
+            if (posBuff > 0 or negBuff < 0) then
+                text = text .. HIGHLIGHT_FONT_COLOR_CODE .. ")" .. FONT_COLOR_CODE_CLOSE;
+            end
+
+            -- if there is a negative buff then show the main number in red, even if there are
+            -- positive buffs. Otherwise show the number in green
+            if (negBuff < 0) then
+                frameText = RED_FONT_COLOR_CODE .. effective .. FONT_COLOR_CODE_CLOSE;
+            else
+                frameText = GREEN_FONT_COLOR_CODE .. effective .. FONT_COLOR_CODE_CLOSE;
+            end
+        end
+        tooltip = text;
+
+        return frameText, tooltip, tooltip2
+    end
+
     -- general
     do
-        self:RegisterElement('health', 'general', {order = 1, name = 'Health', descr = '..'})
-        self:RegisterElement('itemlvl', 'general', {order = 2, name = 'Item Level', descr = '..'})
-        self:RegisterElement('movement', 'general', {order = 3, name = 'Movement Speed', descr = '..'})
-        self:RegisterElement('health', 'general', {order = 4, name = 'Health', descr = '..'})
-        self:RegisterElement('health', 'general', {order = 5, name = 'Health', descr = '..'})
+        self:RegisterElement('health', 'general', {
+            order = 1,
+            name = 'Health',
+            descr = '..',
+            func = function()
+                local hp = UnitHealthMax('player');
+                return hp
+            end
+        })
+        -- self:RegisterElement('itemlvl', 'general', {
+        --     order = 2,
+        --     name = 'Item Level',
+        --     descr = '..',
+        --     func = function()
 
+        --     end
+        -- })
+        self:RegisterElement('movement', 'general', {
+            order = 3,
+            name = 'Movement Speed',
+            descr = '..',
+            func = function()
+
+            end
+        })
     end
 
     -- attributes
-    do self:RegisterElement('health', 'attributes', {order = 1, name = 'Health', descr = '..'}) end
+    do
+        local statTable = {'STRENGTH', 'AGILITY', 'STAMINA', 'INTELLECT', 'SPIRIT'}
+
+        -- function PaperDollFrame_SetPrimaryStats()
+        local stats = function(i)
+            local frameText; -- df
+            local tooltip; -- df
+            local tooltip2; -- df
+
+            local stat;
+            local effectiveStat;
+            local posBuff;
+            local negBuff;
+            stat, effectiveStat, posBuff, negBuff = UnitStat("player", i);
+
+            -- Set the tooltip text
+            local tooltipText = HIGHLIGHT_FONT_COLOR_CODE .. _G["SPELL_STAT" .. i .. "_NAME"] .. " ";
+
+            -- Get class specific tooltip for that stat
+            local temp, classFileName = UnitClass("player");
+            local classStatText = _G[strupper(classFileName) .. "_" .. statTable[i] .. "_" .. "TOOLTIP"];
+            -- If can't find one use the default
+            if (not classStatText) then
+                classStatText = _G["DEFAULT" .. "_" .. statTable[i] .. "_" .. "TOOLTIP"];
+            end
+
+            if ((posBuff == 0) and (negBuff == 0)) then
+                frameText = effectiveStat;
+                tooltip = tooltipText .. effectiveStat .. FONT_COLOR_CODE_CLOSE;
+                tooltip2 = classStatText;
+            else
+                tooltipText = tooltipText .. effectiveStat;
+                if (posBuff > 0 or negBuff < 0) then
+                    tooltipText = tooltipText .. " (" .. (stat - posBuff - negBuff) .. FONT_COLOR_CODE_CLOSE;
+                end
+                if (posBuff > 0) then
+                    tooltipText = tooltipText .. FONT_COLOR_CODE_CLOSE .. GREEN_FONT_COLOR_CODE .. "+" .. posBuff ..
+                                      FONT_COLOR_CODE_CLOSE;
+                end
+                if (negBuff < 0) then
+                    tooltipText = tooltipText .. RED_FONT_COLOR_CODE .. " " .. negBuff .. FONT_COLOR_CODE_CLOSE;
+                end
+                if (posBuff > 0 or negBuff < 0) then
+                    tooltipText = tooltipText .. HIGHLIGHT_FONT_COLOR_CODE .. ")" .. FONT_COLOR_CODE_CLOSE;
+                end
+                tooltip = tooltipText;
+                tooltip2 = classStatText;
+
+                -- If there are any negative buffs then show the main number in red even if there are
+                -- positive buffs. Otherwise show in green.
+                if (negBuff < 0) then
+                    frameText = RED_FONT_COLOR_CODE .. effectiveStat .. FONT_COLOR_CODE_CLOSE;
+                else
+                    frameText = GREEN_FONT_COLOR_CODE .. effectiveStat .. FONT_COLOR_CODE_CLOSE;
+                end
+            end
+
+            return frameText, tooltip, tooltip2;
+        end
+
+        self:RegisterElement('str', 'attributes', {
+            order = 1,
+            name = 'Strength',
+            descr = '..',
+            func = function()
+                return stats(1)
+            end
+        })
+
+        self:RegisterElement('agi', 'attributes', {
+            order = 3,
+            name = 'Agility',
+            descr = '..',
+            func = function()
+                return stats(2)
+            end
+        })
+
+        self:RegisterElement('stam', 'attributes', {
+            order = 3,
+            name = 'Stamina',
+            descr = '..',
+            func = function()
+                return stats(3)
+            end
+        })
+
+        self:RegisterElement('int', 'attributes', {
+            order = 3,
+            name = 'Intellect',
+            descr = '..',
+            func = function()
+                return stats(4)
+            end
+        })
+
+        self:RegisterElement('spirit', 'attributes', {
+            order = 3,
+            name = 'Spirit',
+            descr = '..',
+            func = function()
+                return stats(5)
+            end
+        })
+    end
 
     -- melee
     do self:RegisterElement('health', 'melee', {order = 1, name = 'Health', descr = '..'}) end
@@ -273,10 +434,191 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
     do self:RegisterElement('health', 'spell', {order = 1, name = 'Health', descr = '..'}) end
 
     -- defense
-    do self:RegisterElement('health', 'defense', {order = 1, name = 'Health', descr = '..'}) end
+    do
+        local armor = function()
+            local frameText; -- df
+            local tooltip; -- df
+            local tooltip2; -- df           
+
+            local base, effectiveArmor, _armor, posBuff, negBuff = UnitArmor('player');
+
+            local totalBufs = posBuff + negBuff;
+
+            -- local frame = _G[prefix .. "ArmorFrame"];
+            -- local text = _G[prefix .. "ArmorFrameStatText"];
+
+            frameText, tooltip, tooltip2 = PaperDollFormatStat(ARMOR, base, posBuff, negBuff);
+            local playerLevel = UnitLevel('player');
+            local armorReduction = effectiveArmor / ((85 * playerLevel) + 400);
+            armorReduction = 100 * (armorReduction / (armorReduction + 1));
+
+            tooltip2 = format(ARMOR_TOOLTIP, playerLevel, armorReduction);
+
+            return frameText, tooltip, tooltip2
+        end
+
+        self:RegisterElement('armor', 'defense', {
+            order = 1,
+            name = 'Armor',
+            descr = '..',
+            func = function()
+                return armor()
+            end
+        })
+
+        local function GetDefense()
+            for i = 1, GetNumSkillLines() do
+                local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier = GetSkillLineInfo(i)
+                if skillName == DEFENSE then
+                    -- print(name, rank, tempRank, mod)
+                    -- print('skillName, skillRank, numTempPoints, skillModifier')
+                    return skillName, skillRank, numTempPoints, skillModifier
+                end
+            end
+        end
+
+        self:RegisterElement('defense', 'defense', {
+            order = 2,
+            name = 'Defense',
+            descr = '..',
+            func = function()
+                local skillName, skillRank, numTempPoints, skillModifier = GetDefense();
+                -- local def = skillRank
+                -- local str = string.format(' %.2F', def) .. '%';
+                -- return str, 'Defense' .. str, nil
+
+                local posBuff = 0;
+                local negBuff = 0;
+                if (skillModifier > 0) then
+                    posBuff = skillModifier;
+                elseif (skillModifier < 0) then
+                    negBuff = skillModifier;
+                end
+
+                local frameText, tooltip, tooltip2 = PaperDollFormatStat(DEFENSE, skillRank, posBuff, negBuff);
+
+                tooltip2 = 'Increases chance to Dodge, Block and Parry.\nDecreases chance to be hit and critically hit.';
+
+                return frameText, tooltip, tooltip2
+            end
+        })
+
+        self:RegisterElement('dodge', 'defense', {
+            order = 3,
+            name = 'Dodge',
+            descr = '..',
+            func = function()
+                local dodge = GetDodgeChance()
+                local str = string.format(' %.2F', dodge) .. '%';
+                return str, 'Dodge Chance' .. str, nil
+            end
+        })
+
+        self:RegisterElement('parry', 'defense', {
+            order = 4,
+            name = 'Parry',
+            descr = '..',
+            func = function()
+                local parry = GetParryChance()
+                local str = string.format(' %.2F', parry) .. '%';
+                return str, 'Parry Chance' .. str, nil
+            end
+        })
+
+        self:RegisterElement('block', 'defense', {
+            order = 5,
+            name = 'Block',
+            descr = '..',
+            func = function()
+                local block = GetBlockChance()
+                local str = string.format(' %.2F', block) .. '%';
+                return str, 'Block Chance' .. str, nil
+            end
+        })
+
+    end
 
     -- resistance
-    do self:RegisterElement('health', 'resistance', {order = 1, name = 'Health', descr = '..'}) end
+    do
+        local res = function(i)
+            local frameText; -- df
+            local tooltip; -- df
+            local tooltip2; -- df
+
+            local resistance;
+            local positive;
+            local negative;
+            local base;
+            -- local text = _G["MagicResText"..i];
+            -- local frame = _G["MagicResFrame"..i];
+
+            base, resistance, positive, negative = UnitResistance("player", i);
+
+            -- resistances can now be negative. Show Red if negative, Green if positive, white otherwise
+            if (abs(negative) > positive) then
+                frameText = RED_FONT_COLOR_CODE .. resistance .. FONT_COLOR_CODE_CLOSE;
+            elseif (abs(negative) == positive) then
+                frameText = resistance;
+            else
+                frameText = GREEN_FONT_COLOR_CODE .. resistance .. FONT_COLOR_CODE_CLOSE;
+            end
+
+            local resistanceName = _G["RESISTANCE" .. i .. "_NAME"];
+            tooltip = resistanceName .. " " .. resistance;
+            if (positive ~= 0 or negative ~= 0) then
+                -- Otherwise build up the formula
+                tooltip = tooltip .. " ( " .. HIGHLIGHT_FONT_COLOR_CODE .. base;
+                if (positive > 0) then tooltip = tooltip .. GREEN_FONT_COLOR_CODE .. " +" .. positive; end
+                if (negative < 0) then tooltip = tooltip .. " " .. RED_FONT_COLOR_CODE .. negative; end
+                tooltip = tooltip .. FONT_COLOR_CODE_CLOSE .. " )";
+            end
+
+            local unitLevel = UnitLevel("player");
+            unitLevel = max(unitLevel, 20);
+            local magicResistanceNumber = resistance / unitLevel;
+            local resistanceLevel;
+            if (magicResistanceNumber > 5) then
+                resistanceLevel = RESISTANCE_EXCELLENT;
+            elseif (magicResistanceNumber > 3.75) then
+                resistanceLevel = RESISTANCE_VERYGOOD;
+            elseif (magicResistanceNumber > 2.5) then
+                resistanceLevel = RESISTANCE_GOOD;
+            elseif (magicResistanceNumber > 1.25) then
+                resistanceLevel = RESISTANCE_FAIR;
+            elseif (magicResistanceNumber > 0) then
+                resistanceLevel = RESISTANCE_POOR;
+            else
+                resistanceLevel = RESISTANCE_NONE;
+            end
+            tooltip2 = format(RESISTANCE_TOOLTIP_SUBTEXT, _G["RESISTANCE_TYPE" .. i], unitLevel, resistanceLevel);
+
+            return frameText, tooltip, tooltip2;
+        end
+
+        local resTable = {'Holy', 'Fire', 'Nature', 'Frost', 'Shadow', 'Arcane'}
+
+        self:RegisterElement(resTable[6], 'resistance', {
+            order = 1,
+            name = resTable[6],
+            descr = '..',
+            func = function()
+                return res(6)
+            end
+        })
+        -- 1 = holy
+        for k = 2, NUM_RESISTANCE_TYPES do
+            self:RegisterElement(resTable[k], 'resistance', {
+                order = k,
+                name = resTable[k],
+                descr = '..',
+                func = function()
+                    return res(k)
+                end
+            })
+        end
+
+        -- self:RegisterElement('health', 'resistance', {order = 1, name = 'Health', descr = '..'}) end
+    end
 end
 
 function DragonflightUICharacterStatsPanelMixin:RegisterCategory(id, info, sortComparator)
@@ -316,7 +658,7 @@ function DragonflightUICharacterStatsPanelMixin:RegisterElement(id, categoryID, 
         categoryID = categoryID,
         key = categoryID .. '_' .. id,
         order = info.order or 99999,
-        elementInfo = {name = info.name, descr = info.descr or ''}
+        elementInfo = {name = info.name, descr = info.descr or '', func = info.func}
     }
 
     -- dataProvider:Insert(data)
@@ -465,7 +807,7 @@ function DFCharacterStatsPanelHeaderMixin:SetCollapseState(collapsed)
 
         local childNodes = self.Node:GetNodes();
         local numChilds = #childNodes - 1 + 1;
-        local dy = 18 + (13 + 4) * numChilds + 4;
+        local dy = 18 + (13 + 2) * numChilds + 4;
 
         if dy - 18 < 46 then
             self.BgBottom:SetHeight(dy - 18)
@@ -491,19 +833,36 @@ function DFCharacterStatsStatTemplateMixin:Init(node)
     local elementData = node:GetData();
     self.ElementData = elementData;
 
-    self.Label:SetText(elementData.elementInfo.name)
+    self.Label:SetText(elementData.elementInfo.name .. ':')
     self.Description = elementData.elementInfo.descr
 
     self.Value:SetText('*VALUE*')
+
+    if elementData.elementInfo.func then
+        --
+        local val, tt, tt2 = elementData.elementInfo.func()
+        self.Value:SetText(val or '')
+        self.tooltip = tt;
+        self.tooltip2 = tt2;
+    end
 end
 
 -- function DFCharacterStatsStatTemplateMixin:OnClick()
 -- end
 
 function DFCharacterStatsStatTemplateMixin:OnEnter()
+    if (not self.tooltip) then return; end
+
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(self.tooltip, 1.0, 1.0, 1.0);
+    if (self.tooltip2) then
+        GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+    end
+    GameTooltip:Show();
 end
 
 function DFCharacterStatsStatTemplateMixin:OnLeave()
+    GameTooltip:Hide()
 end
 
 -- spacer
