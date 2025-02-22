@@ -15,10 +15,15 @@ local defaults = {
             anchorParent = 'BOTTOMRIGHT',
             x = -30,
             y = 120,
+            -- mouseanchor
+            anchorToMouse = false,
+            mouseAnchor = 'ANCHOR_CURSOR_RIGHT',
+            mouseX = 16,
+            mouseY = 8,
             -- backdrop
             backdropAlpha = 0.2,
             -- gametooltip
-            anchorMouse = false,
+
             -- statusbar
             statusbarHeight = 9,
             -- spell
@@ -82,10 +87,14 @@ local whiteColor = "|cffffffff%s|r"
 local youText = format(">>%s<<", strupper(YOU))
 local afkText = "|cff909090 <AFK>"
 local dndText = "|cff909090 <DND>"
-local offlineText = "|cff909090 <DC>"
+local dcText = "|cff909090 <DC>"
 local targetText = "|cffffffff@"
 
 local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
+local mouseAnchorTable = {
+    {value = 'ANCHOR_CURSOR_RIGHT', text = 'Cursor Right', tooltip = 'descr', label = 'label'},
+    {value = 'ANCHOR_CURSOR_LEFT', text = 'Cursor Left', tooltip = 'descr', label = 'label'}
+}
 
 local function setPreset(T, preset, sub)
     -- print('setPreset')
@@ -107,22 +116,62 @@ local generalOptions = {
     get = getOption,
     set = setOption,
     args = {
-        headerGameTooltip = {
+        -- headerGameTooltip = {
+        --     type = 'header',
+        --     name = L["TooltipHeaderGameToltip"],
+        --     desc = L["TooltipHeaderGameToltip"],
+        --     order = 1,
+        --     isExpanded = true,
+        --     editmode = true,
+        --     sortComparator = DFSettingsListMixin.AlphaSortComparator
+        -- },
+        headerMouseAnchor = {
             type = 'header',
-            name = L["TooltipHeaderGameToltip"],
-            desc = L["TooltipHeaderGameToltip"],
+            name = L["TooltipCursorAnchorHeader"],
+            desc = L["TooltipCursorAnchorHeaderDesc"],
             order = 1,
             isExpanded = true,
             editmode = true,
-            sortComparator = DFSettingsListMixin.AlphaSortComparator
+            sortComparator = DFSettingsListMixin.OrderSortComparator
         },
-        anchorMouse = {
+        anchorToMouse = {
             type = 'toggle',
-            name = L["TooltipAnchorMouse"],
-            desc = L["TooltipAnchorMouseDesc"] .. getDefaultStr('anchorMouse', 'general'),
+            name = L["TooltipAnchorToMouse"],
+            desc = L["TooltipAnchorToMouseDesc"] .. getDefaultStr('anchorToMouse', 'general'),
             order = 1,
             editmode = true,
-            group = 'headerGameTooltip'
+            group = 'headerMouseAnchor'
+        },
+        mouseAnchor = {
+            type = 'select',
+            name = L["PositionTableAnchor"],
+            desc = L["PositionTableAnchorDesc"] .. getDefaultStr('mouseAnchor', 'general'),
+            dropdownValues = mouseAnchorTable,
+            order = 2,
+            group = 'headerMouseAnchor',
+            editmode = true
+        },
+        mouseX = {
+            type = 'range',
+            name = L["TooltipMouseX"],
+            desc = L["TooltipMouseXDesc"] .. getDefaultStr('mouseX', 'general'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 5,
+            group = 'headerMouseAnchor',
+            editmode = true
+        },
+        mouseY = {
+            type = 'range',
+            name = L["TooltipMouseY"],
+            desc = L["TooltipMouseYDesc"] .. getDefaultStr('mouseY', 'general'),
+            min = -2500,
+            max = 2500,
+            bigStep = 1,
+            order = 6,
+            group = 'headerMouseAnchor',
+            editmode = true
         },
         -- Spelltooltip
         headerSpellTooltip = {
@@ -514,7 +563,7 @@ function Module:HookDefaultAnchor()
         end
 
         --
-        if state.anchorMouse then
+        if state.anchorToMouse then
             --
             local focused;
             if GetMouseFoci then
@@ -527,7 +576,7 @@ function Module:HookDefaultAnchor()
             if focused == WorldFrame then
                 -- units etc
                 self:ClearAllPoints();
-                self:SetOwner(parent, 'ANCHOR_CURSOR_RIGHT', 16, 8); -- TODO config           
+                self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
                 return;
             end
         end

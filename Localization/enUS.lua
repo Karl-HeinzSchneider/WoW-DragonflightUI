@@ -367,8 +367,16 @@ L["TooltipName"] = "Tooltip"
 L["TooltipHeaderGameToltip"] = "GameTooltip"
 L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
 
-L["TooltipAnchorMouse"] = "Anchor on Mouse"
-L["TooltipAnchorMouseDesc"] = ""
+L["TooltipCursorAnchorHeader"] = "Cursor Anchor"
+L["TooltipCursorAnchorHeaderDesc"] = ""
+L["TooltipAnchorToMouse"] = "Anchor on Cursor"
+L["TooltipAnchorToMouseDesc"] = "Anchors some tooltips (e.g. UnitTooltip on WorldFrame) to the mouse cursor."
+L["TooltipMouseAnchor"] = "Cursor Anchor"
+L["TooltipMouseAnchorDesc"] = ""
+L["TooltipMouseX"] = "X"
+L["TooltipMouseXDesc"] = ""
+L["TooltipMouseY"] = "Y"
+L["TooltipMouseYDesc"] = ""
 
 -- spelltooltip
 L["TooltipAnchorSpells"] = "Anchor Spells"
