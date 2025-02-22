@@ -2,6 +2,8 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L_RU = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "ruRU")
 
+if not L_RU then return end
+
 -- @TODO
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
 local L = {}

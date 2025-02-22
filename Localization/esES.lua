@@ -4,6 +4,8 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES")
 local L_MX = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esMX")
 
+if not L_ES and not L_MX then return end
+
 -- @TODO
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
 local L = {}
@@ -424,6 +426,6 @@ L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 
 -- see comment above
 for k, v in pairs(L) do
-    L_ES[k] = v;
-    L_MX[k] = v;
+    if L_ES then L_ES[k] = v; end
+    if L_MX then L_MX[k] = v; end
 end
