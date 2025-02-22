@@ -345,7 +345,8 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             descr = '..',
             func = function()
                 local hp = UnitHealthMax('player');
-                return hp
+                return BreakUpLargeNumbers(hp), 'Health ' .. BreakUpLargeNumbers(hp),
+                       'Maximum Health. If your health reaches Zero, you will die.'
             end
         })
         -- self:RegisterElement('itemlvl', 'general', {
@@ -616,14 +617,15 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
                 newTable[3] = {left = 'Damage', right = tooltipTable.damage}
                 newTable[4] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.dps)}
 
-                if offhandSpeed then
-                    newTable[5] = {left = 'Off Hand'}
-                    newTable[6] = {
+                if tooltipTable.offhandAttackSpeed then
+                    newTable[5] = {left = ' '}
+                    newTable[6] = {left = 'Off Hand', white = true}
+                    newTable[7] = {
                         left = 'Attack Speed (seconds)',
                         right = string.format('%.2f', tooltipTable.offhandAttackSpeed)
                     }
-                    newTable[7] = {left = 'Damage', right = tooltipTable.offhandDamage}
-                    newTable[8] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.offhandDps)}
+                    newTable[8] = {left = 'Damage', right = tooltipTable.offhandDamage}
+                    newTable[9] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.offhandDps)}
                 end
 
                 -- print(frameText, tooltip, tooltip2)
@@ -649,9 +651,9 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
                 newTable[1] = {left = 'Damage Per Second'}
                 newTable[2] = {left = 'Main Hand', right = frameText}
 
-                -- if offhandSpeed then
-                --     newTable[3] = {left = 'Off Hand', right = string.format('%.2f', offhandSpeed)}
-                -- end
+                if tooltipTable.offhandAttackSpeed then
+                    newTable[3] = {left = 'Off Hand', right = string.format('%.1f', tooltipTable.offhandDps)}
+                end
 
                 return frameText, nil, nil, newTable
             end
@@ -1440,6 +1442,7 @@ function DFCharacterStatsStatTemplateMixin:Init(node, skipHook)
         self.tooltip = tt;
         self.tooltip2 = tt2;
         self.tooltipTable = tooltipTable;
+        if (GameTooltip:GetOwner() == self) then self:OnEnter(); end
     end
 
     if skipHook then
@@ -1492,7 +1495,12 @@ function DFCharacterStatsStatTemplateMixin:OnEnter()
                                                   NORMAL_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g,
                                                   HIGHLIGHT_FONT_COLOR.b)
                     else
-                        GameTooltip:AddLine(v.left, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                        if v.white then
+                            GameTooltip:AddLine(v.left, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g,
+                                                HIGHLIGHT_FONT_COLOR.b)
+                        else
+                            GameTooltip:AddLine(v.left, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                        end
                     end
 
                     -- print(k, v.left, v.right)
