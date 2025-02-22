@@ -3,7 +3,7 @@ DragonflightUICharacterStatsPanelMixin = CreateFromMixins(CallbackRegistryMixin)
 DragonflightUICharacterStatsPanelMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
 function DragonflightUICharacterStatsPanelMixin:OnLoad()
-    print('DragonflightUICharacterStatsPanelMixin:OnLoad()')
+    -- print('DragonflightUICharacterStatsPanelMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
     self:SetupScrollBox()
