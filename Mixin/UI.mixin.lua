@@ -1293,12 +1293,12 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     -- add characterstats panel
     if true then
         --
-        local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', CharacterFrame,
+        local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
                                 'DFCharacterFrameExpandButton')
         btn:SetPoint('BOTTOMRIGHT', CharacterFrame.DFInset, 'BOTTOMRIGHT', -2, -1)
         CharacterFrame.DFExpandButton = btn;
 
-        local insetRight = CreateFrame('Frame', 'DragonflightUICharacterFrameInsetRight', CharacterFrame,
+        local insetRight = CreateFrame('Frame', 'DragonflightUICharacterFrameInsetRight', PaperDollFrame,
                                        'InsetFrameTemplate')
         insetRight:ClearAllPoints()
         insetRight:SetPoint('TOPLEFT', CharacterFrame.DFInset, 'TOPRIGHT', 1, 0)
@@ -1312,6 +1312,16 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         p:Show()
 
         CharacterFrame:Expand()
+
+        hooksecurefunc('ToggleCharacter', function(tab)
+            --   
+            -- print('ToggleCharacter', tab)       
+            if tab == 'PaperDollFrame' and frame.Expanded then
+                frame:DFUpdateFrameWidth(true)
+            else
+                frame:DFUpdateFrameWidth(false)
+            end
+        end)
     end
 
     -- rep
