@@ -1486,7 +1486,7 @@ function DFCharacterStatsStatTemplateMixin:OnLoad()
     self.LastUpdate = GetTime()
 end
 
-function DFCharacterStatsStatTemplateMixin:Init(node, skipHook)
+function DFCharacterStatsStatTemplateMixin:Init(node, _, skipHook)
     -- print('DFCharacterStatsStatTemplateMixin:Init()')
     local elementData = node:GetData();
     self.ElementData = elementData;
@@ -1514,11 +1514,11 @@ function DFCharacterStatsStatTemplateMixin:Init(node, skipHook)
     if elementData.elementInfo.hookOnUpdate then
         -- print('hook!')
         self:SetScript("OnUpdate", function(_, elapsed)
-            -- print('OnUpdate')           
+            -- print('OnUpdate')
             if GetTime() - self.LastUpdate >= self.updateInterval then
                 self.LastUpdate = GetTime()
-                -- print('self:OnUpdate')
-                self:Init(node, true)
+                -- print('~~OnUpdate')
+                self:Init(node, _, true)
 
                 if (GameTooltip:GetOwner() == self) then self:OnEnter(); end
             end
