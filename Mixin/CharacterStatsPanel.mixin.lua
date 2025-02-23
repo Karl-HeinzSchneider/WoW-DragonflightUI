@@ -1,4 +1,6 @@
 ---@diagnostic disable: redundant-parameter
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
 DragonflightUICharacterStatsPanelMixin = CreateFromMixins(CallbackRegistryMixin);
 DragonflightUICharacterStatsPanelMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
@@ -6,6 +8,7 @@ function DragonflightUICharacterStatsPanelMixin:OnLoad()
     -- print('DragonflightUICharacterStatsPanelMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
+    self:SetupCollapsedDatabase()
     self:SetupScrollBox()
     self:AddDefaultCategorys()
     self:AddDefaultStats()
@@ -61,6 +64,33 @@ function DragonflightUICharacterStatsPanelMixin:OnUpdate(elapsed)
     end
 end
 
+function DragonflightUICharacterStatsPanelMixin:SetupCollapsedDatabase()
+    self.db = DF.db:RegisterNamespace('CharacterStatsPanel', {profile = {collapsed = {}}})
+end
+
+function DragonflightUICharacterStatsPanelMixin:SetCategoryCollapsed(info, collapsed)
+    -- print('SetRecipeFavorite', info, checked)
+    local db = self.db.profile
+
+    if collapsed then
+        db.collapsed[info] = true
+    else
+        db.collapsed[info] = nil
+    end
+end
+
+function DragonflightUICharacterStatsPanelMixin:IsCategoryCollapsed(info)
+    -- print('IsRecipeFav', info)
+    local db = self.db.profile
+
+    if db.collapsed[info] then
+        -- print('~true')
+        return true
+    else
+        return false
+    end
+end
+
 function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
     self.DataProvider = CreateTreeDataProvider();
 
@@ -82,20 +112,21 @@ function DragonflightUICharacterStatsPanelMixin:SetupScrollBox()
             self:RegisterCallback('OnDefaults', function(btn, message)
                 --
                 -- print(btn, message)
-                button:Init(n);
+                button:Init(n, self);
             end, button)
             self:RegisterCallback('OnRefresh', function(btn, message)
                 --
                 -- print(btn, message)
-                button:Init(n);
+                button:Init(n, self);
             end, button)
 
-            button:Init(n);
+            button:Init(n, self);
 
             if elementData.categoryInfo then
                 button.Toolbar:SetScript("OnMouseDown", function(_, _)
                     node:ToggleCollapsed();
                     button:SetCollapseState(node:IsCollapsed());
+                    self:SetCategoryCollapsed(elementData.id, node:IsCollapsed())
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                 end);
             end
@@ -1380,7 +1411,7 @@ function DFCharacterStatsPanelHeaderMixin:OnLoad()
     -- print('DFCharacterStatsPanelHeaderMixin:OnLoad()')
 end
 
-function DFCharacterStatsPanelHeaderMixin:Init(node)
+function DFCharacterStatsPanelHeaderMixin:Init(node, ref)
     -- print('DFCharacterStatsPanelHeaderMixin:Init()')
     self.Node = node;
     local elementData = node:GetData();
@@ -1390,7 +1421,9 @@ function DFCharacterStatsPanelHeaderMixin:Init(node)
     self.NameText:SetText(elementData.categoryInfo.name)
     self.Description = elementData.categoryInfo.descr
 
-    if elementData.isExpanded then
+    -- local collapsed = not elementData.isExpanded;
+    local collapsed = ref:IsCategoryCollapsed(elementData.id)
+    if not collapsed then
         node:SetCollapsed(false, true, false)
     else
         node:SetCollapsed(true, true, false)
