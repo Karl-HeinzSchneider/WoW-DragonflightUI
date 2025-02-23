@@ -434,6 +434,8 @@ L["TooltipUnitGuildRankIndex"] = "Show Guild Rank Index"
 L["TooltipUnitGuildRankIndexDesc"] = ""
 L["TooltipUnitGrayOutOnDeath"] = "Gray Out On Death"
 L["TooltipUnitGrayOutOnDeathDesc"] = ""
+L["TooltipUnitZone"] = "Show Zone Text"
+L["TooltipUnitZoneDesc"] = ""
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player

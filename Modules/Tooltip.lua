@@ -50,7 +50,8 @@ local defaults = {
             unitGuild = true,
             unitGuildRank = true,
             unitGuildRankIndex = false,
-            unitGrayoutOnDeath = true
+            unitGrayoutOnDeath = true,
+            unitZone = 'onlydifferent'
         }
     }
 }
@@ -94,6 +95,11 @@ local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', l
 local mouseAnchorTable = {
     {value = 'ANCHOR_CURSOR_RIGHT', text = 'Cursor Right', tooltip = 'descr', label = 'label'},
     {value = 'ANCHOR_CURSOR_LEFT', text = 'Cursor Left', tooltip = 'descr', label = 'label'}
+}
+local zoneTable = {
+    {value = 'always', text = 'Always', tooltip = 'descr', label = 'label'},
+    {value = 'never', text = 'Never', tooltip = 'descr', label = 'label'},
+    {value = 'onlydifferent', text = 'Only Different Zone', tooltip = 'descr', label = 'label'}
 }
 
 local function setPreset(T, preset, sub)
@@ -370,6 +376,15 @@ local generalOptions = {
             order = 1,
             editmode = true,
             group = 'headerUnitTooltip'
+        },
+        unitZone = {
+            type = 'select',
+            name = L["TooltipUnitZone"],
+            desc = L["TooltipUnitZoneDesc"] .. getDefaultStr('unitZone', 'general'),
+            dropdownValues = zoneTable,
+            order = 2,
+            group = 'headerUnitTooltip',
+            editmode = true
         }
     }
 }
@@ -961,6 +976,7 @@ function Module:UnitPlayerTooltip(self)
     Module:HideLine(self, "^" .. PVP);
 
     local guild, rank, index = GetGuildInfo(unit)
+    -- print('~g', guild, rank, index)
     if guild and state.unitGuild then
         --
         local guildLine = Module:GetLine(self, 2);
@@ -986,14 +1002,74 @@ function Module:UnitPlayerTooltip(self)
 
     if guild then
         Module:AddUnitLine(self, unit, 3)
+        Module:AddLocationLine(self, unit, 4)
     else
         Module:AddUnitLine(self, unit, 2)
+        Module:AddLocationLine(self, unit, 3)
     end
 
     if state.unitGrayoutOnDeath then
         --
         Module:GrayOutOnDeath(self, unit)
     end
+end
+
+function Module:GetZone(unit)
+    local uname, urealm = UnitName(unit)
+    -- print('GetZone', uname, unit)
+    if not IsInGroup() then return end
+
+    local str, index = string.match(unit, "(.-)(%d+)")
+    if not str or not index then return end -- not in group etc
+
+    if not (str == 'party' or str == 'raid') then return end
+    -- print('~', str, index)
+
+    for k = 1, 40 do
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole =
+            GetRaidRosterInfo(k)
+
+        if name then
+            if string.find(name, '-') then
+                -- xrealm
+                if name == (uname .. '-' .. urealm) then return zone; end
+            else
+                if name == uname then return zone; end
+            end
+        end
+    end
+
+    return;
+end
+
+function Module:AddLocationLine(self, unit, index)
+    local state = Module.db.profile.general;
+
+    -- print('AddLocationLine', unit)
+    local zone = Module:GetZone(unit)
+
+    if not zone then return end
+
+    -- print('~~~> ', zone)
+
+    if state.unitZone == 'always' then
+        local line = Module:GetLine(self, index)
+        line:SetText(zone)
+        line:SetTextColor(1.0, 1.0, 1.0);
+        self:Show()
+    elseif state.unitZone == 'never' then
+    elseif state.unitZone == 'onlydifferent' then
+        if zone ~= GetRealZoneText() then
+            local line = Module:GetLine(self, index)
+            line:SetText(zone)
+            line:SetTextColor(1.0, 1.0, 1.0);
+            self:Show()
+        end
+    end
+
+    -- local line = Module:GetLine(self, index)
+    -- line:SetText(zone)
+    -- line:SetTextColor(1.0, 0.3, 1.0)
 end
 
 function Module:UnitNPCTooltip(self)
