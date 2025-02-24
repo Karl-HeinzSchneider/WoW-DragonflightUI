@@ -11,7 +11,8 @@ No carbon copy of the new retail Dragonflight UI, but a faithful adaption with e
 Beta, but battle-tested inside Naxx and Ulduar, and in active development (please report any bug you might find, and feel free to request new features!).\
 Based on the default UI, so most other addons should work without problems.\
 Completely modular: (de-)/activate any feature you want or don't want! \
-Customizable through ingame interface options (type '**/dragonflight**' or '**/df**' ) with profile support. \
+Customizable through ingame interface options (type '**/dragonflight**' or '**/df**' ) with profile support, \
+or use the **Editmode** (type '**/editmode**').\
 Hidden content (e.g. rare/elite marke on special pets, hunter approved!).\
 Fast hotfixes for bugs, and frequent updates with new features.
 
@@ -22,11 +23,13 @@ De-/activate any modul under InterfaceOptions/Addons/DragonflightUI (or type: '*
 Modules:
 
 - Actionbar
+- Buffs
 - Bossframe
 - Castbar
 - Chat
 - Darkmode
 - Minimap
+- Tooltip
 - UI
 - Unitframe
 - Utility
@@ -37,8 +40,8 @@ Modules:
 
 ## Possible Features coming soon
 
-- enhanced Tooltips
-- Era (/hardcore) specific features
+- more Era (/hardcore) specific features
+- public API and mod support
 
 ## Compatibility
 
@@ -67,6 +70,9 @@ If you want to support the development, like and share, but if you're feeling ex
 ## Darkmode
 ![](Screenshots/darkmode/CompleteUI_dark.png)
 
+## Editmode
+![](Screenshots/v0.23/Editmode.png)
+
 ## Minimap
 
 ![](Screenshots/v0.10/Minimap.png)
@@ -78,6 +84,9 @@ If you want to support the development, like and share, but if you're feeling ex
 ## Quick Keybind
 
 ![](Screenshots/v0.10/QuickKeybind.png)
+
+## Tooltip
+![](Screenshots/v0.23/Tooltip_all.png)
 
 ## UI
 
