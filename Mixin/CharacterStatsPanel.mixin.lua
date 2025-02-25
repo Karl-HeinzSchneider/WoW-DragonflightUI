@@ -1016,6 +1016,18 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             end
         })
 
+        self:RegisterElement('healing', 'spell', {
+            order = 5.5,
+            name = STAT_SPELLHEALING,
+            descr = '..',
+            func = function()
+                local healing = GetSpellBonusHealing();
+
+                local str = string.format(' %d', healing);
+                return str, STAT_SPELLHEALING .. str, STAT_SPELLHEALING_TOOLTIP;
+            end
+        })
+
         self:RegisterElement('hit', 'spell', {
             order = 6,
             name = STAT_HIT_CHANCE,
