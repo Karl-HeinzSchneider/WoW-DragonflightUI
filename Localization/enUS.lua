@@ -380,7 +380,7 @@ L["TooltipMouseYDesc"] = ""
 
 -- spelltooltip
 L["TooltipAnchorSpells"] = "Anchor Spells"
-L["TooltipAnchorSpellsDesc"] = ""
+L["TooltipAnchorSpellsDesc"] = "Anchors the SpellTooltip on action bars to the button instead of default anchor."
 L["TooltipShowSpellID"] = "Show Spell ID"
 L["TooltipShowSpellIDDesc"] = ""
 L["TooltipShowSpellSource"] = "Show Spell Source"
