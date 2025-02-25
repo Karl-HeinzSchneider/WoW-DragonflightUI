@@ -42,6 +42,8 @@ local defaults = {
             -- unit
             unitClassBorder = true,
             unitClassBackdrop = false,
+            unitHealthbar = true,
+            unitHealthbarText = true,
             unitReactionBorder = true,
             unitReactionBackdrop = false,
             unitClassName = true,
@@ -385,6 +387,22 @@ local generalOptions = {
             order = 2,
             group = 'headerUnitTooltip',
             editmode = true
+        },
+        unitHealthbar = {
+            type = 'toggle',
+            name = L["TooltipUnitHealthbar"],
+            desc = L["TooltipUnitHealthbarDesc"] .. getDefaultStr('unitHealthbar', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitHealthbarText = {
+            type = 'toggle',
+            name = L["TooltipUnitHealthbarText"],
+            desc = L["TooltipUnitHealthbarTextDesc"] .. getDefaultStr('unitHealthbarText', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
         }
     }
 }
@@ -714,12 +732,17 @@ function Module:HookStatusBar()
     bar.capNumericDisplay = true;
     bar.lockShow = 1;
 
-    -- bar:HookScript('OnShow', function(self) 
-    --     -- 
-    -- end)
+    bar:HookScript('OnShow', function(self)
+        -- 
+        local state = Module.db.profile.general;
+        if not state.unitHealthbar then self:Hide() end
+    end)
 
     bar:HookScript('OnValueChanged', function(self, value)
         --       
+        -- print('GameTooltipStatusBar OnValueChanged')
+        local state = Module.db.profile.general;
+
         if value <= 0 then
             -- bar.TextString:SetText('DEADS')
             -- TextStatusBar_UpdateTextString(self)
@@ -734,12 +757,20 @@ function Module:HookStatusBar()
             -- bar.TextString:SetText(value)
             TextStatusBar_UpdateTextString(self)
         end
+
+        if not state.unitHealthbarText then
+            bar.LeftText:Hide()
+            bar.RightText:Hide()
+            bar.TextString:Hide()
+        end
     end)
 
     GameTooltip:HookScript('OnShow', function(self)
         --
         -- print('GameTooltip OnShow')
-        if not GameTooltipStatusBar:IsShown() then
+        local state = Module.db.profile.general;
+
+        if not GameTooltipStatusBar:IsShown() or not state.unitHealthbar then
             self.NineSlice:ClearAllPoints()
             self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
             self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0);

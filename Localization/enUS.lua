@@ -436,6 +436,10 @@ L["TooltipUnitGrayOutOnDeath"] = "Gray Out On Death"
 L["TooltipUnitGrayOutOnDeathDesc"] = ""
 L["TooltipUnitZone"] = "Show Zone Text"
 L["TooltipUnitZoneDesc"] = ""
+L["TooltipUnitHealthbar"] = "Show Health Bar"
+L["TooltipUnitHealthbarDesc"] = ""
+L["TooltipUnitHealthbarText"] = "Show Health Bar Text"
+L["TooltipUnitHealthbarTextDesc"] = ""
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player
