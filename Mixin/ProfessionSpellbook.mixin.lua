@@ -47,6 +47,17 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
         local nameLoc, _, _, skillRank = GetSkillLineInfo(i)
 
         local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+        -- print('L:', nameLoc, skillRank, ' - ', skillID)
+
+        -- @TODO - fix for spanish inconsistent names on Era
+        if nameLoc == 'Desollar' then
+            nameLoc = 'Desollando' -- skinning
+            -- print('Desollar')
+        elseif nameLoc == 'Costura' then
+            nameLoc = 'Sastrería' -- tailoring
+        elseif nameLoc == 'Marroquinería' then
+            nameLoc = 'Peletería' -- tailoring
+        end
 
         if skillID then
             --
@@ -124,6 +135,7 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
 end
 
 function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
+    -- print('---GetSpellBookID', name)
     local maxFinder = 69
 
     for i = 1, maxFinder do

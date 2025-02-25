@@ -822,13 +822,24 @@ function DFProfessionMixin:SetupTabs()
             if not prof then return end
 
             if tabFrame.selectedTab == i then return end
-            -- print('cast:', prof.nameLoc)
+            -- print('nameLoc:', prof.nameLoc)
 
             local spellToCast = prof.nameLoc
+            -- print('cast:', spellToCast)
+
+            if spellToCast == 'Costura' then
+                spellToCast = 'Sastrería'
+            elseif spellToCast == 'Marroquinería' then
+                spellToCast = 'Peletería'
+            elseif spellToCast == 'Minería' then
+                spellToCast = 'Fundiendo'
+            end
 
             if spellToCast == DragonflightUILocalizationData.DF_CHARACTER_PROFESSIONMINING then
                 spellToCast = DragonflightUILocalizationData.DF_PROFESSIONS_SMELTING
             end
+
+            -- print('~~cast:', spellToCast)
 
             CastSpellByName(spellToCast)
         end
