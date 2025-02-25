@@ -22,6 +22,7 @@ local defaults = {
             FPS = true,
             XPBar = true,
             RepBar = true,
+            ExtraActionButton = true,
             -- Bossframe
             BossFrames = true,
             -- buffs,
@@ -179,6 +180,7 @@ if true then
 
     -- actionbar
     local actionbarFrames = {'ActionBars', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
+    if DF.Cata then table.insert(actionbarFrames, 'ExtraActionButton') end
     AddTableToCategory(actionbarFrames, 'headerActionbar');
 
     -- combat

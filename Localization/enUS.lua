@@ -259,6 +259,13 @@ L["FPSOptionsAlwaysShowFPSDesc"] = "Always Show Custom FPS Text"
 L["FPSOptionsShowPing"] = "Show Ping"
 L["FPSOptionsShowPingDesc"] = "Show Ping In MS"
 
+-- Extra Action Button
+L["ExtraActionButtonOptionsName"] = "Extra Action Button"
+L["ExtraActionButtonOptionsNameDesc"] = "FPS"
+L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
+L["ExtraActionButtonStyleDesc"] = ""
+L["ExtraActionButtonHideBackgroundTexture"] = "Hide Background Texture"
+L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
 -- Buffs
 L["BuffsOptionsName"] = "Buffs"
 L["BuffsOptionsStyle"] = L["ButtonTableStyle"]

@@ -515,6 +515,27 @@ local defaults = {
             -- hideNoStealth = false,
             -- hideCustom = false,
             -- hideCustomCond = ''
+        },
+        extraActionButton = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            anchor = 'BOTTOM',
+            anchorParent = 'BOTTOM',
+            x = 0,
+            y = 320, -- 160 = default blizz
+            hideBackgroundTexture = false
+            -- Visibility
+            -- showMouseover = false,
+            -- hideAlways = false,
+            -- hideCombat = false,
+            -- hideOutOfCombat = false,
+            -- hidePet = false,
+            -- hideNoPet = false,
+            -- hideStance = false,
+            -- hideStealth = false,
+            -- hideNoStealth = false,
+            -- hideCustom = false,
+            -- hideCustomCond = ''
         }
     }
 }
@@ -1670,6 +1691,68 @@ local optionsFPSEditmode = {
     }
 }
 
+local extraActionButtonOptions = {
+    name = L["ExtraActionButtonOptionsName"],
+    desc = L["ExtraActionButtonOptionsNameDesc"],
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        headerStyling = {
+            type = 'header',
+            name = L["ExtraActionButtonStyle"],
+            desc = L["ExtraActionButtonStyleDesc"],
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
+        hideBackgroundTexture = {
+            type = 'toggle',
+            name = L["ExtraActionButtonHideBackgroundTexture"],
+            desc = L["ExtraActionButtonHideBackgroundTextureDesc"] ..
+                getDefaultStr('hideBackgroundTexture', 'extraActionButton'),
+            group = 'headerStyling',
+            order = 8,
+            editmode = true
+        }
+    }
+}
+
+DF.Settings:AddPositionTable(Module, extraActionButtonOptions, 'extraActionButton', 'Extra Action Button',
+                             getDefaultStr, frameTable)
+
+local extraActionButtonOptionsEditmode = {
+    name = 'extraActionButton',
+    desc = 'extraActionButton',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.extraActionButton
+                local defaultsTable = defaults.profile.extraActionButton
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'extraActionButton')
+            end,
+            order = 16,
+            editmode = true,
+            new = true
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -1739,7 +1822,10 @@ function Module:RegisterSettings()
     register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
     register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = true})
 
-    if DF.Cata then register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false}) end
+    if DF.Cata then
+        register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false})
+        register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = true})
+    end
 end
 
 function Module:SetupActionbarFrames()
@@ -1971,6 +2057,38 @@ function Module:AddEditMode()
         });
     end
 
+    -- extra action button
+    if DF.Cata then
+        local f = CreateFrame('FRAME', 'DragonflightUIExtraActionButtonPreview', UIParent)
+        f:SetPoint('CENTER', UIParent, 'CENTER', 0, -180)
+        f:SetSize(64, 64)
+        f:SetClampedToScreen(true)
+
+        Module.ExtraActionButtonPreview = f;
+
+        EditModeModule:AddEditModeToFrame(f)
+
+        f.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Extra Action Button'
+        end)
+
+        f.DFEditModeSelection:RegisterOptions({
+            name = 'Extra Action Button',
+            sub = 'extraActionButton',
+            advancedName = 'ExtraActionButton',
+            options = extraActionButtonOptions,
+            extra = extraActionButtonOptionsEditmode,
+            default = function()
+                setDefaultSubValues('extraActionButton')
+            end,
+            moduleRef = self,
+            hideFunction = function()
+                --
+                f:Show()
+            end
+        });
+    end
+
     -- Pet 
     EditModeModule:AddEditModeToFrame(Module.petbar)
 
@@ -2165,6 +2283,17 @@ function Module:RegisterOptionScreens()
         })
     end
 
+    if DF.Cata then
+        DF.ConfigModule:RegisterSettingsData('extraactionbutton', 'actionbar', {
+            name = 'Extra Action Button',
+            sub = 'extraActionButton',
+            options = extraActionButtonOptions,
+            default = function()
+                setDefaultSubValues('extraActionButton')
+            end
+        })
+    end
+
     DF.ConfigModule:RegisterSettingsData('petbar', 'actionbar', {
         name = 'Petbar',
         sub = 'pet',
@@ -2277,7 +2406,10 @@ function Module:RefreshOptionScreens()
     Module.repbar.DFEditModeSelection:RefreshOptionScreen();
     PossessBarFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.stancebar.DFEditModeSelection:RefreshOptionScreen();
-    if DF.Cata then MultiCastActionBarFrame.DFEditModeSelection:RefreshOptionScreen(); end
+    if DF.Cata then
+        MultiCastActionBarFrame.DFEditModeSelection:RefreshOptionScreen();
+        Module.ExtraActionButtonPreview.DFEditModeSelection:RefreshOptionScreen();
+    end
 
     MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
     Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
@@ -2321,7 +2453,10 @@ function Module:ApplySettings(sub)
             end
         end
 
-        if DF.Cata then Module.UpdateTotemState(db.totem) end
+        if DF.Cata then
+            Module.UpdateTotemState(db.totem)
+            Module:UpdateExtraButtonState(db.extraActionButton)
+        end
 
         Module.UpdateBagState(db.bags)
         Module.MicroFrame:UpdateState(db.micro)
@@ -2362,6 +2497,8 @@ function Module:ApplySettings(sub)
         Module.bar7:SetState(db.bar7)
     elseif sub == 'bar8' then
         Module.bar8:SetState(db.bar8)
+    elseif sub == 'extraActionButton' then
+        if DF.Cata then Module:UpdateExtraButtonState(db.extraActionButton) end
     elseif sub == 'pet' then
         Module.petbar:SetState(db.pet)
     elseif sub == 'xp' then
@@ -2969,6 +3106,28 @@ function Module.UpdateTotemState(state)
     MultiCastActionBarFrame:SetScale(state.scale)
 
     Module.Temp.TotemFixing = nil
+end
+
+function Module:UpdateExtraButtonState(state)
+    -- print('UpdateExtraButtonState')
+    -- Module.ExtraActionButtonPreview
+
+    local parent = _G[state.anchorFrame]
+
+    Module.ExtraActionButtonPreview:ClearAllPoints()
+    Module.ExtraActionButtonPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    Module.ExtraActionButtonPreview:SetScale(state.scale)
+
+    local btn = _G['ExtraActionButton1']
+    btn:ClearAllPoints()
+    btn:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    btn:SetScale(state.scale)
+
+    if state.hideBackgroundTexture then
+        btn.style:SetAlpha(0);
+    else
+        btn.style:SetAlpha(1.0);
+    end
 end
 
 function Module.GetBagSlots(id)
