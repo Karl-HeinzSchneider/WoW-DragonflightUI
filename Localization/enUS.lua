@@ -314,6 +314,8 @@ L["CastbarTableAutoAdjustDesc"] =
     "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the Target/FocusFrame"
 L["CastbarTableShowRank"] = "Show Rank"
 L["CastbarTableShowRankDesc"] = ""
+L["CastbarTableShowChannelName"] = "Show Channel Name"
+L["CastbarTableShowChannelNameDesc"] = "Shows the spell name instead of the display text (e.g. 'Channeling')"
 
 L["ExtraOptionsResetToDefaultStyle"] = "Reset to Default Style"
 L["ExtraOptionsPresetStyleDesc"] =
