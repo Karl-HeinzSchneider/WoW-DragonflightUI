@@ -249,6 +249,30 @@ function DFObjectiveTrackerContainerHeaderMixin:OnLoad()
     self.MinimizeButton:GetPushedTexture():SetTexCoord(0.883789, 0.918945, 0.236328, 0.310547)
     self.MinimizeButton:SetHighlightTexture(tex, 'ADD')
     self.MinimizeButton:GetHighlightTexture():SetTexCoord(0.920898, 0.956055, 0.314453, 0.388672)
+
+    self.IsCollapsed = false;
+
+    self.MinimizeButton:SetScript('OnClick', function()
+        --
+        -- print('mini')
+        local parent = self:GetParent()
+
+        if self.IsCollapsed then
+            self.MinimizeButton:GetNormalTexture():SetTexCoord(0.928711, 0.963867, 0.115234, 0.189453)
+            self.MinimizeButton:GetPushedTexture():SetTexCoord(0.883789, 0.918945, 0.236328, 0.310547)
+
+            -- parent.ScrollBox:SetHeight(500 - 30)
+            parent.ScrollBox:Show()
+        else
+            self.MinimizeButton:GetNormalTexture():SetTexCoord(0.883789, 0.918945, 0.314453, 0.388672)
+            self.MinimizeButton:GetPushedTexture():SetTexCoord(0.883789, 0.918945, 0.392578, 0.466797)
+
+            -- parent.ScrollBox:SetHeight(1)
+            parent.ScrollBox:Hide()
+        end
+
+        self.IsCollapsed = not self.IsCollapsed;
+    end)
 end
 
 -- element-header
