@@ -8,6 +8,16 @@ function DragonflightUIObjectiveTrackerMixin:OnLoad()
     CallbackRegistryMixin.OnLoad(self);
 
     self:SetupCollapsedDatabase()
+    self:RegisterEvent("QUEST_LOG_UPDATE");
+    self:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE");
+    self:RegisterEvent("ITEM_PUSH");
+    self:RegisterEvent("DISPLAY_SIZE_CHANGED");
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+    self:RegisterEvent("PLAYER_MONEY");
+    self:RegisterEvent("VARIABLES_LOADED");
+    self:RegisterEvent("QUEST_POI_UPDATE");
+    self:RegisterEvent("QUEST_ACCEPTED");
+    self:RegisterEvent("QUEST_AUTOCOMPLETE");
 
     self.DataProvider = CreateTreeDataProvider();
     self.sortComparator = DFSettingsListMixin.OrderSortComparator
@@ -89,8 +99,9 @@ function DragonflightUIObjectiveTrackerMixin:OnShow()
     self:UpdateList()
 end
 
-function DragonflightUIObjectiveTrackerMixin:OnEvent()
-    self:UpdateList()
+function DragonflightUIObjectiveTrackerMixin:OnEvent(event, ...)
+    print('DragonflightUIObjectiveTrackerMixin:OnEvent(event, ...)', event, ...)
+    -- self:UpdateList()
 end
 
 function DragonflightUIObjectiveTrackerMixin:FlushDisplay()
@@ -136,12 +147,17 @@ function DragonflightUIObjectiveTrackerMixin:UpdateList()
     local dataProvider = CreateTreeDataProvider();
 
     do
-        local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
+        local data = {id = 0, categoryInfo = {name = 'Timer', isExpanded = true}}
         dataProvider:Insert(data)
     end
 
     do
         local data = {id = 1, categoryInfo = {name = 'Quests', isExpanded = true}}
+        dataProvider:Insert(data)
+    end
+
+    do
+        local data = {id = 2, categoryInfo = {name = 'Achievements', isExpanded = true}}
         dataProvider:Insert(data)
     end
 
