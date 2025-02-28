@@ -21,6 +21,8 @@ L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
 L["ModuleTooltipMinimap"] =
     "This module overhauls the default Minimap and Questtracker.\nAdds seperate options for Minimap and Questtracker."
+L["ModuleTooltipObjectiveTracker"] =
+    "This module adds a custom objective tracker to replace the default quest tracker.\nWORK IN PROGRESS."
 L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
 L["ModuleTooltipUI"] =
     "This module adds the modern UI style to different windows like the CharacterFrame. Also adds Era specific reworks with the new Spellbook, Talentframe or Professionwindow."

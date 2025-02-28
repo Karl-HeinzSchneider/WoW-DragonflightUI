@@ -63,6 +63,7 @@ XML\DFSettingsList.xml
 XML\DFSettingsList_Compat.xml
 XML\Config.xml
 XML\Editmode.xml
+XML\ObjectiveTracker.xml
 XML\ProfessionFrame.xml
 XML\ProfessionSpellbook.xml
 XML\QuickKeybind.xml
@@ -86,6 +87,7 @@ Modules\Buffs.lua
 Modules\Castbar.lua
 Modules\Chat.lua
 Modules\Minimap.lua
+Modules\ObjectiveTracker.lua
 Modules\Tooltip.lua
 Modules\UI.lua
 Modules\Unitframe.lua

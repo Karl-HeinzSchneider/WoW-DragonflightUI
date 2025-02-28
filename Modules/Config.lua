@@ -15,6 +15,7 @@ local defaults = {
             ['Chat'] = false,
             ['Darkmode'] = false,
             ['Minimap'] = true,
+            ['ObjectiveTracker'] = true,
             ['Tooltip'] = true,
             ['UI'] = true,
             ['Unitframe'] = true,
@@ -105,6 +106,13 @@ local modulesOptions = {
             order = 5,
             group = 'headerModules'
         },
+        ObjectiveTracker = {
+            type = 'toggle',
+            name = 'ObjectiveTracker',
+            desc = L["ModuleTooltipObjectiveTracker"] .. getDefaultStr('ObjectiveTracker', 'modules'),
+            order = 5,
+            group = 'headerModules'
+        },
         Tooltip = {
             type = 'toggle',
             name = 'Tooltip',
@@ -146,7 +154,8 @@ if DF.Cata then
             name = 'Bossframe',
             desc = L["ModuleTooltipBossframe"] .. getDefaultStr('Bossframe', 'modules'),
             order = 2,
-            new = false
+            new = false,
+            group = 'headerModules'
         }
     }
 
