@@ -28,6 +28,7 @@ local defaults = {
             sizeIcon = 30,
             showTicks = false,
             showRank = true,
+            showChannelName = true,
             autoAdjust = false
         },
         target = {
@@ -213,7 +214,7 @@ function AddCastbarTable(optionTable, sub)
             bigStep = 0.05,
             group = 'headerStyling',
             order = 13.1,
-            new = true,
+            new = false,
             editmode = true
         },
         holdTimeInterrupt = {
@@ -225,7 +226,7 @@ function AddCastbarTable(optionTable, sub)
             bigStep = 0.05,
             group = 'headerStyling',
             order = 13.2,
-            new = true,
+            new = false,
             editmode = true
         },
         showIcon = {
@@ -245,7 +246,7 @@ function AddCastbarTable(optionTable, sub)
             bigStep = 1,
             group = 'headerStyling',
             order = 17.1,
-            new = true,
+            new = false,
             editmode = true
         },
         showTicks = {
@@ -281,14 +282,26 @@ if DF.Era then
             desc = L["CastbarTableShowRankDesc"] .. getDefaultStr('showRank', 'player'),
             group = 'headerStyling',
             order = 20,
-            new = true,
+            new = false,
             editmode = true
         }
-
     }
 
     for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
 end
+
+do
+    optionsPlayer.args['showChannelName'] = {
+        type = 'toggle',
+        name = L["CastbarTableShowChannelName"],
+        desc = L["CastbarTableShowChannelNameDesc"] .. getDefaultStr('showChannelName', 'player'),
+        group = 'headerStyling',
+        order = 19,
+        new = true,
+        editmode = true
+    }
+end
+
 AddCastbarTable(optionsPlayer, 'player')
 optionsPlayer.args.autoAdjust = nil;
 DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr, frameTable)

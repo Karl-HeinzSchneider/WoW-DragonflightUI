@@ -1047,6 +1047,7 @@ end
 
 function Module:GetZone(unit)
     local uname, urealm = UnitName(unit)
+    urealm = urealm or ''
     -- print('GetZone', uname, unit)
     if not IsInGroup() then return end
 

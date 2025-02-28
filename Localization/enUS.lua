@@ -316,6 +316,8 @@ L["CastbarTableAutoAdjustDesc"] =
     "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the Target/FocusFrame"
 L["CastbarTableShowRank"] = "Show Rank"
 L["CastbarTableShowRankDesc"] = ""
+L["CastbarTableShowChannelName"] = "Show Channel Name"
+L["CastbarTableShowChannelNameDesc"] = "Shows the spell name instead of the display text (e.g. 'Channeling')"
 
 L["ExtraOptionsResetToDefaultStyle"] = "Reset to Default Style"
 L["ExtraOptionsPresetStyleDesc"] =
@@ -494,7 +496,10 @@ L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player 
 L["TargetFrameHideComboPoints"] = "Hide Combo Points"
 L["TargetFrameHideComboPointsDesc"] = "Hides the combo points frame."
 L["TargetFrameFadeOut"] = "Fadeout"
-L["TargetFrameFadeOutDesc"] = "Fades the TargetFrame when the target is more than 40y away."
+L["TargetFrameFadeOutDesc"] = "Fades the TargetFrame when the target is more than *Fadeout Distance* away."
+L["TargetFrameFadeOutDistance"] = "Fadeout Distance"
+L["TargetFrameFadeOutDistanceDesc"] =
+    "Sets the distance in yards to check against for the fadout effect.\nNote: not every value might make a diffence, as it uses 'LibRangeCheck-3.0'.\nCalculated by 'minRange >= fadeOutDistance'."
 
 -- Pet
 L["PetFrameDesc"] = "Pet frame settings"

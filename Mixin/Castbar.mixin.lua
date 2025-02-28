@@ -7,6 +7,7 @@ DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
     -- print('OnLoad', unit)
+    self.tickTable = {}
     self.maxHoldTime = 1.0;
     self:SetUnit(unit)
     self:AddTicks(15)
@@ -218,6 +219,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         if subText ~= '' then
             text = name
             subText = ' (' .. subText .. ')'
+        elseif self.showChannelName then
+            text = name or text;
         end
 
         if (not name or (not self.showTradeSkills and isTradeSkill)) then
@@ -776,6 +779,10 @@ function DragonFlightUICastbarMixin:SetShowRank(showRank)
     self.showRank = showRank
 end
 
+function DragonFlightUICastbarMixin:SetShowChannelName(showName)
+    self.showChannelName = showName
+end
+
 function DragonFlightUICastbarMixin:UpdateState(state)
     self.state = state
     self:Update()
@@ -814,6 +821,7 @@ function DragonFlightUICastbarMixin:Update()
     self:SetShowTicks(state.showTicks)
     self:SetShowRank(state.showRank)
     self:SetIconShown(state.showIcon)
+    self:SetShowChannelName(state.showChannelName or false)
 
     -- self.Icon:SetSize(state.sizeY, state.sizeY)
     local iconScale = state.sizeIcon / 16
