@@ -93,6 +93,7 @@ local defaults = {
             hideComboPoints = false,
             hideNameBackground = false,
             fadeOut = false,
+            fadeOutDistance = 40,
             scale = 1.0,
             override = false,
             anchorFrame = 'UIParent',
@@ -614,6 +615,18 @@ local optionsTarget = {
             desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'target'),
             group = 'headerStyling',
             order = 9.5,
+            new = true,
+            editmode = true
+        },
+        fadeOutDistance = {
+            type = 'range',
+            name = L["TargetFrameFadeOutDistance"],
+            desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'target'),
+            min = 0,
+            max = 50,
+            bigStep = 1,
+            order = 9.6,
+            group = 'headerStyling',
             new = true,
             editmode = true
         }
@@ -3524,7 +3537,7 @@ function Module.ChangeTargetFrame()
                 return;
             end
 
-            if minRange and minRange >= 40 then
+            if minRange and minRange >= state.fadeOutDistance then
                 TargetFrame:SetAlpha(0.55);
                 -- elseif maxRange and maxRange >= 40 then
                 --     TargetFrame:SetAlpha(0.55);
