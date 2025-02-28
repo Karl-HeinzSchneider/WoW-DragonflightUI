@@ -1023,6 +1023,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
         local updateBackground = function(unit)
             -- print('updateBackground', unit, UnitRace(unit))
             local race, fileName = UnitRace(unit);
+            if not fileName then return end
             local texture = DressUpTexturePath(fileName);
             tl:SetTexture(texture .. 1);
             tr:SetTexture(texture .. 2);
