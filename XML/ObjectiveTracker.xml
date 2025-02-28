@@ -3,7 +3,7 @@ UI_shared.xsd">
 	<Script file="Mixin/ObjectiveTracker.mixin.lua" />
 	<Frame name="DragonflightUIObjectiveTracker" mixin="DragonflightUIObjectiveTrackerMixin" virtual="true">
 		<Size>
-			<AbsDimension x="300" y="500" />
+			<AbsDimension x="260" y="500" />
 		</Size>
 		<Frames>
 			<Frame parentKey="Header" inherits="DFObjectiveTrackerContainerHeaderTemplate">
@@ -11,6 +11,23 @@ UI_shared.xsd">
 					<Anchor point="TOPLEFT" />
 				</Anchors>
 			</Frame>
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="0" y="0" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+					<Anchor point="BOTTOMLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+				<Frames>
+					<Button parentKey="InputBlocker" clipChildren="true" setAllPoints="true" hidden="true" />
+				</Frames>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="-4" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-1" y="7" />
+				</Anchors>
+			</EventFrame>
 		</Frames>
 		<Scripts>
 			<OnLoad method="OnLoad" />
@@ -66,6 +83,57 @@ UI_shared.xsd">
 				<Size x="18" y="19" />
 				<Anchors>
 					<Anchor point="RIGHT" relativeKey="$parent.MinimizeButton" relativePoint="LEFT" x="-2" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Element-Header -->
+	<Frame name="DFObjectiveTrackerElementHeader" mixin="DFObjectiveTrackerElementHeaderMixin" virtual="true">
+		<Size x="260" y="26" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Background">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Text" inherits="DFObjectiveTrackerHeaderFont" maxLines="1" justifyH="LEFT">
+					<KeyValues>
+						<KeyValue key="minLineHeight" value="12" type="number" />
+					</KeyValues>
+					<Size x="200" />
+					<Anchors>
+						<Anchor point="LEFT" x="7" y="0" />
+					</Anchors>
+				</FontString>
+				<!--
+				<Texture parentKey="Shine" alpha="0" atlas="UI-QuestTracker-OBJFX-Shine" useAtlasSize="true" scale="0.95">
+				<Anchors>
+				<Anchor point="CENTER" x="-150" y="1" />
+				</Anchors>
+				</Texture>
+				-->
+			</Layer>
+			<!--
+			<Layer level="OVERLAY">
+			<Texture parentKey="Glow" alpha="0" atlas="UI-QuestTracker-OBJFX-BarGlow" useAtlasSize="true">
+			<Anchors>
+			<Anchor point="CENTER" x="-120" y="1" />
+			</Anchors>
+			</Texture>
+			</Layer>
+			-->
+		</Layers>
+		<Frames>
+			<Button parentKey="MinimizeButton">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="RIGHT" x="1" />
 				</Anchors>
 			</Button>
 		</Frames>
