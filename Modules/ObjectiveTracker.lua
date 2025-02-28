@@ -552,6 +552,11 @@ function Module:AddEditMode()
     -- });
 end
 
+function Module:CreateTracker()
+    local t = CreateFrame('Frame', 'DragonflightUIObjectiveTracker', UIParent, 'DragonflightUIObjectiveTracker')
+    t:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
@@ -574,4 +579,5 @@ end
 
 -- Era
 function Module.Era()
+    Module:CreateTracker()
 end

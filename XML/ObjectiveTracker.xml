@@ -1,4 +1,76 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
 	<Script file="Mixin/ObjectiveTracker.mixin.lua" />
+	<Frame name="DragonflightUIObjectiveTracker" mixin="DragonflightUIObjectiveTrackerMixin" virtual="true">
+		<Size>
+			<AbsDimension x="300" y="500" />
+		</Size>
+		<Frames>
+			<Frame parentKey="Header" inherits="DFObjectiveTrackerContainerHeaderTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow method="OnShow" />
+			<!--
+			<OnDragStart method="OnDragStart" />
+			<OnDragStop method="OnDragStop" />
+			<OnKeyDown method="OnKeyDown" />
+			-->
+		</Scripts>
+	</Frame>
+	<!-- Header -->
+	<Font name="DFObjectiveTrackerHeaderFont" font="Fonts\FRIZQT__.TTF" height="14" justifyH="LEFT" justifyV="TOP" virtual="true">
+		<Shadow>
+			<Offset>
+				<AbsDimension x="1" y="-1" />
+			</Offset>
+			<Color r="0" g="0" b="0" />
+		</Shadow>
+		<Color color="NORMAL_FONT_COLOR" />
+	</Font>
+	<Frame name="DFObjectiveTrackerContainerHeaderTemplate" mixin="DFObjectiveTrackerContainerHeaderMixin" virtual="true">
+		<Size x="260" y="32" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Background">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Text" inherits="DFObjectiveTrackerHeaderFont" maxLines="1" justifyH="LEFT">
+					<KeyValues>
+						<KeyValue key="minLineHeight" value="12" type="number" />
+					</KeyValues>
+					<Size x="208" />
+					<Anchors>
+						<Anchor point="LEFT" x="7" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="MinimizeButton">
+				<Size x="18" y="19" />
+				<Anchors>
+					<Anchor point="RIGHT" x="-1" />
+				</Anchors>
+			</Button>
+			<Button parentKey="FilterButton" hidden="true">
+				<Size x="18" y="19" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.MinimizeButton" relativePoint="LEFT" x="-2" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
 </Ui>
