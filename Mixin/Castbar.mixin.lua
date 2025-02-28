@@ -7,6 +7,7 @@ DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
     -- print('OnLoad', unit)
+    self.tickTable = {}
     self.maxHoldTime = 1.0;
     self:SetUnit(unit)
     self:AddTicks(15)
