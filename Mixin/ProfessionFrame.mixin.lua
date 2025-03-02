@@ -461,12 +461,12 @@ function DFProfessionMixin:SetupSchematics()
     iconOverlay:SetPoint('TOPLEFT', icon, 'TOPLEFT', 0, 0)
     iconOverlay:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', 0, 0)
 
-    local iconCount = icon:CreateFontString('DragonflightUIProfession' .. 'IconCount', 'BACKGROUND', 'NumberFontNormal')
+    local iconCount = icon:CreateFontString('DragonflightUIProfession' .. 'IconCount', 'OVERLAY', 'NumberFontNormal')
     -- iconCount:SetSize(244, 10)
     iconCount:SetText('*1*')
     iconCount:SetJustifyH('RIGHT')
     iconCount:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', -5, 2)
-    frame.SKillIconCount = iconCount
+    frame.SkillIconCount = iconCount
 
     local name = frame:CreateFontString('DragonflightUIProfession' .. 'SkillName', 'BACKGROUND', 'GameFontNormal')
     name:SetSize(244, 10)
@@ -1532,15 +1532,15 @@ function DFProfessionMixin:UpdateRecipe(id)
         local minMade, maxMade = GetTradeSkillNumMade(id);
         if (maxMade > 1) then
             if (minMade == maxMade) then
-                frame.SKillIconCount:SetText(minMade);
+                frame.SkillIconCount:SetText(minMade);
             else
-                frame.SKillIconCount:SetText(minMade .. "-" .. maxMade);
+                frame.SkillIconCount:SetText(minMade .. "-" .. maxMade);
             end
-            if (frame.SKillIconCount:GetWidth() > 39) then
-                frame.SKillIconCount:SetText("~" .. floor((minMade + maxMade) / 2));
+            if (frame.SkillIconCount:GetWidth() > 39) then
+                frame.SkillIconCount:SetText("~" .. floor((minMade + maxMade) / 2));
             end
         else
-            frame.SKillIconCount:SetText("");
+            frame.SkillIconCount:SetText("");
         end
 
         local creatable = true;
@@ -1713,15 +1713,15 @@ function DFProfessionMixin:UpdateRecipe(id)
         local minMade, maxMade = GetCraftNumMade(id);
         if (maxMade > 1) then
             if (minMade == maxMade) then
-                frame.SKillIconCount:SetText(minMade);
+                frame.SkillIconCount:SetText(minMade);
             else
-                frame.SKillIconCount:SetText(minMade .. "-" .. maxMade);
+                frame.SkillIconCount:SetText(minMade .. "-" .. maxMade);
             end
-            if (frame.SKillIconCount:GetWidth() > 39) then
-                frame.SKillIconCount:SetText("~" .. floor((minMade + maxMade) / 2));
+            if (frame.SkillIconCount:GetWidth() > 39) then
+                frame.SkillIconCount:SetText("~" .. floor((minMade + maxMade) / 2));
             end
         else
-            frame.SKillIconCount:SetText("");
+            frame.SkillIconCount:SetText("");
         end
 
         local creatable = true;
