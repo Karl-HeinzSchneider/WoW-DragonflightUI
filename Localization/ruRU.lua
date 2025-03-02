@@ -1,436 +1,523 @@
--- print('ruRU') - Translator ZamestoTV
+-- print('ruRU')  - Translator ZamestoTV
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L_RU = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "ruRU")
-
-if not L_RU then return end
-
--- @TODO
--- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
+local L_RU = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "ruRU", true)
 local L = {}
 
--- modules - config.lua
-L["ModuleTooltipActionbar"] =
-    "Этот аддон изменяет стандартную панель действий, включая кнопки «Микроменю» и «Сумка».\nДобавляет отдельные параметры для панели действий 1-8, Петов-/XP-/Реп.-/Possess-/Позиция-/Тотембар, Сумки и микроменю."
-L["ModuleTooltipBossframe"] =
-    "Этот модуль добавляет пользовательские фреймы босса.\nРАБОТА В ПРОЦЕССЕ."
-L["ModuleTooltipBuffs"] =
-    "Этот модуль изменяет фрейм баффов по умолчанию.\nДобавляет отдельные параметры для баффов и дебаффов."
-L["ModuleTooltipCastbar"] =
-    "Этот модуль изменяет панель кастов по умолчанию.\nДобавляет отдельные параметры для Игрока-, Фокуса- и TargetCastbar."
-L["ModuleTooltipChat"] =
-    "Этот модуль изменяет окно чата по умолчанию.\nРАБОТА В ПРОЦЕССЕ."
-L["ModuleTooltipDarkmode"] =
-    "Этот модуль добавляет темный режим к нескольким фреймам DragonflightUI.\nРАБОТА В ПРОЦЕССЕ - пожалуйста, оставьте отзыв!"
-L["ModuleTooltipMinimap"] =
-    "Этот модуль модернизирует стандартную миникарту и квесттрекер.\nДобавляет отдельные опции для миникарты и квесттрекера."
-L["ModuleTooltipUI"] =
-    "Этот модуль добавляет современный стиль пользовательского интерфейса в различные окна, такие как окно персонажа. Также добавляет специфичные для Era переделки с новой книгой заклинаний, окном талантов или окном профессии."
-L["ModuleTooltipUnitframe"] =
-    "Этот модуль перерабатывает стандартные юнитфреймы и добавляет новые функции, такие как цвет класса или здоровье монстра (Era).\nДобавляет отдельные опции для Игрока-, Пета-, Цели-, Фокуса-, и PartyUnitframes."
-L["ModuleTooltipUtility"] =
-    "Этот модуль добавляет общие функции и настройки пользовательского интерфейса.\nРАБОТА В ПРОЦЕССЕ"
+-- модули - config.lua
+L["ModuleModules"] = "Модули"
 
--- profiles
+L["ModuleTooltipActionbar"] =
+    "Этот модуль перерабатывает стандартную панель действий, включая микроменю и кнопки сумок.\nДобавляет отдельные настройки для панелей действий 1-8, панели питомца, опыта, репутации, управления, стойки, тотемов, сумок и микроменю."
+L["ModuleTooltipBossframe"] = "Этот модуль добавляет пользовательские окна боссов.\nВ РАЗРАБОТКЕ."
+L["ModuleTooltipBuffs"] = "Этот модуль изменяет стандартный окно баффов.\nДобавляет отдельные настройки для баффов и дебаффов."
+L["ModuleTooltipCastbar"] =
+    "Этот модуль изменяет стандартную полосу заклинаний.\nДобавляет отдельные настройки для полосы заклинаний игрока, фокуса и цели."
+L["ModuleTooltipChat"] = "Этот модуль изменяет стандартное окно чата.\nВ РАЗРАБОТКЕ."
+L["ModuleTooltipDarkmode"] =
+    "Этот модуль добавляет темный режим для нескольких окон DragonflightUI.\nВ РАЗРАБОТКЕ - пожалуйста, оставляйте отзывы!"
+L["ModuleTooltipMinimap"] =
+    "Этот модуль перерабатывает стандартную миникарту и трекер заданий.\nДобавляет отдельные настройки для миникарты и трекера заданий."
+L["ModuleTooltipTooltip"] = "Этот модуль улучшает подсказки в игре.\nВ РАЗРАБОТКЕ"
+L["ModuleTooltipUI"] =
+    "Этот модуль добавляет современный стиль интерфейса для различных окон, таких как окно персонажа. Также добавляет редизайн для Era, включая новую книгу заклинаний, окно талантов и окно профессий."
+L["ModuleTooltipUnitframe"] =
+    "Этот модуль перерабатывает стандартные окна юнитов и добавляет новые функции, такие как цвет класса или MobHealth (Era).\nДобавляет отдельные настройки для окна игрока, питомца, цели, фокуса и группы."
+L["ModuleTooltipUtility"] = "Этот модуль добавляет общие функции и настройки интерфейса.\nВ РАЗРАБОТКЕ"
+
+-- профили
 L["ProfilesSetActiveProfile"] = "Установить активный профиль."
 L["ProfilesNewProfile"] = "Создать новый профиль."
-L["ProfilesCopyFrom"] =
-    "Скопируйте настройки из одного существующего профиля в текущий активный профиль."
-L["ProfilesOpenCopyDialogue"] = "Открывает диалог копирования."
+L["ProfilesCopyFrom"] = "Скопировать настройки из существующего профиля в текущий активный профиль."
+L["ProfilesOpenCopyDialogue"] = "Открыть диалог копирования."
 L["ProfilesDeleteProfile"] = "Удалить существующий профиль из базы данных."
-L["Profiles"] = "Add New Profile"
+L["Profiles"] = "Добавить новый профиль"
 
-L["ProfilesOpenDeleteDialogue"] = "Открывает диалог удаления."
+L["ProfilesOpenDeleteDialogue"] = "Открыть диалог удаления."
 
--- L["ProfilesAddNewProfile"] = "Add New Profile"
+L["ProfilesAddNewProfile"] = "Добавить новый профиль"
 
 L["ProfilesChatNewProfile"] = "новый профиль: "
 L["ProfilesErrorNewProfile"] = "ОШИБКА: Имя нового профиля не может быть пустым!"
 
 L["ProfilesDialogueDeleteProfile"] = "Удалить профиль \'%s\'?"
-L["ProfilesDialogueCopyProfile"] = "Копировать профиль \'%s\'?"
+L["ProfilesDialogueCopyProfile"] = "Добавить новый профиль (скопировать из \'|cff8080ff%s|r\')"
 
--- Editmode
--- L["EditModeLayoutDropdown"] = "Profile"
--- L["EditModeCopyLayout"] = "Copy Profile"
--- L["EditModeRenameLayout"] = ""
--- L["EditModeRenameOrCopyLayout"] = "Rename/Copy Profile"
--- L["EditModeDeleteLayout"] = "Delete Profile"
--- L["EditModeNewLayoutDisabled"] = "%s New Profile"
--- L["EditModeNewLayout"] = "%s |cnPURE_GREEN_COLOR:New Profile|r"
+-- Режим редактирования
+L["EditModeBasicOptions"] = "Основные настройки"
+L["EditModeAdvancedOptions"] = "Расширенные настройки"
+L["EditModeLayoutDropdown"] = "Профиль"
+L["EditModeCopyLayout"] = "Копировать профиль"
+L["EditModeRenameLayout"] = ""
+L["EditModeRenameOrCopyLayout"] = "Переименовать/Копировать профиль"
+L["EditModeDeleteLayout"] = "Удалить профиль"
+L["EditModeNewLayoutDisabled"] = "%s Новый профиль"
+L["EditModeNewLayout"] = "%s |cnPURE_GREEN_COLOR:Новый профиль|r"
 
--- L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
--- L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
--- L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipboard |cffffd100(to share online)|r"
+L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Импорт"
+L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Поделиться"
+L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Копировать в буфер обмена |cffffd100(для обмена онлайн)|r"
 
--- L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
--- L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
+L["EditModeExportProfile"] = "Экспорт профиля |cff8080ff%s|r"
+L["EditModeImportProfile"] = "Импорт профиля как |cff8080ff%s|r"
 
--- __Settings
--- L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
+-- __Настройки
+L["SettingsDefaultStringFormat"] = "\n(По умолчанию: |cff8080ff%s|r)"
 
--- positionTable
--- L["PositionTableHeader"] = "Scale and Position"
--- L["PositionTableHeaderDesc"] = ""
--- L["PositionTableScale"] = "Scale"
--- L["PositionTableScaleDesc"] = ""
--- L["PositionTableAnchor"] = "Anchor"
--- L["PositionTableAnchorDesc"] = "Anchor"
--- L["PositionTableAnchorParent"] = "Anchor Parent"
--- L["PositionTableAnchorParentDesc"] = ""
--- L["PositionTableAnchorFrame"] = "Anchor Frame"
--- L["PositionTableAnchorFrameDesc"] = ""
--- L["PositionTableX"] = "X"
--- L["PositionTableXDesc"] = ""
--- L["PositionTableY"] = "Y"
--- L["PositionTableYDesc"] = ""
+-- Таблица позиций
+L["PositionTableHeader"] = "Масштаб и позиция"
+L["PositionTableHeaderDesc"] = ""
+L["PositionTableScale"] = "Масштаб"
+L["PositionTableScaleDesc"] = ""
+L["PositionTableAnchor"] = "Закрепить"
+L["PositionTableAnchorDesc"] = "Закрепить"
+L["PositionTableAnchorParent"] = "Родительский закреп"
+L["PositionTableAnchorParentDesc"] = ""
+L["PositionTableAnchorFrame"] = "Закрепить окно"
+L["PositionTableAnchorFrameDesc"] = ""
+L["PositionTableX"] = "X"
+L["PositionTableXDesc"] = ""
+L["PositionTableY"] = "Y"
+L["PositionTableYDesc"] = ""
 
--- darkmode
--- L["DarkmodeColor"] = "Color"
--- L["DarkmodeDesaturate"] = "Desaturate"
+-- Темный режим
+L["DarkmodeColor"] = "Цвет"
+L["DarkmodeDesaturate"] = "Обесцветить"
 
--- actionbar
--- L["ActionbarName"] = "Action Bar"
--- L["ActionbarNameFormat"] = "Action Bar %d"
+-- Панель действий
+L["ActionbarName"] = "Панель действий"
+L["ActionbarNameFormat"] = "Панель действий %d"
 
--- bar names
--- L["XPBar"] = "XP Bar"
--- L["ReputationBar"] = "Reputation Bar"
--- L["PetBar"] = "Pet Bar"
--- L["StanceBar"] = "Stance Bar"
--- L["PossessBar"] = "Possess Bar"
--- L["MicroMenu"] = "Micromenu"
--- L["TotemBar"] = "Totem Bar"
+-- Названия панелей
+L["XPBar"] = "Панель опыта"
+L["ReputationBar"] = "Панель репутации"
+L["PetBar"] = "Панель питомца"
+L["StanceBar"] = "Панель стойки"
+L["PossessBar"] = "Панель управления"
+L["MicroMenu"] = "Микроменю"
+L["TotemBar"] = "Панель тотемов"
 
--- gryphonsTable
--- L["Default"] = "Default"
--- L["Alliance"] = "Alliance"
--- L["Horde"] = "Horde"
--- L["None"] = "None"
+-- Таблица грифонов
+L["Default"] = "По умолчанию"
+L["Alliance"] = "Альянс"
+L["Horde"] = "Орда"
+L["None"] = "Нет"
 
--- buttonTable
--- L["ButtonTableActive"] = "Active"
--- L["ButtonTableActiveDesc"] = ""
+-- Таблица кнопок
+L["ButtonTableActive"] = "Активно"
+L["ButtonTableActiveDesc"] = ""
 
--- L["ButtonTableButtons"] = "Buttons"
--- L["ButtonTableButtonsDesc"] = ""
+L["ButtonTableButtons"] = "Кнопки"
+L["ButtonTableButtonsDesc"] = ""
 
--- L["ButtonTableButtonScale"] = "Button Scale"
--- L["ButtonTableButtonScaleDesc"] = ""
+L["ButtonTableButtonScale"] = "Масштаб кнопок"
+L["ButtonTableButtonScaleDesc"] = ""
 
--- L["ButtonTableOrientation"] = "Orientation"
--- L["ButtonTableOrientationDesc"] = "Orientation"
+L["ButtonTableOrientation"] = "Ориентация"
+L["ButtonTableOrientationDesc"] = "Ориентация"
 
--- L["ButtonTableReverseButtonOrder"] = "Reverse Button Order"
--- L["ButtonTableReverseButtonOrderDesc"] = ""
+L["ButtonTableReverseButtonOrder"] = "Обратный порядок кнопок"
+L["ButtonTableReverseButtonOrderDesc"] = ""
 
--- L["ButtonTableNumRows"] = "Number of Rows"
--- L["ButtonTableNumRowsDesc"] = ""
+L["ButtonTableNumRows"] = "Количество строк"
+L["ButtonTableNumRowsDesc"] = ""
 
--- L["ButtonTableNumButtons"] = "Number of Buttons"
--- L["ButtonTableNumButtonsDesc"] = ""
+L["ButtonTableNumButtons"] = "Количество кнопок"
+L["ButtonTableNumButtonsDesc"] = ""
 
--- L["ButtonTablePadding"] = "Padding"
--- L["ButtonTablePaddingDesc"] = ""
+L["ButtonTablePadding"] = "Отступ"
+L["ButtonTablePaddingDesc"] = ""
 
--- L["ButtonTableStyle"] = "Style"
--- L["ButtonTableStyleDesc"] = ""
+L["ButtonTableStyle"] = "Стиль"
+L["ButtonTableStyleDesc"] = ""
 
--- L["ButtonTableAlwaysShowActionbar"] = "Always Show Action Bar"
--- L["ButtonTableAlwaysShowActionbarDesc"] = ""
+L["ButtonTableAlwaysShowActionbar"] = "Всегда показывать панель действий"
+L["ButtonTableAlwaysShowActionbarDesc"] = ""
 
--- L["ButtonTableHideMacroText"] = "Hide Macro Text"
--- L["ButtonTableHideMacroTextDesc"] = ""
+L["ButtonTableHideMacroText"] = "Скрыть текст макроса"
+L["ButtonTableHideMacroTextDesc"] = ""
 
--- L["ButtonTableMacroNameFontSize"] = "Macro Name Font Size"
--- L["ButtonTableMacroNameFontSizeDesc"] = ""
+L["ButtonTableMacroNameFontSize"] = "Размер шрифта имени макроса"
+L["ButtonTableMacroNameFontSizeDesc"] = ""
 
--- L["ButtonTableHideKeybindText"] = "Hide Keybind Text"
--- L["ButtonTableHideKeybindTextDesc"] = ""
+L["ButtonTableHideKeybindText"] = "Скрыть текст привязки клавиш"
+L["ButtonTableHideKeybindTextDesc"] = ""
 
--- L["ButtonTableKeybindFontSize"] = "Keybind Font Size"
--- L["ButtonTableKeybindFontSizeDesc"] = ""
+L["ButtonTableKeybindFontSize"] = "Размер шрифта привязки клавиш"
+L["ButtonTableKeybindFontSizeDesc"] = ""
 
--- L["MoreOptionsHideBarArt"] = "Hide Bar Art"
--- L["MoreOptionsHideBarArtDesc"] = ""
+L["MoreOptionsHideBarArt"] = "Скрыть оформление панели"
+L["MoreOptionsHideBarArtDesc"] = ""
 
--- L["MoreOptionsHideBarScrolling"] = "Hide Bar Scrolling"
--- L["MoreOptionsHideBarScrollingDesc"] = ""
+L["MoreOptionsHideBarScrolling"] = "Скрыть прокрутку панели"
+L["MoreOptionsHideBarScrollingDesc"] = ""
 
--- L["MoreOptionsGryphons"] = "Gryphons"
--- L["MoreOptionsGryphonsDesc"] = "Gryphons"
+L["MoreOptionsGryphons"] = "Грифоны"
+L["MoreOptionsGryphonsDesc"] = "Грифоны"
 
--- L["MoreOptionsIconRangeColor"] = "Icon Range Color"
--- L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange"
+L["MoreOptionsIconRangeColor"] = "Цвет иконки вне диапазона"
+L["MoreOptionsIconRangeColorDesc"] = "Изменяет цвет иконки, когда цель вне диапазона, аналогично RedRange/tullaRange"
 
--- L["ExtraOptionsPreset"] = "Preset"
--- L["ExtraOptionsResetToDefaultPosition"] = "Reset to Default Position"
--- L["ExtraOptionsPresetDesc"] =
---     "Sets Scale, Anchor, AnchorParent, AnchorFrame, X and Y to that of the chosen preset, but does not change any other setting.";
+L["ExtraOptionsPreset"] = "Предустановка"
+L["ExtraOptionsResetToDefaultPosition"] = "Сбросить на позицию по умолчанию"
+L["ExtraOptionsPresetDesc"] =
+    "Устанавливает масштаб, закреп, родительский закреп, закреп окна, X и Y в соответствии с выбранной предустановкой, но не изменяет другие настройки."
 
--- L["ExtraOptionsModernLayout"] = "Modern Layout (default)"
--- L["ExtraOptionsModernLayoutDesc"] = ""
+L["ExtraOptionsModernLayout"] = "Современный макет (по умолчанию)"
+L["ExtraOptionsModernLayoutDesc"] = ""
 
--- L["ExtraOptionsClassicLayout"] = "Classic Layout (sidebar)"
--- L["ExtraOptionsClassicLayoutDesc"] = ""
+L["ExtraOptionsClassicLayout"] = "Классический макет (боковая панель)"
+L["ExtraOptionsClassicLayoutDesc"] = ""
 
--- XP
--- L["XPOptionsName"] = "XP"
--- L["XPOptionsDesc"] = "XP"
+-- Опыт
+L["XPOptionsName"] = "Опыт"
+L["XPOptionsDesc"] = "Опыт"
 
--- L["XPOptionsStyle"] = L["ButtonTableStyle"]
--- L["XPOptionsStyleDesc"] = ""
+L["XPOptionsStyle"] = L["ButtonTableStyle"]
+L["XPOptionsStyleDesc"] = ""
 
--- L["XPOptionsWidth"] = "Width"
--- L["XPOptionsWidthDesc"] = ""
+L["XPOptionsWidth"] = "Ширина"
+L["XPOptionsWidthDesc"] = ""
 
--- L["XPOptionsHeight"] = "Height"
--- L["XPOptionsHeightDesc"] = ""
+L["XPOptionsHeight"] = "Высота"
+L["XPOptionsHeightDesc"] = ""
 
--- L["XPOptionsAlwaysShowXPText"] = "Always show XP text"
--- L["XPOptionsAlwaysShowXPTextDesc"] = ""
+L["XPOptionsAlwaysShowXPText"] = "Всегда показывать текст опыта"
+L["XPOptionsAlwaysShowXPTextDesc"] = ""
 
--- L["XPOptionsShowXPPercent"] = "Show XP Percent"
--- L["XPOptionsShowXPPercentDesc"] = ""
+L["XPOptionsShowXPPercent"] = "Показывать процент опыта"
+L["XPOptionsShowXPPercentDesc"] = ""
 
--- rep
--- L["RepOptionsName"] = "Rep"
--- L["RepOptionsDesc"] = "Rep"
+-- Репутация
+L["RepOptionsName"] = "Репутация"
+L["RepOptionsDesc"] = "Репутация"
 
--- L["RepOptionsStyle"] = L["ButtonTableStyle"]
--- L["RepOptionsStyleDesc"] = ""
+L["RepOptionsStyle"] = L["ButtonTableStyle"]
+L["RepOptionsStyleDesc"] = ""
 
--- L["RepOptionsWidth"] = L["XPOptionsWidth"]
--- L["RepOptionsWidthDesc"] = L["XPOptionsWidthDesc"]
+L["RepOptionsWidth"] = L["XPOptionsWidth"]
+L["RepOptionsWidthDesc"] = L["XPOptionsWidthDesc"]
 
--- L["RepOptionsHeight"] = L["XPOptionsHeight"]
--- L["RepOptionsHeightDesc"] = L["XPOptionsHeightDesc"]
+L["RepOptionsHeight"] = L["XPOptionsHeight"]
+L["RepOptionsHeightDesc"] = L["XPOptionsHeightDesc"]
 
--- L["RepOptionsAlwaysShowRepText"] = "Always show Rep text"
--- L["RepOptionsAlwaysShowRepTextDesc"] = ""
+L["RepOptionsAlwaysShowRepText"] = "Всегда показывать текст репутации"
+L["RepOptionsAlwaysShowRepTextDesc"] = ""
 
--- Bags
--- L["BagsOptionsName"] = "Bags"
--- L["BagsOptionsDesc"] = "Bags"
+-- Сумки
+L["BagsOptionsName"] = "Сумки"
+L["BagsOptionsDesc"] = "Сумки"
 
--- L["BagsOptionsStyle"] = L["ButtonTableStyle"]
--- L["BagsOptionsStyleDesc"] = ""
+L["BagsOptionsStyle"] = L["ButtonTableStyle"]
+L["BagsOptionsStyleDesc"] = ""
 
--- L["BagsOptionsExpanded"] = "Expanded"
--- L["BagsOptionsExpandedDesc"] = ""
+L["BagsOptionsExpanded"] = "Расширено"
+L["BagsOptionsExpandedDesc"] = ""
 
--- L["BagsOptionsHideArrow"] = "HideArrow"
--- L["BagsOptionsHideArrowDesc"] = ""
+L["BagsOptionsHideArrow"] = "Скрыть стрелку"
+L["BagsOptionsHideArrowDesc"] = ""
 
--- L["BagsOptionsHidden"] = "Hidden"
--- L["BagsOptionsHiddenDesc"] = "Backpack hidden"
+L["BagsOptionsHidden"] = "Скрыто"
+L["BagsOptionsHiddenDesc"] = "Рюкзак скрыт"
 
--- L["BagsOptionsOverrideBagAnchor"] = "Override BagAnchor"
--- L["BagsOptionsOverrideBagAnchorDesc"] = ""
+L["BagsOptionsOverrideBagAnchor"] = "Переопределить якорь сумок"
+L["BagsOptionsOverrideBagAnchorDesc"] = ""
 
--- L["BagsOptionsOffsetX"] = "BagAnchor OffsetX"
--- L["BagsOptionsOffsetXDesc"] = ""
+L["BagsOptionsOffsetX"] = "Смещение якоря сумок по X"
+L["BagsOptionsOffsetXDesc"] = ""
 
--- L["BagsOptionsOffsetY"] = "BagAnchor OffsetY"
--- L["BagsOptionsOffsetYDesc"] = ""
+L["BagsOptionsOffsetY"] = "Смещение якоря сумок по Y"
+L["BagsOptionsOffsetYDesc"] = ""
 
 -- FPS
--- L["FPSOptionsName"] = "FPS"
--- L["FPSOptionsDesc"] = "FPS"
+L["FPSOptionsName"] = "FPS"
+L["FPSOptionsDesc"] = "FPS"
 
--- L["FPSOptionsStyle"] = L["ButtonTableStyle"]
--- L["FPSOptionsStyleDesc"] = ""
+L["FPSOptionsStyle"] = L["ButtonTableStyle"]
+L["FPSOptionsStyleDesc"] = ""
 
--- L["FPSOptionsHideDefaultFPS"] = "Hide Default FPS"
--- L["FPSOptionsHideDefaultFPSDesc"] = "Hide Default FPS Text"
+L["FPSOptionsHideDefaultFPS"] = "Скрыть стандартный FPS"
+L["FPSOptionsHideDefaultFPSDesc"] = "Скрыть стандартный текст FPS"
 
--- L["FPSOptionsShowFPS"] = "Show FPS"
--- L["FPSOptionsShowFPSDesc"] = "Show Custom FPS Text"
+L["FPSOptionsShowFPS"] = "Показывать FPS"
+L["FPSOptionsShowFPSDesc"] = "Показывать пользовательский текст FPS"
 
--- L["FPSOptionsAlwaysShowFPS"] = "Always Show FPS"
--- L["FPSOptionsAlwaysShowFPSDesc"] = "Always Show Custom FPS Text"
+L["FPSOptionsAlwaysShowFPS"] = "Всегда показывать FPS"
+L["FPSOptionsAlwaysShowFPSDesc"] = "Всегда показывать пользовательский текст FPS"
 
--- L["FPSOptionsShowPing"] = "Show Ping"
--- L["FPSOptionsShowPingDesc"] = "Show Ping In MS"
+L["FPSOptionsShowPing"] = "Показывать пинг"
+L["FPSOptionsShowPingDesc"] = "Показывать пинг в мс"
 
--- Buffs
--- L["BuffsOptionsName"] = "Buffs"
--- L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
--- L["BuffsOptionsStyleDesc"] = ""
+-- Дополнительная кнопка действия
+L["ExtraActionButtonOptionsName"] = "Дополнительная кнопка действия"
+L["ExtraActionButtonOptionsNameDesc"] = "FPS"
+L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
+L["ExtraActionButtonStyleDesc"] = ""
+L["ExtraActionButtonHideBackgroundTexture"] = "Скрыть текстуру фона"
+L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+-- Баффы
+L["BuffsOptionsName"] = "Баффы"
+L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
+L["BuffsOptionsStyleDesc"] = ""
 
--- L["BuffsOptionsExpanded"] = "Expanded"
--- L["BuffsOptionsExpandedDesc"] = ""
+L["BuffsOptionsExpanded"] = "Расширено"
+L["BuffsOptionsExpandedDesc"] = ""
 
--- L["BuffsOptionsUseStateHandler"] = "Use State Handler"
--- L["BuffsOptionsUseStateHandlerDesc"] =
---     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+L["BuffsOptionsUseStateHandler"] = "Использовать обработчик состояния"
+L["BuffsOptionsUseStateHandlerDesc"] =
+    "Без этого настройки видимости выше не будут работать, но может улучшить совместимость с другими аддонами (например, MinimapAlert), так как не делает окна защищенными."
 
--- Castbar
--- L["CastbarName"] = "Cast Bar"
--- L["CastbarNameFormat"] = "%s Cast Bar"
--- L["CastbarTableActive"] = "Active"
--- L["CastbarTableActivateDesc"] = ""
--- L["CastbarTableStyle"] = L["ButtonTableStyle"]
--- L["CastbarTableStyleDesc"] = ""
--- L["CastbarTableWidth"] = L["XPOptionsWidth"]
--- L["CastbarTableWidthDesc"] = L["XPOptionsWidthDesc"]
--- L["CastbarTableHeight"] = L["XPOptionsHeight"]
--- L["CastbarTableHeightDesc"] = L["XPOptionsHeightDesc"]
--- L["CastbarTablePrecisionTimeLeft"] = "Precision (time left)"
--- L["CastbarTablePrecisionTimeLeftDesc"] = ""
--- L["CastbarTablePrecisionTimeMax"] = "Precision (time max)"
--- L["CastbarTablePrecisionTimeMaxDesc"] = ""
--- L["CastbarTableShowCastTimeText"] = "Show cast time text"
--- L["CastbarTableShowCastTimeTextDesc"] = ""
--- L["CastbarTableShowCastTimeMaxText"] = "Show cast time max text"
--- L["CastbarTableShowCastTimeMaxTextDesc"] = ""
--- L["CastbarTableCompactLayout"] = "Compact Layout"
--- L["CastbarTableCompactLayoutDesc"] = ""
--- L["CastbarTableHoldTimeSuccess"] = "Hold Time (Success)"
--- L["CastbarTableHoldTimeSuccessDesc"] = "Time before the Castbar starts fading after the Cast was successful."
--- L["CastbarTableHoldTimeInterrupt"] = "Hold Time (Interrupt)"
--- L["CastbarTableHoldTimeInterruptDesc"] = "Time before the Castbar starts fading after the Cast was interrupted."
--- L["CastbarTableShowIcon"] = "Show Icon"
--- L["CastbarTableShowIconDesc"] = ""
--- L["CastbarTableIconSize"] = "Icon Size"
--- L["CastbarTableIconSizeDesc"] = ""
--- L["CastbarTableShowTicks"] = "Show Ticks"
--- L["CastbarTableShowTicksDesc"] = ""
--- L["CastbarTableAutoAdjust"] = "Auto Adjust"
--- L["CastbarTableAutoAdjustDesc"] =
---     "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the Target/FocusFrame"
--- L["CastbarTableShowRank"] = "Show Rank"
--- L["CastbarTableShowRankDesc"] = ""
+-- Полоса заклинаний
+L["CastbarName"] = "Полоса заклинаний"
+L["CastbarNameFormat"] = "%s Полоса заклинаний"
+L["CastbarTableActive"] = "Активно"
+L["CastbarTableActivateDesc"] = ""
+L["CastbarTableStyle"] = L["ButtonTableStyle"]
+L["CastbarTableStyleDesc"] = ""
+L["CastbarTableWidth"] = L["XPOptionsWidth"]
+L["CastbarTableWidthDesc"] = L["XPOptionsWidthDesc"]
+L["CastbarTableHeight"] = L["XPOptionsHeight"]
+L["CastbarTableHeightDesc"] = L["XPOptionsHeightDesc"]
+L["CastbarTablePrecisionTimeLeft"] = "Точность (оставшееся время)"
+L["CastbarTablePrecisionTimeLeftDesc"] = ""
+L["CastbarTablePrecisionTimeMax"] = "Точность (максимальное время)"
+L["CastbarTablePrecisionTimeMaxDesc"] = ""
+L["CastbarTableShowCastTimeText"] = "Показывать текст времени заклинания"
+L["CastbarTableShowCastTimeTextDesc"] = ""
+L["CastbarTableShowCastTimeMaxText"] = "Показывать текст максимального времени заклинания"
+L["CastbarTableShowCastTimeMaxTextDesc"] = ""
+L["CastbarTableCompactLayout"] = "Компактный макет"
+L["CastbarTableCompactLayoutDesc"] = ""
+L["CastbarTableHoldTimeSuccess"] = "Время удержания (успех)"
+L["CastbarTableHoldTimeSuccessDesc"] = "Время до начала исчезновения полосы заклинаний после успешного завершения заклинания."
+L["CastbarTableHoldTimeInterrupt"] = "Время удержания (прерывание)"
+L["CastbarTableHoldTimeInterruptDesc"] = "Время до начала исчезновения полосы заклинаний после прерывания заклинания."
+L["CastbarTableShowIcon"] = "Показывать иконку"
+L["CastbarTableShowIconDesc"] = ""
+L["CastbarTableIconSize"] = "Размер иконки"
+L["CastbarTableIconSizeDesc"] = ""
+L["CastbarTableShowTicks"] = "Показывать тики"
+L["CastbarTableShowTicksDesc"] = ""
+L["CastbarTableAutoAdjust"] = "Автонастройка"
+L["CastbarTableAutoAdjustDesc"] =
+    "Применяет смещение по Y в зависимости от количества баффов/дебаффов - полезно при привязке полосы заклинаний под окном цели/фокуса"
+L["CastbarTableShowRank"] = "Показывать ранг"
+L["CastbarTableShowRankDesc"] = ""
+L["CastbarTableShowChannelName"] = "Показывать название канала"
+L["CastbarTableShowChannelNameDesc"] = "Показывает название заклинания вместо текста отображения (например, 'Канал')"
 
--- L["ExtraOptionsResetToDefaultStyle"] = "Reset to Default Style"
--- L["ExtraOptionsPresetStyleDesc"] =
---     "Sets all settings that change the style of the castbar, but does not change any other setting."
+L["ExtraOptionsResetToDefaultStyle"] = "Сбросить на стиль по умолчанию"
+L["ExtraOptionsPresetStyleDesc"] =
+    "Устанавливает все настройки, изменяющие стиль полосы заклинаний, но не изменяет другие настройки."
 
--- Minimap
--- L["MinimapName"] = "Minimap"
--- L["MinimapStyle"] = L["ButtonTableStyle"]
--- L["MinimapShowPing"] = "Show Ping"
--- L["MinimapNotYetImplemented"] = "(NOT YET IMPLEMENTED)"
--- L["MinimapShowPingInChat"] = "Show Ping in Chat"
--- L["MinimapHideCalendar"] = "Hide Calendar"
--- L["MinimapHideCalendarDesc"] = "Hides the calendar button"
--- L["MinimapHideZoomButtons"] = "Hide Zoom Buttons"
--- L["MinimapHideZoomDesc"] = "Hides the zoom buttons (+) (-)"
--- L["MinimapSkinMinimapButtons"] = "Skin Minimap Buttons"
--- L["MinimapSkinMinimapButtonsDesc"] = "Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)"
--- L["MinimapUseStateHandler"] = "Use State Handler"
--- L["MinimapUseStateHandlerDesc"] =
---     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+-- Миникарта
+L["MinimapName"] = "Миникарта"
+L["MinimapStyle"] = L["ButtonTableStyle"]
+L["MinimapShowPing"] = "Показывать пинг"
+L["MinimapNotYetImplemented"] = "(ЕЩЕ НЕ РЕАЛИЗОВАНО)"
+L["MinimapShowPingInChat"] = "Показывать пинг в чате"
+L["MinimapHideCalendar"] = "Скрыть календарь"
+L["MinimapHideCalendarDesc"] = "Скрывает кнопку календаря"
+L["MinimapHideZoomButtons"] = "Скрыть кнопки масштабирования"
+L["MinimapHideZoomDesc"] = "Скрывает кнопки масштабирования (+) (-)"
+L["MinimapSkinMinimapButtons"] = "Стилизовать кнопки миникарты"
+L["MinimapSkinMinimapButtonsDesc"] = "Изменяет стиль кнопок миникарты с использованием LibDBIcon (большинство аддонов используют это)"
+L["MinimapUseStateHandler"] = "Использовать обработчик состояния"
+L["MinimapUseStateHandlerDesc"] =
+    "Без этого настройки видимости выше не будут работать, но может улучшить совместимость с другими аддонами (например, MinimapAlert), так как не делает окна защищенными."
 
--- UI
--- L["UIUtility"] = "Utility"
--- L["UIChangeBags"] = "Change Bags"
--- L["UIChangeBagsDesc"] = ""
--- L["UIColoredInventoryItems"] = "Colored Inventory Items"
--- L["UIColoredInventoryItemsDesc"] = "Toggle to color inventory items based on their quality."
--- L["UIShowQuestlevel"] = "Show Questlevel"
--- L["UIShowQuestlevelDesc"] = "Display the quest level next to the quest name."
--- L["UIFrames"] = "Frames"
--- L["UIFramesDesc"] = "Options for modifying various in-game frames."
--- L["UIChangeCharacterFrame"] = "Change CharacterFrame"
--- L["UIChangeCharacterFrameDesc"] = "Change the appearance of the  character frame."
--- L["UIChangeProfessionWindow"] = "Change Profession Window"
--- L["UIChangeProfessionWindowDesc"] = "Modify the appearance of the profession window."
--- L["UIChangeInspectFrame"] = "Change InspectFrame"
--- L["UIChangeInspectFrameDesc"] = "Change the appearance of the inspect frame."
--- L["UIChangeTrainerWindow"] = "Change Trainer Window"
--- L["UIChangeTrainerWindowDesc"] = "Change the appearance of the trainer window."
--- L["UIChangeTalentFrame"] = "Change TalentFrame"
--- L["UIChangeTalentFrameDesc"] = "Change the layout or appearance of the Talent Frame. (Not available on Wrath)"
--- L["UIChangeSpellBook"] = "Change SpellBook"
--- L["UIChangeSpellBookDesc"] = "Change the appearance of the SpellBook."
--- L["UIChangeSpellBookProfessions"] = "Change SpellBook Professions"
--- L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for professions."
+-- Интерфейс
+L["UIUtility"] = "Утилиты"
+L["UIChangeBags"] = "Изменить сумки"
+L["UIChangeBagsDesc"] = ""
+L["UIColoredInventoryItems"] = "Цветные предметы в инвентаре"
+L["UIColoredInventoryItemsDesc"] = "Включить окрашивание предметов в инвентаре в зависимости от их качества."
+L["UIShowQuestlevel"] = "Показывать уровень задания"
+L["UIShowQuestlevelDesc"] = "Отображать уровень задания рядом с названием задания."
+L["UIFrames"] = "Окна"
+L["UIFramesDesc"] = "Настройки для изменения различных внутриигровых окон."
+L["UIChangeCharacterFrame"] = "Изменить окна персонажа"
+L["UIChangeCharacterFrameDesc"] = "Изменить внешний вид окна персонажа."
+L["UIChangeProfessionWindow"] = "Изменить окно профессии"
+L["UIChangeProfessionWindowDesc"] = "Изменить внешний вид окна профессии."
+L["UIChangeInspectFrame"] = "Изменить окно осмотра"
+L["UIChangeInspectFrameDesc"] = "Изменить внешний вид окна осмотра."
+L["UIChangeTrainerWindow"] = "Изменить окно тренера"
+L["UIChangeTrainerWindowDesc"] = "Изменить внешний вид окна тренера."
+L["UIChangeTalentFrame"] = "Изменить окно талантов"
+L["UIChangeTalentFrameDesc"] = "Изменить макет или внешний вид окна талантов. (Недоступно на Wrath)"
+L["UIChangeSpellBook"] = "Изменить книгу заклинаний"
+L["UIChangeSpellBookDesc"] = "Изменить внешний вид книги заклинаний."
+L["UIChangeSpellBookProfessions"] = "Изменить книгу заклинаний для профессий"
+L["UIChangeSpellBookProfessionsDesc"] = "Изменить макет книги заклинаний для профессий."
 
--- ProfessionFrame
--- L["ProfessionFrameHasSkillUp"] = "Has skill up"
--- L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE
--- L["ProfessionFrameSubclass"] = "Subclass"
--- L["ProfessionFrameSlot"] = "Slot"
--- L["ProfessionCheckAll"] = "Check All"
--- L["ProfessionUnCheckAll"] = "Uncheck All"
--- L["ProfessionFavorites"] = "Favorites"
+-- Фрейм профессии
+L["ProfessionFrameHasSkillUp"] = "Есть повышение навыка"
+L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE
+L["ProfessionFrameSubclass"] = "Подкласс"
+L["ProfessionFrameSlot"] = "Слот"
+L["ProfessionCheckAll"] = "Отметить все"
+L["ProfessionUnCheckAll"] = "Снять отметку со всех"
+L["ProfessionFavorites"] = "Избранное"
 
--- Unitframes
--- L["UnitFramesName"] = "Unitframes"
--- Player
--- L["PlayerFrameDesc"] = "Player frame settings"
--- L["PlayerFrameStyle"] = L["ButtonTableStyle"]
--- L["PlayerFrameClassColor"] = "Class Color"
--- L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar"
--- L["PlayerFrameClassIcon"] = "Class Icon Portrait"
--- L["PlayerFrameClassIconDesc"] = "Enable class icon as portrait (currently disabled)"
--- L["PlayerFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
--- L["PlayerFrameBreakUpLargeNumbersDesc"] =
---     "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
--- L["PlayerFrameBiggerHealthbar"] = "Bigger Healthbar"
--- L["PlayerFrameBiggerHealthbarDesc"] = "Enable a bigger health bar"
--- L["PlayerFrameHideRedStatus"] = "Hide In Combat Red Statusglow"
--- L["PlayerFrameHideRedStatusDesc"] = "Hide the red status glow in combat"
--- L["PlayerFrameHideHitIndicator"] = "Hide Hit Indicator"
--- L["PlayerFrameHideHitIndicatorDesc"] = "Hide the hit indicator on the player frame"
--- L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Ressource"
--- L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul shards."
+-- Подсказки
+L["TooltipName"] = "Подсказка"
+L["TooltipHeaderGameToltip"] = "GameTooltip"
+L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
 
--- Target
--- L["TargetFrameDesc"] = "Target frame settings"
--- L["TargetFrameStyle"] = L["ButtonTableStyle"]
--- L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
--- L["TargetFrameClassColorDesc"] = "Enable class colors for the health bar"
--- L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
--- L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
--- L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
--- L["TargetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
--- L["TargetFrameNumericThreat"] = "Numeric Threat"
--- L["TargetFrameNumericThreatDesc"] = "Enable numeric threat display"
--- L["TargetFrameNumericThreatAnchor"] = "Numeric Threat Anchor"
--- L["TargetFrameNumericThreatAnchorDesc"] = "Sets the numeric threat anchor(position)"
--- L["TargetFrameThreatGlow"] = "Threat Glow"
--- L["TargetFrameThreatGlowDesc"] = "Enable threat glow effect"
--- L["TargetFrameHideNameBackground"] = "Hide Name Background"
--- L["TargetFrameHideNameBackgroundDesc"] = "Hide the background of the target's name"
--- L["TargetFrameComboPointsOnPlayerFrame"] = "Combo Points on PlayerFrame"
--- L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Show combo points on the player frame."
--- L["TargetFrameHideComboPoints"] = "Hide Combo Points"
--- L["TargetFrameHideComboPointsDesc"] = "Hides the combo points frame."
--- L["TargetFrameFadeOut"] = "Fadeout"
--- L["TargetFrameFadeOutDesc"] = "Fades the TargetFrame when the target is more than 40y away."
+L["TooltipCursorAnchorHeader"] = "Якорь на курсоре"
+L["TooltipCursorAnchorHeaderDesc"] = ""
+L["TooltipAnchorToMouse"] = "Якорь на курсоре"
+L["TooltipAnchorToMouseDesc"] = "Привязывает некоторые подсказки (например, UnitTooltip на WorldFrame) к курсору мыши."
+L["TooltipMouseAnchor"] = "Якорь на курсоре"
+L["TooltipMouseAnchorDesc"] = ""
+L["TooltipMouseX"] = "X"
+L["TooltipMouseXDesc"] = ""
+L["TooltipMouseY"] = "Y"
+L["TooltipMouseYDesc"] = ""
 
--- Pet
--- L["PetFrameDesc"] = "Pet frame settings"
--- L["PetFrameStyle"] = L["ButtonTableStyle"]
--- L["PetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
--- L["PetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
--- L["PetFrameThreatGlow"] = L["TargetFrameThreatGlow"]
--- L["PetFrameThreatGlowDesc"] = L["TargetFrameThreatGlowDesc"]
--- L["PetFrameHideStatusbarText"] = "Hide Statusbar Text"
--- L["PetFrameHideStatusbarTextDesc"] = "Hide the statusbar text"
--- L["PetFrameHideIndicator"] = "Hide Hit Indicator"
--- L["PetFrameHideIndicatorDesc"] = "Hide the hit indicator"
+-- Подсказки заклинаний
+L["TooltipAnchorSpells"] = "Якорь заклинаний"
+L["TooltipAnchorSpellsDesc"] = "Привязывает подсказку заклинаний на панелях действий к кнопке вместо стандартного якоря."
+L["TooltipShowSpellID"] = "Показывать ID заклинания"
+L["TooltipShowSpellIDDesc"] = ""
+L["TooltipShowSpellSource"] = "Показывать источник заклинания"
+L["TooltipShowSpellSourceDesc"] = ""
+L["TooltipShowSpellIcon"] = "Показывать иконку заклинания"
+L["TooltipShowSpellIconDesc"] = ""
+L["TooltipShowIconID"] = "Показывать ID иконки"
+L["TooltipShowIconIDDesc"] = ""
 
--- Focus
--- L["FocusFrameDesc"] = "Focus frame settings"
--- L["FocusFrameStyle"] = L["ButtonTableStyle"]
--- L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
--- L["FocusFrameClassColorDesc"] = "Enable class colors for the healthbar"
--- L["FocusFrameClassIcon"] = L["PlayerFrameClassIcon"]
--- L["FocusFrameClassIconDesc"] = "Enable class icon as a portrait for the focus frame"
--- L["FocusFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
--- L["FocusFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
--- L["FocusFrameHideNameBackground"] = L["TargetFrameHideNameBackground"]
--- L["FocusFrameHideNameBackgroundDesc"] = "Hide the name background"
+L["TooltipShowIcon"] = "Показывать иконку"
+L["TooltipShowIconDesc"] = ""
 
--- party
--- L["PartyFrameDesc"] = "Party frame settings"
--- L["PartyFrameStyle"] = L["ButtonTableStyle"]
--- L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
--- L["PartyFrameClassColorDesc"] = "Enable class colors for the healthbar"
--- L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
--- L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+-- Подсказки предметов
+L["TooltipHeaderItemTooltip"] = "Подсказка предмета"
+L["TooltipHeaderItemTooltipDesc"] = ""
 
--- see comment above
+L["TooltipShowItemQuality"] = "Граница качества предмета"
+L["TooltipShowItemQualityDesc"] = ""
+L["TooltipShowItemQualityBackdrop"] = "Фон качества предмета"
+L["TooltipShowItemQualityBackdropDesc"] = ""
+L["TooltipShowItemStackCount"] = "Показывать размер стопки"
+L["TooltipShowItemStackCountDesc"] = ""
+L["TooltipShowItemID"] = "Показывать ID предмета"
+L["TooltipShowItemIDDesc"] = ""
+
+-- Подсказки юнитов
+L["TooltipUnitTooltip"] = "Подсказка юнита"
+L["TooltipUnitTooltipDesc"] = ""
+
+L["TooltipUnitClassBorder"] = "Граница класса"
+L["TooltipUnitClassBorderDesc"] = ""
+L["TooltipUnitClassBackdrop"] = "Фон класса"
+L["TooltipUnitClassBackdropDesc"] = ""
+
+L["TooltipUnitReactionBorder"] = "Граница реакции"
+L["TooltipUnitReactionBorderDesc"] = ""
+L["TooltipUnitReactionBackdrop"] = "Фон реакции"
+L["TooltipUnitReactionBackdropDesc"] = ""
+
+L["TooltipUnitClassName"] = "Имя класса"
+L["TooltipUnitClassNameDesc"] = ""
+L["TooltipUnitTitle"] = "Показывать титул"
+L["TooltipUnitTitleDesc"] = ""
+L["TooltipUnitRealm"] = "Показывать игровой мир"
+L["TooltipUnitRealmDesc"] = ""
+L["TooltipUnitGuild"] = "Показывать гильдию"
+L["TooltipUnitGuildDesc"] = ""
+L["TooltipUnitGuildRank"] = "Показывать ранг в гильдии"
+L["TooltipUnitGuildRankDesc"] = ""
+L["TooltipUnitGuildRankIndex"] = "Показывать индекс ранга в гильдии"
+L["TooltipUnitGuildRankIndexDesc"] = ""
+L["TooltipUnitGrayOutOnDeath"] = "Серый цвет при смерти"
+L["TooltipUnitGrayOutOnDeathDesc"] = ""
+L["TooltipUnitZone"] = "Показывать текст зоны"
+L["TooltipUnitZoneDesc"] = ""
+L["TooltipUnitHealthbar"] = "Показывать полосу здоровья"
+L["TooltipUnitHealthbarDesc"] = ""
+L["TooltipUnitHealthbarText"] = "Показывать текст полосы здоровья"
+L["TooltipUnitHealthbarTextDesc"] = ""
+-- Фреймы юнитов
+L["UnitFramesName"] = "Окна юнитов"
+-- Игрок
+L["PlayerFrameDesc"] = "Настройки окна игрока"
+L["PlayerFrameStyle"] = L["ButtonTableStyle"]
+L["PlayerFrameClassColor"] = "Цвет класса"
+L["PlayerFrameClassColorDesc"] = "Включить цвета класса для полосы здоровья"
+L["PlayerFrameClassIcon"] = "Иконка класса как портрет"
+L["PlayerFrameClassIconDesc"] = "Включить иконку класса как портрет (в настоящее время отключено)"
+L["PlayerFrameBreakUpLargeNumbers"] = "Разделять большие числа"
+L["PlayerFrameBreakUpLargeNumbersDesc"] =
+    "Включить разделение больших чисел в тексте статуса (например, 7588 K вместо 7588000)"
+L["PlayerFrameBiggerHealthbar"] = "Увеличенная полоса здоровья"
+L["PlayerFrameBiggerHealthbarDesc"] = "Включить увеличенную полосу здоровья"
+L["PlayerFrameHideRedStatus"] = "Скрыть красное свечение статуса в бою"
+L["PlayerFrameHideRedStatusDesc"] = "Скрыть красное свечение статуса в бою"
+L["PlayerFrameHideHitIndicator"] = "Скрыть индикатор попадания"
+L["PlayerFrameHideHitIndicatorDesc"] = "Скрыть индикатор попадания на окне игрока"
+L["PlayerFrameHideSecondaryRes"] = "Скрыть вторичный ресурс"
+L["PlayerFrameHideSecondaryResDesc"] = "Скрыть вторичный ресурс, например, осколки души."
+L["PlayerFrameHideAlternatePowerBar"] = "Скрыть альтернативную полосу силы друида"
+L["PlayerFrameHideAlternatePowerBarDesc"] = "Скрыть альтернативную полосу силы друида (полоса маны в форме медведя/кошки)."
+
+-- Цель
+L["TargetFrameDesc"] = "Настройки окна цели"
+L["TargetFrameStyle"] = L["ButtonTableStyle"]
+L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
+L["TargetFrameClassColorDesc"] = "Включить цвета класса для полосы здоровья"
+L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
+L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
+L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["TargetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+L["TargetFrameNumericThreat"] = "Числовой показатель угрозы"
+L["TargetFrameNumericThreatDesc"] = "Включить числовой показатель угрозы"
+L["TargetFrameNumericThreatAnchor"] = "Якорь числового показателя угрозы"
+L["TargetFrameNumericThreatAnchorDesc"] = "Устанавливает якорь числового показателя угрозы (позицию)"
+L["TargetFrameThreatGlow"] = "Свечение угрозы"
+L["TargetFrameThreatGlowDesc"] = "Включить эффект свечения угрозы"
+L["TargetFrameHideNameBackground"] = "Скрыть фон имени"
+L["TargetFrameHideNameBackgroundDesc"] = "Скрыть фон имени цели"
+L["TargetFrameComboPointsOnPlayerFrame"] = "Очки комбо на окне игрока"
+L["TargetFrameComboPointsOnPlayerFrameDesc"] = "Показывать очки комбо на окне игрока."
+L["TargetFrameHideComboPoints"] = "Скрыть очки комбо"
+L["TargetFrameHideComboPointsDesc"] = "Скрывает окно очков комбо."
+L["TargetFrameFadeOut"] = "Исчезновение"
+L["TargetFrameFadeOutDesc"] = "Окно цели исчезает, когда цель находится на расстоянии более *Расстояние исчезновения*."
+L["TargetFrameFadeOutDistance"] = "Расстояние исчезновения"
+L["TargetFrameFadeOutDistanceDesc"] =
+    "Устанавливает расстояние в ярдах для проверки эффекта исчезновения.\nПримечание: не каждое значение может иметь значение, так как используется 'LibRangeCheck-3.0'.\nВычисляется по 'minRange >= fadeOutDistance'."
+
+-- Питомец
+L["PetFrameDesc"] = "Настройки окна питомца"
+L["PetFrameStyle"] = L["ButtonTableStyle"]
+L["PetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["PetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+L["PetFrameThreatGlow"] = L["TargetFrameThreatGlow"]
+L["PetFrameThreatGlowDesc"] = L["TargetFrameThreatGlowDesc"]
+L["PetFrameHideStatusbarText"] = "Скрыть текст статусбара"
+L["PetFrameHideStatusbarTextDesc"] = "Скрыть текст статусбара"
+L["PetFrameHideIndicator"] = "Скрыть индикатор попадания"
+L["PetFrameHideIndicatorDesc"] = "Скрыть индикатор попадания"
+
+-- Фокус
+L["FocusFrameDesc"] = "Настройки окна фокуса"
+L["FocusFrameStyle"] = L["ButtonTableStyle"]
+L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
+L["FocusFrameClassColorDesc"] = "Включить цвета класса для полосы здоровья"
+L["FocusFrameClassIcon"] = L["PlayerFrameClassIcon"]
+L["FocusFrameClassIconDesc"] = "Включить иконку класса как портрет для окна фокуса"
+L["FocusFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["FocusFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+L["FocusFrameHideNameBackground"] = L["TargetFrameHideNameBackground"]
+L["FocusFrameHideNameBackgroundDesc"] = "Скрыть фон имени"
+
+-- Группа
+L["PartyFrameDesc"] = "Настройки окна группы"
+L["PartyFrameStyle"] = L["ButtonTableStyle"]
+L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
+L["PartyFrameClassColorDesc"] = "Включить цвета класса для полосы здоровья"
+L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
+L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+
+-- см. комментарий выше
 for k, v in pairs(L) do L_RU[k] = v; end
