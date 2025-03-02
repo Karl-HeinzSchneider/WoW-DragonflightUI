@@ -3507,6 +3507,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         tlcDF:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
         tlcDF:SetSize(75, 74)
         tlcDF:SetPoint('TOPLEFT', -13, 16)
+        tlcDF:SetDrawLayer('ARTWORK', 0)
 
         local trc = _G[name .. 'TopRightCorner'] or frame.TopRightCorner
         trc:SetTexture(tex)
