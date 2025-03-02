@@ -322,6 +322,9 @@ function Module:UpdateMinimap(state)
     minimapBorderTex:SetDesaturated(state.minimapDesaturate)
     minimapBorderTex:SetVertexColor(c:GetRGB())
 
+    MinimapCompassTexture:SetDesaturated(state.minimapDesaturate)
+    MinimapCompassTexture:SetVertexColor(c:GetRGB())
+
     MinimapZoomIn:GetNormalTexture():SetDesaturated(state.minimapDesaturate)
     MinimapZoomIn:GetNormalTexture():SetVertexColor(c:GetRGB())
     MinimapZoomIn:GetDisabledTexture():SetDesaturated(state.minimapDesaturate)
