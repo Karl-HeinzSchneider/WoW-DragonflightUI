@@ -95,20 +95,29 @@ local minimapOptions = {
     get = getOption,
     set = setOption,
     args = {
-        headerStyling = {type = 'header', name = L["MinimapStyle"], desc = '', order = 20, isExpanded = true},
+        headerStyling = {
+            type = 'header',
+            name = L["MinimapStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
         showPing = {
             type = 'toggle',
             name = L["MinimapShowPing"],
             desc = L["MinimapNotYetImplemented"] .. getDefaultStr('showPing', 'minimap'),
             group = 'headerStyling',
-            order = 11
+            order = 11,
+            editmode = true
         },
         showPingChat = {
             type = 'toggle',
             name = L["MinimapShowPingInChat"],
             desc = getDefaultStr('showPingChat', 'minimap'),
             group = 'headerStyling',
-            order = 12
+            order = 12,
+            editmode = true
         },
         hideCalendar = {
             type = 'toggle',
@@ -116,7 +125,8 @@ local minimapOptions = {
             desc = L["MinimapHideCalendarDesc"] .. getDefaultStr('hideCalendar', 'minimap'),
             group = 'headerStyling',
             order = 13,
-            new = false
+            new = false,
+            editmode = true
         },
         hideZoom = {
             type = 'toggle',
@@ -124,7 +134,8 @@ local minimapOptions = {
             desc = L["MinimapHideZoomDesc"] .. getDefaultStr('hideZoom', 'minimap'),
             group = 'headerStyling',
             order = 14,
-            new = true
+            new = true,
+            editmode = true
         },
         skinButtons = {
             type = 'toggle',
@@ -132,14 +143,16 @@ local minimapOptions = {
             desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
             group = 'headerStyling',
             order = 15,
-            new = true
+            new = true,
+            editmode = true
         },
         useStateHandler = {
             type = 'toggle',
             name = L["MinimapUseStateHandler"],
             desc = L["MinimapUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'minimap'),
             group = 'headerVis',
-            order = 115
+            order = 115,
+            editmode = true
         }
     }
 }
@@ -152,7 +165,8 @@ do
             desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
             group = 'headerStyling',
             order = 13.1,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         }
     }
 
