@@ -125,7 +125,8 @@ local buffsOptions = {
             name = L["BuffsOptionsStyle"],
             desc = L["BuffsOptionsStyleDesc"],
             order = 20,
-            isExpanded = true
+            isExpanded = true,
+            editmode = true
         },
         expanded = {
             type = 'toggle',
@@ -133,7 +134,8 @@ local buffsOptions = {
             desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
             group = 'headerStyling',
             order = 10,
-            new = true
+            new = false,
+            editmode = true
         },
         useStateHandler = {
             type = 'toggle',
@@ -154,7 +156,8 @@ if DF.Cata then
             desc = OPTION_TOOLTIP_CONSOLIDATE_BUFFS,
             group = 'headerStyling',
             order = 13,
-            blizzard = true
+            blizzard = true,
+            editmode = true
         }
     }
 
