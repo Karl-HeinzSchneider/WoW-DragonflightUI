@@ -310,7 +310,8 @@ function Module:UpdateMinimap(state)
         return
     end
 
-    local minimapBorderTex = minimapModule.Frame.minimap
+    -- local minimapBorderTex = minimapModule.Frame.minimap
+    local minimapBorderTex = _G['DragonflightUIMinimapBorder']
     if not minimapBorderTex then return end -- TODO: HACK
 
     local c = CreateColorFromRGBHexString(state.minimapColor)
