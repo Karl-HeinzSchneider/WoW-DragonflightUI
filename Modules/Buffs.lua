@@ -22,11 +22,11 @@ local defaults = {
             sortDirection = '-',
             groupBy = '',
             paddingX = 5,
-            paddingY = 5,
+            paddingY = 0,
             wrapAfter = 10,
-            wrapXOffset = 5,
-            wrapYOffset = 5,
-            maxWraps = 3,
+            wrapXOffset = 0,
+            wrapYOffset = 14,
+            maxWraps = 4,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -225,7 +225,7 @@ function AddAuraHeaderTable(optionTable, sub)
             name = L["BuffsWrapXOffset"],
             desc = L["BuffsWrapXOffsetDesc"] .. getDefaultStr('wrapXOffset', sub),
             min = 0,
-            max = 3,
+            max = 30,
             bigStep = 1,
             group = 'headerStyling',
             order = 12,
@@ -236,7 +236,7 @@ function AddAuraHeaderTable(optionTable, sub)
             name = L["BuffsWrapYOffset"],
             desc = L["BuffsWrapYOffsetDesc"] .. getDefaultStr('wrapYOffset', sub),
             min = 0,
-            max = 3,
+            max = 30,
             bigStep = 1,
             group = 'headerStyling',
             order = 13,
@@ -247,7 +247,7 @@ function AddAuraHeaderTable(optionTable, sub)
             name = L["BuffsMaxWraps"],
             desc = L["BuffsMaxWrapsDesc"] .. getDefaultStr('maxWraps', sub),
             min = 0,
-            max = 16,
+            max = 32,
             bigStep = 1,
             group = 'headerStyling',
             order = 14,
@@ -284,13 +284,14 @@ local buffsOptions = {
         --     new = false,
         --     editmode = true
         -- },
-        -- useStateHandler = {
-        --     type = 'toggle',
-        --     name = L["BuffsOptionsUseStateHandler"],
-        --     desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
-        --     group = 'headerStyling',
-        --     order = 115
-        -- }
+        useStateHandler = {
+            type = 'toggle',
+            name = L["BuffsOptionsUseStateHandler"],
+            desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
+            group = 'headerVis',
+            order = 115,
+            editmode = true
+        }
     }
 }
 
@@ -628,6 +629,8 @@ function Module.UpdateBuffState(state)
         toggle:GetHighlightTexture():SetRotation(rotation)
     end
 
+    Module.NewBuffs:SetState(state)
+
     -- BuffFrame:SetScale(state.scale)
     -- BuffFrame:ClearAllPoints()
     -- -- BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
@@ -639,7 +642,7 @@ function Module.UpdateBuffState(state)
     -- TemporaryEnchantFrame:SetScale(state.scale)
     -- TemporaryEnchantFrame:SetParent(f)
 
-    -- if Module.StateHandlerAdded then f:UpdateStateHandler(state) end
+    if Module.StateHandlerAdded then f:UpdateStateHandler(state) end
 end
 
 function Module.MoveBuffs()
@@ -651,12 +654,15 @@ function Module.MoveBuffs()
 end
 
 function Module:CreateNewBuffs()
-    local container = CreateFrame("Frame", "DragonflightUIBuffFrameContainer", nil,
+    local container = CreateFrame("Frame", "DragonflightUIBuffFrameContainer", Module.DFBuffFrame,
                                   "DragonflightUIBuffFrameContainerTemplate");
     container:SetPoint('TOPRIGHT', Module.DFBuffFrame, 'TOPRIGHT', 0, 0)
     container:SetPoint('BOTTOMLEFT', Module.DFBuffFrame, 'BOTTOMLEFT', 0, 0)
+    container.Header:SetParent(Module.DFBuffFrame)
     -- container:SetSize(30, 30)
     container:Show();
+
+    Module.NewBuffs = container
 end
 
 -- set default, may be overriden by darkmode module

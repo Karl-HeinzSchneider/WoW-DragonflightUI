@@ -37,6 +37,9 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     header:SetAttribute("minWidth", 30);
     header:SetAttribute("minHeight", 30);
 
+    header:SetAttribute("includeWeapons", 1);
+    header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplate');
+
     header:SetAttribute("point", "TOPRIGHT");
     header:SetAttribute("xOffset", -30 - 5);
     header:SetAttribute("yOffset", 0);
@@ -50,7 +53,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     header:SetAttribute("separateOwn", "0");
 
     header:SetAttribute("sortMethod", "INDEX"); -- INDEX or NAME or TIME
-    header:SetAttribute("sortDir", "-"); -- - to reverse
+    header:SetAttribute("sortDirection", "-"); -- - to reverse
 
     header:Show()
 
@@ -102,7 +105,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
         self.BuffAlphaValue = (self.BuffAlphaValue * (1 - BUFF_MIN_ALPHA)) + BUFF_MIN_ALPHA;
     end)
 
-    local function updateStyle()
+    function header:UpdateStyle()
         for _, frame in header:ActiveChildren() do
             --
             frame:UpdateStyle()
@@ -112,9 +115,41 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     header:HookScript('OnEvent', function(event, ...)
         --
         -- print('OnEvent:', event, ...)
-        updateStyle()
+        header:UpdateStyle()
     end)
-    updateStyle()
+    header:UpdateStyle()
+end
+
+function DragonflightUIBuffFrameContainerTemplateMixin:SetState(state)
+    self.state = state
+    self:Update()
+    -- DevTools_Dump(state)
+end
+
+function DragonflightUIBuffFrameContainerTemplateMixin:Update()
+    -- print('DragonflightUIBuffFrameContainerTemplateMixin:Update()')
+    local state = self.state
+    local header = self.Header
+
+    -- header:SetAttribute("unit", "player");
+    -- header:SetAttribute("minWidth", 30);
+    -- header:SetAttribute("minHeight", 30);
+
+    -- header:SetAttribute("point", "TOPRIGHT");
+    header:SetAttribute("xOffset", -30 - state.paddingX);
+    header:SetAttribute("yOffset", state.paddingY);
+    header:SetAttribute("wrapAfter", state.wrapAfter);
+    header:SetAttribute("wrapXOffset", state.wrapXOffset);
+    header:SetAttribute("wrapYOffset", -30 - state.wrapYOffset);
+    header:SetAttribute("maxWraps", state.maxWraps);
+
+    -- sorting
+    -- header:SetAttribute("filter", filter);
+    header:SetAttribute("separateOwn", state.seperateOwn);
+    header:SetAttribute("sortMethod", state.sortMethod); -- INDEX or NAME or TIME
+    header:SetAttribute("sortDirection", state.sortDirection); -- - to reverse
+
+    header:UpdateStyle()
 end
 
 -- button template
@@ -130,6 +165,9 @@ function DragonflightUIAuraButtonTemplateMixin:OnLoad()
     cd.noCooldownCount = true -- no OmniCC timers
     cd:SetFrameLevel(3)
     self.Cooldown = cd
+
+    -- print('~~p', self:GetParent():GetName(), self:GetScale())
+    -- self:SetScale(1.5)
 
     --
     local filter = self:GetAttribute('DFFilter');
