@@ -29,6 +29,7 @@ Libs\AceSerializer-3.0\AceSerializer-3.0.xml
 Libs\AceHook-3.0\AceHook-3.0.xml
 Libs\AceConfig-3.0\AceConfig-3.0.xml
 
+Libs\LibClassicDurations\LibClassicDurations.xml
 Libs\LibDeflate\lib.xml
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\lib.xml
@@ -55,6 +56,7 @@ XML\Includes.xml
 # XML
 XML\Actionbar.xml
 XML\Bossframe.xml
+XML\Buffs.xml
 XML\Castbar.xml
 XML\CharacterStatsPanel.xml
 XML\ConfigCategoryList.xml

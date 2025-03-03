@@ -480,18 +480,18 @@ function Module.UpdateBuffState(state)
         toggle:GetHighlightTexture():SetRotation(rotation)
     end
 
-    BuffFrame:SetScale(state.scale)
-    BuffFrame:ClearAllPoints()
-    -- BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
-    BuffFrame:SetPoint('TOPRIGHT', f, 'TOPRIGHT', 0, 0)
+    -- BuffFrame:SetScale(state.scale)
+    -- BuffFrame:ClearAllPoints()
+    -- -- BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    -- BuffFrame:SetPoint('TOPRIGHT', f, 'TOPRIGHT', 0, 0)
 
-    BuffFrame:SetShown(state.expanded)
-    BuffFrame:SetParent(f)
+    -- BuffFrame:SetShown(state.expanded)
+    -- BuffFrame:SetParent(f)
 
-    TemporaryEnchantFrame:SetScale(state.scale)
-    TemporaryEnchantFrame:SetParent(f)
+    -- TemporaryEnchantFrame:SetScale(state.scale)
+    -- TemporaryEnchantFrame:SetParent(f)
 
-    if Module.StateHandlerAdded then f:UpdateStateHandler(state) end
+    -- if Module.StateHandlerAdded then f:UpdateStateHandler(state) end
 end
 
 function Module.MoveBuffs()
@@ -499,6 +499,105 @@ function Module.MoveBuffs()
         -- print('UIParent_UpdateTopFramePositions')
         local state = Module.db.profile.buffs
         Module.UpdateBuffState(state)
+    end)
+end
+
+function Module:CreateNewBuffs()
+    local header = CreateFrame("Frame", "DragonflightUIBuffFrameHeader", nil, "SecureAuraHeaderTemplate");
+    header:SetAttribute("unit", "player"); -- to activate UNITAURA event refresh
+    header:SetAttribute("filter", "HELPFUL");
+    header:SetAttribute("template", "DragonflightUIAuraButtonTemplate"); -- must be the template name of your XML
+    header:SetAttribute("minWidth", 100);
+    header:SetAttribute("minHeight", 100);
+
+    -- the following code create a buff bar anchor to TOPLEFT and buff orientation goes to right with 10 buttons max on two rows
+    header:SetAttribute("point", "TOPRIGHT");
+    header:SetAttribute("xOffset", -30 - 5);
+    header:SetAttribute("yOffset", 0);
+    header:SetAttribute("wrapAfter", 10);
+    header:SetAttribute("wrapXOffset", 0);
+    header:SetAttribute("wrapYOffset", -30 - 5);
+    header:SetAttribute("maxWraps", 2);
+
+    -- sorting
+    header:SetAttribute("sortMethod", "NAME"); -- INDEX or NAME or TIME
+    header:SetAttribute("sortDir", "+"); -- - to reverse
+    header:Show();
+
+    header:SetPoint('TOPRIGHT', Module.DFBuffFrame, 'TOPRIGHT', 0, 0)
+    header:Show();
+
+    -- provide a simple iterator to the header
+    local function siter_active_children(h, i)
+        i = i + 1;
+        local child = h:GetAttribute("child" .. i);
+        if child and child:IsShown() then return i, child, child:GetAttribute("index"); end
+    end
+    function header:ActiveChildren()
+        return siter_active_children, self, 0;
+    end
+
+    -- The update style function
+    local function updateStyle()
+        for _, frame in header:ActiveChildren() do
+
+            if not frame.Cooldown then
+                local cd = CreateFrame("Cooldown", nil, frame)
+                cd:SetAllPoints(frame.Icon)
+                cd:SetReverse(true)
+                cd.noCooldownCount = true -- no OmniCC timers
+                cd:SetFrameLevel(3)
+                frame.Cooldown = cd
+            end
+
+            local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal,
+                  spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura("player",
+                                                                                                          frame:GetID(),
+                                                                                                          "HELPFUL");
+            print('~', name, icon, count, expirationTime - duration)
+            if name then
+                frame.Icon:SetTexture(icon);
+                frame.Icon:Show();
+
+                if count > 1 then
+                    frame.count:SetText(count);
+                else
+                    frame.count:SetText("");
+                end
+
+                if duration > 0 then
+                    frame.Cooldown:SetCooldown(expirationTime - duration, duration);
+                    frame.Cooldown:SetAlpha(1.0);
+                    frame.Cooldown:Show();
+                    print('dur', expirationTime - duration, duration)
+                else
+                    frame.Cooldown:Hide();
+                    frame.Cooldown:SetCooldown(0, -1);
+                    frame.Cooldown:SetAlpha(0);
+                end
+
+                frame.count:Show();
+            else
+                frame.Icon:Hide();
+                frame.count:Hide();
+                frame.Cooldown:Hide();
+                frame.Cooldown:SetCooldown(0, -1);
+                frame.Cooldown:SetAlpha(0);
+
+            end
+        end
+    end
+
+    -- header:RegisterEvent("UNIT_AURA");
+    -- header:SetScript('OnEvent', function(event, ...)
+    --     --
+    --     print('OnEvent:', event, ...)
+    --     updateStyle()
+    -- end)
+    header:HookScript('OnEvent', function(event, ...)
+        --
+        print('OnEvent:', event, ...)
+        updateStyle()
     end)
 end
 
@@ -645,8 +744,9 @@ frame:SetScript('OnEvent', frame.OnEvent)
 -- Cata
 function Module.Cata()
     Module.CreateBuffFrame()
-    Module.AddBuffBorders()
-    Module.MoveBuffs()
+    -- Module.AddBuffBorders()
+    -- Module.MoveBuffs()
+    Module:CreateNewBuffs()
     Module.CreateDebuffFrame()
     Module.MoveDebuffs()
 end
@@ -663,8 +763,9 @@ end
 -- Era
 function Module.Era()
     Module.CreateBuffFrame()
-    Module.AddBuffBorders()
-    Module.MoveBuffs()
+    -- Module.AddBuffBorders()
+    -- Module.MoveBuffs()
+    Module:CreateNewBuffs()
     Module.CreateDebuffFrame()
     Module.MoveDebuffs()
 end

@@ -1,0 +1,46 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<!-- <Script file="Mixin/Castbar.mixin.lua" /> -->
+	<Button name="DragonflightUIAuraButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
+		<Size x="30" y="30" />
+		<Attributes>
+			<Attribute name="type2" value="cancelaura" />
+		</Attributes>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentIcon" parentKey="Icon" />
+				<FontString name="$parentCount" inherits="NumberFontNormal" parentKey="count">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="-2" y="2" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentDuration" inherits="GameFontNormalSmall" hidden="true" parentKey="duration">
+					<Anchors>
+						<Anchor point="TOP" relativePoint="BOTTOM" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("RightButtonUp")
+			</OnLoad>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
+				GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
+				if self:GetAttribute("target-slot") == 16 or self:GetAttribute("target-slot") == 17 or self:GetAttribute("target-slot") == 18 then
+				GameTooltip:SetInventoryItem("player", self:GetID());
+				else
+				GameTooltip:SetUnitAura("player", self:GetID());
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Button>
+</Ui>
