@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
-	<!-- <Script file="Mixin/Castbar.mixin.lua" /> -->
-	<Button name="DragonflightUIAuraButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
+	<Script file="Mixin/Buff.mixin.lua" />
+	<Button name="DragonflightUIAuraButtonTemplate" mixin="DragonflightUIAuraButtonTemplateMixin" inherits="SecureActionButtonTemplate" virtual="true">
 		<Size x="30" y="30" />
 		<Attributes>
 			<Attribute name="type2" value="cancelaura" />
@@ -26,9 +26,7 @@ UI_shared.xsd">
 			</Layer>
 		</Layers>
 		<Scripts>
-			<OnLoad>
-				self:RegisterForClicks("RightButtonUp")
-			</OnLoad>
+			<OnLoad method="OnLoad" />
 			<OnEnter>
 				GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
 				GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
@@ -43,4 +41,11 @@ UI_shared.xsd">
 			</OnLeave>
 		</Scripts>
 	</Button>
+	<Frame name="DragonflightUIBuffFrameContainerTemplate" mixin="DragonflightUIBuffFrameContainerTemplateMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnEvent method="OnEvent" /> -->
+			<!-- <OnUpdate method="OnUpdate" /> -->
+		</Scripts>
+	</Frame>
 </Ui>
