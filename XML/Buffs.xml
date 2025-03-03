@@ -9,7 +9,7 @@ UI_shared.xsd">
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="$parentIcon" parentKey="Icon" />
-				<FontString name="$parentCount" inherits="NumberFontNormal" parentKey="count">
+				<FontString name="$parentCount" inherits="NumberFontNormal" parentKey="Count">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
 							<Offset>
@@ -18,7 +18,7 @@ UI_shared.xsd">
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentDuration" inherits="GameFontNormalSmall" hidden="true" parentKey="duration">
+				<FontString name="$parentDuration" inherits="GameFontNormalSmall" hidden="true" parentKey="Duration">
 					<Anchors>
 						<Anchor point="TOP" relativePoint="BOTTOM" />
 					</Anchors>
