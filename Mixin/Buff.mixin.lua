@@ -191,7 +191,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
                                                                                                             self:GetID(),
                                                                                                             "HELPFUL");
     -- print('~', name, icon, count, expirationTime - duration)
-    local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
+    -- local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
     -- print('~', name, shouldConsolidate, #auraData.points > 0)
 
     if name then
