@@ -16,6 +16,17 @@ local defaults = {
             x = -55,
             y = -13,
             expanded = true,
+            -- auraheader
+            seperateOwn = '0',
+            sortMethod = 'INDEX',
+            sortDirection = '-',
+            groupBy = '',
+            paddingX = 5,
+            paddingY = 5,
+            wrapAfter = 10,
+            wrapXOffset = 5,
+            wrapYOffset = 5,
+            maxWraps = 3,
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -114,36 +125,172 @@ local frameTable = {
     {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
 }
 
+local seperateOwnTable = {
+    {value = '-1', text = 'after', tooltip = 'descr', label = 'label'},
+    {value = '0', text = 'before', tooltip = 'descr', label = 'label'},
+    {value = '1', text = 'no seperation', tooltip = 'descr', label = 'label'}
+}
+
+local sortMethodTable = {
+    {value = 'INDEX', text = 'Index', tooltip = 'descr', label = 'label'},
+    {value = 'NAME', text = 'Name', tooltip = 'descr', label = 'label'},
+    {value = 'TIME', text = 'Time', tooltip = 'descr', label = 'label'}
+}
+
+local sortDirectionTable = {
+    {value = '+', text = '+', tooltip = 'descr', label = 'label'},
+    {value = '-', text = '-', tooltip = 'descr', label = 'label'}
+}
+function AddAuraHeaderTable(optionTable, sub)
+    local AuraHeaderTable = {
+        headerStyling = {
+            type = 'header',
+            name = L["BuffsHeaderAura"],
+            desc = L["BuffsHeaderAuraDesc"],
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
+        -- castTimeEnabled = {
+        --     type = 'toggle',
+        --     name = L["CastbarTableShowCastTimeText"],
+        --     desc = L["CastbarTableShowCastTimeTextDesc"] .. getDefaultStr('castTimeEnabled', sub),
+        --     group = 'headerStyling',
+        --     order = 14,
+        --     editmode = true
+        -- },
+        ----
+        seperateOwn = {
+            type = 'select',
+            name = L["BuffsSeperateOwn"],
+            desc = L["BuffsSeperateOwnDesc"] .. getDefaultStr('seperateOwn', sub),
+            dropdownValues = seperateOwnTable,
+            order = 1,
+            group = 'headerStyling',
+            editmode = true
+        },
+        sortMethod = {
+            type = 'select',
+            name = L["BuffsSortMethod"],
+            desc = L["BuffsSortMethodDesc"] .. getDefaultStr('sortMethod', sub),
+            dropdownValues = sortMethodTable,
+            order = 2,
+            group = 'headerStyling',
+            editmode = true
+        },
+        sortDirection = {
+            type = 'select',
+            name = L["BuffsSortDirection"],
+            desc = L["BuffsSortDirectionDesc"] .. getDefaultStr('sortDirection', sub),
+            dropdownValues = sortDirectionTable,
+            order = 3,
+            group = 'headerStyling',
+            editmode = true
+        },
+        paddingX = {
+            type = 'range',
+            name = L["BuffsPaddingX"],
+            desc = L["BuffsPaddingXDesc"] .. getDefaultStr('paddingX', sub),
+            min = 0,
+            max = 30,
+            bigStep = 0.1,
+            group = 'headerStyling',
+            order = 5,
+            editmode = true
+        },
+        paddingY = {
+            type = 'range',
+            name = L["BuffsPaddingY"],
+            desc = L["BuffsPaddingYDesc"] .. getDefaultStr('paddingY', sub),
+            min = 0,
+            max = 30,
+            bigStep = 0.1,
+            group = 'headerStyling',
+            order = 6,
+            editmode = true
+        },
+        wrapAfter = {
+            type = 'range',
+            name = L["BuffsWrapAfter"],
+            desc = L["BuffsWrapAfterDesc"] .. getDefaultStr('wrapAfter', sub),
+            min = 0,
+            max = 32,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 11,
+            editmode = true
+        },
+        wrapXOffset = {
+            type = 'range',
+            name = L["BuffsWrapXOffset"],
+            desc = L["BuffsWrapXOffsetDesc"] .. getDefaultStr('wrapXOffset', sub),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 12,
+            editmode = true
+        },
+        wrapYOffset = {
+            type = 'range',
+            name = L["BuffsWrapYOffset"],
+            desc = L["BuffsWrapYOffsetDesc"] .. getDefaultStr('wrapYOffset', sub),
+            min = 0,
+            max = 3,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 13,
+            editmode = true
+        },
+        maxWraps = {
+            type = 'range',
+            name = L["BuffsMaxWraps"],
+            desc = L["BuffsMaxWrapsDesc"] .. getDefaultStr('maxWraps', sub),
+            min = 0,
+            max = 16,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 14,
+            editmode = true
+        }
+    }
+
+    for k, v in pairs(AuraHeaderTable) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
 local buffsOptions = {
     type = 'group',
     name = L["BuffsOptionsName"],
     get = getOption,
     set = setOption,
     args = {
-        headerStyling = {
-            type = 'header',
-            name = L["BuffsOptionsStyle"],
-            desc = L["BuffsOptionsStyleDesc"],
-            order = 20,
-            isExpanded = true,
-            editmode = true
-        },
-        expanded = {
-            type = 'toggle',
-            name = L["BuffsOptionsExpanded"],
-            desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
-            group = 'headerStyling',
-            order = 10,
-            new = false,
-            editmode = true
-        },
-        useStateHandler = {
-            type = 'toggle',
-            name = L["BuffsOptionsUseStateHandler"],
-            desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
-            group = 'headerStyling',
-            order = 115
-        }
+        -- headerStyling = {
+        --     type = 'header',
+        --     name = L["BuffsOptionsStyle"],
+        --     desc = L["BuffsOptionsStyleDesc"],
+        --     order = 20,
+        --     isExpanded = true,
+        --     editmode = true
+        -- },
+        -- expanded = {
+        --     type = 'toggle',
+        --     name = L["BuffsOptionsExpanded"],
+        --     desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
+        --     group = 'headerStyling',
+        --     order = 10,
+        --     new = false,
+        --     editmode = true
+        -- },
+        -- useStateHandler = {
+        --     type = 'toggle',
+        --     name = L["BuffsOptionsUseStateHandler"],
+        --     desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
+        --     group = 'headerStyling',
+        --     order = 115
+        -- }
     }
 }
 
@@ -194,6 +341,7 @@ if DF.Cata then
         end
     end
 end
+AddAuraHeaderTable(buffsOptions, 'buffs')
 DF.Settings:AddPositionTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, buffsOptions, 'buffs', 'Buffs', getDefaultStr)
 local optionsBuffEditmode = {

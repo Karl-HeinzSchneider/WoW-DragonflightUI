@@ -266,17 +266,38 @@ L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
 L["ExtraActionButtonStyleDesc"] = ""
 L["ExtraActionButtonHideBackgroundTexture"] = "Hide Background Texture"
 L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+
 -- Buffs
 L["BuffsOptionsName"] = "Buffs"
 L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
 L["BuffsOptionsStyleDesc"] = ""
-
 L["BuffsOptionsExpanded"] = "Expanded"
 L["BuffsOptionsExpandedDesc"] = ""
-
 L["BuffsOptionsUseStateHandler"] = "Use State Handler"
 L["BuffsOptionsUseStateHandlerDesc"] =
     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+L["BuffsHeaderAura"] = "Aura Header"
+L["BuffsHeaderAuraDesc"] = ""
+L["BuffsPaddingX"] = "Padding X"
+L["BuffsPaddingXDesc"] = "The X-padding between auras."
+L["BuffsPaddingY"] = "Padding Y"
+L["BuffsPaddingYDesc"] = "The Y-padding between auras."
+L["BuffsWrapAfter"] = "Wrap After"
+L["BuffsWrapAfterDesc"] = "Begin a new row or column after this many auras.\nIf 0, never wrap or limit the first row."
+L["BuffsWrapXOffset"] = "Wrap X-Offset"
+L["BuffsWrapXOffsetDesc"] = "The X-offset from one row or column to the next."
+L["BuffsWrapYOffset"] = "Wrap Y-Offset"
+L["BuffsWrapYOffsetDesc"] = "The Y-offset from one row or column to the next."
+L["BuffsMaxWraps"] = "Max Wraps"
+L["BuffsMaxWrapsDesc"] =
+    "Limit the number of rows or columns.\nIf 0, the number of rows or columns will not be limited. "
+L["BuffsSeperateOwn"] = "Seperate Own Auras"
+L["BuffsSeperateOwnDesc"] =
+    "Indicate wheter buffs you cast yourself should be seperated before (1) or after (-1) others.\nIf (0), no seperation is done."
+L["BuffsSortMethod"] = "Sort Method"
+L["BuffsSortMethodDesc"] = "Defines how the group is sorted."
+L["BuffsSortDirection"] = "Sort Direction"
+L["BuffsSortDirectionDesc"] = "Defines the sort order."
 
 -- Castbar
 L["CastbarName"] = "Cast Bar"
