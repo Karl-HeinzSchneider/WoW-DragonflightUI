@@ -62,4 +62,49 @@ UI_shared.xsd">
 			<!-- <OnUpdate method="OnUpdate" /> -->
 		</Scripts>
 	</Frame>
+	<Button name="DragonflightUIConsolidatedBuffsTemplate" mixin="DragonflightUIConsolidatedBuffsTemplateMixin" inherits="AuraButtonTemplate" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnUpdate method="OnUpdate" />
+			<OnEnter method="OnEnter" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+		</Scripts>
+	</Button>
+	<Frame name="DragonflightUIConsolidateBuffsProxyHeaderTemplate" mixin="DragonflightUIConsolidateBuffsProxyHeaderTemplateMixin" inherits="SecureAuraHeaderTemplate" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<Frame name="DragonflightUIConsolidatedBuffsTooltip" inherits="TooltipBackdropTemplate" frameStrata="TOOLTIP" clampedToScreen="true" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" />
+		</Anchors>
+		<Size x="60" y="60" />
+		<Frames>
+			<Frame parentKey="Container">
+				<Size x="60" y="60" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="16" y="-16" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.Container:SetScale(0.66);
+			</OnLoad>
+			<OnEnter>
+				self.mousedOver = true;
+			</OnEnter>
+			<OnUpdate>
+				if ( self.mousedOver and not ConsolidatedBuffs.mousedOver and not self:IsMouseOver() ) then
+				self.mousedOver = nil;
+				self:Hide();
+				end
+			</OnUpdate>
+			<OnHide>
+				self.mousedOver = nil;
+			</OnHide>
+		</Scripts>
+	</Frame>
 </Ui>

@@ -19,7 +19,7 @@ local defaults = {
             -- auraheader
             seperateOwn = '0',
             sortMethod = 'INDEX',
-            sortDirection = '-',
+            sortDirection = '+',
             groupBy = '',
             paddingX = 5,
             paddingY = 0,
