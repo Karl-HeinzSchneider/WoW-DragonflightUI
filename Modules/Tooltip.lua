@@ -80,6 +80,7 @@ local function setOption(info, value)
 end
 
 -- 
+local CreateColor = DFCreateColor;
 local GetItemInfo = (C_Item and C_Item.GetItemInfo) and C_Item.GetItemInfo or GetItemInfo
 local GetItemQualityColor = (C_Item and C_Item.GetItemQualityColor) and C_Item.GetItemQualityColor or
                                 GetItemQualityColor

@@ -36,6 +36,8 @@ Libs\LibQuestXP\LibQuestXP-Classic.xml
 Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
 Libs\TaintLess\TaintLess.xml
 
+Mixin\DFColor.mixin.lua
+
 Core.lua
 Config.lua
 Version.lua

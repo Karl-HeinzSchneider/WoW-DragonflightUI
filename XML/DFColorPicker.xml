@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
+	<Script file="Mixin/DFColor.mixin.lua" />
 	<Script file="Mixin/DFColorPicker.mixin.lua" />
 	<Frame name="DragonflightUIColorPicker" mixin="DFColorPickerMixin" virtual="false" toplevel="true" clampedToScreen="true" registerForDrag="LeftButton" movable="true" enableMouse="true" enableKeyboard="true" hidden="true" frameStrata="DIALOG">
 		<Size>
