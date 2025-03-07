@@ -1175,6 +1175,35 @@ function DFProfessionMixin:SetCurrentProfession()
         end
     end
 
+    -- linked profession
+    local isLink, playerName = IsTradeSkillLinked()
+    if DF.Cata and isLink and playerName and playerName ~= '' then
+        --
+        -- print('SetCurrentProfession LINKED')
+        local tradeskillName, currentLevel, maxLevel, skillLineModifier = GetTradeSkillLine()
+
+        local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(tradeskillName)
+
+        if skillID then
+            local profDataTable = self.ProfessionDataTable[skillID]
+
+            self.ProfessionTable['linked'] = {
+                nameLoc = tradeskillName,
+                icon = profDataTable.icon,
+                skillID = skillID,
+                skill = currentLevel,
+                maxSkill = maxLevel,
+                profData = profDataTable
+            }
+
+            self.SelectedProfession = 'linked'
+            return 'linked'
+        end
+
+    end
+
+    self.ProfessionTable['linked'] = nil;
+
     self.SelectedProfession = nil;
     return nil;
 end
@@ -1455,7 +1484,7 @@ function DFProfessionMixin:UpdateHeader()
             self.LinkButton:Show()
         end
     end
-    self.LinkButton:Hide() -- @TODO
+    -- self.LinkButton:Hide() -- @TODO
 
     self.SchematicForm.Background:SetTexture(base .. prof.profData.tex)
 
