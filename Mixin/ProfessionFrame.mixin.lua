@@ -443,7 +443,7 @@ function DFProfessionMixin:UpdateTrainingPoints()
     end
 end
 
-local MAX_TRADE_SKILL_REAGENTS = 6 -- 8
+local MAX_TRADE_SKILL_REAGENTS = 8 -- 8
 
 function DFProfessionMixin:SetupSchematics()
     local frame = self.SchematicForm
@@ -537,7 +537,11 @@ function DFProfessionMixin:SetupSchematics()
         --
         local reagent = CreateFrame('BUTTON', 'DragonflightUIProfession' .. 'Reagent' .. i, frame, 'QuestItemTemplate',
                                     i)
-        reagent:SetPoint('TOPLEFT', reagentLabel, 'TOPLEFT', 1, -23 - (i - 1) * 45)
+        if i <= 6 then
+            reagent:SetPoint('TOPLEFT', reagentLabel, 'TOPLEFT', 1, -23 - (i - 1) * 45)
+        else
+            reagent:SetPoint('TOPLEFT', frame.ReagentTable[i - 2], 'TOPRIGHT', 6, 0)
+        end
         reagent:SetSize(180, 50)
         frame.ReagentTable[i] = reagent
 
