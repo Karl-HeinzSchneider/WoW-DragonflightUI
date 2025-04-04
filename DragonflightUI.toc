@@ -50,6 +50,7 @@ Localization\BlizzardData\Professions.lua
 Localization\enUS.lua
 Localization\esES.lua
 Localization\ruRU.lua
+Localization\zhCN.lua
 
 XML\Includes.xml
 ## Bindings.xml
