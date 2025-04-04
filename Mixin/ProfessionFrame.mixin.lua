@@ -74,6 +74,9 @@ function DFProfessionMixin:OnLoad()
         --
         self:ResetFilter()
     end)
+
+    -- blizzmove
+    self:AddBlizzMoveSupport();
 end
 
 function DFProfessionMixin:OnShow()
@@ -441,6 +444,21 @@ function DFProfessionMixin:UpdateTrainingPoints()
     else
         self.TrainingFrame:Hide()
     end
+end
+
+function DFProfessionMixin:AddBlizzMoveSupport()
+    DF.Compatibility:FuncOrWaitframe('BlizzMove', function()
+        --
+        -- print('blizzmovess')
+        if not BlizzMoveAPI or not BlizzMoveAPI.RegisterAddOnFrames then return end
+
+        local data = {['DragonflightUI'] = {['DragonflightUIProfessionFrame'] = {}}}
+
+        if TradeSkillFrame then TradeSkillFrame:SetAlpha(0); end
+        if CraftFrame then CraftFrame:SetAlpha(0); end
+
+        BlizzMoveAPI:RegisterAddOnFrames(data)
+    end)
 end
 
 local MAX_TRADE_SKILL_REAGENTS = 8 -- 8
