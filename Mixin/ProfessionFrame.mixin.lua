@@ -857,6 +857,8 @@ function DFProfessionMixin:SetupTabs()
                 spellToCast = 'Peletería'
             elseif spellToCast == 'Minería' then
                 spellToCast = 'Fundiendo'
+            elseif spellToCast == 'Secourisme' then
+                spellToCast = 'Premiers soins'
             end
 
             if spellToCast == DragonflightUILocalizationData.DF_CHARACTER_PROFESSIONMINING then

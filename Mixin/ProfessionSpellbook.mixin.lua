@@ -59,6 +59,11 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
             nameLoc = 'Peletería' -- tailoring
         end
 
+        -- @TODO - same with french
+        if nameLoc == 'Secourisme' then
+            nameLoc = 'Premiers soins' -- first aid            
+        end
+
         if skillID then
             --
             -- print(nameLoc, skillRank, skillID)
@@ -139,11 +144,12 @@ function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
     local maxFinder = 69
 
     for i = 1, maxFinder do
-        local spell, rank = GetSpellInfo(i, BOOKTYPE_SPELL)
+        -- local spell, rank = GetSpellInfo(i, BOOKTYPE_SPELL)
+        local spellName, spellSubName, spellID = GetSpellBookItemName(i, BOOKTYPE_SPELL)
         -- print(name .. ':', i, spell, rank)
-        if (not spell) then break end
+        if (not spellName) then break end
 
-        if spell == name then
+        if spellName == name then
             --
             -- print('Found!', name, i)
             return i
