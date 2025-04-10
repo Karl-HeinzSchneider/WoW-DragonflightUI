@@ -80,6 +80,7 @@ local function setOption(info, value)
 end
 
 -- 
+local CreateColor = DFCreateColor;
 local GetItemInfo = (C_Item and C_Item.GetItemInfo) and C_Item.GetItemInfo or GetItemInfo
 local GetItemQualityColor = (C_Item and C_Item.GetItemQualityColor) and C_Item.GetItemQualityColor or
                                 GetItemQualityColor
@@ -1109,6 +1110,7 @@ function Module:UnitNPCTooltip(self)
 
     local name, unit = self:GetUnit()
 
+    -- print('Module:UnitNPCTooltip(self)', name, unit)
     local r, g, b = GameTooltip_UnitColor(unit)
     local level = UnitLevel(unit)
 
@@ -1265,9 +1267,11 @@ function Module:GrayOutOnDeath(self, unit)
     for i = 2, self:NumLines() do
         line = _G[self:GetName() .. 'TextLeft' .. i];
         text = line:GetText() or '';
-        text = text:gsub("|cff%x%x%x%x%x%x", "|cffaaaaaa");
-        line:SetTextColor(0.7, 0.7, 0.7);
-        line:SetText(text)
+        if text ~= UNIT_SKINNABLE_LEATHER then
+            text = text:gsub("|cff%x%x%x%x%x%x", "|cffaaaaaa");
+            line:SetTextColor(0.7, 0.7, 0.7);
+            line:SetText(text)
+        end
     end
 end
 

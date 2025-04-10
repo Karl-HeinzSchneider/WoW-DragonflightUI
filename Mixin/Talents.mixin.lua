@@ -301,8 +301,8 @@ function DragonflightUITalentsPanelMixin:ButtonOnClick(self, button)
             --
             if (GetCVarBool("previewTalentsOption")) then
                 AddPreviewTalentPoints(panelID, talentID, 1, false, selectedSpec)
-            else    
-            ---@diagnostic disable-next-line: redundant-parameter
+            else
+                ---@diagnostic disable-next-line: redundant-parameter
                 LearnTalent(panelID, talentID)
             end
         elseif button == 'RightButton' then
@@ -625,7 +625,7 @@ function DragonflightUITalentsPanelMixin:SetPrereqs(buttonTier, buttonColumn, fo
     for i = 1, select("#", ...), 4 do
         local tier, column, isLearnable, isPreviewLearnable = select(i, ...);
         if (forceDesaturated or (preview and not isPreviewLearnable) or (not preview and not isLearnable)) then
----@diagnostic disable-next-line: cast-local-type
+            ---@diagnostic disable-next-line: cast-local-type
             requirementsMet = nil;
         end
         self:DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
@@ -692,6 +692,7 @@ function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tie
             for i = tier + 1, buttonTier - 1 do
                 if (self.TALENT_BRANCH_ARRAY[i][buttonColumn].id) then
                     -- If there's an id, there's a blocker
+                    ---@diagnostic disable-next-line: missing-parameter
                     message("Error this layout is blocked vertically " .. self.TALENT_BRANCH_ARRAY[buttonTier][i].id);
                     return;
                 end
@@ -721,6 +722,7 @@ function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tie
             for i = left + 1, right - 1 do
                 if (self.TALENT_BRANCH_ARRAY[tier][i].id) then
                     -- If there's an id, there's a blocker
+                    ---@diagnostic disable-next-line: missing-parameter
                     message("there's a blocker " .. tier .. " " .. i);
                     return;
                 end
@@ -785,6 +787,7 @@ function DragonflightUITalentsPanelMixin:DrawLines(buttonTier, buttonColumn, tie
     for i = left, right do
         if (self.TALENT_BRANCH_ARRAY[buttonTier][i].id) then
             -- If there's an id, then throw an error
+            ---@diagnostic disable-next-line: missing-parameter
             message("Error, this layout is undrawable " .. self.TALENT_BRANCH_ARRAY[buttonTier][i].id);
             return;
         end

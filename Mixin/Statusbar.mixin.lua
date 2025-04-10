@@ -86,31 +86,15 @@ function DragonflightUIXPBarMixin:CreateBar()
     local Path, Size, Flags = MainMenuBarExpText:GetFont()
     f.Bar:EnableMouse(true)
 
-    f.Text = f.Bar:CreateFontString('XPBarText', 'HIGHLIGHT', 'GameFontNormal')
-    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
+    f.Text = f.Bar:CreateFontString('XPBarText', 'HIGHLIGHT', 'SystemFont_Outline_Small')
 
-    local newFont = 'Fonts\\FRIZQT__.ttf'
-
-    local locale = GetLocale()
-    if locale == "ruRU" then
-        newFont = "Fonts\\FRIZQT___CYR.TTF"
-    elseif locale == "koKR" then
-        newFont = "Fonts\\2002.TTF"
-    elseif locale == "zhCN" then
-        newFont = "Fonts\\ARKai_T.TTF"
-    elseif locale == "zhTW" then
-        newFont = "Fonts\\blei00d.TTF"
-    end
-
-    f.Text:SetFont(newFont, 10, 'OUTLINE')
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()
     f.Text:SetParent(f.Bar)
     f.Text:SetPoint('CENTER', 0, 1.5)
 
-    f.TextPercent = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    f.TextPercent:SetFont(newFont, 10, 'OUTLINE')
+    f.TextPercent = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'SystemFont_Outline_Small')
     f.TextPercent:SetTextColor(1, 1, 1, 1)
     f.TextPercent:SetText('69%')
     f.TextPercent:ClearAllPoints()
@@ -370,14 +354,9 @@ function DragonflightUIRepBarMixin:CreateBar()
     border:SetPoint('BOTTOMRIGHT', 0, 0)
     f.Border = border
 
-    -- text
-    local newFont = 'Fonts\\FRIZQT__.ttf'
-    if GetLocale() == "ruRU" then newFont = "Fonts\\FRIZQT___CYR.TTF" end
-
     f.Bar:EnableMouse(true)
-    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'GameFontNormal')
-    -- f.Text = f.Bar:CreateFontString('Text', 'OVERLAY', 'GameFontNormal')
-    f.Text:SetFont(newFont, 10, 'OUTLINE')
+    f.Text = f.Bar:CreateFontString('Text', 'HIGHLIGHT', 'SystemFont_Outline_Small')
+
     f.Text:SetTextColor(1, 1, 1, 1)
     f.Text:SetText('')
     f.Text:ClearAllPoints()

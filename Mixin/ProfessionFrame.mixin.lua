@@ -2,6 +2,8 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
+local CreateColor = DFCreateColor;
+
 -- filter
 local DFFilter = {}
 
@@ -72,6 +74,9 @@ function DFProfessionMixin:OnLoad()
         --
         self:ResetFilter()
     end)
+
+    -- blizzmove
+    self:AddBlizzMoveSupport();
 end
 
 function DFProfessionMixin:OnShow()
@@ -441,7 +446,22 @@ function DFProfessionMixin:UpdateTrainingPoints()
     end
 end
 
-local MAX_TRADE_SKILL_REAGENTS = 6 -- 8
+function DFProfessionMixin:AddBlizzMoveSupport()
+    DF.Compatibility:FuncOrWaitframe('BlizzMove', function()
+        --
+        -- print('blizzmovess')
+        if not BlizzMoveAPI or not BlizzMoveAPI.RegisterAddOnFrames then return end
+
+        local data = {['DragonflightUI'] = {['DragonflightUIProfessionFrame'] = {}}}
+
+        if TradeSkillFrame then TradeSkillFrame:SetAlpha(0); end
+        if CraftFrame then CraftFrame:SetAlpha(0); end
+
+        BlizzMoveAPI:RegisterAddOnFrames(data)
+    end)
+end
+
+local MAX_TRADE_SKILL_REAGENTS = 8 -- 8
 
 function DFProfessionMixin:SetupSchematics()
     local frame = self.SchematicForm
@@ -535,7 +555,11 @@ function DFProfessionMixin:SetupSchematics()
         --
         local reagent = CreateFrame('BUTTON', 'DragonflightUIProfession' .. 'Reagent' .. i, frame, 'QuestItemTemplate',
                                     i)
-        reagent:SetPoint('TOPLEFT', reagentLabel, 'TOPLEFT', 1, -23 - (i - 1) * 45)
+        if i <= 6 then
+            reagent:SetPoint('TOPLEFT', reagentLabel, 'TOPLEFT', 1, -23 - (i - 1) * 45)
+        else
+            reagent:SetPoint('TOPLEFT', frame.ReagentTable[i - 2], 'TOPRIGHT', 6, 0)
+        end
         reagent:SetSize(180, 50)
         frame.ReagentTable[i] = reagent
 
@@ -833,6 +857,8 @@ function DFProfessionMixin:SetupTabs()
                 spellToCast = 'Peletería'
             elseif spellToCast == 'Minería' then
                 spellToCast = 'Fundiendo'
+            elseif spellToCast == 'Secourisme' then
+                spellToCast = 'Premiers soins'
             end
 
             if spellToCast == DragonflightUILocalizationData.DF_CHARACTER_PROFESSIONMINING then
@@ -1169,6 +1195,35 @@ function DFProfessionMixin:SetCurrentProfession()
         end
     end
 
+    -- linked profession
+    local isLink, playerName = IsTradeSkillLinked()
+    if DF.Cata and isLink and playerName and playerName ~= '' then
+        --
+        -- print('SetCurrentProfession LINKED')
+        local tradeskillName, currentLevel, maxLevel, skillLineModifier = GetTradeSkillLine()
+
+        local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(tradeskillName)
+
+        if skillID then
+            local profDataTable = self.ProfessionDataTable[skillID]
+
+            self.ProfessionTable['linked'] = {
+                nameLoc = tradeskillName,
+                icon = profDataTable.icon,
+                skillID = skillID,
+                skill = currentLevel,
+                maxSkill = maxLevel,
+                profData = profDataTable
+            }
+
+            self.SelectedProfession = 'linked'
+            return 'linked'
+        end
+
+    end
+
+    self.ProfessionTable['linked'] = nil;
+
     self.SelectedProfession = nil;
     return nil;
 end
@@ -1449,7 +1504,7 @@ function DFProfessionMixin:UpdateHeader()
             self.LinkButton:Show()
         end
     end
-    self.LinkButton:Hide() -- @TODO
+    -- self.LinkButton:Hide() -- @TODO
 
     self.SchematicForm.Background:SetTexture(base .. prof.profData.tex)
 

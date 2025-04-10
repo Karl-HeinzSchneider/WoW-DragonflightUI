@@ -1,13 +1,6 @@
--- Wrath color
-if not ColorMixin.GenerateHexColorNoAlpha then
-    -- print('NO COLORMIXIN')
-    function ColorMixin:GenerateHexColorNoAlpha()
-        return ("%.2X%.2X%.2X"):format(self:GetRGBAsBytes());
-    end
-end
+local CreateColor = DFCreateColor;
 
 ------------------
-
 DFColorPickerMixin = {}
 
 function DFColorPickerMixin:OnLoad()
