@@ -1188,6 +1188,11 @@ function Module:AddUnitLine(self, unit, index)
     local levelHex = levelColor:GenerateHexColor()
     local levelString = '|c' .. levelHex .. level .. '|r'
 
+    if level == -1 then
+        --
+        levelString = '|r|cffff0000??|r';
+    end
+
     if UnitIsPlayer(unit) then
         local localizedClass, englishClass, classIndex = UnitClass(unit);
 
@@ -1196,29 +1201,30 @@ function Module:AddUnitLine(self, unit, index)
         unitLine:SetFormattedText("%s %s %s", levelString, UnitRace(unit),
                                   DF:GetClassColoredText(localizedClass, englishClass))
     else
+        local creature = UnitCreatureFamily(unit) or UnitCreatureType(unit) or ''
+        -- @TODO: localization    if 'Non-Combat Pet' => 'Pet' etc
+
         local class = UnitClassification(unit)
         --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
         if class == 'worldboss' then
-            class = '|r|cffff0000??'
+            -- e.g. ?? Boss
+            unitLine:SetFormattedText("%s %s |r|cffffffff%s", levelString, 'Boss', creature)
         elseif class == 'rareelite' then
-            class = format("+ |cffff00da%s", ITEM_QUALITY3_DESC)
+            -- e.g. 69+ Rare
+            unitLine:SetFormattedText("%s%s |r|cffffffff%s", levelString, format("+ |cffff00da%s", ITEM_QUALITY3_DESC),
+                                      creature)
         elseif class == 'elite' then
-            class = '+'
+            -- e.g. 69+
+            unitLine:SetFormattedText("%s%s |r|cffffffff%s", levelString, '+', creature)
         elseif class == 'rare' then
-            class = format(" |cffff00da%s", ITEM_QUALITY3_DESC)
+            -- e.g. 69 Rare
+            unitLine:SetFormattedText("%s %s |r|cffffffff%s", levelString, format("|cffff00da%s", ITEM_QUALITY3_DESC),
+                                      creature)
             -- elseif class == 'normal' then
             -- elseif class == 'trivial' then
             -- elseif class == 'minus' then
         else
-            class = ''
-        end
-
-        local creature = UnitCreatureFamily(unit) or UnitCreatureType(unit) or ''
-        -- TODO: localization    if 'Non-Combat Pet' => 'Pet' etc
-
-        if class ~= '' then
-            unitLine:SetFormattedText("%s%s |r|cffffffff%s", levelString, class, creature)
-        else
+            -- e.g. 69
             unitLine:SetFormattedText("%s |r|cffffffff%s", levelString, creature)
         end
     end
