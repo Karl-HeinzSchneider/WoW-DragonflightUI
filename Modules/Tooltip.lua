@@ -607,7 +607,8 @@ function Module:HookDefaultAnchor()
                 focused = GetMouseFocus()
             end
 
-            if focused == WorldFrame then
+            -- @TODO @HACK GetMouseFoci returns empty table on units instead of one with worldframe
+            if focused == WorldFrame or (DF.Era and not focused) then
                 -- units etc
                 self:ClearAllPoints();
                 self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
