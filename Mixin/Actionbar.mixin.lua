@@ -110,7 +110,7 @@ function DragonflightUIActionbarMixin:Update()
 
     local modulo = state.buttons % state.rows
 
-    local buttons = state.buttons
+    local buttons = math.min(state.buttons, btnCount)
     local rows = state.rows
     if rows > state.buttons then rows = buttons end
 
@@ -1105,7 +1105,7 @@ function DragonflightUIStancebarMixinCode:Update()
 
     local modulo = state.buttons % state.rows
 
-    local buttons = state.buttons
+    local buttons = math.min(state.buttons, btnCount)
     -- local buttons = math.min(state.buttons, GetNumShapeshiftForms())
     local rows = state.rows
     if rows > state.buttons then rows = buttons end
