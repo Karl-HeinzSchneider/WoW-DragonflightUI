@@ -1291,7 +1291,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         frame:DFUpdateFrameWidth(frame.Expanded)
     end)
 
-    -- add characterstats panel
+    -- add characterstats panel + equzipment manager
     if DF.Era then
         --
         local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
@@ -1310,7 +1310,28 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         p:SetSize(100, 100)
         p:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
         p:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
-        p:Show()
+        p:Hide()
+
+        local titlePanel = CreateFrame('Frame', 'DragonflightUICharacterTitlePanel', insetRight)
+        titlePanel:SetSize(100, 100)
+        titlePanel:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
+        titlePanel:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
+        titlePanel:Hide()
+
+        local equipmentPanel = CreateFrame('Frame', 'DragonflightUICharacterEquipmentManagerPanel', insetRight)
+        equipmentPanel:SetSize(100, 100)
+        equipmentPanel:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
+        equipmentPanel:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
+        equipmentPanel:Hide()
+
+        -- tabs
+
+        local sidebar = CreateFrame('Frame', 'DragonflightUICharacterFrameSidebar', insetRight,
+                                    'DragonflightUISidebarTemplate')
+        sidebar:SetPoint('BOTTOMRIGHT', insetRight, 'TOPRIGHT', -6, -1)
+        sidebar:SetSize(168, 35)
+
+        sidebar:SetSidebar(1)
 
         CharacterFrame:Expand()
 

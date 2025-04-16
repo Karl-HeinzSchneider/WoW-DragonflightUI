@@ -1,0 +1,106 @@
+<UI xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Include file="Mixin/EquipmentManager.mixin.lua" />
+	<Frame name="DragonflightUISidebarTemplate" mixin="DragonflightUISidebarMixin" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="DecorLeft" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="28" y="11" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.45312500" top="0.00390625" bottom="0.04687500" />
+				</Texture>
+				<Texture parentKey="DecorRight" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="28" y="13" />
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.45312500" top="0.05468750" bottom="0.10546875" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="DFPaperDollSidebarTab3" inherits="DFPaperDollSidebarTabTemplate" id="3">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-30" y="0" />
+				</Anchors>
+			</Button>
+			<Button name="DFPaperDollSidebarTab2" inherits="DFPaperDollSidebarTabTemplate" id="2">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="DFPaperDollSidebarTab3" relativePoint="LEFT" x="-4" />
+				</Anchors>
+			</Button>
+			<Button name="DFPaperDollSidebarTab1" inherits="DFPaperDollSidebarTabTemplate" id="1">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="DFPaperDollSidebarTab2" relativePoint="LEFT" x="-4" />
+				</Anchors>
+				<Scripts>
+					<OnEvent>
+						if ( event == "UNIT_PORTRAIT_UPDATE" ) then
+						local unit = ...;
+						if ( unit == "player" ) then
+						SetPortraitTexture(self.Icon, "player");
+						end
+						elseif ( event == "PORTRAITS_UPDATED" ) then
+						SetPortraitTexture(self.Icon, "player");
+						elseif ( event == "PLAYER_ENTERING_WORLD" ) then
+						SetPortraitTexture(self.Icon, "player");
+						end
+					</OnEvent>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Tab -->
+	<Button name="DFPaperDollSidebarTabTemplate" mixin="DragonflightUISidebarTabMixin" virtual="true">
+		<Size x="33" y="35" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs" parentKey="TabBg">
+					<Size x="50" y="43" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="-9" y="-2" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.79687500" top="0.61328125" bottom="0.78125000" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon">
+					<Size x="33" y="35" />
+					<Anchors>
+						<Anchor point="BOTTOM" x="1" y="-2" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Hider" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="34" y="19" />
+					<Anchors>
+						<Anchor point="BOTTOM" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.54687500" top="0.11328125" bottom="0.18750000" />
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="Highlight" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="31" y="31" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="2" y="-3" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.50000000" top="0.19531250" bottom="0.31640625" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick" />
+			<OnEnable method="OnEnable" />
+			<OnDisable method="OnDisable" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Button>
+</UI>
