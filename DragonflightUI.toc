@@ -66,6 +66,7 @@ XML\DFSettingsList.xml
 XML\DFSettingsList_Compat.xml
 XML\Config.xml
 XML\Editmode.xml
+XML\EquipmentManager.xml
 XML\ProfessionFrame.xml
 XML\ProfessionSpellbook.xml
 XML\QuickKeybind.xml

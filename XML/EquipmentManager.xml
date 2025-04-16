@@ -1,0 +1,308 @@
+<UI xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Include file="Mixin/EquipmentManager.mixin.lua" />
+	<Frame name="DragonflightUISidebarTemplate" mixin="DragonflightUISidebarMixin" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="DecorLeft" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="28" y="11" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.45312500" top="0.00390625" bottom="0.04687500" />
+				</Texture>
+				<Texture parentKey="DecorRight" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="28" y="13" />
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.45312500" top="0.05468750" bottom="0.10546875" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="DFPaperDollSidebarTab3" inherits="DFPaperDollSidebarTabTemplate" id="3">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-30" y="0" />
+				</Anchors>
+			</Button>
+			<Button name="DFPaperDollSidebarTab2" inherits="DFPaperDollSidebarTabTemplate" id="2">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="DFPaperDollSidebarTab3" relativePoint="LEFT" x="-4" />
+				</Anchors>
+			</Button>
+			<Button name="DFPaperDollSidebarTab1" inherits="DFPaperDollSidebarTabTemplate" id="1">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="DFPaperDollSidebarTab2" relativePoint="LEFT" x="-4" />
+				</Anchors>
+				<Scripts>
+					<OnEvent>
+						if ( event == "UNIT_PORTRAIT_UPDATE" ) then
+						local unit = ...;
+						if ( unit == "player" ) then
+						SetPortraitTexture(self.Icon, "player");
+						end
+						elseif ( event == "PORTRAITS_UPDATED" ) then
+						SetPortraitTexture(self.Icon, "player");
+						elseif ( event == "PLAYER_ENTERING_WORLD" ) then
+						SetPortraitTexture(self.Icon, "player");
+						end
+					</OnEvent>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
+	<!-- Tab -->
+	<Button name="DFPaperDollSidebarTabTemplate" mixin="DragonflightUISidebarTabMixin" virtual="true">
+		<Size x="33" y="35" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs" parentKey="TabBg">
+					<Size x="50" y="43" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="-9" y="-2" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.79687500" top="0.61328125" bottom="0.78125000" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon">
+					<Size x="33" y="35" />
+					<Anchors>
+						<Anchor point="BOTTOM" x="1" y="-2" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Hider" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="34" y="19" />
+					<Anchors>
+						<Anchor point="BOTTOM" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.54687500" top="0.11328125" bottom="0.18750000" />
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="Highlight" file="Interface\PaperDollInfoFrame\PaperDollSidebarTabs">
+					<Size x="31" y="31" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="2" y="-3" />
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.50000000" top="0.19531250" bottom="0.31640625" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick" />
+			<OnEnable method="OnEnable" />
+			<OnDisable method="OnDisable" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</Button>
+	<!-- equipmentmanager -->
+	<Frame name="DFEquipmentManagerPanel" mixin="DragonflightUIEquipmentManagerPanelMixin" virtual="true">
+		<Frames>
+			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+				<Size x="172" y="331" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="4" y="-27" />
+				</Anchors>
+			</Frame>
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="8" y="17" />
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="8" y="30" />
+				</Anchors>
+			</EventFrame>
+			<Button name="$parentEquipSet" text="EQUIPSET_EQUIP" parentKey="EquipSet" inherits="UIPanelButtonTemplate">
+				<Size x="87" y="22" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="0" y="0" />
+				</Anchors>
+			</Button>
+			<Button name="$parentSaveSet" text="SAVE" parentKey="SaveSet" inherits="UIPanelButtonTemplate">
+				<Size x="87" y="22" />
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.EquipSet" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend" method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<OnUpdate method="OnUpdate" />
+		</Scripts>
+	</Frame>
+	<!-- gearset button -->
+	<Button name="DFGearSetButtonTemplate" mixin="DragonflightUIGearSetButtonMixin" virtual="true">
+		<Size x="169" y="44" />
+		<Anchors>
+			<Anchor point="LEFT" x="2" y="0" />
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBgTop" inherits="Char-Stat-Top" parentKey="BgTop">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="1" />
+					</Anchors>
+				</Texture>
+				<Texture name="$parentBgBottom" inherits="Char-Stat-Top" parentKey="BgBottom">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="0" y="-4" />
+					</Anchors>
+				</Texture>
+				<Texture name="$parentBgMiddle" file="Interface\CharacterFrame\Char-Stat-Middle" parentKey="BgMiddle" vertTile="true">
+					<Size x="169" y="32" />
+					<Anchors>
+						<Anchor point="LEFT" x="1" y="-0.5" />
+					</Anchors>
+					<TexCoords left="0.00390625" right="0.66406250" top="0.00000000" bottom="1.00000000" />
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND" textureSubLevel="1">
+				<Texture name="$parentStripe" parentKey="Stripe">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="1" y="0" />
+						<Anchor point="BOTTOMRIGHT" x="0" y="0" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture name="$parentCheck" file="Interface\Buttons\UI-CheckBox-Check" parentKey="Check" hidden="true">
+					<Size x="16" y="16" />
+					<Anchors>
+						<Anchor point="RIGHT">
+							<Offset x="-8" y="0" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" inherits="GameFontNormalLeft" parentKey="text">
+					<Size x="98" y="38" />
+					<Anchors>
+						<Anchor point="LEFT" x="44" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="-2">
+				<Texture parentKey="SpecRing" atlas="equipmentmanager-spec-border" useAtlasSize="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="18" y="-18" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="-3">
+				<Texture parentKey="SpecIcon">
+					<Size x="18" y="18" />
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.SpecRing" relativePoint="CENTER" x="0" y="0" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="-1">
+				<Texture name="$parentHighlightBar" parentKey="HighlightBar" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar-Blue" alpha="0.4" alphaMode="ADD" hidden="true">
+					<TexCoords left="0.2" right="0.8" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentSelectedBar" parentKey="SelectedBar" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar" alpha="0.4" alphaMode="ADD" hidden="true">
+					<TexCoords left="0.2" right="0.8" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentDeleteButton" parentKey="DeleteButton" hidden="true">
+				<Size x="14" y="14" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-2" y="2" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\Buttons\UI-GroupLoot-Pass-Up" alpha="0.5" parentKey="texture" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						self.texture:SetAlpha(1.0);
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(DELETE);
+					</OnEnter>
+					<OnLeave>
+						self.texture:SetAlpha(0.5);
+						GameTooltip_Hide();
+					</OnLeave>
+					<OnMouseDown>
+						self.texture:SetPoint("TOPLEFT", 1, -1);
+					</OnMouseDown>
+					<OnMouseUp>
+						self.texture:SetPoint("TOPLEFT", 0, 0);
+					</OnMouseUp>
+					<OnClick>
+						local dialog = StaticPopup_Show("CONFIRM_DELETE_EQUIPMENT_SET", self:GetParent().text:GetText());
+						if ( dialog ) then
+						dialog.data = self:GetParent().setID;
+						else
+						UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentEditButton" parentKey="EditButton" hidden="true">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.DeleteButton" relativePoint="LEFT" x="-1" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\WorldMap\GEAR_64GREY" alpha="0.5" parentKey="texture" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						self.texture:SetAlpha(1.0);
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(EQUIPMENT_SET_EDIT);
+					</OnEnter>
+					<OnLeave>
+						self.texture:SetAlpha(0.5);
+						GameTooltip_Hide();
+					</OnLeave>
+					<!-- <OnMouseDown function="GearSetEditButton_OnMouseDown"/> -->
+					<OnMouseUp>
+						self.texture:SetPoint("TOPLEFT", 0, 0);
+					</OnMouseUp>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnClick method="OnClick" />
+			<OnDoubleClick method="OnDoubleClick" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnDragStart method="OnDragStart" />
+		</Scripts>
+		<NormalTexture name="$parentIcon" parentKey="icon">
+			<Size x="36" y="36" />
+			<Anchors>
+				<Anchor point="LEFT" x="4" y="0" />
+			</Anchors>
+		</NormalTexture>
+	</Button>
+	<!-- DFGearManagerPopupFrame -->
+	<Frame name="DFGearManagerPopupFrame" mixin="DFGearManagerPopupFrameMixin" inherits="IconSelectorPopupFrameTemplate" parent="PaperDollFrame" enableMouse="true" hidden="true" frameLevel="50">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="5" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="editBoxHeaderText" value="GEARSETS_POPUP_TEXT" type="global" />
+		</KeyValues>
+	</Frame>
+</UI>
