@@ -1,9 +1,61 @@
 ---@diagnostic disable: redundant-parameter
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
+-- from paperdoll
+local itemSlotButtons = {};
+
+local PaperDollFrame_ClearIgnoredSlots = PaperDollFrame_ClearIgnoredSlots or function()
+    C_EquipmentSet.ClearIgnoredSlotsForSave();
+    for k, button in next, itemSlotButtons do
+        if (button.ignored) then
+            button.ignored = nil;
+            PaperDollItemSlotButton_Update(button);
+        end
+    end
+end
+
+local PaperDollFrame_IgnoreSlotsForSet = PaperDollFrame_IgnoreSlotsForSet or function(setID)
+    local set = C_EquipmentSet.GetIgnoredSlots(setID);
+    for slot, ignored in pairs(set) do
+        if (ignored) then
+            C_EquipmentSet.IgnoreSlotForSave(slot);
+            itemSlotButtons[slot].ignored = true;
+        else
+            C_EquipmentSet.UnignoreSlotForSave(slot);
+            itemSlotButtons[slot].ignored = false;
+        end
+        PaperDollItemSlotButton_Update(itemSlotButtons[slot]);
+    end
+end
+
+local PaperDollFrame_IgnoreSlot = PaperDollFrame_IgnoreSlot or function(slot)
+    C_EquipmentSet.IgnoreSlotForSave(slot);
+    itemSlotButtons[slot].ignored = true;
+    PaperDollItemSlotButton_Update(itemSlotButtons[slot]);
+end
+
+local buttonTable = {
+    CharacterHeadSlot, CharacterNeckSlot, CharacterShoulderSlot, CharacterBackSlot, CharacterChestSlot,
+    CharacterShirtSlot, CharacterTabardSlot, CharacterWristSlot, CharacterHandsSlot, CharacterWaistSlot,
+    CharacterLegsSlot, CharacterFeetSlot, CharacterFinger0Slot, CharacterFinger1Slot, CharacterTrinket0Slot,
+    CharacterTrinket1Slot, CharacterMainHandSlot, CharacterSecondaryHandSlot, CharacterRangedSlot
+}
+for k, v in ipairs(buttonTable) do
+    --
+    itemSlotButtons[v:GetID()] = v;
+end
+
+-- for k, v in ipairs(itemSlotButtons) do
+--     --
+--     print(k, v:GetName())
+-- end
+--
+
 DFEquipmentManagerMixin = {}
 
 -- Sidebar
+local STRIPE_COLOR = {r = 0.9, g = 0.9, b = 1};
+
 local PAPERDOLL_SIDEBARS = {
     {
         name = PAPERDOLL_SIDEBAR_STATS,
@@ -119,7 +171,6 @@ end
 
 function DragonflightUISidebarTabMixin:OnClick()
     -- print('OnClick DragonflightUISidebarTabMixin')
-    -- PaperDollFrame_SetSidebar(self, self:GetID());
     self:GetParent():SetSidebar(self:GetID())
 end
 
@@ -137,7 +188,6 @@ end
 
 function DragonflightUISidebarTabMixin:OnEnter()
     -- print('OnEnter DragonflightUISidebarTabMixin')
-    -- PaperDollFrame_SidebarTab_OnEnter
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip_SetTitle(GameTooltip, PAPERDOLL_SIDEBARS[self:GetID()].name);
@@ -214,8 +264,8 @@ end
 function DragonflightUIEquipmentManagerPanelMixin:OnHide()
     print('OnHide DragonflightUIEquipmentManagerPanelMixin')
     -- EquipmentFlyoutPopoutButton_HideAll();
-    -- PaperDollFrame_ClearIgnoredSlots();
-    -- GearManagerPopupFrame:Hide();
+    PaperDollFrame_ClearIgnoredSlots();
+    _G['DFGearManagerPopupFrame']:Hide();
     StaticPopup_Hide("CONFIRM_SAVE_EQUIPMENT_SET");
     StaticPopup_Hide("CONFIRM_OVERWRITE_EQUIPMENT_SET");
 end
@@ -283,7 +333,7 @@ function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
             self.SaveSet:Enable();
             self.EquipSet:Enable();
         end
-        -- PaperDollFrame_IgnoreSlotsForSet(setID);
+        PaperDollFrame_IgnoreSlotsForSet(setID);
     else
         self.SaveSet:Disable();
         self.EquipSet:Disable();
@@ -291,7 +341,7 @@ function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
         -- Clear selected equipment set if it doesn't exist
         if (self.selectedSetID) then
             self.selectedSetID = nil;
-            -- PaperDollFrame_ClearIgnoredSlots();
+            PaperDollFrame_ClearIgnoredSlots();
         end
     end
 
@@ -428,6 +478,7 @@ function DragonflightUIGearSetButtonMixin:OnLoad()
     SetClampedTextureRotation(self.BgBottom, 180);
 
     local panelRef = self.PanelRef
+    local buttonRef = self;
     self.EditButton:SetScript('OnMouseDown', function(self)
         --
         -- print('editbutton OnMouseDown')
@@ -458,6 +509,7 @@ function DragonflightUIGearSetButtonMixin:OnLoad()
 
             rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
                 -- GearSetButton_OpenPopup(self);
+                buttonRef:OpenPopup()
             end);
 
             -- rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC);
@@ -475,22 +527,23 @@ end
 function DragonflightUIGearSetButtonMixin:OnClick(button, down)
     print('DragonflightUIGearSetButtonMixin:OnClick(button, down)', button, down)
     -- GearSetButton_OnClick(self, button, down);
+    local GearManagerPopupFrame = _G['DFGearManagerPopupFrame'];
     if (self.setID) then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON); -- inappropriately named, but a good sound.
         self.PanelRef.selectedSetID = self.setID;
         -- mark the ignored slots
-        -- PaperDollFrame_ClearIgnoredSlots();
-        -- PaperDollFrame_IgnoreSlotsForSet(self.setID);
-        -- GearManagerPopupFrame:Hide();
+        PaperDollFrame_ClearIgnoredSlots();
+        PaperDollFrame_IgnoreSlotsForSet(self.setID);
+        GearManagerPopupFrame:Hide();
     else
         -- This is the "New Set" button
-        -- GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New;
-        -- GearManagerPopupFrame:Show();
+        GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New;
+        GearManagerPopupFrame:Show();
         self.PanelRef.selectedSetID = nil;
-        -- PaperDollFrame_ClearIgnoredSlots();
+        PaperDollFrame_ClearIgnoredSlots();
         -- Ignore shirt and tabard by default
-        -- PaperDollFrame_IgnoreSlot(4);
-        -- PaperDollFrame_IgnoreSlot(19);
+        PaperDollFrame_IgnoreSlot(4);
+        PaperDollFrame_IgnoreSlot(19);
     end
     self.PanelRef:Update();
 
@@ -551,3 +604,110 @@ function DragonflightUIGearSetButtonMixin:UpdateSpecInfo()
     self:SetSpecInfo(specID);
 end
 
+function DragonflightUIGearSetButtonMixin:OpenPopup()
+    local GearManagerPopupFrame = _G['DFGearManagerPopupFrame'];
+
+    GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit;
+    GearManagerPopupFrame.setID = self.setID;
+    GearManagerPopupFrame.origName = self.text:GetText();
+    GearManagerPopupFrame:Show();
+end
+
+-- gearmanagerpopup
+DFGearManagerPopupFrameMixin = {}
+
+function DFGearManagerPopupFrameMixin:OnShow()
+    self.IconSelector:SetSize(494, 362);
+
+    IconSelectorPopupFrameTemplateMixin.OnShow(self);
+    self.BorderBox.IconSelectorEditBox:SetFocus();
+
+    PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+    self.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment);
+    self:SetIconFilter(IconSelectorPopupFrameIconFilterTypes.All);
+    self:Update();
+    self.BorderBox.IconSelectorEditBox:OnTextChanged();
+
+    local function OnIconSelected(selectionIndex, icon)
+        self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(icon);
+
+        -- Index is not yet set, but we know if an icon in IconSelector was selected it was in the list, so set directly.
+        self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetText(ICON_SELECTION_CLICK);
+        self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetFontObject(GameFontHighlightSmall);
+    end
+    self.IconSelector:SetSelectedCallback(OnIconSelected);
+end
+
+function DFGearManagerPopupFrameMixin:OnHide()
+    IconSelectorPopupFrameTemplateMixin.OnHide(self);
+
+    self.setID = nil;
+    if _G['DragonflightUICharacterEquipmentManagerPanel'].selectedSetID == nil then
+        PaperDollFrame_ClearIgnoredSlots();
+    end
+
+    self.iconDataProvider:Release();
+    self.iconDataProvider = nil;
+end
+
+function DFGearManagerPopupFrameMixin:Update()
+    if (self.mode == IconSelectorPopupFrameModes.New) then
+        self.origName = "";
+        self.BorderBox.IconSelectorEditBox:SetText("");
+        local initialIndex = 1;
+        self.IconSelector:SetSelectedIndex(initialIndex);
+        self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(self:GetIconByIndex(initialIndex));
+    elseif (self.mode == IconSelectorPopupFrameModes.Edit) then
+        local name, texture = C_EquipmentSet.GetEquipmentSetInfo(
+                                  _G['DragonflightUICharacterEquipmentManagerPanel'].selectedSetID);
+        self.BorderBox.IconSelectorEditBox:SetText(name);
+        self.BorderBox.IconSelectorEditBox:HighlightText();
+
+        self.IconSelector:SetSelectedIndex(self:GetIndexOfIcon(texture));
+        self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture);
+    end
+
+    local getSelection = GenerateClosure(self.GetIconByIndex, self);
+    local getNumSelections = GenerateClosure(self.GetNumIcons, self);
+    self.IconSelector:SetSelectionsDataProvider(getSelection, getNumSelections);
+    self.IconSelector:ScrollToSelectedIndex();
+
+    self:SetSelectedIconText();
+end
+
+function DFGearManagerPopupFrameMixin:OkayButton_OnClick()
+    IconSelectorPopupFrameTemplateMixin.OkayButton_OnClick(self);
+
+    local iconTexture = self.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture();
+    local text = self.BorderBox.IconSelectorEditBox:GetText();
+
+    local setID = C_EquipmentSet.GetEquipmentSetID(text);
+    if (setID) then
+        if (self.mode == IconSelectorPopupFrameModes.Edit and text ~= self.origName) then
+            -- Not allowed to overwrite an existing set by doing a rename
+            UIErrorsFrame:AddMessage(EQUIPMENT_SETS_CANT_RENAME, 1.0, 0.1, 0.1, 1.0);
+            return;
+        elseif (self.mode == IconSelectorPopupFrameModes.New) then
+            local dialog = StaticPopup_Show("CONFIRM_OVERWRITE_EQUIPMENT_SET", text);
+            if (dialog) then
+                dialog.data = setID;
+                dialog.selectedIcon = iconTexture;
+            else
+                UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
+            end
+            return;
+        end
+    elseif (C_EquipmentSet.GetNumEquipmentSets() >= MAX_EQUIPMENT_SETS_PER_PLAYER and self.mode ==
+        IconSelectorPopupFrameModes.New) then
+        UIErrorsFrame:AddMessage(EQUIPMENT_SETS_TOO_MANY, 1.0, 0.1, 0.1, 1.0);
+        return;
+    end
+
+    if (self.mode == IconSelectorPopupFrameModes.New) then
+        C_EquipmentSet.CreateEquipmentSet(text, iconTexture);
+    else
+        local selectedSetID = C_EquipmentSet.GetEquipmentSetID(self.origName);
+        _G['DragonflightUICharacterEquipmentManagerPanel'].selectedSetID = selectedSetID;
+        C_EquipmentSet.ModifyEquipmentSet(selectedSetID, text, iconTexture);
+    end
+end

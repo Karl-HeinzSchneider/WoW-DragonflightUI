@@ -296,4 +296,13 @@
 			</Anchors>
 		</NormalTexture>
 	</Button>
+	<!-- DFGearManagerPopupFrame -->
+	<Frame name="DFGearManagerPopupFrame" mixin="DFGearManagerPopupFrameMixin" inherits="IconSelectorPopupFrameTemplate" parent="PaperDollFrame" enableMouse="true" hidden="true" frameLevel="50">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="5" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="editBoxHeaderText" value="GEARSETS_POPUP_TEXT" type="global" />
+		</KeyValues>
+	</Frame>
 </UI>
