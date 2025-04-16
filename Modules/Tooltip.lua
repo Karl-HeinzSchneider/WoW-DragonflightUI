@@ -11,6 +11,7 @@ local defaults = {
         general = {
             scale = 1.0,
             anchorFrame = 'UIParent',
+            customAnchorFrame = '',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
             x = -30,
@@ -519,7 +520,12 @@ function Module:ApplySettings(sub)
     local db = Module.db.profile
     local state = db.general
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
 
     Module.GametooltipPreview:ClearAllPoints()
     Module.GametooltipPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)

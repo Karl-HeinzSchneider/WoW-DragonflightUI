@@ -27,6 +27,30 @@ DF.Settings.OrientationTable = {
     {value = 'vertical', text = 'Vertical', tooltip = 'descr', label = 'label'}
 }
 
+DF.Settings.ValidateFrame = function(t)
+    if not t or t == '' then return false end
+    local f = _G[t];
+
+    if f and f.SetPoint then
+        return true
+    else
+        return false
+    end
+    -- local result, target = SecureCmdOptionParse(t)
+    -- if result ~= 'show' and result ~= 'hide' and result ~= '' then
+    --     Module:Print('|cFFFF0000Error: Custom Condition for ' .. displayName .. ' does not return ' ..
+    --                      [['show' or 'hide'!|r]])
+    --     return
+    -- end
+
+    -- -- valid
+    -- Module:Print('Set Custom Condition for ' .. displayName .. ': \'' .. t .. '\'')
+    -- Module:Print('Current Value: ' .. result)
+
+    -- -- valid, reset
+    -- return true, true;
+end
+
 function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, getDefaultStr, frameTable)
     local extraOptions = {
         headerPosition = {
@@ -95,6 +119,15 @@ function DF.Settings:AddPositionTable(Module, optionTable, sub, displayName, get
             values = frameTable,
             dropdownValues = frameTable,
             order = 4,
+            group = 'headerPosition',
+            editmode = true
+        },
+        customAnchorFrame = {
+            type = 'editbox',
+            name = L["PositionTableCustomAnchorFrame"],
+            desc = L["PositionTableCustomAnchorFrameDesc"] .. getDefaultStr('customAnchorFrame', sub),
+            Validate = DF.Settings.ValidateFrame,
+            order = 4.5,
             group = 'headerPosition',
             editmode = true
         },

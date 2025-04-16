@@ -1,3 +1,4 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 -- print('MIXIN!')
 local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
@@ -796,7 +797,13 @@ function DragonFlightUICastbarMixin:Update()
     self:SetScale(UIParent:GetScale() * state.scale) -- TODO
     self:SetSize(state.sizeX, state.sizeY)
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     if self.DFEditMode then
         self:Show()
         self:UpdateEditModeStyle(true)

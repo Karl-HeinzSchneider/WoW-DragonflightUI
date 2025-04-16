@@ -11,6 +11,7 @@ local defaults = {
         buffs = {
             scale = 1,
             anchorFrame = 'MinimapCluster',
+            customAnchorFrame = '',
             anchor = 'TOPRIGHT',
             anchorParent = 'TOPLEFT',
             x = -55,
@@ -33,6 +34,7 @@ local defaults = {
         debuffs = {
             scale = 1,
             anchorFrame = 'MinimapCluster',
+            customAnchorFrame = '',
             anchor = 'TOPRIGHT',
             anchorParent = 'TOPLEFT',
             x = -55,
@@ -458,9 +460,17 @@ end
 
 function Module.UpdateBuffState(state)
     local f = Module.DFBuffFrame
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     f:SetScale(state.scale)
     f:ClearAllPoints()
-    f:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     -- local toggelFrame = Module.DFToggleFrame
     -- toggleFrame:SetScale(state.scale)
@@ -619,9 +629,17 @@ end
 
 function Module.UpdateDebuffState(state)
     local f = Module.DFDebuffFrame
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     f:SetScale(state.scale)
     f:ClearAllPoints()
-    f:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     for i = 1, 12 do
         local buff = _G['DebuffButton' .. i];

@@ -1,3 +1,5 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
 DragonflightUIEditModeMixin = {}
 
 function DragonflightUIEditModeMixin:InitEditMode()
@@ -68,7 +70,15 @@ function DragonflightUIActionbarMixin:SetState(state)
 end
 
 function DragonflightUIActionbarMixin:IsAnchorframeLegal()
-    local parent = _G[self.state.anchorFrame];
+    local state = self.state
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     local loopStr = self:GetName();
     local toCheck = parent;
     local relativeTo;
@@ -250,7 +260,13 @@ function DragonflightUIActionbarMixin:Update()
         return
     end
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
@@ -1280,7 +1296,13 @@ function DragonflightUIStancebarMixinCode:Update()
         return
     end
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
@@ -1374,7 +1396,13 @@ end
 function DragonflightUIFPSMixin:Update()
     local state = self.state;
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 

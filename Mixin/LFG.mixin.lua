@@ -1,3 +1,5 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
 local btnSize = 28
 
 DragonflightUIEyeTemplateMixin = {};
@@ -465,7 +467,13 @@ function DragonflightUILFGButtonMixin:Update()
     -- print('DragonflightUILFGButtonMixin:Update()')
     local state = self.state;
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     self:SetScale(state.scale)
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)

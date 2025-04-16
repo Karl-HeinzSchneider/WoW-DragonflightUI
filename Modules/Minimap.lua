@@ -12,6 +12,7 @@ local defaults = {
         minimap = {
             scale = 1,
             anchorFrame = 'MinimapCluster',
+            customAnchorFrame = '',
             anchor = 'CENTER',
             anchorParent = 'TOP',
             x = -10,
@@ -36,9 +37,33 @@ local defaults = {
             hideCustomCond = '',
             useStateHandler = true
         },
-        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310},
-        durability = {scale = 1, anchorFrame = 'Minimap', anchor = 'TOP', anchorParent = 'BOTTOM', x = 0, y = -15},
-        lfg = {scale = 1, anchorFrame = 'Minimap', anchor = 'CENTER', anchorParent = 'CENTER', x = -62.38, y = -41.63}
+        tracker = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'TOPRIGHT',
+            anchorParent = 'TOPRIGHT',
+            x = 0,
+            y = -310
+        },
+        durability = {
+            scale = 1,
+            anchorFrame = 'Minimap',
+            customAnchorFrame = '',
+            anchor = 'TOP',
+            anchorParent = 'BOTTOM',
+            x = 0,
+            y = -15
+        },
+        lfg = {
+            scale = 1,
+            anchorFrame = 'Minimap',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = -62.38,
+            y = -41.63
+        }
     }
 }
 Module:SetDefaults(defaults)
@@ -694,9 +719,16 @@ end
 
 function Module.UpdateMinimapState(state)
     -- print('state', state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     Minimap:ClearAllPoints()
     Minimap:SetClampedToScreen(true)
-    Minimap:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    Minimap:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     -- Module.LFG:SetScale(state.scale)
     local dfScale = 1.25
@@ -728,12 +760,19 @@ function Module.UpdateMinimapState(state)
 end
 
 function Module.UpdateTrackerState(state)
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     if DF.Era then
         QuestWatchFrame:SetClampedToScreen(false)
 
         QuestWatchFrame:SetScale(state.scale)
         QuestWatchFrame:ClearAllPoints()
-        QuestWatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+        QuestWatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
         -- QuestWatchFrame:SetHeight(800)
         -- QuestWatchFrame:SetWidth(204)    
@@ -747,7 +786,7 @@ function Module.UpdateTrackerState(state)
 
         WatchFrame:SetScale(state.scale)
         WatchFrame:ClearAllPoints()
-        WatchFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+        WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
         WatchFrame:SetHeight(800)
         WatchFrame:SetWidth(204)
@@ -804,9 +843,16 @@ end
 function Module.UpdateDurabilityState(state)
     local container = Module.DurabilityContainer
 
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     container:SetScale(state.scale)
     container:ClearAllPoints()
-    container:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    container:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 end
 
 function Module.MoveMinimap(x, y)
