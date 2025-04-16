@@ -123,18 +123,12 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" x="0" y="0" />
 				</Anchors>
-				<Scripts>
-					<!-- <OnClick function="PaperDollEquipmentManagerPaneEquipSet_OnClick" /> -->
-				</Scripts>
 			</Button>
 			<Button name="$parentSaveSet" text="SAVE" parentKey="SaveSet" inherits="UIPanelButtonTemplate">
 				<Size x="87" y="22" />
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.EquipSet" relativePoint="RIGHT" />
 				</Anchors>
-				<Scripts>
-					<!-- <OnClick function="PaperDollEquipmentManagerPaneSaveSet_OnClick" /> -->
-				</Scripts>
 			</Button>
 		</Frames>
 		<Scripts>

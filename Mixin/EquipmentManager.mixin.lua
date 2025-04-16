@@ -168,13 +168,41 @@ function DragonflightUIEquipmentManagerPanelMixin:OnLoad()
 
     local view = CreateScrollBoxListLinearView();
     view:SetElementInitializer("DFGearSetButtonTemplate", function(button, elementData)
-        print('SetElementInitializer')
+        -- print('SetElementInitializer')
         self:InitButton(button, elementData);
         button.PanelRef = self;
     end);
     view:SetPadding(0, 0, 3, 0, 2);
 
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
+
+    --
+    local panelRef = self;
+
+    self.SaveSet:SetScript('OnClick', function(self)
+        --
+        -- print('saveSet onclick')
+        local selectedSetID = panelRef.selectedSetID;
+        if (selectedSetID) then
+            local selectedSetName = C_EquipmentSet.GetEquipmentSetInfo(selectedSetID);
+            local dialog = StaticPopup_Show("CONFIRM_SAVE_EQUIPMENT_SET", selectedSetName);
+            if (dialog) then
+                dialog.data = selectedSetID;
+            else
+                UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
+            end
+        end
+    end)
+
+    self.EquipSet:SetScript('OnClick', function(self)
+        --
+        -- print('EquipSet onclick')
+        local selectedSetID = panelRef.selectedSetID;
+        if (selectedSetID) then
+            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB); -- inappropriately named, but a good sound.
+            -- EquipmentManager_EquipSet(selectedSetID);
+        end
+    end)
 end
 
 function DragonflightUIEquipmentManagerPanelMixin:OnShow()
@@ -188,8 +216,8 @@ function DragonflightUIEquipmentManagerPanelMixin:OnHide()
     -- EquipmentFlyoutPopoutButton_HideAll();
     -- PaperDollFrame_ClearIgnoredSlots();
     -- GearManagerPopupFrame:Hide();
-    -- StaticPopup_Hide("CONFIRM_SAVE_EQUIPMENT_SET");
-    -- StaticPopup_Hide("CONFIRM_OVERWRITE_EQUIPMENT_SET");
+    StaticPopup_Hide("CONFIRM_SAVE_EQUIPMENT_SET");
+    StaticPopup_Hide("CONFIRM_OVERWRITE_EQUIPMENT_SET");
 end
 
 function DragonflightUIEquipmentManagerPanelMixin:OnUpdate()
@@ -278,7 +306,7 @@ function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
     local numSets = #self.equipmentSetIDs;
     for index = 1, numSets do
         --
-        print('~set:', index, ' of ', numSets)
+        -- print('~set:', index, ' of ', numSets)
         dataProvider:Insert({index = index});
     end
 
@@ -320,7 +348,7 @@ function DragonflightUIEquipmentManagerPanelMixin:SetButtonSelected(button, sele
 end
 
 function DragonflightUIEquipmentManagerPanelMixin:InitButton(button, elementData)
-    print('InitButton')
+    -- print('InitButton')
     if elementData.addSetButton then
         button.setID = nil;
         button.text:SetText(PAPERDOLL_NEWEQUIPMENTSET);
@@ -331,7 +359,6 @@ function DragonflightUIEquipmentManagerPanelMixin:InitButton(button, elementData
         button.Check:Hide();
         button.SelectedBar:Hide();
         SetClampedTextureRotation(button.BgBottom, 180);
-
     else
         local index = elementData.index;
 
@@ -396,9 +423,53 @@ end
 DragonflightUIGearSetButtonMixin = {}
 
 function DragonflightUIGearSetButtonMixin:OnLoad()
-    print('DragonflightUIGearSetButtonMixin:OnLoad()')
+    -- print('DragonflightUIGearSetButtonMixin:OnLoad()')
     self:RegisterForDrag("LeftButton");
     SetClampedTextureRotation(self.BgBottom, 180);
+
+    local panelRef = self.PanelRef
+    self.EditButton:SetScript('OnMouseDown', function(self)
+        --
+        -- print('editbutton OnMouseDown')
+        self.texture:SetPoint("TOPLEFT", 1, -1);
+
+        -- local function GetSetID()
+        --     return self:GetParent().setID;
+        -- end
+
+        -- local function IsSelected(i)
+        --     return C_EquipmentSet.GetEquipmentSetAssignedSpec(GetSetID()) == i;
+        -- end
+
+        -- local function SetSelected(i)
+        --     local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(GetSetID());
+        --     if (currentSpecIndex ~= i) then
+        --         C_EquipmentSet.AssignSpecToEquipmentSet(GetSetID(), i);
+        --     else
+        --         C_EquipmentSet.UnassignEquipmentSetSpec(GetSetID());
+        --     end
+
+        --     self:UpdateSpecInfo()
+        --     panelRef:Update();
+        -- end
+
+        MenuUtil.CreateContextMenu(PaperDollFrame.EquipmentManagerPane, function(dropdown, rootDescription)
+            rootDescription:SetTag("MENU_PAPERDOLL_FRAME");
+
+            rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
+                -- GearSetButton_OpenPopup(self);
+            end);
+
+            -- rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC);
+
+            -- for i = 1, GetNumSpecializations() do
+            --     local specID = GetSpecializationInfo(i);
+            --     local text = select(2, GetSpecializationInfoByID(specID));
+            --     rootDescription:CreateRadio(text, IsSelected, SetSelected, i);
+            -- end  
+
+        end)
+    end)
 end
 
 function DragonflightUIGearSetButtonMixin:OnClick(button, down)
