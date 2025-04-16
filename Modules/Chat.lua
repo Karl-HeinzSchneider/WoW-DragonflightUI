@@ -225,7 +225,14 @@ end
 function Module:ApplySettings()
     local db = Module.db.profile
 
-    ChatFrame1:SetPoint(db.anchor, db.anchorFrame, db.anchorParent, db.x, db.y)
+    local parent;
+    if DF.Settings.ValidateFrame(db.customAnchorFrame) then
+        parent = _G[db.customAnchorFrame]
+    else
+        parent = _G[db.anchorFrame]
+    end
+
+    ChatFrame1:SetPoint(db.anchor, parent, db.anchorParent, db.x, db.y)
     ChatFrame1:SetSize(db.sizeX, db.sizeY)
     ChatFrame1:SetUserPlaced(true)
 

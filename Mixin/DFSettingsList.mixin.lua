@@ -857,7 +857,9 @@ function DFSettingsListEditboxMixin:Init(node)
         if args.Validate then
             local text = self.Editbox:GetText();
             local valid, reset = args.Validate(text)
-            if valid then
+            if text == '' then
+                elementData.set({elementData.key}, text)
+            elseif valid then
                 elementData.set({elementData.key}, text)
             else
                 if reset then

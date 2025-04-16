@@ -550,7 +550,14 @@ end
 function DragonflightUIEditModePreviewPartyFrameMixin:Update()
     local state = self.state;
     self:ClearAllPoints()
-    local parent = _G[state.anchorFrame]
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
 
