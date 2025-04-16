@@ -1054,6 +1054,7 @@ function Module.ChangeTracking()
     -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
     MiniMapTracking:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
     MiniMapTracking:SetScale(0.75)
+    MiniMapTracking:SetFrameStrata('MEDIUM')
     MiniMapTrackingIcon:Hide()
 
     -- MiniMapTrackingBackground:Hide()
@@ -1096,6 +1097,7 @@ function Module.ChangeTrackingEra()
 
     updatePos()
     MiniMapTrackingFrame:SetSize(31, 31)
+    MiniMapTrackingFrame:SetFrameStrata('MEDIUM')
     -- MiniMapTrackingFrame:SetScale(0.75)
     -- MiniMapTrackingFrame:SetScale(1.15)
 
