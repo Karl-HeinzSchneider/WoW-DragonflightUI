@@ -1318,7 +1318,8 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         titlePanel:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
         titlePanel:Hide()
 
-        local equipmentPanel = CreateFrame('Frame', 'DragonflightUICharacterEquipmentManagerPanel', insetRight)
+        local equipmentPanel = CreateFrame('Frame', 'DragonflightUICharacterEquipmentManagerPanel', insetRight,
+                                           'DFEquipmentManagerPanel')
         equipmentPanel:SetSize(100, 100)
         equipmentPanel:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
         equipmentPanel:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
