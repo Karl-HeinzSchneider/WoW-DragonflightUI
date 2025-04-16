@@ -14,6 +14,7 @@ local defaults = {
         boss = {
             scale = 1,
             anchorFrame = 'MinimapCluster',
+            customAnchorFrame = '',
             anchor = 'TOPRIGHT',
             anchorParent = 'BOTTOMRIGHT',
             x = -200,

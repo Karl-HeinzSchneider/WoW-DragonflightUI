@@ -8,6 +8,7 @@ local defaults = {
     profile = {
         scale = 1,
         anchorFrame = 'UIParent',
+        customAnchorFrame = '',
         anchor = 'BOTTOMLEFT',
         anchorParent = 'BOTTOMLEFT',
         x = 42,

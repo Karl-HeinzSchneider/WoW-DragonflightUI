@@ -12,6 +12,7 @@ local defaults = {
         minimap = {
             scale = 1,
             anchorFrame = 'MinimapCluster',
+            customAnchorFrame = '',
             anchor = 'CENTER',
             anchorParent = 'TOP',
             x = -10,
@@ -36,9 +37,33 @@ local defaults = {
             hideCustomCond = '',
             useStateHandler = true
         },
-        tracker = {scale = 1, anchorFrame = 'UIParent', anchor = 'TOPRIGHT', anchorParent = 'TOPRIGHT', x = 0, y = -310},
-        durability = {scale = 1, anchorFrame = 'Minimap', anchor = 'TOP', anchorParent = 'BOTTOM', x = 0, y = -15},
-        lfg = {scale = 1, anchorFrame = 'Minimap', anchor = 'CENTER', anchorParent = 'CENTER', x = -62.38, y = -41.63}
+        tracker = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'TOPRIGHT',
+            anchorParent = 'TOPRIGHT',
+            x = 0,
+            y = -310
+        },
+        durability = {
+            scale = 1,
+            anchorFrame = 'Minimap',
+            customAnchorFrame = '',
+            anchor = 'TOP',
+            anchorParent = 'BOTTOM',
+            x = 0,
+            y = -15
+        },
+        lfg = {
+            scale = 1,
+            anchorFrame = 'Minimap',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = -62.38,
+            y = -41.63
+        }
     }
 }
 Module:SetDefaults(defaults)

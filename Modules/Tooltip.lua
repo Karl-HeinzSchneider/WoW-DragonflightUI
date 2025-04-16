@@ -11,6 +11,7 @@ local defaults = {
         general = {
             scale = 1.0,
             anchorFrame = 'UIParent',
+            customAnchorFrame = '',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
             x = -30,
