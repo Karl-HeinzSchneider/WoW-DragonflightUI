@@ -49,6 +49,22 @@ end
 --     --
 --     print(k, v:GetName())
 -- end
+
+-- from equipmentmanager
+local EquipmentManager_EquipSet = EquipmentManager_EquipSet or function(setID)
+    if (C_EquipmentSet.EquipmentSetContainsLockedItems(setID) or UnitCastingInfo("player")) then
+        UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
+        return;
+    end
+
+    if InCombatLockdown() then
+        UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
+        return;
+    end
+
+    C_EquipmentSet.UseEquipmentSet(setID);
+end
+
 --
 
 DFEquipmentManagerMixin = {}
@@ -92,7 +108,7 @@ local PAPERDOLL_SIDEBARS = {
 DragonflightUISidebarMixin = {}
 
 function DragonflightUISidebarMixin:OnLoad()
-    print('OnLoads DragonflightUISidebarMixin')
+    -- print('OnLoads DragonflightUISidebarMixin')
 
     _G['DFPaperDollSidebarTab2']:Disable()
 end
@@ -208,7 +224,7 @@ DragonflightUIEquipmentManagerPanelMixin = CreateFromMixins(CallbackRegistryMixi
 DragonflightUIEquipmentManagerPanelMixin:GenerateCallbackEvents({"OnDefaults", "OnRefresh"});
 
 function DragonflightUIEquipmentManagerPanelMixin:OnLoad()
-    print('OnLoad DragonflightUIEquipmentManagerPanelMixin')
+    -- print('OnLoad DragonflightUIEquipmentManagerPanelMixin')
     CallbackRegistryMixin.OnLoad(self);
 
     self:RegisterEvent("EQUIPMENT_SWAP_FINISHED");
@@ -250,19 +266,19 @@ function DragonflightUIEquipmentManagerPanelMixin:OnLoad()
         local selectedSetID = panelRef.selectedSetID;
         if (selectedSetID) then
             PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB); -- inappropriately named, but a good sound.
-            -- EquipmentManager_EquipSet(selectedSetID);
+            EquipmentManager_EquipSet(selectedSetID);
         end
     end)
 end
 
 function DragonflightUIEquipmentManagerPanelMixin:OnShow()
-    print('OnShow DragonflightUIEquipmentManagerPanelMixin')
+    -- print('OnShow DragonflightUIEquipmentManagerPanelMixin')
     self:Update(true)
     -- EquipmentFlyoutPopoutButton_ShowAll();
 end
 
 function DragonflightUIEquipmentManagerPanelMixin:OnHide()
-    print('OnHide DragonflightUIEquipmentManagerPanelMixin')
+    -- print('OnHide DragonflightUIEquipmentManagerPanelMixin')
     -- EquipmentFlyoutPopoutButton_HideAll();
     PaperDollFrame_ClearIgnoredSlots();
     _G['DFGearManagerPopupFrame']:Hide();
@@ -297,7 +313,7 @@ end
 
 function DragonflightUIEquipmentManagerPanelMixin:OnEvent(event, ...)
     -- print('OnEvent DragonflightUIEquipmentManagerPanelMixin')
-    print('~', event, ...)
+    -- print('~', event, ...)
 
     if (event == "EQUIPMENT_SWAP_FINISHED") then
         local completed, setID = ...;
@@ -321,7 +337,7 @@ function DragonflightUIEquipmentManagerPanelMixin:OnEvent(event, ...)
 end
 
 function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
-    print('--update', equipmentSetsDirty)
+    -- print('--update', equipmentSetsDirty)
     local _, setID, isEquipped;
     if (self.selectedSetID) then _, _, setID, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(self.selectedSetID); end
 
@@ -349,7 +365,7 @@ function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
         self.equipmentSetIDs = self:SortEquipmentSetIDs(C_EquipmentSet.GetEquipmentSetIDs());
     end
 
-    DevTools_Dump(self.equipmentSetIDs)
+    -- DevTools_Dump(self.equipmentSetIDs)
 
     local dataProvider = CreateDataProvider();
 
@@ -365,7 +381,7 @@ function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
         dataProvider:Insert({addSetButton = true}); -- "Add New Set" button  
     end
 
-    DevTools_Dump(dataProvider:GetSize())
+    -- DevTools_Dump(dataProvider:GetSize())
 
     self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 end
@@ -525,7 +541,7 @@ function DragonflightUIGearSetButtonMixin:OnLoad()
 end
 
 function DragonflightUIGearSetButtonMixin:OnClick(button, down)
-    print('DragonflightUIGearSetButtonMixin:OnClick(button, down)', button, down)
+    -- print('DragonflightUIGearSetButtonMixin:OnClick(button, down)', button, down)
     -- GearSetButton_OnClick(self, button, down);
     local GearManagerPopupFrame = _G['DFGearManagerPopupFrame'];
     if (self.setID) then
@@ -561,7 +577,8 @@ end
 function DragonflightUIGearSetButtonMixin:OnEnter()
     -- GearSetButton_OnEnter(self);
     if (self.setID) then
-        GameTooltip_SetDefaultAnchor(GameTooltip, self);
+        -- GameTooltip_SetDefaultAnchor(GameTooltip, self);
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         GameTooltip:SetEquipmentSet(self.setID);
     end
 end
