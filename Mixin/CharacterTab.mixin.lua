@@ -24,6 +24,8 @@ function DragonflightUICharacterTabMixin:UpdateTabs(frame)
             tab = GetTabByIndex(frame, i);
             if (tab.isDisabled) then
                 -- PanelTemplates_SetDisabledTabState(tab);
+                DragonflightUICharacterTabMixin:DisableTab(tab);
+                -- print('tab.isDisabled')
             elseif (i == frame.selectedTab) then
                 DragonflightUICharacterTabMixin:SelectTab(tab);
             else
@@ -82,4 +84,29 @@ function DragonflightUICharacterTabMixin:SelectTab(tab)
     if rightDisabled then rightDisabled:Show(); end
     local tooltip = GetAppropriateTooltip();
     if tooltip:IsOwned(tab) then tooltip:Hide(); end
+end
+
+function DragonflightUICharacterTabMixin:DisableTab(tab)
+    local name = tab:GetName();
+
+    local left = tab.Left or _G[name .. "Left"];
+    local middle = tab.Middle or _G[name .. "Middle"];
+    local right = tab.Right or _G[name .. "Right"];
+    left:Show();
+    middle:Show();
+    right:Show();
+    -- tab:UnlockHighlight();
+    -- tab:Enable();
+    tab:DFHighlight(false)
+    tab:SetDisabledFontObject(GameFontHighlightSmall);
+    tab:SetNormalFontObject(GameFontNormalSmall)
+    local text = tab.Text or _G[name .. "Text"];
+    text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2));
+
+    local leftDisabled = tab.LeftDisabled or _G[name .. "LeftDisabled"];
+    local middleDisabled = tab.MiddleDisabled or _G[name .. "MiddleDisabled"];
+    local rightDisabled = tab.RightDisabled or _G[name .. "RightDisabled"];
+    if leftDisabled then leftDisabled:Hide(); end
+    if middleDisabled then middleDisabled:Hide(); end
+    if rightDisabled then rightDisabled:Hide(); end
 end

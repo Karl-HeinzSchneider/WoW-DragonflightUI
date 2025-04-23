@@ -794,7 +794,7 @@ function DFProfessionMixin:SetupTabs()
         tab:SetAttribute('type', 'macro')
         tab:SetScript('PostClick', function(self, button, down)
             --        
-            DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
+            -- DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
         end)
 
         if i == 1 then
@@ -866,7 +866,7 @@ function DFProfessionMixin:SetupTabs()
             end
 
             -- print('~~cast:', spellToCast)
-
+            if prof.skillID == 182 or prof.skillID == 186 or prof.skillID == 393 then return end
             CastSpellByName(spellToCast)
         end
 
@@ -905,6 +905,7 @@ function DFProfessionMixin:UpdateTabs()
         tab:Show()
         tab:SetText(prof1.nameLoc)
         setupTooltip(tab, prof1)
+        tab.isDisabled = (prof1.skillID == 182 or prof1.skillID == 186 or prof1.skillID == 393)
         if self.SelectedProfession == 'primary1' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
@@ -918,6 +919,7 @@ function DFProfessionMixin:UpdateTabs()
         tab:Show()
         tab:SetText(prof2.nameLoc)
         setupTooltip(tab, prof2)
+        tab.isDisabled = (prof2.skillID == 182 or prof2.skillID == 186 or prof2.skillID == 393)
         if self.SelectedProfession == 'primary2' then DragonflightUICharacterTabMixin:Tab_OnClick(tab, tabFrame) end
     else
         tab:Hide()
