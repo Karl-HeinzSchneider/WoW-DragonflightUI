@@ -1941,6 +1941,10 @@ function Module:SetupActionbarFrames()
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
             btn:SetFrameLevel(3)
 
+            btn:SetAttribute("shift-type*", "drag")
+            btn:SetAttribute("alt-type*", "drag")
+            btn:SetAttribute("ctrl-type*", "drag")
+
             -- global binding
             -- _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
             --     "Action Bar " .. n .. ' Button ' .. i;
