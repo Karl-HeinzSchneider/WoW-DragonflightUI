@@ -622,6 +622,12 @@ function Module:HookDefaultAnchor()
             end
         end
 
+        if parent and _G['DragonflightUIXPBar'] and _G['DragonflightUIXPBar'].Bar and parent ==
+            _G['DragonflightUIXPBar'].Bar then
+            self:SetOwner(parent, 'ANCHOR_RIGHT');
+            return;
+        end
+
         -- default
         self:SetOwner(parent, 'ANCHOR_NONE');
         self:ClearAllPoints();
