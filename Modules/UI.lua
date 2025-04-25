@@ -337,6 +337,9 @@ function Module:ApplySettings()
             Module:FuncOrWaitframe('MerInspect', function()
                 DF.Compatibility:MerInspect()
             end)
+            Module:FuncOrWaitframe('tdInspect', function()
+                DF.Compatibility:tdInspect()
+            end)
         end
     elseif not db.changeCharacterframe and Module.CharacterHooked then
         DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")

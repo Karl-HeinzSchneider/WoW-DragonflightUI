@@ -399,4 +399,21 @@ if DF.Era then
             inspect:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", 0, 0)
         end)
     end
+
+    function DF.Compatibility:tdInspect()
+        -- print('DF.Compatibility:tdInspect()')
+        local tdinspect = LibStub('AceAddon-3.0'):GetAddon('tdInspect', true)
+        if (tdinspect and tdinspect.SetupGearParent and tdinspect.CharacterGearParent) then
+            local tdinspect_pos_updated = false
+            local function tdinspect_pos_update(self)
+                local inspect_parent = self.CharacterGearParent
+                if not inspect_parent then return end
+                if tdinspect_pos_updated then return end
+                inspect_parent:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", 0, 0)
+                tdinspect_pos_updated = true
+            end
+            hooksecurefunc(tdinspect, 'SetupGearParent', tdinspect_pos_update)
+            tdinspect_pos_update(tdinspect)
+        end
+    end
 end
