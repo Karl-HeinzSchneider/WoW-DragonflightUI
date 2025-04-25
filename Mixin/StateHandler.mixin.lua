@@ -7,36 +7,36 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
 
     handler:SetAttribute('forceShow', false)
     handler:SetAttribute('_onstate-vis', [[
-        -- if not newstate then return end     
+        -- if not newstate then return end
         local shower = self:GetFrameRef("Shower")
-        if not shower then return end  
+        if not shower then return end
         -- print(shower:GetName(),'NewState',newstate)
         local shouldShow = true
 
         if newstate == "show" then
             shouldShow = true
         elseif newstate == "hide" then
-           shouldShow = false         
-        else 
+           shouldShow = false
+        else
            shouldShow = true
-        end  
+        end
 
         if shouldShow then
             self:SetAttribute('forceShow', false)
-            shower:UnregisterAutoHide()  
+            shower:UnregisterAutoHide()
         else
-            local forceShow = self:GetAttribute('forceShow')     
+            local forceShow = self:GetAttribute('forceShow')
 
-            if forceShow then  
-                shouldShow = true    
+            if forceShow then
+                shouldShow = true
                 shower:RegisterAutoHide(0.1)
             else
                 -- TODO unnecessary?
-                shower:UnregisterAutoHide()  
+                shower:UnregisterAutoHide()
             end
         end
 
-        if shouldShow then 
+        if shouldShow then
             shower:Show();
         else
             shower:Hide();
@@ -58,7 +58,7 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
     handler:SetFrameRef('Shower', shower)
     handler:SetFrameRef('HideFrame1', self)
 
-    shower:SetAttribute('_onshow', [[   
+    shower:SetAttribute('_onshow', [[
         local frameRef = self:GetFrameRef("MainHandler")
 
         local unitRef = frameRef:GetAttribute('UnitRef')
@@ -69,16 +69,16 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
         for i=1,13 do
             local f = frameRef:GetFrameRef('HideFrame'..i)
             if f then f:Show() end
-        end    
+        end
     ]])
 
-    shower:SetAttribute('_onhide', [[     
+    shower:SetAttribute('_onhide', [[
          local frameRef = self:GetFrameRef("MainHandler")
 
         for i=1,13 do
             local f = frameRef:GetFrameRef('HideFrame'..i)
             if f then f:Hide() end
-        end      
+        end
     ]])
 
     ----------
@@ -97,12 +97,12 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
     handler:SetFrameRef('HandlerTwo', handlerTwo)
     shower:SetFrameRef('HandlerTwo', handlerTwo)
 
-    handlerTwo:SetAttribute('_onenter', [[ 
+    handlerTwo:SetAttribute('_onenter', [[
         local frameRef = self:GetFrameRef("MainHandler")
         frameRef:SetAttribute('forceShow', true)
 
         local oldState = frameRef:GetAttribute('state-vis')
-        frameRef:SetAttribute('state-vis', oldState)      
+        frameRef:SetAttribute('state-vis', oldState)
     ]])
     handlerTwo:SetAttribute('_onleave', [[]])
 end

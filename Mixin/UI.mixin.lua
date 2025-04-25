@@ -1502,7 +1502,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         res:SetPoint('TOPRIGHT', model, 'TOPRIGHT', 0, 0)
 
         local att = PetAttributesFrame
-        attX = (inset:GetWidth() - att:GetWidth()) / 2
+        local attX = (inset:GetWidth() - att:GetWidth()) / 2
         att:SetPoint('TOPLEFT', PetPaperDollFrame, 'TOPLEFT', attX + 4, -300 + 10)
 
         local expBar = PetPaperDollFrameExpBar
@@ -1565,16 +1565,17 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             loyal:SetPoint('TOP', levelPet, 'BOTTOM', 0, -1)
             loyal:SetDrawLayer('ARTWORK')
         end
-        --[[     local level = CharacterLevelText
-    level:ClearAllPoints()
-    level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
-    level:SetDrawLayer('ARTWORK')
+        --[[
+        local level = CharacterLevelText
+        level:ClearAllPoints()
+        level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+        level:SetDrawLayer('ARTWORK')
 
-    local honorLevel = HonorLevelText
-    honorLevel:ClearAllPoints()
-    honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
-    honorLevel:SetDrawLayer('ARTWORK')
- ]]
+        local honorLevel = HonorLevelText
+        honorLevel:ClearAllPoints()
+        honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+        honorLevel:SetDrawLayer('ARTWORK')
+        ]]
     end
 
     -- skills
@@ -3174,12 +3175,12 @@ function DragonflightUIMixin:SpellbookEraProfessions()
 
     frame.buttonShow = CreateFrame("Button", "DragonflightUISpellbookProfessionFrameShowButton", frame,
                                    "SecureHandlerClickTemplate");
-    frame.buttonShow:SetAttribute("_onclick", [[      
+    frame.buttonShow:SetAttribute("_onclick", [[
         local frame = self:GetFrameRef("ProfessionFrame");
-        frame:Show();    
-        
+        frame:Show();
+
         -- local tabs = self:GetFrameRef("TabsFrame");
-        -- tabs:Hide();   
+        -- tabs:Hide();
     ]]);
     frame.buttonShow:SetFrameRef("ProfessionFrame", frame)
     -- frame.buttonShow:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
@@ -3190,12 +3191,12 @@ function DragonflightUIMixin:SpellbookEraProfessions()
 
     frame.buttonHide = CreateFrame("Button", "DragonflightUISpellbookProfessionFrameHideButton", frame,
                                    "SecureHandlerClickTemplate");
-    frame.buttonHide:SetAttribute("_onclick", [[      
+    frame.buttonHide:SetAttribute("_onclick", [[
         local frame = self:GetFrameRef("ProfessionFrame");
-        frame:Hide();   
-        
+        frame:Hide();
+
         -- local tabs = self:GetFrameRef("TabsFrame");
-        -- tabs:Show();    
+        -- tabs:Show();
     ]]);
     frame.buttonHide:SetFrameRef("ProfessionFrame", frame)
     -- frame.buttonHide:SetFrameRef("TabsFrame", SpellBookSideTabsFrame)
