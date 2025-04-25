@@ -390,4 +390,13 @@ if DF.Era then
             -- scroll:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -65, 81)
         end)
     end
+
+    function DF.Compatibility:MerInspect()
+        -- print('DF.Compatibility:MerInspect()')
+        hooksecurefunc("ShowInspectItemListFrame", function (...)
+            local inspect = PaperDollFrame.inspectFrame
+            if not inspect then return end
+            inspect:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", 0, 0)
+        end)
+    end
 end

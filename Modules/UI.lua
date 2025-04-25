@@ -334,6 +334,9 @@ function Module:ApplySettings()
             Module:FuncOrWaitframe('TacoTip', function()
                 DF.Compatibility:TacoTipCharacter()
             end)
+            Module:FuncOrWaitframe('MerInspect', function()
+                DF.Compatibility:MerInspect()
+            end)
         end
     elseif not db.changeCharacterframe and Module.CharacterHooked then
         DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
