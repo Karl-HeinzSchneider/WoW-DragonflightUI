@@ -320,13 +320,13 @@ end
 -- end
 
 function DragonflightUICharacterStatsPanelMixin:AddDefaultCategorys()
-    self:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1, isExpanded = false})
-    self:RegisterCategory('attributes', {name = 'Attributes', descr = 'descr..', order = 2, isExpanded = true})
-    self:RegisterCategory('melee', {name = 'Melee', descr = 'descr..', order = 3, isExpanded = true})
-    self:RegisterCategory('ranged', {name = 'Ranged', descr = 'descr..', order = 4, isExpanded = true})
-    self:RegisterCategory('spell', {name = 'Spell', descr = 'descr..', order = 4, isExpanded = true})
-    self:RegisterCategory('defense', {name = 'Defense', descr = 'descr..', order = 4, isExpanded = true})
-    self:RegisterCategory('resistance', {name = 'Resistance', descr = 'descr..', order = 4, isExpanded = true})
+    self:RegisterCategory('general', {name = STAT_CATEGORY_GENERAL, descr = 'descr..', order = 1, isExpanded = false})
+    self:RegisterCategory('attributes', {name = STAT_CATEGORY_ATTRIBUTES, descr = 'descr..', order = 2, isExpanded = true})
+    self:RegisterCategory('melee', {name = STAT_CATEGORY_MELEE, descr = 'descr..', order = 3, isExpanded = true})
+    self:RegisterCategory('ranged', {name = STAT_CATEGORY_RANGED, descr = 'descr..', order = 4, isExpanded = true})
+    self:RegisterCategory('spell', {name = STAT_CATEGORY_SPELL, descr = 'descr..', order = 4, isExpanded = true})
+    self:RegisterCategory('defense', {name = STAT_CATEGORY_DEFENSE, descr = 'descr..', order = 4, isExpanded = true})
+    self:RegisterCategory('resistance', {name = STAT_CATEGORY_RESISTANCE, descr = 'descr..', order = 4, isExpanded = true})
 end
 
 function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
@@ -372,7 +372,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
     do
         self:RegisterElement('health', 'general', {
             order = 1,
-            name = 'Health',
+            name = HEALTH,
             descr = '..',
             func = function()
                 local hp = UnitHealthMax('player');
@@ -382,7 +382,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
         })
         -- self:RegisterElement('itemlvl', 'general', {
         --     order = 2,
-        --     name = 'Item Level',
+        --     name = STAT_AVERAGE_ITEM_LEVEL,
         --     descr = '..',
         --     func = function()
 
@@ -418,7 +418,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('movement', 'general', {
             order = 3,
-            name = 'Movement Speed',
+            name = STAT_MOVEMENT_SPEED,
             descr = '..',
             func = function()
                 local moveTable, currentSpeed = GetMovementTable()
@@ -493,7 +493,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('str', 'attributes', {
             order = 1,
-            name = 'Strength',
+            name = SPELL_STAT1_NAME,
             descr = '..',
             func = function()
                 return stats(1)
@@ -502,7 +502,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('agi', 'attributes', {
             order = 3,
-            name = 'Agility',
+            name = SPELL_STAT2_NAME,
             descr = '..',
             func = function()
                 return stats(2)
@@ -511,7 +511,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('stam', 'attributes', {
             order = 3,
-            name = 'Stamina',
+            name = SPELL_STAT3_NAME,
             descr = '..',
             func = function()
                 return stats(3)
@@ -520,7 +520,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('int', 'attributes', {
             order = 3,
-            name = 'Intellect',
+            name = SPELL_STAT4_NAME,
             descr = '..',
             func = function()
                 return stats(4)
@@ -529,7 +529,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('spirit', 'attributes', {
             order = 3,
-            name = 'Spirit',
+            name = SPELL_STAT5_NAME,
             descr = '..',
             func = function()
                 return stats(5)
@@ -641,7 +641,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('damage', 'melee', {
             order = 1,
-            name = 'Damage',
+            name = DAMAGE,
             descr = '..',
             func = function()
                 local frameText; -- df
@@ -676,7 +676,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('dps', 'melee', {
             order = 2,
-            name = 'DPS',
+            name = STAT_DPS_SHORT,
             descr = '..',
             func = function()
                 local frameText; -- df
@@ -702,7 +702,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('ap', 'melee', {
             order = 3,
-            name = 'Attack Power',
+            name = ATTACK_POWER_TOOLTIP,
             descr = '..',
             func = function()
                 local base, posBuff, negBuff = UnitAttackPower('player');
@@ -716,7 +716,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('attackspeed', 'melee', {
             order = 4,
-            name = 'Attack Speed',
+            name = ATTACK_SPEED,
             descr = '..',
             func = function()
                 local frameText; -- df                   
@@ -762,6 +762,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
         })
 
     end
+
     -- ranged
     do
         local function checkNoRange()
@@ -837,7 +838,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('damage', 'ranged', {
             order = 1,
-            name = 'Damage',
+            name = DAMAGE,
             descr = '..',
             func = function()
                 local frameText; -- df
@@ -864,7 +865,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('dps', 'ranged', {
             order = 2,
-            name = 'DPS',
+            name = STAT_DPS_SHORT,
             descr = '..',
             func = function()
                 if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
@@ -888,7 +889,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('ap', 'ranged', {
             order = 3,
-            name = 'Attack Power',
+            name = ATTACK_POWER_TOOLTIP,
             descr = '..',
             func = function()
                 if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
@@ -907,7 +908,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('attackspeed', 'ranged', {
             order = 4,
-            name = 'Attack Speed',
+            name = ATTACK_SPEED,
             descr = '..',
             func = function()
                 if not checkNoRange() then return NOT_APPLICABLE, nil, nil end
@@ -1130,7 +1131,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('defense', 'defense', {
             order = 2,
-            name = 'Defense',
+            name = DEFENSE,
             descr = '..',
             func = function()
                 local skillName, skillRank, numTempPoints, skillModifier = GetDefense();
@@ -1153,7 +1154,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('dodge', 'defense', {
             order = 3,
-            name = 'Dodge',
+            name = DODGE,
             descr = '..',
             func = function()
                 local dodge = GetDodgeChance()
@@ -1164,7 +1165,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('parry', 'defense', {
             order = 4,
-            name = 'Parry',
+            name = PARRY,
             descr = '..',
             func = function()
                 local parry = GetParryChance()
@@ -1175,7 +1176,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('block', 'defense', {
             order = 5,
-            name = 'Block',
+            name = BLOCK,
             descr = '..',
             func = function()
                 local block = GetBlockChance()
