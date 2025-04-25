@@ -1857,6 +1857,9 @@ function Module:SetupActionbarFrames()
         for i = 1, 12 do
             local name = base .. i
             local btn = _G[name]
+            if not btn.UpdateHotkeys then
+                btn.UpdateHotkeys = Module.UpdateHotkeys
+            end
             buttons[i] = btn
         end
         bar:Init()
@@ -1952,6 +1955,10 @@ function Module:SetupActionbarFrames()
             btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"
             btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
 
+            if not btn.UpdateHotkeys then
+                btn.UpdateHotkeys = Module.UpdateHotkeys
+            end
+
             btns[i] = btn
             btn:Hide()
 
@@ -1982,8 +1989,9 @@ function Module:SetupActionbarFrames()
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
-        -- print('ActionButton_UpdateHotkeys')        
+        -- print('ActionButton_UpdateHotkeys')
         if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
+        if self.UpdateHotkeys then self:UpdateHotkeys(actionButtonType) end
     end)
 
     do
@@ -2030,6 +2038,8 @@ function Module:SetupActionbarFrames()
         -- MultiBarBottomRight:ClearAllPoints()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
     end
+
+    Module.UpdateAllButtonsHotkeys()
 end
 
 function Module.AddStateUpdater()
@@ -2549,6 +2559,91 @@ end
 local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 frame:SetFrameStrata('HIGH')
 Module.Frame = frame
+
+-- Come from LibKeyBound-1.0
+local NUM_MOUSE_BUTTONS = 31
+function Module.ToShortKey(key)
+	if key then
+		key = key:upper()
+		key = key:gsub(' ', '')
+		key = key:gsub('ALT%-', 'A')
+		key = key:gsub('CTRL%-', 'C')
+		key = key:gsub('SHIFT%-', 'S')
+		key = key:gsub('META%-', 'C')
+		key = key:gsub('NUMPAD', 'N')
+
+		key = key:gsub('PLUS', '%+')
+		key = key:gsub('MINUS', '%-')
+		key = key:gsub('MULTIPLY', '%*')
+		key = key:gsub('DIVIDE', '%/')
+
+		key = key:gsub('BACKSPACE', 'BS')
+
+		for i = 1, NUM_MOUSE_BUTTONS do
+			key = key:gsub('BUTTON' .. i, 'B' .. i)
+		end
+
+		key = key:gsub('CAPSLOCK', 'CP')
+		key = key:gsub('CLEAR', 'CL')
+		key = key:gsub('DELETE', 'Del')
+		key = key:gsub('END', 'En')
+		key = key:gsub('HOME', 'HM')
+		key = key:gsub('INSERT', 'Ins')
+		key = key:gsub('MOUSEWHEELDOWN', 'WD')
+		key = key:gsub('MOUSEWHEELUP', 'WU')
+		key = key:gsub('NUMLOCK', 'NL')
+		key = key:gsub('PAGEDOWN', 'PD')
+		key = key:gsub('PAGEUP', 'PU')
+		key = key:gsub('SCROLLLOCK', 'SL')
+		key = key:gsub('SPACEBAR', 'SP')
+		key = key:gsub('SPACE', 'SP')
+		key = key:gsub('TAB', 'TB')
+
+		key = key:gsub('DOWNARROW', 'Dn')
+		key = key:gsub('LEFTARROW', 'Lf')
+		key = key:gsub('RIGHTARROW', 'Rt')
+		key = key:gsub('UPARROW', 'Up')
+
+		return key
+	end
+end
+
+function Module.UpdateHotkeys(self, actionButtonType)
+    local name = self:GetName();
+    local id;
+    if ( not actionButtonType ) then
+        actionButtonType = "ACTIONBUTTON";
+        id = self:GetID();
+    else
+        if ( actionButtonType == "MULTICASTACTIONBUTTON" ) then
+            id = self.buttonIndex;
+        else
+            id = self:GetID();
+        end
+    end
+
+    local key = GetBindingKey(actionButtonType..id) or GetBindingKey("CLICK "..name..":LeftButton");
+    local text = GetBindingText(key, 1);
+    -- print("btn-name: "..name..", id: "..id..", type: "..tostring(actionButtonType)..", key: "..key..", text: "..text)
+    if key then
+        local hotkey = self.HotKey;
+        local short_key = Module.ToShortKey(key)
+        if hotkey then
+            -- print("btn-name: "..name..", id:"..id..", key: "..key..", text: "..text..", short_key: "..short_key)
+            hotkey:SetText(short_key);
+        end
+    end
+end
+
+function Module.UpdateAllButtonsHotkeys()
+    for i = 1, ActionBarCount do
+        local bar = Module['bar' .. i]
+        for j = 1, #bar.buttonTable do
+            local btn = bar.buttonTable[j]
+            Module.UpdateHotkeys(btn, btn.buttonType)
+        end
+    end
+end
 
 function Module.ChangeActionbar()
     -- ActionButton1:ClearAllPoints()
