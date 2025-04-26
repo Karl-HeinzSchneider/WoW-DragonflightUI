@@ -728,7 +728,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 frameText = string.format('%.2f', speed);
 
-                newTable[1] = {left = ATTACK_SPEED_SECONDS}
+                newTable[1] = {left = ATTACK_SPEED_SECONDS or 'Attack Speed (seconds)'} -- era
                 newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = frameText}
 
                 if offhandSpeed then
