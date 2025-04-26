@@ -335,6 +335,14 @@ function Module:ApplySettings()
                 DF.Compatibility:TacoTipCharacter()
             end)
         end
+
+        Module:FuncOrWaitframe('MerInspect-classic-era', function()
+            DF.Compatibility:MerInspectClassicEra()
+        end)
+        -- on some sites it has a shorter name, but seems to be the same addon
+        Module:FuncOrWaitframe('MerInspect', function()
+            DF.Compatibility:MerInspect()
+        end)
     elseif not db.changeCharacterframe and Module.CharacterHooked then
         DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
     end

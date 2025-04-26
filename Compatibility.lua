@@ -194,7 +194,7 @@ function DF.Compatibility:TacoTipInspect()
         text:ClearAllPoints()
         text:SetPoint('BOTTOMLEFT', InspectModelFrame, 'BOTTOMLEFT', 10, 30)
     end
-    
+
     local score = _G['InspectGearScore']
     if score ~= nil then
         score:ClearAllPoints()
@@ -206,7 +206,7 @@ function DF.Compatibility:TacoTipInspect()
         itemlvltext:ClearAllPoints()
         itemlvltext:SetPoint('BOTTOMRIGHT', InspectModelFrame, 'BOTTOMRIGHT', -10, 30)
     end
-    
+
     local itemlvl = _G['InspectAvgItemLvl']
     if itemlvl ~= nil then
         itemlvl:ClearAllPoints()
@@ -219,6 +219,36 @@ function DF.Compatibility:LFGBulletinBoard(func)
     local btn = _G['LFGBulletinBoardMinimapButton'] or _G['Lib_GPI_Minimap_LFGBulletinBoard']
     if not btn then return end
     func(btn)
+end
+
+function DF.Compatibility:MerInspectClassicEra()
+    -- print('DF.Compatibility:MerInspectClassicEra()');
+    if not ShowInspectItemListFrame then return end
+    hooksecurefunc("ShowInspectItemListFrame", function(unit, parent, ilevel, maxLevel)
+        -- print('ShowInspectItemListFrame: ', unit, parent:GetName(), ilevel, maxLevel);
+        local inspectRef = parent.inspectFrame;
+        if not inspectRef then return end
+
+        inspectRef:ClearAllPoints();
+        inspectRef:SetMovable(false);
+        inspectRef:RegisterForDrag();
+        inspectRef:SetPoint('TOPLEFT', parent, 'TOPRIGHT', 0, 0);
+    end)
+end
+
+function DF.Compatibility:MerInspect()
+    -- print('DF.Compatibility:MerInspect()')
+    if not ShowInspectItemListFrame then return end
+    hooksecurefunc("ShowInspectItemListFrame", function(unit, parent, ilevel, maxLevel)
+        -- print('ShowInspectItemListFrame: ', unit, parent:GetName(), ilevel, maxLevel);
+        local inspectRef = parent.inspectFrame;
+        if not inspectRef then return end
+
+        inspectRef:ClearAllPoints();
+        inspectRef:SetMovable(false);
+        inspectRef:RegisterForDrag();
+        inspectRef:SetPoint('TOPLEFT', parent, 'TOPRIGHT', 0, 0);
+    end)
 end
 
 if DF.Era then
