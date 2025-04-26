@@ -194,7 +194,7 @@ function DF.Compatibility:TacoTipInspect()
         text:ClearAllPoints()
         text:SetPoint('BOTTOMLEFT', InspectModelFrame, 'BOTTOMLEFT', 10, 30)
     end
-    
+
     local score = _G['InspectGearScore']
     if score ~= nil then
         score:ClearAllPoints()
@@ -206,7 +206,7 @@ function DF.Compatibility:TacoTipInspect()
         itemlvltext:ClearAllPoints()
         itemlvltext:SetPoint('BOTTOMRIGHT', InspectModelFrame, 'BOTTOMRIGHT', -10, 30)
     end
-    
+
     local itemlvl = _G['InspectAvgItemLvl']
     if itemlvl ~= nil then
         itemlvl:ClearAllPoints()
@@ -219,6 +219,22 @@ function DF.Compatibility:LFGBulletinBoard(func)
     local btn = _G['LFGBulletinBoardMinimapButton'] or _G['Lib_GPI_Minimap_LFGBulletinBoard']
     if not btn then return end
     func(btn)
+end
+
+function DF.Compatibility:TDInspect()
+    -- print('DF.Compatibility:TDInspect()')
+    local tdinspect = LibStub('AceAddon-3.0'):GetAddon('tdInspect', true)
+
+    if (tdinspect and tdinspect.SetupGearParent and tdinspect.CharacterGearParent) then
+        local function updatePosition()
+            if not tdinspect.CharacterGearParent then return end
+            tdinspect.CharacterGearParent:ClearAllPoints()
+            tdinspect.CharacterGearParent:SetPoint('TOPLEFT', PaperDollFrame, 'TOPRIGHT', 0, 0)
+        end
+
+        hooksecurefunc(tdinspect, 'SetupGearParent', updatePosition)
+        updatePosition()
+    end
 end
 
 if DF.Era then

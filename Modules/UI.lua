@@ -335,6 +335,10 @@ function Module:ApplySettings()
                 DF.Compatibility:TacoTipCharacter()
             end)
         end
+
+        Module:FuncOrWaitframe('tdInspect', function()
+            DF.Compatibility:TDInspect()
+        end)
     elseif not db.changeCharacterframe and Module.CharacterHooked then
         DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
     end
