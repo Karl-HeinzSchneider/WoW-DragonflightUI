@@ -1474,10 +1474,19 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         scroll:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
         scroll:SetWidth(300)
 
-        local first = ReputationBar1
-        first:ClearAllPoints()
-        first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
-        -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+        local function UpdateRepulationBarsPos()
+            local first = ReputationBar1
+            first:ClearAllPoints()
+            first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
+            -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+        end
+
+        if DF.Wrath and not DF.Cata then
+            scroll:HookScript("OnShow", UpdateRepulationBarsPos)
+            scroll:HookScript("OnHide", UpdateRepulationBarsPos)
+        else
+            UpdateRepulationBarsPos()
+        end
 
         local detail = ReputationDetailFrame
         detail:SetPoint('TOPLEFT', rep, 'TOPRIGHT', 0, -13)
