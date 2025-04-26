@@ -1844,8 +1844,8 @@ function Module:SetupActionbarFrames()
     Module.bar1:SetupMainBar()
     createStuff(2, 'MultiBarBottomLeftButton')
     createStuff(3, 'MultiBarBottomRightButton')
-    createStuff(4, 'MultiBarLeftButton')
-    createStuff(5, 'MultiBarRightButton')
+    createStuff(4, 'MultiBarRightButton')
+    createStuff(5, 'MultiBarLeftButton')
 
     Module.bar1:StyleButtons()
     Module.bar1:HookQuickbindMode()
@@ -1908,7 +1908,7 @@ function Module:SetupActionbarFrames()
             btn:SetSize(64, 64)
             btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
             btn:SetAttribute("type", "action")
-            btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+            btn:SetAttribute("action", 72 + (n - 6) * 12 + i) -- Action slot 1
             btn:SetFrameLevel(3)
 
             btn:SetAttribute("shift-type*", "drag")
