@@ -235,6 +235,7 @@ function DF.Compatibility:TDInspect()
         hooksecurefunc(tdinspect, 'SetupGearParent', updatePosition)
         updatePosition()
     end
+end
 
 function DF.Compatibility:MerInspectClassicEra()
     -- print('DF.Compatibility:MerInspectClassicEra()');
