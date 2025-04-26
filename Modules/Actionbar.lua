@@ -7,6 +7,8 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 local noop = function()
 end
 
+local ActionBarCount = 8
+
 Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {
@@ -595,53 +597,22 @@ local function setPreset(T, preset, sub)
 end
 
 local frameTable = {
-    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}, {
-        value = 'DragonflightUIActionbarFrame1',
-        text = L["ActionbarNameFormat"]:format(1),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame2',
-        text = L["ActionbarNameFormat"]:format(2),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame3',
-        text = L["ActionbarNameFormat"]:format(3),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame4',
-        text = L["ActionbarNameFormat"]:format(4),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame5',
-        text = L["ActionbarNameFormat"]:format(5),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame6',
-        text = L["ActionbarNameFormat"]:format(6),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame7',
-        text = L["ActionbarNameFormat"]:format(7),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame8',
-        text = L["ActionbarNameFormat"]:format(8),
-        tooltip = 'descr',
-        label = 'label'
-    }, {value = 'DragonflightUIXPBar', text = L["XPBar"], tooltip = 'descr', label = 'label'},
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIXPBar', text = L["XPBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIRepBar', text = L["ReputationBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIPetBar', text = L["PetBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIStancebar', text = L["StanceBar"], tooltip = 'descr', label = 'label'},
     {value = 'PossessBarFrame', text = L["PossessBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIMicroMenuBar', text = L["MicroMenu"], tooltip = 'descr', label = 'label'}
 }
+for i = 1, ActionBarCount do
+    table.insert(frameTable, i + 1, {
+        value = 'DragonflightUIActionbarFrame' .. i,
+        text = L["ActionbarNameFormat"]:format(i),
+        tooltip = 'descr',
+        label = 'label'
+    })
+end
 
 local gryphonsTable = {
     {value = 'DEFAULT', text = L["Default"], tooltip = 'descr', label = 'label'},
@@ -1824,28 +1795,24 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('actionbar1', {order = 1, name = 'Action Bar 1', descr = 'desc', isNew = false})
-    register('actionbar2', {order = 2, name = 'Action Bar 2', descr = 'desc', isNew = false})
-    register('actionbar3', {order = 3, name = 'Action Bar 3', descr = 'desc', isNew = false})
-    register('actionbar4', {order = 4, name = 'Action Bar 4', descr = 'desc', isNew = false})
-    register('actionbar5', {order = 5, name = 'Action Bar 5', descr = 'desc', isNew = false})
-    register('actionbar6', {order = 6, name = 'Action Bar 6', descr = 'desc', isNew = false})
-    register('actionbar7', {order = 7, name = 'Action Bar 7', descr = 'desc', isNew = false})
-    register('actionbar8', {order = 8, name = 'Action Bar 8', descr = 'desc', isNew = false})
 
-    register('petbar', {order = 9, name = 'Pet Bar', descr = 'desc', isNew = false})
-    register('xpbar', {order = 10, name = 'XP Bar', descr = 'desc', isNew = false})
-    register('repbar', {order = 11, name = 'Rep Bar', descr = 'desc', isNew = false})
-    register('possessbar', {order = 12, name = 'Possess Bar', descr = 'desc', isNew = false})
-    register('stancebar', {order = 13, name = 'Stance Bar', descr = 'desc', isNew = false})
+    for i = 1, ActionBarCount do
+        register('actionbar' .. i, {order = i, name = 'Action Bar ' .. i, descr = 'desc', isNew = false})
+    end
 
-    register('bags', {order = 15, name = 'Bags', descr = 'desc', isNew = false})
-    register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
-    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = true})
+    register('petbar', {order = ActionBarCount+1, name = 'Pet Bar', descr = 'desc', isNew = false})
+    register('xpbar', {order = ActionBarCount+2, name = 'XP Bar', descr = 'desc', isNew = false})
+    register('repbar', {order = ActionBarCount+3, name = 'Rep Bar', descr = 'desc', isNew = false})
+    register('possessbar', {order = ActionBarCount+4, name = 'Possess Bar', descr = 'desc', isNew = false})
+    register('stancebar', {order = ActionBarCount+5, name = 'Stance Bar', descr = 'desc', isNew = false})
+
+    register('bags', {order = ActionBarCount+7, name = 'Bags', descr = 'desc', isNew = false})
+    register('micromenu', {order = ActionBarCount+8, name = 'Micromenu', descr = 'desc', isNew = false})
+    register('fps', {order = ActionBarCount+9, name = 'FPS', descr = 'desc', isNew = true})
 
     if DF.Cata then
-        register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false})
-        register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = true})
+        register('totembar', {order = ActionBarCount+6, name = 'Totem Bar', descr = 'desc', isNew = false})
+        register('extraactionbutton', {order = ActionBarCount+0.5, name = 'Extra Action Button', descr = 'desc', isNew = true})
     end
 end
 
@@ -1857,6 +1824,9 @@ function Module:SetupActionbarFrames()
         for i = 1, 12 do
             local name = base .. i
             local btn = _G[name]
+            if not btn.UpdateHotkeys then
+                btn.UpdateHotkeys = Module.UpdateHotkeys
+            end
             buttons[i] = btn
         end
         bar:Init()
@@ -1899,7 +1869,7 @@ function Module:SetupActionbarFrames()
         -- print('~~ActionButtonUseKeyDown')
 
         if GetCVarBool("ActionButtonUseKeyDown") then
-            for n = 6, 8 do
+            for n = 6, ActionBarCount do
                 local bar = Module['bar' .. n]
                 if bar then
                     for k, v in ipairs(bar.buttonTable) do
@@ -1909,7 +1879,7 @@ function Module:SetupActionbarFrames()
                 end
             end
         else
-            for n = 6, 8 do
+            for n = 6, ActionBarCount do
                 local bar = Module['bar' .. n]
                 if bar then
                     for k, v in ipairs(bar.buttonTable) do
@@ -1952,6 +1922,10 @@ function Module:SetupActionbarFrames()
             btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"
             btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
 
+            if not btn.UpdateHotkeys then
+                btn.UpdateHotkeys = Module.UpdateHotkeys
+            end
+
             btns[i] = btn
             btn:Hide()
 
@@ -1975,15 +1949,16 @@ function Module:SetupActionbarFrames()
         bar:HookQuickbindMode()
     end
 
-    createExtra(6)
-    createExtra(7)
-    createExtra(8)
+    for i = 6, ActionBarCount do
+        createExtra(i)
+    end
 
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
         -- print('ActionButton_UpdateHotkeys')        
         if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
+        if self.UpdateHotkeys then self:UpdateHotkeys(actionButtonType) end
     end)
 
     do
@@ -2030,6 +2005,8 @@ function Module:SetupActionbarFrames()
         -- MultiBarBottomRight:ClearAllPoints()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
     end
+
+    Module.UpdateAllButtonsHotkeys()
 end
 
 function Module.AddStateUpdater()
@@ -2058,7 +2035,7 @@ function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
 
     -- bars
-    for i = 1, 8 do
+    for i = 1, ActionBarCount do
         local bar = Module['bar' .. i]
 
         EditModeModule:AddEditModeToFrame(bar)
@@ -2296,7 +2273,7 @@ function Module:AddEditMode()
 end
 
 function Module:RegisterOptionScreens()
-    for i = 1, 8 do
+    for i = 1, ActionBarCount do
         local optionsBar = GetBarOption(i)
         DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
             name = 'Actionbar' .. i,
@@ -2411,7 +2388,7 @@ function Module:RefreshOptionScreens()
         configFrame:RefreshCatSub('Actionbar', name)
     end
 
-    for i = 1, 8 do refreshCat('Actionbar' .. i) end
+    for i = 1, ActionBarCount do refreshCat('Actionbar' .. i) end
     refreshCat('Petbar')
     refreshCat('XPbar')
     refreshCat('Repbar')
@@ -2421,7 +2398,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Micromenu')
     refreshCat('FPS')
 
-    for i = 1, 8 do
+    for i = 1, ActionBarCount do
         local bar = Module['bar' .. i]
         bar.DFEditModeSelection:RefreshOptionScreen();
     end
@@ -2446,15 +2423,10 @@ function Module:ApplySettings(sub)
     local db = Module.db.profile
 
     if not sub or sub == 'ALL' then
-        Module.bar1:SetState(db.bar1)
-        Module.bar2:SetState(db.bar2)
-        Module.bar3:SetState(db.bar3)
-        Module.bar4:SetState(db.bar4)
-        Module.bar5:SetState(db.bar5)
-
-        Module.bar6:SetState(db.bar6)
-        Module.bar7:SetState(db.bar7)
-        Module.bar8:SetState(db.bar8)
+        for i = 1, ActionBarCount do
+            local bar = Module['bar'..i]
+            bar:SetState(db['bar'..i])
+        end
 
         Module.petbar:SetState(db.pet)
         Module.xpbar:SetState(db.xp)
@@ -2549,6 +2521,91 @@ end
 local frame = CreateFrame('FRAME', 'DragonflightUIActionbarFrame', UIParent)
 frame:SetFrameStrata('HIGH')
 Module.Frame = frame
+
+-- Come from LibKeyBound-1.0
+local NUM_MOUSE_BUTTONS = 31
+function Module.ToShortKey(key)
+	if key then
+		key = key:upper()
+		key = key:gsub(' ', '')
+		key = key:gsub('ALT%-', 'A')
+		key = key:gsub('CTRL%-', 'C')
+		key = key:gsub('SHIFT%-', 'S')
+		key = key:gsub('META%-', 'C')
+		key = key:gsub('NUMPAD', 'N')
+
+		key = key:gsub('PLUS', '%+')
+		key = key:gsub('MINUS', '%-')
+		key = key:gsub('MULTIPLY', '%*')
+		key = key:gsub('DIVIDE', '%/')
+
+		key = key:gsub('BACKSPACE', 'BS')
+
+		for i = 1, NUM_MOUSE_BUTTONS do
+			key = key:gsub('BUTTON' .. i, 'B' .. i)
+		end
+
+		key = key:gsub('CAPSLOCK', 'CP')
+		key = key:gsub('CLEAR', 'CL')
+		key = key:gsub('DELETE', 'Del')
+		key = key:gsub('END', 'En')
+		key = key:gsub('HOME', 'HM')
+		key = key:gsub('INSERT', 'Ins')
+		key = key:gsub('MOUSEWHEELDOWN', 'WD')
+		key = key:gsub('MOUSEWHEELUP', 'WU')
+		key = key:gsub('NUMLOCK', 'NL')
+		key = key:gsub('PAGEDOWN', 'PD')
+		key = key:gsub('PAGEUP', 'PU')
+		key = key:gsub('SCROLLLOCK', 'SL')
+		key = key:gsub('SPACEBAR', 'SP')
+		key = key:gsub('SPACE', 'SP')
+		key = key:gsub('TAB', 'TB')
+
+		key = key:gsub('DOWNARROW', 'Dn')
+		key = key:gsub('LEFTARROW', 'Lf')
+		key = key:gsub('RIGHTARROW', 'Rt')
+		key = key:gsub('UPARROW', 'Up')
+
+		return key
+	end
+end
+
+function Module.UpdateHotkeys(self, actionButtonType)
+    local name = self:GetName();
+    local id;
+    if ( not actionButtonType ) then
+        actionButtonType = "ACTIONBUTTON";
+        id = self:GetID();
+    else
+        if ( actionButtonType == "MULTICASTACTIONBUTTON" ) then
+            id = self.buttonIndex;
+        else
+            id = self:GetID();
+        end
+    end
+
+    local key = GetBindingKey(actionButtonType..id) or GetBindingKey("CLICK "..name..":LeftButton");
+    local text = GetBindingText(key, 1);
+    -- print("btn-name: "..name..", id: "..id..", type: "..tostring(actionButtonType)..", key: "..key..", text: "..text)
+    if key then
+        local hotkey = self.HotKey;
+        local short_key = Module.ToShortKey(key)
+        if hotkey then
+            -- print("btn-name: "..name..", id:"..id..", key: "..key..", text: "..text..", short_key: "..short_key)
+            hotkey:SetText(short_key);
+        end
+    end
+end
+
+function Module.UpdateAllButtonsHotkeys()
+    for i = 1, ActionBarCount do
+        local bar = Module['bar' .. i]
+        for j = 1, #bar.buttonTable do
+            local btn = bar.buttonTable[j]
+            Module.UpdateHotkeys(btn, btn.buttonType)
+        end
+    end
+end
 
 function Module.ChangeActionbar()
     -- ActionButton1:ClearAllPoints()
