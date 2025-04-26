@@ -1498,15 +1498,24 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 -- print(layer, layerNr, child:GetTexture())
                 if layer == 'BORDER' then child:Hide() end
                 -- if layer == 'ARTWORK' then child:Hide() end
+                if DF.Wrath and not DF.Cata then
+                    if layer == 'BACKGROUND' then child:Hide() end
+                end
             end
         end
 
         local model = PetModelFrame
         model:SetPoint('TOPLEFT', PetPaperDollFrame, 'TOPLEFT', 9, -66)
 
+        local rotateleft = PetModelFrameRotateLeftButton
+        if rotateleft then
+            rotateleft:ClearAllPoints()
+            rotateleft:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        end
+
         local rotate = PetModelFrameRotateRightButton
         rotate:ClearAllPoints()
-        rotate:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        rotate:SetPoint('TOPLEFT', rotateleft or model, 'TOPRIGHT', 0, 0)
 
         local res = PetResistanceFrame
         res:ClearAllPoints()
@@ -1523,6 +1532,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         local close = PetPaperDollCloseButton
         close:ClearAllPoints()
         close:SetPoint('BOTTOMRIGHT', PetPaperDollFrame, 'BOTTOMRIGHT', -9, 7)
+        close:Hide()
 
         local newMoney = CreateFrame('FRAME', 'DFPetTrainingPointsFrame', PetPaperDollFrame)
         -- newMoney:SetSize(178 - 2 * 8, 17)
