@@ -336,6 +336,9 @@ function Module:ApplySettings()
             end)
         end
 
+        Module:FuncOrWaitframe('tdInspect', function()
+            DF.Compatibility:TDInspect()
+        end)    
         Module:FuncOrWaitframe('MerInspect-classic-era', function()
             DF.Compatibility:MerInspectClassicEra()
         end)
