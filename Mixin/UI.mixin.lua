@@ -1108,6 +1108,9 @@ end
 
 function DragonflightUIMixin:ChangeCharacterFrameEra()
     local frameTable = {PaperDollFrame, ReputationFrame, SkillFrame}
+    if DF.Wrath and not DF.Cata then -- Need test Era or Cata or Mop need hide TokenFrame.
+        table.insert(frameTable, TokenFrame)
+    end
 
     for i, f in ipairs(frameTable) do
         local regions = {f:GetRegions()}
@@ -1119,6 +1122,9 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 -- print(layer, layerNr, child:GetTexture())
                 if layer == 'BORDER' then child:Hide() end
                 -- if layer == 'ARTWORK' then child:Hide() end
+                if DF.Wrath and not DF.Cata then
+                    if f == TokenFrame and layer == 'ARTWORK' then child:Hide() end
+                end
             end
         end
     end
@@ -1171,6 +1177,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     closeButton:ClearAllPoints()
     closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
 
+    -- Portrait
     do
         local port = CharacterFramePortrait
         port:SetSize(62, 62)
@@ -1190,6 +1197,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
+    -- Background
     local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', frame, 'InsetFrameTemplate')
     inset:ClearAllPoints()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
@@ -1197,6 +1205,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     frame.DFInset = inset
     -- _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
 
+    -- Item Slots
     local head = CharacterHeadSlot
     head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -2)
 
@@ -1204,6 +1213,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     hand:ClearAllPoints()
     hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
 
+    -- Model
     local model = CharacterModelFrame
     model:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', 52, -66)
     model:SetHeight(224 - 12)
@@ -1226,6 +1236,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local res = CharacterResistanceFrame
     res:SetPoint('TOPRIGHT', PaperDollFrame, 'TOPLEFT', 297 - 10 + 2, -77 + 10 + 2)
 
+    -- Attributes
     local att = CharacterAttributesFrame
     local attX = (inset:GetWidth() - att:GetWidth()) / 2
     att:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', attX + 4, -291 + 12)
@@ -1463,10 +1474,19 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         scroll:SetPoint('TOPLEFT', inset, 'TOPLEFT', 0, 0)
         scroll:SetWidth(300)
 
-        local first = ReputationBar1
-        first:ClearAllPoints()
-        first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
-        -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+        local function UpdateRepulationBarsPos()
+            local first = ReputationBar1
+            first:ClearAllPoints()
+            first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
+            -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
+        end
+
+        if DF.Wrath and not DF.Cata then
+            scroll:HookScript("OnShow", UpdateRepulationBarsPos)
+            scroll:HookScript("OnHide", UpdateRepulationBarsPos)
+        else
+            UpdateRepulationBarsPos()
+        end
 
         local detail = ReputationDetailFrame
         detail:SetPoint('TOPLEFT', rep, 'TOPRIGHT', 0, -13)
@@ -1487,22 +1507,31 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 -- print(layer, layerNr, child:GetTexture())
                 if layer == 'BORDER' then child:Hide() end
                 -- if layer == 'ARTWORK' then child:Hide() end
+                if DF.Wrath and not DF.Cata then
+                    if layer == 'BACKGROUND' then child:Hide() end
+                end
             end
         end
 
         local model = PetModelFrame
         model:SetPoint('TOPLEFT', PetPaperDollFrame, 'TOPLEFT', 9, -66)
 
+        local rotateleft = PetModelFrameRotateLeftButton
+        if rotateleft then
+            rotateleft:ClearAllPoints()
+            rotateleft:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        end
+
         local rotate = PetModelFrameRotateRightButton
         rotate:ClearAllPoints()
-        rotate:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        rotate:SetPoint('TOPLEFT', rotateleft or model, 'TOPRIGHT', 0, 0)
 
         local res = PetResistanceFrame
         res:ClearAllPoints()
         res:SetPoint('TOPRIGHT', model, 'TOPRIGHT', 0, 0)
 
         local att = PetAttributesFrame
-        attX = (inset:GetWidth() - att:GetWidth()) / 2
+        local attX = (inset:GetWidth() - att:GetWidth()) / 2
         att:SetPoint('TOPLEFT', PetPaperDollFrame, 'TOPLEFT', attX + 4, -300 + 10)
 
         local expBar = PetPaperDollFrameExpBar
@@ -1512,6 +1541,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         local close = PetPaperDollCloseButton
         close:ClearAllPoints()
         close:SetPoint('BOTTOMRIGHT', PetPaperDollFrame, 'BOTTOMRIGHT', -9, 7)
+        close:Hide()
 
         local newMoney = CreateFrame('FRAME', 'DFPetTrainingPointsFrame', PetPaperDollFrame)
         -- newMoney:SetSize(178 - 2 * 8, 17)
@@ -1565,16 +1595,17 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             loyal:SetPoint('TOP', levelPet, 'BOTTOM', 0, -1)
             loyal:SetDrawLayer('ARTWORK')
         end
-        --[[     local level = CharacterLevelText
-    level:ClearAllPoints()
-    level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
-    level:SetDrawLayer('ARTWORK')
+        --[[
+        local level = CharacterLevelText
+        level:ClearAllPoints()
+        level:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+        level:SetDrawLayer('ARTWORK')
 
-    local honorLevel = HonorLevelText
-    honorLevel:ClearAllPoints()
-    honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
-    honorLevel:SetDrawLayer('ARTWORK')
- ]]
+        local honorLevel = HonorLevelText
+        honorLevel:ClearAllPoints()
+        honorLevel:SetPoint('TOP', header, 'BOTTOM', 0, -10)
+        honorLevel:SetDrawLayer('ARTWORK')
+        ]]
     end
 
     -- skills
@@ -1591,7 +1622,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
         local firstSkill = SkillRankFrame1
         -- firstSkill:ClearAllPoints()
-        --  firstSkill:SetPoint('TOPLEFT', skills, 'TOPLEFT', 38, -86)
+        -- firstSkill:SetPoint('TOPLEFT', skills, 'TOPLEFT', 38, -86)
 
         local expand = SkillFrameExpandButtonFrame
         expand:SetPoint('TOPLEFT', skills, 'TOPLEFT', 70 - 10, -49 + 14)
@@ -1610,6 +1641,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         local cancel = SkillFrameCancelButton
         cancel:ClearAllPoints()
         cancel:SetPoint('BOTTOMRIGHT', skills, 'BOTTOMRIGHT', -9 - 26, 7)
+        cancel:Hide()
 
         local dividerLeft = SkillFrameHorizontalBarLeft
         dividerLeft:SetPoint('TOPLEFT', skills, 'TOPLEFT', 15 - 10, -290)
@@ -1620,6 +1652,38 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         detail:SetPoint('TOPLEFT', scroll, 'BOTTOMLEFT', 0, -8 - 10)
         detail:SetWidth(300)
 
+    end
+
+    -- token
+    do
+        if DF.Wrath and not DF.Cata then -- Need test Era or Cata or Mop
+            local token = TokenFrame
+
+            local container = TokenFrameContainer
+            container:ClearAllPoints()
+            container:SetPoint('TOPLEFT', token, 'TOPLEFT', 12, -63)
+
+            local pop = TokenFramePopup
+            pop:ClearAllPoints()
+            pop:SetPoint('TOPLEFT', token, 'TOPRIGHT', 0, 0)
+
+            local money = TokenFrameMoneyFrame
+            money:ClearAllPoints()
+            money:SetPoint('BOTTOMRIGHT', token, 'BOTTOMRIGHT', 6, 6)
+
+            local cancel = TokenFrameCancelButton
+            cancel:ClearAllPoints()
+            cancel:SetPoint('BOTTOMRIGHT', token, 'BOTTOMRIGHT', -9 - 26, 7)
+            cancel:Hide()
+
+            local children = {token:GetChildren()}
+            for i, child in ipairs(children) do
+                local name = child:GetName()
+                if not name then
+                    child:Hide()
+                end
+            end
+        end
     end
 end
 
