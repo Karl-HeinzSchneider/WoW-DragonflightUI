@@ -655,20 +655,20 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 local newTable = {} -- df
 
-                newTable[1] = {left = 'Main Hand'}
-                newTable[2] = {left = 'Attack Speed (seconds)', right = string.format('%.2f', tooltipTable.attackSpeed)}
-                newTable[3] = {left = 'Damage', right = tooltipTable.damage}
-                newTable[4] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.dps)}
+                newTable[1] = {left = INVTYPE_WEAPONMAINHAND}
+                newTable[2] = {left = ATTACK_SPEED_SECONDS, right = string.format('%.2f', tooltipTable.attackSpeed)}
+                newTable[3] = {left = DAMAGE, right = tooltipTable.damage}
+                newTable[4] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.dps)}
 
                 if tooltipTable.offhandAttackSpeed then
                     newTable[5] = {left = ' '}
-                    newTable[6] = {left = 'Off Hand', white = true}
+                    newTable[6] = {left = INVTYPE_WEAPONOFFHAND, white = true}
                     newTable[7] = {
-                        left = 'Attack Speed (seconds)',
+                        left = ATTACK_SPEED_SECONDS,
                         right = string.format('%.2f', tooltipTable.offhandAttackSpeed)
                     }
-                    newTable[8] = {left = 'Damage', right = tooltipTable.offhandDamage}
-                    newTable[9] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.offhandDps)}
+                    newTable[8] = {left = DAMAGE, right = tooltipTable.offhandDamage}
+                    newTable[9] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.offhandDps)}
                 end
 
                 -- print(frameText, tooltip, tooltip2)
@@ -691,11 +691,11 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
                 frameText, tooltip, tooltip2, tooltipTable = melee()
                 frameText = string.format('%.1f', tooltipTable.dps);
 
-                newTable[1] = {left = 'Damage Per Second'}
-                newTable[2] = {left = 'Main Hand', right = frameText}
+                newTable[1] = {left = DAMAGE_PER_SECOND}
+                newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = frameText}
 
                 if tooltipTable.offhandAttackSpeed then
-                    newTable[3] = {left = 'Off Hand', right = string.format('%.1f', tooltipTable.offhandDps)}
+                    newTable[3] = {left = INVTYPE_WEAPONOFFHAND, right = string.format('%.1f', tooltipTable.offhandDps)}
                 end
 
                 return frameText, nil, nil, newTable
@@ -728,11 +728,11 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 frameText = string.format('%.2f', speed);
 
-                newTable[1] = {left = 'Attack Speed (seconds)'}
-                newTable[2] = {left = 'Main Hand', right = frameText}
+                newTable[1] = {left = ATTACK_SPEED_SECONDS}
+                newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = frameText}
 
                 if offhandSpeed then
-                    newTable[3] = {left = 'Off Hand', right = string.format('%.2f', offhandSpeed)}
+                    newTable[3] = {left = INVTYPE_WEAPONOFFHAND, right = string.format('%.2f', offhandSpeed)}
                 end
 
                 return frameText, nil, nil, newTable
@@ -759,7 +759,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             func = function()
                 local crit = GetCritChance()
                 local str = string.format(' %.2F', crit) .. '%';
-                return str, 'Crit Chance' .. str, 'Chance of attacks doing extra damage.'
+                return str, CRIT_CHANCE .. str, 'Chance of attacks doing extra damage.'
             end
         })
 
@@ -855,10 +855,10 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 local newTable = {} -- df
 
-                newTable[1] = {left = 'Ranged'}
-                newTable[2] = {left = 'Attack Speed (seconds)', right = string.format('%.2f', tooltipTable.attackSpeed)}
-                newTable[3] = {left = 'Damage', right = tooltipTable.damage}
-                newTable[4] = {left = 'Damage per Second', right = string.format('%.1f', tooltipTable.dps)}
+                newTable[1] = {left = RANGED}
+                newTable[2] = {left = ATTACK_SPEED_SECONDS, right = string.format('%.2f', tooltipTable.attackSpeed)}
+                newTable[3] = {left = DAMAGE, right = tooltipTable.damage}
+                newTable[4] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.dps)}
 
                 -- print(frameText, tooltip, tooltip2)
                 return frameText, nil, nil, newTable
@@ -882,8 +882,8 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
                 frameText, tooltip, tooltip2, tooltipTable = range()
                 frameText = string.format('%.1f', tooltipTable.dps);
 
-                newTable[1] = {left = 'Damage Per Second'}
-                newTable[2] = {left = 'Ranged', right = frameText}
+                newTable[1] = {left = DAMAGE_PER_SECOND}
+                newTable[2] = {left = RANGED, right = frameText}
 
                 return frameText, nil, nil, newTable
             end
@@ -925,8 +925,8 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 local newTable = {} -- df         
 
-                newTable[1] = {left = 'Ranged'}
-                newTable[2] = {left = 'Attack Speed (seconds)', right = frameText}
+                newTable[1] = {left = RANGED}
+                newTable[2] = {left = ATTACK_SPEED_SECONDS, right = frameText}
 
                 -- print(frameText, tooltip, tooltip2)
                 return frameText, nil, nil, newTable
@@ -970,7 +970,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
                 local crit = GetRangedCritChance()
                 local str = string.format(' %.2F', crit) .. '%';
-                return str, 'Crit Chance' .. str, 'Chance of attacks doing extra damage.'
+                return str, CRIT_CHANCE .. str, 'Chance of attacks doing extra damage.'
             end
         })
     end
@@ -1064,7 +1064,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             func = function()
                 local crit = GetRealSpellCrit()
                 local str = string.format(' %.2f', crit) .. '%';
-                return str, 'Crit Chance' .. str, 'Chance of spells doing extra damage.'
+                return str, CRIT_CHANCE .. str, 'Chance of spells doing extra damage.'
             end
         })
 
@@ -1113,7 +1113,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
 
         self:RegisterElement('armor', 'defense', {
             order = 1,
-            name = 'Armor',
+            name = ARMOR,
             descr = '..',
             func = function()
                 return armor()
@@ -1161,7 +1161,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             func = function()
                 local dodge = GetDodgeChance()
                 local str = string.format(' %.2F', dodge) .. '%';
-                return str, 'Dodge Chance' .. str, nil
+                return str, DODGE_CHANCE .. str, nil
             end
         })
 
@@ -1172,7 +1172,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             func = function()
                 local parry = GetParryChance()
                 local str = string.format(' %.2F', parry) .. '%';
-                return str, 'Parry Chance' .. str, nil
+                return str, PARRY_CHANCE .. str, nil
             end
         })
 
@@ -1183,7 +1183,7 @@ function DragonflightUICharacterStatsPanelMixin:AddDefaultStats()
             func = function()
                 local block = GetBlockChance()
                 local str = string.format(' %.2F', block) .. '%';
-                return str, 'Block Chance' .. str, nil
+                return str, BLOCK_CHANCE .. str, nil
             end
         })
 
