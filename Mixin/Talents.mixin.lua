@@ -264,10 +264,18 @@ function DragonflightUITalentsPanelMixin:Init(id)
             --                    
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
             GameTooltip:SetTalent(id, i)
+
+            C_Timer.After(0, function()
+                if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+            end)
+
+            C_Timer.After(1, function()
+                if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+            end)
         end)
 
         button:SetScript('OnEvent', function(self, event, ...)
-            --
+            --          
             if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
         end)
 
