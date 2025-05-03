@@ -27,11 +27,13 @@ function DFProfessionMixin:OnLoad()
     self:Refresh(true)
     self:Show()
 
-    hooksecurefunc('SpellBookFrame_Update', function()
-        --
-        -- print('SpellBookFrame_Update')
-        self:Refresh(true)
-    end)
+    if SpellBookFrame_Update then
+        hooksecurefunc('SpellBookFrame_Update', function()
+            --
+            -- print('SpellBookFrame_Update')
+            self:Refresh(true)
+        end)
+    end
 
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
 
