@@ -13,6 +13,16 @@ else
     end
 end
 
+if C_AddOns and C_AddOns.LoadAddOn then
+    function DF:LoadAddOn(...)
+        return C_AddOns.LoadAddOn(...)
+    end
+else
+    function DF:LoadAddOn(...)
+        return LoadAddOn(...)
+    end
+end
+
 function DF.Compatibility:FuncOrWaitframe(addon, func)
     if DF:IsAddOnLoaded(addon) then
         -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')

@@ -549,11 +549,11 @@ end
 
 function Module:UpdateTradeskills()
     do
-        local loaded, reason = LoadAddOn('Blizzard_TradeSkillUI')
+        local loaded, reason = DF:LoadAddOn('Blizzard_TradeSkillUI')
         -- print('--', loaded, reason)    
     end
     do
-        local loaded, reason = LoadAddOn('Blizzard_CraftUI')
+        local loaded, reason = DF:LoadAddOn('Blizzard_CraftUI')
         -- print('--', loaded, reason)
     end
 
