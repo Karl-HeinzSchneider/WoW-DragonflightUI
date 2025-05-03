@@ -595,53 +595,23 @@ local function setPreset(T, preset, sub)
 end
 
 local frameTable = {
-    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}, {
-        value = 'DragonflightUIActionbarFrame1',
-        text = L["ActionbarNameFormat"]:format(1),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame2',
-        text = L["ActionbarNameFormat"]:format(2),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame3',
-        text = L["ActionbarNameFormat"]:format(3),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame4',
-        text = L["ActionbarNameFormat"]:format(4),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame5',
-        text = L["ActionbarNameFormat"]:format(5),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame6',
-        text = L["ActionbarNameFormat"]:format(6),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame7',
-        text = L["ActionbarNameFormat"]:format(7),
-        tooltip = 'descr',
-        label = 'label'
-    }, {
-        value = 'DragonflightUIActionbarFrame8',
-        text = L["ActionbarNameFormat"]:format(8),
-        tooltip = 'descr',
-        label = 'label'
-    }, {value = 'DragonflightUIXPBar', text = L["XPBar"], tooltip = 'descr', label = 'label'},
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIXPBar', text = L["XPBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIRepBar', text = L["ReputationBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIPetBar', text = L["PetBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIStancebar', text = L["StanceBar"], tooltip = 'descr', label = 'label'},
     {value = 'PossessBarFrame', text = L["PossessBar"], tooltip = 'descr', label = 'label'},
     {value = 'DragonflightUIMicroMenuBar', text = L["MicroMenu"], tooltip = 'descr', label = 'label'}
 }
+
+for i = 1, 8 do
+    table.insert(frameTable, i + 1, {
+        value = 'DragonflightUIActionbarFrame' .. i,
+        text = L["ActionbarNameFormat"]:format(i),
+        tooltip = 'descr',
+        label = 'label'
+    })
+end
 
 local gryphonsTable = {
     {value = 'DEFAULT', text = L["Default"], tooltip = 'descr', label = 'label'},
@@ -1824,14 +1794,7 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('actionbar1', {order = 1, name = 'Action Bar 1', descr = 'desc', isNew = false})
-    register('actionbar2', {order = 2, name = 'Action Bar 2', descr = 'desc', isNew = false})
-    register('actionbar3', {order = 3, name = 'Action Bar 3', descr = 'desc', isNew = false})
-    register('actionbar4', {order = 4, name = 'Action Bar 4', descr = 'desc', isNew = false})
-    register('actionbar5', {order = 5, name = 'Action Bar 5', descr = 'desc', isNew = false})
-    register('actionbar6', {order = 6, name = 'Action Bar 6', descr = 'desc', isNew = false})
-    register('actionbar7', {order = 7, name = 'Action Bar 7', descr = 'desc', isNew = false})
-    register('actionbar8', {order = 8, name = 'Action Bar 8', descr = 'desc', isNew = false})
+    for i = 1, 8 do register('actionbar' .. i, {order = i, name = 'Action Bar ' .. i, descr = 'desc', isNew = false}) end
 
     register('petbar', {order = 9, name = 'Pet Bar', descr = 'desc', isNew = false})
     register('xpbar', {order = 10, name = 'XP Bar', descr = 'desc', isNew = false})
@@ -1877,17 +1840,11 @@ function Module:SetupActionbarFrames()
     createStuff(4, 'MultiBarLeftButton')
     createStuff(5, 'MultiBarRightButton')
 
-    Module.bar1:StyleButtons()
-    Module.bar1:HookQuickbindMode()
-    -- Module.bar1:HookGrid()
-    Module.bar2:StyleButtons()
-    Module.bar2:HookQuickbindMode()
-    Module.bar3:StyleButtons()
-    Module.bar3:HookQuickbindMode()
-    Module.bar4:StyleButtons()
-    Module.bar4:HookQuickbindMode()
-    Module.bar5:StyleButtons()
-    Module.bar5:HookQuickbindMode()
+    for i = 1, 5 do
+        local bar = Module['bar' .. i]
+        bar:StyleButtons()
+        bar:HookQuickbindMode()
+    end
 
     -- bar 6
     local cvarFrame = CreateFrame('FRAME');
