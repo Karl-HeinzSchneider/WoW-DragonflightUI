@@ -338,7 +338,7 @@ function Module:ApplySettings()
 
         Module:FuncOrWaitframe('tdInspect', function()
             DF.Compatibility:TDInspect()
-        end)    
+        end)
         Module:FuncOrWaitframe('MerInspect-classic-era', function()
             DF.Compatibility:MerInspectClassicEra()
         end)
@@ -485,7 +485,7 @@ function Module:ChangeFrames()
         Module:FuncOrWaitframe('TacoTip', function()
             DF.Compatibility:TacoTipCharacter()
         end) ]]
-        if IsAddOnLoaded('Leatrix_Plus') then
+        if DF:IsAddOnLoaded('Leatrix_Plus') then
             --
             if QuestLogFrame:GetWidth() > 400 then
                 --
@@ -531,8 +531,7 @@ function Module:ChangeFrames()
 end
 
 function Module:FuncOrWaitframe(addon, func)
-    local checkAddonFunc = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
-    if checkAddonFunc(addon) then
+    if DF:IsAddOnLoaded(addon) then
         -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
         func()
     else
@@ -561,7 +560,7 @@ function Module:UpdateTradeskills()
     local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
     Module.ProfessionFrame = prof
 
-    if IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
+    if DF:IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
 end
 
 function Module:HookCharacterFrame()

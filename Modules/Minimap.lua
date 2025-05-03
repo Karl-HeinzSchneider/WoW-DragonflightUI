@@ -1068,7 +1068,7 @@ function Module.HookCalendar()
 end
 
 function Module.ChangeClock()
-    if IsAddOnLoaded('Blizzard_TimeManager') then
+    if DF:IsAddOnLoaded('Blizzard_TimeManager') then
         local regions = {TimeManagerClockButton:GetRegions()}
         regions[1]:Hide()
         TimeManagerClockButton:ClearAllPoints()
