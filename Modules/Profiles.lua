@@ -388,7 +388,7 @@ function Module:SetupDialogFrames()
 
         Module.ExportFrame = outerFrame
 
-        LoadAddOn("LibDeflate")
+        DF:LoadAddOn("LibDeflate")
     end
 
     do

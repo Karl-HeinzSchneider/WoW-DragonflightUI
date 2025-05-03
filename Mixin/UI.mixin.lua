@@ -439,7 +439,7 @@ function DragonflightUIMixin:ChangeTradeskillFrameCata(frame)
 end
 
 function DragonflightUIMixin:ChangeTrainerFrame()
-    if IsAddOnLoaded('Leatrix_Plus') then
+    if DF:IsAddOnLoaded('Leatrix_Plus') then
         --
         if ClassTrainerFrame:GetWidth() > 400 then
             --
@@ -1507,9 +1507,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 -- print(layer, layerNr, child:GetTexture())
                 if layer == 'BORDER' then child:Hide() end
                 -- if layer == 'ARTWORK' then child:Hide() end
-                if DF.Wrath and not DF.Cata then
-                    if layer == 'BACKGROUND' then child:Hide() end
-                end
+                if DF.Wrath and not DF.Cata then if layer == 'BACKGROUND' then child:Hide() end end
             end
         end
 
@@ -1679,9 +1677,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             local children = {token:GetChildren()}
             for i, child in ipairs(children) do
                 local name = child:GetName()
-                if not name then
-                    child:Hide()
-                end
+                if not name then child:Hide() end
             end
         end
     end

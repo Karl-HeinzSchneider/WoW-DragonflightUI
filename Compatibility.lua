@@ -3,11 +3,28 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 DF.Compatibility = {}
 
--- wrath compat @TODO
-local IsAddOnLoaded = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+if C_AddOns and C_AddOns.IsAddOnLoaded then
+    function DF:IsAddOnLoaded(...)
+        return C_AddOns.IsAddOnLoaded(...)
+    end
+else
+    function DF:IsAddOnLoaded(...)
+        return IsAddOnLoaded(...)
+    end
+end
+
+if C_AddOns and C_AddOns.LoadAddOn then
+    function DF:LoadAddOn(...)
+        return C_AddOns.LoadAddOn(...)
+    end
+else
+    function DF:LoadAddOn(...)
+        return LoadAddOn(...)
+    end
+end
 
 function DF.Compatibility:FuncOrWaitframe(addon, func)
-    if IsAddOnLoaded(addon) then
+    if DF:IsAddOnLoaded(addon) then
         -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
         func()
     else
@@ -23,7 +40,7 @@ function DF.Compatibility:FuncOrWaitframe(addon, func)
     end
 end
 
-local novaLoaded = IsAddOnLoaded('NovaWorldBuffs')
+local novaLoaded = DF:IsAddOnLoaded('NovaWorldBuffs')
 -- print('Nova loaded: ', novaLoaded)
 if novaLoaded then if _G['MinimapLayerFrame'] then _G['MinimapLayerFrame']:SetPoint('BOTTOM', 0, 4) end end
 
@@ -331,14 +348,12 @@ function DF.Compatibility:WhatsTraining()
             inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6, 4)
             inset:SetFrameLevel(1)
 
-            local first =
-                frame:CreateTexture('DragonflightUIWhatsTrainingCompatibilitySpellBookPage1', 'BACKGROUND')
+            local first = frame:CreateTexture('DragonflightUIWhatsTrainingCompatibilitySpellBookPage1', 'BACKGROUND')
             first:SetTexture(base .. 'Spellbook-Page-1')
             first:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -25)
             first:SetDrawLayer('BACKGROUND', -1)
 
-            local second = frame:CreateTexture('DragonflightUIWhatsTrainingCompatibilitySpellBookPage2',
-                                               'BACKGROUND')
+            local second = frame:CreateTexture('DragonflightUIWhatsTrainingCompatibilitySpellBookPage2', 'BACKGROUND')
             second:SetTexture(base .. 'Spellbook-Page-2')
             second:SetPoint('TOPLEFT', first, 'TOPRIGHT', 0, 0)
 
