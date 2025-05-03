@@ -1120,6 +1120,8 @@ function DragonflightUIPetbarMixin:StylePetButton()
         local btn = self.buttonTable[i]
         local btnName = btn:GetName()
 
+        btn.buttonType = 'BONUSACTIONBUTTON'
+
         local normalTwo = _G[btnName .. 'NormalTexture2']
         normalTwo:Hide()
         normalTwo:SetTexture('')
@@ -1292,6 +1294,9 @@ function DragonflightUIStancebarMixinCode:Update()
             end
 
             btn:SetKeybindFontSize(state.keybindFontSize)
+
+            btn.buttonType = 'SHAPESHIFTBUTTON'
+            btn:UpdateHotkeyDisplayText(state.shortenKeybind)
 
             index = index + 1
         end

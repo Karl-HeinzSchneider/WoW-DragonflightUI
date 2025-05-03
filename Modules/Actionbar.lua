@@ -327,6 +327,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -410,6 +411,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
