@@ -311,9 +311,16 @@ end
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
-    -- print('event', event)   
+    -- print('event', event, InCombatLockdown())
+    if event == 'PLAYER_REGEN_DISABLED' then
+        Module:CombatHandler(true)
+    elseif event == 'PLAYER_REGEN_ENABLED' then
+        Module:CombatHandler(false)
+    end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
+frame:RegisterEvent('PLAYER_REGEN_DISABLED')
+frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 function Module:CreateGrid()
     DF:Debug(self, 'CreateGrid()')
@@ -343,6 +350,23 @@ function Module:SetupMainmenuButton()
         DF:Debug(self, 'editmode')
         Module:SetEditMode(not Module.IsEditMode)
     end)
+end
+
+function Module:CombatHandler(preCombat)
+    if preCombat then
+        self.WasEditMode = self.IsEditMode
+
+        if self.IsEditMode then
+            self:Print('Combat started while in edit mode - deactivating until combat is over.')
+            self:SetEditMode(false)
+        end
+    else
+        if self.WasEditMode then
+            self:Print('Combat ended - restoring edit mode.')
+            self:SetEditMode(true)
+            self.WasEditMode = false;
+        end
+    end
 end
 
 function Module:SetEditMode(isEditMode)
