@@ -45,6 +45,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -79,6 +80,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -114,6 +116,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -149,6 +152,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -183,6 +187,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -217,6 +222,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -251,6 +257,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -285,6 +292,7 @@ local defaults = {
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
+            shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -762,6 +770,15 @@ function AddButtonTable(optionTable, sub)
             group = 'headerStyling',
             order = 56,
             editmode = true
+        },
+        shortenKeybind = {
+            type = 'toggle',
+            name = L["ButtonTableShortenKeybindText"],
+            desc = L["ButtonTableShortenKeybindTextDesc"] .. getDefaultStr('shortenKeybind', sub),
+            group = 'headerStyling',
+            order = 56.05,
+            editmode = true,
+            new = true
         },
         keybindFontSize = {
             type = 'range',
