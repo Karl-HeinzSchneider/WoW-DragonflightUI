@@ -166,7 +166,7 @@ function Module:HookFriendsColor(hook)
                     button.DFHeart = heart
                 end
 
-                if string.match(noteText, "<3") then
+                if string.match(noteText or '', "<3") then
                     button.DFHeart:Show()
                 else
                     button.DFHeart:Hide()
@@ -189,8 +189,8 @@ function Module:HookFriendsColor(hook)
 
                     local englishFaction, localizedFaction = UnitFactionGroup('player')
 
-                    nameText = accountName .. " " .. "|c" .. color.colorStr .. "(" .. characterName .. ': ' .. level ..
-                                   ")" .. FONT_COLOR_CODE_CLOSE;
+                    local nameText = accountName .. " " .. "|c" .. color.colorStr .. "(" .. characterName .. ': ' ..
+                                         level .. ")" .. FONT_COLOR_CODE_CLOSE;
 
                     if faction ~= localizedFaction then
                         nameText = nameText .. ' (' .. faction .. ') '
