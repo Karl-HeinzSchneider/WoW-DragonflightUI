@@ -229,6 +229,8 @@ function DragonflightUIActionbarMixin:Update()
 
             btn:SetKeybindFontSize(state.keybindFontSize)
 
+            btn:UpdateHotkeyDisplayText(state.shortenKeybind)
+
             index = index + 1
         end
     end
@@ -563,6 +565,18 @@ function DragonflightUIActionbarMixin:AddDeco()
     end
 end
 
+function DragonflightUIActionbarMixin:GetShortKey(k)
+    if not k then return '' end
+
+    local key = k:upper():gsub(" ", "")
+
+    local KEY_REPLACEMENTS = DF.KEY_REPLACEMENTS;
+
+    for pattern, replacement in pairs(KEY_REPLACEMENTS) do key = key:gsub(pattern, replacement) end
+
+    return key;
+end
+
 function DragonflightUIActionbarMixin:StyleButtons()
     local count = #(self.buttonTable)
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
@@ -766,6 +780,48 @@ function DragonflightUIActionbarMixin:StyleButtons()
             btn:SetKeybindFontSize(14 + 2)
         end
         btn.DragonflightFixHotkeyPosition()
+
+        do
+            function btn:UpdateHotkeyDisplayText(shorten)
+                local name = self:GetName();
+                local actionButtonType = self.buttonType;
+                local id;
+                if (not actionButtonType) then
+                    actionButtonType = "ACTIONBUTTON";
+                    id = self:GetID();
+                else
+                    if (actionButtonType == "MULTICASTACTIONBUTTON") then
+                        id = self.buttonIndex;
+                    else
+                        id = self:GetID();
+                    end
+                end
+
+                local hotkey = self.HotKey
+
+                local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":LeftButton");
+
+                if not key then
+                    hotkey:SetText('');
+                    return
+                end
+
+                local text = GetBindingText(key, 1);
+
+                if not shorten then
+                    hotkey:SetText(text)
+                    -- print('..', name, id, actionButtonType, key, text, '*')
+                    return;
+                end
+
+                local shortText = DragonflightUIActionbarMixin:GetShortKey(key)
+
+                hotkey:SetText(shortText)
+                -- print('..', name, id, actionButtonType, key, text, shortText)
+            end
+
+            btn:UpdateHotkeyDisplayText(false)
+        end
 
         do
             local name = _G[btnName .. 'Name']
