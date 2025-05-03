@@ -1295,6 +1295,9 @@ function DragonflightUIStancebarMixinCode:Update()
 
             btn:SetKeybindFontSize(state.keybindFontSize)
 
+            btn.buttonType = 'SHAPESHIFTBUTTON'
+            btn:UpdateHotkeyDisplayText(state.shortenKeybind)
+
             index = index + 1
         end
     end
