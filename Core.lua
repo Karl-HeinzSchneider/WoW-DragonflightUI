@@ -6,6 +6,9 @@ local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
 
 local defaults = {profile = {bestnumber = 42}}
 
+---@type API
+local t = DF.API;
+
 function DF:OnInitialize()
     -- Called when the addon is loaded
     self.db = LibStub('AceDB-3.0'):New('DragonflightUIDB', defaults, true)
