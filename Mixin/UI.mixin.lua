@@ -3349,11 +3349,13 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     frame:InitHook()
     frame:Update()
 
-    hooksecurefunc('SpellBookFrame_Update', function()
-        --
-        -- print('SpellBookFrame_Update')
-        frame:Update()
-    end)
+    if SpellBookFrame_Update then
+        hooksecurefunc('SpellBookFrame_Update', function()
+            --
+            -- print('SpellBookFrame_Update')
+            frame:Update()
+        end)
+    end
 end
 
 function DragonflightUIMixin:ChangeWrathPVPFrame()
@@ -3713,11 +3715,13 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             end
         end
 
-        hooksecurefunc('SpellBookFrame_Update', function()
-            --
-            --  print('SpellBookFrame_Update')
-            setTabWidths()
-        end)
+        if SpellBookFrame_Update then
+            hooksecurefunc('SpellBookFrame_Update', function()
+                --
+                --  print('SpellBookFrame_Update')
+                setTabWidths()
+            end)
+        end
 
         for i = 1, 8 do
             -- SpellBookSkillLineTab1
