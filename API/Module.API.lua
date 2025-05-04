@@ -93,3 +93,54 @@ end
 function Modules:IsModuleInitialized(moduleName)
     return initializedModules[moduleName] or false;
 end
+
+--- Hook into Module:OnInitialize()
+--- 
+--- Executes the provided function *after* OnInitialize(),
+--- or *straightaway* if the module was already initialized
+---  
+--- Will also provide the module as argument, e.g. call `func(Module)`
+---@param moduleName string
+---@param func function
+---@return boolean b `true` if module was initialized, `false` if the callback is waiting for event
+function Modules:HookInitModule(moduleName, func)
+    if Modules:IsModuleInitialized(moduleName) then
+        func(Modules:GetModule(moduleName))
+        return true;
+    end
+
+    local event = DF_EVENT:format(moduleName, 'OnInitialize')
+    EventRegistry:RegisterCallback(event, function(ownerID, ...)
+        func(...)
+    end)
+    return false;
+end
+
+--- Hook into Module:OnEnable()
+--- 
+--- Executes the provided function *after* OnEnable(),
+--- or *straightaway* if the module was already enabled
+--- 
+--- Will also provide the module as argument, e.g. call `func(Module)`
+---@param moduleName string
+---@param func function
+---@return boolean b `true` if module was enabled, `false` if the callback is waiting for event
+function Modules:HookEnableModule(moduleName, func)
+    if Modules:IsModuleEnabled(moduleName) then
+        func(Modules:GetModule(moduleName))
+        return true;
+    end
+
+    local event = DF_EVENT:format(moduleName, 'OnEnable')
+    EventRegistry:RegisterCallback(event, function(ownerID, ...)
+        func(...)
+    end)
+    return false;
+end
+
+local cb = DragonflightUI_API.Modules:HookEnableModule('Chat', function(module)
+    print('</3')
+    print(module.ApplySettings)
+    DevTools_Dump(module:GetWasEnabled())
+end)
+print('chat?', cb)
