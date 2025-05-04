@@ -4,10 +4,72 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 ---@type API
 local API = DF.API;
 
-local t = API.Version
-
 --- Game version table
 --- @class ModulesAPI
 local Modules = {}
 API.Modules = Modules
+
+local DF_EVENT = 'DragonflightUI.%s.%s'
+
+--- A mapping of module names to their enabled state (true = enabled)
+--- @type {[string]: boolean} 
+local enabledModules = {}
+
+--- A mapping of module names to their initialization state (true = initialized)
+--- @type {[string]: boolean} 
+local initializedModules = {}
+
+hooksecurefunc(DF, 'OnInitialize', function()
+    -- Event 'DragonflightUI.Core.OnInitialize'
+    -- arg1: DragonflightUI AceAddon table
+    EventRegistry:TriggerEvent("DragonflightUI.Core.OnInitialize", DF)
+    print('DragonflightUI.Core.OnInitialize')
+
+    for moduleName, v in pairs(DF.modules) do
+        --   
+        do
+            local event = DF_EVENT:format(moduleName, 'OnInitialize')
+            hooksecurefunc(v, 'OnInitialize', function(self, ...)
+                -- e.g. 'Chat'
+                -- Event: 'DragonflightUI.Chat.OnInitialize'
+                -- arg1: AceModule table
+                EventRegistry:TriggerEvent(event, self);
+                initializedModules[moduleName] = true;
+                print(event);
+            end)
+        end
+        do
+            local event = DF_EVENT:format(moduleName, 'OnEnable')
+            hooksecurefunc(v, 'OnEnable', function(self, ...)
+                -- e.g. 'Chat'
+                -- Event: 'DragonflightUI.Chat.OnEnable'
+                -- arg1: AceModule table
+                EventRegistry:TriggerEvent(event, self);
+                enabledModules[moduleName] = true;
+                print(event);
+            end)
+        end
+    end
+end)
+
+hooksecurefunc(DF, 'OnEnable', function()
+    -- DevTools_Dump(DF.modules)
+    EventRegistry:TriggerEvent("DragonflightUI.Core.OnEnable", DF)
+    print('DragonflightUI.Core.OnEnable')
+
+    -- DevTools_Dump(DF.orderedModules)
+    -- for moduleName, v in pairs(DF.orderedModules) do print(v.name) end
+end)
+
+--- Retrieves all registered addon modules
+--- @return {[string]:AceModule} T A table of modules indexed by their names
+function Modules:GetModules()
+    return DF.modules
+end
+
+--- Retrieves all registered addon modules in their initialization order
+--- @return {[integer]:AceModule} T An ordered array of module references
+function Modules:GetOrderedModules()
+    return DF.orderedModules
+end
 
