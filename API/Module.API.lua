@@ -23,7 +23,7 @@ hooksecurefunc(DF, 'OnInitialize', function()
     -- Event 'DragonflightUI.Core.OnInitialize'
     -- arg1: DragonflightUI AceAddon table
     EventRegistry:TriggerEvent("DragonflightUI.Core.OnInitialize", DF)
-    print('DragonflightUI.Core.OnInitialize')
+    -- print('DragonflightUI.Core.OnInitialize')
 
     for moduleName, v in pairs(DF.modules) do
         --   
@@ -35,7 +35,7 @@ hooksecurefunc(DF, 'OnInitialize', function()
                 -- arg1: AceModule table
                 EventRegistry:TriggerEvent(event, self);
                 initializedModules[moduleName] = true;
-                print(event);
+                -- print(event);
             end)
         end
         do
@@ -46,7 +46,7 @@ hooksecurefunc(DF, 'OnInitialize', function()
                 -- arg1: AceModule table
                 EventRegistry:TriggerEvent(event, self);
                 enabledModules[moduleName] = true;
-                print(event);
+                -- print(event);
             end)
         end
     end
@@ -55,7 +55,7 @@ end)
 hooksecurefunc(DF, 'OnEnable', function()
     -- DevTools_Dump(DF.modules)
     EventRegistry:TriggerEvent("DragonflightUI.Core.OnEnable", DF)
-    print('DragonflightUI.Core.OnEnable')
+    -- print('DragonflightUI.Core.OnEnable')
 
     -- DevTools_Dump(DF.orderedModules)
     -- for moduleName, v in pairs(DF.orderedModules) do print(v.name) end
