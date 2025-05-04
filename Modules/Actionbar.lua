@@ -1848,8 +1848,8 @@ function Module:SetupActionbarFrames()
 
     DragonflightUIActionbarMixin:HookGrid()
     if DF.Cata then
-        DragonflightUIActionbarMixin:HookFlyout()
-        DragonflightUIActionbarMixin:StyleFlyout()
+        -- DragonflightUIActionbarMixin:HookFlyout()
+        -- DragonflightUIActionbarMixin:StyleFlyout()
     end
 
     createStuff(1, 'ActionButton')

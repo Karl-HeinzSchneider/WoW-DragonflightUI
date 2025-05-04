@@ -764,7 +764,12 @@ function DragonflightUIActionbarMixin:StyleButtons()
         end
 
         -- TODO: support dynamic
-        btn:SetAttribute("flyoutDirection", nil);
+        -- btn:SetAttribute("flyoutDirection", nil);
+
+        function btn:UpdateFlyoutDirection(dir)
+            btn:SetAttribute("flyoutDirection", dir);
+        end
+        btn:UpdateFlyoutDirection(nil)
 
         btn.DragonflightFixHotkeyPosition = function()
             local hotkey = _G[btnName .. 'HotKey']
