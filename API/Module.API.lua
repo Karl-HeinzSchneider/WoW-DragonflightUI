@@ -61,15 +61,35 @@ hooksecurefunc(DF, 'OnEnable', function()
     -- for moduleName, v in pairs(DF.orderedModules) do print(v.name) end
 end)
 
---- Retrieves all registered addon modules
+--- Returns a table of all registered modules
 --- @return {[string]:AceModule} T A table of modules indexed by their names
 function Modules:GetModules()
     return DF.modules
 end
 
---- Retrieves all registered addon modules in their initialization order
+--- Returns a table of all registered modules in their initialization order
 --- @return {[integer]:AceModule} T An ordered array of module references
 function Modules:GetOrderedModules()
     return DF.orderedModules
 end
 
+--- Returns an addon module by name
+---@param moduleName string
+---@return AceModule M Addon module
+function Modules:GetModule(moduleName)
+    return DF:GetModule(moduleName, true)
+end
+
+--- Returns whether a module is enabled
+---@param moduleName string
+---@return boolean b boolean
+function Modules:IsModuleEnabled(moduleName)
+    return enabledModules[moduleName] or false;
+end
+
+--- Returns whether a module is initialized
+---@param moduleName string
+---@return boolean b boolean
+function Modules:IsModuleInitialized(moduleName)
+    return initializedModules[moduleName] or false;
+end
