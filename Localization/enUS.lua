@@ -28,6 +28,18 @@ L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
+-- config
+L["ConfigToolbarCopyPopup"] = "Copy the link below (Ctrl+C, Enter):"
+
+L["ConfigToolbarDiscord"] = "Discord"
+L["ConfigToolbarDiscordTooltip"] = "Contribute ideas & get support."
+L["ConfigToolbarGithub"] = "Github"
+L["ConfigToolbarGithubTooltip"] = "View code, report issues & contribute."
+L["ConfigToolbarCoffee"] = "BuyMeACoffee"
+L["ConfigToolbarCoffeeTooltip1"] =
+    "Every comment, like or share counts, but if you're feeling very kind, you can buy me a slice of pizza to fuel further development!"
+L["ConfigToolbarCoffeeTooltip2"] = "Supporters enjoy exclusive perks, discover them in our Discord's supporter section."
+
 -- profiles
 L["ProfilesSetActiveProfile"] = "Set active profile."
 L["ProfilesNewProfile"] = "Create a new profile."

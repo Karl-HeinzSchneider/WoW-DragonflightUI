@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
@@ -42,6 +43,7 @@ function DragonFlightUIConfigMixin:OnLoad()
     self.selectedFrame = nil
 
     self:SetupSettingsCategorys()
+    self:AddToolbar()
 end
 
 function DragonFlightUIConfigMixin:OnShow()
@@ -296,4 +298,133 @@ function DragonFlightUIConfigMixin:RefreshCatSub(cat, sub)
     -- if not newFrame then return end
 
     -- newFrame:CallRefresh()
+end
+
+function DragonFlightUIConfigMixin:AddToolbar()
+    -- print('DragonFlightUIConfigMixin:AddToolbar()')
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\Art\\'
+
+    local t = {}
+    table.insert(t, {
+        name = L["ConfigToolbarDiscord"],
+        tooltip = L["ConfigToolbarDiscordTooltip"],
+        link = "https://discord.gg/D7CtUHT87G",
+        icon = 'discord'
+    })
+    table.insert(t, {
+        name = L["ConfigToolbarGithub"],
+        tooltip = L["ConfigToolbarGithubTooltip"],
+        link = "https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI",
+        icon = 'github',
+        sizeDelta = 4
+    })
+    table.insert(t, {
+        name = L["ConfigToolbarCoffee"],
+        tooltipTable = {L["ConfigToolbarCoffeeTooltip1"], ' ', L["ConfigToolbarCoffeeTooltip2"]},
+        link = "https://buymeacoffee.com/karlheinzschneider",
+        icon = 'coffee',
+        sizeDelta = 4
+    })
+
+    local dialogOpen = false;
+    StaticPopupDialogs['DragonflightUILinkCopyPopup'] = {
+        text = L["ConfigToolbarCopyPopup"],
+        button1 = ACCEPT,
+        hasEditBox = true,
+        editBoxWidth = 250,
+        maxLetters = 0,
+        OnShow = function(self, data)
+            self.editBox:SetText(data)
+            self.editBox:HighlightText()
+            self.editBox:SetFocus()
+            -- print(dialogOpen, data)
+            -- dialogOpen = data;
+        end,
+        OnHide = function(self)
+            self.editBox:SetText("")
+            dialogOpen = false
+        end,
+        EditBoxOnEnterPressed = function(self)
+            self:GetParent():Hide()
+            dialogOpen = false
+        end,
+        EditBoxOnEscapePressed = function(self)
+            self:GetParent():Hide()
+            dialogOpen = false
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3
+    }
+
+    local btnT = {}
+
+    for k, v in ipairs(t) do
+        local b = CreateFrame("Button", "DragonflightUIConfigToolbar" .. v.name .. 'Button', self)
+        table.insert(btnT, b)
+        b:SetSize(80, 22)
+
+        b:SetScript("OnClick", function()
+            -- print(v.name .. 'Button clicked, open ', v.link)      
+            if dialogOpen then
+                if dialogOpen == v.name then
+                    -- print('same')
+                    StaticPopup_Hide('DragonflightUILinkCopyPopup')
+                    dialogOpen = false;
+                else
+                    -- print('different')
+                    StaticPopup_Show("DragonflightUILinkCopyPopup", nil, nil, v.link)
+                    dialogOpen = v.name
+                end
+            else
+                -- print('not open')
+                StaticPopup_Show("DragonflightUILinkCopyPopup", nil, nil, v.link)
+                dialogOpen = v.name
+            end
+        end)
+
+        b:SetScript('OnEnter', function()
+            --         
+            GameTooltip:SetOwner(b, "ANCHOR_RIGHT");
+            -- GameTooltip:SetText(HIGHLIGHT_FONT_COLOR_CODE .. self.collapseTooltip .. FONT_COLOR_CODE_CLOSE);
+            GameTooltip:SetText(v.name, 1.0, 1.0, 1.0);
+
+            if v.tooltip then
+                GameTooltip:AddLine(v.tooltip or '', NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+            elseif v.tooltipTable then
+                for i, l in ipairs(v.tooltipTable) do
+                    GameTooltip:AddLine(l or '', NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+                end
+            end
+            GameTooltip:Show()
+        end)
+        b:SetScript('OnLeave', function()
+            --      
+            GameTooltip:Hide();
+        end)
+
+        local tex = b:CreateTexture('Tex')
+        tex:SetTexture(base .. v.icon)
+        tex:SetSize(22 - (v.sizeDelta or 0), 22 - (v.sizeDelta or 0))
+        tex:SetPoint('LEFT', b, 'LEFT', 4, 0)
+
+        local highlight = b:CreateTexture(nil, "HIGHLIGHT")
+        highlight:SetAllPoints(b)
+        highlight:SetColorTexture(1, 1, 1, 0.1) -- RGB values (yellow) with 0.3 alpha
+
+        local str = b:CreateFontString(nil, 'ARTWORK', 'GameTooltipText')
+        str:SetPoint('LEFT', tex, 'RIGHT', 4, 0)
+        str:SetText(v.name)
+
+        b:SetWidth(4 + 22 + 4 + str:GetStringWidth() + 4)
+    end
+
+    for k, v in ipairs(btnT) do
+        if k == 1 then
+            v:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 16, 16);
+        else
+            v:SetPoint('LEFT', btnT[k - 1], 'RIGHT', 4, 0);
+        end
+    end
 end
