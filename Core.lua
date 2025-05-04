@@ -2,20 +2,17 @@
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceComm-3.0', 'AceHook-3.0',
                                             'AceSerializer-3.0')
-local db
-
-DF.InterfaceVersion = select(4, GetBuildInfo())
-DF.Cata = (DF.InterfaceVersion >= 40000)
-DF.Wrath = (DF.InterfaceVersion >= 30400)
-DF.Era = DF.InterfaceVersion <= 20000
-DF.EraLater = DF.Era and DF.InterfaceVersion >= 11503
+local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
 
 local defaults = {profile = {bestnumber = 42}}
+
+---@type API
+local t = DF.API;
 
 function DF:OnInitialize()
     -- Called when the addon is loaded
     self.db = LibStub('AceDB-3.0'):New('DragonflightUIDB', defaults, true)
-    db = self.db.profile
+    local db = self.db.profile
     self:SetupOptions()
     self:RegisterSlashCommands()
     self:InitVersionCheck()

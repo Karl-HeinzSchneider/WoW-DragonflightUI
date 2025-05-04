@@ -1,7 +1,7 @@
 -- print('enUS')
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L_EN = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
--- local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "deDE") -- DEBUG
+-- local L_EN = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
+local L_EN = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 -- @TODO
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale

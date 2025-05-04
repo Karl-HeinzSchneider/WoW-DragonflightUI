@@ -1,0 +1,5 @@
+<UI xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Include file="API/Core.API.lua" />
+	<Include file="API/Module.API.lua" />
+	<Include file="API/Version.API.lua" />
+</UI>
