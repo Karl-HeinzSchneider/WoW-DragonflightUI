@@ -100,6 +100,10 @@ end
 --- or *straightaway* if the module was already initialized
 ---  
 --- Will also provide the module as argument, e.g. call `func(Module)`
+---
+--- Example: 
+--- 
+--- `DragonflightUI_API.Modules:HookInitModule('Chat', function(m) print('chat <3') end)`
 ---@param moduleName string
 ---@param func function
 ---@return boolean b `true` if module was initialized, `false` if the callback is waiting for event
@@ -122,6 +126,10 @@ end
 --- or *straightaway* if the module was already enabled
 --- 
 --- Will also provide the module as argument, e.g. call `func(Module)`
+--- 
+--- Example: 
+--- 
+--- `DragonflightUI_API.Modules:HookEnableModule('Chat', function(m) print('chat <3') end)`
 ---@param moduleName string
 ---@param func function
 ---@return boolean b `true` if module was enabled, `false` if the callback is waiting for event
@@ -138,9 +146,20 @@ function Modules:HookEnableModule(moduleName, func)
     return false;
 end
 
-local cb = DragonflightUI_API.Modules:HookEnableModule('Chat', function(module)
-    print('</3')
-    print(module.ApplySettings)
-    DevTools_Dump(module:GetWasEnabled())
-end)
-print('chat?', cb)
+--- Hook into a Module function, e.g. `Module:ApplySettings()`
+---  
+--- Will also provide the module as argument, e.g. call `func(Module,...)`
+--- 
+--- Example
+--- 
+--- `DragonflightUI_API.Modules:HookModuleFunction('Minimap', 'UpdateMinimapState', function(m, state) print(state.scale) end)`
+---@param moduleName string
+---@param moduleFunctionName string
+---@param func function
+function Modules:HookModuleFunction(moduleName, moduleFunctionName, func)
+    local m = Modules:GetModule(moduleName);
+
+    hooksecurefunc(m, moduleFunctionName, function(...)
+        func(m, ...)
+    end)
+end
