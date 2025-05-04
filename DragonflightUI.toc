@@ -39,6 +39,7 @@ Libs\TaintLess\TaintLess.xml
 Mixin\DFColor.mixin.lua
 
 Core.lua
+API.lua
 Config.lua
 Version.lua
 VIP.lua
