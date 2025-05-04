@@ -8,3 +8,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local API = {};
 DF.API = API;
 
+-- make globally available
+_G['DragonflightUI_API'] = API;
+
