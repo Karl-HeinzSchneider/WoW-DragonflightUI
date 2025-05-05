@@ -1,7 +1,7 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 function DF.Compatibility:Baganator()
-    print('DF.Compatibility:Baganator()')
+    -- print('DF.Compatibility:Baganator()')
 
     local function ConvertTags(tags)
         local res = {}
@@ -182,7 +182,21 @@ function DF.Compatibility:Baganator()
         InsetFrame = function(frame)
         end,
         Divider = function(tex)
-            tex:SetAlpha(0.5)
+            tex:SetAlpha(0)
+
+            if tex.DF then return end
+
+            local customTex = tex:GetParent():CreateTexture('DividerDF')
+            customTex:SetTexCoord(0, 1, 0, 1)
+            customTex:SetTexture(base .. 'activities-divider')
+
+            -- customTex:ClearAllPoints()
+            -- customTex:SetPoint("TOPLEFT", tex,'TOPLEFT', 0, 0)
+            -- customTex:SetPoint("BOTTOMRIGHT",tex,'BOTTOMRIGHT', 0, 0)
+            customTex:SetHeight(2)
+            customTex:SetPoint("CENTER", tex, 'CENTER', 0, 0)
+
+            tex.DF = customTex;
         end,
         CategoryLabel = function(btn)
         end,
@@ -199,7 +213,7 @@ function DF.Compatibility:Baganator()
     }
 
     local function SkinFrame(details)
-        print('~~~~~SKINFRAME', details.regionType)
+        -- print('~~~~~SKINFRAME', details.regionType)
         local func = skinners[details.regionType]
         if func then func(details.region, details.tags and ConvertTags(details.tags) or {}) end
     end
