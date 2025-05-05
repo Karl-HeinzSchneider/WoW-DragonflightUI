@@ -98,4 +98,4 @@ Modules\Utility.lua
 
 Modules\Darkmode.lua
 #
-Compatibility.lua
+Compatibility.xml

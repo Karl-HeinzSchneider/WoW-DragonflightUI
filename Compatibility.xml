@@ -1,0 +1,13 @@
+<UI xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Include file="Compatibility/_Compatibility.lua" />
+	<Include file="Compatibility/Auctionator.lua" />
+	<Include file="Compatibility/Baganator.lua" />
+	<Include file="Compatibility/CharacterStatsClassic.lua" />
+	<Include file="Compatibility/ClassicCalendar.lua" />
+	<Include file="Compatibility/LFGBulletinBoard.lua" />
+	<Include file="Compatibility/MerInspect.lua" />
+	<Include file="Compatibility/Ranker.lua" />
+	<Include file="Compatibility/TacoTip.lua" />
+	<Include file="Compatibility/TDInspect.lua" />
+	<Include file="Compatibility/WhatsTraining.lua" />
+</UI>
