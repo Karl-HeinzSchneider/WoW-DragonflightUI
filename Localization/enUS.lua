@@ -58,6 +58,14 @@ L["ProfilesErrorNewProfile"] = "ERROR: New profile name cant be empty!"
 L["ProfilesDialogueDeleteProfile"] = "Delete profile \'%s\'?"
 L["ProfilesDialogueCopyProfile"] = "Add New Profile (copy from \'|cff8080ff%s|r\')"
 
+L["ProfilesImportShareHeader"] = "Import/Share"
+L["ProfilesImportProfile"] = "Import Profile"
+L["ProfilesImportProfileButton"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
+L["ProfilesImportProfileDesc"] = "Opens the import dialogue."
+L["ProfilesExportProfile"] = "Share Profile"
+L["ProfilesExportProfileButton"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
+L["ProfilesExportProfileDesc"] = "Opens the share dialogue."
+
 -- Editmode
 L["EditModeBasicOptions"] = "Basic Options"
 L["EditModeAdvancedOptions"] = "Advanced Options"

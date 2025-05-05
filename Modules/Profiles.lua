@@ -122,7 +122,7 @@ function Module:RegisterOptionScreens()
         get = getOption,
         set = setOption,
         args = {
-            headerCurrentProfile = {type = 'header', name = 'Current Profile', order = 1},
+            headerCurrentProfile = {type = 'header', name = 'Current Profile', isExpanded = true, order = 1},
             currentProfile = {
                 type = 'select',
                 name = 'Current Profile',
@@ -134,7 +134,9 @@ function Module:RegisterOptionScreens()
                     -- print('SetSelected', name)
                     Module:SetCurrentProfile(name)
                 end),
+                group = 'headerCurrentProfile',
                 order = 10
+
             },
             -- headerNewProfile = {type = 'header', name = 'New Profile', order = 20},
             createNewProfile = {
@@ -147,6 +149,7 @@ function Module:RegisterOptionScreens()
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                     StaticPopup_Show('DragonflightUINewProfile')
                 end,
+                group = 'headerCurrentProfile',
                 order = 21
             },
             -- headerCopy = {type = 'header', name = 'Copy From Profile', order = 30},
@@ -173,7 +176,7 @@ function Module:RegisterOptionScreens()
             --     end,
             --     order = 32
             -- },
-            headerDelete = {type = 'header', name = 'Delete Profile', order = 40},
+            headerDelete = {type = 'header', name = 'Delete Profile', isExpanded = true, order = 40},
             toDelete = {
                 type = 'select',
                 name = 'Profile To Delete',
@@ -183,6 +186,7 @@ function Module:RegisterOptionScreens()
                 end, function(name)
                     setOption({'toDelete'}, name)
                 end),
+                group = 'headerDelete',
                 order = 41
             },
             deleteProfile = {
@@ -195,7 +199,33 @@ function Module:RegisterOptionScreens()
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                     StaticPopup_Show('DragonflightUIDeleteProfile')
                 end,
+                group = 'headerDelete',
                 order = 42
+            },
+            headerImportExport = {type = 'header', name = L["ProfilesImportShareHeader"], isExpanded = true, order = 50},
+            importProfile = {
+                type = 'execute',
+                name = L["ProfilesImportProfile"],
+                btnName = L["ProfilesImportProfileButton"],
+                desc = L["ProfilesImportProfileDesc"],
+                func = function()
+                    -- print('func! *DeleteProfile*')
+                    Module:ShowImportProfileDialog()
+                end,
+                group = 'headerImportExport',
+                order = 52
+            },
+            exportProfile = {
+                type = 'execute',
+                name = L["ProfilesExportProfile"],
+                btnName = L["ProfilesExportProfileButton"],
+                desc = L["ProfilesExportProfileDesc"],
+                func = function()
+                    -- print('func! *DeleteProfile*')
+                    Module:CopyActiveProfileToClipboard()
+                end,
+                group = 'headerImportExport',
+                order = 53
             }
         }
     }
