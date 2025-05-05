@@ -146,6 +146,7 @@ if DF.Cata then
             name = 'Bossframe',
             desc = L["ModuleTooltipBossframe"] .. getDefaultStr('Bossframe', 'modules'),
             order = 2,
+            group = 'headerModules',
             new = false
         }
     }
