@@ -439,7 +439,7 @@ local optionsGeneralEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -491,7 +491,7 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('tooltip', {order = 0, name = 'Tooltip', descr = '...', isNew = true})
+    register('tooltip', {order = 0, name = 'Tooltip', descr = '...', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

@@ -225,7 +225,7 @@ local optionsBuffEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -260,7 +260,7 @@ local optionsDebuffEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }

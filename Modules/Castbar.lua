@@ -129,7 +129,7 @@ function AddCastbarTable(optionTable, sub)
             name = L["CastbarTableActive"],
             desc = L["CastbarTableActivateDesc"] .. getDefaultStr('activate', sub),
             order = -1,
-            new = true,
+            new = false,
             editmode = true
         },
         headerStyling = {
@@ -300,7 +300,7 @@ do
         desc = L["CastbarTableShowChannelNameDesc"] .. getDefaultStr('showChannelName', 'player'),
         group = 'headerStyling',
         order = 19,
-        new = true,
+        new = false,
         editmode = true
     }
 end
@@ -336,7 +336,7 @@ local optionsPlayerEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         },
         resetStyle = {
             type = 'execute',
@@ -366,7 +366,7 @@ local optionsPlayerEditmode = {
             end,
             order = 17,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -382,7 +382,7 @@ if DF.Era then
             name = 'Show Rank',
             desc = '' .. getDefaultStr('showRank', 'target'),
             order = 20,
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -418,7 +418,7 @@ local optionsTargetEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         },
         resetStyle = {
             type = 'execute',
@@ -449,7 +449,7 @@ local optionsTargetEditmode = {
             end,
             order = 17,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -486,7 +486,7 @@ local optionsFocusEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         },
         resetStyle = {
             type = 'execute',
@@ -517,7 +517,7 @@ local optionsFocusEditmode = {
             end,
             order = 17,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }

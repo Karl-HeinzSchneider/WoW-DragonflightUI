@@ -373,7 +373,7 @@ if DF.Cata then
         desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
         group = 'headerStyling',
         order = 12,
-        new = true,
+        new = false,
         editmode = true
     }
 end
@@ -386,7 +386,7 @@ if DF.Era then
             desc = L["PlayerFrameHideAlternatePowerBarDesc"] .. getDefaultStr('hideAlternatePowerBar', 'player'),
             group = 'headerStyling',
             order = 13,
-            new = true,
+            new = false,
             editmode = true
         }
     end
@@ -502,7 +502,7 @@ local optionsPlayerEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -543,7 +543,7 @@ local optionsAltPowerEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -631,7 +631,7 @@ local optionsTarget = {
             desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'target'),
             group = 'headerStyling',
             order = 9.5,
-            new = true,
+            new = false,
             editmode = true
         },
         fadeOutDistance = {
@@ -643,7 +643,7 @@ local optionsTarget = {
             bigStep = 1,
             order = 9.6,
             group = 'headerStyling',
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -771,7 +771,7 @@ local optionsTargetEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -812,7 +812,7 @@ local optionsTargetOfTargetEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -863,7 +863,7 @@ local optionsPet = {
             desc = L["PetFrameHideIndicatorDesc"] .. getDefaultStr('hideIndicator', 'pet'),
             group = 'headerStyling',
             order = 11,
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -878,7 +878,7 @@ if DF.Cata then
                 getDefaultStr('offset', 'pet'),
             group = 'headerStyling',
             order = 11,
-            new = true
+            new = false
         }
     }
 
@@ -914,7 +914,7 @@ local optionsPetEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -966,7 +966,7 @@ local optionsFocus = {
             desc = L["FocusFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'focus'),
             group = 'headerStyling',
             order = 11,
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -1002,7 +1002,7 @@ local optionsFocusEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1043,7 +1043,7 @@ local optionsFocusTargetEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1193,7 +1193,7 @@ local optionsPartyEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1584,13 +1584,13 @@ function Module:RegisterSettings()
     register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
     register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
     register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = false})
-    register('targetoftarget', {order = 0, name = 'TargetOfTarget', descr = 'Targetss', isNew = true})
+    register('targetoftarget', {order = 0, name = 'TargetOfTarget', descr = 'Targetss', isNew = false})
 
     if DF.Wrath then
         register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
-        register('focustarget', {order = 0, name = 'FocusTarget', descr = 'Focusss', isNew = true})
+        register('focustarget', {order = 0, name = 'FocusTarget', descr = 'Focusss', isNew = false})
     end
-    if DF.Cata then register('altpower', {order = 0, name = 'Player_PowerBarAlt', descr = 'Focusss', isNew = true}) end
+    if DF.Cata then register('altpower', {order = 0, name = 'Player_PowerBarAlt', descr = 'Focusss', isNew = false}) end
 end
 
 function Module:RegisterOptionScreens()

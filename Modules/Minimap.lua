@@ -159,7 +159,7 @@ local minimapOptions = {
             desc = L["MinimapHideZoomDesc"] .. getDefaultStr('hideZoom', 'minimap'),
             group = 'headerStyling',
             order = 14,
-            new = true,
+            new = falsee,
             editmode = true
         },
         skinButtons = {
@@ -168,7 +168,7 @@ local minimapOptions = {
             desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
             group = 'headerStyling',
             order = 15,
-            new = true,
+            new = false,
             editmode = true
         },
         useStateHandler = {
@@ -253,7 +253,7 @@ local optionsMinimapEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -288,7 +288,7 @@ local optionsTrackerEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -323,7 +323,7 @@ local optionsDurabilityEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -358,7 +358,7 @@ local optionsLFGEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -412,7 +412,7 @@ function Module:RegisterSettings()
     register('minimap', {order = 1, name = 'Minimap', descr = 'Minimapss', isNew = false})
     register('questtracker', {order = 1, name = 'Quest Tracker', descr = 'Trackers', isNew = false})
     register('durability', {order = 1, name = 'Durability', descr = 'Durablityss', isNew = false})
-    register('lfg', {order = 1, name = 'LFG', descr = 'LFGss', isNew = true})
+    register('lfg', {order = 1, name = 'LFG', descr = 'LFGss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

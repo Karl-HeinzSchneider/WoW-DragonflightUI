@@ -657,7 +657,7 @@ function AddButtonTable(optionTable, sub)
             name = L["ButtonTableActive"],
             desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', sub),
             order = -1,
-            new = true,
+            new = falsee,
             editmode = true
         },
         headerButtons = {
@@ -762,7 +762,7 @@ function AddButtonTable(optionTable, sub)
             bigStep = 1,
             group = 'headerStyling',
             order = 55.1,
-            new = true,
+            new = falseeee,
             editmode = true
         },
         hideKeybind = {
@@ -791,7 +791,7 @@ function AddButtonTable(optionTable, sub)
             bigStep = 1,
             group = 'headerStyling',
             order = 56.1,
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -876,7 +876,7 @@ local function GetBarOption(n)
             --     name = 'Active',
             --     desc = '' .. getDefaultStr('activate', barname),
             --     order = 13,
-            --     new = true,
+            --     new = falseeeeeee,
             --     editmode = true
             -- }
         }
@@ -919,7 +919,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 16,
                 editmode = true,
-                new = true
+                new = falsee
             }
         }
     }
@@ -954,7 +954,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 20,
                 editmode = true,
-                new = true
+                new = false
             },
             sidebarClassic = {
                 type = 'execute',
@@ -983,7 +983,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 21,
                 editmode = true,
-                new = true
+                new = falseeeeee
             }
         }
         for k, v in pairs(morePresets) do extra.args[k] = v end
@@ -1018,7 +1018,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 20,
                 editmode = true,
-                new = true
+                new = false
             },
             sidebarClassic = {
                 type = 'execute',
@@ -1047,7 +1047,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 21,
                 editmode = true,
-                new = true
+                new = falseeeee
             }
 
         }
@@ -1094,7 +1094,7 @@ local optionsPetEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1184,7 +1184,7 @@ local optionsXpEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = falsee
         }
     }
 }
@@ -1267,7 +1267,7 @@ local optionsRepEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1314,7 +1314,7 @@ local optionsStanceEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1350,7 +1350,7 @@ local optionsTotemEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1370,7 +1370,7 @@ local possessOptions = {
                 getDefaultStr('offset', 'possess'),
             group = 'headerStyling',
             order = 11,
-            new = true,
+            new = false,
             editmode = true
         }
     }
@@ -1405,7 +1405,7 @@ local optionsPossessEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1455,7 +1455,7 @@ local bagsOptions = {
             desc = L["BagsOptionsOverrideBagAnchorDesc"] .. getDefaultStr('overrideBagAnchor', 'bags'),
             group = 'headerStyling',
             order = 15,
-            new = true
+            new = falsee
         },
         offsetX = {
             type = 'range',
@@ -1466,7 +1466,7 @@ local bagsOptions = {
             bigStep = 1,
             group = 'headerStyling',
             order = 16,
-            new = true
+            new = false
         },
         offsetY = {
             type = 'range',
@@ -1477,7 +1477,7 @@ local bagsOptions = {
             bigStep = 1,
             group = 'headerStyling',
             order = 17,
-            new = true
+            new = falsee
         }
     }
 }
@@ -1563,7 +1563,7 @@ local optionsBagsEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = falsee
         }
     }
 }
@@ -1613,7 +1613,7 @@ local optionsMicroEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1696,7 +1696,7 @@ local optionsFPSEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1758,7 +1758,7 @@ local extraActionButtonOptionsEditmode = {
             end,
             order = 16,
             editmode = true,
-            new = true
+            new = false
         }
     }
 }
@@ -1823,11 +1823,11 @@ function Module:RegisterSettings()
 
     register('bags', {order = 15, name = 'Bags', descr = 'desc', isNew = false})
     register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
-    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = true})
+    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = false})
 
     if DF.Cata then
         register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false})
-        register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = true})
+        register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = false})
     end
 end
 

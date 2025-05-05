@@ -86,7 +86,7 @@ local UIOptions = {
             name = L["UIChangeCharacterFrame"],
             desc = L["UIChangeCharacterFrameDesc"] .. getDefaultStr('changeCharacterframe', 'first'),
             order = 101,
-            new = true
+            new = false
         },
         changeTradeskill = {
             type = 'toggle',
@@ -99,7 +99,7 @@ local UIOptions = {
             name = L["UIChangeInspectFrame"],
             desc = L["UIChangeInspectFrameDesc"] .. getDefaultStr('changeInspect', 'first'),
             order = 104,
-            new = true
+            new = false
         },
         changeTrainer = {
             type = 'toggle',
@@ -117,21 +117,21 @@ if DF.Era or (DF.Wrath and not DF.Cata) then
             name = L["UIChangeTalentFrame"],
             desc = L["UIChangeTalentFrameDesc"] .. getDefaultStr('changeTalents', 'first'),
             order = 103,
-            new = true
+            new = false
         },
         changeSpellBook = {
             type = 'toggle',
             name = L["UIChangeSpellBook"],
             desc = L["UIChangeSpellBookDesc"] .. getDefaultStr('changeSpellBook', 'first'),
             order = 101.1,
-            new = true
+            new = false
         },
         changeSpellBookProfessions = {
             type = 'toggle',
             name = L["UIChangeSpellBookProfessions"],
             desc = L["UIChangeSpellBookProfessionsDesc"] .. getDefaultStr('changeSpellBookProfessions', 'first'),
             order = 101.2,
-            new = true
+            new = false
         }
     }
 

@@ -95,7 +95,7 @@ local modulesOptions = {
             name = 'Darkmode',
             desc = L["ModuleTooltipDarkmode"] .. getDefaultStr('Darkmode', 'modules'),
             order = 4.1,
-            new = true,
+            new = false,
             group = 'headerModules'
         },
         Minimap = {
@@ -110,7 +110,7 @@ local modulesOptions = {
             name = 'Tooltip',
             desc = L["ModuleTooltipTooltip"] .. getDefaultStr('Tooltip', 'modules'),
             order = 8,
-            new = true,
+            new = false,
             group = 'headerModules'
         },
         UI = {
