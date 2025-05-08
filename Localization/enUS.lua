@@ -28,6 +28,9 @@ L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
+L["ModuelConditionalMessage"] =
+    "'%s' was deactivated, but the corresponding function was already hooked, please '/reload'!"
+
 -- config
 L["ConfigToolbarCopyPopup"] = "Copy the link below (Ctrl+C, Enter):"
 

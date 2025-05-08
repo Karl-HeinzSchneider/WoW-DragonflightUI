@@ -1,3 +1,4 @@
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 DragonflightUIModulesMixin = {}
@@ -84,5 +85,34 @@ end
 
 function DragonflightUIModulesMixin:GetWasEnabled()
     return self.wasEnabled
+end
+
+function DragonflightUIModulesMixin:ConditionalOption(cond, sub, displayName, func, message)
+    local state = self.db.profile[sub]
+
+    local shouldDo = state[cond]
+    local hookName = cond .. 'Hooked'
+
+    if shouldDo then
+        if self[hookName] then
+            -- already hooked - do nothing
+        else
+            -- needs hooking
+            self[hookName] = true;
+            func()
+        end
+    else
+        if self[hookName] then
+            -- already hooked, but needs deactivate
+            if message then
+                DF:Print(message);
+                return;
+            end
+
+            local m = L["ModuelConditionalMessage"]:format(displayName)
+        else
+            -- should not and is not hooked
+        end
+    end
 end
 
