@@ -97,5 +97,7 @@ Modules\Unitframe.lua
 Modules\Utility.lua
 
 Modules\Darkmode.lua
+
 #
 Compatibility.xml
+Modules\Compatibility.lua
