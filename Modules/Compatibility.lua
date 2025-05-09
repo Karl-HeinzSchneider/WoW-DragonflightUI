@@ -5,7 +5,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, general = {baganator = true}}}
+local defaults = {profile = {scale = 1, general = {auctionator = true, baganator = true}}}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub, extra)
@@ -35,6 +35,12 @@ local compatOptions = {
     set = setOption,
     sortComparator = DFSettingsListMixin.AlphaSortComparator,
     args = {
+        auctionator = {
+            type = 'toggle',
+            name = L["CompatAuctionator"],
+            desc = L["CompatAuctionatorDesc"] .. getDefaultStr('auctionator', 'general'),
+            order = 21
+        },
         baganator = {
             type = 'toggle',
             name = L["CompatBaganator"],
@@ -120,8 +126,19 @@ function Module:ApplySettings(sub)
     local db = Module.db.profile
     local state = db.general
 
-    self:ConditionalOption('baganator', 'general', 'Change Bag', function()
+    self:ConditionalOption('auctionator', 'general', L['CompatAuctionator'], function()
+        if _G['DragonflightUIProfessionFrame'] then
+            DF.Compatibility:FuncOrWaitframe('Auctionator', DF.Compatibility.AuctionatorCraftingInfoFrame)
+        else
+            DF.API.Modules:HookModuleFunction('UI', 'UpdateTradeskills', function(m, state)
+                DF.Compatibility:FuncOrWaitframe('Auctionator', DF.Compatibility.AuctionatorCraftingInfoFrame)
+            end)
+        end
+    end)
+
+    self:ConditionalOption('baganator', 'general', L['CompatBaganator'], function()
         DF.Compatibility:FuncOrWaitframe('Baganator', DF.Compatibility.Baganator)
     end)
+
 end
 

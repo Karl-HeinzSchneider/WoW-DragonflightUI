@@ -559,8 +559,6 @@ function Module:UpdateTradeskills()
 
     local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
     Module.ProfessionFrame = prof
-
-    if DF:IsAddOnLoaded('Auctionator') then DF.Compatibility:AuctionatorCraftingInfoFrame() end
 end
 
 function Module:HookCharacterFrame()

@@ -99,6 +99,9 @@ L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
 
 L['CompatName'] = "Compatibility"
 
+L['CompatAuctionator'] = "Auctionator"
+L['CompatAuctionatorDesc'] =
+    "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
 L['CompatBaganator'] = "Baganator"
 L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
 
