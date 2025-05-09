@@ -109,7 +109,8 @@ function DragonflightUIModulesMixin:ConditionalOption(cond, sub, displayName, fu
                 return;
             end
 
-            local m = L["ModuelConditionalMessage"]:format(displayName)
+            local m = L["ModuleConditionalMessage"]:format(displayName)
+            DF:Print(m)
         else
             -- should not and is not hooked
         end

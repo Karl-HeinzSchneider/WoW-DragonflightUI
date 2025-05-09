@@ -28,8 +28,8 @@ L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
-L["ModuelConditionalMessage"] =
-    "'%s' was deactivated, but the corresponding function was already hooked, please '/reload'!"
+L["ModuleConditionalMessage"] =
+    "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '/reload'!"
 
 -- config
 L["ConfigToolbarCopyPopup"] = "Copy the link below (Ctrl+C, Enter):"
@@ -94,6 +94,13 @@ L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipb
 
 L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
 L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
+
+-- Compat
+
+L['CompatName'] = "Compatibility"
+
+L['CompatBaganator'] = "Baganator"
+L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"

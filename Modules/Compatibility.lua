@@ -5,7 +5,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {scale = 1, general = {}}}
+local defaults = {profile = {scale = 1, general = {baganator = true}}}
 Module:SetDefaults(defaults)
 
 local function getDefaultStr(key, sub, extra)
@@ -28,6 +28,22 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
+local compatOptions = {
+    type = 'group',
+    name = L["CompatName"],
+    get = getOption,
+    set = setOption,
+    sortComparator = DFSettingsListMixin.AlphaSortComparator,
+    args = {
+        baganator = {
+            type = 'toggle',
+            name = L["CompatBaganator"],
+            desc = L["CompatBaganatorDesc"] .. getDefaultStr('baganator', 'general'),
+            order = 21
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -37,7 +53,7 @@ function Module:OnInitialize()
 
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
-    -- DF:RegisterModuleOptions(mName, generalOptions)
+    DF:RegisterModuleOptions(mName, compatOptions)
 end
 
 function Module:OnEnable()
@@ -79,15 +95,15 @@ function Module:RegisterSettings()
 end
 
 function Module:RegisterOptionScreens()
-    -- DF.ConfigModule:RegisterSettingsData('tooltip', 'misc', {
-    --     name = 'Tooltip',
-    --     sub = 'general',
-    --     options = generalOptions,
-    --     sortComparator = generalOptions.sortComparator,
-    --     default = function()
-    --         setDefaultSubValues('general')
-    --     end
-    -- })
+    DF.ConfigModule:RegisterSettingsData('compatibility', 'general', {
+        name = L['CompatName'],
+        sub = 'general',
+        options = compatOptions,
+        sortComparator = compatOptions.sortComparator,
+        default = function()
+            setDefaultSubValues('general')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -104,5 +120,8 @@ function Module:ApplySettings(sub)
     local db = Module.db.profile
     local state = db.general
 
+    self:ConditionalOption('baganator', 'general', 'Change Bag', function()
+        DF.Compatibility:FuncOrWaitframe('Baganator', DF.Compatibility.Baganator)
+    end)
 end
 
