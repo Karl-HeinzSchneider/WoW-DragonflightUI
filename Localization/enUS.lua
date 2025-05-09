@@ -17,6 +17,7 @@ L["ModuleTooltipBuffs"] = "This module changes the default BuffFrame.\nAdds sepe
 L["ModuleTooltipCastbar"] =
     "This module changes the default Castbar.\nAdds seperate options for the Player-, Focus- and TargetCastbar."
 L["ModuleTooltipChat"] = "This module changes the default Chatwindow.\nWORK IN PROGRESS."
+L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
 L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
 L["ModuleTooltipMinimap"] =
