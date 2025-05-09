@@ -253,68 +253,47 @@ end
 function Module:ApplySettings()
     local db = Module.db.profile.first
 
-    if db.changeBag and not ContainerFrame1.DFHooked then
-        ContainerFrame1.DFHooked = true
-
+    self:ConditionalOption('changeBag', 'first', 'Change Bags', function()
         Module:ChangeBags()
 
         frame:RegisterEvent('BAG_UPDATE_DELAYED')
         frame:RegisterEvent('BANKFRAME_OPENED')
         frame:RegisterEvent('PLAYERBANKSLOTS_CHANGED')
         frame:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
-    elseif not db.changeBag and ContainerFrame1.DFHooked then
-        DF:Print("'Change Bags' was deactivated, but bags were already modified, please /reload.")
-    end
+    end)
 
-    if db.itemcolor and not Module.ItemColorHooked then
-        Module.ItemColorHooked = true
+    self:ConditionalOption('itemcolor', 'first', 'Colored Inventory Items', function()
         Module:HookColor()
 
         frame:RegisterEvent('INSPECT_READY')
-    elseif not db.itemcolor and Module.ItemColorHooked then
-        DF:Print("'Colored Inventory Items' was deactivated, but Icons were already modified, please /reload.")
-    end
+    end)
 
-    if db.changeTradeskill and not Module.TradeskillHooked then
-        Module.TradeskillHooked = true
+    self:ConditionalOption('changeTradeskill', 'first', 'Change Profession Window', function()
         Module:UpdateTradeskills()
-    elseif not db.changeTradeskill and Module.TradeskillHooked then
-        DF:Print("'Change Profession Window' was deactivated, but Professions were already modified, please /reload.")
-    end
+    end)
 
     if DF.Era or (DF.Wrath and not DF.Cata) then
-        if db.changeSpellBook and not Module.SpellBookHooked then
-            Module.SpellBookHooked = true
+        self:ConditionalOption('changeSpellBook', 'first', 'Change SpellBook', function()
             DragonflightUIMixin:ChangeSpellbookEra()
             Module:FuncOrWaitframe('WhatsTraining', function()
                 DF.Compatibility:WhatsTraining()
             end)
-        elseif not db.changeSpellBook and Module.SpellBookHooked then
-            DF:Print("'Change SpellBook' was deactivated, but SpellBook was already modified, please /reload.")
-        end
+        end)
 
-        if db.changeSpellBookProfessions and not Module.SpellBookProfessionsHooked then
-            Module.SpellBookProfessionsHooked = true
+        self:ConditionalOption('changeSpellBookProfessions', 'first', 'Change SpellBook Professions', function()
             DragonflightUIMixin:SpellbookEraAddTabs()
             DragonflightUIMixin:SpellbookEraProfessions()
-        elseif not db.changeSpellBookProfessions and Module.SpellBookProfessionsHooked then
-            DF:Print(
-                "'Change SpellBook Professions' was deactivated, but SpellBook Professions was already modified, please /reload.")
-        end
+        end)
     end
 
-    if db.changeTrainer and not Module.TrainerHooked then
+    self:ConditionalOption('changeTrainer', 'first', 'Change Trainer Window', function()
         Module.TrainerHooked = true
         Module:FuncOrWaitframe('Blizzard_TrainerUI', function()
             DragonflightUIMixin:ChangeTrainerFrame()
         end)
-    elseif not db.changeTrainer and Module.TrainerHooked then
-        DF:Print("'Change Trainer Window' was deactivated, but TrainerFrame were already modified, please /reload.")
-    end
+    end)
 
-    if db.changeCharacterframe and not Module.CharacterHooked then
-        Module.CharacterHooked = true
-
+    self:ConditionalOption('changeCharacterframe', 'first', 'Change Characterframe', function()
         if DF.Cata then
             DragonflightUIMixin:ChangeCharacterFrameCata()
             Module:HookCharacterLevel()
@@ -346,25 +325,20 @@ function Module:ApplySettings()
         Module:FuncOrWaitframe('MerInspect', function()
             DF.Compatibility:MerInspect()
         end)
-    elseif not db.changeCharacterframe and Module.CharacterHooked then
-        DF:Print("'Change Characterframe' was deactivated, but Characterframe were already modified, please /reload.")
-    end
+    end)
 
-    if db.changeTalents and not Module.TalentsHooked and (DF.Era or (DF.Wrath and not DF.Cata and false)) then
-        Module.TalentsHooked = true
-        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-            DragonflightUIMixin:ChangeTalentsEra()
+    if (DF.Era or (DF.Wrath and not DF.Cata and false)) then
+        self:ConditionalOption('changeTalents', 'first', 'Change Talentframe', function()
+            Module.TalentsHooked = true
+            Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+                DragonflightUIMixin:ChangeTalentsEra()
+            end)
         end)
-    elseif not db.changeTalents and Module.TalentsHooked and DF.Era then
-        DF:Print("'Change Talentframe' was deactivated, but Talentframe was already modified, please /reload.")
     end
 
-    if db.questLevel and not Module.QuestLevelHooked then
-        Module.QuestLevelHooked = true
+    self:ConditionalOption('questLevel', 'first', 'Show Questlevel', function()
         DragonflightUIMixin:AddQuestLevel()
-    elseif not db.questLevel and Module.QuestLevelHooked then
-        DF:Print("'Show Questlevel' was deactivated, but Questlog was already modified, please /reload.")
-    end
+    end)
 end
 
 function Module:ChangeFrames()
