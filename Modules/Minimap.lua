@@ -159,7 +159,7 @@ local minimapOptions = {
             desc = L["MinimapHideZoomDesc"] .. getDefaultStr('hideZoom', 'minimap'),
             group = 'headerStyling',
             order = 14,
-            new = falsee,
+            new = false,
             editmode = true
         },
         skinButtons = {

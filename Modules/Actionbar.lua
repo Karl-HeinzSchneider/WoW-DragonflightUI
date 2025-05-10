@@ -762,7 +762,7 @@ function AddButtonTable(optionTable, sub)
             bigStep = 1,
             group = 'headerStyling',
             order = 55.1,
-            new = falseeee,
+            new = false,
             editmode = true
         },
         hideKeybind = {
@@ -876,7 +876,7 @@ local function GetBarOption(n)
             --     name = 'Active',
             --     desc = '' .. getDefaultStr('activate', barname),
             --     order = 13,
-            --     new = falseeeeeee,
+            --     new = false,
             --     editmode = true
             -- }
         }
@@ -919,7 +919,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 16,
                 editmode = true,
-                new = falsee
+                new = false
             }
         }
     }
@@ -983,7 +983,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 21,
                 editmode = true,
-                new = falseeeeee
+                new = false
             }
         }
         for k, v in pairs(morePresets) do extra.args[k] = v end
@@ -1047,7 +1047,7 @@ local function GetBarExtraOptions(n)
                 end,
                 order = 21,
                 editmode = true,
-                new = falseeeee
+                new = false
             }
 
         }
@@ -1184,7 +1184,7 @@ local optionsXpEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = falsee
+            new = false
         }
     }
 }
@@ -1455,7 +1455,7 @@ local bagsOptions = {
             desc = L["BagsOptionsOverrideBagAnchorDesc"] .. getDefaultStr('overrideBagAnchor', 'bags'),
             group = 'headerStyling',
             order = 15,
-            new = falsee
+            new = false
         },
         offsetX = {
             type = 'range',
@@ -1477,7 +1477,7 @@ local bagsOptions = {
             bigStep = 1,
             group = 'headerStyling',
             order = 17,
-            new = falsee
+            new = false
         }
     }
 }
@@ -1563,7 +1563,7 @@ local optionsBagsEdtimode = {
             end,
             order = 16,
             editmode = true,
-            new = falsee
+            new = false
         }
     }
 }
