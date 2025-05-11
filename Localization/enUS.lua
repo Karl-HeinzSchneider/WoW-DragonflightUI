@@ -105,36 +105,26 @@ L['CompatAuctionatorDesc'] =
     "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
 L['CompatBaganator'] = "Baganator"
 L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
-
 L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
 L['CompatCharacterStatsClassicDesc'] =
     "Adds compatibility for Auctionator when using the UI Module with 'Change CharacterFrame' enabled."
-
 L['CompatClassicCalendar'] = "Classic Calendar"
 L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
-
 L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
 L['CompatLFGBulletinBoardDesc'] = "Adds compatibility for LFG Bulletin Board"
-
 L['CompatMerInspect'] = "MerInspect"
 L['CompatMerInspectDesc'] =
-    "Adds compatibility for MerInspect when using the UI Module with 'Change Profession Window' enabled."
-
+    "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
 L['CompatRanker'] = "Ranker"
-L['CompatRankerDesc'] =
-    "Adds compatibility for Ranker when using the UI Module with 'Change Profession Window' enabled."
-
+L['CompatRankerDesc'] = "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
 L['CompatTacoTip'] = "TacoTip"
-L['CompatTacoTipDesc'] =
-    "Adds compatibility for TacoTip when using the UI Module with 'Change Profession Window' enabled."
-
+L['CompatTacoTipDesc'] = "Adds compatibility for TacoTip when using the UI Module with 'Change CharacterFrame' enabled."
 L['CompatTDInspect'] = "TDInspect"
 L['CompatTDInspectDesc'] =
-    "Adds compatibility for TDInspect when using the UI Module with 'Change Profession Window' enabled."
-
+    "Adds compatibility for TDInspect when using the UI Module with 'Change CharacterFrame' enabled."
 L['CompatWhatsTraining'] = "WhatsTraining"
 L['CompatWhatsTrainingDesc'] =
-    "Adds compatibility for WhatsTraining when using the UI Module with 'Change Profession Window' enabled."
+    "Adds compatibility for WhatsTraining when using the UI Module with 'Change SpellBook' enabled."
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
