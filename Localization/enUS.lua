@@ -30,7 +30,7 @@ L["ModuleTooltipUnitframe"] =
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
 L["ModuleConditionalMessage"] =
-    "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '/reload'!"
+    "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '|cff8080ff/reload|r'!"
 
 -- config
 L["ConfigToolbarCopyPopup"] = "Copy the link below (Ctrl+C, Enter):"
@@ -105,6 +105,36 @@ L['CompatAuctionatorDesc'] =
     "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
 L['CompatBaganator'] = "Baganator"
 L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
+
+L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
+L['CompatCharacterStatsClassicDesc'] =
+    "Adds compatibility for Auctionator when using the UI Module with 'Change CharacterFrame' enabled."
+
+L['CompatClassicCalendar'] = "Classic Calendar"
+L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
+
+L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
+L['CompatLFGBulletinBoardDesc'] = "Adds compatibility for LFG Bulletin Board"
+
+L['CompatMerInspect'] = "MerInspect"
+L['CompatMerInspectDesc'] =
+    "Adds compatibility for MerInspect when using the UI Module with 'Change Profession Window' enabled."
+
+L['CompatRanker'] = "Ranker"
+L['CompatRankerDesc'] =
+    "Adds compatibility for Ranker when using the UI Module with 'Change Profession Window' enabled."
+
+L['CompatTacoTip'] = "TacoTip"
+L['CompatTacoTipDesc'] =
+    "Adds compatibility for TacoTip when using the UI Module with 'Change Profession Window' enabled."
+
+L['CompatTDInspect'] = "TDInspect"
+L['CompatTDInspectDesc'] =
+    "Adds compatibility for TDInspect when using the UI Module with 'Change Profession Window' enabled."
+
+L['CompatWhatsTraining'] = "WhatsTraining"
+L['CompatWhatsTrainingDesc'] =
+    "Adds compatibility for WhatsTraining when using the UI Module with 'Change Profession Window' enabled."
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"

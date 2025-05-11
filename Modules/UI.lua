@@ -275,9 +275,6 @@ function Module:ApplySettings()
     if DF.Era or (DF.Wrath and not DF.Cata) then
         self:ConditionalOption('changeSpellBook', 'first', 'Change SpellBook', function()
             DragonflightUIMixin:ChangeSpellbookEra()
-            Module:FuncOrWaitframe('WhatsTraining', function()
-                DF.Compatibility:WhatsTraining()
-            end)
         end)
 
         self:ConditionalOption('changeSpellBookProfessions', 'first', 'Change SpellBook Professions', function()
@@ -287,7 +284,6 @@ function Module:ApplySettings()
     end
 
     self:ConditionalOption('changeTrainer', 'first', 'Change Trainer Window', function()
-        Module.TrainerHooked = true
         Module:FuncOrWaitframe('Blizzard_TrainerUI', function()
             DragonflightUIMixin:ChangeTrainerFrame()
         end)
@@ -307,29 +303,11 @@ function Module:ApplySettings()
                 RuneFrameControlButton:ClearAllPoints()
                 RuneFrameControlButton:SetPoint('TOPRIGHT', CharacterFrame, 'TOPRIGHT', -8, -26)
             end)
-            Module:FuncOrWaitframe('CharacterStatsClassic', function()
-                DF.Compatibility:CharacterStatsClassic()
-            end)
-            Module:FuncOrWaitframe('TacoTip', function()
-                DF.Compatibility:TacoTipCharacter()
-            end)
         end
-
-        Module:FuncOrWaitframe('tdInspect', function()
-            DF.Compatibility:TDInspect()
-        end)
-        Module:FuncOrWaitframe('MerInspect-classic-era', function()
-            DF.Compatibility:MerInspectClassicEra()
-        end)
-        -- on some sites it has a shorter name, but seems to be the same addon
-        Module:FuncOrWaitframe('MerInspect', function()
-            DF.Compatibility:MerInspect()
-        end)
     end)
 
     if (DF.Era or (DF.Wrath and not DF.Cata and false)) then
         self:ConditionalOption('changeTalents', 'first', 'Change Talentframe', function()
-            Module.TalentsHooked = true
             Module:FuncOrWaitframe('Blizzard_TalentUI', function()
                 DragonflightUIMixin:ChangeTalentsEra()
             end)
@@ -500,23 +478,6 @@ function Module:ChangeFrames()
         Module:FuncOrWaitframe('Blizzard_TimeManager', function()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
-        end)
-    end
-end
-
-function Module:FuncOrWaitframe(addon, func)
-    if DF:IsAddOnLoaded(addon) then
-        -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
-        func()
-    else
-        local waitFrame = CreateFrame("FRAME")
-        waitFrame:RegisterEvent("ADDON_LOADED")
-        waitFrame:SetScript("OnEvent", function(self, event, arg1)
-            if arg1 == addon then
-                -- print('Module:FuncOrWaitframe(addon,func)', addon, 'WAITFRAME')
-                func()
-                waitFrame:UnregisterAllEvents()
-            end
         end)
     end
 end

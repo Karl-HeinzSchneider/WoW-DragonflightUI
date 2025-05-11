@@ -117,3 +117,20 @@ function DragonflightUIModulesMixin:ConditionalOption(cond, sub, displayName, fu
     end
 end
 
+function DragonflightUIModulesMixin:FuncOrWaitframe(addon, func)
+    if DF:IsAddOnLoaded(addon) then
+        -- print('Module:FuncOrWaitframe(addon,func)', addon, 'ISLOADED')
+        func()
+    else
+        local waitFrame = CreateFrame("FRAME")
+        waitFrame:RegisterEvent("ADDON_LOADED")
+        waitFrame:SetScript("OnEvent", function(self, event, arg1)
+            if arg1 == addon then
+                -- print('Module:FuncOrWaitframe(addon,func)', addon, 'WAITFRAME')
+                func()
+                waitFrame:UnregisterAllEvents()
+            end
+        end)
+    end
+end
+
