@@ -228,7 +228,7 @@ function Module:ApplySettings(sub)
 
     self:ConditionalOption('characterstatsclassic', 'general', L['CompatCharacterStatsClassic'], function()
         if UIModule['changeCharacterframe' .. 'Hooked'] then
-            ModuleFuncOrWaitframe('CharacterStatsClassic', DF.Compatibility.CharacterStatsClassic)
+            Module:FuncOrWaitframe('CharacterStatsClassic', DF.Compatibility.CharacterStatsClassic)
         else
             hooksecurefunc(DragonflightUIMixin, 'ChangeCharacterFrameEra', function()
                 Module:FuncOrWaitframe('CharacterStatsClassic', DF.Compatibility.CharacterStatsClassic)
