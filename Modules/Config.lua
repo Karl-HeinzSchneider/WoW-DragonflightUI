@@ -142,7 +142,7 @@ local modulesOptions = {
             name = 'Compatibility',
             desc = L["ModuleTooltipCompatibility"] .. getDefaultStr('Compatibility', 'modules'),
             order = 25,
-            new = false,
+            new = true,
             group = 'headerModules'
         }
     }
