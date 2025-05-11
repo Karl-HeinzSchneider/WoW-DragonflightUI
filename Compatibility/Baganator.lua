@@ -18,45 +18,45 @@ function DF.Compatibility:Baganator()
                 local bg = frame.SlotBackground
                 bg:SetTexture(base .. 'BagsItemSlot2x')
                 bg:SetSize(37, 37)
-                bg:SetPoint('CENTER', 0, 0)
-                bg:SetDrawLayer('BACKGROUND', 3)
+                -- bg:SetPoint('CENTER', 0, 0)
+                -- bg:SetDrawLayer('BACKGROUND', 3)
             end
 
-            if frame:GetNormalTexture() then
-                local normal = frame:GetNormalTexture()
-                normal:SetTexture(base .. 'BagsItemSlot2x')
-                normal:SetSize(37, 37)
-                normal:SetPoint('CENTER', 0, 0)
-                normal:SetDrawLayer('BACKGROUND', 3)
-            end
+            -- if frame:GetNormalTexture() then
+            --     local normal = frame:GetNormalTexture()
+            --     normal:SetTexture(base .. 'BagsItemSlot2x')
+            --     normal:SetSize(37, 37)
+            --     normal:SetPoint('CENTER', 0, 0)
+            --     normal:SetDrawLayer('BACKGROUND', 3)
+            -- end
 
-            if frame:GetPushedTexture() then
-                local pushed = frame:GetPushedTexture()
-                pushed:SetTexture(base .. 'ui-quickslot-depress')
-                pushed:SetSize(37, 37)
-                pushed:SetPoint('CENTER', 0, 0)
-            end
+            -- if frame:GetPushedTexture() then
+            --     local pushed = frame:GetPushedTexture()
+            --     pushed:SetTexture(base .. 'ui-quickslot-depress')
+            --     pushed:SetSize(37, 37)
+            --     pushed:SetPoint('CENTER', 0, 0)
+            -- end
 
-            if frame:GetHighlightTexture() then
-                local high = frame:GetHighlightTexture()
-                high:SetTexture(base .. 'buttonhilight-square')
-                -- high:SetTexCoord(0.408203, 0.478516, 0.679688, 0.820312)
-                high:SetSize(37, 37)
-                high:SetPoint('CENTER', 0, 0)
-                -- high:SetDrawLayer('BACKGROUND', 3)
-            end
+            -- if frame:GetHighlightTexture() then
+            --     local high = frame:GetHighlightTexture()
+            --     high:SetTexture(base .. 'buttonhilight-square')
+            --     -- high:SetTexCoord(0.408203, 0.478516, 0.679688, 0.820312)
+            --     high:SetSize(37, 37)
+            --     high:SetPoint('CENTER', 0, 0)
+            --     -- high:SetDrawLayer('BACKGROUND', 3)
+            -- end
 
             -- local iconBorder = frame.IconBorder
             -- iconBorder:Hide()
 
-            if not frame.DFBorder then
-                local border = frame:CreateTexture('DragonflightUIBorder')
-                border:SetTexture(base .. 'ui-quickslot2')
-                border:SetSize(64, 64)
-                border:SetPoint('CENTER', 0, -1)
-                border:SetDrawLayer('BACKGROUND', 4)
-                frame.DFBorder = border
-            end
+            -- if not frame.DFBorder then
+            --     local border = frame:CreateTexture('DragonflightUIBorder')
+            --     border:SetTexture(base .. 'ui-quickslot2')
+            --     border:SetSize(64, 64)
+            --     border:SetPoint('CENTER', 0, -1)
+            --     border:SetDrawLayer('BACKGROUND', 4)
+            --     frame.DFBorder = border
+            -- end
         end,
         IconButton = function(button, tags)
             if tags.sort then
