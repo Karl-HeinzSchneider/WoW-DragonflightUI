@@ -1289,7 +1289,7 @@ function Module.MoveTracker()
         hooksecurefunc(WatchFrame, 'SetPoint', function(self)
             if not setting then
                 setting = true
-                print('WatchFrame SetPoint')
+                -- print('WatchFrame SetPoint')
                 local state = Module.db.profile.tracker
                 Module.UpdateTrackerState(state)
                 setting = nil
