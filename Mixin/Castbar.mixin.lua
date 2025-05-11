@@ -789,6 +789,15 @@ function DragonFlightUICastbarMixin:UpdateState(state)
     self:Update()
 end
 
+function DragonFlightUICastbarMixin:FixScale()
+    local state = self.state
+    if not state then return end
+
+    self:SetIgnoreParentScale(true) -- TODO
+    self:SetScale(UIParent:GetScale() * state.scale) -- TODO
+    self:SetSize(state.sizeX, state.sizeY)
+end
+
 function DragonFlightUICastbarMixin:Update()
     local state = self.state
 

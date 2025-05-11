@@ -838,10 +838,18 @@ function Module.AddNewCastbar()
     end)
 end
 
+function Module:FixScale()
+    -- print('Module:FixScale()')
+    local t = {'PlayerCastbar', 'TargetCastbar', 'FocusCastbar'}
+    for k, v in ipairs(t) do if Module[v] then Module[v]:FixScale() end end
+end
+
 function frame:OnEvent(event, arg1)
-    -- print('event', event, arg1) 
+    -- print('event', event, arg1)
+    if event == 'UI_SCALE_CHANGED' then Module:FixScale() end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
+frame:RegisterEvent('UI_SCALE_CHANGED')
 
 -- Wrath
 function Module.Wrath()
