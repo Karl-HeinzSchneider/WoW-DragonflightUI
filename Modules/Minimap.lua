@@ -787,6 +787,15 @@ function Module.UpdateTrackerState(state)
 
         WatchFrame:SetHeight(800)
         WatchFrame:SetWidth(204)
+    elseif DF.Wrath then
+        if not WatchFrame then return end
+        WatchFrame:SetClampedToScreen(false)
+        mike_spells_utils.dump(state)
+        WatchFrame:SetScale(state.scale)
+        WatchFrame:ClearAllPoints()
+        WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        WatchFrame:SetHeight(800)
+        WatchFrame:SetWidth(204)
     end
 end
 
@@ -1272,6 +1281,16 @@ function Module.MoveTracker()
             if not setting then
                 setting = true
                 -- print('WatchFrame SetPoint')
+                local state = Module.db.profile.tracker
+                Module.UpdateTrackerState(state)
+                setting = nil
+            end
+        end)
+    elseif DF.Wrath then
+        hooksecurefunc(WatchFrame, 'SetPoint', function(self)
+            if not setting then
+                setting = true
+                print('WatchFrame SetPoint')
                 local state = Module.db.profile.tracker
                 Module.UpdateTrackerState(state)
                 setting = nil
