@@ -30,7 +30,7 @@ function DFProfessionMixin:OnLoad()
     if SpellBookFrame_Update then
         hooksecurefunc('SpellBookFrame_Update', function()
             --
-            print('SpellBookFrame_Update')
+            -- print('SpellBookFrame_Update')
             self:Refresh(true)
         end)
     end
