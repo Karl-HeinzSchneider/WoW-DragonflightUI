@@ -1201,7 +1201,11 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', frame, 'InsetFrameTemplate')
     inset:ClearAllPoints()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
+    if DF.Wrath then
+        inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -73)
+    end
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
+    
     frame.DFInset = inset
     -- _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
 
@@ -1212,6 +1216,26 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local hand = CharacterHandsSlot
     hand:ClearAllPoints()
     hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
+
+    if DF.Wrath then
+        head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -10)
+        hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -10)
+        local equip_manager_btn = GearManagerToggleButton
+        equip_manager_btn:ClearAllPoints()
+        equip_manager_btn:SetPoint("TOPRIGHT", inset, "TOPRIGHT", -8, 40)
+
+        local model_rotate_right_btn = CharacterModelFrameRotateRightButton
+        model_rotate_right_btn:ClearAllPoints()
+        model_rotate_right_btn:SetPoint("TOPLEFT", inset, "TOPLEFT", 40, -7)
+
+        local model_rotate_left_btn = CharacterModelFrameRotateLeftButton
+        model_rotate_left_btn:ClearAllPoints()
+        model_rotate_left_btn:SetPoint("TOPLEFT", inset, "TOPLEFT", 70, -7)
+        
+        local magic_res_frame = MagicResFrame1
+        magic_res_frame:ClearAllPoints()
+        magic_res_frame:SetPoint("TOPRIGHT", inset, "TOPRIGHT", -45, -10)
+    end
 
     -- Model
     local model = CharacterModelFrame
@@ -1245,7 +1269,9 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
     main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
-
+    if DF.Wrath then
+        main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 85, 13)
+    end
     -- tabs
     do
         for i = 1, 5 do
