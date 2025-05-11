@@ -790,7 +790,6 @@ function Module.UpdateTrackerState(state)
     elseif DF.Wrath then
         if not WatchFrame then return end
         WatchFrame:SetClampedToScreen(false)
-        mike_spells_utils.dump(state)
         WatchFrame:SetScale(state.scale)
         WatchFrame:ClearAllPoints()
         WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
