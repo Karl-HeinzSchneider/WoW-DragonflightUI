@@ -164,7 +164,7 @@ function DF.Compatibility:Baganator()
             end
 
             -- bg
-            frame.Bg:SetAlpha(1)
+            -- frame.Bg:SetAlpha(1)
 
             local bg = frame.Bg
             bg:SetTexture(base .. 'ui-background-rock')
