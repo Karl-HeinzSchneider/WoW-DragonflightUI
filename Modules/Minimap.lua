@@ -751,12 +751,9 @@ function Module.UpdateMinimapState(state)
 
     if Module.StateHandlerAdded then Minimap:UpdateStateHandler(state) end
 
-    if state.skinButtons and not Module.SkinButtonsHooked then
-        Module.SkinButtonsHooked = true;
+    Module:ConditionalOption('skinButtons', 'minimap', 'Skin Minimap Buttons', function()
         Module.ChangeMinimapButtons()
-    elseif not state.skinButtons and Module.SkinButtonsHooked then
-        DF:Print("'Skin Minimap Buttons' was deactivated, but Buttons were already modified, please /reload.");
-    end
+    end)
 end
 
 function Module.UpdateTrackerState(state)
@@ -1479,12 +1476,6 @@ function Module.ChangeMinimapButtons()
     end
 
     Module:UpdateButton(MiniMapBattlefieldFrame)
-
-    -- compat
-    DF.Compatibility:FuncOrWaitframe('LFGBulletinBoard', function()
-        --
-        DF.Compatibility:LFGBulletinBoard(Module.UpdateButton)
-    end)
 end
 
 function Module.HandlePing(unit, y, x)
@@ -1565,9 +1556,6 @@ function Module.Era()
     Module.HookCalendar()
     Module.UpdateCalendar()
 
-    DF.Compatibility:FuncOrWaitframe('ClassicCalendar', function()
-        DF.Compatibility:ClassicCalendarEra()
-    end)
     -- frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('MINIMAP_PING')
     frame:RegisterEvent('MINIMAP_UPDATE_TRACKING')

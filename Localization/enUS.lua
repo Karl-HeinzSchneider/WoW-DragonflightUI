@@ -17,6 +17,7 @@ L["ModuleTooltipBuffs"] = "This module changes the default BuffFrame.\nAdds sepe
 L["ModuleTooltipCastbar"] =
     "This module changes the default Castbar.\nAdds seperate options for the Player-, Focus- and TargetCastbar."
 L["ModuleTooltipChat"] = "This module changes the default Chatwindow.\nWORK IN PROGRESS."
+L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
 L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
 L["ModuleTooltipMinimap"] =
@@ -27,6 +28,9 @@ L["ModuleTooltipUI"] =
 L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
+
+L["ModuleConditionalMessage"] =
+    "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '|cff8080ff/reload|r'!"
 
 -- config
 L["ConfigToolbarCopyPopup"] = "Copy the link below (Ctrl+C, Enter):"
@@ -91,6 +95,36 @@ L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipb
 
 L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
 L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
+
+-- Compat
+
+L['CompatName'] = "Compatibility"
+
+L['CompatAuctionator'] = "Auctionator"
+L['CompatAuctionatorDesc'] =
+    "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
+L['CompatBaganator'] = "Baganator"
+L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
+L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
+L['CompatCharacterStatsClassicDesc'] =
+    "Adds compatibility for Auctionator when using the UI Module with 'Change CharacterFrame' enabled."
+L['CompatClassicCalendar'] = "Classic Calendar"
+L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
+L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
+L['CompatLFGBulletinBoardDesc'] = "Adds compatibility for LFG Bulletin Board"
+L['CompatMerInspect'] = "MerInspect"
+L['CompatMerInspectDesc'] =
+    "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
+L['CompatRanker'] = "Ranker"
+L['CompatRankerDesc'] = "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
+L['CompatTacoTip'] = "TacoTip"
+L['CompatTacoTipDesc'] = "Adds compatibility for TacoTip when using the UI Module with 'Change CharacterFrame' enabled."
+L['CompatTDInspect'] = "TDInspect"
+L['CompatTDInspectDesc'] =
+    "Adds compatibility for TDInspect when using the UI Module with 'Change CharacterFrame' enabled."
+L['CompatWhatsTraining'] = "WhatsTraining"
+L['CompatWhatsTrainingDesc'] =
+    "Adds compatibility for WhatsTraining when using the UI Module with 'Change SpellBook' enabled."
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
