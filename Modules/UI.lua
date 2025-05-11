@@ -487,9 +487,11 @@ function Module:UpdateTradeskills()
         local loaded, reason = DF:LoadAddOn('Blizzard_TradeSkillUI')
         -- print('--', loaded, reason)    
     end
-    do
-        local loaded, reason = DF:LoadAddOn('Blizzard_CraftUI')
-        -- print('--', loaded, reason)
+    if not DF.Wrath then
+        do
+            local loaded, reason = DF:LoadAddOn('Blizzard_CraftUI')
+            -- print('--', loaded, reason)
+        end
     end
 
     local prof = CreateFrame('Frame', 'DragonflightUIProfessionFrame', UIParent, 'DFProfessionFrameTemplate')
