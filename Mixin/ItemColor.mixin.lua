@@ -249,9 +249,8 @@ function DragonflightUIItemColorMixin:UpdateBag(bag)
             if containerInfo then
                 local quality = containerInfo.quality or 0
                 DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
-
             else
-                slotFrame.DFQuality:Hide()
+                if slotFrame and slotFrame.DFQuality then slotFrame.DFQuality:Hide() end
             end
         end
     end
@@ -270,7 +269,7 @@ function DragonflightUIItemColorMixin:UpdateBankSlots()
             local quality = containerInfo.quality or 0
             DragonflightUIItemColorMixin:UpdateOverlayQuality(slotFrame, quality)
         else
-            slotFrame.DFQuality:Hide()
+            if slotFrame and slotFrame.DFQuality then slotFrame.DFQuality:Hide() end
         end
     end
 end
