@@ -2053,20 +2053,29 @@ function DragonflightUIMixin:ShowQuestXP()
     end
 
     local function hookFunc(questLogIndex)
-        local point, relativeTo, relativePoint, xOfs, yOfs = QuestLogSpacerFrame:GetPoint(1)
+        local point, relativeToOrig, relativePoint, xOfs, yOfs = QuestLogSpacerFrame:GetPoint(1)
+        -- print('relativeTo', relativeToOrig:GetName())
 
-        if relativeTo == QuestLogItem2 then
+        local relativeTo = relativeToOrig;
+
+        if relativeToOrig == _G["QuestLogSpellLearnText"] then
             relativeTo = QuestLogItem1
-        elseif relativeTo == QuestLogItem4 then
-            relativeTo = QuestLogItem3
-        elseif relativeTo == QuestLogItem6 then
-            relativeTo = QuestLogItem5
-        elseif relativeTo == QuestLogItem8 then
-            relativeTo = QuestLogItem7
-        elseif relativeTo == QuestLogItem10 then
-            relativeTo = QuestLogItem9
-        elseif relativeTo == _G["QuestLogSpellLearnText"] then
-            relativeTo = QuestLogItem1
+        else
+            local numChoices = GetNumQuestLogChoices(questLogIndex)
+            local numRewards = GetNumQuestLogRewards(questLogIndex)
+
+            -- print('choices:', numChoices, ', rewards:', numRewards)
+
+            local num = numChoices + numRewards;
+            if num > 0 then
+                if numRewards % 2 == 0 then num = num - 1; end
+
+                local choose = _G['QuestLogItem' .. num];
+                if choose then relativeTo = choose end
+                -- print('choose', choose:GetName())
+            else
+                -- print('leave')
+            end
         end
 
         local str = QuestLogFrame.DFQuestXP
@@ -2075,7 +2084,7 @@ function DragonflightUIMixin:ShowQuestXP()
         -- local learnSpellText = _G["QuestLogSpellLearnText"];
 
         if rewardText:IsShown() then
-            -- 'You will also receive'
+            -- 'You will also receive' 
             str:SetText(REWARD_ITEMS)
 
             str:ClearAllPoints()
