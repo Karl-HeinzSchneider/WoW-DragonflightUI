@@ -32,6 +32,9 @@ function DragonflightUIMicroMenuMixin:OnLoad()
     elseif DF.Cata then
         -- socials/guild button
         numButtons = numButtons - 1
+        -- elseif DF.Wrath and GuildMicroButton then
+    elseif DF.Wrath then
+        numButtons = numButtons - 1
     end
 
     local sizeX, sizeY = self.MicroButtons[1]:GetSize()
@@ -185,6 +188,7 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         self:ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
         self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end -- wrath newer version, e.g. CN
         self:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
         self:ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
         self:ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
