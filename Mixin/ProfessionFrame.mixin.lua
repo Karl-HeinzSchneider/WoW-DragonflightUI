@@ -1201,7 +1201,7 @@ function DFProfessionMixin:SetCurrentProfession()
 
     -- linked profession
     local isLink, playerName = IsTradeSkillLinked()
-    if DF.Cata and isLink and playerName and playerName ~= '' then
+    if (DF.Cata or DF.API.Version.IsWotlk) and isLink and playerName and playerName ~= '' then
         --
         -- print('SetCurrentProfession LINKED')
         local tradeskillName, currentLevel, maxLevel, skillLineModifier = GetTradeSkillLine()
@@ -1400,6 +1400,84 @@ function DFProfessionMixin:UpdateProfessionData()
             }
         end
     elseif DF.Wrath then
+        for i = 1, GetNumSkillLines() do
+            local nameLoc, _, _, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost,
+                  rankCost, minLevel, skillCostType, skillDescription = GetSkillLineInfo(i)
+
+            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+
+            if skillID then
+                --
+                local profDataTable = self.ProfessionDataTable[skillID]
+                local texture = profDataTable.icon
+                local spellIcon = texture
+
+                if skillID == 182 then
+                    -- herbalism
+                    local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2383)
+                    nameLoc = name
+                    spellIcon = icon
+                elseif skillID == 186 then
+                    -- mining
+                    -- local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = GetSpellInfo(2580)
+                    -- nameLoc = name
+                    -- spellIcon = icon
+                end
+
+                local data = {
+                    nameLoc = nameLoc,
+                    icon = texture,
+                    skillID = skillID, -- only era @TODO
+                    lineID = i,
+                    skill = skillRank,
+                    maxSkill = skillMaxRank,
+                    skillModifier = skillModifier, -- only era= @TODO
+                    profData = professionDataTable[skillID]
+                }
+
+                if profs.primary[skillID] and not profs.ignoredPrimary[skillID] then
+                    --
+                    if skillTable['primary1'] then
+                        skillTable['primary2'] = data
+                    else
+                        skillTable['primary1'] = data
+                    end
+                else
+                    --
+                    if skillID == profs.poison then
+                        skillTable['poison'] = data
+                    elseif skillID == profs.fishing then
+                        skillTable['fishing'] = data
+                    elseif skillID == profs.cooking then
+                        skillTable['cooking'] = data
+                    elseif skillID == profs.firstaid then
+                        skillTable['firstaid'] = data
+                    end
+                end
+            end
+        end
+
+        -- beast training rip
+        if IsSpellKnown(5149) or IsSpellKnown(5300) then
+            -- beast training
+
+            local nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
+            local skillID = DragonflightUILocalizationData:GetSkillIDFromProfessionName(nameLoc)
+            local profData = professionDataTable[skillID]
+
+            local data = {
+                nameLoc = nameLoc,
+                icon = profData.icon,
+                skillID = skillID, -- only era @TODO
+                -- lineID = i,
+                skill = 1,
+                maxSkill = 1,
+                -- skillModifier = skillModifier, -- only era= @TODO
+                profData = profData
+            }
+
+            skillTable['beast'] = data
+        end
     elseif DF.Era then
         for i = 1, GetNumSkillLines() do
             local nameLoc, _, _, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost,
