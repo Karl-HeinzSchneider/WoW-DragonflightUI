@@ -487,7 +487,7 @@ function Module:UpdateTradeskills()
         local loaded, reason = DF:LoadAddOn('Blizzard_TradeSkillUI')
         -- print('--', loaded, reason)    
     end
-    do
+    if not DF.API.Version.IsWotlk then
         local loaded, reason = DF:LoadAddOn('Blizzard_CraftUI')
         -- print('--', loaded, reason)
     end
