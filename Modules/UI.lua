@@ -149,7 +149,9 @@ function frame:OnEvent(event, arg1, ...)
         if db.changeInspect and not Module.InspectHooked then
             Module.InspectHooked = true
 
-            DragonflightUIMixin:ChangeInspectFrame()
+            Module:FuncOrWaitframe('Blizzard_InspectUI', function ()
+                DragonflightUIMixin:ChangeInspectFrame()
+            end)
 
             if InspectFrame and not InspectFrame.DFTacoTipHooked then
                 --    
