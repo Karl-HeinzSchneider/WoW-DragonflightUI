@@ -1498,7 +1498,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         local function UpdateRepulationBarsPos()
             local first = ReputationBar1
             first:ClearAllPoints()
-            first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -10)
+            first:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -50, -3)
             -- first:SetPoint('LEFT', rep, 'LEFT', 10, 0)
         end
 
