@@ -445,12 +445,17 @@ function Module:UpdatePlayerFrame(state)
 
     local playerFrameBorder = f.PlayerFrameBorder
     local playerFrameDeco = f.PlayerFrameDeco
+    local playerFramePortaitExtra = f.PlayerPortraitExtra
 
     playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
     playerFrameBorder:SetVertexColor(c:GetRGB())
 
     playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
     playerFrameDeco:SetVertexColor(c:GetRGB())
+
+    -- playerFramePortaitExtra:SetDesaturated(state.unitframeDesaturate)
+    -- playerFramePortaitExtra:SetVertexColor(c:GetRGB())
+    playerFramePortaitExtra:SetVertexColor(0.6, 0.6, 0.6) -- TODO
 
     -- PlayerFrameHealthBar:GetStatusBarTexture():SetDesaturated(state.unitframeHealthDesaturate)
 end

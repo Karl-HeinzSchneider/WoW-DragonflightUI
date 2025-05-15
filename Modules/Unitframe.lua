@@ -67,6 +67,7 @@ local defaults = {
             x = -19,
             y = -4,
             biggerHealthbar = false,
+            portraitExtra = 'none',
             hideRedStatus = false,
             hideIndicator = false,
             hideSecondaryRes = false,
@@ -260,6 +261,13 @@ local statusTextTable = {
     {value = 'Numeric Value', text = 'Numeric Value', tooltip = 'descr', label = 'label'}
 }
 
+local portraitExtraTable = {
+    {value = 'none', text = 'None', tooltip = 'descr', label = 'label'},
+    {value = 'elite', text = 'Elite', tooltip = 'descr', label = 'label'},
+    {value = 'rare', text = 'Rare', tooltip = 'descr', label = 'label'},
+    {value = 'worldboss', text = 'World Boss', tooltip = 'descr', label = 'label'}
+}
+
 if DF.Wrath then
     table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
 end
@@ -343,6 +351,15 @@ local optionsPlayer = {
             group = 'headerStyling',
             order = 9,
             new = false,
+            editmode = true
+        },
+        portraitExtra = {
+            type = 'select',
+            name = L["PlayerFramePortraitExtra"],
+            desc = L["PlayerFramePortraitExtraDesc"] .. getDefaultStr('portraitExtra', 'player'),
+            dropdownValues = portraitExtraTable,
+            order = 9.5,
+            group = 'headerStyling',
             editmode = true
         },
         hideRedStatus = {
@@ -1802,6 +1819,7 @@ function Module:ApplySettings(sub)
         PlayerFrame:SetScale(obj.scale)
         Module.ChangePlayerframe()
         Module.SetPlayerBiggerHealthbar(obj.biggerHealthbar)
+        Module.Frame.PlayerPortraitExtra:UpdateStyle(obj.portraitExtra)
         PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
         TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
         UnitFramePortrait_Update(PlayerFrame)
@@ -2608,6 +2626,50 @@ function Module.CreatePlayerFrameTextures()
         textureSmall:SetScale(1)
         frame.PlayerFrameDeco = textureSmall
     end
+end
+
+function Module:CreatePlayerFrameExtra()
+
+    local textureFrame = CreateFrame('Frame', 'DragonflightUIPlayerFrameTextureFrame', PlayerFrame)
+    textureFrame:SetPoint('TOPLEFT')
+    textureFrame:SetPoint('BOTTOMRIGHT')
+    textureFrame:SetFrameLevel(3)
+    PlayerFrame.DFTextureFrame = textureFrame
+
+    local extra = textureFrame:CreateTexture('DragonflightUIPlayerFramePortraitExtra')
+    extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+    -- extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+    extra:SetTexCoord(0.314453125, 0.001953125, 0.322265625, 0.630859375)
+    extra:SetSize(80, 79)
+    extra:SetDrawLayer('ARTWORK', 7)
+    extra:SetPoint('CENTER', PlayerPortrait, 'CENTER', -4, 1)
+    frame.PlayerPortraitExtra = extra
+
+    function extra:UpdateStyle(class)
+        -- local class = UnitClassification('target')
+        --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+        extra:ClearAllPoints()
+        if class == 'worldboss' then
+            extra:Show()
+            extra:SetSize(99 - 2, 81 - 2)
+            extra:SetTexCoord(0.388671875, 0.001953125, 0.001953125, 0.31835937)
+            extra:SetPoint('CENTER', PlayerPortrait, 'CENTER', -13, 1 + 2)
+        elseif class == 'rareelite' or class == 'rare' then
+            extra:Show()
+            extra:SetSize(80 - 2, 79 - 2)
+            extra:SetTexCoord(0.31640625, 0.00390625, 0.634765625, 0.943359375)
+            extra:SetPoint('CENTER', PlayerPortrait, 'CENTER', -4, 1 + 2)
+        elseif class == 'elite' then
+            extra:Show()
+            extra:SetTexCoord(0.314453125, 0.001953125, 0.322265625, 0.630859375)
+            extra:SetSize(80 - 2, 79 - 2)
+            extra:SetPoint('CENTER', PlayerPortrait, 'CENTER', -4, 1 + 2)
+        else
+            extra:Hide()
+        end
+    end
+
+    extra:UpdateStyle('none')
 end
 
 function Module:HideSecondaryRes(hide)
@@ -5352,6 +5414,8 @@ function Module.Wrath()
     Module.ChangePartyFrame()
     Module.ChangePetFrame()
     if DF.Cata then Module:AddPowerBarAlt() end
+
+    Module:CreatePlayerFrameExtra()
 end
 
 function Module.Era()
@@ -5391,4 +5455,6 @@ function Module.Era()
     Module.ChangePetFrame()
     Module:AddAlternatePowerBar()
     Module:AddRaidframeRoleIcons()
+
+    Module:CreatePlayerFrameExtra()
 end
