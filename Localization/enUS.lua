@@ -524,6 +524,8 @@ L["PlayerFrameBreakUpLargeNumbersDesc"] =
     "Enable breaking up large numbers in the StatusText (e.g., 7588 K instead of 7588000)"
 L["PlayerFrameBiggerHealthbar"] = "Bigger Healthbar"
 L["PlayerFrameBiggerHealthbarDesc"] = "Enable a bigger health bar"
+L["PlayerFramePortraitExtra"] = "Portrait Extra"
+L["PlayerFramePortraitExtraDesc"] = "Shows an elite, rare or world boss dragon around the PlayerFrame."
 L["PlayerFrameHideRedStatus"] = "Hide In Combat Red Statusglow"
 L["PlayerFrameHideRedStatusDesc"] = "Hide the red status glow in combat"
 L["PlayerFrameHideHitIndicator"] = "Hide Hit Indicator"
