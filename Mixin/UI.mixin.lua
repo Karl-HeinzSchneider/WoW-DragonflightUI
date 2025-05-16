@@ -3462,7 +3462,7 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     local slice = frame.NineSlice
 
     -- corner
-    do
+    if slice.TopLeftCorner then
         local tex = base .. 'uiframemetal2x'
 
         local tlc = slice.TopLeftCorner
@@ -3491,7 +3491,7 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     end
 
     -- edge bottom/top
-    do
+    if slice.TopEdge then
         local tex = base .. 'UIFrameMetalHorizontal2x'
 
         local te = slice.TopEdge
@@ -3510,7 +3510,7 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     end
 
     -- edge left/right
-    do
+    if slice.LeftEdge then
         local tex = base .. 'UIFrameMetalVertical2x'
 
         local le = slice.LeftEdge

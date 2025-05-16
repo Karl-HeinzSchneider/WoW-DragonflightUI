@@ -2,6 +2,11 @@
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+---@type API
+local API = DF.API;
+---@type VersionAPI
+local Version = API.Version;
+
 local mName = 'UI'
 ---@diagnostic disable-next-line: undefined-field
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
@@ -287,7 +292,7 @@ function Module:ApplySettings()
 
     self:ConditionalOption('changeCharacterframe', 'first', 'Change Characterframe', function()
         if DF.Cata then
-            DragonflightUIMixin:ChangeCharacterFrameCata()
+            -- DragonflightUIMixin:ChangeCharacterFrameCata()
             Module:HookCharacterLevel()
         elseif DF.Wrath then
             DragonflightUIMixin:ChangeCharacterFrameEra()
@@ -332,93 +337,7 @@ function Module:ChangeFrames()
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
     -- DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['HelpFrame'])
 
-    if DF.Cata then
-        --
-        DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
-        -- DragonflightUIMixin:ChangeCharacterFrameCata()
-        DragonflightUIMixin:ChangeQuestLogFrameCata()
-        DragonflightUIMixin:ChangeDressupFrame()
-        DragonflightUIMixin:ChangeTradeFrame()
-        DragonflightUIMixin:ChangeGossipFrame()
-        DragonflightUIMixin:ChangeQuestFrame()
-        DragonflightUIMixin:ChangeTaxiFrame()
-        DragonflightUIMixin:ImproveTaxiFrame()
-        DragonflightUIMixin:ChangeLootFrame()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
-
-        Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
-        end)
-
-        Module:FuncOrWaitframe('Blizzard_Collections', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
-        end)
-
-        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
-        end)
-
-        Module:FuncOrWaitframe('Blizzard_Communities', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
-        end)
-
-        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
-        end)
-
-        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
-            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
-        end)
-
-    elseif DF.Wrath then
-        --
-        DragonflightUIMixin:ChangeQuestLogFrameCata()
-        DragonflightUIMixin:ChangeDressupFrame()
-        DragonflightUIMixin:ChangeTradeFrame()
-        DragonflightUIMixin:ChangeGossipFrame()
-        DragonflightUIMixin:ChangeQuestFrame()
-        DragonflightUIMixin:ChangeTaxiFrame()
-        DragonflightUIMixin:ImproveTaxiFrame()
-        DragonflightUIMixin:ChangeLootFrame()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
-        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame']) -- pp missing
-        -- DragonflightUIMixin:ChangeWrathPVPFrame()
-        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
-        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
-
-        -- Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
-        --     DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
-        -- end)
-
-        Module:FuncOrWaitframe('Blizzard_Collections', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
-        end)
-
-        -- Module:FuncOrWaitframe('Blizzard_TalentUI', function()
-        --     DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
-        -- end)
-
-        -- Module:FuncOrWaitframe('Blizzard_Communities', function()
-        --     DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
-        -- end)
-
-        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
-        end)
-
-        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
-            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
-            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
-        end)
-    elseif DF.Era then
+    if Version.IsEra then
         --
         -- DragonflightUIMixin:ChangeSpellbookEra()
         -- DragonflightUIMixin:SpellbookEraAddTabs()
@@ -465,6 +384,132 @@ function Module:ChangeFrames()
         Module:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
             --
             -- DragonflightUIMixin:ChangeLFGListingFrameEra()
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
+    elseif Version.IsTBC then
+    elseif Version.IsWotlk then
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:ChangeTradeFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
+        DragonflightUIMixin:ChangeQuestFrame()
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame']) -- pp missing
+        -- DragonflightUIMixin:ChangeWrathPVPFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
+
+        -- Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        -- end)
+
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
+
+        -- Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        -- end)
+
+        -- Module:FuncOrWaitframe('Blizzard_Communities', function()
+        --     DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        -- end)
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
+    elseif Version.IsCata then
+        DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        -- DragonflightUIMixin:ChangeCharacterFrameCata()
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:ChangeTradeFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
+        DragonflightUIMixin:ChangeQuestFrame()
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
+
+        Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_Communities', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
+    elseif Version.IsMoP then
+        DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
+        DragonflightUIMixin:ChangeCharacterFrameCata()
+        DragonflightUIMixin:ChangeQuestLogFrameCata()
+        -- DragonflightUIMixin:ChangeDressupFrame() TODO
+        DragonflightUIMixin:ChangeTradeFrame()
+        -- DragonflightUIMixin:ChangeGossipFrame() TODO
+        DragonflightUIMixin:ChangeQuestFrame()
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
+
+        Module:FuncOrWaitframe('Blizzard_EncounterJournal', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['EncounterJournal'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_Collections', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CollectionsJournal'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_Communities', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
         end)
 
         Module:FuncOrWaitframe('Blizzard_MacroUI', function()
