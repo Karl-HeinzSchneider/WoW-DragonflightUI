@@ -337,7 +337,7 @@ function Module:ChangeFrames()
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['SettingsPanel'])
     -- DragonflightUIMixin:ButtonFrameTemplateNoPortrait(_G['HelpFrame'])
 
-    if Version.IsEra then
+    if Version.IsClassic then
         --
         -- DragonflightUIMixin:ChangeSpellbookEra()
         -- DragonflightUIMixin:SpellbookEraAddTabs()
