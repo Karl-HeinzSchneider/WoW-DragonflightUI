@@ -198,13 +198,6 @@ function Module:OnEnable()
     self:SetWasEnabled(true)
 
     self:EnableAddonSpecific()
-    -- if DF.Cata then
-    --     Module.Cata()
-    -- elseif DF.Wrath then
-    --     Module.Wrath()
-    -- else
-    --     Module.Era()
-    -- end
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
