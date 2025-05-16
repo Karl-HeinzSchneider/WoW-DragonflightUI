@@ -2115,6 +2115,7 @@ function DragonflightUIMixin:ShowQuestXP()
 end
 
 function DragonflightUIMixin:GetCompletedQuestsAndXP()
+    -- print('DragonflightUIMixin:GetCompletedQuestsAndXP()')
     -- C_QuestLog.GetMaxNumQuestsCanAccept() -- 20
     -- local maxQuests = C_QuestLog.GetMaxNumQuests(); -- 25
     local numEntries, numQuests = GetNumQuestLogEntries();
@@ -2124,6 +2125,32 @@ function DragonflightUIMixin:GetCompletedQuestsAndXP()
     returnTable.numCompletedQuests = 0;
     returnTable.numQuestXP = 0;
 
+    if DF.API.Version.IsCata or DF.API.Version.IsMoP then
+        local currentSelection = GetQuestLogSelection()
+        -- print('current:', currentSelection)
+        for i = 1, numEntries do
+            --  
+            local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent,
+                  displayQuestID, isOnMap, hasLocalPOI, isTask, isBounty, isStory, isHidden, isScaling =
+                GetQuestLogTitle(i);
+
+            if isComplete then
+                SelectQuestLogEntry(i)
+
+                local questXP, questLevel = GetQuestLogRewardXP();
+                returnTable.numCompletedQuests = returnTable.numCompletedQuests + 1;
+                returnTable.numQuestXP = returnTable.numQuestXP + questXP;
+
+                local info = {title = title, questID = questID, questXP = questXP, questLevel = questLevel};
+                table.insert(returnTable.completedQuests, info);
+            end
+        end
+
+        SelectQuestLogEntry(currentSelection)
+        -- print('after:', GetQuestLogSelection())
+
+        return returnTable;
+    end
     for i = 1, numEntries do
         local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent,
               displayQuestID, isOnMap, hasLocalPOI, isTask, isBounty, isStory, isHidden, isScaling = GetQuestLogTitle(i);
