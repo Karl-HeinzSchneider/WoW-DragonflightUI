@@ -134,7 +134,7 @@ function DragonflightUIXPBarMixin:SetupTooltip()
             GameTooltip:AddDoubleLine('Time to max rested:', '|cFFFFFFFF' .. SecondsToTime(restedTime))
         end
 
-        if DF.Era then
+        do
             -- 
             GameTooltip:AddDoubleLine(' ')
             local questXPInfo = DragonflightUIMixin:GetCompletedQuestsAndXP();

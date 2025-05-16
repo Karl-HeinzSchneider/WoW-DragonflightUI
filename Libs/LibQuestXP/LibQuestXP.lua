@@ -5,6 +5,11 @@ if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then
     return -- Don't load for Retail
 end
 
+-- DF CHANGE
+if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CATACLYSM_CLASSIC or _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MISTS_CLASSIC then
+    return -- Don't load for Cata/Mists
+end
+
 if not LibQuestXP then
     return -- already loaded and no upgrade necessary
 end
@@ -19,18 +24,14 @@ end
 hooksecurefunc("SelectQuestLogEntry", hookSelectQuestLogEntry)
 
 function LibQuestXP:GetQuestInfo(questID)
-    if LibQuestXPDB[questID] ~= nil then
-        return LibQuestXPDB[questID]['xp'], LibQuestXPDB[questID]['level']
-    end
+    if LibQuestXPDB[questID] ~= nil then return LibQuestXPDB[questID]['xp'], LibQuestXPDB[questID]['level'] end
 
     return 0, nil
 end
 
 function LibQuestXP:GetAdjustedXP(xp, qLevel)
     local charLevel = UnitLevel("player");
-    if (charLevel == GetMaxPlayerLevel()) then
-        return 0;
-    end
+    if (charLevel == GetMaxPlayerLevel()) then return 0; end
 
     local diffFactor = 2 * (qLevel - charLevel) + 20;
     if (diffFactor < 1) then

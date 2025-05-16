@@ -2654,6 +2654,39 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
 
     DragonflightUIMixin:FrameBackgroundSolid(frame, true)
 
+    do
+        -- quest xp
+        local count = CreateFrame('FRAME', 'DragonflightUIQuestCompletedQuestsFrame', frame, 'DFQuestLogCount')
+        count:SetSize(180, 20) -- TODO
+        count:SetPoint("LEFT", QuestLogCount, "RIGHT", 6, 0);
+
+        local textOne = count:CreateFontString('DragonflightUICompletedQuests', 'OVERLAY', 'GameFontNormalSmall')
+        textOne:SetPoint('TOPLEFT', _G['DragonflightUIQuestCompletedQuestsFrameTopLeft'], 'BOTTOMRIGHT', 1, 3)
+
+        frame.DFCompletedQuestsFrame = count;
+
+        count.Update = function()
+            -- print('QuestLogFrame.DFCompletedQuestsFrame:Update()')
+            local questXPInfo = DragonflightUIMixin:GetCompletedQuestsAndXP();
+
+            local first = 'Completed: ' .. '|cffffffff' .. tostring(questXPInfo.numCompletedQuests) .. '/' ..
+                              tostring(questXPInfo.numQuests) .. '|r';
+            local second = 'XP: ' .. '|cffffffff' .. FormatLargeNumber(tostring(questXPInfo.numQuestXP)) .. '|r'
+            textOne:SetText(first .. '   ' .. second);
+
+            local hPadding = 15;
+            local width = textOne:GetWidth();
+            count:SetWidth(width + hPadding);
+        end
+
+        count.Update()
+
+        hooksecurefunc('QuestLog_Update', function()
+            -- print('QuestLog_Update')
+            count.Update()
+        end)
+    end
+
     -- default -16 
     ShowUIPanel(frame)
     QuestLogFrame:SetAttribute("UIPanelLayout-" .. "xoffset", 0);
