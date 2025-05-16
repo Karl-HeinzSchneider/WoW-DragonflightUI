@@ -281,13 +281,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Cata then
-        Module.Cata()
-    elseif DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     -- Module.AddStateUpdater()
     Module:AddEditMode()
@@ -660,8 +654,7 @@ function frame:OnEvent(event, arg1, arg2, arg3)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
--- Cata
-function Module.Cata()
+function Module:Era()
     Module.CreateBuffFrame()
     Module.AddBuffBorders()
     Module.MoveBuffs()
@@ -669,8 +662,10 @@ function Module.Cata()
     Module.MoveDebuffs()
 end
 
--- Wrath
-function Module.Wrath()
+function Module:TBC()
+end
+
+function Module:Wrath()
     Module.CreateBuffFrame()
     Module.AddBuffBorders()
     Module.MoveBuffs()
@@ -678,8 +673,15 @@ function Module.Wrath()
     Module.MoveDebuffs()
 end
 
--- Era
-function Module.Era()
+function Module:Cata()
+    Module.CreateBuffFrame()
+    Module.AddBuffBorders()
+    Module.MoveBuffs()
+    Module.CreateDebuffFrame()
+    Module.MoveDebuffs()
+end
+
+function Module:Mists()
     Module.CreateBuffFrame()
     Module.AddBuffBorders()
     Module.MoveBuffs()

@@ -130,13 +130,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    -- if DF.Cata then
-    --     Module.Cata()
-    -- elseif DF.Wrath then
-    --     Module.Wrath()
-    -- else
-    --     Module.Era()
-    -- end
+    -- self:EnableAddonSpecific()
 
     -- Module:AddEditMode()
 

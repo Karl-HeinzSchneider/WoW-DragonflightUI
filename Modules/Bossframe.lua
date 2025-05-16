@@ -159,11 +159,7 @@ function Module:OnEnable()
 
     if not DF.Cata then return end -- guard TODO
 
-    if DF.Cata then
-        Module.Cata()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -319,16 +315,19 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
--- Cata
-function Module.Cata()
+function Module:Era()
+end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
+end
+
+function Module:Cata()
     Module:CreateBossFrames()
     Module:HideDefault()
 end
 
--- Wrath
-function Module.Wrath()
-end
-
--- Era
-function Module.Era()
+function Module:Mists()
 end

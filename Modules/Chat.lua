@@ -177,11 +177,8 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
+
     -- Module.AddStateUpdater()
     -- Module:AddEditMode()
 
@@ -277,12 +274,21 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
-function Module.Wrath()
-    -- Module.ChangeSizeAndPosition()
+function Module:Era()
+    Module:Wrath()
+end
 
+function Module:TBC()
+end
+
+function Module:Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function Module.Era()
-    Module.Wrath()
+function Module:Cata()
+    Module:Wrath()
+end
+
+function Module:Mists()
+    Module:Wrath()
 end

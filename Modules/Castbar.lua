@@ -538,11 +538,8 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
+
     Module:AddEditMode()
 
     Module:RegisterOptionScreens()
@@ -851,13 +848,22 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 frame:RegisterEvent('UI_SCALE_CHANGED')
 
--- Wrath
-function Module.Wrath()
+function Module:Era()
+    Module:Wrath()
+end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
     Module.ChangeDefaultCastbar()
     Module.AddNewCastbar()
 end
 
--- Era
-function Module.Era()
-    Module.Wrath()
+function Module:Cata()
+    Module:Wrath()
+end
+
+function Module:Mists()
+    Module:Wrath()
 end

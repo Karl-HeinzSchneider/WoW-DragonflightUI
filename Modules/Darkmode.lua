@@ -204,13 +204,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Cata then
-        Module.Cata()
-    elseif DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -801,17 +795,21 @@ function frame:OnEvent(event, arg1, arg2, arg3)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
--- Cata
-function Module.Cata()
+function Module:Era()
     Module:HookOnEnable()
 end
 
--- Wrath
-function Module.Wrath()
+function Module:TBC()
+end
+
+function Module:Wrath()
     Module:HookOnEnable()
 end
 
--- Era
-function Module.Era()
+function Module:Cata()
+    Module:HookOnEnable()
+end
+
+function Module:Mists()
     Module:HookOnEnable()
 end

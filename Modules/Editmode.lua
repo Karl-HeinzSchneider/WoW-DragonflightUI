@@ -223,13 +223,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Cata then
-        Module.Cata()
-    elseif DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module:CreateGrid()
     Module:SetupMainmenuButton()
@@ -407,14 +401,17 @@ function Module:SelectFrame(frameRef)
     end
 end
 
--- Cata
-function Module.Cata()
+function Module:Era()
 end
 
--- Wrath
-function Module.Wrath()
+function Module:TBC()
 end
 
--- Era
-function Module.Era()
+function Module:Wrath()
+end
+
+function Module:Cata()
+end
+
+function Module:Mists()
 end
