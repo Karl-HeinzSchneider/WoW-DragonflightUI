@@ -377,11 +377,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module.Tmp.MinimapX = 0
     Module.Tmp.MinimapY = 0
@@ -1528,33 +1524,7 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 Module.Frame = frame
 
--- Wrath
-function Module.Wrath()
-    Module.HideDefaultStuff()
-    Module.MoveDefaultStuff()
-    Module.ChangeZoom()
-    Module.CreateMinimapInfoFrame()
-    Module.ChangeCalendar()
-    Module.ChangeClock()
-    Module.ChangeZoneText()
-    Module.ChangeTracking()
-    Module.DrawMinimapBorder()
-    Module.MoveTracker()
-    Module:ChangeLFG()
-    Module.ChangeDifficulty()
-    Module.HookMouseWheel()
-    Module.ChangeMail()
-    -- Module.ChangeMinimapButtons()
-
-    Module.HookCalendar()
-    Module.UpdateCalendar()
-
-    -- frame:RegisterEvent('ADDON_LOADED')
-    frame:RegisterEvent('MINIMAP_PING')
-end
-
--- Era
-function Module.Era()
+function Module:Era()
     Module.HideDefaultStuff()
     Module.MoveDefaultStuff()
     Module.ChangeZoom()
@@ -1578,3 +1548,39 @@ function Module.Era()
     frame:RegisterEvent('MINIMAP_PING')
     frame:RegisterEvent('MINIMAP_UPDATE_TRACKING')
 end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
+    Module.HideDefaultStuff()
+    Module.MoveDefaultStuff()
+    Module.ChangeZoom()
+    Module.CreateMinimapInfoFrame()
+    Module.ChangeCalendar()
+    Module.ChangeClock()
+    Module.ChangeZoneText()
+    Module.ChangeTracking()
+    Module.DrawMinimapBorder()
+    Module.MoveTracker()
+    Module:ChangeLFG()
+    Module.ChangeDifficulty()
+    Module.HookMouseWheel()
+    Module.ChangeMail()
+    -- Module.ChangeMinimapButtons()
+
+    Module.HookCalendar()
+    Module.UpdateCalendar()
+
+    -- frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('MINIMAP_PING')
+end
+
+function Module:Cata()
+    Module:Wrath()
+end
+
+function Module:Mists()
+    Module:Wrath()
+end
+

@@ -1560,11 +1560,8 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
+
     Module.AddStateUpdater()
     Module:AddEditMode()
 
@@ -5375,7 +5372,51 @@ function Module:TakePicture()
 end
 Module:RegisterChatCommand('cheeese', 'TakePicture')
 
-function Module.Wrath()
+function Module:Era()
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('PLAYER_TARGET_CHANGED')
+    frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
+    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
+    frame:RegisterEvent('PET_BAR_UPDATE')
+
+    frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
+
+    frame:RegisterEvent('UNIT_POWER_UPDATE')
+    -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
+
+    frame:RegisterEvent('ZONE_CHANGED')
+    frame:RegisterEvent('ZONE_CHANGED_INDOORS')
+    frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+
+    frame:RegisterEvent('PORTRAITS_UPDATED')
+
+    frame:RegisterEvent('CVAR_UPDATE')
+    frame:RegisterEvent('SETTINGS_LOADED')
+
+    Module.HookRestFunctions()
+    Module.HookVertexColor()
+    Module.HookEnergyBar()
+    Module.HookPlayerStatus()
+    Module.HookPlayerArt()
+    Module.HookDrag()
+
+    -- Module.ApplyPortraitMask()
+    Module.HookClassIcon()
+    Module.ChangePartyFrame()
+    Module.AddMobhealth()
+    Module.CreatThreatIndicator()
+    Module.ChangePetFrame()
+    Module:AddAlternatePowerBar()
+    Module:AddRaidframeRoleIcons()
+
+    Module:CreatePlayerFrameExtra()
+end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
     frame:RegisterEvent('PLAYER_TARGET_CHANGED')
     frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
@@ -5418,43 +5459,10 @@ function Module.Wrath()
     Module:CreatePlayerFrameExtra()
 end
 
-function Module.Era()
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('PLAYER_TARGET_CHANGED')
-    frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-    frame:RegisterEvent('UNIT_PORTRAIT_UPDATE')
-    frame:RegisterEvent('PET_BAR_UPDATE')
+function Module:Cata()
+    Module:Wrath()
+end
 
-    frame:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
-    frame:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
-
-    frame:RegisterEvent('UNIT_POWER_UPDATE')
-    -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'pet') -- overriden by other RegisterUnitEvent
-
-    frame:RegisterEvent('ZONE_CHANGED')
-    frame:RegisterEvent('ZONE_CHANGED_INDOORS')
-    frame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-
-    frame:RegisterEvent('PORTRAITS_UPDATED')
-
-    frame:RegisterEvent('CVAR_UPDATE')
-    frame:RegisterEvent('SETTINGS_LOADED')
-
-    Module.HookRestFunctions()
-    Module.HookVertexColor()
-    Module.HookEnergyBar()
-    Module.HookPlayerStatus()
-    Module.HookPlayerArt()
-    Module.HookDrag()
-
-    -- Module.ApplyPortraitMask()
-    Module.HookClassIcon()
-    Module.ChangePartyFrame()
-    Module.AddMobhealth()
-    Module.CreatThreatIndicator()
-    Module.ChangePetFrame()
-    Module:AddAlternatePowerBar()
-    Module:AddRaidframeRoleIcons()
-
-    Module:CreatePlayerFrameExtra()
+function Module:Mists()
+    Module:Wrath()
 end

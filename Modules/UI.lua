@@ -149,7 +149,7 @@ function frame:OnEvent(event, arg1, ...)
         if db.changeInspect and not Module.InspectHooked then
             Module.InspectHooked = true
 
-            Module:FuncOrWaitframe('Blizzard_InspectUI', function ()
+            Module:FuncOrWaitframe('Blizzard_InspectUI', function()
                 DragonflightUIMixin:ChangeInspectFrame()
             end)
 
@@ -197,13 +197,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Cata then
-        Module.Cata()
-    elseif DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -700,30 +694,8 @@ function Module:HookColorInspect()
     DragonflightUIItemColorMixin:HookInspectFrame()
 end
 
--- Cata
-function Module.Cata()
+function Module:Era()
     Module:ChangeFrames()
-    Module:HookCharacterFrame()
-    -- Module:HookCharacterLevel()
-
-    frame:RegisterEvent('ADDON_LOADED')
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('INSPECT_READY')
-end
-
--- Wrath
-function Module.Wrath()
-    Module:ChangeFrames()
-end
-
--- Era
-function Module.Era()
-    Module:ChangeFrames()
-    -- Module:HookCharacterFrame()
-    -- Module:HookCharacterLevel()
-
-    -- DragonflightUIMixin:ChangeQuestLogFrameCata()
-    -- Module:UpdateTradeskills()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -731,4 +703,29 @@ function Module.Era()
     DF.Compatibility:FuncOrWaitframe('Ranker', function()
         DF.Compatibility:ClassicRanker()
     end)
+end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
+    Module:ChangeFrames()
+end
+
+function Module:Cata()
+    Module:ChangeFrames()
+    Module:HookCharacterFrame()
+
+    frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('INSPECT_READY')
+end
+
+function Module:Mists()
+    Module:ChangeFrames()
+    Module:HookCharacterFrame()
+
+    frame:RegisterEvent('ADDON_LOADED')
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+    frame:RegisterEvent('INSPECT_READY')
 end

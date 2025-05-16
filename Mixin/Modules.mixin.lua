@@ -1,5 +1,9 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+---@type API
+local API = DF.API;
+---@type VersionAPI
+local Version = API.Version;
 
 DragonflightUIModulesMixin = {}
 
@@ -131,6 +135,29 @@ function DragonflightUIModulesMixin:FuncOrWaitframe(addon, func)
                 waitFrame:UnregisterAllEvents()
             end
         end)
+    end
+end
+
+function DragonflightUIModulesMixin:EnableAddonSpecific()
+    -- print('DragonflightUIModulesMixin:EnableAddonSpecific()')
+    -- DevTools_Dump(Version)
+
+    local versionTable = {
+        {'IsClassic', 'Era'}, {'IsTBC', 'TBC'}, {'IsWotlk', 'Wrath'}, {'IsCata', 'Cata'}, {'IsMoP', 'Mists'}
+    }
+
+    for k, v in ipairs(versionTable) do
+        -- print(v[1], v[2])
+        local versionName = v[1]
+        local versionFunc = v[2]
+        if Version[versionName] then
+            if self[versionFunc] then
+                self[versionFunc]();
+            else
+                DF:Debug(self, 'No self.' .. versionFunc);
+            end
+            return;
+        end
     end
 end
 

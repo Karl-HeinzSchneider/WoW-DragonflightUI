@@ -460,13 +460,7 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
-    if DF.Cata then
-        Module.Cata()
-    elseif DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module:AddEditMode()
 
@@ -1440,22 +1434,26 @@ function frame:OnEvent(event, arg1, arg2, arg3)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
--- Cata
-function Module.Cata()
-    Module.Era()
-end
-
--- Wrath
-function Module.Wrath()
-    Module.Era()
-end
-
--- Era
-function Module.Era()
+function Module:Era()
     Module:HookDefaultAnchor()
     Module:AddBackdrops()
 
     Module:HookFunctions()
     Module:HookSpellTooltip()
     Module:HookStatusBar()
+end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
+    Module:Era()
+end
+
+function Module:Cata()
+    Module:Era()
+end
+
+function Module:Mists()
+    Module:Era()
 end

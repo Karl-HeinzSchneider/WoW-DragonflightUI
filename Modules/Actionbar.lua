@@ -1783,11 +1783,9 @@ function Module:OnEnable()
 
     Module.Temp = {}
     Module.UpdateRangeHooked = false
-    if DF.Wrath then
-        Module.Wrath()
-    else
-        Module.Era()
-    end
+
+    self:EnableAddonSpecific()
+
     Module:SetupActionbarFrames()
     Module.AddStateUpdater()
     Module:AddEditMode()
@@ -3574,8 +3572,34 @@ function Module.ChangeFramerate()
     Module.FPSFrame = fps
 end
 
--- WRATH
-function Module.Wrath()
+function Module:Era()
+    Module.ChangeActionbar()
+    Module.CreateNewXPBar()
+    Module.CreateNewRepBar()
+
+    Module.HookPetBar()
+    -- Module.MoveTotem()
+    -- Module.ChangePossessBar()
+
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+    Module.ChangeGryphon()
+    -- Module.DrawActionbarDeco()
+
+    Module.ChangeMicroMenu()
+    Module.ChangeBackpack()
+    Module.MoveBars()
+    Module.ChangeFramerate()
+    Module.CreateBagExpandButton()
+    Module.RefreshBagBarToggle()
+    Module.HookBags()
+end
+
+function Module:TBC()
+end
+
+function Module:Wrath()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
@@ -3599,27 +3623,10 @@ function Module.Wrath()
     Module.HookBags()
 end
 
--- ERA
-function Module.Era()
-    Module.ChangeActionbar()
-    Module.CreateNewXPBar()
-    Module.CreateNewRepBar()
+function Module:Cata()
+    Module:Wrath()
+end
 
-    Module.HookPetBar()
-    -- Module.MoveTotem()
-    -- Module.ChangePossessBar()
-
-    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
-    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-    Module.ChangeGryphon()
-    -- Module.DrawActionbarDeco()
-
-    Module.ChangeMicroMenu()
-    Module.ChangeBackpack()
-    Module.MoveBars()
-    Module.ChangeFramerate()
-    Module.CreateBagExpandButton()
-    Module.RefreshBagBarToggle()
-    Module.HookBags()
+function Module:Mists()
+    Module:Wrath()
 end

@@ -65,11 +65,7 @@ function Module:OnEnable()
 
     Module:SetupLookupTable()
 
-    if DF.Cata then
-        Module.Cata()
-    else
-        Module.Era()
-    end
+    self:EnableAddonSpecific()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
@@ -237,14 +233,17 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
--- Cata
-function Module.Cata()
+function Module:Era()
 end
 
--- Wrath
-function Module.Wrath()
+function Module:TBC()
 end
 
--- Era
-function Module.Era()
+function Module:Wrath()
+end
+
+function Module:Cata()
+end
+
+function Module:Mists()
 end
