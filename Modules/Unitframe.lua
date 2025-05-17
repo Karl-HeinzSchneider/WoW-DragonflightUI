@@ -360,6 +360,7 @@ local optionsPlayer = {
             dropdownValues = portraitExtraTable,
             order = 9.5,
             group = 'headerStyling',
+            new = true,
             editmode = true
         },
         hideRedStatus = {
