@@ -570,63 +570,66 @@ end
 function Module:HookDefaultAnchor()
     hooksecurefunc("GameTooltip_SetDefaultAnchor", function(self, parent)
         --
-        -- DF:Debug(Module, 'GameTooltip_SetDefaultAnchor', self:GetName(), parent:GetName())
+        Module:GameTooltipSetDefaultAnchor(self, parent);
+    end)
+end
 
-        local state = Module.db.profile.general;
+function Module:GameTooltipSetDefaultAnchor(self, parent)
+    -- DF:Debug(Module, 'GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
+    local state = Module.db.profile.general;
 
-        -- spells
-        if state.anchorSpells then
-            local parentparent = parent and parent:GetParent();
+    -- spells
+    if state.anchorSpells then
+        local parentparent = parent and parent:GetParent();
 
-            if (parent.action or parent.spellId) or (parentparent and parentparent.action) or
-                (parentparent and parentparent.spellId) then
-                self:SetOwner(parent, 'ANCHOR_RIGHT');
-                return;
-            end
-
-            local parentName = parent:GetName() or ''
-            if string.match(parentName, "^PetActionButton") then
-                self:SetOwner(parent, 'ANCHOR_RIGHT');
-                return;
-            end
-            if string.match(parentName, "^StanceButton") then
-                self:SetOwner(parent, 'ANCHOR_RIGHT');
-                return;
-            end
-            -- print('ss', parent:GetName())
-        end
-
-        --
-        if state.anchorToMouse then
-            --
-            local focused;
-            if GetMouseFoci then
-                local foci = GetMouseFoci()
-                focused = foci[1]
-            else
-                focused = GetMouseFocus()
-            end
-
-            -- @TODO @HACK GetMouseFoci returns empty table on units instead of one with worldframe
-            if focused == WorldFrame or (DF.Era and not focused) or (DF.API.Version.IsMoP and not focused) then
-                -- units etc
-                self:ClearAllPoints();
-                self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
-                return;
-            end
-        end
-
-        if parent and _G['DragonflightUIXPBar'] and _G['DragonflightUIXPBar'].Bar and parent ==
-            _G['DragonflightUIXPBar'].Bar then
+        if (parent.action or parent.spellId) or (parentparent and parentparent.action) or
+            (parentparent and parentparent.spellId) then
             self:SetOwner(parent, 'ANCHOR_RIGHT');
             return;
         end
 
-        -- default
-        self:SetOwner(parent, 'ANCHOR_NONE');
-        self:ClearAllPoints();
-        self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
-    end)
+        local parentName = parent:GetName() or ''
+        if string.match(parentName, "^PetActionButton") then
+            self:SetOwner(parent, 'ANCHOR_RIGHT');
+            return;
+        end
+        if string.match(parentName, "^StanceButton") then
+            self:SetOwner(parent, 'ANCHOR_RIGHT');
+            return;
+        end
+        -- print('ss', parent:GetName())
+    end
+
+    --
+    if state.anchorToMouse then
+        --
+        local focused;
+        if GetMouseFoci then
+            local foci = GetMouseFoci()
+            focused = foci[1]
+        else
+            focused = GetMouseFocus()
+        end
+
+        -- @TODO @HACK GetMouseFoci returns empty table on units instead of one with worldframe
+        if focused == WorldFrame or (DF.Era and not focused) or (DF.API.Version.IsMoP and not focused) then
+            -- units etc
+            self:ClearAllPoints();
+            self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
+            return;
+        end
+    end
+
+    if parent and _G['DragonflightUIXPBar'] and _G['DragonflightUIXPBar'].Bar and parent ==
+        _G['DragonflightUIXPBar'].Bar then
+        self:SetOwner(parent, 'ANCHOR_RIGHT');
+        return;
+    end
+
+    -- default
+    self:SetOwner(parent, 'ANCHOR_NONE');
+    self:ClearAllPoints();
+    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
 end
 
 function Module:AddBackdrops()
