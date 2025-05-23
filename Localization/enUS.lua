@@ -340,6 +340,13 @@ L["BuffsOptionsUseStateHandler"] = "Use State Handler"
 L["BuffsOptionsUseStateHandlerDesc"] =
     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
 
+-- Flyout
+L["FlyoutHeader"] = "Flyout"
+L["FlyoutHeaderDesc"] = ""
+
+L["FlyoutDirection"] = "Flyout Direction"
+L["FlyoutDirectionDesc"] = "Flyout Direction"
+
 -- Castbar
 L["CastbarName"] = "Cast Bar"
 L["CastbarNameFormat"] = "%s Cast Bar"

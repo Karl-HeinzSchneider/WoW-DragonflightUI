@@ -24,6 +24,7 @@ local defaults = {
             padding = 2,
             -- flyout
             icon = 136082,
+            flyoutDirection = 'TOP',
             spells = '688, 697, 712, 691, 1122',
             spellsHorde = '',
             items = '',
@@ -88,6 +89,44 @@ local function setPreset(T, preset, sub)
     Module:RefreshOptionScreens()
 end
 
+function AddFlyoutTable(optionTable, sub)
+    local extraOptions = {
+        headerFlyout = {
+            type = 'header',
+            name = L["FlyoutHeader"],
+            desc = L["FlyoutHeaderDesc"],
+            order = 10,
+            isExpanded = true,
+            editmode = true
+        },
+        flyoutDirection = {
+            type = 'select',
+            name = L["FlyoutDirection"],
+            desc = L["FlyoutDirectionDesc"] .. getDefaultStr('flyoutDirection', sub),
+            dropdownValues = DF.Settings.DropdownCrossAnchorTable,
+            order = 9.5,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        buttons = {
+            type = 'range',
+            name = L["ButtonTableNumButtons"],
+            desc = L["ButtonTableNumButtonsDesc"] .. getDefaultStr('buttons', sub),
+            min = 1,
+            max = 12,
+            bigStep = 1,
+            order = 10,
+            group = 'headerFlyout',
+            editmode = true
+        }
+    }
+
+    for k, v in pairs(extraOptions) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
 local warlockOptions = {
     name = 'Warlock',
     desc = '...',
@@ -105,7 +144,7 @@ local warlockOptions = {
         }
     }
 }
--- AddButtonTable(warlockOptions, 'warlock')
+AddFlyoutTable(warlockOptions, 'warlock')
 DF.Settings:AddPositionTable(Module, warlockOptions, 'warlock', 'Warlock', getDefaultStr, frameTable)
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, warlockOptions, 'warlock', 'Warlock', getDefaultStr)
@@ -200,7 +239,7 @@ function Module:RegisterOptionScreens()
 end
 
 function Module:RefreshOptionScreens()
-    print('Module:RefreshOptionScreens()')
+    -- print('Module:RefreshOptionScreens()')
 
     local configFrame = DF.ConfigModule.ConfigFrame
 

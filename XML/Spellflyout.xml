@@ -11,7 +11,7 @@
 	</CheckButton>
 	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" virtual="true">
 	</Button>
-	<Frame name="DFSpellFlyoutBGTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellFlyoutBGMixin">
+	<Frame name="DFSpellFlyoutBGTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellFlyoutBGMixin" virtual="true">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<!-- <OnClick method="OnClick" /> -->

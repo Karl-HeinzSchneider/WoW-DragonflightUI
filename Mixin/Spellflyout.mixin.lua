@@ -1,6 +1,9 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
+local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
 DragonflightUISpellFlyoutButtonMixin = {}
 
 function DragonflightUISpellFlyoutButtonMixin:OnLoad()
@@ -9,8 +12,49 @@ function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
 
+    self:AddArrow()
+    self:UpdateArrow()
+
     self.MaxButtons = 8;
     self:InitButtons()
+end
+
+function DragonflightUISpellFlyoutButtonMixin:AddArrow()
+    local arr = self:CreateTexture('DragonflightUISpellFlyoutArrow')
+
+    arr:ClearAllPoints()
+    arr:SetSize(18, 6)
+    arr:SetTexture(textureRefTwo)
+    arr:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
+    arr:SetPoint('TOP', self, 'TOP', 0, 6)
+
+    self.Arrow = arr;
+end
+
+function DragonflightUISpellFlyoutButtonMixin:UpdateArrow(dir)
+    local arr = self.Arrow
+
+    if dir == 'LEFT' then
+        arr:ClearAllPoints()
+        arr:SetSize(18, 6)
+        arr:SetPoint('RIGHT', self, 'LEFT', 6, 0)
+        arr:SetRotation(math.pi / 2)
+    elseif dir == 'RIGHT' then
+        arr:ClearAllPoints()
+        arr:SetSize(18, 6)
+        arr:SetPoint('LEFT', self, 'RIGHT', -6, 0)
+        arr:SetRotation(-math.pi / 2)
+    elseif dir == 'BOTTOM' then
+        arr:ClearAllPoints()
+        arr:SetSize(18, 6)
+        arr:SetPoint('BOTTOM', self, 'BOTTOM', 0, -6)
+        arr:SetRotation(math.pi)
+    else
+        arr:ClearAllPoints()
+        arr:SetSize(18, 6)
+        arr:SetPoint('TOP', self, 'TOP', 0, 6)
+        arr:SetRotation(0)
+    end
 end
 
 function DragonflightUISpellFlyoutButtonMixin:InitButtons()
@@ -18,17 +62,20 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
 
     local n = self:GetName()
 
+    local f = CreateFrame('Frame', n .. 'BG', self, 'DFSpellFlyoutBGTemplate')
+    self.BG = f;
+
     local t = {}
     for i = 1, self.MaxButtons do
         --
         -- print(i, n)
-        local btn = CreateFrame("CheckButton", n .. 'Spell' .. i, self, "DFSpellFlyoutSubButtonTemplate");
+        local btn = CreateFrame("CheckButton", n .. 'Spell' .. i, self.BG, "DFSpellFlyoutSubButtonTemplate");
         -- print(i, n, btn:GetName())
 
         DragonflightUIActionbarMixin:StyleButton(btn);
         btn:SetScale(0.8);
         btn:SetSize(45, 45)
-        btn:Show()
+        -- btn:Show()
 
         t[i] = btn;
         self:SetHideFrame(btn, i + 1)
@@ -38,11 +85,11 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         btn:SetFrameLevel(3)
         btn.Icon:SetTexture(136082)
 
-        if i == 1 then
-            btn:SetPoint("BOTTOM", self, "TOP", 0, 4)
-        else
-            btn:SetPoint("BOTTOM", t[i - 1], "TOP", 0, 4)
-        end
+        -- if i == 1 then
+        --     btn:SetPoint("BOTTOM", self, "TOP", 0, 4)
+        -- else
+        --     btn:SetPoint("BOTTOM", t[i - 1], "TOP", 0, 4)
+        -- end
     end
 
     self.buttonTable = t;
@@ -62,6 +109,8 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
 
     self.Icon:SetTexture(state.icon or 136082)
 
+    self:UpdateArrow(state.flyoutDirection)
+
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable
     local buttons = math.min(state.buttons, btnCount)
@@ -71,6 +120,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         btn:ClearAllPoints()
         btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
         btn:Hide()
+        -- print('hide', i)
     end
 
     local numUsed = 0;
@@ -78,19 +128,15 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         local spellTable = self:SplitString(state.spells)
         -- print('spells: ', state.spells)
         -- DevTools_Dump(spellTable)
-        numUsed = #spellTable;
+        numUsed = math.min(state.buttons, #spellTable)
+        self.BG:SetState(state, numUsed)
 
         for i = 1, numUsed do
             --
             local btn = buttonTable[i]
-            btn:ClearAllPoints()
-            btn:Show()
-
-            if i == 1 then
-                btn:SetPoint("BOTTOM", self, "TOP", 0, 4)
-            else
-                btn:SetPoint("BOTTOM", buttonTable[i - 1], "TOP", 0, 4)
-            end
+            -- btn:ClearAllPoints()
+            -- btn:Show()
+            self.BG:SetButton(btn, i, buttonTable)
 
             local spell = spellTable[i];
 
@@ -107,9 +153,9 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
                 GameTooltip:SetSpellByID(spell)
 
                 if IsPlayerSpell(spell) then
-                    print('true')
+                    -- print('true')
                 else
-                    print('false')
+                    -- print('false')
                 end
             end)
             btn:SetScript('OnLeave', function()
@@ -155,14 +201,99 @@ end
 
 DragonflightUISpellFlyoutBGMixin = {}
 function DragonflightUISpellFlyoutBGMixin:OnLoad()
-    print('DragonflightUISpellFlyoutBGMixin:OnLoad()')
+    -- print('DragonflightUISpellFlyoutBGMixin:OnLoad()')
+    self:SetSize(45, 45)
+    self:AddTextures()
 end
 
-function DragonflightUISpellFlyoutBGMixin:SetState(state)
+function DragonflightUISpellFlyoutBGMixin:AddTextures()
+    -- print('DragonflightUISpellFlyoutBGMixin:AddTextures()')
+
+    self.box = CreateFrame('FRAME')
+    self.box:SetParent(self)
+    self.box:SetAllPoints()
+    self.box:SetFrameLevel(42)
+    self.box:SetFrameStrata('LOW')
+
+    self.box.texture = self.box:CreateTexture(nil, 'BACKGROUND')
+    self.box.texture:SetAllPoints()
+    self.box.texture:SetColorTexture(0, 0.8, 0, 0.42)
+end
+
+-- function DragonflightUISpellFlyoutBGMixin:OnLoad()
+--     print('DragonflightUISpellFlyoutBGMixin:OnLoad()')
+-- end
+
+function DragonflightUISpellFlyoutBGMixin:SetState(state, numUsed)
     self.state = state
+    self.state.numUsed = numUsed
     self:Update()
 end
 
 function DragonflightUISpellFlyoutBGMixin:Update()
-    -- print('DragonflightUISpellFlyoutButtonMixin:Update()')
+    -- print('DragonflightUISpellFlyoutBGMixin:Update()')
+    local state = self.state
+
+    local parent = self:GetParent()
+
+    local buttons = state.numUsed;
+    local buttonSize = 45;
+    local buttonScaling = 0.8
+
+    local padding = 4;
+
+    local w = buttonScaling * (buttonSize + padding)
+    local h = buttonScaling * (buttons * (buttonSize + padding) + 2 * padding)
+
+    local dir = state.flyoutDirection
+    self:ClearAllPoints()
+    if dir == 'LEFT' then
+        self:SetSize(h, w)
+        self:SetPoint('RIGHT', parent, 'LEFT', 0, 0)
+    elseif dir == 'RIGHT' then
+        self:SetSize(h, w)
+        self:SetPoint('LEFT', parent, 'RIGHT', 0, 0)
+    elseif dir == 'BOTTOM' then
+        self:SetSize(w, h)
+        self:SetPoint('TOP', parent, 'BOTTOM', 0, 0)
+    else
+        self:SetSize(w, h)
+        self:SetPoint('BOTTOM', parent, 'TOP', 0, 0)
+    end
+end
+
+function DragonflightUISpellFlyoutBGMixin:SetButton(btn, i, buttonTable)
+    -- print('~SetButton', btn:GetName(), i)
+    local state = self.state
+    local dir = state.flyoutDirection
+    local padding = 4;
+
+    btn:ClearAllPoints()
+    btn:Show()
+
+    if dir == 'LEFT' then
+        if i == 1 then
+            btn:SetPoint("RIGHT", self, "RIGHT", -2 * padding, 0)
+        else
+            btn:SetPoint("RIGHT", buttonTable[i - 1], "LEFT", -padding, 0)
+        end
+    elseif dir == 'RIGHT' then
+        if i == 1 then
+            btn:SetPoint("LEFT", self, "LEFT", 2 * padding, 0)
+        else
+            btn:SetPoint("LEFT", buttonTable[i - 1], "RIGHT", padding, 0)
+        end
+    elseif dir == 'BOTTOM' then
+        if i == 1 then
+            btn:SetPoint("TOP", self, "TOP", 0, -2 * padding)
+        else
+            btn:SetPoint("TOP", buttonTable[i - 1], "BOTTOM", 0, -padding)
+        end
+    else
+        if i == 1 then
+            btn:SetPoint("BOTTOM", self, "BOTTOM", 0, 2 * padding)
+        else
+            btn:SetPoint("BOTTOM", buttonTable[i - 1], "TOP", 0, padding)
+        end
+    end
 end
