@@ -103,6 +103,8 @@ function DragonflightUIActionbarMixin:Update()
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable
 
+    if btnCount < 1 then return end
+
     if state.reverse then
         local tmp = {}
         for i = 1, btnCount do tmp[i] = buttonTable[i] end
