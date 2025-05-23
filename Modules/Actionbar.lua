@@ -2164,23 +2164,25 @@ function Module:AddEditMode()
     end
 
     -- Flyout
-    EditModeModule:AddEditModeToFrame(Module.flyoutbar)
+    if DF.Era then
+        EditModeModule:AddEditModeToFrame(Module.flyoutbar)
 
-    Module.flyoutbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Flyoutbar'
-    end)
+        Module.flyoutbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Flyoutbar'
+        end)
 
-    Module.flyoutbar.DFEditModeSelection:RegisterOptions({
-        name = 'Petbar',
-        sub = 'flyout',
-        options = flyoutOptions,
-        advancedName = 'FlyoutBar',
-        extra = flyoutOptionsEditmode,
-        default = function()
-            setDefaultSubValues('flyout')
-        end,
-        moduleRef = self
-    });
+        Module.flyoutbar.DFEditModeSelection:RegisterOptions({
+            name = 'Petbar',
+            sub = 'flyout',
+            options = flyoutOptions,
+            advancedName = 'FlyoutBar',
+            extra = flyoutOptionsEditmode,
+            default = function()
+                setDefaultSubValues('flyout')
+            end,
+            moduleRef = self
+        });
+    end
 
     -- Pet 
     EditModeModule:AddEditModeToFrame(Module.petbar)
