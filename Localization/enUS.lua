@@ -20,6 +20,7 @@ L["ModuleTooltipChat"] = "This module changes the default Chatwindow.\nWORK IN P
 L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
 L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
+L["ModuleTooltipFlyout"] = "Flyout"
 L["ModuleTooltipMinimap"] =
     "This module overhauls the default Minimap and Questtracker.\nAdds seperate options for Minimap and Questtracker."
 L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"

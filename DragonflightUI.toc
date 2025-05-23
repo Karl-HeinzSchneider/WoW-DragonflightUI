@@ -92,6 +92,7 @@ Modules\Bossframe.lua
 Modules\Buffs.lua
 Modules\Castbar.lua
 Modules\Chat.lua
+Modules\Flyout.lua
 Modules\Minimap.lua
 Modules\Tooltip.lua
 Modules\UI.lua
