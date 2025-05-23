@@ -9,7 +9,7 @@ local defaults = {
     profile = {
         scale = 1,
         warlock = {
-            scale = 1,
+            scale = 0.8,
             anchorFrame = 'UIParent',
             customAnchorFrame = '',
             anchor = 'CENTER',
@@ -22,6 +22,11 @@ local defaults = {
             rows = 1,
             buttons = 10,
             padding = 2,
+            -- flyout
+            icon = 136082,
+            spells = '688, 697, 712, 691, 1122',
+            spellsHorde = '',
+            items = '',
             -- Style
             alwaysShow = true,
             activate = true,
@@ -83,7 +88,23 @@ local function setPreset(T, preset, sub)
     Module:RefreshOptionScreens()
 end
 
-local warlockOptions = {name = 'Warlock', desc = '...', get = getOption, set = setOption, type = 'group', args = {}}
+local warlockOptions = {
+    name = 'Warlock',
+    desc = '...',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        activate = {
+            type = 'toggle',
+            name = L["ButtonTableActive"],
+            desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', 'warlock'),
+            order = -1,
+            new = false,
+            editmode = true
+        }
+    }
+}
 -- AddButtonTable(warlockOptions, 'warlock')
 DF.Settings:AddPositionTable(Module, warlockOptions, 'warlock', 'Warlock', getDefaultStr, frameTable)
 
@@ -154,40 +175,49 @@ function Module:OnDisable()
 end
 
 function Module:RegisterSettings()
-    -- local moduleName = 'Tooltip'
-    -- local cat = 'misc'
-    -- local function register(name, data)
-    --     data.module = moduleName;
-    --     DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
-    -- end
+    local moduleName = 'Flyout'
+    local cat = 'flyout'
+    local function register(name, data)
+        data.module = moduleName;
+        DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
+    end
 
-    -- register('tooltip', {order = 0, name = 'Tooltip', descr = '...', isNew = false})
+    register('warlock', {order = 0, name = 'Warlock', descr = '...', isNew = true})
+    register('magePort', {order = 0, name = 'Mage Port', descr = '...', isNew = true})
+    register('magePortals', {order = 0, name = 'Mage Portals', descr = '...', isNew = true})
 end
 
 function Module:RegisterOptionScreens()
-    -- DF.ConfigModule:RegisterSettingsData('tooltip', 'misc', {
-    --     name = 'Tooltip',
-    --     sub = 'general',
-    --     options = generalOptions,
-    --     sortComparator = generalOptions.sortComparator,
-    --     default = function()
-    --         setDefaultSubValues('general')
-    --     end
-    -- })
+    DF.ConfigModule:RegisterSettingsData('warlock', 'flyout', {
+        name = 'Warlock',
+        sub = 'warlock',
+        options = warlockOptions,
+        sortComparator = warlockOptions.sortComparator,
+        default = function()
+            setDefaultSubValues('warlock')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
-    -- print('Module:RefreshOptionScreens()')
+    print('Module:RefreshOptionScreens()')
 
-    -- local configFrame = DF.ConfigModule.ConfigFrame
-    -- local cat = 'Misc'
-    -- configFrame:RefreshCatSub(cat, 'Tooltip')
+    local configFrame = DF.ConfigModule.ConfigFrame
 
-    -- Module.GametooltipPreview.DFEditModeSelection:RefreshOptionScreen();
+    local refreshCat = function(name)
+        configFrame:RefreshCatSub('Flyout', name)
+    end
+
+    refreshCat('warlock')
+
+    Module.WarlockButton.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings(sub)
-    -- local db = Module.db.profile
+    local db = Module.db.profile
+
+    Module.WarlockButton:SetState(db.warlock)
+
     -- local state = db.general
 
     -- local parent;
@@ -203,44 +233,50 @@ function Module:ApplySettings(sub)
 end
 
 function Module:AddEditMode()
-    -- local EditModeModule = DF:GetModule('Editmode');
+    local EditModeModule = DF:GetModule('Editmode');
 
     -- local f = CreateFrame('FRAME', 'DragonflightUIGameTooltipPreviewFrame', UIParent)
     -- f:SetSize(250, 90)
 
     -- Module.GametooltipPreview = f;
 
-    -- EditModeModule:AddEditModeToFrame(f)
+    EditModeModule:AddEditModeToFrame(Module.WarlockButton)
 
-    -- f.DFEditModeSelection:SetGetLabelTextFunction(function()
-    --     return 'Tooltip Anchor'
-    -- end)
+    Module.WarlockButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Warlock'
+    end)
 
-    -- f.DFEditModeSelection:RegisterOptions({
-    --     name = 'GameTooltip',
-    --     sub = 'general',
-    --     advancedName = 'GameTooltip',
-    --     options = generalOptions,
-    --     extra = optionsGeneralEditmode,
-    --     -- parentExtra = TargetFrame,
-    --     default = function()
-    --         setDefaultSubValues('general')
-    --     end,
-    --     moduleRef = self
-    --     -- showFunction = function()
-    --     --     --
-    --     --     -- TargetFrame.unit = 'player';
-    --     --     -- TargetFrame_Update(TargetFrame);
-    --     --     -- TargetFrame:Show()
-    --     --     TargetFrame:SetAlpha(0)
-    --     -- end,
-    --     -- hideFunction = function()
-    --     --     --        
-    --     --     -- TargetFrame.unit = 'target';
-    --     --     -- TargetFrame_Update(TargetFrame);
-    --     --     TargetFrame:SetAlpha(1)
-    --     -- end
-    -- });
+    Module.WarlockButton.DFEditModeSelection:RegisterOptions({
+        name = 'Warlock',
+        sub = 'warlock',
+        advancedName = 'FlyoutBar',
+        options = warlockOptions,
+        extra = warlockOptionsEditmode,
+        -- parentExtra = TargetFrame,
+        default = function()
+            setDefaultSubValues('warlock')
+        end,
+        moduleRef = self
+        -- showFunction = function()
+        --     --
+        --     -- TargetFrame.unit = 'player';
+        --     -- TargetFrame_Update(TargetFrame);
+        --     -- TargetFrame:Show()
+        --     TargetFrame:SetAlpha(0)
+        -- end,
+        -- hideFunction = function()
+        --     --        
+        --     -- TargetFrame.unit = 'target';
+        --     -- TargetFrame_Update(TargetFrame);
+        --     TargetFrame:SetAlpha(1)
+        -- end
+    });
+end
+
+function Module:AddWarlockButton()
+    local btn = CreateFrame("CheckButton", "DragonflightUISpellFlyout" .. "Warlock" .. "Button", UIParent,
+                            "DFSpellFlyoutButtonTemplate")
+    Module.WarlockButton = btn;
 end
 
 local frame = CreateFrame('FRAME')
@@ -251,6 +287,7 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:Era()
+    Module:AddWarlockButton()
 end
 
 function Module:TBC()
