@@ -213,24 +213,27 @@ function DragonflightUIActionbarMixin:Update()
             local macroText = _G[name .. 'Name']
             local keybindText = _G[name .. 'HotKey']
 
-            if state.hideMacro then
-                macroText:SetAlpha(0)
-            else
-                macroText:SetAlpha(1)
+            if macroText then
+                if state.hideMacro then
+                    macroText:SetAlpha(0)
+                else
+                    macroText:SetAlpha(1)
+                end
+
+                btn:SetMacroFontSize(state.macroFontSize)
             end
 
-            btn:SetMacroFontSize(state.macroFontSize)
+            if keybindText then
+                if state.hideKeybind then
+                    keybindText:SetAlpha(0)
+                else
+                    keybindText:SetAlpha(1)
+                end
 
-            if state.hideKeybind then
-                keybindText:SetAlpha(0)
-            else
-                keybindText:SetAlpha(1)
+                btn:SetKeybindFontSize(state.keybindFontSize)
+
+                btn:UpdateHotkeyDisplayText(state.shortenKeybind)
             end
-
-            btn:SetKeybindFontSize(state.keybindFontSize)
-
-            btn:UpdateHotkeyDisplayText(state.shortenKeybind)
-
             index = index + 1
         end
     end
