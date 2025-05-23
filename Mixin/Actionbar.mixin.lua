@@ -584,38 +584,38 @@ end
 
 function DragonflightUIActionbarMixin:StyleButtons()
     local count = #(self.buttonTable)
-    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
-    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
-    local maskRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbariconframemask'
-
-    self.mask = self:CreateMaskTexture()
-    self.mask:SetTexture(maskRef, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    self.mask:SetSize(45, 45)
-    self.mask:SetPoint('CENTER')
 
     for i = 1, count do
         local btn = self.buttonTable[i]
-        local btnName = btn:GetName()
+        self:StyleButton(btn)
+    end
+end
 
-        btn:SetSize(45, 45)
-        -- print(btn:GetName())
-        -- print(btn:GetName(), btn:GetAttribute("statehidden"))
+function DragonflightUIActionbarMixin:StyleButton(btn)
+    local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
+    local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
-        local icon = _G[btnName .. 'Icon']
-        -- icon:ClearAllPoints()
-        icon:SetSize(45, 45)
-        -- icon:SetPoint('CENTER')
-        -- icon:SetAlpha(0)
-        btn.Icon = icon
+    local btnName = btn:GetName()
 
-        local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
-        btn.Mask = mask
-        mask:SetAllPoints(icon)
-        mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
-        mask:SetSize(45, 45)
+    btn:SetSize(45, 45)
+    -- print(btn:GetName())
+    -- print(btn:GetName(), btn:GetAttribute("statehidden"))
 
-        icon:AddMaskTexture(mask)
-        --[[  OLD: #hack
+    local icon = _G[btnName .. 'Icon']
+    -- icon:ClearAllPoints()
+    icon:SetSize(45, 45)
+    -- icon:SetPoint('CENTER')
+    -- icon:SetAlpha(0)
+    btn.Icon = icon
+
+    local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
+    btn.Mask = mask
+    mask:SetAllPoints(icon)
+    mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
+    mask:SetSize(45, 45)
+
+    icon:AddMaskTexture(mask)
+    --[[  OLD: #hack
         -- mask
         do
               local mask = btn:CreateTexture('DragonflightUIMaskTexture')
@@ -634,7 +634,7 @@ function DragonflightUIActionbarMixin:StyleButtons()
                     mask:SetTexture(tex)
                 end
             end) ]]
-        --[[ 
+    --[[ 
             hooksecurefunc(icon, 'Hide', function(self)
                 mask:Hide()
             end)
@@ -645,215 +645,214 @@ function DragonflightUIActionbarMixin:StyleButtons()
         end
         ]]
 
-        local cd = _G[btnName .. 'Cooldown']
-        cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
-        cd:SetSize(45, 45)
-        -- cd:GetSwipeTexture():SetAlpha(0.5)
-        local deltaCD = 0;
-        cd:ClearAllPoints();
-        cd:SetPoint('TOPLEFT', btn, 'TOPLEFT', deltaCD + 0.3, -deltaCD);
-        cd:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -deltaCD + 0.2, deltaCD);
+    local cd = _G[btnName .. 'Cooldown']
+    cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
+    cd:SetSize(45, 45)
+    -- cd:GetSwipeTexture():SetAlpha(0.5)
+    local deltaCD = 0;
+    cd:ClearAllPoints();
+    cd:SetPoint('TOPLEFT', btn, 'TOPLEFT', deltaCD + 0.3, -deltaCD);
+    cd:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -deltaCD + 0.2, deltaCD);
 
-        local floatingBG = _G[btnName .. 'FloatingBG']
-        if floatingBG then
-            floatingBG:ClearAllPoints()
-            floatingBG:SetSize(46, 45)
-            floatingBG:SetTexture(textureRef)
-            floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
-            floatingBG:SetAllPoints()
+    local floatingBG = _G[btnName .. 'FloatingBG']
+    if floatingBG then
+        floatingBG:ClearAllPoints()
+        floatingBG:SetSize(46, 45)
+        floatingBG:SetTexture(textureRef)
+        floatingBG:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
+        floatingBG:SetAllPoints()
+    end
+
+    -- TODO: better visibility
+    -- iconframe-border
+    local border = _G[btnName .. 'Border']
+    border:ClearAllPoints()
+    border:SetSize(46, 45)
+    border:SetPoint('TOPLEFT')
+    border:SetTexture(textureRefTwo)
+    border:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+    border:SetDrawLayer('OVERLAY')
+
+    -- iconframe
+    local normal = btn:GetNormalTexture()
+    normal:ClearAllPoints()
+    normal:SetSize(46, 45)
+    normal:SetPoint('TOPLEFT')
+    normal:SetTexture(textureRefTwo)
+    normal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
+    normal:SetAlpha(1)
+
+    -- iconframe-down
+    local pushed = btn:GetPushedTexture()
+    pushed:ClearAllPoints()
+    pushed:SetSize(46, 45)
+    pushed:SetPoint('TOPLEFT')
+    pushed:SetTexture(textureRefTwo)
+    pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+    -- pushed:SetAlpha(0)
+
+    if false then
+        --
+        local customFrame = CreateFrame('FRAME', 'DragonflightUIPushTextureFrame', btn)
+        customFrame:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0)
+        customFrame:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
+        customFrame:SetFrameStrata('MEDIUM')
+        customFrame:SetFrameLevel(6)
+        btn.DFCustomPushedTextureFrame = customFrame;
+        customFrame:Hide()
+
+        local customPush = customFrame:CreateTexture('DragonflightUIPushedTexture')
+        customPush:ClearAllPoints()
+        customPush:SetSize(46, 45)
+        customPush:SetPoint('TOPLEFT')
+        customPush:SetTexture(textureRefTwo)
+        customPush:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
+    end
+
+    -- iconframe-mouseover
+    local highlight = btn:GetHighlightTexture()
+    highlight:ClearAllPoints()
+    highlight:SetSize(46, 45)
+    highlight:SetPoint('TOPLEFT')
+    highlight:SetTexture(textureRefTwo)
+    highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+    -- iconframe-mouseover
+    local checked = btn:GetCheckedTexture()
+    checked:ClearAllPoints()
+    checked:SetSize(46, 45)
+    checked:SetPoint('TOPLEFT')
+    checked:SetTexture(textureRefTwo)
+    checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+
+    local flyoutBorder = _G[btnName .. 'FlyoutBorder']
+    if flyoutBorder then
+        flyoutBorder:ClearAllPoints()
+        --  flyoutBorder:SetSize(46, 45)
+        -- flyoutBorder:SetTexture(textureRef)
+        -- flyoutBorder:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
+        -- flyoutBorder:SetAllPoints()
+    end
+
+    local flyoutBorderShadow = _G[btnName .. 'FlyoutBorderShadow']
+    if flyoutBorderShadow then
+        flyoutBorderShadow:ClearAllPoints()
+        flyoutBorderShadow:SetSize(52, 52)
+        flyoutBorderShadow:SetTexture(textureRefTwo)
+        flyoutBorderShadow:SetTexCoord(0.701172, 0.904297, 0.163574, 0.214355)
+        flyoutBorderShadow:SetPoint('CENTER', icon, 'CENTER', -0.3, 0.6)
+        flyoutBorderShadow:SetDrawLayer('ARTWORK', -1)
+        -- ["UI-HUD-ActionBar-IconFrame-FlyoutBorderShadow"]={52, 26, 0.701172, 0.904297, 0.163574, 0.214355, false, false, "2x"},
+    end
+
+    local flyoutArrow = _G[btnName .. 'FlyoutArrow']
+    if flyoutArrow then
+        -- ["UI-HUD-ActionBar-Flyout"]={18, 3, 0.884766, 0.955078, 0.438965, 0.445801, false, false, "2x"},
+        -- ["UI-HUD-ActionBar-Flyout-Down"]={19, 4, 0.884766, 0.958984, 0.430176, 0.437988, false, false, "2x"},
+        -- ["UI-HUD-ActionBar-Flyout-Mouseover"]={18, 3, 0.884766, 0.955078, 0.446777, 0.453613, false, false, "2x"},
+
+        flyoutArrow:ClearAllPoints()
+        flyoutArrow:SetSize(18, 6)
+        flyoutArrow:SetTexture(textureRefTwo)
+        flyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
+        flyoutArrow:SetPoint('TOP', btn, 'TOP', 0, 6)
+    end
+
+    local flash = _G[btnName .. 'Flash']
+    if flash then
+        flash:ClearAllPoints()
+        flash:SetSize(46, 45)
+        flash:SetPoint('TOPLEFT')
+        flash:SetTexture(textureRefTwo)
+        flash:SetTexCoord(0.701172, 0.880859, 0.475098, 0.519043)
+        flash:SetDrawLayer('OVERLAY')
+    end
+
+    -- TODO: support dynamic
+    -- btn:SetAttribute("flyoutDirection", nil);
+
+    function btn:UpdateFlyoutDirection(dir)
+        btn:SetAttribute("flyoutDirection", dir);
+    end
+    btn:UpdateFlyoutDirection(nil)
+
+    btn.DragonflightFixHotkeyPosition = function()
+        local hotkey = _G[btnName .. 'HotKey']
+        hotkey:ClearAllPoints()
+        hotkey:SetSize(46 - 10, 10)
+        hotkey:SetPoint('TOPRIGHT', -5, -5)
+
+        function btn:SetKeybindFontSize(newSize)
+            local fontFile, fontHeight, flags = hotkey:GetFont()
+            hotkey:SetFont(fontFile, newSize, "OUTLINE")
         end
 
-        -- TODO: better visibility
-        -- iconframe-border
-        local border = _G[btnName .. 'Border']
-        border:ClearAllPoints()
-        border:SetSize(46, 45)
-        border:SetPoint('TOPLEFT')
-        border:SetTexture(textureRefTwo)
-        border:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
-        border:SetDrawLayer('OVERLAY')
+        btn:SetKeybindFontSize(14 + 2)
+    end
+    btn.DragonflightFixHotkeyPosition()
 
-        -- iconframe
-        local normal = btn:GetNormalTexture()
-        normal:ClearAllPoints()
-        normal:SetSize(46, 45)
-        normal:SetPoint('TOPLEFT')
-        normal:SetTexture(textureRefTwo)
-        normal:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
-        normal:SetAlpha(1)
-
-        -- iconframe-down
-        local pushed = btn:GetPushedTexture()
-        pushed:ClearAllPoints()
-        pushed:SetSize(46, 45)
-        pushed:SetPoint('TOPLEFT')
-        pushed:SetTexture(textureRefTwo)
-        pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
-        -- pushed:SetAlpha(0)
-
-        if false then
-            --
-            local customFrame = CreateFrame('FRAME', 'DragonflightUIPushTextureFrame', btn)
-            customFrame:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0)
-            customFrame:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
-            customFrame:SetFrameStrata('MEDIUM')
-            customFrame:SetFrameLevel(6)
-            btn.DFCustomPushedTextureFrame = customFrame;
-            customFrame:Hide()
-
-            local customPush = customFrame:CreateTexture('DragonflightUIPushedTexture')
-            customPush:ClearAllPoints()
-            customPush:SetSize(46, 45)
-            customPush:SetPoint('TOPLEFT')
-            customPush:SetTexture(textureRefTwo)
-            customPush:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
-        end
-
-        -- iconframe-mouseover
-        local highlight = btn:GetHighlightTexture()
-        highlight:ClearAllPoints()
-        highlight:SetSize(46, 45)
-        highlight:SetPoint('TOPLEFT')
-        highlight:SetTexture(textureRefTwo)
-        highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
-
-        -- iconframe-mouseover
-        local checked = btn:GetCheckedTexture()
-        checked:ClearAllPoints()
-        checked:SetSize(46, 45)
-        checked:SetPoint('TOPLEFT')
-        checked:SetTexture(textureRefTwo)
-        checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
-
-        local flyoutBorder = _G[btnName .. 'FlyoutBorder']
-        if flyoutBorder then
-            flyoutBorder:ClearAllPoints()
-            --  flyoutBorder:SetSize(46, 45)
-            -- flyoutBorder:SetTexture(textureRef)
-            -- flyoutBorder:SetTexCoord(0.707031, 0.886719, 0.401367, 0.445312)
-            -- flyoutBorder:SetAllPoints()
-        end
-
-        local flyoutBorderShadow = _G[btnName .. 'FlyoutBorderShadow']
-        if flyoutBorderShadow then
-            flyoutBorderShadow:ClearAllPoints()
-            flyoutBorderShadow:SetSize(52, 52)
-            flyoutBorderShadow:SetTexture(textureRefTwo)
-            flyoutBorderShadow:SetTexCoord(0.701172, 0.904297, 0.163574, 0.214355)
-            flyoutBorderShadow:SetPoint('CENTER', icon, 'CENTER', -0.3, 0.6)
-            flyoutBorderShadow:SetDrawLayer('ARTWORK', -1)
-            -- ["UI-HUD-ActionBar-IconFrame-FlyoutBorderShadow"]={52, 26, 0.701172, 0.904297, 0.163574, 0.214355, false, false, "2x"},
-        end
-
-        local flyoutArrow = _G[btnName .. 'FlyoutArrow']
-        if flyoutArrow then
-            -- ["UI-HUD-ActionBar-Flyout"]={18, 3, 0.884766, 0.955078, 0.438965, 0.445801, false, false, "2x"},
-            -- ["UI-HUD-ActionBar-Flyout-Down"]={19, 4, 0.884766, 0.958984, 0.430176, 0.437988, false, false, "2x"},
-            -- ["UI-HUD-ActionBar-Flyout-Mouseover"]={18, 3, 0.884766, 0.955078, 0.446777, 0.453613, false, false, "2x"},
-
-            flyoutArrow:ClearAllPoints()
-            flyoutArrow:SetSize(18, 6)
-            flyoutArrow:SetTexture(textureRefTwo)
-            flyoutArrow:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
-            flyoutArrow:SetPoint('TOP', btn, 'TOP', 0, 6)
-        end
-
-        local flash = _G[btnName .. 'Flash']
-        if flash then
-            flash:ClearAllPoints()
-            flash:SetSize(46, 45)
-            flash:SetPoint('TOPLEFT')
-            flash:SetTexture(textureRefTwo)
-            flash:SetTexCoord(0.701172, 0.880859, 0.475098, 0.519043)
-            flash:SetDrawLayer('OVERLAY')
-        end
-
-        -- TODO: support dynamic
-        -- btn:SetAttribute("flyoutDirection", nil);
-
-        function btn:UpdateFlyoutDirection(dir)
-            btn:SetAttribute("flyoutDirection", dir);
-        end
-        btn:UpdateFlyoutDirection(nil)
-
-        btn.DragonflightFixHotkeyPosition = function()
-            local hotkey = _G[btnName .. 'HotKey']
-            hotkey:ClearAllPoints()
-            hotkey:SetSize(46 - 10, 10)
-            hotkey:SetPoint('TOPRIGHT', -5, -5)
-
-            function btn:SetKeybindFontSize(newSize)
-                local fontFile, fontHeight, flags = hotkey:GetFont()
-                hotkey:SetFont(fontFile, newSize, "OUTLINE")
-            end
-
-            btn:SetKeybindFontSize(14 + 2)
-        end
-        btn.DragonflightFixHotkeyPosition()
-
-        do
-            function btn:UpdateHotkeyDisplayText(shorten)
-                local name = self:GetName();
-                local actionButtonType = self.buttonType;
-                local id;
-                if (not actionButtonType) then
-                    actionButtonType = "ACTIONBUTTON";
-                    id = self:GetID();
+    do
+        function btn:UpdateHotkeyDisplayText(shorten)
+            local name = self:GetName();
+            local actionButtonType = self.buttonType;
+            local id;
+            if (not actionButtonType) then
+                actionButtonType = "ACTIONBUTTON";
+                id = self:GetID();
+            else
+                if (actionButtonType == "MULTICASTACTIONBUTTON") then
+                    id = self.buttonIndex;
                 else
-                    if (actionButtonType == "MULTICASTACTIONBUTTON") then
-                        id = self.buttonIndex;
-                    else
-                        id = self:GetID();
-                    end
+                    id = self:GetID();
                 end
-
-                local hotkey = self.HotKey
-
-                local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":LeftButton");
-
-                if not key then
-                    hotkey:SetText('');
-                    return
-                end
-
-                local text = GetBindingText(key, 1);
-
-                if not shorten then
-                    hotkey:SetText(text)
-                    -- print('..', name, id, actionButtonType, key, text, '*')
-                    return;
-                end
-
-                local shortText = DragonflightUIActionbarMixin:GetShortKey(key)
-
-                hotkey:SetText(shortText)
-                -- print('..', name, id, actionButtonType, key, text, shortText)
             end
 
-            btn:UpdateHotkeyDisplayText(false)
-        end
+            local hotkey = self.HotKey
 
-        do
-            local name = _G[btnName .. 'Name']
-            name:ClearAllPoints()
-            name:SetSize(46, 10)
-            name:SetPoint('BOTTOM', 0, 2)
+            local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":LeftButton");
 
-            function btn:SetMacroFontSize(newSize)
-                local fontFile, fontHeight, flags = name:GetFont()
-                name:SetFont(fontFile, newSize, "OUTLINE")
+            if not key then
+                hotkey:SetText('');
+                return
             end
 
-            btn:SetMacroFontSize(14)
+            local text = GetBindingText(key, 1);
+
+            if not shorten then
+                hotkey:SetText(text)
+                -- print('..', name, id, actionButtonType, key, text, '*')
+                return;
+            end
+
+            local shortText = DragonflightUIActionbarMixin:GetShortKey(key)
+
+            hotkey:SetText(shortText)
+            -- print('..', name, id, actionButtonType, key, text, shortText)
         end
 
-        do
-            local count = _G[btnName .. 'Count']
-            count:ClearAllPoints()
-            count:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -5, 5)
-            local fontFile, fontHeight, flags = count:GetFont()
-            count:SetFont(fontFile, 14 + 2, flags)
+        btn:UpdateHotkeyDisplayText(false)
+    end
+
+    do
+        local name = _G[btnName .. 'Name']
+        name:ClearAllPoints()
+        name:SetSize(46, 10)
+        name:SetPoint('BOTTOM', 0, 2)
+
+        function btn:SetMacroFontSize(newSize)
+            local fontFile, fontHeight, flags = name:GetFont()
+            name:SetFont(fontFile, newSize, "OUTLINE")
         end
+
+        btn:SetMacroFontSize(14)
+    end
+
+    do
+        local count = _G[btnName .. 'Count']
+        count:ClearAllPoints()
+        count:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', -5, 5)
+        local fontFile, fontHeight, flags = count:GetFont()
+        count:SetFont(fontFile, 14 + 2, flags)
     end
 end
 
