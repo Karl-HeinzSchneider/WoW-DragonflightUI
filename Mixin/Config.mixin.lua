@@ -157,6 +157,7 @@ function DragonFlightUIConfigMixin:RegisterSettingsData(id, categoryID, data)
 
     local node = self.DFSettingsCategoryList:FindElementDataByKey(key)
     -- print('node?!', key, node:GetData().key)
+    if not node then print(id, categoryID, data) end
     local nodeData = node:GetData()
     -- print('node?!', key, nodeData.key)
 

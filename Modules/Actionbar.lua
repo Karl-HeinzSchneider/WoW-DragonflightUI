@@ -307,6 +307,41 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        flyout = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
         pet = {
             scale = 1,
             anchorFrame = 'DragonflightUIActionbarFrame3',
@@ -1056,6 +1091,44 @@ local function GetBarExtraOptions(n)
 
     return extra;
 end
+
+local flyoutOptions = {name = 'FlyoutBar', desc = 'PetBar', get = getOption, set = setOption, type = 'group', args = {}}
+AddButtonTable(flyoutOptions, 'flyout')
+DF.Settings:AddPositionTable(Module, flyoutOptions, 'flyout', 'Flyout Bar', getDefaultStr,
+                             frameTableWithout('DragonflightUISpellFlyoutBar'))
+
+DragonflightUIStateHandlerMixin:AddStateTable(Module, flyoutOptions, 'flyout', 'Flyout Bar', getDefaultStr)
+local flyoutOptionsEditmode = {
+    name = 'flyout',
+    desc = 'flyout',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.flyout
+                local defaultsTable = defaults.profile.flyout
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'flyout')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
 
 local petOptions = {name = 'PetBar', desc = 'PetBar', get = getOption, set = setOption, type = 'group', args = {}}
 AddButtonTable(petOptions, 'pet')
@@ -1827,6 +1900,8 @@ function Module:RegisterSettings()
         register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false})
         register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = false})
     end
+
+    if DF.Era then register('flyout', {order = 8.5, name = 'Flyout Bar', descr = 'desc', isNew = true}) end
 end
 
 function Module:SetupActionbarFrames()
@@ -2088,6 +2163,25 @@ function Module:AddEditMode()
         });
     end
 
+    -- Flyout
+    EditModeModule:AddEditModeToFrame(Module.flyoutbar)
+
+    Module.flyoutbar.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return 'Flyoutbar'
+    end)
+
+    Module.flyoutbar.DFEditModeSelection:RegisterOptions({
+        name = 'Petbar',
+        sub = 'flyout',
+        options = flyoutOptions,
+        advancedName = 'FlyoutBar',
+        extra = flyoutOptionsEditmode,
+        default = function()
+            setDefaultSubValues('flyout')
+        end,
+        moduleRef = self
+    });
+
     -- Pet 
     EditModeModule:AddEditModeToFrame(Module.petbar)
 
@@ -2293,6 +2387,17 @@ function Module:RegisterOptionScreens()
         })
     end
 
+    if DF.Era then
+        DF.ConfigModule:RegisterSettingsData('flyout', 'actionbar', {
+            name = 'Flyout Bar',
+            sub = 'flyout',
+            options = flyoutOptions,
+            default = function()
+                setDefaultSubValues('flyout')
+            end
+        })
+    end
+
     DF.ConfigModule:RegisterSettingsData('petbar', 'actionbar', {
         name = 'Petbar',
         sub = 'pet',
@@ -2409,6 +2514,7 @@ function Module:RefreshOptionScreens()
         MultiCastActionBarFrame.DFEditModeSelection:RefreshOptionScreen();
         Module.ExtraActionButtonPreview.DFEditModeSelection:RefreshOptionScreen();
     end
+    if DF.Era then Module.flyoutbar.DFEditModeSelection:RefreshOptionScreen(); end
 
     MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
     Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
@@ -2457,6 +2563,8 @@ function Module:ApplySettings(sub)
             Module:UpdateExtraButtonState(db.extraActionButton)
         end
 
+        if DF.Era then Module.flyoutbar:SetState(db.flyout) end
+
         Module.UpdateBagState(db.bags)
         Module.MicroFrame:UpdateState(db.micro)
         Module.FPSFrame:SetState(db.fps)
@@ -2498,6 +2606,8 @@ function Module:ApplySettings(sub)
         Module.bar8:SetState(db.bar8)
     elseif sub == 'extraActionButton' then
         if DF.Cata then Module:UpdateExtraButtonState(db.extraActionButton) end
+    elseif sub == 'flyout' then
+        if DF.Era then Module.flyoutbar:SetState(db.flyout) end
     elseif sub == 'pet' then
         Module.petbar:SetState(db.pet)
     elseif sub == 'xp' then
@@ -3572,6 +3682,14 @@ function Module.ChangeFramerate()
     Module.FPSFrame = fps
 end
 
+function Module:AddSpellFlyout()
+    local flyoutBar = CreateFrame('Frame', 'DragonflightUISpellFlyoutBar', UIParent, 'DFSpellFlyoutBarTemplate');
+    flyoutBar:Init()
+    flyoutBar:InitFlyoutButtons()
+    -- flyoutBar.buttonTable = {}
+    Module.flyoutbar = flyoutBar;
+end
+
 function Module:Era()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
@@ -3594,6 +3712,8 @@ function Module:Era()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()
     Module.HookBags()
+
+    Module:AddSpellFlyout()
 end
 
 function Module:TBC()
