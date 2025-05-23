@@ -12,4 +12,6 @@
 	</Frame>
 	<CheckButton name="DFSpellFlyoutButtonTemplate" inherits="ActionButtonTemplate, SecureFrameTemplate" virtual="true">
 	</CheckButton>
+	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" virtual="true">
+	</Button>
 </Ui>
