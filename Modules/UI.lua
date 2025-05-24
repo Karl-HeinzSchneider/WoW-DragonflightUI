@@ -398,6 +398,7 @@ function Module:ChangeFrames()
     elseif Version.IsWotlk then
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:EnhanceDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
         DragonflightUIMixin:ChangeGossipFrame()
         DragonflightUIMixin:ChangeQuestFrame()

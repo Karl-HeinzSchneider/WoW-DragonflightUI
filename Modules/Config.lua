@@ -63,14 +63,14 @@ local modulesOptions = {
         },
         Actionbar = {
             type = 'toggle',
-            name = 'Actionbar',
+            name = L["ModuleActionbar"],
             desc = L["ModuleTooltipActionbar"] .. getDefaultStr('Actionbar', 'modules'),
             order = 1,
             group = 'headerModules'
         },
         Castbar = {
             type = 'toggle',
-            name = 'Castbar',
+            name = L["ModuleCastbar"],
             desc = L["ModuleTooltipCastbar"] .. getDefaultStr('Castbar', 'modules'),
             order = 3,
             new = false,
@@ -78,14 +78,14 @@ local modulesOptions = {
         },
         Chat = {
             type = 'toggle',
-            name = 'Chat',
+            name = L["ModuleChat"],
             desc = L["ModuleTooltipChat"] .. getDefaultStr('Chat', 'modules'),
             order = 4,
             group = 'headerModules'
         },
         Buffs = {
             type = 'toggle',
-            name = 'Buffs',
+            name = L["ModuleBuffs"],
             desc = L["ModuleTooltipBuffs"] .. getDefaultStr('Buffs', 'modules'),
             order = 2.1,
             new = false,
@@ -93,7 +93,7 @@ local modulesOptions = {
         },
         Darkmode = {
             type = 'toggle',
-            name = 'Darkmode',
+            name = L["ModuleDarkmode"],
             desc = L["ModuleTooltipDarkmode"] .. getDefaultStr('Darkmode', 'modules'),
             order = 4.1,
             new = false,
@@ -101,14 +101,14 @@ local modulesOptions = {
         },
         Minimap = {
             type = 'toggle',
-            name = 'Minimap',
+            name = L["ModuleMinimap"],
             desc = L["ModuleTooltipMinimap"] .. getDefaultStr('Minimap', 'modules'),
             order = 5,
             group = 'headerModules'
         },
         Tooltip = {
             type = 'toggle',
-            name = 'Tooltip',
+            name = L["ModuleTooltip"],
             desc = L["ModuleTooltipTooltip"] .. getDefaultStr('Tooltip', 'modules'),
             order = 8,
             new = false,
@@ -116,7 +116,7 @@ local modulesOptions = {
         },
         UI = {
             type = 'toggle',
-            name = 'UI',
+            name = L["ModuleUI"],
             desc = L["ModuleTooltipUI"] .. getDefaultStr('UI', 'modules'),
             order = 6,
             new = false,
@@ -124,14 +124,14 @@ local modulesOptions = {
         },
         Unitframe = {
             type = 'toggle',
-            name = 'Unitframe',
+            name = L["ModuleUnitframe"],
             desc = L["ModuleTooltipUnitframe"] .. getDefaultStr('Unitframe', 'modules'),
             order = 7,
             group = 'headerModules'
         },
         Utility = {
             type = 'toggle',
-            name = 'Utility',
+            name = L["ModuleUtility"],
             desc = L["ModuleTooltipUtility"] .. getDefaultStr('Utility', 'modules'),
             order = 8,
             new = false,
@@ -139,7 +139,7 @@ local modulesOptions = {
         },
         Compatibility = {
             type = 'toggle',
-            name = 'Compatibility',
+            name = L["ModuleCompatibility"],
             desc = L["ModuleTooltipCompatibility"] .. getDefaultStr('Compatibility', 'modules'),
             order = 25,
             new = true,
@@ -152,7 +152,7 @@ if DF.Cata then
     local moreOptions = {
         Bossframe = {
             type = 'toggle',
-            name = 'Bossframe',
+            name = L["ModuleBossframe"],
             desc = L["ModuleTooltipBossframe"] .. getDefaultStr('Bossframe', 'modules'),
             order = 2,
             group = 'headerModules',
@@ -205,12 +205,12 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('whatsnew', {order = 4, name = [[What's New]], descr = 'Whatsnewss', isNew = false})
-    register('modules', {order = 2, name = 'Modules', descr = 'Modulesss', isNew = false})
-    register('info', {order = 1, name = 'Info', descr = 'Infoss', isNew = false})
+    register('whatsnew', {order = 4, name = L["ConfigGeneralWhatsNew"], descr = 'Whatsnewss', isNew = false})
+    register('modules', {order = 2, name = L["ConfigGeneralModules"], descr = 'Modulesss', isNew = false})
+    register('info', {order = 1, name = L["ConfigGeneralInfo"], descr = 'Infoss', isNew = false})
 
     DF.ConfigModule:RegisterSettingsData('modules', 'general', {
-        name = 'Modules',
+        name = L["ConfigGeneralModules"],
         sub = 'modules',
         options = modulesOptions,
         default = function()
@@ -275,12 +275,12 @@ function Module:AddMainMenuButton()
 
     local btn = CreateFrame('Button', 'DragonflightUIMainMenuButton', GameMenuFrame, 'UIPanelButtonTemplate')
     btn:SetSize(145, 21)
-    btn:SetText('DragonflightUI')
+    btn:SetText(L["MainMenuDragonflightUI"])
     Module.MainMenuButton = btn
 
     local editBtn = CreateFrame('Button', 'DragonflightUIEditModeButton', GameMenuFrame, 'UIPanelButtonTemplate')
     editBtn:SetSize(145, 21)
-    editBtn:SetText('Editmode')
+    editBtn:SetText(L["MainMenuEditmode"])
     editBtn:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
     Module.EditModeButton = editBtn
 
@@ -331,7 +331,7 @@ end
 
 function Module:AddTestConfig()
     local options = {
-        name = 'WhatsNew',
+        name = L["ConfigGeneralWhatsNew"],
         get = function(info)
             return false
         end,
@@ -358,7 +358,7 @@ function Module:AddTestConfig()
             steptog = {type = 'toggle', name = 'toggle me steptoggler', order = 666}
         }
     }
-    local config = {name = 'WhatsNew', options = options}
+    local config = {name = L["ConfigGeneralWhatsNew"], options = options}
     Module:RegisterSettingsData('whatsnew', 'general', config)
 end
 

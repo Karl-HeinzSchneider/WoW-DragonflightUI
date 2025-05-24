@@ -29,6 +29,35 @@ L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
+L["ModuleActionbar"] = "Actionbar"
+L["ModuleCastbar"] = "Castbar"
+L["ModuleChat"] = "Chat"
+L["ModuleBuffs"] = "Buffs"
+L["ModuleDarkmode"] = "Darkmode"
+L["ModuleMinimap"] = "Minimap"
+L["ModuleTooltip"] = "Tooltip"
+L["ModuleUI"] = "UI"
+L["ModuleUnitframe"] = "Unitframe"
+L["ModuleUtility"] = "Utility"
+L["ModuleCompatibility"] = "Compatibility"
+L["ModuleBossframe"] = "Bossframe"
+
+L["ConfigGeneralWhatsNew"] = "What's New"
+L["ConfigGeneralModules"] = "Modules"
+L["ConfigGeneralInfo"] = "Info"
+
+L["MainMenuDragonflightUI"] = "DragonflightUI"
+L["MainMenuEditmode"] = "Editmode"
+
+-- config.mixin.lua
+L["ConfigMixinQuickKeybindMode"] = "Quick Keybind Mode"
+L["ConfigMixinGeneral"] = "General"
+L["ConfigMixinActionBar"] = "Action Bar"
+L["ConfigMixinCastBar"] = "Cast Bar"
+L["ConfigMixinMisc"] = "Misc"
+L["ConfigMixinUnitframes"] = "Unitframes"
+
+-- modules.mixin.lua
 L["ModuleConditionalMessage"] =
     "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '|cff8080ff/reload|r'!"
 
