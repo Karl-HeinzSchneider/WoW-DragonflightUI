@@ -65,11 +65,41 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     local f = CreateFrame('Frame', n .. 'BG', self, 'DFSpellFlyoutBGTemplate')
     self.BG = f;
 
+    self:SetAttribute("type", "macro");
+    self:SetAttribute("macrotext", "/click " .. n .. "ClickButton");
+
+    -- self:SetSize(45, 45)
+    -- self:SetAttribute("_onclick", [[      
+    --     -- local frame = self:GetFrameRef("flyoutFrame");
+    --     -- frame:Show();    
+    --     print('test')
+    --     -- local tabs = self:GetFrameRef("TabsFrame");
+    --     -- tabs:Hide();   
+    -- -- ]]);
+    -- self:SetFrameRef('flyoutFrame', f)
+    -- self:SetFrameRef("frame1", PlayerFrame);
+
+    -- somehow I could not get SetFrameRef to work here °_°; workaround:
+    local frame = CreateFrame("BUTTON", n .. "ClickButton", UIParent, "SecureHandlerClickTemplate")
+    frame:SetAttribute("_onclick", [=[
+        local ref = self:GetFrameRef("frame1")
+        if ref:IsShown() then
+            ref:Hide()
+        else
+            ref:Show()
+        end
+    ]=]);
+    frame:RegisterForClicks("AnyUp");
+    frame:SetFrameRef("frame1", f);
+
+    -- frame:SetSize(69, 69)
+    frame:SetPoint('TOP', UIParent, 'BOTTOM', -666, -666)
+
     local t = {}
     for i = 1, self.MaxButtons do
         --
         -- print(i, n)
-        local btn = CreateFrame("CheckButton", n .. 'Spell' .. i, self.BG, "DFSpellFlyoutSubButtonTemplate");
+        local btn = CreateFrame("Button", n .. 'Spell' .. i, self.BG, "DFSpellFlyoutSubButtonTemplate");
         -- print(i, n, btn:GetName())
 
         DragonflightUIActionbarMixin:StyleButton(btn);
@@ -219,7 +249,7 @@ function DragonflightUISpellFlyoutBGMixin:AddTextures()
     self.box.texture:SetAllPoints()
     self.box.texture:SetColorTexture(0, 0.8, 0, 0.42)
 
-    -- self.box.texture:Hide()
+    self.box.texture:Hide()
 
     -- -- end
     -- local e = self:CreateTexture(nil, 'BACKGROUND')

@@ -20,7 +20,7 @@ local defaults = {
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
-            buttons = 10,
+            buttons = 5,
             padding = 2,
             -- flyout
             icon = 136082,
@@ -116,6 +116,28 @@ function AddFlyoutTable(optionTable, sub)
             max = 12,
             bigStep = 1,
             order = 10,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        spells = {
+            type = 'editbox',
+            name = L["FlyoutSpells"],
+            desc = L["FlyoutSpellsDesc"] .. getDefaultStr('spells', sub),
+            Validate = function()
+                return true
+            end,
+            order = 4.5,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        spellsHorde = {
+            type = 'editbox',
+            name = L["FlyoutSpellsHorde"],
+            desc = L["FlyoutSpellsHordeDesc"] .. getDefaultStr('spellsHorde', sub),
+            Validate = function()
+                return true
+            end,
+            order = 4.5,
             group = 'headerFlyout',
             editmode = true
         }
@@ -313,7 +335,7 @@ function Module:AddEditMode()
 end
 
 function Module:AddWarlockButton()
-    local btn = CreateFrame("CheckButton", "DragonflightUISpellFlyout" .. "Warlock" .. "Button", UIParent,
+    local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Warlock" .. "Button", UIParent,
                             "DFSpellFlyoutButtonTemplate")
     Module.WarlockButton = btn;
 end

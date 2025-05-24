@@ -343,9 +343,12 @@ L["BuffsOptionsUseStateHandlerDesc"] =
 -- Flyout
 L["FlyoutHeader"] = "Flyout"
 L["FlyoutHeaderDesc"] = ""
-
 L["FlyoutDirection"] = "Flyout Direction"
 L["FlyoutDirectionDesc"] = "Flyout Direction"
+L["FlyoutSpells"] = "Spells"
+L["FlyoutSpellsDesc"] = ""
+L["FlyoutSpellsHorde"] = "Spells (Horde)"
+L["FlyoutSpellsHordeDesc"] = ""
 
 -- Castbar
 L["CastbarName"] = "Cast Bar"
