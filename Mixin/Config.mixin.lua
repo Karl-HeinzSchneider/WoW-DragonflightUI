@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 DragonFlightUIConfigMixin = {}
 DragonFlightUIConfigMixin2 = {}
 
-local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or "Quick Keybind Mode";
+local QUICK_KEYBIND_MODE = QUICK_KEYBIND_MODE or L["ConfigMixinQuickKeybindMode"];
 
 function DragonFlightUIConfigMixin:OnLoad()
     -- print('DragonFlightUIConfigMixin:OnLoad')
@@ -53,7 +53,7 @@ function DragonFlightUIConfigMixin:OnShow()
         -- self:SubCategoryBtnClicked(btn)
         -- btn:UpdateState()
         -- self:SelectCategory('General', 'Modules')
-        self:OnSelectionChanged({cat = 'General', name = 'Modules'}, true)
+        self:OnSelectionChanged({cat = L["ConfigMixinGeneral"], name = L["ConfigMixinModules"]}, true)
     end
 end
 
@@ -115,14 +115,14 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
     end
 
     -- default categorys
-    list:RegisterCategory('general', {name = 'General', descr = 'descr..', order = 1, isExpanded = true},
+    list:RegisterCategory('general', {name = L["ConfigMixinGeneral"], descr = 'descr..', order = 1, isExpanded = true},
                           alphaSortComparator, true)
-    list:RegisterCategory('actionbar', {name = 'Action Bar', descr = 'descr..', order = 2, isExpanded = true}, nil, true)
-    list:RegisterCategory('castbar', {name = 'Cast Bar', descr = 'descr..', order = 3, isExpanded = true},
+    list:RegisterCategory('actionbar', {name = L["ConfigMixinActionBar"], descr = 'descr..', order = 2, isExpanded = true}, nil, true)
+    list:RegisterCategory('castbar', {name = L["ConfigMixinCastBar"], descr = 'descr..', order = 3, isExpanded = true},
                           alphaSortComparator, true)
-    list:RegisterCategory('misc', {name = 'Misc', descr = 'descr..', order = 4, isExpanded = true}, alphaSortComparator,
+    list:RegisterCategory('misc', {name = L["ConfigMixinMisc"], descr = 'descr..', order = 4, isExpanded = true}, alphaSortComparator,
                           true)
-    list:RegisterCategory('unitframes', {name = 'Unitframes', descr = 'descr..', order = 5, isExpanded = true},
+    list:RegisterCategory('unitframes', {name = L["ConfigMixinUnitframes"], descr = 'descr..', order = 5, isExpanded = true},
                           alphaSortComparator, true)
 
     self.SettingsDataTable = {}

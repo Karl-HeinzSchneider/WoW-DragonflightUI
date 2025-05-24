@@ -28,6 +28,35 @@ L["ModuleTooltipUnitframe"] =
     "该模块全面改造默认单位框架，添加职业染色等功能。\n为玩家/宠物/目标/焦点/小队框架提供独立选项。"
 L["ModuleTooltipUtility"] = "该模块提供通用UI功能和调整。\n开发中"
 
+L["ModuleActionbar"] = "动作条"
+L["ModuleCastbar"] = "施法条"
+L["ModuleChat"] = "聊天框"
+L["ModuleBuffs"] = "增益"
+L["ModuleDarkmode"] = "暗黑模式"
+L["ModuleMinimap"] = "小地图"
+L["ModuleTooltip"] = "鼠标提示"
+L["ModuleUI"] = "界面"
+L["ModuleUnitframe"] = "单位框体"
+L["ModuleUtility"] = "实用工具"
+L["ModuleCompatibility"] = "插件兼容"
+L["ModuleBossframe"] = "首领框体"
+
+L["ConfigGeneralWhatsNew"] = "更新"
+L["ConfigGeneralModules"] = "模块"
+L["ConfigGeneralInfo"] = "信息"
+
+L["MainMenuDragonflightUI"] = "DragonflightUI"
+L["MainMenuEditmode"] = "编辑模式"
+
+-- config.mixin.lua
+L["ConfigMixinQuickKeybindMode"] = "快速按键绑定模式"
+L["ConfigMixinGeneral"] = "通用"
+L["ConfigMixinAction Bar"] = "动作条"
+L["ConfigMixinCast Bar"] = "施法条"
+L["ConfigMixinMisc"] = "其他"
+L["ConfigMixinUnitframes"] = "单位框体"
+
+-- modules.mixin.lua
 L["ModuleConditionalMessage"] =
     "'|cff8080ff%s|r'已停用，但相关功能已被挂钩，请执行'|cff8080ff/reload|r'重载界面！"
 
@@ -88,7 +117,7 @@ L["EditModeExportProfile"] = "导出配置 |cff8080ff%s|r"
 L["EditModeImportProfile"] = "导入配置为 |cff8080ff%s|r"
 
 -- 兼容性
-L['CompatName'] = "兼容性"
+L['CompatName'] = "插件兼容"
 
 L['CompatAuctionator'] = "Auctionator"
 L['CompatAuctionatorDesc'] = "当启用'修改专业窗口'时，为Auctionator添加兼容支持"
