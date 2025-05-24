@@ -218,7 +218,44 @@ function DragonflightUISpellFlyoutBGMixin:AddTextures()
     self.box.texture = self.box:CreateTexture(nil, 'BACKGROUND')
     self.box.texture:SetAllPoints()
     self.box.texture:SetColorTexture(0, 0.8, 0, 0.42)
+
+    -- self.box.texture:Hide()
+
+    -- -- end
+    -- local e = self:CreateTexture(nil, 'BACKGROUND')
+    -- e:SetSize(47, 29)
+    -- e:SetTexture(textureRefTwo)
+    -- e:SetTexCoord(0.701171875, 0.884765625, 0.56494140625, 0.59326171875)
+    -- e:SetPoint('TOP', 0, 3)
+
+    -- -- start
+    -- local start = self:CreateTexture(nil, 'BACKGROUND')
+    -- start:SetSize(47, 5)
+    -- start:SetTexture(textureRefTwo)
+    -- start:SetTexCoord(0.701171875, 0.884765625, 0.59423828125, 0.59912109375)
+    -- start:SetPoint('BOTTOM', 0, -5)
+
+    -- ["_ui-hud-actionbar-iconframe-flyoutmidleft"]={48, 19771, 0.125, 0.183594, 0, 0.03125, false, false, "1x"},
+    -- local midHoriz = self:CreateTexture(nil, 'BACKGROUND')
+    -- midHoriz:SetSize(47, 5)
+    -- midHoriz:SetTexture(textureRef)
+    -- midHoriz:SetTexCoord(0.701171875, 0.884765625, 0.59423828125, 0.59912109375)
+    -- midHoriz:SetPoint('BOTTOM')
+
+    -- local texVert = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarvertical2x'
+
+    --   local midVert = self:CreateTexture(nil, 'BACKGROUND')
+    -- midVert:SetSize(32, 9885)
+    -- midVert:SetTexture(texVert)
+    -- midVert:SetTexCoord(0.701171875, 0.884765625, 0.59423828125, 0.59912109375)
+    -- midVert:SetPoint('BOTTOM')
+    -- ["!ui-hud-actionbar-iconframe-flyoutmid"]={32, 19770, 0.183594, 0.125, 0.03125, 1.5, false, false, "1x"},
+    -- ["!ui-hud-actionbar-iconframe-flyoutmid-2x"]={32, 9885, 0.367188, 0.25, 0.015625, 1.48438, false, false, "2x"},
 end
+
+-- ["UI-HUD-ActionBar-Flyout"]={18, 3, 0.884766, 0.955078, 0.438965, 0.445801, false, false, "2x"},
+-- ["UI-HUD-ActionBar-Flyout-Down"]={19, 4, 0.884766, 0.958984, 0.430176, 0.437988, false, false, "2x"},
+-- ["UI-HUD-ActionBar-Flyout-Mouseover"]={18, 3, 0.884766, 0.955078, 0.446777, 0.453613, false, false, "2x"},
 
 -- function DragonflightUISpellFlyoutBGMixin:OnLoad()
 --     print('DragonflightUISpellFlyoutBGMixin:OnLoad()')
