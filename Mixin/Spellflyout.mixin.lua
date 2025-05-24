@@ -174,8 +174,12 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
             local learned = IsPlayerSpell(spell)
             -- print(spell, name, learned)
 
-            btn:SetAttribute("type", "spell");
-            btn:SetAttribute("spell", name);
+            -- btn:SetAttribute("type", "spell");
+            -- btn:SetAttribute("spell", name);
+
+            btn:SetAttribute("type", "macro");
+            btn:SetAttribute("macrotext", "/cast " .. name .. "\n/click " .. self:GetName() .. "ClickButton");
+
             btn.Icon:SetTexture(icon)
 
             btn:SetScript('OnEnter', function()
