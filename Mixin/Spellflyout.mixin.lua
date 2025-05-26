@@ -65,6 +65,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     local n = self:GetName()
 
     local f = CreateFrame('Frame', n .. 'BG', self, 'DFSpellFlyoutBGTemplate')
+    f:Hide()
     self.BG = f;
 
     self:SetAttribute("type", "macro");
@@ -98,7 +99,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         --
         -- print('onclick')
         local state = self.state;
-        self:UpdateArrow(state.flyoutDirection)
+        self:UpdateArrow(state.flyoutDirection or '')
     end)
 
     -- frame:SetSize(69, 69)
@@ -149,6 +150,17 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
     self.Icon:SetTexture(state.icon or 136082)
 
     self:UpdateArrow(state.flyoutDirection)
+
+    self:SetScript('OnEnter', function()
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetText(state.displayName, 1.0, 1.0, 1.0);
+        GameTooltip:AddLine(state.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+        GameTooltip:Show()
+    end)
+
+    self:SetScript('OnLeave', function()
+        GameTooltip:Hide()
+    end)
 
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable

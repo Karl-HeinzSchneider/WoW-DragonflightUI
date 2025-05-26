@@ -24,8 +24,11 @@ local defaults = {
             padding = 2,
             -- flyout
             icon = 136082,
+            displayName = L["FlyoutWarlock"],
+            tooltip = L["FlyoutWarlockDesc"],
             flyoutDirection = 'TOP',
             spells = '688, 697, 712, 691, 1122',
+            spellsAlliance = '',
             spellsHorde = '',
             items = '',
             -- Style
@@ -104,7 +107,7 @@ function AddFlyoutTable(optionTable, sub)
             name = L["FlyoutDirection"],
             desc = L["FlyoutDirectionDesc"] .. getDefaultStr('flyoutDirection', sub),
             dropdownValues = DF.Settings.DropdownCrossAnchorTable,
-            order = 9.5,
+            order = 2,
             group = 'headerFlyout',
             editmode = true
         },
@@ -115,7 +118,7 @@ function AddFlyoutTable(optionTable, sub)
             min = 1,
             max = 12,
             bigStep = 1,
-            order = 10,
+            order = 3,
             group = 'headerFlyout',
             editmode = true
         },
@@ -130,6 +133,17 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerFlyout',
             editmode = true
         },
+        spellsAlliance = {
+            type = 'editbox',
+            name = L["FlyoutSpellsAlliance"],
+            desc = L["FlyoutSpellsAllianceDesc"] .. getDefaultStr('spellsAlliance', sub),
+            Validate = function()
+                return true
+            end,
+            order = 4.6,
+            group = 'headerFlyout',
+            editmode = true
+        },
         spellsHorde = {
             type = 'editbox',
             name = L["FlyoutSpellsHorde"],
@@ -137,7 +151,40 @@ function AddFlyoutTable(optionTable, sub)
             Validate = function()
                 return true
             end,
-            order = 4.5,
+            order = 4.7,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        items = {
+            type = 'editbox',
+            name = L["FlyoutItems"],
+            desc = L["FlyoutItemsDesc"] .. getDefaultStr('items', sub),
+            Validate = function()
+                return true
+            end,
+            order = 4.8,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        displayName = {
+            type = 'editbox',
+            name = L["FlyoutDisplayname"],
+            desc = L["FlyoutDisplaynameDesc"] .. getDefaultStr('displayName', sub),
+            Validate = function()
+                return true
+            end,
+            order = 5,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        tooltip = {
+            type = 'editbox',
+            name = L["FlyoutTooltip"],
+            desc = L["FlyoutTooltipDesc"] .. getDefaultStr('tooltip', sub),
+            Validate = function()
+                return true
+            end,
+            order = 5.1,
             group = 'headerFlyout',
             editmode = true
         }

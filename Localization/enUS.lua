@@ -346,9 +346,21 @@ L["FlyoutHeaderDesc"] = ""
 L["FlyoutDirection"] = "Flyout Direction"
 L["FlyoutDirectionDesc"] = "Flyout Direction"
 L["FlyoutSpells"] = "Spells"
-L["FlyoutSpellsDesc"] = ""
+L["FlyoutSpellsDesc"] = "Inspert SpellIDs as comma seperated values, e.g. '688, 697'."
+L["FlyoutSpellsAlliance"] = "Spells (Alliance)"
+L["FlyoutSpellsAllianceDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on alliance side.)"
 L["FlyoutSpellsHorde"] = "Spells (Horde)"
-L["FlyoutSpellsHordeDesc"] = ""
+L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on horde side.)"
+L["FlyoutItems"] = "Items"
+L["FlyoutItemsDesc"] = "Inspert ItemIDs as comma seperated values, e.g. '6948, 8490'."
+
+L["FlyoutDisplayname"] = "Display Name"
+L["FlyoutDisplaynameDesc"] = ""
+L["FlyoutTooltip"] = "Tooltip"
+L["FlyoutTooltipDesc"] = ""
+
+L["FlyoutWarlock"] = "Summon Demon"
+L["FlyoutWarlockDesc"] = "Summons one of your demons to you."
 
 -- Castbar
 L["CastbarName"] = "Cast Bar"
