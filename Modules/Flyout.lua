@@ -166,6 +166,17 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerFlyout',
             editmode = true
         },
+        icon = {
+            type = 'editbox',
+            name = L["FlyoutIcon"],
+            desc = L["FlyoutIconDesc"] .. getDefaultStr('icon', sub),
+            Validate = function()
+                return true
+            end,
+            order = 5.1,
+            group = 'headerFlyout',
+            editmode = true
+        },
         displayName = {
             type = 'editbox',
             name = L["FlyoutDisplayname"],
@@ -173,7 +184,7 @@ function AddFlyoutTable(optionTable, sub)
             Validate = function()
                 return true
             end,
-            order = 5,
+            order = 5.2,
             group = 'headerFlyout',
             editmode = true
         },
@@ -184,7 +195,7 @@ function AddFlyoutTable(optionTable, sub)
             Validate = function()
                 return true
             end,
-            order = 5.1,
+            order = 5.3,
             group = 'headerFlyout',
             editmode = true
         }
