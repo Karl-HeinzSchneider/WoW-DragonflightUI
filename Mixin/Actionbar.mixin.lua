@@ -718,12 +718,14 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
 
     -- iconframe-mouseover
-    local checked = btn:GetCheckedTexture()
-    checked:ClearAllPoints()
-    checked:SetSize(46, 45)
-    checked:SetPoint('TOPLEFT')
-    checked:SetTexture(textureRefTwo)
-    checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+    if btn.GetCheckedTexture then
+        local checked = btn:GetCheckedTexture()
+        checked:ClearAllPoints()
+        checked:SetSize(46, 45)
+        checked:SetPoint('TOPLEFT')
+        checked:SetTexture(textureRefTwo)
+        checked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+    end
 
     local flyoutBorder = _G[btnName .. 'FlyoutBorder']
     if flyoutBorder then

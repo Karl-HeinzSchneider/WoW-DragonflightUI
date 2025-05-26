@@ -1,7 +1,17 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
 	<Script file="Mixin/Spellflyout.mixin.lua" />
-	<Frame name="DFSpellFlyoutBarTemplate" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" mixin="DragonflightUISpellFlyoutMixin" virtual="true">
-		<Size x="80" y="22" />
+	<Button name="DFSpellFlyoutButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" mixin="DragonflightUISpellFlyoutButtonMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnClick method="OnClick" /> -->
+			<!-- <OnShow method="OnShow" /> -->
+			<!-- <OnHide method="OnHide" /> -->
+			<!-- <OnEvent method="OnEvent" /> -->
+		</Scripts>
+	</Button>
+	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" virtual="true">
+	</Button>
+	<Frame name="DFSpellFlyoutBGTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellFlyoutBGMixin" virtual="true">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<!-- <OnClick method="OnClick" /> -->
@@ -10,8 +20,4 @@
 			<!-- <OnEvent method="OnEvent" /> -->
 		</Scripts>
 	</Frame>
-	<CheckButton name="DFSpellFlyoutButtonTemplate" inherits="ActionButtonTemplate, SecureFrameTemplate" virtual="true">
-	</CheckButton>
-	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" virtual="true">
-	</Button>
 </Ui>

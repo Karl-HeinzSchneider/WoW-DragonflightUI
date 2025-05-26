@@ -20,6 +20,7 @@ L["ModuleTooltipChat"] = "This module changes the default Chatwindow.\nWORK IN P
 L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
 L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
+L["ModuleTooltipFlyout"] = "Flyout"
 L["ModuleTooltipMinimap"] =
     "This module overhauls the default Minimap and Questtracker.\nAdds seperate options for Minimap and Questtracker."
 L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
@@ -338,6 +339,16 @@ L["BuffsOptionsExpandedDesc"] = ""
 L["BuffsOptionsUseStateHandler"] = "Use State Handler"
 L["BuffsOptionsUseStateHandlerDesc"] =
     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+
+-- Flyout
+L["FlyoutHeader"] = "Flyout"
+L["FlyoutHeaderDesc"] = ""
+L["FlyoutDirection"] = "Flyout Direction"
+L["FlyoutDirectionDesc"] = "Flyout Direction"
+L["FlyoutSpells"] = "Spells"
+L["FlyoutSpellsDesc"] = ""
+L["FlyoutSpellsHorde"] = "Spells (Horde)"
+L["FlyoutSpellsHordeDesc"] = ""
 
 -- Castbar
 L["CastbarName"] = "Cast Bar"
