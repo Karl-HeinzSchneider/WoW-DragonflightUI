@@ -354,6 +354,8 @@ L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on horde sid
 L["FlyoutItems"] = "Items"
 L["FlyoutItemsDesc"] = "Inspert ItemIDs as comma seperated values, e.g. '6948, 8490'."
 
+L["FlyoutCloseAfterClick"] = "Close After Click"
+L["FlyoutCloseAfterClickDesc"] = "Close the flyout after pressing one of its buttons."
 L["FlyoutIcon"] = "Icon"
 L["FlyoutIconDesc"] = "Insert FileID or the file path to a texture."
 L["FlyoutDisplayname"] = "Display Name"

@@ -31,6 +31,7 @@ local defaults = {
             spellsAlliance = '',
             spellsHorde = '',
             items = '',
+            closeAfterClick = true,
             -- Style
             alwaysShow = true,
             activate = true,
@@ -163,6 +164,14 @@ function AddFlyoutTable(optionTable, sub)
                 return true
             end,
             order = 4.8,
+            group = 'headerFlyout',
+            editmode = true
+        },
+        closeAfterClick = {
+            type = 'toggle',
+            name = L["FlyoutCloseAfterClick"],
+            desc = L["FlyoutCloseAfterClickDesc"] .. getDefaultStr('closeAfterClick', sub),
+            order = 5,
             group = 'headerFlyout',
             editmode = true
         },
