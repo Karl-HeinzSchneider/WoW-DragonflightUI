@@ -12,11 +12,11 @@ function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
 
-    self:AddArrow()
-    self:UpdateArrow()
-
     self.MaxButtons = 8;
     self:InitButtons()
+
+    self:AddArrow()
+    self:UpdateArrow()
 end
 
 function DragonflightUISpellFlyoutButtonMixin:AddArrow()
@@ -34,26 +34,28 @@ end
 function DragonflightUISpellFlyoutButtonMixin:UpdateArrow(dir)
     local arr = self.Arrow
 
+    local o = (self.BG:IsShown() and 1) or 0;
+
     if dir == 'LEFT' then
         arr:ClearAllPoints()
         arr:SetSize(18, 6)
         arr:SetPoint('RIGHT', self, 'LEFT', 6, 0)
-        arr:SetRotation(math.pi / 2)
+        arr:SetRotation(math.pi / 2 + o * math.pi)
     elseif dir == 'RIGHT' then
         arr:ClearAllPoints()
         arr:SetSize(18, 6)
         arr:SetPoint('LEFT', self, 'RIGHT', -6, 0)
-        arr:SetRotation(-math.pi / 2)
+        arr:SetRotation(-math.pi / 2 + o * math.pi)
     elseif dir == 'BOTTOM' then
         arr:ClearAllPoints()
         arr:SetSize(18, 6)
         arr:SetPoint('BOTTOM', self, 'BOTTOM', 0, -6)
-        arr:SetRotation(math.pi)
+        arr:SetRotation(math.pi + o * math.pi)
     else
         arr:ClearAllPoints()
         arr:SetSize(18, 6)
         arr:SetPoint('TOP', self, 'TOP', 0, 6)
-        arr:SetRotation(0)
+        arr:SetRotation(0 + o * math.pi)
     end
 end
 
@@ -91,6 +93,13 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     ]=]);
     frame:RegisterForClicks("AnyUp");
     frame:SetFrameRef("frame1", f);
+
+    frame:HookScript('OnClick', function()
+        --
+        -- print('onclick')
+        local state = self.state;
+        self:UpdateArrow(state.flyoutDirection)
+    end)
 
     -- frame:SetSize(69, 69)
     frame:SetPoint('TOP', UIParent, 'BOTTOM', -666, -666)
