@@ -14,7 +14,7 @@ function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
 
-    self.MaxButtons = 8;
+    self.MaxButtons = 12;
     self:InitButtons()
 
     self:AddArrow()
@@ -247,7 +247,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
             -- local learned = IsPlayerSpell(spell)
 
             btn:SetAttribute("type", "macro");
-            btn:SetAttribute("macrotext", "#showtooltip\n/cast " .. name .. closeStr);
+            btn:SetAttribute("macrotext", "/cast " .. name .. closeStr);
 
             btn:SetSpell(spell)
         else
@@ -262,8 +262,26 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         end
     end
 
-    for i = numUsed + 1, btnCount do
+    for i = numUsed + 1, buttons do
         --
+        local btn = buttonTable[i]
+
+        if state.alwaysShow then
+            self.BG:SetButton(btn, i, buttonTable)
+
+            btn:SetAttribute("type", "macro");
+            btn:SetAttribute("macrotext", closeStr);
+
+            btn:SetEmpty()
+        else
+            btn:ClearAllPoints()
+            btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
+            btn:Hide()
+        end
+    end
+
+    for i = buttons + 1, btnCount do
+        --       
         local btn = buttonTable[i]
         btn:ClearAllPoints()
         btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
@@ -476,6 +494,16 @@ function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)
     self:UpdateState()
 end
 
+function DragonflightUISpellSubButtonMixin:SetEmpty()
+    self.Spell = nil;
+    self.Item = nil;
+    self.ItemLink = nil;
+
+    self.Icon:SetTexture()
+
+    self:UpdateState()
+end
+
 function DragonflightUISpellSubButtonMixin:SetSpell(spell)
     self.Spell = spell;
     self.Item = nil;
@@ -507,6 +535,8 @@ function DragonflightUISpellSubButtonMixin:UpdateState()
         self:UpdateStateSpell()
     elseif self.Item then
         self:UpdateStateItem()
+    else
+        self:UpdateStateEmpty()
     end
 end
 
@@ -567,6 +597,11 @@ function DragonflightUISpellSubButtonMixin:UpdateStateItem()
     end
 
     self:UpdateCooldown()
+end
+
+function DragonflightUISpellSubButtonMixin:UpdateStateEmpty()
+    self.Count:SetText("");
+    self.Icon:SetVertexColor(1.0, 1.0, 1.0)
 end
 
 local bandageIDs = {

@@ -773,6 +773,14 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerFlyout',
             editmode = true
         },
+        alwaysShow = {
+            type = 'toggle',
+            name = L["ButtonTableAlwaysShowActionbar"],
+            desc = L["ButtonTableAlwaysShowActionbarDesc"] .. getDefaultStr('alwaysShow', sub),
+            group = 'headerFlyout',
+            order = 5.1,
+            editmode = true
+        },
         icon = {
             type = 'editbox',
             name = L["FlyoutIcon"],
@@ -780,7 +788,7 @@ function AddFlyoutTable(optionTable, sub)
             Validate = function()
                 return true
             end,
-            order = 5.1,
+            order = 10.1,
             group = 'headerFlyout',
             editmode = true
         },
@@ -791,7 +799,7 @@ function AddFlyoutTable(optionTable, sub)
             Validate = function()
                 return true
             end,
-            order = 5.2,
+            order = 10.2,
             group = 'headerFlyout',
             editmode = true
         },
@@ -802,7 +810,7 @@ function AddFlyoutTable(optionTable, sub)
             Validate = function()
                 return true
             end,
-            order = 5.3,
+            order = 10.3,
             group = 'headerFlyout',
             editmode = true
         }
