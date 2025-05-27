@@ -9,7 +9,16 @@
 			<!-- <OnEvent method="OnEvent" /> -->
 		</Scripts>
 	</Button>
-	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" virtual="true">
+	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" mixin="DragonflightUISpellSubButtonMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnClick method="OnClick" /> -->
+			<!-- <OnShow method="OnShow" /> -->
+			<!-- <OnHide method="OnHide" /> -->
+			<OnEvent method="OnEvent" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
 	</Button>
 	<Frame name="DFSpellFlyoutBGTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellFlyoutBGMixin" virtual="true">
 		<Scripts>
