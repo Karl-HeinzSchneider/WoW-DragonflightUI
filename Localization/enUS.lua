@@ -366,6 +366,11 @@ L["FlyoutTooltipDesc"] = ""
 L["FlyoutWarlock"] = "Summon Demon"
 L["FlyoutWarlockDesc"] = "Summons one of your demons to you."
 
+L["FlyoutMagePort"] = "Teleport"
+L["FlyoutMagePortDesc"] = "Teleports you to a major city."
+L["FlyoutMagePortals"] = "Portal"
+L["FlyoutMagePortalsDesc"] = "Creates a portal, teleporting group members who use it to a major city."
+
 -- Castbar
 L["CastbarName"] = "Cast Bar"
 L["CastbarNameFormat"] = "%s Cast Bar"

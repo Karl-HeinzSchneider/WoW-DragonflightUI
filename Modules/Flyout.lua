@@ -52,6 +52,97 @@ local defaults = {
             hideNoStealth = false,
             hideCustom = false,
             hideCustomCond = ''
+        },
+        magePort = {
+            scale = 0.8,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            -- flyout
+            icon = 237509,
+            displayName = L["FlyoutMagePort"],
+            tooltip = L["FlyoutMagePortDesc"],
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '3561,3562,3565,32271,49359,33690,53140,120145,88342,132621',
+            spellsHorde = '3567,3563,3566,32272,49358,35715,53140,120145,88344,132627',
+            -- spellsHorde = '3567,3563,3566,49358,35715,53140',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        magePortals = {
+            scale = 0.8,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            -- flyout
+            icon = 135748,
+            displayName = L["FlyoutMagePortals"],
+            tooltip = L["FlyoutMagePortalsDesc"],
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '10059,11416,11419,32266,49360,33691,53142,120146,88345,132620',
+            spellsHorde = '11417,11418,11420,32267,49361,35717,53142,120146,88346,132626',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         }
     }
 }
@@ -269,6 +360,112 @@ local warlockOptionsEditmode = {
     }
 }
 
+local magePortOptions = {
+    name = 'Mage Port',
+    desc = '...',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        activate = {
+            type = 'toggle',
+            name = L["ButtonTableActive"],
+            desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', 'magePort'),
+            order = -1,
+            new = false,
+            editmode = true
+        }
+    }
+}
+AddFlyoutTable(magePortOptions, 'magePort')
+DF.Settings:AddPositionTable(Module, magePortOptions, 'magePort', 'Mage Port', getDefaultStr, frameTable)
+
+DragonflightUIStateHandlerMixin:AddStateTable(Module, magePortOptions, 'magePort', 'Mage Port', getDefaultStr)
+local magePortOptionsEditmode = {
+    name = 'flyout',
+    desc = 'flyout',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.magePort
+                local defaultsTable = defaults.profile.magePort
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'magePort')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
+
+local magePortalOptions = {
+    name = 'Mage Portals',
+    desc = '...',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        activate = {
+            type = 'toggle',
+            name = L["ButtonTableActive"],
+            desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', 'magePortals'),
+            order = -1,
+            new = false,
+            editmode = true
+        }
+    }
+}
+AddFlyoutTable(magePortalOptions, 'magePortals')
+DF.Settings:AddPositionTable(Module, magePortalOptions, 'magePortals', 'Mage Portals', getDefaultStr, frameTable)
+
+DragonflightUIStateHandlerMixin:AddStateTable(Module, magePortalOptions, 'magePortals', 'Mage Portals', getDefaultStr)
+local magePortalOptionsEditmode = {
+    name = 'flyout',
+    desc = 'flyout',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.magePortals
+                local defaultsTable = defaults.profile.magePortals
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'magePortals')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -325,6 +522,26 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('warlock')
         end
     })
+
+    DF.ConfigModule:RegisterSettingsData('magePort', 'flyout', {
+        name = 'Mage Port',
+        sub = 'magePort',
+        options = magePortOptions,
+        sortComparator = magePortOptions.sortComparator,
+        default = function()
+            setDefaultSubValues('magePort')
+        end
+    })
+
+    DF.ConfigModule:RegisterSettingsData('magePortals', 'flyout', {
+        name = 'Mage Portals',
+        sub = 'magePortals',
+        options = magePortalOptions,
+        sortComparator = magePortalOptions.sortComparator,
+        default = function()
+            setDefaultSubValues('magePortals')
+        end
+    })
 end
 
 function Module:RefreshOptionScreens()
@@ -345,6 +562,8 @@ function Module:ApplySettings(sub)
     local db = Module.db.profile
 
     Module.WarlockButton:SetState(db.warlock)
+    Module.MagePortButton:SetState(db.magePort)
+    Module.MagePortalsButton:SetState(db.magePortals)
 
     -- local state = db.general
 
@@ -363,48 +582,87 @@ end
 function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
 
-    -- local f = CreateFrame('FRAME', 'DragonflightUIGameTooltipPreviewFrame', UIParent)
-    -- f:SetSize(250, 90)
+    -- warlock
+    do
+        EditModeModule:AddEditModeToFrame(Module.WarlockButton)
 
-    -- Module.GametooltipPreview = f;
+        Module.WarlockButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Warlock'
+        end)
 
-    EditModeModule:AddEditModeToFrame(Module.WarlockButton)
+        Module.WarlockButton.DFEditModeSelection:RegisterOptions({
+            name = 'Warlock',
+            sub = 'warlock',
+            advancedName = 'FlyoutBar',
+            options = warlockOptions,
+            extra = warlockOptionsEditmode,
+            -- parentExtra = TargetFrame,
+            default = function()
+                setDefaultSubValues('warlock')
+            end,
+            moduleRef = self
+        });
+    end
 
-    Module.WarlockButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Warlock'
-    end)
+    -- mage port
+    do
+        EditModeModule:AddEditModeToFrame(Module.MagePortButton)
 
-    Module.WarlockButton.DFEditModeSelection:RegisterOptions({
-        name = 'Warlock',
-        sub = 'warlock',
-        advancedName = 'FlyoutBar',
-        options = warlockOptions,
-        extra = warlockOptionsEditmode,
-        -- parentExtra = TargetFrame,
-        default = function()
-            setDefaultSubValues('warlock')
-        end,
-        moduleRef = self
-        -- showFunction = function()
-        --     --
-        --     -- TargetFrame.unit = 'player';
-        --     -- TargetFrame_Update(TargetFrame);
-        --     -- TargetFrame:Show()
-        --     TargetFrame:SetAlpha(0)
-        -- end,
-        -- hideFunction = function()
-        --     --        
-        --     -- TargetFrame.unit = 'target';
-        --     -- TargetFrame_Update(TargetFrame);
-        --     TargetFrame:SetAlpha(1)
-        -- end
-    });
+        Module.MagePortButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Mage Port'
+        end)
+
+        Module.MagePortButton.DFEditModeSelection:RegisterOptions({
+            name = 'Mage Port',
+            sub = 'magePort',
+            advancedName = 'FlyoutBar',
+            options = magePortOptions,
+            extra = magePortOptionsEditmode,
+            -- parentExtra = TargetFrame,
+            default = function()
+                setDefaultSubValues('Mage')
+            end,
+            moduleRef = self
+        });
+    end
+
+    -- mage portals
+    do
+        EditModeModule:AddEditModeToFrame(Module.MagePortalsButton)
+
+        Module.MagePortalsButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return 'Mage Portals'
+        end)
+
+        Module.MagePortalsButton.DFEditModeSelection:RegisterOptions({
+            name = 'Mage Portals',
+            sub = 'magePortals',
+            advancedName = 'FlyoutBar',
+            options = magePortalOptions,
+            extra = magePortalOptionsEditmode,
+            -- parentExtra = TargetFrame,
+            default = function()
+                setDefaultSubValues('magePortals')
+            end,
+            moduleRef = self
+        });
+    end
 end
 
 function Module:AddWarlockButton()
     local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Warlock" .. "Button", UIParent,
                             "DFSpellFlyoutButtonTemplate")
     Module.WarlockButton = btn;
+end
+
+function Module:AddMageButtons()
+    local port = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MagePort" .. "Button", UIParent,
+                             "DFSpellFlyoutButtonTemplate")
+    Module.MagePortButton = port;
+
+    local portals = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MagePortals" .. "Button", UIParent,
+                                "DFSpellFlyoutButtonTemplate")
+    Module.MagePortalsButton = portals;
 end
 
 local frame = CreateFrame('FRAME')
@@ -416,6 +674,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:Era()
     Module:AddWarlockButton()
+    Module:AddMageButtons()
 end
 
 function Module:TBC()
