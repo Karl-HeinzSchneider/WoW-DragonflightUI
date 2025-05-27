@@ -356,6 +356,9 @@ L["FlyoutItemsDesc"] = "Inspert ItemIDs as comma seperated values, e.g. '6948, 8
 
 L["FlyoutCloseAfterClick"] = "Close After Click"
 L["FlyoutCloseAfterClickDesc"] = "Close the flyout after pressing one of its buttons."
+L["FlyoutAlwaysShow"] = "Always Show Buttons"
+L["FlyoutAlwaysShowDesc"] =
+    "Always shows the (sub) buttons, even when they are empty.\nUse this if you want to use drag&drop."
 L["FlyoutIcon"] = "Icon"
 L["FlyoutIconDesc"] = "Insert FileID or the file path to a texture."
 L["FlyoutDisplayname"] = "Display Name"

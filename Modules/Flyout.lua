@@ -775,8 +775,8 @@ function AddFlyoutTable(optionTable, sub)
         },
         alwaysShow = {
             type = 'toggle',
-            name = L["ButtonTableAlwaysShowActionbar"],
-            desc = L["ButtonTableAlwaysShowActionbarDesc"] .. getDefaultStr('alwaysShow', sub),
+            name = L["FlyoutAlwaysShow"],
+            desc = L["FlyoutAlwaysShowDesc"] .. getDefaultStr('alwaysShow', sub),
             group = 'headerFlyout',
             order = 5.1,
             editmode = true
@@ -1326,34 +1326,38 @@ function Module:RefreshOptionScreens()
 end
 
 function Module:ApplySettings(sub)
+    -- print('Module:ApplySettings(sub)', sub)
     local db = Module.db.profile
 
-    Module.WarlockButton:SetState(db.warlock)
-    Module.MagePortButton:SetState(db.magePort)
-    Module.MagePortalsButton:SetState(db.magePortals)
-    if DF.API.Version.IsClassic then
+    if not sub or sub == 'ALL' then
+        Module.WarlockButton:SetState(db.warlock)
+        Module.MagePortButton:SetState(db.magePort)
+        Module.MagePortalsButton:SetState(db.magePortals)
+        if DF.API.Version.IsClassic then
+            Module.MageFoodButton:SetState(db.mageFood)
+            Module.MageWaterButton:SetState(db.mageWater)
+        end
+
+        for i = 1, numCustomButtons do
+            --
+            local btn = Module['Custom' .. i .. 'Button'];
+            if btn then btn:SetState(db['custom' .. i]) end
+        end
+    elseif sub == 'warlock' then
+        Module.WarlockButton:SetState(db.warlock)
+    elseif sub == 'magePort' then
+        Module.MagePortButton:SetState(db.magePort)
+    elseif sub == 'magePortals' then
+        Module.MagePortalsButton:SetState(db.magePortals)
+    elseif sub == 'mageFood' then
         Module.MageFoodButton:SetState(db.mageFood)
+    elseif sub == 'mageWater' then
         Module.MageWaterButton:SetState(db.mageWater)
+    elseif strmatch(sub, 'custom') then
+        local big = sub:gsub("c", "C")
+        local btn = Module[big .. 'Button'];
+        if btn then btn:SetState(db[sub]) end
     end
-
-    for i = 1, numCustomButtons do
-        --
-        local btn = Module['Custom' .. i .. 'Button'];
-        if btn then btn:SetState(db['custom' .. i]) end
-    end
-
-    -- local state = db.general
-
-    -- local parent;
-    -- if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-    --     parent = _G[state.customAnchorFrame]
-    -- else
-    --     parent = _G[state.anchorFrame]
-    -- end
-
-    -- Module.GametooltipPreview:ClearAllPoints()
-    -- Module.GametooltipPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    -- Module.GametooltipPreview:SetScale(state.scale)
 end
 
 function Module:AddEditMode()
