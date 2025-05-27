@@ -723,5 +723,13 @@ end
 
 function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
     if InCombatLockdown() then return end
-    print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()')
+    local infoType = GetCursorInfo()
+    print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()', infoType)
+    if infoType == 'spell' then
+        local _, spellIndex, bookType, spellID = GetCursorInfo()
+        print(spellIndex, bookType, spellID)
+    elseif infoType == 'item' then
+        local _, itemID, itemLink = GetCursorInfo()
+        print(itemID, itemLink)
+    end
 end
