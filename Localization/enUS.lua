@@ -382,6 +382,11 @@ L["FlyoutMageWater"] = "Conjure Water"
 L["FlyoutMageWaterDesc"] = "Conjured items disappear if logged out for more than 15 minutes."
 L["FlyoutMageFood"] = "Conjure Food"
 L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
+
+L["FlyoutButtonCustomFormat"] = "Custom Flyout %d"
+L["FlyoutCustomNameFormat"] = "Custom Flyout %d"
+L["FlyoutCustomNameDescFormat"] = ""
+
 -- Castbar
 L["CastbarName"] = "Cast Bar"
 L["CastbarNameFormat"] = "%s Cast Bar"

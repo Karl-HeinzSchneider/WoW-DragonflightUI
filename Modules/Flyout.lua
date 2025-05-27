@@ -233,6 +233,366 @@ local defaults = {
             hideNoStealth = false,
             hideCustom = false,
             hideCustomCond = ''
+        },
+        custom1 = {
+            scale = 0.8,
+            anchorFrame = "UIParent",
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 1),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 1),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom2 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(1) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 2),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 2),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom3 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(2) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 3),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 3),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom4 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(3) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 4),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 4),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom5 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(4) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 5),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 5),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom6 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(5) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 6),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 6),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom7 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(6) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 7),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 7),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom8 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(7) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 8),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 8),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         }
     }
 }
@@ -287,6 +647,17 @@ if DF.API.Version.IsClassic then
     table.insert(frameTable, {
         value = "DragonflightUISpellFlyout" .. "MageWater" .. "Button",
         text = L["FlyoutButtonMageWater"],
+        tooltip = 'descr',
+        label = 'label'
+    })
+end
+
+local numCustomButtons = 8;
+for i = 1, numCustomButtons do
+    --
+    table.insert(frameTable, {
+        value = "DragonflightUISpellFlyout" .. "Custom" .. i .. "Button",
+        text = string.format(L["FlyoutCustomNameFormat"], i),
         tooltip = 'descr',
         label = 'label'
     })
@@ -718,6 +1089,72 @@ local mageWaterOptionsEditmode = {
     }
 }
 
+-- custom
+local customOptionsTable = {}
+local customOptionsTableEditmode = {}
+
+for i = 1, numCustomButtons do
+    --
+    local sub = 'custom' .. i;
+    local options = {
+        name = string.format(L["FlyoutCustomNameFormat"], i),
+        desc = '...',
+        get = getOption,
+        set = setOption,
+        type = 'group',
+        args = {
+            activate = {
+                type = 'toggle',
+                name = L["ButtonTableActive"],
+                desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', sub),
+                order = -1,
+                new = false,
+                editmode = true
+            }
+        }
+    }
+    AddFlyoutTable(options, sub)
+    DF.Settings:AddPositionTable(Module, options, sub, string.format(L["FlyoutCustomNameFormat"], i), getDefaultStr,
+                                 frameTableWithout("DragonflightUISpellFlyout" .. "Custom" .. i .. "Button"))
+
+    DragonflightUIStateHandlerMixin:AddStateTable(Module, options, sub, string.format(L["FlyoutCustomNameFormat"], i),
+                                                  getDefaultStr)
+    local optionsEditmode = {
+        name = 'flyout',
+        desc = 'flyout',
+        get = getOption,
+        set = setOption,
+        type = 'group',
+        args = {
+            resetPosition = {
+                type = 'execute',
+                name = L["ExtraOptionsPreset"],
+                btnName = L["ExtraOptionsResetToDefaultPosition"],
+                desc = L["ExtraOptionsPresetDesc"],
+                func = function()
+                    local dbTable = Module.db.profile[sub]
+                    local defaultsTable = defaults.profile[sub]
+                    -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                    setPreset(dbTable, {
+                        scale = defaultsTable.scale,
+                        anchor = defaultsTable.anchor,
+                        anchorParent = defaultsTable.anchorParent,
+                        anchorFrame = defaultsTable.anchorFrame,
+                        x = defaultsTable.x,
+                        y = defaultsTable.y
+                    }, sub)
+                end,
+                order = 16,
+                editmode = true,
+                new = false
+            }
+        }
+    }
+
+    customOptionsTable[i] = options
+    customOptionsTableEditmode[i] = optionsEditmode
+end
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -765,6 +1202,12 @@ function Module:RegisterSettings()
     if DF.API.Version.IsClassic then
         register('mageFood', {order = 0, name = L["FlyoutButtonMageFood"], descr = '...', isNew = true})
         register('mageWater', {order = 0, name = L["FlyoutButtonMageWater"], descr = '...', isNew = true})
+    end
+
+    for i = 1, numCustomButtons do
+        --
+        register('custom' .. i,
+                 {order = 0, name = string.format(L["FlyoutCustomNameFormat"], i), descr = '...', isNew = true})
     end
 end
 
@@ -820,6 +1263,22 @@ function Module:RegisterOptionScreens()
             end
         })
     end
+
+    for i = 1, numCustomButtons do
+        --   
+        local n = string.format(L["FlyoutCustomNameFormat"], i);
+        local sub = 'custom' .. i;
+
+        DF.ConfigModule:RegisterSettingsData(sub, 'flyout', {
+            name = n,
+            sub = sub,
+            options = customOptionsTable[i],
+            sortComparator = customOptionsTable[i].sortComparator,
+            default = function()
+                setDefaultSubValues(sub)
+            end
+        })
+    end
 end
 
 function Module:RefreshOptionScreens()
@@ -845,6 +1304,12 @@ function Module:ApplySettings(sub)
     if DF.API.Version.IsClassic then
         Module.MageFoodButton:SetState(db.mageFood)
         Module.MageWaterButton:SetState(db.mageWater)
+    end
+
+    for i = 1, numCustomButtons do
+        --
+        local btn = Module['Custom' .. i .. 'Button'];
+        if btn then btn:SetState(db['custom' .. i]) end
     end
 
     -- local state = db.general
@@ -975,6 +1440,32 @@ function Module:AddEditMode()
             });
         end
     end
+
+    for i = 1, numCustomButtons do
+        --   
+        local n = string.format(L["FlyoutCustomNameFormat"], i);
+        local sub = 'custom' .. i;
+
+        local btn = Module['Custom' .. i .. 'Button']
+        EditModeModule:AddEditModeToFrame(btn)
+
+        btn.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return n
+        end)
+
+        btn.DFEditModeSelection:RegisterOptions({
+            name = n,
+            sub = sub,
+            advancedName = 'FlyoutBar',
+            options = customOptionsTable[i],
+            extra = customOptionsTableEditmode[i],
+            -- parentExtra = TargetFrame,
+            default = function()
+                setDefaultSubValues(sub)
+            end,
+            moduleRef = self
+        });
+    end
 end
 
 function Module:AddWarlockButton()
@@ -1003,6 +1494,15 @@ function Module:AddMageButtons()
     end
 end
 
+function Module:AddCustomButtons()
+    for i = 1, numCustomButtons do
+        --
+        local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Custom" .. i .. "Button", UIParent,
+                                "DFSpellFlyoutButtonTemplate")
+        Module['Custom' .. i .. 'Button'] = btn;
+    end
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
@@ -1013,6 +1513,7 @@ frame:SetScript('OnEvent', frame.OnEvent)
 function Module:Era()
     Module:AddWarlockButton()
     Module:AddMageButtons()
+    Module:AddCustomButtons()
 end
 
 function Module:TBC()
