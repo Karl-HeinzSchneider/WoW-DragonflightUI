@@ -194,7 +194,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
     local englishFaction, localizedFaction = UnitFactionGroup('player')
 
     if state.spellsAlliance ~= '' and englishFaction == 'Alliance' then
-        local spellTable = self:SplitString(state.spellsHorde)
+        local spellTable = self:SplitString(state.spellsAlliance)
 
         for k, spell in ipairs(spellTable) do
             --        
