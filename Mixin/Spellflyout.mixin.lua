@@ -459,6 +459,15 @@ function DragonflightUISpellSubButtonMixin:OnLoad()
     self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE");
 
     -- self:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+
+    self:RegisterForDrag("LeftButton")
+    -- btn:HookScript('OnDragStart', function()
+    --     print('OnDragStart')
+    -- end)
+
+    -- btn:HookScript('OnReceiveDrag', function()
+    --     print('OnReceiveDrag')
+    -- end)
 end
 
 function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)
@@ -660,4 +669,24 @@ end
 
 function DragonflightUISpellSubButtonMixin:OnLeave()
     GameTooltip:Hide()
+end
+
+function DragonflightUISpellSubButtonMixin:OnDragStart()
+    if InCombatLockdown() then return end
+
+    local doDrag = (not Settings.GetValue("lockActionBars") or IsModifiedClick("PICKUPACTION"));
+    if not doDrag then return end
+
+    print('DragonflightUISpellSubButtonMixin:OnDragStart()', self.Spell, self.Item)
+
+    if self.Spell then
+        PickupSpell(self.Spell)
+    elseif self.Item then
+        PickupItem(self.Item)
+    end
+end
+
+function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
+    if InCombatLockdown() then return end
+    print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()')
 end

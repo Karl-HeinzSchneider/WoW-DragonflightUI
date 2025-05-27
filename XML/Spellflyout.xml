@@ -18,6 +18,8 @@
 			<OnEvent method="OnEvent" />
 			<OnEnter method="OnEnter" />
 			<OnLeave method="OnLeave" />
+			<OnDragStart method="OnDragStart" />
+			<OnReceiveDrag method="OnReceiveDrag" />
 		</Scripts>
 	</Button>
 	<Frame name="DFSpellFlyoutBGTemplate" inherits="SecureFrameTemplate" mixin="DragonflightUISpellFlyoutBGMixin" virtual="true">
