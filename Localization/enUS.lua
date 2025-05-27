@@ -370,7 +370,10 @@ L["FlyoutMagePort"] = "Teleport"
 L["FlyoutMagePortDesc"] = "Teleports you to a major city."
 L["FlyoutMagePortals"] = "Portal"
 L["FlyoutMagePortalsDesc"] = "Creates a portal, teleporting group members who use it to a major city."
-
+L["FlyoutMageWater"] = "Conjure Water"
+L["FlyoutMageWaterDesc"] = "Conjured items disappear if logged out for more than 15 minutes."
+L["FlyoutMageFood"] = "Conjure Food"
+L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
 -- Castbar
 L["CastbarName"] = "Cast Bar"
 L["CastbarNameFormat"] = "%s Cast Bar"

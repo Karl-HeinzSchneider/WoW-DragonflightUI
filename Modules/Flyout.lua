@@ -143,6 +143,96 @@ local defaults = {
             hideNoStealth = false,
             hideCustom = false,
             hideCustomCond = ''
+        },
+        mageWater = {
+            scale = 0.8,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            -- flyout
+            icon = 132793,
+            displayName = L["FlyoutMageWater"],
+            tooltip = L["FlyoutMageWaterDesc"],
+            flyoutDirection = 'TOP',
+            spells = '5504, 5505, 5506, 6127, 10138, 10139, 10140, 468766',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        mageFood = {
+            scale = 0.8,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'CENTER',
+            anchorParent = 'CENTER',
+            x = 0,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 10,
+            padding = 2,
+            -- flyout
+            icon = 134029,
+            displayName = L["FlyoutMageFood"],
+            tooltip = L["FlyoutMageFoodDesc"],
+            flyoutDirection = 'TOP',
+            spells = '587, 597, 990, 6129, 10144, 10145, 28612',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
         }
     }
 }
@@ -307,6 +397,7 @@ function AddFlyoutTable(optionTable, sub)
     end
 end
 
+-- warlock pets
 local warlockOptions = {
     name = 'Warlock',
     desc = '...',
@@ -360,6 +451,7 @@ local warlockOptionsEditmode = {
     }
 }
 
+-- mage port
 local magePortOptions = {
     name = 'Mage Port',
     desc = '...',
@@ -413,6 +505,7 @@ local magePortOptionsEditmode = {
     }
 }
 
+-- portals
 local magePortalOptions = {
     name = 'Mage Portals',
     desc = '...',
@@ -466,6 +559,114 @@ local magePortalOptionsEditmode = {
     }
 }
 
+-- mage food
+local mageFoodOptions = {
+    name = 'Mage Food',
+    desc = '...',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        activate = {
+            type = 'toggle',
+            name = L["ButtonTableActive"],
+            desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', 'mageFood'),
+            order = -1,
+            new = false,
+            editmode = true
+        }
+    }
+}
+AddFlyoutTable(mageFoodOptions, 'mageFood')
+DF.Settings:AddPositionTable(Module, mageFoodOptions, 'mageFood', 'Mage Food', getDefaultStr, frameTable)
+
+DragonflightUIStateHandlerMixin:AddStateTable(Module, mageFoodOptions, 'mageFood', 'Mage Food', getDefaultStr)
+local mageFoodOptionsEditmode = {
+    name = 'flyout',
+    desc = 'flyout',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.mageFood
+                local defaultsTable = defaults.profile.mageFood
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'mageFood')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
+
+-- mage water
+local mageWaterOptions = {
+    name = 'Mage Water',
+    desc = '...',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        activate = {
+            type = 'toggle',
+            name = L["ButtonTableActive"],
+            desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', 'mageWater'),
+            order = -1,
+            new = false,
+            editmode = true
+        }
+    }
+}
+AddFlyoutTable(mageWaterOptions, 'mageWater')
+DF.Settings:AddPositionTable(Module, mageWaterOptions, 'mageWater', 'Mage Water', getDefaultStr, frameTable)
+
+DragonflightUIStateHandlerMixin:AddStateTable(Module, mageWaterOptions, 'mageWater', 'Mage Water', getDefaultStr)
+local mageWaterOptionsEditmode = {
+    name = 'flyout',
+    desc = 'flyout',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.mageWater
+                local defaultsTable = defaults.profile.mageWater
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'mageWater')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -510,6 +711,10 @@ function Module:RegisterSettings()
     register('warlock', {order = 0, name = 'Warlock', descr = '...', isNew = true})
     register('magePort', {order = 0, name = 'Mage Port', descr = '...', isNew = true})
     register('magePortals', {order = 0, name = 'Mage Portals', descr = '...', isNew = true})
+    if DF.API.Version.IsClassic then
+        register('mageFood', {order = 0, name = 'Mage Food', descr = '...', isNew = true})
+        register('mageWater', {order = 0, name = 'Mage Water', descr = '...', isNew = true})
+    end
 end
 
 function Module:RegisterOptionScreens()
@@ -542,6 +747,28 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues('magePortals')
         end
     })
+
+    if DF.API.Version.IsClassic then
+        DF.ConfigModule:RegisterSettingsData('mageFood', 'flyout', {
+            name = 'Mage Food',
+            sub = 'mageFood',
+            options = mageFoodOptions,
+            sortComparator = mageFoodOptions.sortComparator,
+            default = function()
+                setDefaultSubValues('mageFood')
+            end
+        })
+
+        DF.ConfigModule:RegisterSettingsData('mageWater', 'flyout', {
+            name = 'Mage Water',
+            sub = 'mageWater',
+            options = mageWaterOptions,
+            sortComparator = mageWaterOptions.sortComparator,
+            default = function()
+                setDefaultSubValues('mageWater')
+            end
+        })
+    end
 end
 
 function Module:RefreshOptionScreens()
@@ -564,6 +791,10 @@ function Module:ApplySettings(sub)
     Module.WarlockButton:SetState(db.warlock)
     Module.MagePortButton:SetState(db.magePort)
     Module.MagePortalsButton:SetState(db.magePortals)
+    if DF.API.Version.IsClassic then
+        Module.MageFoodButton:SetState(db.mageFood)
+        Module.MageWaterButton:SetState(db.mageWater)
+    end
 
     -- local state = db.general
 
@@ -647,6 +878,52 @@ function Module:AddEditMode()
             moduleRef = self
         });
     end
+
+    if DF.API.Version.IsClassic then
+        -- mage food
+        do
+            EditModeModule:AddEditModeToFrame(Module.MageFoodButton)
+
+            Module.MageFoodButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+                return 'Mage Food'
+            end)
+
+            Module.MageFoodButton.DFEditModeSelection:RegisterOptions({
+                name = 'Mage Food',
+                sub = 'mageFood',
+                advancedName = 'FlyoutBar',
+                options = mageFoodOptions,
+                extra = mageFoodOptionsEditmode,
+                -- parentExtra = TargetFrame,
+                default = function()
+                    setDefaultSubValues('mageFood')
+                end,
+                moduleRef = self
+            });
+        end
+
+        -- mage water
+        do
+            EditModeModule:AddEditModeToFrame(Module.MageWaterButton)
+
+            Module.MageWaterButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+                return 'Mage Water'
+            end)
+
+            Module.MageWaterButton.DFEditModeSelection:RegisterOptions({
+                name = 'Mage Water',
+                sub = 'mageWater',
+                advancedName = 'FlyoutBar',
+                options = mageWaterOptions,
+                extra = mageWaterOptionsEditmode,
+                -- parentExtra = TargetFrame,
+                default = function()
+                    setDefaultSubValues('mageWater')
+                end,
+                moduleRef = self
+            });
+        end
+    end
 end
 
 function Module:AddWarlockButton()
@@ -663,6 +940,16 @@ function Module:AddMageButtons()
     local portals = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MagePortals" .. "Button", UIParent,
                                 "DFSpellFlyoutButtonTemplate")
     Module.MagePortalsButton = portals;
+
+    if DF.API.Version.IsClassic then
+        local food = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MageFood" .. "Button", UIParent,
+                                 "DFSpellFlyoutButtonTemplate")
+        Module.MageFoodButton = food;
+
+        local water = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MageWater" .. "Button", UIParent,
+                                  "DFSpellFlyoutButtonTemplate")
+        Module.MageWaterButton = water;
+    end
 end
 
 local frame = CreateFrame('FRAME')

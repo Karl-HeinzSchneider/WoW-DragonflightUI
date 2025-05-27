@@ -9,7 +9,7 @@ local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2
 DragonflightUISpellFlyoutButtonMixin = {}
 
 function DragonflightUISpellFlyoutButtonMixin:OnLoad()
-    print('DragonflightUISpellFlyoutButtonMixin:OnLoad()')
+    -- print('DragonflightUISpellFlyoutButtonMixin:OnLoad()')
 
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
