@@ -363,6 +363,14 @@ L["FlyoutDisplaynameDesc"] = ""
 L["FlyoutTooltip"] = "Tooltip"
 L["FlyoutTooltipDesc"] = ""
 
+L["FlyoutButtonWarlock"] = "Warlock Summon Flyout"
+L["FlyoutButtonMagePort"] = "Teleport Flyout"
+L["FlyoutButtonMagePortals"] = "Portals Flyout"
+
+-- L["FlyoutButtonWarlock"] = "Warlock"
+L["FlyoutButtonMageFood"] = "Conjure Food Flyout"
+L["FlyoutButtonMageWater"] = "Conjure Water Flyout"
+
 L["FlyoutWarlock"] = "Summon Demon"
 L["FlyoutWarlockDesc"] = "Summons one of your demons to you."
 

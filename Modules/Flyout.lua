@@ -20,14 +20,14 @@ local defaults = {
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
-            buttons = 5,
+            buttons = 7,
             padding = 2,
             -- flyout
             icon = 136082,
             displayName = L["FlyoutWarlock"],
             tooltip = L["FlyoutWarlockDesc"],
             flyoutDirection = 'TOP',
-            spells = '688, 697, 712, 691, 1122',
+            spells = '688, 697, 712, 713, 691, 1122, 18540',
             spellsAlliance = '',
             spellsHorde = '',
             items = '',
@@ -55,11 +55,11 @@ local defaults = {
         },
         magePort = {
             scale = 0.8,
-            anchorFrame = 'UIParent',
+            anchorFrame = "DragonflightUISpellFlyout" .. "Warlock" .. "Button",
             customAnchorFrame = '',
-            anchor = 'CENTER',
-            anchorParent = 'CENTER',
-            x = 0,
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
@@ -101,11 +101,11 @@ local defaults = {
         },
         magePortals = {
             scale = 0.8,
-            anchorFrame = 'UIParent',
+            anchorFrame = "DragonflightUISpellFlyout" .. "MagePort" .. "Button",
             customAnchorFrame = '',
-            anchor = 'CENTER',
-            anchorParent = 'CENTER',
-            x = 0,
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
@@ -146,11 +146,11 @@ local defaults = {
         },
         mageWater = {
             scale = 0.8,
-            anchorFrame = 'UIParent',
+            anchorFrame = "DragonflightUISpellFlyout" .. "MagePortals" .. "Button",
             customAnchorFrame = '',
-            anchor = 'CENTER',
-            anchorParent = 'CENTER',
-            x = 0,
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
@@ -191,11 +191,11 @@ local defaults = {
         },
         mageFood = {
             scale = 0.8,
-            anchorFrame = 'UIParent',
+            anchorFrame = "DragonflightUISpellFlyout" .. "MageWater" .. "Button",
             customAnchorFrame = '',
-            anchor = 'CENTER',
-            anchorParent = 'CENTER',
-            x = 0,
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
             y = 0,
             orientation = 'horizontal',
             reverse = false,
@@ -258,7 +258,53 @@ local function setOption(info, value)
     Module:SetOption(info, value)
 end
 
-local frameTable = {{value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}}
+local frameTable = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}, {
+        value = "DragonflightUISpellFlyout" .. "Warlock" .. "Button",
+        text = L["FlyoutButtonWarlock"],
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = "DragonflightUISpellFlyout" .. "MagePort" .. "Button",
+        text = L["FlyoutButtonMagePort"],
+        tooltip = 'descr',
+        label = 'label'
+    }, {
+        value = "DragonflightUISpellFlyout" .. "MagePortals" .. "Button",
+        text = L["FlyoutButtonMagePortals"],
+        tooltip = 'descr',
+        label = 'label'
+    }
+}
+
+if DF.API.Version.IsClassic then
+    table.insert(frameTable, {
+        value = "DragonflightUISpellFlyout" .. "MageFood" .. "Button",
+        text = L["FlyoutButtonMageFood"],
+        tooltip = 'descr',
+        label = 'label'
+    })
+    table.insert(frameTable, {
+        value = "DragonflightUISpellFlyout" .. "MageWater" .. "Button",
+        text = L["FlyoutButtonMageWater"],
+        tooltip = 'descr',
+        label = 'label'
+    })
+end
+
+local function frameTableWithout(without)
+    local newTable = {}
+
+    for k, v in ipairs(frameTable) do
+        --
+        if v.value ~= without then
+            --      
+            table.insert(newTable, v);
+        end
+    end
+
+    return newTable
+end
 
 local function setPreset(T, preset, sub)
     -- print('setPreset')
@@ -399,7 +445,7 @@ end
 
 -- warlock pets
 local warlockOptions = {
-    name = 'Warlock',
+    name = L["FlyoutButtonWarlock"],
     desc = '...',
     get = getOption,
     set = setOption,
@@ -416,7 +462,8 @@ local warlockOptions = {
     }
 }
 AddFlyoutTable(warlockOptions, 'warlock')
-DF.Settings:AddPositionTable(Module, warlockOptions, 'warlock', 'Warlock', getDefaultStr, frameTable)
+DF.Settings:AddPositionTable(Module, warlockOptions, 'warlock', 'Warlock', getDefaultStr,
+                             frameTableWithout("DragonflightUISpellFlyout" .. "Warlock" .. "Button"))
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, warlockOptions, 'warlock', 'Warlock', getDefaultStr)
 local warlockOptionsEditmode = {
@@ -470,7 +517,8 @@ local magePortOptions = {
     }
 }
 AddFlyoutTable(magePortOptions, 'magePort')
-DF.Settings:AddPositionTable(Module, magePortOptions, 'magePort', 'Mage Port', getDefaultStr, frameTable)
+DF.Settings:AddPositionTable(Module, magePortOptions, 'magePort', 'Mage Port', getDefaultStr,
+                             frameTableWithout("DragonflightUISpellFlyout" .. "MagePort" .. "Button"))
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, magePortOptions, 'magePort', 'Mage Port', getDefaultStr)
 local magePortOptionsEditmode = {
@@ -524,7 +572,8 @@ local magePortalOptions = {
     }
 }
 AddFlyoutTable(magePortalOptions, 'magePortals')
-DF.Settings:AddPositionTable(Module, magePortalOptions, 'magePortals', 'Mage Portals', getDefaultStr, frameTable)
+DF.Settings:AddPositionTable(Module, magePortalOptions, 'magePortals', 'Mage Portals', getDefaultStr,
+                             frameTableWithout("DragonflightUISpellFlyout" .. "MagePortals" .. "Button"))
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, magePortalOptions, 'magePortals', 'Mage Portals', getDefaultStr)
 local magePortalOptionsEditmode = {
@@ -578,7 +627,8 @@ local mageFoodOptions = {
     }
 }
 AddFlyoutTable(mageFoodOptions, 'mageFood')
-DF.Settings:AddPositionTable(Module, mageFoodOptions, 'mageFood', 'Mage Food', getDefaultStr, frameTable)
+DF.Settings:AddPositionTable(Module, mageFoodOptions, 'mageFood', 'Mage Food', getDefaultStr,
+                             frameTableWithout("DragonflightUISpellFlyout" .. "MageFood" .. "Button"))
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, mageFoodOptions, 'mageFood', 'Mage Food', getDefaultStr)
 local mageFoodOptionsEditmode = {
@@ -632,7 +682,8 @@ local mageWaterOptions = {
     }
 }
 AddFlyoutTable(mageWaterOptions, 'mageWater')
-DF.Settings:AddPositionTable(Module, mageWaterOptions, 'mageWater', 'Mage Water', getDefaultStr, frameTable)
+DF.Settings:AddPositionTable(Module, mageWaterOptions, 'mageWater', 'Mage Water', getDefaultStr,
+                             frameTableWithout("DragonflightUISpellFlyout" .. "MageWater" .. "Button"))
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, mageWaterOptions, 'mageWater', 'Mage Water', getDefaultStr)
 local mageWaterOptionsEditmode = {
@@ -708,18 +759,18 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('warlock', {order = 0, name = 'Warlock', descr = '...', isNew = true})
-    register('magePort', {order = 0, name = 'Mage Port', descr = '...', isNew = true})
-    register('magePortals', {order = 0, name = 'Mage Portals', descr = '...', isNew = true})
+    register('warlock', {order = 0, name = L["FlyoutButtonWarlock"], descr = '...', isNew = true})
+    register('magePort', {order = 0, name = L["FlyoutButtonMagePort"], descr = '...', isNew = true})
+    register('magePortals', {order = 0, name = L["FlyoutButtonMagePortals"], descr = '...', isNew = true})
     if DF.API.Version.IsClassic then
-        register('mageFood', {order = 0, name = 'Mage Food', descr = '...', isNew = true})
-        register('mageWater', {order = 0, name = 'Mage Water', descr = '...', isNew = true})
+        register('mageFood', {order = 0, name = L["FlyoutButtonMageFood"], descr = '...', isNew = true})
+        register('mageWater', {order = 0, name = L["FlyoutButtonMageWater"], descr = '...', isNew = true})
     end
 end
 
 function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterSettingsData('warlock', 'flyout', {
-        name = 'Warlock',
+        name = L["FlyoutButtonWarlock"],
         sub = 'warlock',
         options = warlockOptions,
         sortComparator = warlockOptions.sortComparator,
@@ -729,7 +780,7 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('magePort', 'flyout', {
-        name = 'Mage Port',
+        name = L["FlyoutButtonMagePort"],
         sub = 'magePort',
         options = magePortOptions,
         sortComparator = magePortOptions.sortComparator,
@@ -739,7 +790,7 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('magePortals', 'flyout', {
-        name = 'Mage Portals',
+        name = L["FlyoutButtonMagePortals"],
         sub = 'magePortals',
         options = magePortalOptions,
         sortComparator = magePortalOptions.sortComparator,
@@ -750,7 +801,7 @@ function Module:RegisterOptionScreens()
 
     if DF.API.Version.IsClassic then
         DF.ConfigModule:RegisterSettingsData('mageFood', 'flyout', {
-            name = 'Mage Food',
+            name = L["FlyoutButtonMageFood"],
             sub = 'mageFood',
             options = mageFoodOptions,
             sortComparator = mageFoodOptions.sortComparator,
@@ -760,7 +811,7 @@ function Module:RegisterOptionScreens()
         })
 
         DF.ConfigModule:RegisterSettingsData('mageWater', 'flyout', {
-            name = 'Mage Water',
+            name = L["FlyoutButtonMageWater"],
             sub = 'mageWater',
             options = mageWaterOptions,
             sortComparator = mageWaterOptions.sortComparator,
@@ -818,11 +869,11 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(Module.WarlockButton)
 
         Module.WarlockButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Warlock'
+            return L["FlyoutButtonWarlock"]
         end)
 
         Module.WarlockButton.DFEditModeSelection:RegisterOptions({
-            name = 'Warlock',
+            name = L["FlyoutButtonWarlock"],
             sub = 'warlock',
             advancedName = 'FlyoutBar',
             options = warlockOptions,
@@ -840,11 +891,11 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(Module.MagePortButton)
 
         Module.MagePortButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Mage Port'
+            return L["FlyoutButtonMagePort"]
         end)
 
         Module.MagePortButton.DFEditModeSelection:RegisterOptions({
-            name = 'Mage Port',
+            name = L["FlyoutButtonMagePort"],
             sub = 'magePort',
             advancedName = 'FlyoutBar',
             options = magePortOptions,
@@ -862,11 +913,11 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(Module.MagePortalsButton)
 
         Module.MagePortalsButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Mage Portals'
+            return L["FlyoutButtonMagePortals"]
         end)
 
         Module.MagePortalsButton.DFEditModeSelection:RegisterOptions({
-            name = 'Mage Portals',
+            name = L["FlyoutButtonMagePortals"],
             sub = 'magePortals',
             advancedName = 'FlyoutBar',
             options = magePortalOptions,
@@ -885,11 +936,11 @@ function Module:AddEditMode()
             EditModeModule:AddEditModeToFrame(Module.MageFoodButton)
 
             Module.MageFoodButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-                return 'Mage Food'
+                return L["FlyoutButtonMageFood"]
             end)
 
             Module.MageFoodButton.DFEditModeSelection:RegisterOptions({
-                name = 'Mage Food',
+                name = L["FlyoutButtonMageFood"],
                 sub = 'mageFood',
                 advancedName = 'FlyoutBar',
                 options = mageFoodOptions,
@@ -907,11 +958,11 @@ function Module:AddEditMode()
             EditModeModule:AddEditModeToFrame(Module.MageWaterButton)
 
             Module.MageWaterButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-                return 'Mage Water'
+                return L["FlyoutButtonMageWater"]
             end)
 
             Module.MageWaterButton.DFEditModeSelection:RegisterOptions({
-                name = 'Mage Water',
+                name = L["FlyoutButtonMageWater"],
                 sub = 'mageWater',
                 advancedName = 'FlyoutBar',
                 options = mageWaterOptions,
