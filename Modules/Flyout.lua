@@ -1291,8 +1291,30 @@ function Module:RefreshOptionScreens()
     end
 
     refreshCat('warlock')
+    refreshCat('magePort')
+    refreshCat('magePortals')
 
     Module.WarlockButton.DFEditModeSelection:RefreshOptionScreen();
+    Module.MagePortButton.DFEditModeSelection:RefreshOptionScreen();
+    Module.MagePortalsButton.DFEditModeSelection:RefreshOptionScreen();
+
+    if DF.API.Version.IsClassic then
+        refreshCat('mageFood')
+        refreshCat('mageWater')
+        Module.MageFoodButton.DFEditModeSelection:RefreshOptionScreen();
+        Module.MageWaterButton.DFEditModeSelection:RefreshOptionScreen();
+    end
+
+    for i = 1, numCustomButtons do
+        --   
+        local n = string.format(L["FlyoutCustomNameFormat"], i);
+        local sub = 'custom' .. i;
+
+        refreshCat(sub)
+
+        local btn = Module['Custom' .. i .. 'Button'];
+        btn.DFEditModeSelection:RefreshOptionScreen();
+    end
 end
 
 function Module:ApplySettings(sub)
