@@ -2027,6 +2027,8 @@ function Module:SetupActionbarFrames()
     createExtra(7)
     createExtra(8)
 
+    DragonflightUIActionbarMixin:MigrateOldKeybinds()
+
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
