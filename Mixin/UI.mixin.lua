@@ -1934,7 +1934,13 @@ function DragonflightUIMixin:ChangeQuestFrame()
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
-    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    if DF.API.Version.IsMoP then
+        --
+        DragonflightUIMixin:FrameBackgroundSolidMoP(frame, true)
+    else
+        DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+    end
 
     local header = QuestNpcNameFrame
     header:ClearAllPoints()
@@ -2679,7 +2685,12 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
-    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+    if DF.API.Version.IsMoP then
+        --
+        DragonflightUIMixin:FrameBackgroundSolidMoP(frame, true)
+    else
+        DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+    end
 
     do
         -- quest xp
@@ -3492,6 +3503,8 @@ end
 
 function DragonflightUIMixin:FrameBackgroundSolid(frame, streak)
     local top = frame.Bg.TopSection
+    if not top then return end
+
     top:SetTexture(base .. 'ui-background-rock')
     top:ClearAllPoints()
     top:SetPoint('TOPLEFT', frame.Bg, 'TOPLEFT', 0, 0)
@@ -3507,7 +3520,27 @@ function DragonflightUIMixin:FrameBackgroundSolid(frame, streak)
         </Anchors>
         <TexCoords left="0" right="1" top="0.0078125" bottom="0.34375" />
     </Texture> ]]
-        local TopTileStreak = frame:CreateTexture()
+        local TopTileStreak = _G[frame:GetName() .. 'TopTileStreaks'] or frame:CreateTexture()
+        TopTileStreak:ClearAllPoints()
+        TopTileStreak:SetSize(256, 43)
+        TopTileStreak:SetTexture(base .. 'uiframehorizontal')
+        TopTileStreak:SetTexCoord(0, 1, 0.0078125, 0.34375)
+        TopTileStreak:SetPoint('TOPLEFT', 6, -21)
+        TopTileStreak:SetPoint('TOPRIGHT', -2, -21)
+    end
+end
+
+-- MoP, e.g. QuestLogFrame or TaxiFrame
+function DragonflightUIMixin:FrameBackgroundSolidMoP(frame, streak)
+    -- print('~FrameBackgroundSolidMoP~', frame:GetName(), streak, top)
+    local bg = _G[frame:GetName() .. 'Bg']
+    if not bg then return end
+
+    bg:SetTexture(base .. 'ui-background-rock')
+    bg:SetDrawLayer('BACKGROUND', 2)
+
+    if streak then
+        local TopTileStreak = _G[frame:GetName() .. 'TopTileStreaks'] or frame:CreateTexture()
         TopTileStreak:SetSize(256, 43)
         TopTileStreak:SetTexture(base .. 'uiframehorizontal')
         TopTileStreak:SetTexCoord(0, 1, 0.0078125, 0.34375)
