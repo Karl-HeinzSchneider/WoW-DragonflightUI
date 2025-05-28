@@ -2216,6 +2216,29 @@ function DragonflightUIMixin:ChangeGossipFrame()
     frame:SetSize(338, 496)
     greeting:SetSize(338, 496)
 
+    if DF.API.Version.IsMoP then
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+
+        _G['GossipFramePortraitFrame']:Hide()
+    end
+
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     DragonflightUIMixin:FrameBackgroundSolid(frame, true)
@@ -2236,7 +2259,11 @@ function DragonflightUIMixin:ChangeGossipFrame()
     do
         local scroll = greeting.ScrollBox
         scroll:SetSize(300, 403)
-        scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
+        if DF.API.Version.IsMoP then
+            scroll:SetHeight(320) -- TODO
+        else
+            scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
+        end
 
         local bar = greeting.ScrollBar
         bar:SetPoint('TOPLEFT', scroll, 'TOPRIGHT', 6 - 5, -3)
