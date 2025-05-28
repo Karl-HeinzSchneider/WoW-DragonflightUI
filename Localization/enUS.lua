@@ -107,7 +107,7 @@ L['CompatBaganator'] = "Baganator"
 L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
 L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
 L['CompatCharacterStatsClassicDesc'] =
-    "Adds compatibility for Auctionator when using the UI Module with 'Change CharacterFrame' enabled."
+    "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
 L['CompatClassicCalendar'] = "Classic Calendar"
 L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
 L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
