@@ -2687,6 +2687,9 @@ function Module:HideSecondaryRes(hide)
         _G['PaladinPowerBar']:SetShown(not hide);
     elseif class == 'DEATHKNIGHT' then
         _G['RuneFrame']:SetShown(not hide);
+    elseif class == 'MONK' then
+        _G['MonkHarmonyBar']:SetShown(not hide)
+        _G['MonkStaggerBar']:SetShown(not hide)
     end
 end
 
@@ -2701,6 +2704,8 @@ function Module:HookSecondaryRes()
         Module.SecondaryResToHide = _G['PaladinPowerBar'];
     elseif class == 'DEATHKNIGHT' then
         Module.SecondaryResToHide = _G['RuneFrame'];
+    elseif class == 'MONK' then
+        Module.SecondaryResToHide = _G['MonkHarmonyBar'];
     end
 
     if Module.SecondaryResToHide then
@@ -3079,6 +3084,9 @@ function Module.ChangePlayerframe()
         PaladinPowerBar:SetPoint('TOP', PlayerFrame, 'BOTTOM', 43, 39 - 2)
         ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1)
     end
+    if DF.API.Version.IsMoP then _G['MonkHarmonyBar']:SetPoint('TOP', 49 - 5, -46) end
+
+    if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
 end
 -- ChangePlayerframe()
 -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
