@@ -227,6 +227,9 @@ L["MoreOptionsHideBarScrollingDesc"] = ""
 L["MoreOptionsGryphons"] = "Gryphons"
 L["MoreOptionsGryphonsDesc"] = "Gryphons"
 
+L["MoreOptionsUseKeyDown"] = "Use Key Down"
+L["MoreOptionsUseKeyDownDesc"] = "Activates abilities on key down."
+
 L["MoreOptionsIconRangeColor"] = "Icon Range Color"
 L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange"
 

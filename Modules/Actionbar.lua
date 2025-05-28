@@ -46,6 +46,7 @@ local defaults = {
             macroFontSize = 14,
             hideKeybind = false,
             shortenKeybind = false,
+            useKeyDown = false,
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
@@ -852,10 +853,51 @@ local function GetBarOption(n)
                 group = 'headerButtons',
                 order = 51.1,
                 editmode = true
+            },
+            useKeyDown = {
+                type = 'toggle',
+                name = L["MoreOptionsUseKeyDown"],
+                desc = L["MoreOptionsUseKeyDownDesc"] .. getDefaultStr('useKeyDown', barname),
+                group = 'headerButtons',
+                order = 51.0,
+                editmode = true,
+                blizzard = true
             }
         }
 
         for k, v in pairs(moreOptions) do opt.args[k] = v end
+
+        opt.get = function(info)
+            local key = info[1]
+            local sub = info[2]
+            if sub == 'useKeyDown' then
+                if GetCVarBool('ActionButtonUseKeyDown') then
+                    return true
+                else
+                    return false
+                end
+            else
+                return getOption(info)
+            end
+        end
+
+        opt.set = function(info, value)
+            local key = info[1]
+            local sub = info[2]
+
+            if sub == 'useKeyDown' then
+                if value then
+                    C_CVar.SetCVar('ActionButtonUseKeyDown', 1)
+                else
+                    C_CVar.SetCVar('ActionButtonUseKeyDown', 0)
+                end
+            else
+                setOption(info, value)
+            end
+        end
+
+        -- GetCVarBool('ActionButtonUseKeyDown')
+
         -- elseif n <= 5 then
         --     local moreOptions = {
         --         activate = {
