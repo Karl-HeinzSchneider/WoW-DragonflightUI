@@ -1863,47 +1863,50 @@ function Module:SetupActionbarFrames()
         bar:HookQuickbindMode()
     end
 
-    -- bar 6
-    local cvarFrame = CreateFrame('FRAME');
-    -- VARIABLES_LOADED
-    cvarFrame:SetScript('OnEvent', function(_, event, arg1, arg2, arg3)
-        --
-        -- print('~OnEvent', event, arg1, arg2)
-        if arg1 ~= 'ActionButtonUseKeyDown' then return end
-        -- print('~~ActionButtonUseKeyDown')
+    -- secure handler
+    local handler = CreateFrame('Frame', 'DragonflightUIActionBarHandler', nil, 'SecureHandlerBaseTemplate');
+    handler:SetAttribute("ActionButtonUseKeyDown", GetCVarBool('ActionButtonUseKeyDown'));
 
-        if GetCVarBool("ActionButtonUseKeyDown") then
-            for n = 6, 8 do
-                local bar = Module['bar' .. n]
-                if bar then
-                    for k, v in ipairs(bar.buttonTable) do
-                        --
-                        v:RegisterForClicks("AnyDown")
-                    end
-                end
-            end
-        else
-            for n = 6, 8 do
-                local bar = Module['bar' .. n]
-                if bar then
-                    for k, v in ipairs(bar.buttonTable) do
-                        --
-                        v:RegisterForClicks("AnyUp")
-                    end
-                end
-            end
-        end
+    handler:SetScript("OnEvent", function(f, event, ...)
+        f[event](f, ...)
     end)
-    cvarFrame:RegisterEvent('VARIABLES_LOADED')
-    cvarFrame:RegisterEvent('CVAR_UPDATE')
+    handler:RegisterEvent('VARIABLES_LOADED');
+    handler:RegisterEvent('CVAR_UPDATE');
+    handler:RegisterEvent('PLAYER_REGEN_ENABLED');
+
+    handler.dirtyTable = {};
+    function handler:TrySetAttribute(key, value)
+        if InCombatLockdown() then
+            self.dirtyTable[key] = value;
+            return;
+        end
+
+        self:SetAttribute(key, value);
+    end
+
+    function handler:PLAYER_REGEN_ENABLED()
+        for k, v in pairs(self.dirtyTable) do
+            self:SetAttribute(k, v);
+            self.dirtyTable[k] = nil;
+        end
+    end
+
+    function handler:VARIABLES_LOADED()
+        self:TrySetAttribute('ActionButtonUseKeyDown', GetCVarBool('ActionButtonUseKeyDown'))
+    end
+
+    function handler:CVAR_UPDATE(cvar)
+        if cvar == 'ActionButtonUseKeyDown' then
+            --
+            self:TrySetAttribute(cvar, GetCVarBool(cvar))
+        end
+    end
 
     local createExtra = function(n)
         local btns = {}
 
         local extraParent = CreateFrame('FRAME', 'DragonflightUIMultiactionBar' .. n .. 'VisParent', UIParent)
         extraParent:SetFrameLevel(0)
-
-        local useKeydown = GetCVarBool("ActionButtonUseKeyDown");
 
         for i = 1, 12 do
             --
@@ -1915,27 +1918,56 @@ function Module:SetupActionbarFrames()
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
             btn:SetFrameLevel(3)
 
-            btn:SetAttribute("shift-type*", "drag")
-            btn:SetAttribute("alt-type*", "drag")
-            btn:SetAttribute("ctrl-type*", "drag")
+            btn:EnableMouseWheel()
+            btn:RegisterForClicks('AnyDown', 'AnyUp')
 
-            -- global binding
-            -- _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"] =
-            --     "Action Bar " .. n .. ' Button ' .. i;
+            handler:WrapScript(btn, "OnClick", [[
+                -- print('OnClick',self:GetName(),button)
+                if self:GetAttribute("type") == "action" then
+                    local type, action = GetActionInfo(self:GetAttribute("action"))
 
-            btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":LeftButton"
+                    local flyoutHandler = owner:GetFrameRef("flyoutHandler")
+                    if flyoutHandler then
+                        flyoutHandler:Hide()
+                    end
+
+                    if IsModifiedClick("PICKUPACTION") then
+                        -- print('PICKUPACTION')
+                        return false;
+                    end                    
+
+                    if button == 'Keybind' then    
+                        local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")                         
+
+                        if down == useKeyDown then
+                            return "LeftButton"
+                        end
+                        return false
+                    end
+
+                  
+                    if down then 
+                        return false
+                    else
+                        return "LeftButton"    
+                    end                                     
+                end
+
+                local flyoutHandler = owner:GetFrameRef("flyoutHandler")
+                if flyoutHandler and (not down or self:GetParent() ~= flyoutHandler) then
+                    flyoutHandler:Hide()
+                end
+
+                return "LeftButton"               
+            ]])
+
+            btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":Keybind"
             btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
+
+            btn:SetAttributeNoHandler("commandName", btn.command)
 
             btns[i] = btn
             btn:Hide()
-
-            if useKeydown then
-                btn:RegisterForClicks("AnyDown")
-            else
-                btn:RegisterForClicks("AnyUp")
-            end
-
-            -- btn:UpdateAction()          
         end
 
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,

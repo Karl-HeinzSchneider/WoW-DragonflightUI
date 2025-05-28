@@ -803,13 +803,15 @@ function DragonflightUIActionbarMixin:StyleButtons()
                 end
 
                 local hotkey = self.HotKey
+                hotkey:Show()
 
-                local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":LeftButton");
+                local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":Keybind");
 
                 if not key then
                     hotkey:SetText('');
                     return
                 end
+                -- print(name, key)
 
                 local text = GetBindingText(key, 1);
 
