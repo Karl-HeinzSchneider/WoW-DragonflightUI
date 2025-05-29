@@ -859,7 +859,7 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
 end
 
 function DragonflightUIActionbarMixin:MigrateOldKeybinds()
-    DF:Debug('~~MigrateOldKeybinds()~~')
+    DF:Debug(DF, '~~MigrateOldKeybinds()~~')
     local which = GetCurrentBindingSet()
     local changed = false;
     for i = 6, 8 do
@@ -883,7 +883,7 @@ function DragonflightUIActionbarMixin:MigrateOldKeybinds()
             end
         end
     end
-    DF:Debug('~~~> changes?', changed);
+    DF:Debug(DF, '~~~> changes?', changed);
     if changed then SaveBindings(which) end
 end
 
