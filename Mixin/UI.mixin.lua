@@ -1934,7 +1934,13 @@ function DragonflightUIMixin:ChangeQuestFrame()
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
-    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    if DF.API.Version.IsMoP then
+        --
+        DragonflightUIMixin:FrameBackgroundSolidMoP(frame, true)
+    else
+        DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+    end
 
     local header = QuestNpcNameFrame
     header:ClearAllPoints()
@@ -2210,6 +2216,29 @@ function DragonflightUIMixin:ChangeGossipFrame()
     frame:SetSize(338, 496)
     greeting:SetSize(338, 496)
 
+    if DF.API.Version.IsMoP then
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+
+        _G['GossipFramePortraitFrame']:Hide()
+    end
+
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
     DragonflightUIMixin:FrameBackgroundSolid(frame, true)
@@ -2230,7 +2259,11 @@ function DragonflightUIMixin:ChangeGossipFrame()
     do
         local scroll = greeting.ScrollBox
         scroll:SetSize(300, 403)
-        scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
+        if DF.API.Version.IsMoP then
+            scroll:SetHeight(320) -- TODO
+        else
+            scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
+        end
 
         local bar = greeting.ScrollBar
         bar:SetPoint('TOPLEFT', scroll, 'TOPRIGHT', 6 - 5, -3)
@@ -2654,6 +2687,27 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         end
     end
 
+    -- DevTools_Dump(frame.NineSlice)
+    if DF.API.Version.IsMoP then
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        -- slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+    end
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
 
@@ -2679,7 +2733,12 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
         pp:SetDrawLayer('OVERLAY', 7)
     end
 
-    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+    if DF.API.Version.IsMoP then
+        --
+        DragonflightUIMixin:FrameBackgroundSolidMoP(frame, true)
+    else
+        DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+    end
 
     do
         -- quest xp
@@ -3492,6 +3551,8 @@ end
 
 function DragonflightUIMixin:FrameBackgroundSolid(frame, streak)
     local top = frame.Bg.TopSection
+    if not top then return end
+
     top:SetTexture(base .. 'ui-background-rock')
     top:ClearAllPoints()
     top:SetPoint('TOPLEFT', frame.Bg, 'TOPLEFT', 0, 0)
@@ -3507,7 +3568,27 @@ function DragonflightUIMixin:FrameBackgroundSolid(frame, streak)
         </Anchors>
         <TexCoords left="0" right="1" top="0.0078125" bottom="0.34375" />
     </Texture> ]]
-        local TopTileStreak = frame:CreateTexture()
+        local TopTileStreak = _G[frame:GetName() .. 'TopTileStreaks'] or frame:CreateTexture()
+        TopTileStreak:ClearAllPoints()
+        TopTileStreak:SetSize(256, 43)
+        TopTileStreak:SetTexture(base .. 'uiframehorizontal')
+        TopTileStreak:SetTexCoord(0, 1, 0.0078125, 0.34375)
+        TopTileStreak:SetPoint('TOPLEFT', 6, -21)
+        TopTileStreak:SetPoint('TOPRIGHT', -2, -21)
+    end
+end
+
+-- MoP, e.g. QuestLogFrame or TaxiFrame
+function DragonflightUIMixin:FrameBackgroundSolidMoP(frame, streak)
+    -- print('~FrameBackgroundSolidMoP~', frame:GetName(), streak, top)
+    local bg = _G[frame:GetName() .. 'Bg']
+    if not bg then return end
+
+    bg:SetTexture(base .. 'ui-background-rock')
+    bg:SetDrawLayer('BACKGROUND', -2)
+
+    if streak then
+        local TopTileStreak = _G[frame:GetName() .. 'TopTileStreaks'] or frame:CreateTexture()
         TopTileStreak:SetSize(256, 43)
         TopTileStreak:SetTexture(base .. 'uiframehorizontal')
         TopTileStreak:SetTexCoord(0, 1, 0.0078125, 0.34375)
@@ -3526,24 +3607,28 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
         local tex = base .. 'uiframemetal2x'
 
         local tlc = slice.TopLeftCorner
+        tlc:ClearAllPoints()
         tlc:SetTexture(tex)
         tlc:SetTexCoord(0.00195312, 0.294922, 0.00195312, 0.294922)
         tlc:SetSize(75, 74)
         tlc:SetPoint('TOPLEFT', -12, 16)
 
         local trc = slice.TopRightCorner
+        trc:ClearAllPoints()
         trc:SetTexture(tex)
         trc:SetTexCoord(0.298828, 0.591797, 0.00195312, 0.294922)
         trc:SetSize(75, 74)
         trc:SetPoint('TOPRIGHT', 4, 16)
 
         local blc = slice.BottomLeftCorner
+        blc:ClearAllPoints()
         blc:SetTexture(tex)
         blc:SetTexCoord(0.298828, 0.423828, 0.298828, 0.423828)
         blc:SetSize(32, 32)
         blc:SetPoint('BOTTOMLEFT', -12, -3)
 
         local brc = slice.BottomRightCorner
+        brc:ClearAllPoints()
         brc:SetTexture(tex)
         brc:SetTexCoord(0.427734, 0.552734, 0.298828, 0.423828)
         brc:SetSize(32, 32)
@@ -3555,6 +3640,7 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
         local tex = base .. 'UIFrameMetalHorizontal2x'
 
         local te = slice.TopEdge
+        te:ClearAllPoints()
         te:SetTexture(tex)
         te:SetTexCoord(0, 1, 0.00390625, 0.589844)
         te:SetSize(32, 74)
@@ -3562,6 +3648,7 @@ function DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
         te:SetPoint('TOPRIGHT', slice.TopRightCorner, 'TOPLEFT', 0, 0)
 
         local be = slice.BottomEdge
+        be:ClearAllPoints()
         be:SetTexture(tex)
         be:SetTexCoord(0, 0.5, 0.597656, 0.847656)
         be:SetSize(16, 32)

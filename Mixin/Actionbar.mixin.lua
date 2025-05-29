@@ -810,8 +810,8 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
             end
 
             local hotkey = self.HotKey
-
-            local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":LeftButton");
+            hotkey:Show()
+            local key = GetBindingKey(actionButtonType .. id) or GetBindingKey("CLICK " .. name .. ":Keybind");
 
             if not key then
                 hotkey:SetText('');
@@ -856,6 +856,35 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
         local fontFile, fontHeight, flags = count:GetFont()
         count:SetFont(fontFile, 14 + 2, flags)
     end
+end
+
+function DragonflightUIActionbarMixin:MigrateOldKeybinds()
+    DF:Debug('~~MigrateOldKeybinds()~~')
+    local which = GetCurrentBindingSet()
+    local changed = false;
+    for i = 6, 8 do
+        for j = 1, 12 do
+            local n = "CLICK DragonflightUIMultiactionBar" .. i .. "Button" .. j .. ":LeftButton"
+            local updated = "CLICK DragonflightUIMultiactionBar" .. i .. "Button" .. j .. ":Keybind"
+
+            local key1, key2 = GetBindingKey(n)
+
+            if key1 and key2 then
+                -- print('~OLD:', n, key1 or "", ' | ', key2 or "")
+                local ok1 = SetBinding(key1, updated, which)
+                local ok2 = SetBinding(key2, updated, which)
+                -- print('~CHANGED?', ok1, ok2)
+                changed = true;
+            elseif key1 then
+                -- print('~OLD:', n, key1 or "")
+                local ok1 = SetBinding(key1, updated, which)
+                -- print('~CHANGED?', ok1)
+                changed = true;
+            end
+        end
+    end
+    DF:Debug('~~~> changes?', changed);
+    if changed then SaveBindings(which) end
 end
 
 function DragonflightUIActionbarMixin:ReplaceNormalTexture2()

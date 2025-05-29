@@ -108,7 +108,7 @@ L['CompatBaganator'] = "Baganator"
 L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
 L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
 L['CompatCharacterStatsClassicDesc'] =
-    "Adds compatibility for Auctionator when using the UI Module with 'Change CharacterFrame' enabled."
+    "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
 L['CompatClassicCalendar'] = "Classic Calendar"
 L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
 L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
@@ -227,6 +227,9 @@ L["MoreOptionsHideBarScrollingDesc"] = ""
 
 L["MoreOptionsGryphons"] = "Gryphons"
 L["MoreOptionsGryphonsDesc"] = "Gryphons"
+
+L["MoreOptionsUseKeyDown"] = "Use Key Down"
+L["MoreOptionsUseKeyDownDesc"] = "Activates abilities on key down."
 
 L["MoreOptionsIconRangeColor"] = "Icon Range Color"
 L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange"

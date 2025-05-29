@@ -398,6 +398,7 @@ function Module:ChangeFrames()
     elseif Version.IsWotlk then
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:EnhanceDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
         DragonflightUIMixin:ChangeGossipFrame()
         DragonflightUIMixin:ChangeQuestFrame()
@@ -482,9 +483,9 @@ function Module:ChangeFrames()
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
         DragonflightUIMixin:ChangeCharacterFrameCata()
         DragonflightUIMixin:ChangeQuestLogFrameCata()
-        -- DragonflightUIMixin:ChangeDressupFrame() TODO
+        -- DragonflightUIMixin:ChangeDressupFrame() -- TODO
         DragonflightUIMixin:ChangeTradeFrame()
-        -- DragonflightUIMixin:ChangeGossipFrame() TODO
+        DragonflightUIMixin:ChangeGossipFrame()
         DragonflightUIMixin:ChangeQuestFrame()
         DragonflightUIMixin:ChangeTaxiFrame()
         DragonflightUIMixin:ImproveTaxiFrame()

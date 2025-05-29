@@ -849,7 +849,13 @@ end
 function DragonFlightUICastbarMixin:AdjustPosition()
     local state = self.state
 
-    local parent = _G[state.anchorFrame]
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
     self:ClearAllPoints()
 
     if state.autoAdjust then
