@@ -603,13 +603,13 @@ end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateEquipmentset()
     local equipName = self:GetAttribute('equipmentsetName');
+    local id = C_EquipmentSet.GetEquipmentSetID(equipName)
 
     self.PickupFunc = function()
-        -- PickupMacro(macroName)
-        return false;
+        C_EquipmentSet.PickupEquipmentSet(id)
+        return true;
     end;
 
-    local id = C_EquipmentSet.GetEquipmentSetID(equipName)
     local name, texture, setID, isEquipped, numItems, equippedItems, availableItems, missingItems, ignoredSlots =
         C_EquipmentSet.GetEquipmentSetInfo(id)
 
@@ -822,6 +822,6 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
         self:UpdateAction()
 
         ClearCursor()
-        -- pickupCurrent()
+        pickupCurrent()
     end
 end
