@@ -867,5 +867,9 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
 
         ClearCursor()
         pickupCurrent()
+    elseif infoType == 'companion' then
+        local _, s, f, m = GetCursorInfo()
+        -- print(infoType, s, f, m)
+
     end
 end
