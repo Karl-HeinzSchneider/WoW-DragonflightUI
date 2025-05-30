@@ -1514,6 +1514,7 @@ function Module:GetAction(index)
 end
 
 function Module:SetAction(index, type, value)
+    -- print('SetAction', index, type, value)
     local t = self:GetActionTable()
     if type and value then
         t[index] = {type = type, value = value};

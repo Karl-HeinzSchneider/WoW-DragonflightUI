@@ -122,6 +122,9 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     handler:SetFrameRef('flyout', f)
     self.Handler = handler;
 
+    RegisterStateDriver(handler, "cursor", "[cursor] true; false")
+    RegisterStateDriver(handler, "combat", "[combat] true; false")
+
     local t = {}
     for i = 1, self.MaxButtons do
         --    
@@ -143,14 +146,27 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         btn.Count = _G[btn:GetName() .. 'Count']
         btn.Count:SetText('69')
 
+        btn.Name = _G[btn:GetName() .. 'Name']
+
         handler:WrapScript(btn, 'OnClick', [[
             -- print('wraped OnClick')
+
+            local inCombatState = control:GetAttribute('state-combat')
+            local inCombat = inCombat == 'true'
+
+            local cursorState = control:GetAttribute('state-cursor')
+            local hasCursor = cursorState == 'true'
+
+            if hasCursor and not inCombat then             
+                self:CallMethod('OnReceiveDrag')
+                return false;    
+            end         
 
             local flyout = control:GetFrameRef("flyout")
             local closeAfterClick = control:GetAttribute('closeAfterClick')
             if flyout and flyout:IsShown() and closeAfterClick then
                 flyout:Hide()
-            end
+            end  
         ]])
     end
 
@@ -428,7 +444,7 @@ function DragonflightUISpellSubButtonMixin:UpdateAction()
     if actionTable then
         local type = actionTable.type;
         local value = actionTable.value;
-        print(DFAction, type, value)
+        print('~UpdateAction()', DFAction, type, value)
 
         if type == 'spell' then
             self:SetAttribute("type", "spell");
@@ -439,6 +455,9 @@ function DragonflightUISpellSubButtonMixin:UpdateAction()
             self:SetAttribute("itemID", value); -- custom
 
             -- self:SetAttribute("unit", "player");
+        elseif type == 'macro' then
+            self:SetAttribute("type", "macro");
+            self:SetAttribute("macro", value);
         else
             self:SetAttribute("type", nil);
         end
@@ -458,6 +477,8 @@ function DragonflightUISpellSubButtonMixin:UpdateState()
         self:UpdateStateSpell()
     elseif type == 'item' then
         self:UpdateStateItem()
+    elseif type == 'macro' then
+        self:UpdateStateMacro()
     else
         self:UpdateStateEmpty()
     end
@@ -515,6 +536,8 @@ function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
         self.Icon:SetVertexColor(1.0, 1.0, 1.0)
     end
 
+    self.Name:SetText('')
+
     self:UpdateCooldown()
 end
 
@@ -543,13 +566,33 @@ function DragonflightUISpellSubButtonMixin:UpdateStateItem()
         self.Icon:SetVertexColor(0.4, 0.4, 0.4)
     end
 
+    self.Name:SetText('')
+
     self:UpdateCooldown()
+end
+
+function DragonflightUISpellSubButtonMixin:UpdateStateMacro()
+    local macroName = self:GetAttribute('macro');
+
+    self.PickupFunc = function()
+        PickupMacro(macroName)
+        return true;
+    end;
+
+    local name, icon, body = GetMacroInfo(macroName)
+
+    self.Count:SetText('')
+    self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    self.Icon:SetTexture(icon)
+
+    self.Name:SetText(macroName)
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateEmpty()
     self.Count:SetText("");
     self.Icon:SetVertexColor(1.0, 1.0, 1.0)
     self.Icon:SetTexture()
+    self.Name:SetText('')
 
     self.PickupFunc = noop;
 end
@@ -658,6 +701,13 @@ function DragonflightUISpellSubButtonMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         GameTooltip:SetHyperlink(itemLink)
         GameTooltip:Show()
+    elseif type == 'macro' then
+        local macroName = self:GetAttribute('macro');
+        local tt = DF:GetModule('Tooltip')
+
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        tt:SetMacroTooltip(GameTooltip, macroName)
+        GameTooltip:Show()
     end
 end
 
@@ -709,6 +759,15 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
         local _, itemID, itemLink = GetCursorInfo()
         -- print(itemID, itemLink)
         self.ModuleRef:SetAction(DFAction, 'item', itemID)
+        self:UpdateAction()
+
+        ClearCursor()
+        pickupCurrent()
+    elseif infoType == 'macro' then
+        local _, index = GetCursorInfo()
+        -- print(infoType, index)
+        local name, icon, body = GetMacroInfo(index)
+        self.ModuleRef:SetAction(DFAction, 'macro', name)
         self:UpdateAction()
 
         ClearCursor()
