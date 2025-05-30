@@ -1,6 +1,10 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
+local noop = function()
+    return false;
+end
+
 local GetItemCooldown = GetItemCooldown or C_Container.GetItemCooldown;
 
 local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
@@ -14,11 +18,15 @@ function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
 
+    local flyoutModule = DF:GetModule('Flyout')
+    self.ModuleRef = flyoutModule;
+
     self.MaxButtons = 12;
     self:InitButtons()
 
     self:AddArrow()
     self:UpdateArrow()
+
 end
 
 function DragonflightUISpellFlyoutButtonMixin:AddArrow()
@@ -67,7 +75,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     local n = self:GetName()
 
     local f = CreateFrame('Frame', n .. 'BG', self, 'DFSpellFlyoutBGTemplate')
-    f:Hide()
+    -- f:Hide()
     self.BG = f;
 
     self:SetAttribute("type", "macro");
@@ -107,12 +115,19 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     -- frame:SetSize(69, 69)
     frame:SetPoint('TOP', UIParent, 'BOTTOM', -666, -666)
 
+    local handler = CreateFrame('Frame', 'DragonflightUISpellFlyoutHandler', nil, 'SecureHandlerBaseTemplate');
+    local id = self:GetID() - 1000;
+    print(n, id, '=', (id - 1) * 12 + 1, '-', (id - 1) * 12 + 12)
+
+    handler:SetFrameRef('flyout', f)
+    self.Handler = handler;
+
     local t = {}
     for i = 1, self.MaxButtons do
-        --
-        -- print(i, n)
-        local btn = CreateFrame("Button", n .. 'Spell' .. i, self.BG, "DFSpellFlyoutSubButtonTemplate");
-        -- print(i, n, btn:GetName())
+        --    
+        local btn = CreateFrame("Button", n .. 'Sub' .. i, self.BG, "DFSpellFlyoutSubButtonTemplate");
+        btn:SetAttribute('DFAction', (id - 1) * 12 + i)
+        -- print(i, n, btn:GetName(), btn:GetAttribute('DFAction'))
 
         DragonflightUIActionbarMixin:StyleButton(btn);
         btn:SetScale(0.8);
@@ -122,18 +137,21 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         t[i] = btn;
         self:SetHideFrame(btn, i + 1)
 
-        -- btn:SetAttribute("type", "spell");
-        -- btn:SetAttribute("spell", "Summon Imp");
         btn:SetFrameLevel(3)
         btn.Icon:SetTexture(136082)
 
         btn.Count = _G[btn:GetName() .. 'Count']
         btn.Count:SetText('69')
-        -- if i == 1 then
-        --     btn:SetPoint("BOTTOM", self, "TOP", 0, 4)
-        -- else
-        --     btn:SetPoint("BOTTOM", t[i - 1], "TOP", 0, 4)
-        -- end
+
+        handler:WrapScript(btn, 'OnClick', [[
+            -- print('wraped OnClick')
+
+            local flyout = control:GetFrameRef("flyout")
+            local closeAfterClick = control:GetAttribute('closeAfterClick')
+            if flyout and flyout:IsShown() and closeAfterClick then
+                flyout:Hide()
+            end
+        ]])
     end
 
     self.buttonTable = t;
@@ -178,106 +196,16 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         -- print('hide', i)
     end
 
-    local macroTable = {}
+    self.BG:SetState(state, buttons)
 
-    -- all spells
-    if state.spells ~= '' then
-        local spellTable = self:SplitString(state.spells)
+    self.Handler:SetAttribute('closeAfterClick', state.closeAfterClick)
 
-        for k, spell in ipairs(spellTable) do
-            --        
-            local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spell)
-            if name then table.insert(macroTable, spell) end
-        end
-    end
-
-    local englishFaction, localizedFaction = UnitFactionGroup('player')
-
-    if state.spellsAlliance ~= '' and englishFaction == 'Alliance' then
-        local spellTable = self:SplitString(state.spellsAlliance)
-
-        for k, spell in ipairs(spellTable) do
-            --        
-            local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spell)
-            if name then table.insert(macroTable, spell) end
-        end
-    end
-
-    if state.spellsHorde ~= '' and englishFaction == 'Horde' then
-        local spellTable = self:SplitString(state.spellsHorde)
-
-        for k, spell in ipairs(spellTable) do
-            --        
-            local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spell)
-            if name then table.insert(macroTable, spell) end
-        end
-    end
-
-    local numSpells = #macroTable;
-
-    if state.items ~= '' then
-        local spellTable = self:SplitString(state.items)
-
-        for k, spell in ipairs(spellTable) do
-            --        
-            local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-                  itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(spell)
-            if itemName then table.insert(macroTable, spell) end
-        end
-    end
-
-    -- DevTools_Dump(macroTable)
-    -- print('numspells', numSpells)
-    -- print('all', #macroTable)
-
-    local closeStr = ''
-    if state.closeAfterClick then closeStr = "\n/click " .. self:GetName() .. "ClickButton"; end
-
-    local numUsed = math.min(state.buttons, #macroTable);
-    self.BG:SetState(state, numUsed)
-
-    for i = 1, numUsed do
-        --
+    for i = 1, buttons do
         local btn = buttonTable[i]
         self.BG:SetButton(btn, i, buttonTable)
 
-        if i <= numSpells then
-            local spell = macroTable[i];
-            local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spell)
-            -- local learned = IsPlayerSpell(spell)
-
-            btn:SetAttribute("type", "macro");
-            btn:SetAttribute("macrotext", "/cast " .. name .. closeStr);
-
-            btn:SetSpell(spell)
-        else
-            local item = macroTable[i]
-            local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-                  itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(item)
-
-            btn:SetAttribute("type", "macro");
-            btn:SetAttribute("macrotext", "/use " .. itemName .. closeStr);
-
-            btn:SetItem(item)
-        end
-    end
-
-    for i = numUsed + 1, buttons do
-        --
-        local btn = buttonTable[i]
-
-        if state.alwaysShow then
-            self.BG:SetButton(btn, i, buttonTable)
-
-            btn:SetAttribute("type", "macro");
-            btn:SetAttribute("macrotext", closeStr);
-
-            btn:SetEmpty()
-        else
-            btn:ClearAllPoints()
-            btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
-            btn:Hide()
-        end
+        btn.ModuleRef = self.ModuleRef;
+        btn:UpdateAction()
     end
 
     for i = buttons + 1, btnCount do
@@ -494,46 +422,41 @@ function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)
     self:UpdateState()
 end
 
-function DragonflightUISpellSubButtonMixin:SetEmpty()
-    self.Spell = nil;
-    self.Item = nil;
-    self.ItemLink = nil;
+function DragonflightUISpellSubButtonMixin:UpdateAction()
+    local DFAction = self:GetAttribute('DFAction');
+    local actionTable = self.ModuleRef:GetAction(DFAction)
+    if actionTable then
+        local type = actionTable.type;
+        local value = actionTable.value;
+        print(DFAction, type, value)
 
-    self.Icon:SetTexture()
+        if type == 'spell' then
+            self:SetAttribute("type", "spell");
+            self:SetAttribute("spell", value);
+        elseif type == 'item' then
+            self:SetAttribute("type", "item");
+            self:SetAttribute("item", "item:" .. value);
+            self:SetAttribute("itemID", value); -- custom
 
-    self:UpdateState()
-end
-
-function DragonflightUISpellSubButtonMixin:SetSpell(spell)
-    self.Spell = spell;
-    self.Item = nil;
-    self.ItemLink = nil;
-
-    local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spell)
-    local learned = IsPlayerSpell(spell)
-
-    self.Icon:SetTexture(icon)
-
-    self:UpdateState()
-end
-
-function DragonflightUISpellSubButtonMixin:SetItem(item)
-    self.Spell = nil;
-    self.Item = item;
-
-    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
-          itemTexture, itemSellPrice = GetItemInfo(item)
-    self.ItemLink = itemLink;
-
-    self.Icon:SetTexture(itemTexture)
+            -- self:SetAttribute("unit", "player");
+        else
+            self:SetAttribute("type", nil);
+        end
+    else
+        -- print(DFAction, 'NIL', 'NIL')
+        self:SetAttribute("type", nil);
+    end
 
     self:UpdateState()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateState()
-    if self.Spell then
+    local type = self:GetAttribute('type');
+    -- print('UpdateState', type)
+
+    if type == 'spell' then
         self:UpdateStateSpell()
-    elseif self.Item then
+    elseif type == 'item' then
         self:UpdateStateItem()
     else
         self:UpdateStateEmpty()
@@ -543,23 +466,36 @@ end
 function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
     self.Count:SetText("");
 
+    local Spell = self:GetAttribute('spell');
+
+    self.PickupFunc = function()
+        C_Spell.PickupSpell(Spell);
+        return true;
+    end
+
+    local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(Spell)
+    self.Icon:SetTexture(icon)
+
     -- local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spell)
-    local learned = IsPlayerSpell(self.Spell)
+    local learned = IsPlayerSpell(Spell)
 
     if learned then
         self.Icon:SetDesaturated(false);
-        local powerCosts = C_Spell.GetSpellPowerCost(self.Spell)
-        powerCosts = powerCosts[1]
+        local powerCosts = C_Spell.GetSpellPowerCost(Spell)
+        local hasRequiredAura = true;
+        local hasCost = true;
+        if powerCosts then
+            powerCosts = powerCosts[1]
+            if powerCosts.requiredAuraID and powerCosts.requiredAuraID ~= 0 then
+                hasRequiredAura = powerCosts.hasRequiredAura;
+            end
+
+            local power = UnitPower("player", Enum.PowerType[powerCosts.type]);
+            hasCost = power >= powerCosts.minCost;
+        else
+        end
         self.Icon:SetVertexColor(0.4, 0.4, 0.4)
         self.Icon:SetVertexColor(0.5, 0.5, 1.0)
-
-        local hasRequiredAura = true;
-        if powerCosts.requiredAuraID and powerCosts.requiredAuraID ~= 0 then
-            hasRequiredAura = powerCosts.hasRequiredAura;
-        end
-
-        local power = UnitPower("player", Enum.PowerType[powerCosts.type]);
-        local hasCost = power >= powerCosts.minCost;
 
         -- print(self.Spell, hasRequiredAura, hasCost)
 
@@ -583,7 +519,18 @@ function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateItem()
-    local count = GetItemCount(self.Item, false, true)
+    local Item = self:GetAttribute('itemID');
+
+    self.PickupFunc = function()
+        C_Item.PickupItem(Item)
+        return true;
+    end
+
+    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
+          itemTexture, itemSellPrice = GetItemInfo(Item)
+    self.Icon:SetTexture(itemTexture)
+
+    local count = GetItemCount(Item, false, true)
     if (count > (self.maxDisplayCount or 9999)) then
         self.Count:SetText("*");
     else
@@ -602,6 +549,9 @@ end
 function DragonflightUISpellSubButtonMixin:UpdateStateEmpty()
     self.Count:SetText("");
     self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    self.Icon:SetTexture()
+
+    self.PickupFunc = noop;
 end
 
 local bandageIDs = {
@@ -619,13 +569,16 @@ function DragonflightUISpellSubButtonMixin:UpdateCooldown()
     local start, duration, enable -- , charges, maxCharges, chargeStart, chargeDuration;
     local modRate = 1.0;
     -- local chargeModRate = 1.0;
+    local type = self:GetAttribute('type');
 
-    if self.Spell then
-        start, duration, enable, modRate = GetSpellCooldown(self.Spell);
-    elseif self.Item then
+    if type == 'spell' then
+        local Spell = self:GetAttribute('spell');
+        start, duration, enable, modRate = GetSpellCooldown(Spell);
+    elseif type == 'item' then
+        local Item = self:GetAttribute('itemID');
         -- start, duration, enable, modRate = GetActionCooldown(self.action);
         -- charges, maxCharges, chargeStart, chargeDuration, chargeModRate = GetActionCharges(self.action);
-        if isBandageID[self.Item] then
+        if isBandageID[Item] then
             -- print('bandage')
             local auraData = self:GetBandage()
 
@@ -635,7 +588,7 @@ function DragonflightUISpellSubButtonMixin:UpdateCooldown()
                 enable = true;
             end
         else
-            start, duration, enable = GetItemCooldown(self.Item)
+            start, duration, enable = GetItemCooldown(Item)
         end
     end
 
@@ -691,13 +644,19 @@ function DragonflightUISpellSubButtonMixin:GetBandage()
 end
 
 function DragonflightUISpellSubButtonMixin:OnEnter()
-    if self.Spell then
+    local type = self:GetAttribute('type');
+
+    if type == 'spell' then
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-        GameTooltip:SetSpellByID(self.Spell)
+        GameTooltip:SetSpellByID(self:GetAttribute('spell'))
         GameTooltip:Show()
-    elseif self.Item and self.ItemLink then
+    elseif type == 'item' then
+        local Item = self:GetAttribute('itemID');
+        local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+              itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(Item)
+        if not itemName or not itemLink then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-        GameTooltip:SetHyperlink(self.ItemLink)
+        GameTooltip:SetHyperlink(itemLink)
         GameTooltip:Show()
     end
 end
@@ -714,10 +673,19 @@ function DragonflightUISpellSubButtonMixin:OnDragStart()
 
     print('DragonflightUISpellSubButtonMixin:OnDragStart()', self.Spell, self.Item)
 
-    if self.Spell then
-        PickupSpell(self.Spell)
-    elseif self.Item then
-        PickupItem(self.Item)
+    -- if self.Spell then
+    --     PickupSpell(self.Spell)
+    -- elseif self.Item then
+    --     PickupItem(self.Item)
+    -- end
+
+    local pickupCurrent = self.PickupFunc
+    local didPickup = pickupCurrent()
+
+    if didPickup then
+        local DFAction = self:GetAttribute('DFAction');
+        self.ModuleRef:SetAction(DFAction, nil, nil)
+        self:UpdateAction()
     end
 end
 
@@ -725,11 +693,25 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
     if InCombatLockdown() then return end
     local infoType = GetCursorInfo()
     print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()', infoType)
+
+    local DFAction = self:GetAttribute('DFAction');
+    local pickupCurrent = self.PickupFunc
+
     if infoType == 'spell' then
         local _, spellIndex, bookType, spellID = GetCursorInfo()
-        print(spellIndex, bookType, spellID)
+        -- print(spellIndex, bookType, spellID)
+        self.ModuleRef:SetAction(DFAction, 'spell', spellID)
+        self:UpdateAction()
+
+        ClearCursor()
+        pickupCurrent()
     elseif infoType == 'item' then
         local _, itemID, itemLink = GetCursorInfo()
-        print(itemID, itemLink)
+        -- print(itemID, itemLink)
+        self.ModuleRef:SetAction(DFAction, 'item', itemID)
+        self:UpdateAction()
+
+        ClearCursor()
+        pickupCurrent()
     end
 end

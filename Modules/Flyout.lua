@@ -593,7 +593,8 @@ local defaults = {
             hideNoStealth = false,
             hideCustom = false,
             hideCustomCond = ''
-        }
+        },
+        actions = {actionTable = {}}
     }
 }
 Module:SetDefaults(defaults)
@@ -1502,28 +1503,47 @@ function Module:AddEditMode()
     end
 end
 
+function Module:GetActionTable()
+    return Module.db.profile.actions.actionTable;
+end
+
+function Module:GetAction(index)
+    local t = self:GetActionTable()
+
+    return t[index] or nil;
+end
+
+function Module:SetAction(index, type, value)
+    local t = self:GetActionTable()
+    if type and value then
+        t[index] = {type = type, value = value};
+    else
+        t[index] = nil;
+    end
+end
+
 function Module:AddWarlockButton()
     local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Warlock" .. "Button", UIParent,
-                            "DFSpellFlyoutButtonTemplate")
+                            "DFSpellFlyoutButtonTemplate", 1000 + 1)
     Module.WarlockButton = btn;
 end
 
 function Module:AddMageButtons()
     local port = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MagePort" .. "Button", UIParent,
-                             "DFSpellFlyoutButtonTemplate")
+                             "DFSpellFlyoutButtonTemplate", 1000 + 2)
     Module.MagePortButton = port;
 
     local portals = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MagePortals" .. "Button", UIParent,
-                                "DFSpellFlyoutButtonTemplate")
+                                "DFSpellFlyoutButtonTemplate", 1000 + 3)
     Module.MagePortalsButton = portals;
 
     if DF.API.Version.IsClassic then
         local food = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MageFood" .. "Button", UIParent,
-                                 "DFSpellFlyoutButtonTemplate")
+                                 "DFSpellFlyoutButtonTemplate", 1000 + 4)
         Module.MageFoodButton = food;
 
         local water = CreateFrame("Button", "DragonflightUISpellFlyout" .. "MageWater" .. "Button", UIParent,
-                                  "DFSpellFlyoutButtonTemplate")
+                                  "DFSpellFlyoutButtonTemplate", 1000 + 5)
         Module.MageWaterButton = water;
     end
 end
@@ -1532,7 +1552,7 @@ function Module:AddCustomButtons()
     for i = 1, numCustomButtons do
         --
         local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Custom" .. i .. "Button", UIParent,
-                                "DFSpellFlyoutButtonTemplate")
+                                "DFSpellFlyoutButtonTemplate", 1000 + 5 + i)
         Module['Custom' .. i .. 'Button'] = btn;
     end
 end
