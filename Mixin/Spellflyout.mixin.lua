@@ -441,10 +441,13 @@ end
 function DragonflightUISpellSubButtonMixin:UpdateAction()
     local DFAction = self:GetAttribute('DFAction');
     local actionTable = self.ModuleRef:GetAction(DFAction)
+
+    self:SetAttribute("IsEquipmentset", false);
+
     if actionTable then
         local type = actionTable.type;
         local value = actionTable.value;
-        print('~UpdateAction()', DFAction, type, value)
+        -- print('~UpdateAction()', DFAction, type, value)
 
         if type == 'spell' then
             self:SetAttribute("type", "spell");
@@ -458,6 +461,14 @@ function DragonflightUISpellSubButtonMixin:UpdateAction()
         elseif type == 'macro' then
             self:SetAttribute("type", "macro");
             self:SetAttribute("macro", value);
+        elseif type == 'equipmentset' then
+            -- print('~~equipmentSet')
+            local t = "/equipset " .. value
+            -- print(t)
+            self:SetAttribute("type", "macro");
+            self:SetAttribute("macrotext", t);
+            self:SetAttribute("IsEquipmentset", true); -- custom
+            self:SetAttribute('equipmentsetName', value); -- custom
         else
             self:SetAttribute("type", nil);
         end
@@ -471,12 +482,14 @@ end
 
 function DragonflightUISpellSubButtonMixin:UpdateState()
     local type = self:GetAttribute('type');
-    -- print('UpdateState', type)
+    -- print('UpdateState', type, self:GetAttribute('IsEquipmentset'))
 
     if type == 'spell' then
         self:UpdateStateSpell()
     elseif type == 'item' then
         self:UpdateStateItem()
+    elseif type == 'macro' and (self:GetAttribute('IsEquipmentset') == true) then
+        self:UpdateStateEquipmentset()
     elseif type == 'macro' then
         self:UpdateStateMacro()
     else
@@ -586,6 +599,25 @@ function DragonflightUISpellSubButtonMixin:UpdateStateMacro()
     self.Icon:SetTexture(icon)
 
     self.Name:SetText(macroName)
+end
+
+function DragonflightUISpellSubButtonMixin:UpdateStateEquipmentset()
+    local equipName = self:GetAttribute('equipmentsetName');
+
+    self.PickupFunc = function()
+        -- PickupMacro(macroName)
+        return false;
+    end;
+
+    local id = C_EquipmentSet.GetEquipmentSetID(equipName)
+    local name, texture, setID, isEquipped, numItems, equippedItems, availableItems, missingItems, ignoredSlots =
+        C_EquipmentSet.GetEquipmentSetInfo(id)
+
+    self.Count:SetText('')
+    self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    self.Icon:SetTexture(texture)
+
+    self.Name:SetText(name)
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateEmpty()
@@ -701,6 +733,13 @@ function DragonflightUISpellSubButtonMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         GameTooltip:SetHyperlink(itemLink)
         GameTooltip:Show()
+    elseif type == 'macro' and (self:GetAttribute('IsEquipmentset') == true) then
+        -- print('equip onenter')
+        local equipName = self:GetAttribute('equipmentsetName');
+
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetEquipmentSet(equipName)
+        GameTooltip:Show()
     elseif type == 'macro' then
         local macroName = self:GetAttribute('macro');
         local tt = DF:GetModule('Tooltip')
@@ -743,6 +782,7 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
     if InCombatLockdown() then return end
     local infoType = GetCursorInfo()
     print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()', infoType)
+    DevTools_Dump({GetCursorInfo()})
 
     local DFAction = self:GetAttribute('DFAction');
     local pickupCurrent = self.PickupFunc
@@ -772,5 +812,16 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
 
         ClearCursor()
         pickupCurrent()
+    elseif infoType == 'equipmentset' then
+        local _, name, itemLink = GetCursorInfo()
+        local id = C_EquipmentSet.GetEquipmentSetID(name)
+        print(infoType, name, id)
+
+        -- self.ModuleRef:SetAction(DFAction, 'equipmentset', id)
+        self.ModuleRef:SetAction(DFAction, 'equipmentset', name)
+        self:UpdateAction()
+
+        ClearCursor()
+        -- pickupCurrent()
     end
 end
