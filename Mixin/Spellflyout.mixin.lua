@@ -469,6 +469,9 @@ function DragonflightUISpellSubButtonMixin:UpdateAction()
             self:SetAttribute("macrotext", t);
             self:SetAttribute("IsEquipmentset", true); -- custom
             self:SetAttribute('equipmentsetName', value); -- custom
+        elseif type == 'toy' then
+            self:SetAttribute("type", "toy")
+            self:SetAttribute("toy", value)
         else
             self:SetAttribute("type", nil);
         end
@@ -492,6 +495,8 @@ function DragonflightUISpellSubButtonMixin:UpdateState()
         self:UpdateStateEquipmentset()
     elseif type == 'macro' then
         self:UpdateStateMacro()
+    elseif type == 'toy' then
+        self:UpdateStateToy()
     else
         self:UpdateStateEmpty()
     end
@@ -599,6 +604,27 @@ function DragonflightUISpellSubButtonMixin:UpdateStateMacro()
     self.Icon:SetTexture(icon)
 
     self.Name:SetText(macroName)
+
+    self:UpdateCooldown()
+end
+
+function DragonflightUISpellSubButtonMixin:UpdateStateToy()
+    local toyID = self:GetAttribute('toy');
+
+    self.PickupFunc = function()
+        C_ToyBox.PickupToyBoxItem(toyID);
+        return true;
+    end;
+
+    local itemID, toyName, icon, isFavorite, hasFanfare = C_ToyBox.GetToyInfo(toyID);
+
+    self.Count:SetText('')
+    self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    self.Icon:SetTexture(icon)
+
+    self.Name:SetText('')
+
+    self:UpdateCooldown()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateEquipmentset()
@@ -618,6 +644,8 @@ function DragonflightUISpellSubButtonMixin:UpdateStateEquipmentset()
     self.Icon:SetTexture(texture)
 
     self.Name:SetText(name)
+
+    self:UpdateCooldown()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateEmpty()
@@ -627,6 +655,7 @@ function DragonflightUISpellSubButtonMixin:UpdateStateEmpty()
     self.Name:SetText('')
 
     self.PickupFunc = noop;
+    self:UpdateCooldown()
 end
 
 local bandageIDs = {
@@ -663,8 +692,11 @@ function DragonflightUISpellSubButtonMixin:UpdateCooldown()
                 enable = true;
             end
         else
-            start, duration, enable = GetItemCooldown(Item)
+            start, duration, enable = C_Container.GetItemCooldown(Item)
         end
+    elseif type == 'toy' then
+        local toyID = self:GetAttribute('toy');
+        start, duration, enable = C_Container.GetItemCooldown(toyID)
     end
 
     if (self.cooldown.currentCooldownType ~= COOLDOWN_TYPE_NORMAL) then
@@ -747,6 +779,11 @@ function DragonflightUISpellSubButtonMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         tt:SetMacroTooltip(GameTooltip, macroName)
         GameTooltip:Show()
+    elseif type == 'toy' then
+        local toyID = self:GetAttribute('toy');
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetToyByItemID(toyID)
+        GameTooltip:Show()
     end
 end
 
@@ -797,9 +834,16 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
         pickupCurrent()
     elseif infoType == 'item' then
         local _, itemID, itemLink = GetCursorInfo()
-        -- print(itemID, itemLink)
-        self.ModuleRef:SetAction(DFAction, 'item', itemID)
-        self:UpdateAction()
+        -- print(itemID, itemLink)       
+
+        if PlayerHasToy and PlayerHasToy(itemID) then
+            -- print('TOY', itemID)
+            self.ModuleRef:SetAction(DFAction, 'toy', itemID)
+            self:UpdateAction()
+        else
+            self.ModuleRef:SetAction(DFAction, 'item', itemID)
+            self:UpdateAction()
+        end
 
         ClearCursor()
         pickupCurrent()
