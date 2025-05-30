@@ -5,6 +5,8 @@ local noop = function()
     return false;
 end
 
+local CompanionID = nil;
+
 local GetItemCooldown = GetItemCooldown or C_Container.GetItemCooldown;
 
 local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
@@ -784,6 +786,13 @@ function DragonflightUISpellSubButtonMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         GameTooltip:SetToyByItemID(toyID)
         GameTooltip:Show()
+    elseif type == 'companion' then
+        -- local petID = self:GetAttribute('petID');
+
+        -- GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        -- ---@diagnostic disable-next-line: redundant-parameter
+        -- GameTooltip:SetCompanionPet(petID);
+        -- GameTooltip:Show();
     end
 end
 
@@ -868,8 +877,51 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
         ClearCursor()
         pickupCurrent()
     elseif infoType == 'companion' then
-        local _, s, f, m = GetCursorInfo()
-        -- print(infoType, s, f, m)
-
+        -- if CompanionID then
+        --     local _, s, f, m = GetCursorInfo()
+        --     print('~', infoType, CompanionID)
+        -- end
     end
 end
+
+-- DF.API.Modules:HookInitModule('Flyout', function()
+--     DF.Compatibility:FuncOrWaitframe('Blizzard_Collections', function()
+--         -- print('Blizzard_Collectionssssss')
+--         -- hooksecurefunc('PetJournalDragButton_OnDragStart', function(self)
+--         --     --
+--         --     print('PetJournalDragButton_OnDragStart', self:GetParent().petID)
+--         -- end)
+
+--         hooksecurefunc(C_PetJournal, 'PickupPet', function(petID, ...)
+--             -- print('pickupPet', petID)
+--             CompanionID = petID;
+
+--             -- local usePetID = C_PetJournal.GetPetInfoByIndex(petID);
+--             -- DevTools_Dump(usePetID)
+--             DevTools_Dump({C_PetJournal.GetPetInfoByPetID(petID)})
+
+--             local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID,
+--                   sourceText, description, isWild, canBattle, tradable, unique, obtainable =
+--                 C_PetJournal.GetPetInfoByPetID(petID)
+
+--         end)
+--         -- hooksecurefunc(C_PetJournal.PickupPet, function()
+--         --     print('C_PetJournal.PickupPet')
+--         -- end)
+--     end)
+-- end)
+
+-- hooksecurefunc('PickupCompanion', function(target, detail)
+--     print('PickupCompanion', target, detail)
+-- end)
+
+-- hooksecurefunc('ClearCursor', function()
+--     print('ClearCursor')
+--     CompanionID = nil;
+-- end)
+
+-- hooksecurefunc('PlaceAction', function(id)
+--     print('PlaceAction', id)
+--     CompanionID = nil;
+-- end)
+
