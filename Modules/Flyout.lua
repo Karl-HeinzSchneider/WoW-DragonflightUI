@@ -1523,6 +1523,40 @@ function Module:SetAction(index, type, value)
     end
 end
 
+function Module:HookCollections()
+    hooksecurefunc(C_MountJournal, 'Pickup', function(index)
+        local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction,
+              shouldHideOnChar, isCollected, mountID, isSteadyFlight = C_MountJournal.GetDisplayedMountInfo(index)
+        DF:Debug(self, 'C_MountJournal Pickup():', name, spellID, mountID)
+        -- self:Print('C_MountJournal Pickup():', name, spellID, mountID)
+
+        Module.CursorMountID = mountID;
+        Module.CursorMountSpellID = spellID;
+    end)
+
+    hooksecurefunc(GameTooltip, 'SetAction', function(tt, slot)
+        -- print('SetAction', slot)
+        if not slot or slot < 1 or slot > 1000 then return end
+
+        local actionType, id, subType = GetActionInfo(slot)
+        if actionType == 'companion' and subType == 'MOUNT' then
+            Module.PreCursorMountID = C_MountJournal.GetMountFromSpell(id);
+            Module.PreCursorMountSpellID = id;
+        end
+    end)
+
+    hooksecurefunc(_G, 'PickupAction', function(slot)
+        DF:Debug(self, 'PickupAction(slot):', slot)
+        -- self:Print('PickupAction(slot):', slot)
+
+        --
+        Module.CursorMountID = Module.PreCursorMountID;
+        Module.CursorMountSpellID = Module.PreCursorMountSpellID;
+        DF:Debug(self, '~picked up:', Module.PreCursorMountID, Module.PreCursorMountSpellID)
+        -- self:Print('~picked up:', Module.PreCursorMountID, Module.PreCursorMountSpellID)
+    end)
+end
+
 function Module:AddWarlockButton()
     local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Warlock" .. "Button", UIParent,
                             "DFSpellFlyoutButtonTemplate", 1000 + 1)
@@ -1566,6 +1600,8 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:Era()
+    Module:HookCollections()
+
     Module:AddWarlockButton()
     Module:AddMageButtons()
     Module:AddCustomButtons()

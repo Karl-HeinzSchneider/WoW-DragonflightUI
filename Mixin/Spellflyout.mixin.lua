@@ -435,7 +435,7 @@ function DragonflightUISpellSubButtonMixin:OnLoad()
 end
 
 function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)
-    -- if self:GetID() == 1 then print(event, ...) end
+    if self:GetAttribute('DFAction') == 1 then print(event, ...) end
     -- print(event, ...)
     self:UpdateState()
 end
@@ -445,6 +445,7 @@ function DragonflightUISpellSubButtonMixin:UpdateAction()
     local actionTable = self.ModuleRef:GetAction(DFAction)
 
     self:SetAttribute("IsEquipmentset", false);
+    self:SetAttribute("IsMount", false);
 
     if actionTable then
         local type = actionTable.type;
@@ -474,6 +475,16 @@ function DragonflightUISpellSubButtonMixin:UpdateAction()
         elseif type == 'toy' then
             self:SetAttribute("type", "toy")
             self:SetAttribute("toy", value)
+        elseif type == 'mount' then
+            local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction,
+                  shouldHideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(value)
+            -- local t = "/cast " .. name .. ""
+            local t = "/run C_MountJournal.SummonByID(" .. value .. ')'
+            -- print(t)
+            self:SetAttribute("type", "macro");
+            self:SetAttribute("macrotext", t);
+            self:SetAttribute("IsMount", true); -- custom
+            self:SetAttribute('mountID', value); -- custom
         else
             self:SetAttribute("type", nil);
         end
@@ -495,6 +506,8 @@ function DragonflightUISpellSubButtonMixin:UpdateState()
         self:UpdateStateItem()
     elseif type == 'macro' and (self:GetAttribute('IsEquipmentset') == true) then
         self:UpdateStateEquipmentset()
+    elseif type == 'macro' and (self:GetAttribute('IsMount') == true) then
+        self:UpdateStateMount()
     elseif type == 'macro' then
         self:UpdateStateMacro()
     elseif type == 'toy' then
@@ -627,6 +640,36 @@ function DragonflightUISpellSubButtonMixin:UpdateStateToy()
     self.Name:SetText('')
 
     self:UpdateCooldown()
+end
+
+function DragonflightUISpellSubButtonMixin:UpdateStateMount()
+    local mountID = self:GetAttribute('mountID');
+    local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar,
+          isCollected, id = C_MountJournal.GetMountInfoByID(mountID)
+
+    -- print('UpdateStateMount', mountID, spellID)
+
+    self.PickupFunc = function()
+        -- C_MountJournal.Pickup(mountID)
+        C_Spell.PickupSpell(spellID);
+        self.ModuleRef.CursorMountID = mountID
+        self.ModuleRef.PreCursorMountSpellID = spellID
+        return true;
+    end;
+
+    -- 
+    self.Count:SetText('')
+    self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+
+    if isActive then
+        self.Icon:SetTexture(136116)
+    else
+        self.Icon:SetTexture(icon)
+    end
+
+    self.Name:SetText(name)
+
+    -- self:UpdateCooldown()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateEquipmentset()
@@ -774,6 +817,14 @@ function DragonflightUISpellSubButtonMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         GameTooltip:SetEquipmentSet(equipName)
         GameTooltip:Show()
+    elseif type == 'macro' and (self:GetAttribute('IsMount') == true) then
+        local mountID = self:GetAttribute('mountID');
+        local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction,
+              shouldHideOnChar, isCollected, id = C_MountJournal.GetMountInfoByID(mountID)
+
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetSpellByID(spellID)
+        GameTooltip:Show()
     elseif type == 'macro' then
         local macroName = self:GetAttribute('macro');
         local tt = DF:GetModule('Tooltip')
@@ -806,7 +857,7 @@ function DragonflightUISpellSubButtonMixin:OnDragStart()
     local doDrag = (not Settings.GetValue("lockActionBars") or IsModifiedClick("PICKUPACTION"));
     if not doDrag then return end
 
-    print('DragonflightUISpellSubButtonMixin:OnDragStart()', self.Spell, self.Item)
+    print('DragonflightUISpellSubButtonMixin:OnDragStart()')
 
     -- if self.Spell then
     --     PickupSpell(self.Spell)
@@ -877,51 +928,18 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
         ClearCursor()
         pickupCurrent()
     elseif infoType == 'companion' then
-        -- if CompanionID then
-        --     local _, s, f, m = GetCursorInfo()
-        --     print('~', infoType, CompanionID)
-        -- end
+        local _, mountID, mountIndex = GetCursorInfo()
+
+        if mountIndex == 'MOUNT' then
+            -- print(infoType, mountID, mountIndex)
+
+            self.ModuleRef:SetAction(DFAction, 'mount', self.ModuleRef.CursorMountID)
+            -- self.ModuleRef:SetAction(DFAction, 'spell', self.ModuleRef.CursorMountSpellID)
+
+            self:UpdateAction()
+
+            ClearCursor()
+            pickupCurrent()
+        end
     end
 end
-
--- DF.API.Modules:HookInitModule('Flyout', function()
---     DF.Compatibility:FuncOrWaitframe('Blizzard_Collections', function()
---         -- print('Blizzard_Collectionssssss')
---         -- hooksecurefunc('PetJournalDragButton_OnDragStart', function(self)
---         --     --
---         --     print('PetJournalDragButton_OnDragStart', self:GetParent().petID)
---         -- end)
-
---         hooksecurefunc(C_PetJournal, 'PickupPet', function(petID, ...)
---             -- print('pickupPet', petID)
---             CompanionID = petID;
-
---             -- local usePetID = C_PetJournal.GetPetInfoByIndex(petID);
---             -- DevTools_Dump(usePetID)
---             DevTools_Dump({C_PetJournal.GetPetInfoByPetID(petID)})
-
---             local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID,
---                   sourceText, description, isWild, canBattle, tradable, unique, obtainable =
---                 C_PetJournal.GetPetInfoByPetID(petID)
-
---         end)
---         -- hooksecurefunc(C_PetJournal.PickupPet, function()
---         --     print('C_PetJournal.PickupPet')
---         -- end)
---     end)
--- end)
-
--- hooksecurefunc('PickupCompanion', function(target, detail)
---     print('PickupCompanion', target, detail)
--- end)
-
--- hooksecurefunc('ClearCursor', function()
---     print('ClearCursor')
---     CompanionID = nil;
--- end)
-
--- hooksecurefunc('PlaceAction', function(id)
---     print('PlaceAction', id)
---     CompanionID = nil;
--- end)
-
