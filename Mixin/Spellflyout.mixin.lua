@@ -119,7 +119,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
 
     local handler = CreateFrame('Frame', 'DragonflightUISpellFlyoutHandler', nil, 'SecureHandlerBaseTemplate');
     local id = self:GetID() - 1000;
-    print(n, id, '=', (id - 1) * 12 + 1, '-', (id - 1) * 12 + 12)
+    -- print(n, id, '=', (id - 1) * 12 + 1, '-', (id - 1) * 12 + 12)
 
     handler:SetFrameRef('flyout', f)
     self.Handler = handler;
@@ -435,7 +435,7 @@ function DragonflightUISpellSubButtonMixin:OnLoad()
 end
 
 function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)
-    if self:GetAttribute('DFAction') == 1 then print(event, ...) end
+    -- if self:GetAttribute('DFAction') == 1 then print(event, ...) end
     -- print(event, ...)
     self:UpdateState()
 end
@@ -659,7 +659,13 @@ function DragonflightUISpellSubButtonMixin:UpdateStateMount()
 
     -- 
     self.Count:SetText('')
-    self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    -- self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+
+    if isUsable then
+        self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    else
+        self.Icon:SetVertexColor(0.4, 0.4, 0.4)
+    end
 
     if isActive then
         self.Icon:SetTexture(136116)
@@ -667,7 +673,8 @@ function DragonflightUISpellSubButtonMixin:UpdateStateMount()
         self.Icon:SetTexture(icon)
     end
 
-    self.Name:SetText(name)
+    -- self.Name:SetText(name)
+    self.Name:SetText('')
 
     -- self:UpdateCooldown()
 end
@@ -857,7 +864,7 @@ function DragonflightUISpellSubButtonMixin:OnDragStart()
     local doDrag = (not Settings.GetValue("lockActionBars") or IsModifiedClick("PICKUPACTION"));
     if not doDrag then return end
 
-    print('DragonflightUISpellSubButtonMixin:OnDragStart()')
+    -- print('DragonflightUISpellSubButtonMixin:OnDragStart()')
 
     -- if self.Spell then
     --     PickupSpell(self.Spell)
@@ -878,8 +885,8 @@ end
 function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
     if InCombatLockdown() then return end
     local infoType = GetCursorInfo()
-    print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()', infoType)
-    DevTools_Dump({GetCursorInfo()})
+    -- print('DragonflightUISpellSubButtonMixin:OnReceiveDrag()', infoType)
+    -- DevTools_Dump({GetCursorInfo()})
 
     local DFAction = self:GetAttribute('DFAction');
     local pickupCurrent = self.PickupFunc
@@ -919,7 +926,7 @@ function DragonflightUISpellSubButtonMixin:OnReceiveDrag()
     elseif infoType == 'equipmentset' then
         local _, name, itemLink = GetCursorInfo()
         local id = C_EquipmentSet.GetEquipmentSetID(name)
-        print(infoType, name, id)
+        -- print(infoType, name, id)
 
         -- self.ModuleRef:SetAction(DFAction, 'equipmentset', id)
         self.ModuleRef:SetAction(DFAction, 'equipmentset', name)
