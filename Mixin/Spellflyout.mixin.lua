@@ -173,12 +173,17 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     end
 
     self.buttonTable = t;
+
+    self:SetScript('OnLeave', function()
+        GameTooltip:Hide()
+    end)
 end
 -- function DragonflightUISpellFlyoutButtonMixin:OnLoad()
 -- end
 
-function DragonflightUISpellFlyoutButtonMixin:SetState(state)
+function DragonflightUISpellFlyoutButtonMixin:SetState(state, char)
     self.state = state
+    self.stateChar = char
     self.savedAlwaysShow = state.alwaysShow
     self:Update()
 end
@@ -186,25 +191,22 @@ end
 function DragonflightUISpellFlyoutButtonMixin:Update()
     -- print('DragonflightUISpellFlyoutButtonMixin:Update()')
     local state = self.state
+    local char = self.stateChar
 
-    self.Icon:SetTexture(state.icon or 136082)
+    self.Icon:SetTexture(char.icon or 136082)
 
-    self:UpdateArrow(state.flyoutDirection)
+    self:UpdateArrow(char.flyoutDirection)
 
     self:SetScript('OnEnter', function()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-        GameTooltip:SetText(state.displayName, 1.0, 1.0, 1.0);
-        GameTooltip:AddLine(state.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+        GameTooltip:SetText(char.displayName, 1.0, 1.0, 1.0);
+        GameTooltip:AddLine(char.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
         GameTooltip:Show()
-    end)
-
-    self:SetScript('OnLeave', function()
-        GameTooltip:Hide()
     end)
 
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable
-    local buttons = math.min(state.buttons, btnCount)
+    local buttons = math.min(char.buttons, btnCount)
 
     for i = buttons + 1, btnCount do
         local btn = buttonTable[i]
@@ -214,9 +216,9 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         -- print('hide', i)
     end
 
-    self.BG:SetState(state, buttons)
+    self.BG:SetState(char, buttons)
 
-    self.Handler:SetAttribute('closeAfterClick', state.closeAfterClick)
+    self.Handler:SetAttribute('closeAfterClick', char.closeAfterClick)
 
     for i = 1, buttons do
         local btn = buttonTable[i]
@@ -246,7 +248,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
 
-    self:UpdateStateHandler(state)
+    self:UpdateStateHandler(state, char.activate)
 end
 
 function DragonflightUISpellFlyoutButtonMixin:SplitString(str)
