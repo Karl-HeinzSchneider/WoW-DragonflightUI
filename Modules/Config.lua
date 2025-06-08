@@ -229,9 +229,8 @@ function Module:ApplySettings()
     DF:EnableModule('Editmode')
 
     for k, v in pairs(modules) do
-        -- print(k, v)
-
-        local dfmod = DF:GetModule(k)
+        -- print(k, v)   
+        local dfmod = DF:GetModule(k, true)
         if dfmod then
             if v and not dfmod:GetWasEnabled() then
                 if k ~= 'Darkmode' then DF:EnableModule(k) end
