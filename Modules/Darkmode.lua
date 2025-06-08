@@ -770,12 +770,14 @@ function Module:HookOnEnable()
         -- print(k, v)
         if not v then
             --
-            local m = DF:GetModule(k)
-            hooksecurefunc(m, 'OnEnable', function()
-                --
-                -- print('enabless!')
-                Module:ApplySettings()
-            end)
+            local m = DF:GetModule(k, true)
+            if m then
+                hooksecurefunc(m, 'OnEnable', function()
+                    --
+                    -- print('enabless!')
+                    Module:ApplySettings()
+                end)
+            end
         end
     end
 
