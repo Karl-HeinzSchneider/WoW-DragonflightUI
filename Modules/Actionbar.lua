@@ -3036,6 +3036,7 @@ end
 
 function Module:CheckActionbarSettingsCVars()
     -- print('Module:CheckActionbarSettingsCVars()')
+    if not self:IsEnabled() then return end
 
     local allSet = true;
 
