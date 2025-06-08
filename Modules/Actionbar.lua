@@ -1875,11 +1875,18 @@ function Module:SetupActionbarFrames()
     local createStuff = function(n, base)
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
                                 'DragonflightUIActionbarFrameTemplate')
+        if base == 'MultiBarLeftButton' or base == 'MultiBarRightButton' then
+            bar:RegisterEvent('UI_SCALE_CHANGED');
+            bar:RegisterEvent('PLAYER_REGEN_ENABLED');
+        end
         local buttons = {}
         for i = 1, 12 do
             local name = base .. i
             local btn = _G[name]
             buttons[i] = btn
+            if base == 'MultiBarLeftButton' or base == 'MultiBarRightButton' then
+                btn.DFIgnoreParentScale = true;
+            end
         end
         bar:Init()
         bar:SetButtons(buttons)
