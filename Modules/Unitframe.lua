@@ -2681,7 +2681,11 @@ function Module:HideSecondaryRes(hide)
         if hide then
             _G['EclipseBarFrame']:Hide()
         else
-            EclipseBar_UpdateShown(_G['EclipseBarFrame'])
+            if DF.API.Version.IsMoP then
+                _G['EclipseBarFrame']:UpdateShown()
+            else
+                EclipseBar_UpdateShown(_G['EclipseBarFrame'])
+            end
         end
     elseif class == 'PALADIN' then
         _G['PaladinPowerBar']:SetShown(not hide);
