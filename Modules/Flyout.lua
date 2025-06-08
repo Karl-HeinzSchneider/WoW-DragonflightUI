@@ -610,7 +610,8 @@ for i = 1, numCustomButtons do
         flyoutDirection = 'TOP',
         closeAfterClick = true,
         buttons = 12,
-        activate = true
+        activate = true,
+        alwaysShow = true
     }
 end
 
@@ -739,50 +740,50 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerFlyout',
             editmode = true
         },
-        spells = {
-            type = 'editbox',
-            name = L["FlyoutSpells"],
-            desc = L["FlyoutSpellsDesc"] .. getDefaultStr('spells', sub),
-            Validate = function()
-                return true
-            end,
-            order = 4.5,
-            group = 'headerFlyout',
-            editmode = true
-        },
-        spellsAlliance = {
-            type = 'editbox',
-            name = L["FlyoutSpellsAlliance"],
-            desc = L["FlyoutSpellsAllianceDesc"] .. getDefaultStr('spellsAlliance', sub),
-            Validate = function()
-                return true
-            end,
-            order = 4.6,
-            group = 'headerFlyout',
-            editmode = true
-        },
-        spellsHorde = {
-            type = 'editbox',
-            name = L["FlyoutSpellsHorde"],
-            desc = L["FlyoutSpellsHordeDesc"] .. getDefaultStr('spellsHorde', sub),
-            Validate = function()
-                return true
-            end,
-            order = 4.7,
-            group = 'headerFlyout',
-            editmode = true
-        },
-        items = {
-            type = 'editbox',
-            name = L["FlyoutItems"],
-            desc = L["FlyoutItemsDesc"] .. getDefaultStr('items', sub),
-            Validate = function()
-                return true
-            end,
-            order = 4.8,
-            group = 'headerFlyout',
-            editmode = true
-        },
+        -- spells = {
+        --     type = 'editbox',
+        --     name = L["FlyoutSpells"],
+        --     desc = L["FlyoutSpellsDesc"] .. getDefaultStr('spells', sub),
+        --     Validate = function()
+        --         return true
+        --     end,
+        --     order = 4.5,
+        --     group = 'headerFlyout',
+        --     editmode = true
+        -- },
+        -- spellsAlliance = {
+        --     type = 'editbox',
+        --     name = L["FlyoutSpellsAlliance"],
+        --     desc = L["FlyoutSpellsAllianceDesc"] .. getDefaultStr('spellsAlliance', sub),
+        --     Validate = function()
+        --         return true
+        --     end,
+        --     order = 4.6,
+        --     group = 'headerFlyout',
+        --     editmode = true
+        -- },
+        -- spellsHorde = {
+        --     type = 'editbox',
+        --     name = L["FlyoutSpellsHorde"],
+        --     desc = L["FlyoutSpellsHordeDesc"] .. getDefaultStr('spellsHorde', sub),
+        --     Validate = function()
+        --         return true
+        --     end,
+        --     order = 4.7,
+        --     group = 'headerFlyout',
+        --     editmode = true
+        -- },
+        -- items = {
+        --     type = 'editbox',
+        --     name = L["FlyoutItems"],
+        --     desc = L["FlyoutItemsDesc"] .. getDefaultStr('items', sub),
+        --     Validate = function()
+        --         return true
+        --     end,
+        --     order = 4.8,
+        --     group = 'headerFlyout',
+        --     editmode = true
+        -- },
         closeAfterClick = {
             type = 'toggle',
             name = L["FlyoutCloseAfterClick"],
@@ -837,6 +838,30 @@ function AddFlyoutTable(optionTable, sub)
     for k, v in pairs(extraOptions) do
         --
         optionTable.args[k] = v
+    end
+
+    optionTable.get = function(info)
+        local key = info[1]
+        local s = info[2]
+        if defaults.char.custom1[s] ~= nil then
+            local t = Module.db.char[key]
+            return t[s]
+        else
+            return getOption(info)
+        end
+    end
+
+    optionTable.set = function(info, value)
+        local key = info[1]
+        local s = info[2]
+
+        if defaults.char.custom1[s] ~= nil then
+            local t = Module.db.char[key]
+            t[s] = value
+            Module:ApplySettings(key)
+        else
+            setOption(info, value)
+        end
     end
 end
 
@@ -1177,6 +1202,13 @@ for i = 1, numCustomButtons do
         }
     }
 
+    for k, v in pairs(options.args) do
+        if defaults.char.custom1[k] ~= nil then
+            v.desc = v.desc .. L["SettingsCharacterSpecific"];
+            v.char = true;
+        end
+    end
+
     customOptionsTable[i] = options
     customOptionsTableEditmode[i] = optionsEditmode
 end
@@ -1191,8 +1223,6 @@ function Module:OnInitialize()
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     -- DF:RegisterModuleOptions(mName, generalOptions)
-
-    DevTools_Dump(self.db.class)
 end
 
 function Module:OnEnable()

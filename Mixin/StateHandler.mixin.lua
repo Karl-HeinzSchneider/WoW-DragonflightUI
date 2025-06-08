@@ -127,14 +127,18 @@ do
     visConditionalTable['hideNoStealth'] = '[nostealth]hide'
 end
 
-function DragonflightUIStateHandlerMixin:UpdateStateHandler(state)
+function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverride)
     local handler = self.DFStateHandler
     UnregisterStateDriver(handler, 'vis')
 
     local driverTable = {}
 
     if state.EditModeActive then table.insert(driverTable, 'show') end
-    if state.activate ~= nil and not state.activate then table.insert(driverTable, 'hide') end
+    if activateOverride ~= nil then
+        if not activateOverride then table.insert(driverTable, 'hide') end
+    else
+        if state.activate ~= nil and not state.activate then table.insert(driverTable, 'hide') end
+    end
 
     if state.hideCustom then
         table.insert(driverTable, state.hideCustomCond)

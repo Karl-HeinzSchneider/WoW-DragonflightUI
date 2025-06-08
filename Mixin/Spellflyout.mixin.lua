@@ -216,7 +216,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         -- print('hide', i)
     end
 
-    self.BG:SetState(state, buttons)
+    self.BG:SetState(char, buttons)
 
     self.Handler:SetAttribute('closeAfterClick', char.closeAfterClick)
 
@@ -248,7 +248,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
 
-    self:UpdateStateHandler(state)
+    self:UpdateStateHandler(state, char.activate)
 end
 
 function DragonflightUISpellFlyoutButtonMixin:SplitString(str)
