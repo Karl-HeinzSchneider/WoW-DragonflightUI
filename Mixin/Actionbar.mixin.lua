@@ -35,6 +35,7 @@ function DragonflightUIActionbarMixin:Init()
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:SetScript('OnEvent', function(event, arg1)
+        if InCombatLockdown() then return end
         self:Update()
     end)
 end
@@ -170,7 +171,13 @@ function DragonflightUIActionbarMixin:Update()
             btn:Show()
             if btn.decoDF then btn.decoDF:SetShown(not state.hideArt) end
 
-            btn:SetScale(btnScale)
+            if btn.DFIgnoreParentScale then
+                btn:SetIgnoreParentScale(true)
+                btn:SetScale(UIParent:GetScale() * btnScale)
+            else
+                btn:SetIgnoreParentScale(false)
+                btn:SetScale(btnScale)
+            end
             local dx = (2 * j - 1) * padding + (j - 1) * btnSize
             local dy = (2 * i - 1) * padding + (i - 1) * btnSize
 
