@@ -510,6 +510,8 @@ function DragonflightUISpellSubButtonMixin:OnLoad()
     -- btn:HookScript('OnReceiveDrag', function()
     --     print('OnReceiveDrag')
     -- end)
+
+    self.DFNormalTexture = _G[self:GetName() .. 'NormalTexture']
 end
 
 function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)

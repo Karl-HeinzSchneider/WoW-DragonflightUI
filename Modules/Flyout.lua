@@ -691,6 +691,7 @@ local defaults = {
 }
 -- 
 local numCustomButtons = 10;
+Module.NumCustomButtons = numCustomButtons;
 
 for i = 1, numCustomButtons do
     defaults.char['custom' .. i] = {

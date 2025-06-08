@@ -26,7 +26,10 @@ local defaults = {
             buffColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
             -- Castbar
             castbarDesaturate = true,
-            castbarColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha()
+            castbarColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
+            -- Flyout
+            flyoutDesaturate = true,
+            flyoutColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha()
         }
     }
 }
@@ -184,6 +187,28 @@ local generalOptions = {
             desc = '' .. getDefaultStr('castbarColor', 'general', '#'),
             group = 'headerCastbar',
             order = 501
+        },
+        headerFlyout = {
+            type = 'header',
+            name = L["FlyoutHeader"],
+            desc = '...',
+            order = 600,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        flyoutDesaturate = {
+            type = 'toggle',
+            name = L["DarkmodeDesaturate"],
+            desc = '' .. getDefaultStr('flyoutDesaturate', 'general'),
+            group = 'headerFlyout',
+            order = 600.1
+        },
+        flyoutColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('flyoutColor', 'general', '#'),
+            group = 'headerFlyout',
+            order = 600.2
         }
     }
 }
@@ -265,6 +290,7 @@ function Module:ApplySettings()
     Module:UpdateMinimap(state)
     Module:UpdateUnitframe(state)
     Module:UpdateActionbar(state)
+    Module:UpdateFlyout(state)
     Module:UpdateBuff(state)
     Module:UpdateCastbar(state)
 end
@@ -683,6 +709,57 @@ function Module:UpdateActionbar(state)
         --
         RepBar.Border:SetDesaturated(state.actionbarDesaturate)
         RepBar.Border:SetVertexColor(c:GetRGB())
+    end
+end
+
+function Module:UpdateFlyout(state)
+    -- print('UpdateFlyout')
+    local moduleName = 'Flyout'
+    if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
+
+    local unitModule = DF:GetModule(moduleName)
+    -- local f = unitModule.Frame
+    -- local c = CreateColorFromRGBHexString(state.flyoutColor)
+
+    for i = 1, unitModule.NumCustomButtons do
+        local f = unitModule['Custom' .. i .. 'Button']
+
+        if f then
+            if not f.DFDarkmodeUpdateBarButtons then
+                f.DFDarkmodeUpdateBarButtons = function()
+                    -- print('DFDarkmodeUpdateBarButtons', f:GetName())
+                    local c = CreateColorFromRGBHexString(state.flyoutColor)
+
+                    if f.DFNormalTexture then
+                        f.DFNormalTexture:SetVertexColor(c:GetRGB())
+                    else
+                        f:GetNormalTexture():SetVertexColor(c:GetRGB())
+                    end
+
+                    local buttonTable = f.buttonTable
+                    local btnCount = #buttonTable
+
+                    for j = 1, btnCount do
+                        --
+                        local btn = buttonTable[j]
+                        if btn.DFNormalTexture then
+                            btn.DFNormalTexture:SetVertexColor(c:GetRGB())
+                        else
+                            btn:GetNormalTexture():SetVertexColor(c:GetRGB())
+                        end
+                    end
+                end
+
+                hooksecurefunc(f, 'Update', function()
+                    --
+                    -- print('updatehook', k, bar:GetName())
+                    f.DFDarkmodeUpdateBarButtons()
+                end)
+
+            end
+            f.DFDarkmodeUpdateBarButtons()
+        end
+
     end
 end
 
