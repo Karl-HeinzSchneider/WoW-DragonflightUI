@@ -1859,6 +1859,8 @@ function Module:AddCustomButtons()
                                 "DFSpellFlyoutButtonTemplate", 1000 + 5 + i)
         Module['Custom' .. i .. 'Button'] = btn;
     end
+
+    _G['DragonflightUIQuickKeybindFrame']:HookCustomFlyoutButtons()
 end
 
 local frame = CreateFrame('FRAME')

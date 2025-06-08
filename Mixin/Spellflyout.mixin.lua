@@ -29,6 +29,28 @@ function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     self:AddArrow()
     self:UpdateArrow()
 
+    self:RegisterEvent('UPDATE_BINDINGS')
+end
+
+function DragonflightUISpellFlyoutButtonMixin:OnEvent(event, ...)
+    if event == 'UPDATE_BINDINGS' then
+        self:UpdateHotkeyDisplayText()
+        return;
+    end
+end
+
+function DragonflightUISpellFlyoutButtonMixin:OnEnter()
+    local char = self.stateChar
+    if not char then return end
+
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(char.displayName, 1.0, 1.0, 1.0);
+    GameTooltip:AddLine(char.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+    GameTooltip:Show()
+end
+
+function DragonflightUISpellFlyoutButtonMixin:OnLeave()
+    GameTooltip:Hide()
 end
 
 function DragonflightUISpellFlyoutButtonMixin:AddArrow()
@@ -196,13 +218,6 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
     self.Icon:SetTexture(char.icon or 136082)
 
     self:UpdateArrow(char.flyoutDirection)
-
-    self:SetScript('OnEnter', function()
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-        GameTooltip:SetText(char.displayName, 1.0, 1.0, 1.0);
-        GameTooltip:AddLine(char.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
-        GameTooltip:Show()
-    end)
 
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable
@@ -424,6 +439,8 @@ function DragonflightUISpellSubButtonMixin:OnLoad()
     self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW");
     self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE");
 
+    self:RegisterEvent('UPDATE_BINDINGS')
+
     -- self:RegisterEvent("SPELL_UPDATE_COOLDOWN");
 
     self:RegisterForDrag("LeftButton")
@@ -439,6 +456,10 @@ end
 function DragonflightUISpellSubButtonMixin:OnEvent(event, ...)
     -- if self:GetAttribute('DFAction') == 1 then print(event, ...) end
     -- print(event, ...)
+    if event == 'UPDATE_BINDINGS' then
+        self:UpdateHotkeyDisplayText()
+        return;
+    end
     self:UpdateState()
 end
 
@@ -517,6 +538,7 @@ function DragonflightUISpellSubButtonMixin:UpdateState()
     else
         self:UpdateStateEmpty()
     end
+    self:UpdateHotkeyDisplayText()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
