@@ -240,7 +240,7 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'CENTER',
             anchorParent = 'CENTER',
-            x = 200,
+            x = 300,
             y = -100,
             orientation = 'horizontal',
             reverse = false,
@@ -610,7 +610,7 @@ for i = 1, numCustomButtons do
         flyoutDirection = 'TOP',
         closeAfterClick = true,
         buttons = 12,
-        activate = true,
+        activate = i <= 5,
         alwaysShow = true
     }
 end
