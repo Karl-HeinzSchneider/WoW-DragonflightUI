@@ -190,6 +190,7 @@ function Module:OnEnable()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
+        if Module.DontRefresh then return end
         Module:ApplySettings()
     end)
 end
@@ -242,7 +243,9 @@ function Module:ApplySettings()
 
     if modules['Darkmode'] then DF:EnableModule('Darkmode') end
 
+    Module.DontRefresh = true;
     DF:RefreshConfig()
+    Module.DontRefresh = false;
 end
 
 function Module:GetModuleEnabled(module)
