@@ -595,7 +595,8 @@ local defaults = {
             hideCustomCond = ''
         },
         actions = {actionTable = {}}
-    }
+    },
+    class = {WARLOCK = {test = 1337}}
 }
 Module:SetDefaults(defaults)
 
@@ -1174,6 +1175,8 @@ function Module:OnInitialize()
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     -- DF:RegisterModuleOptions(mName, generalOptions)
+
+    DevTools_Dump(self.db.class)
 end
 
 function Module:OnEnable()
