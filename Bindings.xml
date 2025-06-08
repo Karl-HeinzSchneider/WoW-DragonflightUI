@@ -38,4 +38,144 @@
 	<Binding name="CLICK DragonflightUIMultiactionBar8Button10:Keybind" category="BINDING_CATEGORY_DFACTIONBAR8" />
 	<Binding name="CLICK DragonflightUIMultiactionBar8Button11:Keybind" category="BINDING_CATEGORY_DFACTIONBAR8" />
 	<Binding name="CLICK DragonflightUIMultiactionBar8Button12:Keybind" category="BINDING_CATEGORY_DFACTIONBAR8" />
+	<!-- custom Flyout 1 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" header="BINDING_HEADER_DFCUSTOMFLYOUT1_BUTTON1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom1ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT1" />
+	<!-- custom Flyout 2 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" header="BINDING_HEADER_DFCUSTOMFLYOUT2_BUTTON2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom2ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT2" />
+	<!-- custom Flyout 3 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" header="BINDING_HEADER_DFCUSTOMFLYOUT3_BUTTON3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom3ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT3" />
+	<!-- custom Flyout 4 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" header="BINDING_HEADER_DFCUSTOMFLYOUT4_BUTTON4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom4ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT4" />
+	<!-- custom Flyout 5 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" header="BINDING_HEADER_DFCUSTOMFLYOUT5_BUTTON5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom5ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT5" />
+	<!-- custom Flyout 6 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" header="BINDING_HEADER_DFCUSTOMFLYOUT6_BUTTON6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom6ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT6" />
+	<!-- custom Flyout 7 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" header="BINDING_HEADER_DFCUSTOMFLYOUT7_BUTTON7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom7ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT7" />
+	<!-- custom Flyout 8 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" header="BINDING_HEADER_DFCUSTOMFLYOUT8_BUTTON8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom8ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT8" />
+	<!-- custom Flyout 9 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" header="BINDING_HEADER_DFCUSTOMFLYOUT9_BUTTON9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom9ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT9" />
+	<!-- custom Flyout 10 -->
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10Button:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" header="BINDING_HEADER_DFCUSTOMFLYOUT10_BUTTON10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub1:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub2:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub3:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub4:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub5:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub6:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub7:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub8:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub9:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
 </Bindings>

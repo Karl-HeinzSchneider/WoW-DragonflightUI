@@ -24,3 +24,15 @@ for i = 1, 12 do
 end
 
 -- flyout
+
+for f = 1, 10 do
+    _G['BINDING_CATEGORY_DFCUSTOMFLYOUT' .. f] = 'Custom Flyout ' .. f
+    _G['BINDING_HEADER_DFCUSTOMFLYOUT' .. f .. '_BUTTON1'] = 'Custom Flyout ' .. f
+
+    _G["BINDING_NAME_CLICK DragonflightUISpellFlyoutCustom" .. f .. "Button:Keybind"] = "Custom Flyout " .. f ..
+                                                                                            " Expand"
+    for i = 1, 12 do
+        _G["BINDING_NAME_CLICK DragonflightUISpellFlyoutCustom" .. f .. "ButtonSub" .. i .. ":Keybind"] =
+            "Custom Flyout " .. f .. " Button " .. i
+    end
+end
