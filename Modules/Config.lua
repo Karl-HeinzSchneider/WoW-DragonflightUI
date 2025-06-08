@@ -241,6 +241,8 @@ function Module:ApplySettings()
     end
 
     if modules['Darkmode'] then DF:EnableModule('Darkmode') end
+
+    DF:RefreshConfig()
 end
 
 function Module:GetModuleEnabled(module)
