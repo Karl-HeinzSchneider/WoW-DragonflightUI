@@ -7,45 +7,20 @@ BINDING_CATEGORY_DRAGONFLIGHTUI = "DragonflightUI"
 
 BINDING_CATEGORY_DFACTIONBAR6 = "Action Bar 6"
 BINDING_HEADER_DFACTIONBAR6_BUTTON1 = "Action Bar 6 Button 1"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button1:LeftButton"] = "Action Bar 6 Button 1"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button2:LeftButton"] = "Action Bar 6 Button 2"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button3:LeftButton"] = "Action Bar 6 Button 3"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button4:LeftButton"] = "Action Bar 6 Button 4"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button5:LeftButton"] = "Action Bar 6 Button 5"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button6:LeftButton"] = "Action Bar 6 Button 6"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button7:LeftButton"] = "Action Bar 6 Button 7"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button8:LeftButton"] = "Action Bar 6 Button 8"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button9:LeftButton"] = "Action Bar 6 Button 9"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button10:LeftButton"] = "Action Bar 6 Button 10"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button11:LeftButton"] = "Action Bar 6 Button 11"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button12:LeftButton"] = "Action Bar 6 Button 12"
+for i = 1, 12 do
+    _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar6Button" .. i .. ":Keybind"] = "Action Bar 6 Button " .. i
+end
 
 BINDING_CATEGORY_DFACTIONBAR7 = "Action Bar 7"
 BINDING_HEADER_DFACTIONBAR7_BUTTON1 = "Action Bar 7 Button 1"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button1:LeftButton"] = "Action Bar 7 Button 1"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button2:LeftButton"] = "Action Bar 7 Button 2"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button3:LeftButton"] = "Action Bar 7 Button 3"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button4:LeftButton"] = "Action Bar 7 Button 4"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button5:LeftButton"] = "Action Bar 7 Button 5"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button6:LeftButton"] = "Action Bar 7 Button 6"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button7:LeftButton"] = "Action Bar 7 Button 7"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button8:LeftButton"] = "Action Bar 7 Button 8"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button9:LeftButton"] = "Action Bar 7 Button 9"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button10:LeftButton"] = "Action Bar 7 Button 10"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button11:LeftButton"] = "Action Bar 7 Button 11"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button12:LeftButton"] = "Action Bar 7 Button 12"
+for i = 1, 12 do
+    _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar7Button" .. i .. ":Keybind"] = "Action Bar 7 Button " .. i
+end
 
 BINDING_CATEGORY_DFACTIONBAR8 = "Action Bar 8"
 BINDING_HEADER_DFACTIONBAR8_BUTTON1 = "Action Bar 8 Button 1"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button1:LeftButton"] = "Action Bar 8 Button 1"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button2:LeftButton"] = "Action Bar 8 Button 2"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button3:LeftButton"] = "Action Bar 8 Button 3"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button4:LeftButton"] = "Action Bar 8 Button 4"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button5:LeftButton"] = "Action Bar 8 Button 5"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button6:LeftButton"] = "Action Bar 8 Button 6"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button7:LeftButton"] = "Action Bar 8 Button 7"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button8:LeftButton"] = "Action Bar 8 Button 8"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button9:LeftButton"] = "Action Bar 8 Button 9"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button10:LeftButton"] = "Action Bar 8 Button 10"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button11:LeftButton"] = "Action Bar 8 Button 11"
-_G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button12:LeftButton"] = "Action Bar 8 Button 12"
+for i = 1, 12 do
+    _G["BINDING_NAME_CLICK DragonflightUIMultiactionBar8Button" .. i .. ":Keybind"] = "Action Bar 8 Button " .. i
+end
+
+-- flyout
