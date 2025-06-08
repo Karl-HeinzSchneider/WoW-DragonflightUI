@@ -129,7 +129,7 @@ L['CompatWhatsTrainingDesc'] =
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
-L["SettingsCharacterSpecific"] = "\n\n|cff8080ff[Per-character setting]|r)"
+L["SettingsCharacterSpecific"] = "\n\n|cff8080ff[Per-character setting]|r"
 
 -- positionTable
 L["PositionTableHeader"] = "Scale and Position"

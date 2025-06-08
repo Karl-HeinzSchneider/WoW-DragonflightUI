@@ -594,13 +594,103 @@ local defaults = {
             hideCustom = false,
             hideCustomCond = ''
         },
+        custom9 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(8) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 9),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 9),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
+        custom10 = {
+            scale = 0.8,
+            anchorFrame = "DragonflightUISpellFlyout" .. "Custom" .. tostring(9) .. "Button",
+            customAnchorFrame = '',
+            anchor = 'LEFT',
+            anchorParent = 'RIGHT',
+            x = 4,
+            y = 0,
+            orientation = 'horizontal',
+            reverse = false,
+            buttonScale = 0.8,
+            rows = 1,
+            buttons = 12,
+            padding = 2,
+            -- flyout
+            icon = 134400,
+            displayName = string.format(L["FlyoutCustomNameFormat"], 10),
+            tooltip = string.format(L["FlyoutCustomNameDescFormat"], 10),
+            flyoutDirection = 'TOP',
+            spells = '',
+            spellsAlliance = '',
+            spellsHorde = '',
+            items = '',
+            closeAfterClick = true,
+            -- Style
+            alwaysShow = true,
+            activate = true,
+            hideMacro = false,
+            macroFontSize = 14,
+            hideKeybind = false,
+            shortenKeybind = false,
+            keybindFontSize = 16,
+            -- Visibility
+            showMouseover = false,
+            hideAlways = false,
+            hideCombat = false,
+            hideOutOfCombat = false,
+            hidePet = false,
+            hideNoPet = false,
+            hideStance = false,
+            hideStealth = false,
+            hideNoStealth = false,
+            hideCustom = false,
+            hideCustomCond = ''
+        },
         actions = {actionTable = {}}
     },
     class = {WARLOCK = {test = 1337}},
     char = {actions = {actionTable = {}}}
 }
 -- 
-local numCustomButtons = 8;
+local numCustomButtons = 10;
 
 for i = 1, numCustomButtons do
     defaults.char['custom' .. i] = {
@@ -704,12 +794,13 @@ local function setOption(info, value)
 end
 
 local frameTable = {
-    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}, {
-        value = "DragonflightUISpellFlyout" .. "Warlock" .. "Button",
-        text = L["FlyoutButtonWarlock"],
-        tooltip = 'descr',
-        label = 'label'
-    }
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}
+    -- {
+    --     value = "DragonflightUISpellFlyout" .. "Warlock" .. "Button",
+    --     text = L["FlyoutButtonWarlock"],
+    --     tooltip = 'descr',
+    --     label = 'label'
+    -- }
     -- {
     --     value = "DragonflightUISpellFlyout" .. "MagePort" .. "Button",
     --     text = L["FlyoutButtonMagePort"],
