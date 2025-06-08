@@ -240,8 +240,8 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'CENTER',
             anchorParent = 'CENTER',
-            x = 0,
-            y = 0,
+            x = 200,
+            y = -100,
             orientation = 'horizontal',
             reverse = false,
             buttonScale = 0.8,
@@ -614,8 +614,74 @@ for i = 1, numCustomButtons do
         alwaysShow = true
     }
 end
-
 Module:SetDefaults(defaults)
+
+local classDefaults = {
+    WARLOCK = {
+        [1] = {
+            icon = 136082,
+            displayName = L["FlyoutWarlock"],
+            tooltip = L["FlyoutWarlockDesc"],
+            flyoutDirection = 'TOP',
+            spells = {688, 697, 712, 713, 691, 1122, 18540}
+        }
+    },
+    MAGE_ALLIANCE = {
+        [1] = {
+            icon = 237509,
+            displayName = L["FlyoutMagePort"],
+            tooltip = L["FlyoutMagePortDesc"],
+            flyoutDirection = 'TOP',
+            spells = {3561, 3562, 3565, 32271, 49359, 33690, 53140, 120145, 88342, 132621}
+        },
+        [2] = {
+            icon = 135748,
+            displayName = L["FlyoutMagePortals"],
+            tooltip = L["FlyoutMagePortalsDesc"],
+            flyoutDirection = 'TOP',
+            spells = {10059, 11416, 11419, 32266, 49360, 33691, 53142, 120146, 88345, 132620}
+        }
+    },
+    MAGE_HORDE = {
+        [1] = {
+            icon = 237509,
+            displayName = L["FlyoutMagePort"],
+            tooltip = L["FlyoutMagePortDesc"],
+            flyoutDirection = 'TOP',
+            spells = {3567, 3563, 3566, 32272, 49358, 35715, 53140, 120145, 88344, 132627}
+        },
+        [2] = {
+            icon = 135744,
+            displayName = L["FlyoutMagePortals"],
+            tooltip = L["FlyoutMagePortalsDesc"],
+            flyoutDirection = 'TOP',
+            spells = {11417, 11418, 11420, 32267, 49361, 35717, 53142, 120146, 88346, 132626}
+        }
+    }
+}
+if DF.API.Version.IsClassic then
+    local t = {
+        [3] = {
+            icon = 132793,
+            displayName = L["FlyoutMageWater"],
+            tooltip = L["FlyoutMageWaterDesc"],
+            flyoutDirection = 'TOP',
+            spells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 468766}
+        },
+        [4] = {
+            icon = 134029,
+            displayName = L["FlyoutMageFood"],
+            tooltip = L["FlyoutMageFoodDesc"],
+            flyoutDirection = 'TOP',
+            spells = {587, 597, 990, 6129, 10144, 10145, 28612}
+        }
+    }
+    for k, v in ipairs(t) do
+        classDefaults.MAGE_ALLIANCE[k] = v;
+        classDefaults.MAGE_HORDE[k] = v;
+    end
+end
+DevTools_Dump(classDefaults)
 
 local function getDefaultStr(key, sub, extra)
     return Module:GetDefaultStr(key, sub, extra)
@@ -1216,10 +1282,11 @@ end
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
+    Module:AddClassDefaults()
+
     hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
         Module:RegisterSettings()
     end)
-
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 
     -- DF:RegisterModuleOptions(mName, generalOptions)
@@ -1606,6 +1673,66 @@ function Module:HookCollections()
         DF:Debug(self, '~picked up:', Module.PreCursorMountID, Module.PreCursorMountSpellID)
         -- self:Print('~picked up:', Module.PreCursorMountID, Module.PreCursorMountSpellID)
     end)
+end
+
+function Module:AddClassDefaults()
+    DF:Debug(self, 'AddClassDefaults()')
+
+    local localizedClass, englishClass, classIndex = UnitClass('player')
+
+    if englishClass == 'MAGE' then
+        local englishFaction, localizedFaction = UnitFactionGroup('player')
+
+        if englishFaction then englishClass = englishClass .. '_' .. englishFaction:upper() end
+        -- englishClass = 'MAGE_HORDE'
+    end
+
+    if not classDefaults[englishClass] then
+        DF:Debug(self, '~no defaults for class')
+        return
+    end
+
+    -- self.db.char.initialized = false;
+
+    if self.db.char.initialized then
+        DF:Debug(self, '~already initialized')
+        return
+    else
+        DF:Debug(self, '~>initialize defaults')
+        local template = classDefaults[englishClass]
+        local db = self.db.char;
+
+        for flyout, options in pairs(template) do
+            -- print(flyout)
+            -- DevTools_Dump({options})
+            local flyoutTable = db['custom' .. flyout]
+
+            local baseID = 5 + flyout - 1
+
+            for k, v in pairs(options) do
+                if k ~= 'spells' then
+                    flyoutTable[k] = v;
+                else
+                    local index = 0;
+                    for i, spell in ipairs(v) do
+                        local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon =
+                            GetSpellInfo(spell)
+                        if name then
+                            print(name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon)
+                            local actionID = baseID * 12 + i;
+                            -- print('actionID', actionID, Module:GetAction(actionID))
+                            Module:SetAction(actionID, 'spell', spell)
+                            index = index + 1;
+                        end
+                    end
+                    -- print('~~~>>', index)
+                    flyoutTable['buttons'] = index
+                end
+            end
+        end
+
+        self.db.char.initialized = true;
+    end
 end
 
 function Module:AddWarlockButton()
