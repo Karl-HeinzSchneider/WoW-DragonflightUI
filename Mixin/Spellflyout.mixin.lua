@@ -520,8 +520,6 @@ function DragonflightUISpellSubButtonMixin:UpdateState()
 end
 
 function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
-    self.Count:SetText("");
-
     local Spell = self:GetAttribute('spell');
 
     self.PickupFunc = function()
@@ -569,6 +567,14 @@ function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
     else
         self.Icon:SetDesaturated(true);
         self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+    end
+
+    local numCasts = GetSpellCount(Spell)
+
+    if numCasts and numCasts > 0 then
+        self.Count:SetText(numCasts);
+    else
+        self.Count:SetText("");
     end
 
     self.Name:SetText('')
