@@ -700,8 +700,8 @@ for i = 1, numCustomButtons do
         flyoutDirection = 'TOP',
         closeAfterClick = true,
         buttons = 12,
-        activate = i <= 5,
-        alwaysShow = true
+        activate = i <= 5
+        -- alwaysShow = true
     }
 end
 Module:SetDefaults(defaults)
@@ -949,14 +949,14 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerFlyout',
             editmode = true
         },
-        alwaysShow = {
-            type = 'toggle',
-            name = L["FlyoutAlwaysShow"],
-            desc = L["FlyoutAlwaysShowDesc"] .. getDefaultStr('alwaysShow', sub),
-            group = 'headerFlyout',
-            order = 5.1,
-            editmode = true
-        },
+        -- alwaysShow = {
+        --     type = 'toggle',
+        --     name = L["FlyoutAlwaysShow"],
+        --     desc = L["FlyoutAlwaysShowDesc"] .. getDefaultStr('alwaysShow', sub),
+        --     group = 'headerFlyout',
+        --     order = 5.1,
+        --     editmode = true
+        -- },
         icon = {
             type = 'editbox',
             name = L["FlyoutIcon"],
@@ -988,6 +988,71 @@ function AddFlyoutTable(optionTable, sub)
             end,
             order = 10.3,
             group = 'headerFlyout',
+            editmode = true
+        },
+        headerStyling = {
+            type = 'header',
+            name = L["ButtonTableStyle"],
+            desc = L["ButtonTableStyleDesc"],
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
+        alwaysShow = {
+            type = 'toggle',
+            name = L["ButtonTableAlwaysShowActionbar"],
+            desc = L["ButtonTableAlwaysShowActionbarDesc"] .. getDefaultStr('alwaysShow', sub),
+            group = 'headerStyling',
+            order = 50.1,
+            editmode = true
+        },
+        hideMacro = {
+            type = 'toggle',
+            name = L["ButtonTableHideMacroText"],
+            desc = L["ButtonTableHideMacroTextDesc"] .. getDefaultStr('hideMacro', sub),
+            group = 'headerStyling',
+            order = 55,
+            editmode = true
+        },
+        macroFontSize = {
+            type = 'range',
+            name = L["ButtonTableMacroNameFontSize"],
+            desc = L["ButtonTableMacroNameFontSizeDesc"] .. getDefaultStr('macroFontSize', sub),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 55.1,
+            new = false,
+            editmode = true
+        },
+        hideKeybind = {
+            type = 'toggle',
+            name = L["ButtonTableHideKeybindText"],
+            desc = L["ButtonTableHideKeybindTextDesc"] .. getDefaultStr('hideKeybind', sub),
+            group = 'headerStyling',
+            order = 56,
+            editmode = true
+        },
+        shortenKeybind = {
+            type = 'toggle',
+            name = L["ButtonTableShortenKeybindText"],
+            desc = L["ButtonTableShortenKeybindTextDesc"] .. getDefaultStr('shortenKeybind', sub),
+            group = 'headerStyling',
+            order = 56.05,
+            editmode = true,
+            new = true
+        },
+        keybindFontSize = {
+            type = 'range',
+            name = L["ButtonTableKeybindFontSize"],
+            desc = L["ButtonTableKeybindFontSizeDesc"] .. getDefaultStr('keybindFontSize', sub),
+            min = 6,
+            max = 24,
+            bigStep = 1,
+            group = 'headerStyling',
+            order = 56.1,
+            new = false,
             editmode = true
         }
     }

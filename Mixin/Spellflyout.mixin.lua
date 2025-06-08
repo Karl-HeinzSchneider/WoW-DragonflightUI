@@ -99,7 +99,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     local n = self:GetName()
 
     local f = CreateFrame('Frame', n .. 'BG', self, 'DFSpellFlyoutBGTemplate')
-    -- f:Hide()
+    f:Hide()
     self.BG = f;
 
     self:SetAttribute("type", "macro");
@@ -219,6 +219,33 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
 
     self:UpdateArrow(char.flyoutDirection)
 
+    do
+        local name = self:GetName()
+        local macroText = _G[name .. 'Name']
+        local keybindText = _G[name .. 'HotKey']
+
+        if macroText then
+            if state.hideMacro then
+                macroText:SetAlpha(0)
+            else
+                macroText:SetAlpha(1)
+            end
+
+            self:SetMacroFontSize(state.macroFontSize)
+        end
+
+        if keybindText then
+            if state.hideKeybind then
+                keybindText:SetAlpha(0)
+            else
+                keybindText:SetAlpha(1)
+            end
+
+            self:SetKeybindFontSize(state.keybindFontSize)
+
+            self:UpdateHotkeyDisplayText(state.shortenKeybind)
+        end
+    end
     local buttonTable = self.buttonTable
     local btnCount = #buttonTable
     local buttons = math.min(char.buttons, btnCount)
@@ -241,6 +268,38 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
 
         btn.ModuleRef = self.ModuleRef;
         btn:UpdateAction()
+
+        if state.alwaysShow then
+            btn:SetAttribute("showgrid", 1)
+        else
+            btn:SetAttribute("showgrid", 0)
+        end
+
+        local name = btn:GetName()
+        local macroText = _G[name .. 'Name']
+        local keybindText = _G[name .. 'HotKey']
+
+        if macroText then
+            if state.hideMacro then
+                macroText:SetAlpha(0)
+            else
+                macroText:SetAlpha(1)
+            end
+
+            btn:SetMacroFontSize(state.macroFontSize)
+        end
+
+        if keybindText then
+            if state.hideKeybind then
+                keybindText:SetAlpha(0)
+            else
+                keybindText:SetAlpha(1)
+            end
+
+            btn:SetKeybindFontSize(state.keybindFontSize)
+
+            btn:UpdateHotkeyDisplayText(state.shortenKeybind)
+        end
     end
 
     for i = buttons + 1, btnCount do
