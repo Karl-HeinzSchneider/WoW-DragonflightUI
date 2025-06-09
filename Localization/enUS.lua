@@ -392,7 +392,7 @@ L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
 
 L["FlyoutButtonCustomFormat"] = "Custom Flyout %d"
 L["FlyoutCustomNameFormat"] = "Custom Flyout %d"
-L["FlyoutCustomNameDescFormat"] = "ss"
+L["FlyoutCustomNameDescFormat"] = "Per-character flyout button with up to 12 additional actionbuttons."
 
 -- Castbar
 L["CastbarName"] = "Cast Bar"
