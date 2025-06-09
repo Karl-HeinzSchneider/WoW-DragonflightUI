@@ -1489,7 +1489,7 @@ function Module:RegisterSettings()
     for i = 1, numCustomButtons do
         --
         register('custom' .. i,
-                 {order = 0, name = string.format(L["FlyoutCustomNameFormat"], i), descr = '...', isNew = true})
+                 {order = i, name = string.format(L["FlyoutCustomNameFormat"], i), descr = '...', isNew = true})
     end
 end
 
