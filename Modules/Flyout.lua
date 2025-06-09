@@ -772,7 +772,7 @@ if DF.API.Version.IsClassic then
         classDefaults.MAGE_HORDE[k] = v;
     end
 end
-DevTools_Dump(classDefaults)
+-- DevTools_Dump(classDefaults)
 
 local function getDefaultStr(key, sub, extra)
     return Module:GetDefaultStr(key, sub, extra)
