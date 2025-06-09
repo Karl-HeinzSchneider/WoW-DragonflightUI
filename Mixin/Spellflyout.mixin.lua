@@ -10,6 +10,9 @@ local CompanionID = nil;
 local GetItemCooldown = GetItemCooldown or C_Container.GetItemCooldown;
 local GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
 local GetItemCount = GetItemCount or C_Item.GetItemCount;
+local GetSpellPowerCost = GetSpellPowerCost or C_Spell.GetSpellPowerCost;
+local PickupSpell = PickupSpell or C_Spell.PickupSpell
+local PickupItem = PickupItem or C_Item.PickupItem;
 
 local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
 local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -612,7 +615,7 @@ function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
     local Spell = self:GetAttribute('spell');
 
     self.PickupFunc = function()
-        C_Spell.PickupSpell(Spell);
+        PickupSpell(Spell);
         return true;
     end
 
@@ -624,10 +627,10 @@ function DragonflightUISpellSubButtonMixin:UpdateStateSpell()
 
     if learned then
         self.Icon:SetDesaturated(false);
-        local powerCosts = C_Spell.GetSpellPowerCost(Spell)
+        local powerCosts = GetSpellPowerCost(Spell)
         local hasRequiredAura = true;
         local hasCost = true;
-        if powerCosts then
+        if powerCosts and powerCosts[1] then
             powerCosts = powerCosts[1]
             if powerCosts.requiredAuraID and powerCosts.requiredAuraID ~= 0 then
                 hasRequiredAura = powerCosts.hasRequiredAura;
@@ -675,7 +678,7 @@ function DragonflightUISpellSubButtonMixin:UpdateStateItem()
     local Item = self:GetAttribute('itemID');
 
     self.PickupFunc = function()
-        C_Item.PickupItem(Item)
+        PickupItem(Item)
         return true;
     end
 
@@ -841,11 +844,11 @@ function DragonflightUISpellSubButtonMixin:UpdateCooldown()
                 enable = true;
             end
         else
-            start, duration, enable = C_Container.GetItemCooldown(Item)
+            start, duration, enable = GetItemCooldown(Item)
         end
     elseif type == 'toy' then
         local toyID = self:GetAttribute('toy');
-        start, duration, enable = C_Container.GetItemCooldown(toyID)
+        start, duration, enable = GetItemCooldown(toyID)
     end
 
     if (self.cooldown.currentCooldownType ~= COOLDOWN_TYPE_NORMAL) then
