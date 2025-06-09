@@ -11,6 +11,7 @@ local defaults = {
         general = {
             auctionator = true,
             baganator = true,
+            baganatorEquipment = true,
             characterstatsclassic = true,
             classicalendar = true,
             lfgbulletinboard = true,
@@ -114,6 +115,15 @@ local compatOptions = {
     }
 }
 
+if DF.API.Version.IsClassic then
+    compatOptions.args.baganatorEquipment = {
+        type = 'toggle',
+        name = L["CompatBaganatorEquipment"],
+        desc = L["CompatBaganatorEquipmentDesc"] .. getDefaultStr('baganatorEquipment', 'general'),
+        order = 21
+    }
+end
+
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
@@ -199,6 +209,10 @@ function Module:ApplySettings(sub)
 
     self:ConditionalOption('baganator', 'general', L['CompatBaganator'], function()
         DF.Compatibility:FuncOrWaitframe('Baganator', DF.Compatibility.Baganator)
+    end)
+
+    self:ConditionalOption('baganatorEquipment', 'general', L['CompatBaganatorEquipment'], function()
+        DF.Compatibility:FuncOrWaitframe('Baganator', DF.Compatibility.BaganatorEquipment)
     end)
 
     -- self:ConditionalOption('characterstatsclassic', 'general', L['CompatCharacterStatsClassic'], function()

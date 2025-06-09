@@ -104,8 +104,10 @@ L['CompatName'] = "Compatibility"
 L['CompatAuctionator'] = "Auctionator"
 L['CompatAuctionatorDesc'] =
     "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
-L['CompatBaganator'] = "Baganator"
+L['CompatBaganator'] = "Baganator_Skin"
 L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
+L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
+L['CompatBaganatorEquipmentDesc'] = "Adds support for equipment sets as item source."
 L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
 L['CompatCharacterStatsClassicDesc'] =
     "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
