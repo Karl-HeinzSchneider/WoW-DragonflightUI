@@ -45,9 +45,13 @@ function DragonflightUISpellFlyoutButtonMixin:OnEnter()
     local char = self.stateChar
     if not char then return end
 
+    if char.displayName == '' and char.tooltip == '' then return end
+
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-    GameTooltip:SetText(char.displayName, 1.0, 1.0, 1.0);
-    GameTooltip:AddLine(char.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+    if char.displayName ~= '' then GameTooltip:SetText(char.displayName, 1.0, 1.0, 1.0); end
+    if char.tooltip ~= '' then
+        GameTooltip:AddLine(char.tooltip, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+    end
     GameTooltip:Show()
 end
 
