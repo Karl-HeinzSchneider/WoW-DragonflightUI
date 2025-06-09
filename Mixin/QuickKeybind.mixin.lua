@@ -268,6 +268,34 @@ function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     end
 end
 
+function DragonFlightUIQuickKeybindMixin:HookCustomFlyoutButtons()
+    for f = 1, 10 do
+        local expander = _G['DragonflightUISpellFlyoutCustom' .. f .. 'Button']
+
+        expander.command = "CLICK DragonflightUISpellFlyoutCustom" .. f .. "Button:Keybind"
+        expander.commandHuman = "Custom Flyout " .. f .. " Expand"
+
+        expander:HookScript('OnEnter', function(selfButton)
+            if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
+                DragonflightUIQuickKeybindButtonOverlay:SetButton(selfButton)
+            end
+        end)
+
+        for i = 1, 12 do
+            local btn = _G['DragonflightUISpellFlyoutCustom' .. f .. 'ButtonSub' .. i]
+
+            btn.command = "CLICK DragonflightUISpellFlyoutCustom" .. f .. "ButtonSub" .. i .. ":Keybind"
+            btn.commandHuman = "Custom Flyout " .. f .. " Button " .. i
+
+            btn:HookScript('OnEnter', function(selfButton)
+                if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
+                    DragonflightUIQuickKeybindButtonOverlay:SetButton(selfButton)
+                end
+            end)
+        end
+    end
+end
+
 function DragonFlightUIQuickKeybindMixin:OnMouseWheel()
 end
 

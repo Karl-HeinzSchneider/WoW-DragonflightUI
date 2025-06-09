@@ -14,6 +14,7 @@ local defaults = {
             ['Castbar'] = true,
             ['Chat'] = false,
             ['Darkmode'] = false,
+            ['Flyout'] = true,
             ['Minimap'] = true,
             ['Tooltip'] = true,
             ['UI'] = true,
@@ -97,6 +98,14 @@ local modulesOptions = {
             desc = L["ModuleTooltipDarkmode"] .. getDefaultStr('Darkmode', 'modules'),
             order = 4.1,
             new = false,
+            group = 'headerModules'
+        },
+        Flyout = {
+            type = 'toggle',
+            name = 'Flyout',
+            desc = L["ModuleTooltipFlyout"] .. getDefaultStr('Flyout', 'modules'),
+            order = 4.5,
+            new = true,
             group = 'headerModules'
         },
         Minimap = {

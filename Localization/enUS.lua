@@ -20,6 +20,7 @@ L["ModuleTooltipChat"] = "This module changes the default Chatwindow.\nWORK IN P
 L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
 L["ModuleTooltipDarkmode"] =
     "This module adds a Darkmode to multiple frames of DragonflightUI.\nWORK IN PROGRESS - please give feedback!"
+L["ModuleTooltipFlyout"] = "Flyout"
 L["ModuleTooltipMinimap"] =
     "This module overhauls the default Minimap and Questtracker.\nAdds seperate options for Minimap and Questtracker."
 L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
@@ -128,6 +129,7 @@ L['CompatWhatsTrainingDesc'] =
 
 -- __Settings
 L["SettingsDefaultStringFormat"] = "\n(Default: |cff8080ff%s|r)"
+L["SettingsCharacterSpecific"] = "\n\n|cff8080ff[Per-character setting]|r"
 
 -- positionTable
 L["PositionTableHeader"] = "Scale and Position"
@@ -341,6 +343,56 @@ L["BuffsOptionsExpandedDesc"] = ""
 L["BuffsOptionsUseStateHandler"] = "Use State Handler"
 L["BuffsOptionsUseStateHandlerDesc"] =
     "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+
+-- Flyout
+L["FlyoutHeader"] = "Flyout"
+L["FlyoutHeaderDesc"] = ""
+L["FlyoutDirection"] = "Flyout Direction"
+L["FlyoutDirectionDesc"] = "Flyout Direction"
+L["FlyoutSpells"] = "Spells"
+L["FlyoutSpellsDesc"] = "Inspert SpellIDs as comma seperated values, e.g. '688, 697'."
+L["FlyoutSpellsAlliance"] = "Spells (Alliance)"
+L["FlyoutSpellsAllianceDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on alliance side.)"
+L["FlyoutSpellsHorde"] = "Spells (Horde)"
+L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on horde side.)"
+L["FlyoutItems"] = "Items"
+L["FlyoutItemsDesc"] = "Inspert ItemIDs as comma seperated values, e.g. '6948, 8490'."
+
+L["FlyoutCloseAfterClick"] = "Close After Click"
+L["FlyoutCloseAfterClickDesc"] = "Close the flyout after pressing one of its buttons."
+L["FlyoutAlwaysShow"] = "Always Show Buttons"
+L["FlyoutAlwaysShowDesc"] =
+    "Always shows the (sub) buttons, even when they are empty.\nUse this if you want to use drag&drop."
+L["FlyoutIcon"] = "Icon"
+L["FlyoutIconDesc"] = "Insert FileID or the file path to a texture."
+L["FlyoutDisplayname"] = "Display Name"
+L["FlyoutDisplaynameDesc"] = ""
+L["FlyoutTooltip"] = "Tooltip"
+L["FlyoutTooltipDesc"] = ""
+
+L["FlyoutButtonWarlock"] = "Warlock Summon Flyout"
+L["FlyoutButtonMagePort"] = "Teleport Flyout"
+L["FlyoutButtonMagePortals"] = "Portals Flyout"
+
+-- L["FlyoutButtonWarlock"] = "Warlock"
+L["FlyoutButtonMageFood"] = "Conjure Food Flyout"
+L["FlyoutButtonMageWater"] = "Conjure Water Flyout"
+
+L["FlyoutWarlock"] = "Summon Demon"
+L["FlyoutWarlockDesc"] = "Summons one of your demons to you."
+
+L["FlyoutMagePort"] = "Teleport"
+L["FlyoutMagePortDesc"] = "Teleports you to a major city."
+L["FlyoutMagePortals"] = "Portal"
+L["FlyoutMagePortalsDesc"] = "Creates a portal, teleporting group members who use it to a major city."
+L["FlyoutMageWater"] = "Conjure Water"
+L["FlyoutMageWaterDesc"] = "Conjured items disappear if logged out for more than 15 minutes."
+L["FlyoutMageFood"] = "Conjure Food"
+L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
+
+L["FlyoutButtonCustomFormat"] = "Custom Flyout %d"
+L["FlyoutCustomNameFormat"] = "Custom Flyout %d"
+L["FlyoutCustomNameDescFormat"] = "Per-character flyout button with up to 12 additional actionbuttons."
 
 -- Castbar
 L["CastbarName"] = "Cast Bar"

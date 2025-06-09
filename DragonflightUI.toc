@@ -73,6 +73,7 @@ XML\ProfessionFrame.xml
 XML\ProfessionSpellbook.xml
 XML\QuickKeybind.xml
 XML\SettingsList.xml
+XML\Spellflyout.xml
 XML\Talents.xml
 XML\UI.xml
 
@@ -91,6 +92,7 @@ Modules\Bossframe.lua
 Modules\Buffs.lua
 Modules\Castbar.lua
 Modules\Chat.lua
+Modules\Flyout.lua
 Modules\Minimap.lua
 Modules\Tooltip.lua
 Modules\UI.lua

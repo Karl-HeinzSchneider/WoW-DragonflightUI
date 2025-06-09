@@ -120,6 +120,8 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
     list:RegisterCategory('actionbar', {name = 'Action Bar', descr = 'descr..', order = 2, isExpanded = true}, nil, true)
     list:RegisterCategory('castbar', {name = 'Cast Bar', descr = 'descr..', order = 3, isExpanded = true},
                           alphaSortComparator, true)
+    list:RegisterCategory('flyout', {name = 'Flyout', descr = 'descr..', order = 3.5, isExpanded = true},
+                          alphaSortComparator, true)
     list:RegisterCategory('misc', {name = 'Misc', descr = 'descr..', order = 4, isExpanded = true}, alphaSortComparator,
                           true)
     list:RegisterCategory('unitframes', {name = 'Unitframes', descr = 'descr..', order = 5, isExpanded = true},
@@ -157,6 +159,7 @@ function DragonFlightUIConfigMixin:RegisterSettingsData(id, categoryID, data)
 
     local node = self.DFSettingsCategoryList:FindElementDataByKey(key)
     -- print('node?!', key, node:GetData().key)
+    if not node then print(id, categoryID, data) end
     local nodeData = node:GetData()
     -- print('node?!', key, nodeData.key)
 

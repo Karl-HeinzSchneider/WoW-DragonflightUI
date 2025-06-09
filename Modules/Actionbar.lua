@@ -658,7 +658,7 @@ function AddButtonTable(optionTable, sub)
             name = L["ButtonTableActive"],
             desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', sub),
             order = -1,
-            new = falsee,
+            new = false,
             editmode = true
         },
         headerButtons = {

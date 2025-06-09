@@ -877,6 +877,19 @@ function Module:OnTooltipSetSpell(self)
     Module:SetExtraStringTable(self, strTable)
 end
 
+function Module:SetMacroTooltip(self, macroName)
+    -- print('SetMacroTooltip', self, macroName)
+    local name, icon, body = GetMacroInfo(macroName)
+
+    self:SetText(macroName, 1.0, 1.0, 1.0);
+
+    local line = _G[self:GetName() .. 'TextLeft1']
+    local text = line:GetText()
+    line:SetFormattedText('|T%s:16:16:0:0:32:32:2:30:2:30|t %s', icon, text)
+
+    self:AddLine(body, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+end
+
 function Module:CheckForRecipe(self, classID)
     if classID == LE_ITEM_CLASS_RECIPE then
         if not self.inner then
