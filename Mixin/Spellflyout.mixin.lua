@@ -8,6 +8,8 @@ end
 local CompanionID = nil;
 
 local GetItemCooldown = GetItemCooldown or C_Container.GetItemCooldown;
+local GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
+local GetItemCount = GetItemCount or C_Item.GetItemCount;
 
 local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
 local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
