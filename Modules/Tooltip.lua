@@ -54,6 +54,7 @@ local defaults = {
             unitGuildRank = true,
             unitGuildRankIndex = false,
             unitGrayoutOnDeath = true,
+            unitTarget = true,
             unitZone = 'onlydifferent'
         }
     }
@@ -402,6 +403,14 @@ local generalOptions = {
             type = 'toggle',
             name = L["TooltipUnitHealthbarText"],
             desc = L["TooltipUnitHealthbarTextDesc"] .. getDefaultStr('unitHealthbarText', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerUnitTooltip'
+        },
+        unitTarget = {
+            type = 'toggle',
+            name = L["TooltipUnitTarget"],
+            desc = L["TooltipUnitTargetDesc"] .. getDefaultStr('unitTarget', 'general'),
             order = 1,
             editmode = true,
             group = 'headerUnitTooltip'
@@ -969,7 +978,7 @@ function Module:OnTooltipSetUnit(self)
         Module:UnitNPCTooltip(self)
     end
 
-    Module:AddTargetLine(self, unit, nil)
+    if state.unitTarget then Module:AddTargetLine(self, unit, nil) end
 end
 
 function Module:UnitPlayerTooltip(self)

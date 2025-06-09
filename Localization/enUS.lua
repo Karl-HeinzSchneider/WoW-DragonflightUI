@@ -567,6 +567,8 @@ L["TooltipUnitHealthbar"] = "Show Health Bar"
 L["TooltipUnitHealthbarDesc"] = ""
 L["TooltipUnitHealthbarText"] = "Show Health Bar Text"
 L["TooltipUnitHealthbarTextDesc"] = ""
+L["TooltipUnitTarget"] = "Show Target"
+L["TooltipUnitTargetDesc"] = "Show unit target"
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
 -- Player
