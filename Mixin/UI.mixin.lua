@@ -3987,7 +3987,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             --  
             local lastElem = nil
             for i = 1, NUM_TALENT_FRAME_TABS do
-                tab = _G["PlayerTalentFrameTab" .. i];
+                local tab = _G["PlayerTalentFrameTab" .. i];
                 if (tab:IsShown()) then
                     tab:SetWidth(78)
                     tab:ClearAllPoints();

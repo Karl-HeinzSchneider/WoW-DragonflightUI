@@ -357,8 +357,8 @@ function DragonflightUIItemColorMixin:HookGuildbankBags()
     for c = 1, 7 do
         local column = GuildBankFrame['Column' .. c]
         for i = 1, 14 do
-            itemButton = column['Button' .. i]
-            buttonID = (c - 1) * 14 + i
+            local itemButton = column['Button' .. i]
+            local buttonID = (c - 1) * 14 + i
 
             local overlay = DragonflightUIItemColorMixin:AddOverlayToFrame(itemButton)
             overlay:SetPoint('CENTER')
