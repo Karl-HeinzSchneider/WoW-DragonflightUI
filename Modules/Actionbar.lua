@@ -706,6 +706,7 @@ function AddButtonTable(optionTable, sub)
             dropdownValues = DF.Settings.GrowthDirectionTable,
             order = 7.1,
             group = 'headerButtons',
+            new = true,
             editmode = true
         },
         reverse = {
