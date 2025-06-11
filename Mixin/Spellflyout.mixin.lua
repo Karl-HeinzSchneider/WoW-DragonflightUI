@@ -142,7 +142,8 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         --
         -- print('onclick')
         local state = self.state;
-        self:UpdateArrow(state.flyoutDirection or '')
+        local char = self.stateChar
+        self:UpdateArrow(char.flyoutDirection or '')
     end)
 
     -- frame:SetSize(69, 69)
