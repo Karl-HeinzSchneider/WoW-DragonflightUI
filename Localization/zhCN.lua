@@ -402,6 +402,8 @@ L["UIChangeSpellBook"] = "修改法术书"
 L["UIChangeSpellBookDesc"] = "修改法术书外观"
 L["UIChangeSpellBookProfessions"] = "修改专业技能法术书"
 L["UIChangeSpellBookProfessionsDesc"] = "修改专业技能法术书布局"
+L["UINewCharacterframe"] = "新风格角色窗口"
+L["UINewCharacterframeDesc"] = "新风格角色窗口(仅巫妖王版本可用)"
 
 -- 专业窗口
 L["ProfessionFrameHasSkillUp"] = "可提升技能"
