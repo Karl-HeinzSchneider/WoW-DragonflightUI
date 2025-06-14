@@ -479,6 +479,8 @@ L["UIChangeSpellBook"] = "Change SpellBook"
 L["UIChangeSpellBookDesc"] = "Change the appearance of the SpellBook."
 L["UIChangeSpellBookProfessions"] = "Change SpellBook Professions"
 L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for professions."
+L["UINewCharacterframe"] = "New Character Frame"
+L["UINewCharacterframeDesc"] = "New Character Frame (Only available on Wrath)"
 
 -- ProfessionFrame
 L["ProfessionFrameHasSkillUp"] = "Has skill up"

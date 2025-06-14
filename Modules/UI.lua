@@ -37,6 +37,7 @@ if DF.Wrath and not DF.Cata then
     defaults.profile.first.changeSpellBookProfessions = false
     defaults.profile.first.changeTradeskill = false
     defaults.profile.first.changeTalents = false
+    defaults.profile.first.enableNewCharacterframe = true
 end
 
 Module:SetDefaults(defaults)
@@ -124,18 +125,25 @@ if DF.Era or (DF.Wrath and not DF.Cata) then
             order = 103,
             new = false
         },
+        enableNewCharacterframe = {
+            type = 'toggle',
+            name = L["UINewCharacterframe"],
+            desc = L["UINewCharacterframeDesc"] .. getDefaultStr('enableNewCharacterframe', 'first'),
+            order = 101.1,
+            new = true
+        },
         changeSpellBook = {
             type = 'toggle',
             name = L["UIChangeSpellBook"],
             desc = L["UIChangeSpellBookDesc"] .. getDefaultStr('changeSpellBook', 'first'),
-            order = 101.1,
+            order = 101.2,
             new = false
         },
         changeSpellBookProfessions = {
             type = 'toggle',
             name = L["UIChangeSpellBookProfessions"],
             desc = L["UIChangeSpellBookProfessionsDesc"] .. getDefaultStr('changeSpellBookProfessions', 'first'),
-            order = 101.2,
+            order = 101.3,
             new = false
         }
     }
@@ -295,7 +303,7 @@ function Module:ApplySettings()
             -- DragonflightUIMixin:ChangeCharacterFrameCata()
             Module:HookCharacterLevel()
         elseif DF.Wrath then
-            DragonflightUIMixin:ChangeCharacterFrameEra()
+            DragonflightUIMixin:ChangeCharacterFrameEra(db.enableNewCharacterframe)
         elseif DF.Era then
             DragonflightUIMixin:ChangeCharacterFrameEra()
             Module:FuncOrWaitframe('Blizzard_EngravingUI', function()
@@ -306,6 +314,15 @@ function Module:ApplySettings()
             end)
         end
     end)
+
+    if (API.Version.IsWotlk) then
+        self:ConditionalOption('enableNewCharacterframe', 'first', L["UINewCharacterframe"], function()
+            C_CVar.SetCVar("equipmentManager", db.enableNewCharacterframe and 0 or 1);
+        end)
+        if (not db.enableNewCharacterframe) then
+            C_CVar.SetCVar("equipmentManager", db.enableNewCharacterframe and 0 or 1);
+        end
+    end
 
     if (DF.Era or (DF.Wrath and not DF.Cata and false)) then
         self:ConditionalOption('changeTalents', 'first', 'Change Talentframe', function()
