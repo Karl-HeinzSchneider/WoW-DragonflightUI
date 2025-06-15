@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 UI_shared.xsd">
 	<Script file="Mixin/CharacterStatsPanel.mixin.lua" />
+	<Script file="Mixin/CharacterStatsEra.mixin.lua" />
 	<Frame name="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsPanelMixin" virtual="true">
 		<Frames>
 			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
@@ -17,10 +18,12 @@ UI_shared.xsd">
 		</Frames>
 		<Scripts>
 			<!-- <OnShow inherit="prepend" method="OnShow" /> -->
-			<OnLoad inherit="prepend" method="OnLoad" />
+			<OnLoad method="OnLoad" />
 			<OnEvent method="OnEvent" />
 			<!-- <OnHide method="OnHide" /> -->
 		</Scripts>
+	</Frame>
+	<Frame name="DFCharacterStatsPanelEra" inherits="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsEraMixin" virtual="true">
 	</Frame>
 	<Button name="DFCharacterFrameExpandButton" mixin="DragonflightUICharacterFrameExpandButtonMixin" virtual="true">
 		<Size x="32" y="32" />

@@ -1338,7 +1338,8 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         insetRight:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', -4, 4)
         CharacterFrame.DFInsetRight = insetRight
 
-        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', insetRight, 'DFCharacterStatsPanel')
+        local statsTemplate = 'DFCharacterStatsPanelEra';
+        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', insetRight, statsTemplate)
         p:SetSize(100, 100)
         p:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
         p:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
