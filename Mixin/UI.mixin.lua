@@ -1106,7 +1106,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
     InspectFrame.DFHooked = true
 end
 
-function DragonflightUIMixin:ChangeCharacterFrameEra()
+function DragonflightUIMixin:ChangeCharacterFrameEra(enableNewCharacterframe)
     local frameTable = {PaperDollFrame, ReputationFrame, SkillFrame}
     if DF.Wrath and not DF.Cata then -- Need test Era or Cata or Mop need hide TokenFrame.
         table.insert(frameTable, TokenFrame)
@@ -1324,7 +1324,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     end)
 
     -- add characterstats panel + equzipment manager
-    if DF.Era then
+    if DF.Era or enableNewCharacterframe then
         --
         local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
                                 'DFCharacterFrameExpandButton')
