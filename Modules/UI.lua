@@ -685,8 +685,10 @@ function Module:ChangeBags()
         end
 
         DragonflightUIMixin:ChangeBackpackTokenFrame()
-        local searchBox = DragonflightUIMixin:CreateSearchBox()
-        local bankSearchBox = DragonflightUIMixin:CreateBankSearchBox()
+        local searchBox = _G['BagItemSearchBox'] or DragonflightUIMixin:CreateSearchBox()
+        searchBox:SetSize(115, 20)
+        local bankSearchBox = _G['BankItemSearchBox'] or DragonflightUIMixin:CreateBankSearchBox()
+        bankSearchBox:SetSize(110, 20)
 
         Module:FuncOrWaitframe('Blizzard_GuildBankUI', function()
             DragonflightUIMixin:AddGuildbankSearch()
@@ -701,6 +703,7 @@ function Module:ChangeBags()
 
             if id == 0 then
                 --
+                searchBox:ClearAllPoints()
                 searchBox:SetParent(frame)
                 searchBox:SetPoint('TOPLEFT', frame, 'TOPLEFT', 42, -37 + 2)
                 -- searchBox:SetWidth(frame:GetWidth() - 2 * 42)
