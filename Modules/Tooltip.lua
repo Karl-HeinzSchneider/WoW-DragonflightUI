@@ -620,7 +620,7 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
             focused = GetMouseFocus()
         end
 
-        -- @TODO @HACK GetMouseFoci returns empty table on units instead of one with worldframe
+        -- @TODO @HACK GetMouseFoci returns empty table on units instead of one with worldframe :(
         if focused == WorldFrame or (DF.Era and not focused) or (DF.API.Version.IsWotlk and not focused) or
             (DF.API.Version.IsMoP and not focused) then
             -- units etc
