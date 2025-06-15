@@ -27,6 +27,11 @@ DF.Settings.OrientationTable = {
     {value = 'vertical', text = 'Vertical', tooltip = 'descr', label = 'label'}
 }
 
+DF.Settings.GrowthDirectionTable = {
+    {value = 'up', text = 'Up', tooltip = 'descr', label = 'label'},
+    {value = 'down', text = 'Down', tooltip = 'descr', label = 'label'}
+}
+
 DF.Settings.ValidateFrame = function(t)
     if not t or t == '' then return false end
     local f = _G[t];

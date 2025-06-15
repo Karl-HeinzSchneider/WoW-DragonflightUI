@@ -188,6 +188,9 @@ L["ButtonTableButtonScaleDesc"] = ""
 L["ButtonTableOrientation"] = "Orientation"
 L["ButtonTableOrientationDesc"] = "Orientation"
 
+L["ButtonTableGrowthDirection"] = "Growth Direction"
+L["ButtonTableGrowthDirectionDesc"] = ""
+
 L["ButtonTableReverseButtonOrder"] = "Reverse Button Order"
 L["ButtonTableReverseButtonOrderDesc"] = ""
 

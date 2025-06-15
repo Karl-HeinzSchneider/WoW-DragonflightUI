@@ -181,10 +181,18 @@ function DragonflightUIActionbarMixin:Update()
             local dx = (2 * j - 1) * padding + (j - 1) * btnSize
             local dy = (2 * i - 1) * padding + (i - 1) * btnSize
 
+            local sgn = 1;
+            local anchor = 'BOTTOMLEFT';
+
+            if state.growthDirection == 'down' then
+                sgn = -1;
+                anchor = 'TOPLEFT'
+            end
+
             if state.orientation == 'horizontal' then
-                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dx, dy)
+                btn:SetPoint(anchor, self, anchor, dx, sgn * dy)
             else
-                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
+                btn:SetPoint(anchor, self, anchor, dy, sgn * dx)
             end
 
             -- btn:GetAttribute("showgrid") can be nil
@@ -1285,10 +1293,18 @@ function DragonflightUIStancebarMixinCode:Update()
             local dx = (2 * j - 1) * padding + (j - 1) * btnSize
             local dy = (2 * i - 1) * padding + (i - 1) * btnSize
 
+            local sgn = 1;
+            local anchor = 'BOTTOMLEFT';
+
+            if state.growthDirection == 'down' then
+                sgn = -1;
+                anchor = 'TOPLEFT'
+            end
+
             if state.orientation == 'horizontal' then
-                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dx, dy)
+                btn:SetPoint(anchor, self, anchor, dx, sgn * dy)
             else
-                btn:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', dy, dx)
+                btn:SetPoint(anchor, self, anchor, dy, sgn * dx)
             end
 
             -- btn:GetAttribute("showgrid") can be nil
