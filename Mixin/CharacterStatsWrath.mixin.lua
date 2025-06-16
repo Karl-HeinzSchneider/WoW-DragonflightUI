@@ -15,7 +15,7 @@ function DragonflightUICharacterStatsWrathMixin:SetupStats()
     self:AddStatsAttributes()
     self:AddStatsMelee()
     -- self:AddStatsRanged()
-    -- self:AddStatsSpell()
+    self:AddStatsSpell()
     -- self:AddStatsDefense()
     -- self:AddStatsResistance()
     -- self:AddStatsSpell()
@@ -358,9 +358,9 @@ function DragonflightUICharacterStatsWrathMixin:AddStatsMelee()
         name = COMBAT_RATING_NAME6,
         descr = '..',
         func = function()
-            local Dummy = self.Dummy;
-            Dummy:ResetText()
-            PaperDollFrame_SetRating(Dummy, CR_HIT_MELEE);
+            -- local Dummy = self.Dummy;
+            -- Dummy:ResetText()
+            -- PaperDollFrame_SetRating(Dummy, CR_HIT_MELEE);
             -- local label, stattext, tt, tt2 = Dummy:GetText();
             -- print(label, stattext, tt, tt2)
 
@@ -658,6 +658,148 @@ function DragonflightUICharacterStatsWrathMixin:AddStatsRanged()
             local crit = GetRangedCritChance()
             local str = string.format(' %.2F', crit) .. '%';
             return str, CRIT_CHANCE .. str, 'Chance of attacks doing extra damage.'
+        end
+    })
+end
+
+function DragonflightUICharacterStatsWrathMixin:AddStatsSpell()
+    local cap = {
+        SPELL_SCHOOL1_CAP, SPELL_SCHOOL2_CAP, SPELL_SCHOOL3_CAP, SPELL_SCHOOL4_CAP, SPELL_SCHOOL5_CAP,
+        SPELL_SCHOOL6_CAP, SPELL_SCHOOL7_CAP
+    }
+
+    self:RegisterElement('damage', 'spell', {
+        order = 1,
+        name = BONUS_DAMAGE,
+        descr = '..',
+        func = function()
+            local newTable = {} -- df
+            newTable[1] = {left = BONUS_DAMAGE}
+
+            local holySchool = 2;
+            -- Start at 2 to skip physical damage
+            local minModifier = GetSpellBonusDamage(holySchool);
+            local bonusDamageTable = {};
+            bonusDamageTable[holySchool] = minModifier;
+            table.insert(newTable, {left = cap[2 - 1] .. ' ' .. DAMAGE, right = string.format('%d', minModifier)})
+
+            local bonusDamage;
+            for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
+                bonusDamage = GetSpellBonusDamage(i);
+                minModifier = min(minModifier, bonusDamage);
+                bonusDamageTable[i] = bonusDamage;
+
+                table.insert(newTable, {left = cap[i - 1] .. ' ' .. DAMAGE, right = string.format('%d', bonusDamage)})
+            end
+            if #newTable == 3 then newTable[3] = nil; end
+
+            local str = minModifier;
+
+            newTable[1] = {left = BONUS_DAMAGE .. ' ' .. str}
+
+            -- local str = string.format(' %d', dmg);
+            return str, nil, nil, newTable;
+        end
+    })
+
+    self:RegisterElement('healing', 'spell', {
+        order = 2,
+        name = BONUS_HEALING,
+        descr = '..',
+        func = function()
+            local healing = GetSpellBonusHealing();
+
+            local str = string.format(' %d', healing);
+            return str, BONUS_HEALING .. str, format(BONUS_HEALING_TOOLTIP, healing);
+        end
+    })
+
+    self:RegisterElement('hit', 'spell', {
+        order = 3,
+        name = COMBAT_RATING_NAME8,
+        descr = '..',
+        func = function()
+            local rating = GetCombatRating(CR_HIT_SPELL);
+            local ratingBonus = GetCombatRatingBonus(CR_HIT_SPELL);
+
+            local newTable = {} -- df
+            newTable[1] = {left = COMBAT_RATING_NAME8 .. ' ' .. rating}
+            newTable[2] = {left = L['CharacterStatsHitSpellTooltipFormat']:format(UnitLevel('player'), ratingBonus)}
+
+            return rating, nil, nil, newTable
+        end
+    })
+
+    self:RegisterElement('crit', 'spell', {
+        order = 4,
+        name = SPELL_CRIT_CHANCE,
+        descr = '..',
+        func = function()
+            local newTable = {} -- df
+            newTable[1] = {left = SPELL_CRIT_CHANCE}
+
+            local holySchool = 2;
+            -- Start at 2 to skip physical damage
+            local minCrit = GetSpellCritChance(holySchool);
+
+            table.insert(newTable, {left = cap[2 - 1] .. ' ' .. '', right = string.format('%.2f%%', minCrit)})
+
+            local spellCrit;
+            for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
+                spellCrit = GetSpellCritChance(i);
+                minCrit = min(minCrit, spellCrit);
+
+                table.insert(newTable, {left = cap[i - 1] .. ' ' .. '', right = string.format('%.2f%%', spellCrit)})
+            end
+            if #newTable == 3 then newTable[3] = nil; end
+
+            local str = minCrit;
+            newTable[1] = {left = SPELL_CRIT_CHANCE .. ' ' .. string.format('%.2f%%', str)}
+
+            -- local str = string.format(' %d', dmg);
+            return str, nil, nil, newTable;
+        end
+    })
+
+    self:RegisterElement('haste', 'spell', {
+        order = 5,
+        name = SPELL_HASTE,
+        descr = '..',
+        func = function()
+            local rating = GetCombatRating(CR_HASTE_SPELL)
+
+            return rating, SPELL_HASTE .. ' ' .. rating, format(SPELL_HASTE_TOOLTIP, rating);
+        end
+    })
+
+    self:RegisterElement('pen', 'spell', {
+        order = 6,
+        name = L['CharacterStatsSpellPen'],
+        descr = '..',
+        func = function()
+            local rating = GetSpellPenetration();
+
+            local newTable = {} -- df
+            newTable[1] = {left = L['CharacterStatsSpellPen'] .. ' ' .. rating}
+            newTable[2] = {left = L['CharacterStatsSpellPenTooltipFormat']:format(rating, rating)}
+
+            return rating, nil, nil, newTable
+        end
+    })
+
+    self:RegisterElement('mana', 'spell', {
+        order = 7,
+        name = MANA_REGEN,
+        descr = '..',
+        func = function()
+            if (not UnitHasMana("player")) then return NOT_APPLICABLE, nil, nil; end
+
+            local base, casting = GetManaRegen();
+            -- All mana regen stats are displayed as mana/5 sec.
+            base = floor(base * 5.0);
+            casting = floor(casting * 5.0);
+
+            return base, MANA_REGEN .. ' ' .. base, format(MANA_REGEN_TOOLTIP, base, casting)
         end
     })
 end
