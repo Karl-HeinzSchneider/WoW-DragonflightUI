@@ -28,6 +28,11 @@ UI_shared.xsd">
 	</Frame>
 	<Frame name="DFCharacterStatsPanelWrath" inherits="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsWrathMixin" virtual="true">
 	</Frame>
+	<Frame name="DFCharacterStatsDummy" mixin="DragonflightUICharacterStatsDummyMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+		</Scripts>
+	</Frame>
 	<Button name="DFCharacterFrameExpandButton" mixin="DragonflightUICharacterFrameExpandButtonMixin" virtual="true">
 		<Size x="32" y="32" />
 		<!--

@@ -652,7 +652,8 @@ function DFCharacterStatsStatTemplateMixin:OnEnter()
                             GameTooltip:AddLine(v.left, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g,
                                                 HIGHLIGHT_FONT_COLOR.b)
                         else
-                            GameTooltip:AddLine(v.left, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                            GameTooltip:AddLine(v.left, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b,
+                                                true)
                         end
                     end
 
