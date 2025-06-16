@@ -1201,7 +1201,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', frame, 'InsetFrameTemplate')
     inset:ClearAllPoints()
     inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -60)
-    if DF.API.Version.IsWotlk then inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -73) end
+    -- if DF.API.Version.IsWotlk then inset:SetPoint('TOPLEFT', frame, 'TOPLEFT', 4, -73) end
     inset:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMLEFT', 332, 4)
     frame.DFInset = inset
     -- _G['DragonflightUICharacterFrameInsetBg']:SetAlpha(0.25)
@@ -1215,19 +1215,19 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
 
     if DF.API.Version.IsWotlk then
-        head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -10)
-        hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -10)
+        -- head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -10)
+        -- hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -10)
         local equipManagerBtn = GearManagerToggleButton
         equipManagerBtn:ClearAllPoints()
-        equipManagerBtn:SetPoint("TOPRIGHT", inset, "TOPRIGHT", -8, 40)
+        -- equipManagerBtn:SetPoint("TOPRIGHT", inset, "TOPRIGHT", -8, 40)
 
         local modelRotateRightBtn = CharacterModelFrameRotateRightButton
         modelRotateRightBtn:ClearAllPoints()
-        modelRotateRightBtn:SetPoint("TOPLEFT", inset, "TOPLEFT", 40, -7)
+        modelRotateRightBtn:SetPoint("TOPLEFT", inset, "TOPLEFT", 40 + 10, -7)
 
         local modelRotateLeftBtn = CharacterModelFrameRotateLeftButton
         modelRotateLeftBtn:ClearAllPoints()
-        modelRotateLeftBtn:SetPoint("TOPLEFT", inset, "TOPLEFT", 70, -7)
+        modelRotateLeftBtn:SetPoint("TOPLEFT", inset, "TOPLEFT", 70 + 10, -7)
 
         local magicRes = MagicResFrame1
         magicRes:ClearAllPoints()
@@ -1266,7 +1266,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
     main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
-    if DF.API.Version.IsWotlk then main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 87, 13) end
+    -- if DF.API.Version.IsWotlk then main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 87, 13) end -- @TODO
     -- tabs
     do
         for i = 1, 5 do
@@ -1324,7 +1324,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     end)
 
     -- add characterstats panel + equzipment manager
-    if DF.Era then
+    if DF.API.Version.IsClassic or DF.API.Version.IsWotlk then
         --
         local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
                                 'DFCharacterFrameExpandButton')
@@ -1338,7 +1338,16 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         insetRight:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', -4, 4)
         CharacterFrame.DFInsetRight = insetRight
 
-        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', insetRight, 'DFCharacterStatsPanel')
+        local statsTemplate
+        if DF.API.Version.IsClassic then
+            statsTemplate = 'DFCharacterStatsPanelEra';
+        elseif DF.API.Version.IsWotlk then
+            statsTemplate = 'DFCharacterStatsPanelWrath';
+        else
+            --
+        end
+
+        local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', insetRight, statsTemplate)
         p:SetSize(100, 100)
         p:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
         p:SetPoint('BOTTOMRIGHT', insetRight, 'BOTTOMRIGHT', -3, 2);
@@ -1379,11 +1388,11 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         end)
 
         -- remove default
-        -- local res = CharacterResistanceFrame
+        local res = CharacterResistanceFrame
         res:ClearAllPoints()
         res:Hide()
 
-        -- local att = CharacterAttributesFrame
+        local att = CharacterAttributesFrame
         att:ClearAllPoints()
         att:Hide()
 
