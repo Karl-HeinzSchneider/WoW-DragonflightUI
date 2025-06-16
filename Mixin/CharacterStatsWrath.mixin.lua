@@ -16,7 +16,7 @@ function DragonflightUICharacterStatsWrathMixin:SetupStats()
     self:AddStatsMelee()
     -- self:AddStatsRanged()
     self:AddStatsSpell()
-    -- self:AddStatsDefense()
+    self:AddStatsDefense()
     -- self:AddStatsResistance()
     -- self:AddStatsSpell()
     -- self:AddStatsSpell()
@@ -33,11 +33,11 @@ function DragonflightUICharacterStatsWrathMixin:AddDefaultCategorys()
     self:RegisterCategory('attributes',
                           {name = STAT_CATEGORY_ATTRIBUTES, descr = 'descr..', order = 2, isExpanded = true})
     self:RegisterCategory('melee', {name = STAT_CATEGORY_MELEE, descr = 'descr..', order = 3, isExpanded = true})
-    self:RegisterCategory('ranged', {name = STAT_CATEGORY_RANGED, descr = 'descr..', order = 4, isExpanded = true})
+    -- self:RegisterCategory('ranged', {name = STAT_CATEGORY_RANGED, descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('spell', {name = STAT_CATEGORY_SPELL, descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('defense', {name = STAT_CATEGORY_DEFENSE, descr = 'descr..', order = 4, isExpanded = true})
-    self:RegisterCategory('resistance',
-                          {name = STAT_CATEGORY_RESISTANCE, descr = 'descr..', order = 4, isExpanded = true})
+    -- self:RegisterCategory('resistance',
+    --                       {name = STAT_CATEGORY_RESISTANCE, descr = 'descr..', order = 4, isExpanded = true})
 end
 
 function DragonflightUICharacterStatsWrathMixin:AddStatsGeneral()
@@ -804,11 +804,152 @@ function DragonflightUICharacterStatsWrathMixin:AddStatsSpell()
     })
 end
 
+function DragonflightUICharacterStatsWrathMixin:AddStatsDefense()
+    local armor = function()
+        local frameText; -- df
+        local tooltip; -- df
+        local tooltip2; -- df           
+
+        local base, effectiveArmor, armor, posBuff, negBuff = UnitArmor('player');
+
+        local totalBufs = posBuff + negBuff;
+
+        -- local frame = _G[prefix .. "ArmorFrame"];
+        -- local text = _G[prefix .. "ArmorFrameStatText"];
+
+        frameText, tooltip, tooltip2 = self:PaperDollFormatStat(ARMOR, base, posBuff, negBuff);
+        local playerLevel = UnitLevel('player');
+        local armorReduction = PaperDollFrame_GetArmorReduction(effectiveArmor, UnitLevel('player'))
+        tooltip2 = format(DEFAULT_STATARMOR_TOOLTIP, armorReduction)
+        -- armorReduction = 100 * (armorReduction / (armorReduction + 1));
+
+        -- tooltip2 = format(ARMOR_TOOLTIP, playerLevel, armorReduction);        	
+
+        local petBonus = ComputePetBonus("PET_BONUS_ARMOR", effectiveArmor);
+        if (petBonus > 0) then tooltip2 = tooltip2 .. "\n" .. format(PET_BONUS_TOOLTIP_ARMOR, petBonus); end
+
+        return frameText, tooltip, tooltip2
+    end
+
+    self:RegisterElement('armor', 'defense', {
+        order = 1,
+        name = ARMOR,
+        descr = '..',
+        func = function()
+            return armor()
+        end
+    })
+
+    local function GetDefense()
+        for i = 1, GetNumSkillLines() do
+            local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier = GetSkillLineInfo(i)
+            if skillName == DEFENSE then
+                -- print(name, rank, tempRank, mod)
+                -- print('skillName, skillRank, numTempPoints, skillModifier')
+                return skillName, skillRank, numTempPoints, skillModifier
+            end
+        end
+    end
+
+    self:RegisterElement('defense', 'defense', {
+        order = 2,
+        name = DEFENSE,
+        descr = '..',
+        func = function()
+            local base, modifier = UnitDefense('player');
+            local posBuff = 0;
+            local negBuff = 0;
+            if (modifier > 0) then
+                posBuff = modifier;
+            elseif (modifier < 0) then
+                negBuff = modifier;
+            end
+            local frameText, tooltip, tooltip2 = self:PaperDollFormatStat(DEFENSE, base, posBuff, negBuff);
+
+            -- tooltip2 = 'Increases chance to Dodge, Block and Parry.\nDecreases chance to be hit and critically hit.';
+            local defensePercent = GetDodgeBlockParryChanceFromDefense();
+            tooltip2 = format(DEFAULT_STATDEFENSE_TOOLTIP, GetCombatRating(CR_DEFENSE_SKILL),
+                              GetCombatRatingBonus(CR_DEFENSE_SKILL), defensePercent, defensePercent);
+
+            return frameText, tooltip, tooltip2
+        end
+    })
+
+    self:RegisterElement('dodge', 'defense', {
+        order = 3,
+        name = DODGE,
+        descr = '..',
+        func = function()
+            local dodge = GetDodgeChance()
+            local str = string.format(' %.2F', dodge) .. '%';
+
+            local tooltip = DODGE_CHANCE .. str
+            local tooltip2 = format(CR_DODGE_TOOLTIP, GetCombatRating(CR_DODGE), GetCombatRatingBonus(CR_DODGE));
+
+            return str, tooltip, tooltip2
+        end
+    })
+
+    self:RegisterElement('parry', 'defense', {
+        order = 4,
+        name = PARRY,
+        descr = '..',
+        func = function()
+            -- local parry = GetParryChance()
+            -- local str = string.format(' %.2F', parry) .. '%';
+            -- return str, PARRY_CHANCE .. str, nil
+
+            local parry = GetParryChance()
+            local str = string.format(' %.2F', parry) .. '%';
+
+            local tooltip = PARRY_CHANCE .. str
+            local tooltip2 = format(CR_PARRY_TOOLTIP, GetCombatRating(CR_PARRY), GetCombatRatingBonus(CR_PARRY));
+
+            return str, tooltip, tooltip2
+        end
+    })
+
+    self:RegisterElement('block', 'defense', {
+        order = 5,
+        name = BLOCK,
+        descr = '..',
+        func = function()
+            local block = GetBlockChance()
+            local str = string.format(' %.2F', block) .. '%';
+
+            local tooltip = BLOCK_CHANCE .. str
+            local tooltip2 = format(CR_BLOCK_TOOLTIP, GetCombatRating(CR_BLOCK), GetCombatRatingBonus(CR_BLOCK),
+                                    GetShieldBlock());
+
+            return str, tooltip, tooltip2
+        end
+    })
+
+    self:RegisterElement('res', 'defense', {
+        order = 6,
+        name = STAT_RESILIENCE,
+        descr = '..',
+        func = function()
+            local resilience = GetCombatRating(CR_RESILIENCE_CRIT_TAKEN);
+            local bonus = GetCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
+            local maxBonus = GetMaxCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
+
+            -- local frameText, tooltip, tooltip2 = self:PaperDollFormatStat(DEFENSE, base, posBuff, negBuff);
+            local tooltip = STAT_RESILIENCE .. ' ' .. resilience;
+            local tooltip2 = format(RESILIENCE_TOOLTIP, bonus,
+                                    min(bonus * RESILIENCE_CRIT_CHANCE_TO_DAMAGE_REDUCTION_MULTIPLIER, maxBonus),
+                                    bonus * RESILIENCE_CRIT_CHANCE_TO_CONSTANT_DAMAGE_REDUCTION_MULTIPLIER);
+
+            return resilience, tooltip, tooltip2
+        end
+    })
+end
+
 DragonflightUICharacterStatsDummyMixin = {}
 
 function DragonflightUICharacterStatsDummyMixin:OnLoad()
-    print('DragonflightUICharacterStatsDummyMixin:OnLoad()')
-    print('~~>> DUMMY')
+    -- print('DragonflightUICharacterStatsDummyMixin:OnLoad()')
+    -- print('~~>> DUMMY')
 
     self.tt = self:CreateFontString('DragonflightUICharacterStatsDummyTooltip1', 'ARTWORK', 'GameFontNormal')
     self.tt2 = self:CreateFontString('DragonflightUICharacterStatsDummyTooltip2', 'ARTWORK', 'GameFontNormal')
