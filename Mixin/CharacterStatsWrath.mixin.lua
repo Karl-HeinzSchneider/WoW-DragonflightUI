@@ -17,9 +17,7 @@ function DragonflightUICharacterStatsWrathMixin:SetupStats()
     -- self:AddStatsRanged()
     self:AddStatsSpell()
     self:AddStatsDefense()
-    -- self:AddStatsResistance()
-    -- self:AddStatsSpell()
-    -- self:AddStatsSpell()
+    self:AddStatsResistance()
 end
 
 function DragonflightUICharacterStatsWrathMixin:AddDummy()
@@ -36,8 +34,8 @@ function DragonflightUICharacterStatsWrathMixin:AddDefaultCategorys()
     -- self:RegisterCategory('ranged', {name = STAT_CATEGORY_RANGED, descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('spell', {name = STAT_CATEGORY_SPELL, descr = 'descr..', order = 4, isExpanded = true})
     self:RegisterCategory('defense', {name = STAT_CATEGORY_DEFENSE, descr = 'descr..', order = 4, isExpanded = true})
-    -- self:RegisterCategory('resistance',
-    --                       {name = STAT_CATEGORY_RESISTANCE, descr = 'descr..', order = 4, isExpanded = true})
+    self:RegisterCategory('resistance',
+                          {name = STAT_CATEGORY_RESISTANCE, descr = 'descr..', order = 4, isExpanded = true})
 end
 
 function DragonflightUICharacterStatsWrathMixin:AddStatsGeneral()
@@ -943,6 +941,108 @@ function DragonflightUICharacterStatsWrathMixin:AddStatsDefense()
             return resilience, tooltip, tooltip2
         end
     })
+end
+
+function DragonflightUICharacterStatsWrathMixin:AddStatsResistance()
+    local tex = 'Interface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons';
+    local resIcons = {}
+    local resCoords = {
+        {0, 1.0, 0, 0.11328125}, -- fire
+        {0, 1.0, 0.11328125, 0.2265625}, -- nature
+        {0, 1.0, 0.33984375, 0.453125}, -- frost
+        {0, 1.0, 0.453125, 0.56640625}, -- shadow  
+        {0, 1.0, 0.2265625, 0.33984375} -- arcane
+    }
+    for k, v in ipairs(resCoords) do
+        resIcons[k] = string.format('%s:%s:%s:%s', v[1] * 32, v[2] * 32, v[3] * 256, v[4] * 256)
+    end
+    -- local resIcons = {'0:1.0:0.2265625:0.33984375'}
+
+    local res = function(i)
+        local frameText; -- df
+        local tooltip; -- df
+        local tooltip2; -- df
+
+        local resistance;
+        local positive;
+        local negative;
+        local base;
+        -- local text = _G["MagicResText"..i];
+        -- local frame = _G["MagicResFrame"..i];
+
+        base, resistance, positive, negative = UnitResistance("player", i);
+        local petBonus = ComputePetBonus("PET_BONUS_RES", resistance);
+
+        -- resistances can now be negative. Show Red if negative, Green if positive, white otherwise
+        if (abs(negative) > positive) then
+            frameText = RED_FONT_COLOR_CODE .. resistance .. FONT_COLOR_CODE_CLOSE;
+        elseif (abs(negative) == positive) then
+            frameText = resistance;
+        else
+            frameText = GREEN_FONT_COLOR_CODE .. resistance .. FONT_COLOR_CODE_CLOSE;
+        end
+
+        local resistanceName = _G["RESISTANCE" .. i .. "_NAME"];
+        tooltip = resistanceName .. " " .. resistance;
+        if (positive ~= 0 or negative ~= 0) then
+            -- Otherwise build up the formula
+            tooltip = tooltip .. " ( " .. HIGHLIGHT_FONT_COLOR_CODE .. base;
+            if (positive > 0) then tooltip = tooltip .. GREEN_FONT_COLOR_CODE .. " +" .. positive; end
+            if (negative < 0) then tooltip = tooltip .. " " .. RED_FONT_COLOR_CODE .. negative; end
+            tooltip = tooltip .. FONT_COLOR_CODE_CLOSE .. " )";
+        end
+
+        local unitLevel = UnitLevel("player");
+        unitLevel = max(unitLevel, 20);
+        local magicResistanceNumber = resistance / unitLevel;
+        local resistanceLevel;
+        if (magicResistanceNumber > 5) then
+            resistanceLevel = RESISTANCE_EXCELLENT;
+        elseif (magicResistanceNumber > 3.75) then
+            resistanceLevel = RESISTANCE_VERYGOOD;
+        elseif (magicResistanceNumber > 2.5) then
+            resistanceLevel = RESISTANCE_GOOD;
+        elseif (magicResistanceNumber > 1.25) then
+            resistanceLevel = RESISTANCE_FAIR;
+        elseif (magicResistanceNumber > 0) then
+            resistanceLevel = RESISTANCE_POOR;
+        else
+            resistanceLevel = RESISTANCE_NONE;
+        end
+        tooltip2 = format(RESISTANCE_TOOLTIP_SUBTEXT, _G["RESISTANCE_TYPE" .. i], unitLevel, resistanceLevel);
+
+        tooltip = string.format('|T%s:16:16:0:0:32:256:%s|t %s', tex, resIcons[i - 1], tooltip)
+
+        if (petBonus > 0) then tooltip2 = tooltip2 .. "\n" .. format(PET_BONUS_TOOLTIP_RESISTANCE, petBonus); end
+
+        return frameText, tooltip, tooltip2;
+    end
+
+    -- local resTable = {'Holy', 'Fire', 'Nature', 'Frost', 'Shadow', 'Arcane'}
+
+    local function resName(i)
+        return string.format('|T%s:16:16:0:0:32:256:%s|t %s', tex, resIcons[i - 2], SCHOOL_STRINGS[i])
+    end
+
+    self:RegisterElement(SCHOOL_STRINGS[7], 'resistance', {
+        order = 1,
+        name = resName(7),
+        descr = '..',
+        func = function()
+            return res(6)
+        end
+    })
+    -- 1 = holy
+    for k = 2, NUM_RESISTANCE_TYPES do
+        self:RegisterElement(SCHOOL_STRINGS[k + 1], 'resistance', {
+            order = k,
+            name = resName(k + 1),
+            descr = '..',
+            func = function()
+                return res(k)
+            end
+        })
+    end
 end
 
 DragonflightUICharacterStatsDummyMixin = {}
