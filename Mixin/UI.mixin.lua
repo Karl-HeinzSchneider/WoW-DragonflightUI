@@ -1324,7 +1324,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     end)
 
     -- add characterstats panel + equzipment manager
-    if DF.Era then
+    if DF.API.Version.Era or DF.API.Version.IsWotlk then
         --
         local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
                                 'DFCharacterFrameExpandButton')
@@ -1338,7 +1338,15 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         insetRight:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', -4, 4)
         CharacterFrame.DFInsetRight = insetRight
 
-        local statsTemplate = 'DFCharacterStatsPanelEra';
+        local statsTemplate
+        if DF.API.Version.Era then
+            statsTemplate = 'DFCharacterStatsPanelEra';
+        elseif DF.API.Version.IsWotlk then
+            statsTemplate = 'DFCharacterStatsPanelWrath';
+        else
+            --
+        end
+
         local p = CreateFrame('Frame', 'DragonflightUICharacterStatsPanel', insetRight, statsTemplate)
         p:SetSize(100, 100)
         p:SetPoint('TOPLEFT', insetRight, 'TOPLEFT', 3, -3)
@@ -1381,12 +1389,12 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
         -- remove default
         -- local res = CharacterResistanceFrame
-        res:ClearAllPoints()
-        res:Hide()
+        -- res:ClearAllPoints()
+        -- res:Hide()
 
         -- local att = CharacterAttributesFrame
-        att:ClearAllPoints()
-        att:Hide()
+        -- att:ClearAllPoints()
+        -- att:Hide()
 
         -- local model = CharacterModelFrame
         model:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', 52, -66)
