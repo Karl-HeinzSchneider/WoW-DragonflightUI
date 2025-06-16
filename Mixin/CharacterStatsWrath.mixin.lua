@@ -755,7 +755,7 @@ function DragonflightUICharacterStatsWrathMixin:AddStatsSpell()
             newTable[1] = {left = SPELL_CRIT_CHANCE .. ' ' .. string.format('%.2f%%', str)}
 
             -- local str = string.format(' %d', dmg);
-            return str, nil, nil, newTable;
+            return string.format('%.2f%%', str), nil, nil, newTable;
         end
     })
 
