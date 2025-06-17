@@ -30,6 +30,37 @@ L["ModuleTooltipUnitframe"] =
     "This module overhauls the default Unitframes, and adds new features like ClassColor or MobHealth(Era).\nAdds seperate options for Player-, Pet-, Target-, Focus-, and PartyUnitframes."
 L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
+L["ModuleFlyout"] = "Flyout"
+L["ModuleActionbar"] = "Actionbar"
+L["ModuleCastbar"] = "Castbar"
+L["ModuleChat"] = "Chat"
+L["ModuleBuffs"] = "Buffs"
+L["ModuleDarkmode"] = "Darkmode"
+L["ModuleMinimap"] = "Minimap"
+L["ModuleTooltip"] = "Tooltip"
+L["ModuleUI"] = "UI"
+L["ModuleUnitframe"] = "Unitframe"
+L["ModuleUtility"] = "Utility"
+L["ModuleCompatibility"] = "Compatibility"
+L["ModuleBossframe"] = "Bossframe"
+
+L["ConfigGeneralWhatsNew"] = "What's New"
+L["ConfigGeneralModules"] = "Modules"
+L["ConfigGeneralInfo"] = "Info"
+
+L["MainMenuDragonflightUI"] = "DragonflightUI"
+L["MainMenuEditmode"] = "Editmode"
+
+-- config.mixin.lua
+L["ConfigMixinQuickKeybindMode"] = "Quick Keybind Mode"
+L["ConfigMixinGeneral"] = "General"
+L["ConfigMixinModules"] = "Modules"
+L["ConfigMixinActionBar"] = "Action Bar"
+L["ConfigMixinCastBar"] = "Cast Bar"
+L["ConfigMixinMisc"] = "Misc"
+L["ConfigMixinUnitframes"] = "Unitframes"
+
+-- modules.mixin.lua
 L["ModuleConditionalMessage"] =
     "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '|cff8080ff/reload|r'!"
 
@@ -74,13 +105,6 @@ L["ProfilesExportProfileDesc"] = "Opens the share dialogue."
 -- Editmode
 L["EditModeBasicOptions"] = "Basic Options"
 L["EditModeAdvancedOptions"] = "Advanced Options"
--- L["EditModeLayoutDropdown"] = HUD_EDIT_MODE_LAYOUT or "Layout"
--- L["EditModeCopyLayout"] = HUD_EDIT_MODE_COPY_LAYOUT or "Copy Layout"
--- L["EditModeRenameLayout"] = HUD_EDIT_MODE_RENAME_LAYOUT or "Change Name"
--- L["EditModeRenameOrCopyLayout"] = HUD_EDIT_MODE_RENAME_OR_COPY_LAYOUT or "Rename/Copy Layout"
--- L["EditModeDeleteLayout"] = HUD_EDIT_MODE_DELETE_LAYOUT or "Delete Layout"
--- L["EditModeNewLayoutDisabled"] = HUD_EDIT_MODE_NEW_LAYOUT_DISABLED or "%s New Layout"
--- L["EditModeNewLayout"] = HUD_EDIT_MODE_NEW_LAYOUT or "%s |cnPURE_GREEN_COLOR:New Layout|r"
 
 L["EditModeLayoutDropdown"] = "Profile"
 L["EditModeCopyLayout"] = "Copy Profile"
@@ -98,7 +122,6 @@ L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
 L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
 
 -- Compat
-
 L['CompatName'] = "Compatibility"
 
 L['CompatAuctionator'] = "Auctionator"
@@ -234,8 +257,8 @@ L["MoreOptionsHideBarScrollingDesc"] = ""
 L["MoreOptionsGryphons"] = "Gryphons"
 L["MoreOptionsGryphonsDesc"] = "Gryphons"
 
-L["MoreOptionsUseKeyDown"] = "Use Key Down"
-L["MoreOptionsUseKeyDownDesc"] = "Activates abilities on key down."
+L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "Use Key Down"
+L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or "Activates abilities on key down."
 
 L["MoreOptionsIconRangeColor"] = "Icon Range Color"
 L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange"
@@ -337,6 +360,7 @@ L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
 L["ExtraActionButtonStyleDesc"] = ""
 L["ExtraActionButtonHideBackgroundTexture"] = "Hide Background Texture"
 L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+
 -- Buffs
 L["BuffsOptionsName"] = "Buffs"
 L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
@@ -355,13 +379,13 @@ L["FlyoutHeaderDesc"] = ""
 L["FlyoutDirection"] = "Flyout Direction"
 L["FlyoutDirectionDesc"] = "Flyout Direction"
 L["FlyoutSpells"] = "Spells"
-L["FlyoutSpellsDesc"] = "Inspert SpellIDs as comma seperated values, e.g. '688, 697'."
+L["FlyoutSpellsDesc"] = "Insert SpellIDs as comma seperated values, e.g. '688, 697'."
 L["FlyoutSpellsAlliance"] = "Spells (Alliance)"
 L["FlyoutSpellsAllianceDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on alliance side.)"
 L["FlyoutSpellsHorde"] = "Spells (Horde)"
 L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on horde side.)"
 L["FlyoutItems"] = "Items"
-L["FlyoutItemsDesc"] = "Inspert ItemIDs as comma seperated values, e.g. '6948, 8490'."
+L["FlyoutItemsDesc"] = "Insert ItemIDs as comma seperated values, e.g. '6948, 8490'."
 
 L["FlyoutCloseAfterClick"] = "Close After Click"
 L["FlyoutCloseAfterClickDesc"] = "Close the flyout after pressing one of its buttons."
@@ -485,11 +509,11 @@ L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for profess
 
 -- Characterstatspanel
 L['CharacterStatsHitMeleeTooltipFormat'] = "Increases your melee chance to hit a target of level %d by %.2f%%." -- CR_HIT_MELEE_TOOLTIP
-L['CharacterStatsArp'] = "Armor Penetration"
+L['CharacterStatsArp'] = "Armor Penetration" -- ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT
 L['CharacterStatsArpTooltipFormat'] = "Armor penetration rating %d \n(Enemy armor reduced by up to %.2f%%)." -- CR_HIT_MELEE_TOOLTIP
 L['CharacterStatsHitSpellTooltipFormat'] = "Increases your spell chance to hit a target of level %d by %.2f%%." -- CR_HIT_SPELL_TOOLTIP
-L['CharacterStatsSpellPen'] = "Spell Penetration"
-L['CharacterStatsSpellPenTooltipFormat'] = "Spell Penetration %d \n(Reduces enemy resistances by %d)." -- CR_HIT_SPELL_TOOLTIP
+L['CharacterStatsSpellPen'] = "Spell Penetration" -- ITEM_MOD_SPELL_PENETRATION_SHORT
+L['CharacterStatsSpellPenTooltipFormat'] = "Spell Penetration %d \n(Reduces enemy resistances by %d)." -- SPELL_PENETRATION_TOOLTIP
 
 -- ProfessionFrame
 L["ProfessionFrameHasSkillUp"] = "Has skill up"
@@ -580,8 +604,10 @@ L["TooltipUnitHealthbarText"] = "Show Health Bar Text"
 L["TooltipUnitHealthbarTextDesc"] = ""
 L["TooltipUnitTarget"] = "Show Target"
 L["TooltipUnitTargetDesc"] = "Show unit target"
+
 -- Unitframes
 L["UnitFramesName"] = "Unitframes"
+
 -- Player
 L["PlayerFrameDesc"] = "Player frame settings"
 L["PlayerFrameStyle"] = L["ButtonTableStyle"]

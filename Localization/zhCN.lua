@@ -7,18 +7,20 @@ if not L_CN then return end
 
 local L = {}
 
--- 模块 - config.lua
+-- modules - config.lua
 L["ModuleModules"] = "模块"
 
 L["ModuleTooltipActionbar"] =
     "该模块全面改造默认动作条，包括微型菜单和背包按钮。\n为动作条1-8、宠物/经验/声望/控制/姿态/图腾条、背包和微型菜单提供独立选项。"
 L["ModuleTooltipBossframe"] = "该模块添加自定义首领框架。\n开发中。"
 L["ModuleTooltipBuffs"] = "该模块修改默认增益效果框架。\n为增益和减益效果提供独立选项。"
-L["ModuleTooltipCastbar"] = "该模块修改默认施法条。\n为玩家/焦点/目标施法条提供独立选项。"
+L["ModuleTooltipCastbar"] =
+    "该模块修改默认施法条。\n为玩家/焦点/目标施法条提供独立选项。"
 L["ModuleTooltipChat"] = "该模块修改默认聊天窗口。\n开发中。"
 L["ModuleTooltipCompatibility"] = "该模块为其他插件提供额外兼容性支持。"
 L["ModuleTooltipDarkmode"] =
     "该模块为DragonflightUI的多个框架添加暗黑模式。\n开发中 - 请反馈意见！"
+L["ModuleTooltipFlyout"] = "弹出按钮"
 L["ModuleTooltipMinimap"] =
     "该模块全面改造默认小地图和任务追踪器。\n为小地图和任务追踪器提供独立选项。"
 L["ModuleTooltipTooltip"] = "该模块增强游戏提示框功能。\n开发中"
@@ -28,10 +30,41 @@ L["ModuleTooltipUnitframe"] =
     "该模块全面改造默认单位框架，添加职业染色等功能。\n为玩家/宠物/目标/焦点/小队框架提供独立选项。"
 L["ModuleTooltipUtility"] = "该模块提供通用UI功能和调整。\n开发中"
 
+L["ModuleFlyout"] = "弹出按钮"
+L["ModuleActionbar"] = "动作条"
+L["ModuleCastbar"] = "施法条"
+L["ModuleChat"] = "聊天框"
+L["ModuleBuffs"] = "增益"
+L["ModuleDarkmode"] = "暗黑模式"
+L["ModuleMinimap"] = "小地图"
+L["ModuleTooltip"] = "鼠标提示"
+L["ModuleUI"] = "界面"
+L["ModuleUnitframe"] = "单位框体"
+L["ModuleUtility"] = "实用工具"
+L["ModuleCompatibility"] = "插件兼容"
+L["ModuleBossframe"] = "首领框体"
+
+L["ConfigGeneralWhatsNew"] = "更新"
+L["ConfigGeneralModules"] = "模块"
+L["ConfigGeneralInfo"] = "信息"
+
+L["MainMenuDragonflightUI"] = "DragonflightUI"
+L["MainMenuEditmode"] = "编辑模式"
+
+-- config.mixin.lua
+L["ConfigMixinQuickKeybindMode"] = "快速按键绑定模式"
+L["ConfigMixinGeneral"] = "通用"
+L["ConfigMixinModules"] = "模块"
+L["ConfigMixinActionBar"] = "动作条"
+L["ConfigMixinCastBar"] = "施法条"
+L["ConfigMixinMisc"] = "其他"
+L["ConfigMixinUnitframes"] = "单位框体"
+
+-- modules.mixin.lua
 L["ModuleConditionalMessage"] =
     "'|cff8080ff%s|r'已停用，但相关功能已被挂钩，请执行'|cff8080ff/reload|r'重载界面！"
 
--- 配置
+-- config
 L["ConfigToolbarCopyPopup"] = "复制下方链接(Ctrl+C, Enter):"
 
 L["ConfigToolbarDiscord"] = "Discord"
@@ -43,7 +76,7 @@ L["ConfigToolbarCoffeeTooltip1"] =
     "每个点赞分享都是支持，若您愿意，也可以请开发者喝杯咖啡继续开发！"
 L["ConfigToolbarCoffeeTooltip2"] = "支持者可享专属福利，详见Discord支持者频道。"
 
--- 配置文件
+-- profiles
 L["ProfilesSetActiveProfile"] = "设置当前配置文件"
 L["ProfilesNewProfile"] = "创建新配置文件"
 L["ProfilesCopyFrom"] = "从现有配置复制设置到当前配置"
@@ -69,9 +102,10 @@ L["ProfilesExportProfile"] = "分享配置"
 L["ProfilesExportProfileButton"] = HUD_EDIT_MODE_SHARE_LAYOUT or "分享"
 L["ProfilesExportProfileDesc"] = "打开分享对话框"
 
--- 编辑模式
+-- Editmode
 L["EditModeBasicOptions"] = "基本选项"
 L["EditModeAdvancedOptions"] = "高级选项"
+
 L["EditModeLayoutDropdown"] = "配置文件"
 L["EditModeCopyLayout"] = "复制配置"
 L["EditModeRenameLayout"] = ""
@@ -87,34 +121,42 @@ L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "复制到剪�
 L["EditModeExportProfile"] = "导出配置 |cff8080ff%s|r"
 L["EditModeImportProfile"] = "导入配置为 |cff8080ff%s|r"
 
--- 兼容性
-L['CompatName'] = "兼容性"
+-- Compat
+L['CompatName'] = "插件兼容"
 
 L['CompatAuctionator'] = "Auctionator"
-L['CompatAuctionatorDesc'] = "当启用'修改专业窗口'时，为Auctionator添加兼容支持"
+L['CompatAuctionatorDesc'] =
+    "当启用'修改专业窗口'时，为Auctionator添加兼容支持"
 L['CompatBaganator'] = "Baganator"
 L['CompatBaganatorDesc'] = "将默认'暴雪'皮肤改为DragonflightUI风格"
+L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
+L['CompatBaganatorEquipmentDesc'] = "增加将装备套装作为物品来源的支持"
 L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
-L['CompatCharacterStatsClassicDesc'] = "当启用'修改角色窗口'时，为CharacterStatsClassic添加兼容支持"
+L['CompatCharacterStatsClassicDesc'] =
+    "当启用'修改角色窗口'时，为CharacterStatsClassic添加兼容支持"
 L['CompatClassicCalendar'] = "Classic Calendar"
 L['CompatClassicCalendarDesc'] = "为Classic Calendar添加兼容支持"
 L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
 L['CompatLFGBulletinBoardDesc'] = "为LFG Bulletin Board添加兼容支持"
 L['CompatMerInspect'] = "MerInspect"
-L['CompatMerInspectDesc'] = "当启用'修改角色窗口'时，为MerInspect添加兼容支持"
+L['CompatMerInspectDesc'] =
+    "当启用'修改角色窗口'时，为MerInspect添加兼容支持"
 L['CompatRanker'] = "Ranker"
 L['CompatRankerDesc'] = "当启用'修改角色窗口'时，为Ranker添加兼容支持"
 L['CompatTacoTip'] = "TacoTip"
 L['CompatTacoTipDesc'] = "当启用'修改角色窗口'时，为TacoTip添加兼容支持"
 L['CompatTDInspect'] = "TDInspect"
-L['CompatTDInspectDesc'] = "当启用'修改角色窗口'时，为TDInspect添加兼容支持"
+L['CompatTDInspectDesc'] =
+    "当启用'修改角色窗口'时，为TDInspect添加兼容支持"
 L['CompatWhatsTraining'] = "WhatsTraining"
-L['CompatWhatsTrainingDesc'] = "当启用'修改法术书'时，为WhatsTraining添加兼容支持"
+L['CompatWhatsTrainingDesc'] =
+    "当启用'修改法术书'时，为WhatsTraining添加兼容支持"
 
--- 设置
+-- __Settings
 L["SettingsDefaultStringFormat"] = "\n(默认: |cff8080ff%s|r)"
+L["SettingsCharacterSpecific"] = "\n\n|cff8080ff[每个角色设置]|r"
 
--- 位置表
+-- positionTable
 L["PositionTableHeader"] = "缩放与位置"
 L["PositionTableHeaderDesc"] = ""
 L["PositionTableScale"] = "缩放"
@@ -128,16 +170,20 @@ L["PositionTableAnchorFrameDesc"] = ""
 L["PositionTableCustomAnchorFrame"] = "锚点框架(自定义)"
 L["PositionTableCustomAnchorFrameDesc"] =
     "使用指定名称的框架作为锚点(如有效)。例如'CharacterFrame', 'TargetFrame'..."
+L["PositionTableX"] = "X"
+L["PositionTableXDesc"] = ""
+L["PositionTableY"] = "Y"
+L["PositionTableYDesc"] = ""
 
--- 暗黑模式
+-- darkmode
 L["DarkmodeColor"] = "颜色"
 L["DarkmodeDesaturate"] = "去饱和度"
 
--- 动作条
+-- actionbar
 L["ActionbarName"] = "动作条"
 L["ActionbarNameFormat"] = "动作条 %d"
 
--- 条名称
+-- bar names
 L["XPBar"] = "经验条"
 L["ReputationBar"] = "声望条"
 L["PetBar"] = "宠物条"
@@ -146,13 +192,13 @@ L["PossessBar"] = "控制条"
 L["MicroMenu"] = "微型菜单"
 L["TotemBar"] = "图腾条"
 
--- 狮鹫样式
+-- gryphonsTable
 L["Default"] = "默认"
 L["Alliance"] = "联盟"
 L["Horde"] = "部落"
 L["None"] = "无"
 
--- 按钮表
+-- buttonTable
 L["ButtonTableActive"] = "启用"
 L["ButtonTableActiveDesc"] = ""
 
@@ -164,6 +210,9 @@ L["ButtonTableButtonScaleDesc"] = ""
 
 L["ButtonTableOrientation"] = "方向"
 L["ButtonTableOrientationDesc"] = "方向"
+
+L["ButtonTableGrowthDirection"] = "延展方向"
+L["ButtonTableGrowthDirectionDesc"] = ""
 
 L["ButtonTableReverseButtonOrder"] = "反转按钮顺序"
 L["ButtonTableReverseButtonOrderDesc"] = ""
@@ -193,7 +242,8 @@ L["ButtonTableHideKeybindText"] = "隐藏按键绑定"
 L["ButtonTableHideKeybindTextDesc"] = ""
 
 L["ButtonTableShortenKeybindText"] = "简化按键文本"
-L["ButtonTableShortenKeybindTextDesc"] = "简化按键文本显示，例如用'sF'代替's-F'"
+L["ButtonTableShortenKeybindTextDesc"] =
+    "简化按键文本显示，例如用'sF'代替's-F'"
 
 L["ButtonTableKeybindFontSize"] = "按键字体大小"
 L["ButtonTableKeybindFontSizeDesc"] = ""
@@ -206,6 +256,9 @@ L["MoreOptionsHideBarScrollingDesc"] = ""
 
 L["MoreOptionsGryphons"] = "狮鹫装饰"
 L["MoreOptionsGryphonsDesc"] = "狮鹫装饰"
+
+L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "按下快捷键时施法"
+L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or "在按下快捷键时施法，而不是在松开快捷键时施法。"
 
 L["MoreOptionsIconRangeColor"] = "超出距离图标染色"
 L["MoreOptionsIconRangeColorDesc"] = "当技能超出距离时改变图标颜色，类似RedRange/tullaRange效果"
@@ -221,7 +274,7 @@ L["ExtraOptionsModernLayoutDesc"] = ""
 L["ExtraOptionsClassicLayout"] = "经典布局(侧边栏)"
 L["ExtraOptionsClassicLayoutDesc"] = ""
 
--- 经验条
+-- XP
 L["XPOptionsName"] = "经验条"
 L["XPOptionsDesc"] = "经验条"
 
@@ -240,7 +293,7 @@ L["XPOptionsAlwaysShowXPTextDesc"] = ""
 L["XPOptionsShowXPPercent"] = "显示经验百分比"
 L["XPOptionsShowXPPercentDesc"] = ""
 
--- 声望条
+-- rep
 L["RepOptionsName"] = "声望条"
 L["RepOptionsDesc"] = "声望条"
 
@@ -256,7 +309,7 @@ L["RepOptionsHeightDesc"] = L["XPOptionsHeightDesc"]
 L["RepOptionsAlwaysShowRepText"] = "始终显示声望文本"
 L["RepOptionsAlwaysShowRepTextDesc"] = ""
 
--- 背包
+-- Bags
 L["BagsOptionsName"] = "背包"
 L["BagsOptionsDesc"] = "背包"
 
@@ -300,7 +353,7 @@ L["FPSOptionsAlwaysShowFPSDesc"] = "始终显示自定义帧数文本"
 L["FPSOptionsShowPing"] = "显示延迟"
 L["FPSOptionsShowPingDesc"] = "显示延迟(毫秒)"
 
--- 额外动作按钮
+-- Extra Action Button
 L["ExtraActionButtonOptionsName"] = "额外动作按钮"
 L["ExtraActionButtonOptionsNameDesc"] = "帧数显示"
 L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
@@ -308,7 +361,7 @@ L["ExtraActionButtonStyleDesc"] = ""
 L["ExtraActionButtonHideBackgroundTexture"] = "隐藏背景纹理"
 L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
 
--- 增益效果
+-- Buffs
 L["BuffsOptionsName"] = "增益效果"
 L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
 L["BuffsOptionsStyleDesc"] = ""
@@ -320,7 +373,57 @@ L["BuffsOptionsUseStateHandler"] = "使用状态处理器"
 L["BuffsOptionsUseStateHandlerDesc"] =
     "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框架变为安全框架。"
 
--- 施法条
+-- Flyout
+L["FlyoutHeader"] = "弹出按钮"
+L["FlyoutHeaderDesc"] = ""
+L["FlyoutDirection"] = "弹出方向"
+L["FlyoutDirectionDesc"] = "弹出方向"
+L["FlyoutSpells"] = "法术"
+L["FlyoutSpellsDesc"] = "输入逗号分隔的法术ID, 例如 '688, 697'。"
+L["FlyoutSpellsAlliance"] = "法术 (联盟)"
+L["FlyoutSpellsAllianceDesc"] = L["FlyoutSpellsDesc"] .. "\n(仅用于联盟阵营)"
+L["FlyoutSpellsHorde"] = "法术 (部落)"
+L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(仅用于部落阵营)"
+L["FlyoutItems"] = "物品"
+L["FlyoutItemsDesc"] = "输入逗号分隔的物品ID, 例如 '6948, 8490'。"
+
+L["FlyoutCloseAfterClick"] = "点击后关闭"
+L["FlyoutCloseAfterClickDesc"] = "按下其中一个按钮后关闭弹出框。"
+L["FlyoutAlwaysShow"] = "总是显示按钮"
+L["FlyoutAlwaysShowDesc"] =
+    "总是显示子按钮，即便它们是空的。\n如果你想使用拖放，可以使用这个。"
+L["FlyoutIcon"] = "图标"
+L["FlyoutIconDesc"] = "输入材质的文件ID或文件路径。"
+L["FlyoutDisplayname"] = "显示名称"
+L["FlyoutDisplaynameDesc"] = ""
+L["FlyoutTooltip"] = "鼠标提示"
+L["FlyoutTooltipDesc"] = ""
+
+L["FlyoutButtonWarlock"] = "召唤"
+L["FlyoutButtonMagePort"] = "传送"
+L["FlyoutButtonMagePortals"] = "传送门"
+
+-- L["FlyoutButtonWarlock"] = "术士"
+L["FlyoutButtonMageFood"] = "造食术"
+L["FlyoutButtonMageWater"] = "造水术"
+
+L["FlyoutWarlock"] = "召唤恶魔"
+L["FlyoutWarlockDesc"] = "召唤一个恶魔到你身边。"
+
+L["FlyoutMagePort"] = "传送"
+L["FlyoutMagePortDesc"] = "传送你到一个主城。"
+L["FlyoutMagePortals"] = "传送门"
+L["FlyoutMagePortalsDesc"] = "开启一个传送门，传送适用它的队伍成员到一个主城。"
+L["FlyoutMageWater"] = "造水术"
+L["FlyoutMageWaterDesc"] = "如果登出超过15分钟，魔法物品会消失。"
+L["FlyoutMageFood"] = "造食术"
+L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
+
+L["FlyoutButtonCustomFormat"] = "自定义弹出按钮 %d"
+L["FlyoutCustomNameFormat"] = "自定义弹出按钮 %d"
+L["FlyoutCustomNameDescFormat"] = "每个角色的弹出按钮，拥有最多12个额外的动作按钮。"
+
+-- Castbar
 L["CastbarName"] = "施法条"
 L["CastbarNameFormat"] = "%s 施法条"
 L["CastbarTableActive"] = "启用"
@@ -360,9 +463,10 @@ L["CastbarTableShowChannelName"] = "显示引导名称"
 L["CastbarTableShowChannelNameDesc"] = "显示法术名称而非默认文本(如'引导中')"
 
 L["ExtraOptionsResetToDefaultStyle"] = "重置为默认样式"
-L["ExtraOptionsPresetStyleDesc"] = "重置所有影响施法条样式的设置，但不影响其他设置。"
+L["ExtraOptionsPresetStyleDesc"] =
+    "重置所有影响施法条样式的设置，但不影响其他设置。"
 
--- 小地图
+-- Minimap
 L["MinimapName"] = "小地图"
 L["MinimapStyle"] = L["ButtonTableStyle"]
 L["MinimapShowPing"] = "显示点击信号"
@@ -378,7 +482,7 @@ L["MinimapUseStateHandler"] = "使用状态处理器"
 L["MinimapUseStateHandlerDesc"] =
     "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框架变为安全框架。"
 
--- 界面
+-- UI
 L["UIUtility"] = "实用功能"
 L["UIChangeBags"] = "修改背包"
 L["UIChangeBagsDesc"] = ""
@@ -403,16 +507,24 @@ L["UIChangeSpellBookDesc"] = "修改法术书外观"
 L["UIChangeSpellBookProfessions"] = "修改专业技能法术书"
 L["UIChangeSpellBookProfessionsDesc"] = "修改专业技能法术书布局"
 
--- 专业窗口
+-- Characterstatspanel
+L['CharacterStatsHitMeleeTooltipFormat'] = "使你的近战攻击命中%d级目标的几率提高%.2f%%。" -- CR_HIT_MELEE_TOOLTIP
+L['CharacterStatsArp'] = "护甲穿透" -- ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT
+L['CharacterStatsArpTooltipFormat'] = "护甲穿透等级 %d \n(敌人的护甲最多减少%.2f%%)." -- CR_HIT_MELEE_TOOLTIP
+L['CharacterStatsHitSpellTooltipFormat'] = "使你的法术命中%d级目标的几率提高%.2f%%。" -- CR_HIT_SPELL_TOOLTIP
+L['CharacterStatsSpellPen'] = "法术穿透" -- ITEM_MOD_SPELL_PENETRATION_SHORT
+L['CharacterStatsSpellPenTooltipFormat'] = "法术穿透%d\n（降低目标抗性%d点）。" -- SPELL_PENETRATION_TOOLTIP
+
+-- ProfessionFrame
 L["ProfessionFrameHasSkillUp"] = "可提升技能"
-L["ProfessionFrameHasMaterials"] = "材料充足"
+L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE or "材料齐备"
 L["ProfessionFrameSubclass"] = "子类别"
 L["ProfessionFrameSlot"] = "装备部位"
 L["ProfessionCheckAll"] = "全选"
 L["ProfessionUnCheckAll"] = "取消全选"
 L["ProfessionFavorites"] = "收藏"
 
--- 提示框
+-- Tooltip
 L["TooltipName"] = "提示框"
 L["TooltipHeaderGameToltip"] = "游戏提示框"
 L["TooltipHeaderSpellTooltip"] = "法术提示框"
@@ -428,7 +540,7 @@ L["TooltipMouseXDesc"] = ""
 L["TooltipMouseY"] = "Y轴"
 L["TooltipMouseYDesc"] = ""
 
--- 法术提示框
+-- spelltooltip
 L["TooltipAnchorSpells"] = "法术锚点"
 L["TooltipAnchorSpellsDesc"] = "将动作条上的法术提示框锚定到按钮而非默认位置"
 L["TooltipShowSpellID"] = "显示法术ID"
@@ -443,7 +555,7 @@ L["TooltipShowIconIDDesc"] = ""
 L["TooltipShowIcon"] = "显示图标"
 L["TooltipShowIconDesc"] = ""
 
--- 物品提示框
+-- itemtooltip
 L["TooltipHeaderItemTooltip"] = "物品提示框"
 L["TooltipHeaderItemTooltipDesc"] = ""
 
@@ -456,7 +568,7 @@ L["TooltipShowItemStackCountDesc"] = ""
 L["TooltipShowItemID"] = "显示物品ID"
 L["TooltipShowItemIDDesc"] = ""
 
--- 单位提示框
+-- unittooltip
 L["TooltipUnitTooltip"] = "单位提示框"
 L["TooltipUnitTooltipDesc"] = ""
 
@@ -490,10 +602,13 @@ L["TooltipUnitHealthbar"] = "显示生命条"
 L["TooltipUnitHealthbarDesc"] = ""
 L["TooltipUnitHealthbarText"] = "显示生命条文本"
 L["TooltipUnitHealthbarTextDesc"] = ""
+L["TooltipUnitTarget"] = "显示目标"
+L["TooltipUnitTargetDesc"] = "显示单位目标"
 
--- 单位框架
+-- Unitframes
 L["UnitFramesName"] = "单位框架"
--- 玩家框架
+
+-- Player
 L["PlayerFrameDesc"] = "玩家框架设置"
 L["PlayerFrameStyle"] = L["ButtonTableStyle"]
 L["PlayerFrameClassColor"] = "职业颜色"
@@ -501,9 +616,12 @@ L["PlayerFrameClassColorDesc"] = "生命条使用职业颜色"
 L["PlayerFrameClassIcon"] = "职业图标头像"
 L["PlayerFrameClassIconDesc"] = "使用职业图标作为头像(当前禁用)"
 L["PlayerFrameBreakUpLargeNumbers"] = "数字分段显示"
-L["PlayerFrameBreakUpLargeNumbersDesc"] = "在状态文本中使用分段数字显示(如显示7588 K而非7588000)"
+L["PlayerFrameBreakUpLargeNumbersDesc"] =
+    "在状态文本中使用分段数字显示(如显示7588 K而非7588000)"
 L["PlayerFrameBiggerHealthbar"] = "加宽生命条"
 L["PlayerFrameBiggerHealthbarDesc"] = "启用更宽的生命条"
+L["PlayerFramePortraitExtra"] = "头像边框"
+L["PlayerFramePortraitExtraDesc"] = "在玩家框体周围显示一个精英、稀有或世界首领样式的边框。"
 L["PlayerFrameHideRedStatus"] = "隐藏战斗红色光效"
 L["PlayerFrameHideRedStatusDesc"] = "隐藏战斗中的红色状态光效"
 L["PlayerFrameHideHitIndicator"] = "隐藏命中指示器"
@@ -513,7 +631,7 @@ L["PlayerFrameHideSecondaryResDesc"] = "隐藏次要资源条，如灵魂碎片"
 L["PlayerFrameHideAlternatePowerBar"] = "隐藏德鲁伊备用能量条"
 L["PlayerFrameHideAlternatePowerBarDesc"] = "隐藏德鲁伊熊/猫形态时的备用能量条(法力条)"
 
--- 目标框架
+-- Target
 L["TargetFrameDesc"] = "目标框架设置"
 L["TargetFrameStyle"] = L["ButtonTableStyle"]
 L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
@@ -540,7 +658,7 @@ L["TargetFrameFadeOutDistance"] = "淡出距离"
 L["TargetFrameFadeOutDistanceDesc"] =
     "设置触发淡出效果的距离(码)。\n注意: 并非所有值都有效，因使用'LibRangeCheck-3.0'库。\n计算方式为'最小距离 >= 淡出距离'"
 
--- 宠物框架
+-- Pet
 L["PetFrameDesc"] = "宠物框架设置"
 L["PetFrameStyle"] = L["ButtonTableStyle"]
 L["PetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
@@ -552,7 +670,7 @@ L["PetFrameHideStatusbarTextDesc"] = "隐藏状态条文本"
 L["PetFrameHideIndicator"] = "隐藏命中指示器"
 L["PetFrameHideIndicatorDesc"] = "隐藏命中指示器"
 
--- 焦点框架
+-- Focus
 L["FocusFrameDesc"] = "焦点框架设置"
 L["FocusFrameStyle"] = L["ButtonTableStyle"]
 L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
@@ -564,7 +682,7 @@ L["FocusFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 L["FocusFrameHideNameBackground"] = L["TargetFrameHideNameBackground"]
 L["FocusFrameHideNameBackgroundDesc"] = "隐藏焦点名称背景"
 
--- 小队框架
+-- party
 L["PartyFrameDesc"] = "小队框架设置"
 L["PartyFrameStyle"] = L["ButtonTableStyle"]
 L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
@@ -572,37 +690,37 @@ L["PartyFrameClassColorDesc"] = "生命条使用职业颜色"
 L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
 L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
 
--- 按键绑定替换
+-- keybindings
 local KEY_REPLACEMENTS = {
     ["ALT%-"] = "A",
     ["CTRL%-"] = "C",
     ["SHIFT%-"] = "S",
-    ["META%-"] = "C", -- 注意: META也映射为C类似CTRL
+    ["META%-"] = "C", -- Note: META is also mapped to C like CTRL
     ["NUMPAD"] = "N",
     ["PLUS"] = "+",
     ["MINUS"] = "-",
     ["MULTIPLY"] = "*",
     ["DIVIDE"] = "/",
-    ["BACKSPACE"] = "退格",
-    ["CAPSLOCK"] = "大写",
-    ["CLEAR"] = "清除",
-    ["DELETE"] = "删除",
-    ["END"] = "结尾",
-    ["HOME"] = "首页",
-    ["INSERT"] = "插入",
-    ["MOUSEWHEELDOWN"] = "滚轮下",
-    ["MOUSEWHEELUP"] = "滚轮上",
-    ["NUMLOCK"] = "数字锁",
-    ["PAGEDOWN"] = "下页",
-    ["PAGEUP"] = "上页",
-    ["SCROLLLOCK"] = "滚动锁",
-    ["SPACEBAR"] = "空格",
-    ["SPACE"] = "空格",
-    ["TAB"] = "制表",
-    ["DOWNARROW"] = "下",
-    ["LEFTARROW"] = "左",
-    ["RIGHTARROW"] = "右",
-    ["UPARROW"] = "上"
+    ["BACKSPACE"] = "BS",
+    ["CAPSLOCK"] = "CP",
+    ["CLEAR"] = "CL",
+    ["DELETE"] = "Del",
+    ["END"] = "En",
+    ["HOME"] = "HM",
+    ["INSERT"] = "Ins",
+    ["MOUSEWHEELDOWN"] = "WD",
+    ["MOUSEWHEELUP"] = "WU",
+    ["NUMLOCK"] = "NL",
+    ["PAGEDOWN"] = "PD",
+    ["PAGEUP"] = "PU",
+    ["SCROLLLOCK"] = "SL",
+    ["SPACEBAR"] = "SP",
+    ["SPACE"] = "SP",
+    ["TAB"] = "TB",
+    ["DOWNARROW"] = "Dn",
+    ["LEFTARROW"] = "Lf",
+    ["RIGHTARROW"] = "Rt",
+    ["UPARROW"] = "Up"
 }
 
 local NUM_MOUSE_BUTTONS = 31
@@ -611,5 +729,5 @@ for i = 1, NUM_MOUSE_BUTTONS do KEY_REPLACEMENTS["BUTTON" .. i] = "鼠标" .. i 
 for k, v in pairs(KEY_REPLACEMENTS) do L_CN[k] = v; end
 DF.KEY_REPLACEMENTS = KEY_REPLACEMENTS;
 
--- 将L表中的内容复制到L_CN
+-- see comment above
 for k, v in pairs(L) do L_CN[k] = v; end
