@@ -509,11 +509,12 @@ L["UIChangeSpellBookProfessionsDesc"] = "Modify the SpellBook layout for profess
 
 -- Characterstatspanel
 L['CharacterStatsHitMeleeTooltipFormat'] = "Increases your melee chance to hit a target of level %d by %.2f%%." -- CR_HIT_MELEE_TOOLTIP
-L['CharacterStatsArp'] = "Armor Penetration" -- ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT
+L['CharacterStatsArp'] = ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT or "Armor Penetration"
 L['CharacterStatsArpTooltipFormat'] = "Armor penetration rating %d \n(Enemy armor reduced by up to %.2f%%)." -- CR_HIT_MELEE_TOOLTIP
 L['CharacterStatsHitSpellTooltipFormat'] = "Increases your spell chance to hit a target of level %d by %.2f%%." -- CR_HIT_SPELL_TOOLTIP
-L['CharacterStatsSpellPen'] = "Spell Penetration" -- ITEM_MOD_SPELL_PENETRATION_SHORT
-L['CharacterStatsSpellPenTooltipFormat'] = "Spell Penetration %d \n(Reduces enemy resistances by %d)." -- SPELL_PENETRATION_TOOLTIP
+L['CharacterStatsSpellPen'] = ITEM_MOD_SPELL_PENETRATION_SHORT or "Spell Penetration" -- ITEM_MOD_SPELL_PENETRATION_SHORT
+L['CharacterStatsSpellPenTooltipFormat'] = SPELL_PENETRATION_TOOLTIP or
+                                               "Spell Penetration %d \n(Reduces enemy resistances by %d)."
 
 -- ProfessionFrame
 L["ProfessionFrameHasSkillUp"] = "Has skill up"
