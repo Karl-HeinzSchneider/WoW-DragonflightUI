@@ -10,13 +10,62 @@ end
 --
 local MAX_TARGET_BUFFS = MAX_TARGET_BUFFS or 32;
 local MAX_TARGET_DEBUFFS = MAX_TARGET_DEBUFFS or 16;
+local PLAYER_UNITS = {player = true, vehicle = true, pet = true};
 
 local UnitAura = UnitAura
 local LibClassicDurations;
 
+local SetCVarFunc = SetCVar;
+-- if C_CVar and C_CVar.SetCVar then
+--     SetCVarFunc = C_CVar.SetCVar;
+-- else
+--     SetCVarFunc = SetCVar;
+-- end
+
+local GetCVarFunc = GetCVarBool;
+-- if C_CVar and C_CVar.GetCVar then
+--     GetCVarFunc = C_CVar.GetCVarBool;
+-- else
+--     GetCVarFunc = GetCVarBool;
+-- end
+
+local defaults = {
+    auraSizeSmall = 17, -- SMALL_AURA_SIZE,
+    auraSizeLarge = 21, -- LARGE_AURA_SIZE,
+    auraOffsetY = 1, -- AURA_OFFSET_Y,
+    noDebuffFilter = true, -- noBuffDebuffFilterOnTarget
+    dynamicBuffSize = true, -- showDynamicBuffSize
+    auraRowWidth = 122, -- AURA_ROW_WIDTH
+    totAuraRowWidth = 101, -- TOT_AURA_ROW_WIDTH
+    numTotAuraRows = 2 -- NUM_TOT_AURA_ROWS
+}
+
 ---@class frame
 local frame = CreateFrame("Frame");
 lib.frame = frame;
+lib.Defaults = defaults
+
+function frame:SetDefaults()
+    for k, v in pairs(defaults) do AuraDurationsDB[k] = v; end
+end
+
+function frame:AddMissingKeys()
+    for k, v in pairs(defaults) do if AuraDurationsDB[k] == nil then AuraDurationsDB[k] = v; end end
+end
+
+function frame:SetState(state)
+    for k, v in pairs(state) do AuraDurationsDB[k] = v; end
+
+    self:Update()
+end
+
+function frame:Update()
+    -- print('update')
+    SetCVarFunc('noBuffDebuffFilterOnTarget', AuraDurationsDB.noDebuffFilter)
+    SetCVarFunc('showDynamicBuffSize', AuraDurationsDB.dynamicBuffSize)
+
+    TargetFrame_UpdateAuras(TargetFrame)
+end
 
 frame:SetScript("OnEvent", function(self, event, ...)
     return self[event](self, event, ...);
@@ -25,6 +74,16 @@ end)
 frame:RegisterEvent("PLAYER_LOGIN")
 function frame:PLAYER_LOGIN(event, ...)
     -- print(event, ...)
+
+    if type(AuraDurationsDB) ~= 'table' then
+        -- print('AuraDurations: new DB!')
+        AuraDurationsDB = {}
+        lib.AuraDurationsDB = AuraDurationsDB;
+        self.AuraDurationsDB = AuraDurationsDB;
+        frame:SetDefaults()
+    end
+    self:AddMissingKeys()
+    self:Update()
 
     LibClassicDurations = LibStub("LibClassicDurations", true)
     if LibClassicDurations then
@@ -37,9 +96,76 @@ function frame:PLAYER_LOGIN(event, ...)
     end
 end
 
+local largeBuffList = {};
+local largeDebuffList = {};
+local function ShouldAuraBeLarge(caster)
+    if (not GetCVarBool("showDynamicBuffSize")) then return true; end
+    if not caster then return false; end
+
+    for token, value in pairs(PLAYER_UNITS) do
+        if UnitIsUnit(caster, token) or UnitIsOwnerOrControllerOfUnit(token, caster) then return value; end
+    end
+end
+
+frame.UpdateAuraPositions = function(self, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth,
+                                     offsetX, mirrorAurasVertically)
+    -- custom
+    local AURA_OFFSET_Y = AuraDurationsDB.auraOffsetY;
+    local LARGE_AURA_SIZE = AuraDurationsDB.auraSizeLarge;
+    local SMALL_AURA_SIZE = AuraDurationsDB.auraSizeSmall;
+    local AURA_ROW_WIDTH = AuraDurationsDB.auraRowWidth;
+    local NUM_TOT_AURA_ROWS = AuraDurationsDB.numTotAuraRows;
+    --
+
+    -- Position auras
+    local size;
+    local offsetY = AURA_OFFSET_Y;
+    -- current width of a row, increases as auras are added and resets when a new aura's width exceeds the max row width
+    local rowWidth = 0;
+    local firstBuffOnRow = 1;
+    for i = 1, numAuras do
+        -- update size and offset info based on large aura status
+        if (largeAuraList[i]) then
+            size = LARGE_AURA_SIZE;
+            offsetY = AURA_OFFSET_Y + AURA_OFFSET_Y;
+        else
+            size = SMALL_AURA_SIZE;
+        end
+
+        -- anchor the current aura
+        if (i == 1) then
+            rowWidth = size;
+            self.auraRows = self.auraRows + 1;
+        else
+            rowWidth = rowWidth + size + offsetX;
+        end
+        if (rowWidth > maxRowWidth) then
+            -- this aura would cause the current row to exceed the max row width, so make this aura
+            -- the start of a new row instead
+            updateFunc(self, auraName, i, numOppositeAuras, firstBuffOnRow, size, offsetX, offsetY,
+                       mirrorAurasVertically);
+
+            rowWidth = size;
+            self.auraRows = self.auraRows + 1;
+            firstBuffOnRow = i;
+            offsetY = AURA_OFFSET_Y;
+
+            if (self.auraRows > NUM_TOT_AURA_ROWS) then
+                -- if we exceed the number of tot rows, then reset the max row width
+                -- note: don't have to check if we have tot because AURA_ROW_WIDTH is the default anyway
+                maxRowWidth = AURA_ROW_WIDTH;
+            end
+        else
+            updateFunc(self, auraName, i, numOppositeAuras, i - 1, size, offsetX, offsetY, mirrorAurasVertically);
+        end
+    end
+end
+
 frame.TargetBuffHook = function(self)
     -- print('TargetBuffHook')
     local frameName, frameCooldown;
+    local numBuffs = 0;
+    local numDebuffs = 0;
     local selfName = self:GetName();
     ---@diagnostic disable-next-line: undefined-field
     local unit = self.unit;
@@ -50,7 +176,8 @@ frame.TargetBuffHook = function(self)
 
         if (buffName) then
             frameName = selfName .. "Buff" .. (i);
-
+            numBuffs = numBuffs + 1;
+            largeBuffList[numBuffs] = ShouldAuraBeLarge(caster);
             -- blizzard default
             -- -- Handle cooldowns
             -- frameCooldown = _G[frameName .. "Cooldown"];
@@ -83,6 +210,9 @@ frame.TargetBuffHook = function(self)
                 frameName = selfName .. "Debuff" .. frameNum;
                 frame = _G[frameName];
                 if (icon) then
+                    numDebuffs = numDebuffs + 1;
+                    largeDebuffList[numDebuffs] = ShouldAuraBeLarge(caster);
+
                     -- -- blizzard default
                     -- -- Handle cooldowns
                     -- frameCooldown = _G[frameName .. "Cooldown"];
@@ -107,6 +237,31 @@ frame.TargetBuffHook = function(self)
         end
         index = index + 1;
     end
+
+    -- custom
+    local AURA_ROW_WIDTH = AuraDurationsDB.auraRowWidth;
+    local NUM_TOT_AURA_ROWS = AuraDurationsDB.numTotAuraRows;
+    local TOT_AURA_ROW_WIDTH = AuraDurationsDB.totAuraRowWidth
+    --
+
+    self.auraRows = 0;
+
+    local mirrorAurasVertically = false;
+    if (self.buffsOnTop) then mirrorAurasVertically = true; end
+    local haveTargetofTarget;
+    if (self.totFrame) then haveTargetofTarget = self.totFrame:IsShown(); end
+    self.spellbarAnchor = nil;
+    local maxRowWidth;
+    -- update buff positions
+    maxRowWidth = (haveTargetofTarget and TOT_AURA_ROW_WIDTH) or AURA_ROW_WIDTH;
+    frame.UpdateAuraPositions(self, selfName .. "Buff", numBuffs, numDebuffs, largeBuffList,
+                              TargetFrame_UpdateBuffAnchor, maxRowWidth, 3, mirrorAurasVertically);
+    -- update debuff positions
+    maxRowWidth = (haveTargetofTarget and self.auraRows < NUM_TOT_AURA_ROWS and TOT_AURA_ROW_WIDTH) or AURA_ROW_WIDTH;
+    frame.UpdateAuraPositions(self, selfName .. "Debuff", numDebuffs, numBuffs, largeDebuffList,
+                              TargetFrame_UpdateDebuffAnchor, maxRowWidth, 3, mirrorAurasVertically);
+    -- update the spell bar position
+    if (self.spellbar) then Target_Spellbar_AdjustPosition(self.spellbar); end
 end
 
 -- based on blizz: function CompactUnitFrame_UtilSetBuff(buffFrame, unit, index, filter)
