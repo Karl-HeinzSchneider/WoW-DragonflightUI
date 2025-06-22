@@ -2,6 +2,8 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local rc = LibStub("LibRangeCheck-3.0")
+AuraDurationsDB = nil;
+local auraDurations = LibStub:GetLibrary('AuraDurations-1.0')
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -114,6 +116,15 @@ local defaults = {
             anchorParent = 'TOPLEFT',
             x = 250,
             y = -4,
+            -- buff - from AuraDurations
+            auraSizeSmall = 17, -- SMALL_AURA_SIZE,
+            auraSizeLarge = 21, -- LARGE_AURA_SIZE,
+            auraOffsetY = 1, -- AURA_OFFSET_Y,
+            noDebuffFilter = true, -- noBuffDebuffFilterOnTarget
+            dynamicBuffSize = true, -- showDynamicBuffSize
+            auraRowWidth = 122, -- AURA_ROW_WIDTH
+            totAuraRowWidth = 101, -- TOT_AURA_ROW_WIDTH
+            numTotAuraRows = 2, -- NUM_TOT_AURA_ROWS
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -710,6 +721,61 @@ if true then
             editmode = true
         }
     }
+
+    if true then
+        moreOptions['headerBuffs'] = {
+            type = 'header',
+            name = L["TargetFrameHeaderBuffs"],
+            desc = '',
+            order = 19,
+            isExpanded = true,
+            editmode = true
+        }
+        moreOptions['buffsOnTop'].group = 'headerBuffs'
+
+        moreOptions['auraSizeSmall'] = {
+            type = 'range',
+            name = L["TargetFrameAuraSizeSmall"],
+            desc = L["TargetFrameAuraSizeSmallDesc"] .. getDefaultStr('auraSizeSmall', 'target'),
+            min = 8,
+            max = 64,
+            bigStep = 1,
+            group = 'headerBuffs',
+            order = 4,
+            new = true,
+            editmode = true
+        }
+        moreOptions['auraSizeLarge'] = {
+            type = 'range',
+            name = L["TargetFrameAuraSizeLarge"],
+            desc = L["TargetFrameAuraSizeLargeDesc"] .. getDefaultStr('auraSizeLarge', 'target'),
+            min = 8,
+            max = 64,
+            bigStep = 1,
+            group = 'headerBuffs',
+            order = 2,
+            new = true,
+            editmode = true
+        }
+        moreOptions['noDebuffFilter'] = {
+            type = 'toggle',
+            name = L["TargetFrameNoDebuffFilter"],
+            desc = L["TargetFrameNoDebuffFilterDesc"] .. getDefaultStr('noDebuffFilter', 'target'),
+            group = 'headerBuffs',
+            order = 1,
+            new = true,
+            editmode = true
+        }
+        moreOptions['dynamicBuffSize'] = {
+            type = 'toggle',
+            name = L["TargetFrameDynamicBuffSize"],
+            desc = L["TargetFrameDynamicBuffSizeDesc"] .. getDefaultStr('dynamicBuffSize', 'target'),
+            group = 'headerBuffs',
+            order = 3,
+            new = true,
+            editmode = true
+        }
+    end
 
     for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
 
@@ -1598,7 +1664,7 @@ function Module:RegisterSettings()
     register('pet', {order = 0, name = 'Pet', descr = 'Petss', isNew = false})
     register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
     register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
-    register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = false})
+    register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = true})
     register('targetoftarget', {order = 0, name = 'TargetOfTarget', descr = 'Targetss', isNew = false})
 
     if DF.Wrath then
@@ -1857,6 +1923,7 @@ function Module:ApplySettings(sub)
         TextStatusBar_UpdateTextString(TargetFrameHealthBar)
         Module.UpdateComboFrameState(obj)
         TargetFrameNameBackground:SetShown(not obj.hideNameBackground)
+        auraDurations.frame:SetState(obj)
         UnitFramePortrait_Update(TargetFrame)
         TargetFrame:UpdateStateHandler(obj)
         Module.PreviewTarget:UpdateState(obj);

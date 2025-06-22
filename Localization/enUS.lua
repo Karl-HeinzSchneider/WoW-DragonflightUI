@@ -659,6 +659,17 @@ L["TargetFrameFadeOutDistance"] = "Fadeout Distance"
 L["TargetFrameFadeOutDistanceDesc"] =
     "Sets the distance in yards to check against for the fadout effect.\nNote: not every value might make a diffence, as it uses 'LibRangeCheck-3.0'.\nCalculated by 'minRange >= fadeOutDistance'."
 
+L["TargetFrameHeaderBuffs"] = "Buffs/Debuffs"
+L["TargetFrameAuraSizeSmall"] = "Aura Size Small"
+L["TargetFrameAuraSizeSmallDesc"] =
+    "Sets the size of non player auras on the TargetFrame when using 'Dynamic Buff Size'."
+L["TargetFrameAuraSizeLarge"] = "Aura Size"
+L["TargetFrameAuraSizeLargeDesc"] = "Sets the size of an aura on the TargetFrame."
+L["TargetFrameNoDebuffFilter"] = "Show All Enemy Debuffs"
+L["TargetFrameNoDebuffFilterDesc"] = "Displays friendly and enemy debuffs on the TargetFrame, and not just your own."
+L["TargetFrameDynamicBuffSize"] = "Dynamic Buff Size"
+L["TargetFrameDynamicBuffSizeDesc"] = "Increases the size of the player buffs and debuffs on the target."
+
 -- Pet
 L["PetFrameDesc"] = "Pet frame settings"
 L["PetFrameStyle"] = L["ButtonTableStyle"]
