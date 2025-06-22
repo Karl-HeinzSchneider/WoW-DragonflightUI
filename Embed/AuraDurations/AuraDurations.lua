@@ -54,6 +54,10 @@ function frame:AddMissingKeys()
 end
 
 function frame:SetState(state)
+    if not frame.AuraDurationsDB then
+        frame:PLAYER_LOGIN('PLAYER_LOGIN')
+        frame:UnregisterEvent('PLAYER_LOGIN')
+    end
     for k, v in pairs(state) do AuraDurationsDB[k] = v; end
 
     self:Update()
@@ -78,10 +82,10 @@ function frame:PLAYER_LOGIN(event, ...)
     if type(AuraDurationsDB) ~= 'table' then
         -- print('AuraDurations: new DB!')
         AuraDurationsDB = {}
-        lib.AuraDurationsDB = AuraDurationsDB;
-        self.AuraDurationsDB = AuraDurationsDB;
         frame:SetDefaults()
     end
+    lib.AuraDurationsDB = AuraDurationsDB;
+    self.AuraDurationsDB = AuraDurationsDB;
     self:AddMissingKeys()
     self:Update()
 
