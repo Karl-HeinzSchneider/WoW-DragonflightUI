@@ -1,0 +1,3 @@
+files:
+  - source: /Localization/enUS.lua
+    translation: '%original_path%/%locale%.lua'
