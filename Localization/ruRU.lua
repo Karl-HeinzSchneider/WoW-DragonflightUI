@@ -18,7 +18,8 @@ do
         "Этот модуль изменяет стандартную полосу заклинаний.\nДобавляет отдельные настройки для полосы заклинаний игрока, фокуса и цели."
     L["ModuleTooltipChat"] =
         "Этот модуль изменяет стандартное окно чата.\nВ РАЗРАБОТКЕ."
-    --    L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
+    L["ModuleTooltipCompatibility"] =
+        "Этот модуль добавляет дополнительную совместимость с другими аддонами."
     L["ModuleTooltipDarkmode"] =
         "Этот модуль добавляет темный режим для нескольких окон DragonflightUI.\nВ РАЗРАБОТКЕ - пожалуйста, оставляйте отзывы!"
     --    L["ModuleTooltipFlyout"] = "Flyout"
@@ -66,17 +67,20 @@ do
     --    L["ConfigMixinUnitframes"] = "Unitframes"
 
     -- modules.mixin.lua
-    --    L["ModuleConditionalMessage"] = "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '|cff8080ff/reload|r'!"
+    L["ModuleConditionalMessage"] =
+        "'|cff8080ff%s|r' был деактивирован, но соответствующая функция уже была зацеплена, пожалуйста, выполните '|cff8080ff/reload|r'!"
 
     -- config
-    --    L["ConfigToolbarCopyPopup"] = "Copy the link below (Ctrl+C, Enter):"
-    --    L["ConfigToolbarDiscord"] = "Discord"
-    --    L["ConfigToolbarDiscordTooltip"] = "Contribute ideas & get support."
-    --    L["ConfigToolbarGithub"] = "Github"
-    --    L["ConfigToolbarGithubTooltip"] = "View code, report issues & contribute."
-    --    L["ConfigToolbarCoffee"] = "BuyMeACoffee"
-    --    L["ConfigToolbarCoffeeTooltip1"] = "Every comment, like or share counts, but if you're feeling very kind, you can buy me a slice of pizza to fuel further development!"
-    --    L["ConfigToolbarCoffeeTooltip2"] = "Supporters enjoy exclusive perks, discover them in our Discord's supporter section."
+    L["ConfigToolbarDiscord"] = "Discord"
+    L["ConfigToolbarDiscordTooltip"] = "Вносите идеи и получайте поддержку."
+    L["ConfigToolbarGithub"] = "Github"
+    L["ConfigToolbarGithubTooltip"] =
+        "Просматривайте код, сообщайте об ошибках и вносите вклад."
+    L["ConfigToolbarCoffee"] = "BuyMeACoffee"
+    L["ConfigToolbarCoffeeTooltip1"] =
+        "Каждый комментарий, лайк или репост имеет значение, но если вы чувствуете себя особенно щедрым, вы можете угостить меня куском пиццы, чтобы поддержать дальнейшую разработку!"
+    L["ConfigToolbarCoffeeTooltip2"] =
+        "Поддерживающие получают эксклюзивные бонусы, узнайте о них в разделе для спонсоров на нашем Discord."
 end
 
 -- profiles
@@ -96,13 +100,13 @@ do
     L["ProfilesDialogueDeleteProfile"] = "Удалить профиль \'%s\'?"
     L["ProfilesDialogueCopyProfile"] =
         "Добавить новый профиль (скопировать из \'|cff8080ff%s|r\')"
-    --    L["ProfilesImportShareHeader"] = "Import/Share"
-    --    L["ProfilesImportProfile"] = "Import Profile"
-    --    L["ProfilesImportProfileButton"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
-    --    L["ProfilesImportProfileDesc"] = "Opens the import dialogue."
-    --    L["ProfilesExportProfile"] = "Share Profile"
-    --    L["ProfilesExportProfileButton"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
-    --    L["ProfilesExportProfileDesc"] = "Opens the share dialogue."
+    L["ProfilesImportShareHeader"] = "Импорт/Поделиться"
+    L["ProfilesImportProfile"] = "Импортировать профиль"
+    L["ProfilesImportProfileButton"] = "Импортировать"
+    L["ProfilesImportProfileDesc"] = "Открывает диалог импорта."
+    L["ProfilesExportProfile"] = "Поделиться профилем"
+    L["ProfilesExportProfileButton"] = "Поделиться"
+    L["ProfilesExportProfileDesc"] = "Открывает диалог для передачи."
 end
 
 -- Editmode
@@ -126,29 +130,34 @@ end
 
 -- Compat
 do
-    --    L['CompatName'] = "Compatibility"
-    --    L['CompatAuctionator'] = "Auctionator"
-    --    L['CompatAuctionatorDesc'] = "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
-    --    L['CompatBaganator'] = "Baganator_Skin"
-    --    L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
-    --    L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
-    --    L['CompatBaganatorEquipmentDesc'] = "Adds support for equipment sets as item source."
-    --    L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
-    --    L['CompatCharacterStatsClassicDesc'] = "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
-    --    L['CompatClassicCalendar'] = "Classic Calendar"
-    --    L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
-    --    L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
-    --    L['CompatLFGBulletinBoardDesc'] = "Adds compatibility for LFG Bulletin Board"
-    --    L['CompatMerInspect'] = "MerInspect"
-    --    L['CompatMerInspectDesc'] = "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
-    --    L['CompatRanker'] = "Ranker"
-    --    L['CompatRankerDesc'] = "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
-    --    L['CompatTacoTip'] = "TacoTip"
-    --    L['CompatTacoTipDesc'] = "Adds compatibility for TacoTip when using the UI Module with 'Change CharacterFrame' enabled."
-    --    L['CompatTDInspect'] = "TDInspect"
-    --    L['CompatTDInspectDesc'] = "Adds compatibility for TDInspect when using the UI Module with 'Change CharacterFrame' enabled."
-    --    L['CompatWhatsTraining'] = "WhatsTraining"
-    --    L['CompatWhatsTrainingDesc'] = "Adds compatibility for WhatsTraining when using the UI Module with 'Change SpellBook' enabled."
+    L['CompatAuctionator'] = "Auctionator"
+    L['CompatAuctionatorDesc'] =
+        "Добавляет совместимость с Auctionator при использовании модуля UI с включенной опцией 'Изменить окно профессий'."
+    L['CompatBaganator'] = "Baganator"
+    L['CompatBaganatorDesc'] =
+        "Изменяет стандартную тему 'Blizzard' на стилизованную под DragonflightUI."
+    L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
+    L['CompatCharacterStatsClassicDesc'] =
+        "Добавляет совместимость с CharacterStatsClassic при использовании модуля UI с включенной опцией 'Изменить окно персонажа'."
+    L['CompatClassicCalendar'] = "Classic Calendar"
+    L['CompatClassicCalendarDesc'] = "Добавляет совместимость с Classic Calendar."
+    L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
+    L['CompatLFGBulletinBoardDesc'] = "Добавляет совместимость с LFG Bulletin Board."
+    L['CompatMerInspect'] = "MerInspect"
+    L['CompatMerInspectDesc'] =
+        "Добавляет совместимость с MerInspect при использовании модуля UI с включенной опцией 'Изменить окно персонажа'."
+    L['CompatRanker'] = "Ranker"
+    L['CompatRankerDesc'] =
+        "Добавляет совместимость с Ranker при использовании модуля UI с включенной опцией 'Изменить окно персонажа'."
+    L['CompatTacoTip'] = "TacoTip"
+    L['CompatTacoTipDesc'] =
+        "Добавляет совместимость с TacoTip при использовании модуля UI с включенной опцией 'Изменить окно персонажа'."
+    L['CompatTDInspect'] = "TDInspect"
+    L['CompatTDInspectDesc'] =
+        "Добавляет совместимость с TDInspect при использовании модуля UI с включенной опцией 'Изменить окно персонажа'."
+    L['CompatWhatsTraining'] = "WhatsTraining"
+    L['CompatWhatsTrainingDesc'] =
+        "Добавляет совместимость с WhatsTraining при использовании модуля UI с включенной опцией 'Изменить книгу заклинаний'."
 end
 
 -- __Settings
@@ -167,8 +176,9 @@ do
     L["PositionTableAnchorParentDesc"] = ""
     L["PositionTableAnchorFrame"] = "Закрепить окно"
     L["PositionTableAnchorFrameDesc"] = ""
-    --    L["PositionTableCustomAnchorFrame"] = "Anchor Frame (custom)"
-    --    L["PositionTableCustomAnchorFrameDesc"] = "Use this named frame as anchor frame (if it's valid). E.g. 'CharacterFrame', 'TargetFrame'..."
+    L["PositionTableCustomAnchorFrame"] = "Рамка якоря (пользовательская)"
+    L["PositionTableCustomAnchorFrameDesc"] =
+        "Используйте эту именованную рамку в качестве якоря (если она действительна). Например, 'CharacterFrame', 'TargetFrame'..."
     L["PositionTableX"] = "X"
     L["PositionTableXDesc"] = ""
     L["PositionTableY"] = "Y"
@@ -230,8 +240,9 @@ do
     L["ButtonTableMacroNameFontSizeDesc"] = ""
     L["ButtonTableHideKeybindText"] = "Скрыть текст привязки клавиш"
     L["ButtonTableHideKeybindTextDesc"] = ""
-    --    L["ButtonTableShortenKeybindText"] = "Shorten Keybind Text"
-    --    L["ButtonTableShortenKeybindTextDesc"] = "Shortens the keybind text, e.g. 'sF' instead of 's-F' and similar replacements."
+    L["ButtonTableShortenKeybindText"] = "Сократить текст горячих клавиш"
+    L["ButtonTableShortenKeybindTextDesc"] =
+        "Сокращает текст горячих клавиш, например, 'sF' вместо 's-F' и подобные замены."
     L["ButtonTableKeybindFontSize"] = "Размер шрифта привязки клавиш"
     L["ButtonTableKeybindFontSizeDesc"] = ""
 
@@ -241,8 +252,9 @@ do
     L["MoreOptionsHideBarScrollingDesc"] = ""
     L["MoreOptionsGryphons"] = "Грифоны"
     L["MoreOptionsGryphonsDesc"] = "Грифоны"
-    --    L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "Use Key Down"
-    --    L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or "Activates abilities on key down."
+    L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "Использовать нажатие клавиши"
+    L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or
+                                         "Активирует способности при нажатии клавиши."
     L["MoreOptionsIconRangeColor"] = "Цвет иконки вне диапазона"
     L["MoreOptionsIconRangeColorDesc"] =
         "Изменяет цвет иконки, когда цель вне диапазона, аналогично RedRange/tullaRange"
