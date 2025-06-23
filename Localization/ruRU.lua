@@ -1,5 +1,7 @@
 -- print('ruRU')  - Translator ZamestoTV
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L_RU = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "ruRU")
+if not L_RU then return end
 
 -- preprocess to reuse strings - without this L[XY] = L['X'] will fail in AceLocale
 local L = {}
@@ -730,7 +732,5 @@ do
     -- DF.KEY_REPLACEMENTS = KEY_REPLACEMENTS;
 end
 
-local L_RU = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "ruRU")
-
 -- см. комментарий выше
-if L_RU then for k, v in pairs(L) do L_RU[k] = v; end end
+for k, v in pairs(L) do L_RU[k] = v; end

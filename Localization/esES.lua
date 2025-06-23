@@ -655,43 +655,43 @@ end
 
 -- keybindings
 do
-    local KEY_REPLACEMENTS = {
-        ["ALT%-"] = "a",
-        ["CTRL%-"] = "c",
-        ["SHIFT%-"] = "s",
-        ["META%-"] = "c", -- Note: META is also mapped to C like CTRL
-        ["NUMPAD"] = "N",
-        ["PLUS"] = "+",
-        ["MINUS"] = "-",
-        ["MULTIPLY"] = "*",
-        ["DIVIDE"] = "/",
-        ["BACKSPACE"] = "BS",
-        ["CAPSLOCK"] = "CP",
-        ["CLEAR"] = "CL",
-        ["DELETE"] = "Del",
-        ["END"] = "En",
-        ["HOME"] = "HM",
-        ["INSERT"] = "Ins",
-        ["MOUSEWHEELDOWN"] = "WD",
-        ["MOUSEWHEELUP"] = "WU",
-        ["NUMLOCK"] = "NL",
-        ["PAGEDOWN"] = "PD",
-        ["PAGEUP"] = "PU",
-        ["SCROLLLOCK"] = "SL",
-        ["SPACEBAR"] = "SP",
-        ["SPACE"] = "SP",
-        ["TAB"] = "TB",
-        ["DOWNARROW"] = "Dn",
-        ["LEFTARROW"] = "Lf",
-        ["RIGHTARROW"] = "Rt",
-        ["UPARROW"] = "Up"
-    }
+    -- local KEY_REPLACEMENTS = {
+    --     ["ALT%-"] = "a",
+    --     ["CTRL%-"] = "c",
+    --     ["SHIFT%-"] = "s",
+    --     ["META%-"] = "c", -- Note: META is also mapped to C like CTRL
+    --     ["NUMPAD"] = "N",
+    --     ["PLUS"] = "+",
+    --     ["MINUS"] = "-",
+    --     ["MULTIPLY"] = "*",
+    --     ["DIVIDE"] = "/",
+    --     ["BACKSPACE"] = "BS",
+    --     ["CAPSLOCK"] = "CP",
+    --     ["CLEAR"] = "CL",
+    --     ["DELETE"] = "Del",
+    --     ["END"] = "En",
+    --     ["HOME"] = "HM",
+    --     ["INSERT"] = "Ins",
+    --     ["MOUSEWHEELDOWN"] = "WD",
+    --     ["MOUSEWHEELUP"] = "WU",
+    --     ["NUMLOCK"] = "NL",
+    --     ["PAGEDOWN"] = "PD",
+    --     ["PAGEUP"] = "PU",
+    --     ["SCROLLLOCK"] = "SL",
+    --     ["SPACEBAR"] = "SP",
+    --     ["SPACE"] = "SP",
+    --     ["TAB"] = "TB",
+    --     ["DOWNARROW"] = "Dn",
+    --     ["LEFTARROW"] = "Lf",
+    --     ["RIGHTARROW"] = "Rt",
+    --     ["UPARROW"] = "Up"
+    -- }
 
-    local NUM_MOUSE_BUTTONS = 31
-    for i = 1, NUM_MOUSE_BUTTONS do KEY_REPLACEMENTS["BUTTON" .. i] = "B" .. i end
+    -- local NUM_MOUSE_BUTTONS = 31
+    -- for i = 1, NUM_MOUSE_BUTTONS do KEY_REPLACEMENTS["BUTTON" .. i] = "B" .. i end
 
-    for k, v in pairs(KEY_REPLACEMENTS) do L[k] = v; end
-    DF.KEY_REPLACEMENTS = KEY_REPLACEMENTS;
+    -- for k, v in pairs(KEY_REPLACEMENTS) do L[k] = v; end
+    -- DF.KEY_REPLACEMENTS = KEY_REPLACEMENTS;
 end
 
 local L_ES = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "esES")
