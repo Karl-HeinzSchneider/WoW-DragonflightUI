@@ -22,6 +22,11 @@ DF.Settings.DropdownCrossAnchorTable = {
     {value = 'LEFT', text = 'LEFT', tooltip = 'descr', label = 'label'}
 }
 
+DF.Settings.DropdownTopBottomAnchorTable = {
+    {value = 'TOP', text = 'TOP', tooltip = 'descr', label = 'label'},
+    {value = 'BOTTOM', text = 'BOTTOM', tooltip = 'descr', label = 'label'}
+}
+
 DF.Settings.OrientationTable = {
     {value = 'horizontal', text = 'Horizontal', tooltip = 'descr', label = 'label'},
     {value = 'vertical', text = 'Vertical', tooltip = 'descr', label = 'label'}

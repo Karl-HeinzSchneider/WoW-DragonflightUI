@@ -446,6 +446,9 @@ do
     L["MinimapHideZoomDesc"] = "Hides the zoom buttons (+) (-)"
     L["MinimapSkinMinimapButtons"] = "Skin Minimap Buttons"
     L["MinimapSkinMinimapButtonsDesc"] = "Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)"
+    L["MinimapZonePanelPosition"] = "Zone Panel Position"
+    L["MinimapZonePanelPositionDesc"] =
+        "Sets the position of the zone text panel including the frames anchored to it (e.g. calendar, tracking, mail, ..)."
     L["MinimapUseStateHandler"] = "Use State Handler"
     L["MinimapUseStateHandlerDesc"] =
         "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."

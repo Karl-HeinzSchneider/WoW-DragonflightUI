@@ -23,6 +23,7 @@ local defaults = {
             hideCalendar = false,
             hideZoom = false,
             skinButtons = true,
+            zonePanelPosition = 'TOP',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -126,6 +127,16 @@ local minimapOptions = {
             desc = '',
             order = 20,
             isExpanded = true,
+            editmode = true
+        },
+        zonePanelPosition = {
+            type = 'select',
+            name = L["MinimapZonePanelPosition"],
+            desc = L["MinimapZonePanelPositionDesc"] .. getDefaultStr('zonePanelPosition', 'minimap'),
+            dropdownValues = DF.Settings.DropdownTopBottomAnchorTable,
+            order = 10,
+            group = 'headerStyling',
+            new = true,
             editmode = true
         },
         showPing = {
@@ -731,6 +742,8 @@ function Module.UpdateMinimapState(state)
     Minimap:SetScale(state.scale * dfScale)
     -- Module.LockMinimap(state.locked)
 
+    Module:UpdateMinimapZonePanelPosition(state.zonePanelPosition)
+
     if state.hideCalendar then
         frame.CalendarButton:Hide()
     else
@@ -750,6 +763,49 @@ function Module.UpdateMinimapState(state)
     Module:ConditionalOption('skinButtons', 'minimap', 'Skin Minimap Buttons', function()
         Module.ChangeMinimapButtons()
     end)
+end
+
+function Module:UpdateMinimapZonePanelPosition(pos)
+    if pos ~= 'TOP' and pos ~= 'BOTTOM' then pos = 'TOP' end
+
+    local f = frame.MinimapInfo;
+    f:ClearAllPoints()
+    MiniMapMailFrame:ClearAllPoints()
+
+    if pos == 'TOP' then
+        -- default
+        f:SetPoint('CENTER', Minimap, 'TOP', 0, 25)
+
+        if DF.Wrath or DF.Cata then
+            MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
+        else
+            MiniMapMailFrame:SetPoint('RIGHT', _G['DragonflightUIMinimapTop'], 'LEFT', 0, 0)
+        end
+
+        Minimap.DFShower:ClearAllPoints()
+        Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32 + 32)
+        Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+
+        Minimap.DFMouseHandler:ClearAllPoints()
+        Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+        Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+    else
+        f:SetPoint('CENTER', Minimap, 'BOTTOM', 0, -25)
+
+        if DF.Wrath or DF.Cata then
+            MiniMapMailFrame:SetPoint('BOTTOMRIGHT', MiniMapTracking, 'TOPRIGHT', 2, 1)
+        else
+            MiniMapMailFrame:SetPoint('RIGHT', _G['DragonflightUIMinimapTop'], 'LEFT', 0, 0)
+        end
+
+        Minimap.DFShower:ClearAllPoints()
+        Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+        Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16 - 32)
+
+        Minimap.DFMouseHandler:ClearAllPoints()
+        Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+        Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+    end
 end
 
 function Module.UpdateTrackerState(state)
