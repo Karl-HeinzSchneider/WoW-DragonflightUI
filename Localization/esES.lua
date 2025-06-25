@@ -430,6 +430,9 @@ do
     L["MinimapSkinMinimapButtons"] = "Personalizar botones del minimapa"
     L["MinimapSkinMinimapButtonsDesc"] =
         "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
+    -- L["MinimapZonePanelPosition"] = "Zone Panel Position"
+    -- L["MinimapZonePanelPositionDesc"] =
+    -- "Sets the position of the zone text panel including the frames anchored to it (e.g. calendar, tracking, mail, ..)."
     L["MinimapUseStateHandler"] = "Usar controlador de estado"
     L["MinimapUseStateHandlerDesc"] =
         "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."

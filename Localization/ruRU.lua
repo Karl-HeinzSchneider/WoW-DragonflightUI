@@ -461,6 +461,9 @@ do
     L["MinimapSkinMinimapButtons"] = "Стилизовать кнопки миникарты"
     L["MinimapSkinMinimapButtonsDesc"] =
         "Изменяет стиль кнопок миникарты с использованием LibDBIcon (большинство аддонов используют это)"
+    -- L["MinimapZonePanelPosition"] = "Zone Panel Position"
+    -- L["MinimapZonePanelPositionDesc"] =
+    -- "Sets the position of the zone text panel including the frames anchored to it (e.g. calendar, tracking, mail, ..)."
     L["MinimapUseStateHandler"] = "Использовать обработчик состояния"
     L["MinimapUseStateHandlerDesc"] =
         "Без этого настройки видимости выше не будут работать, но может улучшить совместимость с другими аддонами (например, MinimapAlert), так как не делает окна защищенными."

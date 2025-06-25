@@ -444,6 +444,9 @@ do
     L["MinimapHideZoomDesc"] = "隐藏缩放按钮(+)(-)"
     L["MinimapSkinMinimapButtons"] = "美化小地图按钮"
     L["MinimapSkinMinimapButtonsDesc"] = "使用LibDBIcon美化小地图按钮(多数插件使用此库)"
+    -- L["MinimapZonePanelPosition"] = "Zone Panel Position"
+    -- L["MinimapZonePanelPositionDesc"] =
+    -- "Sets the position of the zone text panel including the frames anchored to it (e.g. calendar, tracking, mail, ..)."
     L["MinimapUseStateHandler"] = "使用状态处理器"
     L["MinimapUseStateHandlerDesc"] =
         "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框架变为安全框架。"
