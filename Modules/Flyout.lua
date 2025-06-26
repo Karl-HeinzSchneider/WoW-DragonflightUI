@@ -767,7 +767,7 @@ if DF.API.Version.IsClassic then
             spells = {587, 597, 990, 6129, 10144, 10145, 28612}
         }
     }
-    for k, v in ipairs(t) do
+    for k, v in pairs(t) do
         classDefaults.MAGE_ALLIANCE[k] = v;
         classDefaults.MAGE_HORDE[k] = v;
     end
