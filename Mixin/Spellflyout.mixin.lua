@@ -133,10 +133,14 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
             ref:Hide()
         else
             ref:Show()
-        end
+        end   
+        
+        local attributeFrame = self:GetFrameRef("attributeFrame")
+        attributeFrame:SetAttribute('update', not attributeFrame:GetAttribute('update'))
     ]=]);
     frame:RegisterForClicks("AnyUp");
     frame:SetFrameRef("frame1", f);
+    self.Frame = frame;
 
     frame:HookScript('OnClick', function()
         --
@@ -149,16 +153,89 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     -- frame:SetSize(69, 69)
     frame:SetPoint('TOP', UIParent, 'BOTTOM', -666, -666)
 
+    -- handler
     local handler = CreateFrame('Frame', 'DragonflightUISpellFlyoutHandler', nil, 'SecureHandlerBaseTemplate');
     local id = self:GetID() - 1000;
     -- print(n, id, '=', (id - 1) * 12 + 1, '-', (id - 1) * 12 + 12)
 
     handler:SetFrameRef('flyout', f)
+
     self.Handler = handler;
 
     RegisterStateDriver(handler, "cursor", "[cursor] true; false")
     RegisterStateDriver(handler, "combat", "[combat] true; false")
 
+    -- attribute
+    local attributeFrame = CreateFrame("FRAME", "DragonflightUISpellFlyoutAttributeHandler", nil,
+                                       "SecureHandlerAttributeTemplate");
+    attributeFrame:SetFrameRef('shower', self.DFShower)
+    attributeFrame:SetFrameRef('mouse', self.DFMouseHandler)
+    attributeFrame:SetFrameRef('flyout', f)
+    attributeFrame:SetFrameRef('parent', self)
+
+    attributeFrame:SetAttribute("_onattributechanged", [=[
+        -- print('_onattributechanged',name)
+
+        local parent = control:GetFrameRef("parent")
+
+        local dir = control:GetAttribute('dir')
+        local w = control:GetAttribute('w')
+        local h = control:GetAttribute('h')
+        -- print('state:',dir,w,h)    
+
+        local shower = control:GetFrameRef("shower")
+        local mouse = control:GetFrameRef("mouse")
+        shower:ClearAllPoints()
+        mouse:ClearAllPoints() 
+
+        local flyout = control:GetFrameRef("flyout")
+        if flyout and flyout:IsShown() then
+            if dir == 'LEFT' then
+                mouse:SetPoint('TOPRIGHT', parent, 'TOPRIGHT', 2, 2)
+                mouse:SetPoint('BOTTOMRIGHT', parent, 'BOTTOMRIGHT', 2, -2)
+                mouse:SetPoint('LEFT', flyout, 'LEFT', -2, 0)
+
+                shower:SetPoint('TOPRIGHT', parent, 'TOPRIGHT', 2, 2)
+                shower:SetPoint('BOTTOMRIGHT', parent, 'BOTTOMRIGHT', 2, -2)
+                shower:SetPoint('LEFT', flyout, 'LEFT', -2, 0)
+            elseif dir == 'RIGHT' then
+                mouse:SetPoint('TOPLEFT', parent, 'TOPLEFT', -2, 2)
+                mouse:SetPoint('BOTTOMLEFT', parent, 'BOTTOMLEFT', -2, -2)
+                mouse:SetPoint('RIGHT', flyout, 'RIGHT', 2, 0)
+
+                shower:SetPoint('TOPLEFT', parent, 'TOPLEFT', -2, 2)
+                shower:SetPoint('BOTTOMLEFT', parent, 'BOTTOMLEFT', -2, -2)
+                shower:SetPoint('RIGHT', flyout, 'RIGHT', 2, 0)
+            elseif dir == 'BOTTOM' then
+                mouse:SetPoint('TOPRIGHT', parent, 'TOPRIGHT', 2, 2)
+                mouse:SetPoint('TOPLEFT', parent, 'TOPLEFT', -2, 2)
+                mouse:SetPoint('BOTTOM', flyout, 'BOTTOM', 0, -2)
+
+                shower:SetPoint('TOPRIGHT', parent, 'TOPRIGHT', 2, 2)
+                shower:SetPoint('TOPLEFT', parent, 'TOPLEFT', -2, 2)
+                shower:SetPoint('BOTTOM', flyout, 'BOTTOM', 0, -2)
+            else
+                mouse:SetPoint('BOTTOMLEFT', parent, 'BOTTOMLEFT', -2, -2)
+                mouse:SetPoint('BOTTOMRIGHT', parent, 'BOTTOMRIGHT', 2, -2)
+                mouse:SetPoint('TOP', flyout, 'TOP', 0, 2)
+
+                shower:SetPoint('BOTTOMLEFT', parent, 'BOTTOMLEFT', -2, -2)
+                shower:SetPoint('BOTTOMRIGHT', parent, 'BOTTOMRIGHT', 2, -2)
+                shower:SetPoint('TOP', flyout, 'TOP', 0, 2)
+            end
+        else 
+            shower:SetPoint('TOPLEFT',parent,'TOPLEFT',-2,2)
+            shower:SetPoint('BOTTOMRIGHT',parent,'BOTTOMRIGHT',2,-2)
+
+            mouse:SetPoint('TOPLEFT',parent,'TOPLEFT',-2,2)
+            mouse:SetPoint('BOTTOMRIGHT',parent,'BOTTOMRIGHT',2,-2)
+        end   
+    ]=]);
+    self.AttributeFrame = attributeFrame
+    frame:SetFrameRef("attributeFrame", attributeFrame);
+    handler:SetFrameRef("attributeFrame", attributeFrame);
+
+    --
     local t = {}
     for i = 1, self.MaxButtons do
         --    
@@ -200,7 +277,10 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
             local closeAfterClick = control:GetAttribute('closeAfterClick')
             if flyout and flyout:IsShown() and closeAfterClick then
                 flyout:Hide()
-            end  
+            end      
+            
+            local attributeFrame = control:GetFrameRef("attributeFrame")
+            attributeFrame:SetAttribute('update', not attributeFrame:GetAttribute('update'))
         ]])
     end
 
@@ -444,6 +524,12 @@ function DragonflightUISpellFlyoutBGMixin:Update()
         self:SetSize(w, h)
         self:SetPoint('BOTTOM', parent, 'TOP', 0, 0)
     end
+
+    local attributeFrame = parent.AttributeFrame
+    attributeFrame:SetAttributeNoHandler('dir', dir)
+    attributeFrame:SetAttributeNoHandler('w', w)
+    attributeFrame:SetAttributeNoHandler('h', h)
+    attributeFrame:SetAttribute('update', not attributeFrame:GetAttribute('update'))
 end
 
 function DragonflightUISpellFlyoutBGMixin:SetButton(btn, i, buttonTable)
