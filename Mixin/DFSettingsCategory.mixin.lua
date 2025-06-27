@@ -48,6 +48,8 @@ function DFSettingsCategoryListMixin:OnLoad()
                 button:SetSelected(selected);
 
                 button:SetScript("OnClick", function(button, buttonName, down)
+                    -- print('onclick', elementData.elementInfo.name)
+                    if not elementData.isEnabled then return end
                     self.selectionBehavior:Select(button);
                     -- PlaySound(SOUNDKIT.UI_90_BLACKSMITHING_TREEITEMCLICK);
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
