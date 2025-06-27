@@ -386,9 +386,9 @@ do
     L["FlyoutCustomNameFormat"] = "自定义弹出按钮 %d"
     L["FlyoutCustomNameDescFormat"] = "每个角色的弹出按钮，拥有最多12个额外的动作按钮。"
 
-    -- L["FlyoutHeaderClassPresets"] = "Class Presets"
-    -- L["FlyoutHeaderClassPresetsDesc"] =
-    -- "Sets the flyout settings and also the buttons of the flyout to a character specific preset."
+    L["FlyoutHeaderClassPresets"] = "职业预设"
+    L["FlyoutHeaderClassPresetsDesc"] =
+        "将弹出按钮预设设置为角色专有预设。"
 end
 
 -- Castbar
@@ -448,9 +448,9 @@ do
     L["MinimapHideZoomDesc"] = "隐藏缩放按钮(+)(-)"
     L["MinimapSkinMinimapButtons"] = "美化小地图按钮"
     L["MinimapSkinMinimapButtonsDesc"] = "使用LibDBIcon美化小地图按钮(多数插件使用此库)"
-    -- L["MinimapZonePanelPosition"] = "Zone Panel Position"
-    -- L["MinimapZonePanelPositionDesc"] =
-    -- "Sets the position of the zone text panel including the frames anchored to it (e.g. calendar, tracking, mail, ..)."
+    L["MinimapZonePanelPosition"] = "区域面板位置"
+    L["MinimapZonePanelPositionDesc"] =
+        "设置区域文本面板的位置，包括锚定在上面的框体（例如：日历、跟踪、邮件等）。"
     L["MinimapUseStateHandler"] = "使用状态处理器"
     L["MinimapUseStateHandlerDesc"] =
         "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框架变为安全框架。"
