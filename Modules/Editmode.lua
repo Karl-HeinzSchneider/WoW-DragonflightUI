@@ -180,9 +180,8 @@ if true then
     end
 
     -- actionbar
-    local actionbarFrames = {'ActionBars', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
+    local actionbarFrames = {'ActionBars', 'FlyoutBar', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
     if DF.Cata then table.insert(actionbarFrames, 'ExtraActionButton') end
-    if DF.Era then table.insert(actionbarFrames, 'FlyoutBar') end
     AddTableToCategory(actionbarFrames, 'headerActionbar');
 
     -- combat
