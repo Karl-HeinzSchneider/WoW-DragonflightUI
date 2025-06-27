@@ -282,6 +282,14 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
             local attributeFrame = control:GetFrameRef("attributeFrame")
             attributeFrame:SetAttribute('update', not attributeFrame:GetAttribute('update'))
         ]])
+
+        btn:HookScript('OnClick', function()
+            --
+            -- print('onclick')
+            local state = self.state;
+            local char = self.stateChar
+            self:UpdateArrow(char.flyoutDirection or '')
+        end)
     end
 
     self.buttonTable = t;
