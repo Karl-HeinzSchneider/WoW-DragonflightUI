@@ -117,14 +117,16 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
     -- default categorys
     list:RegisterCategory('general', {name = L["ConfigMixinGeneral"], descr = 'descr..', order = 1, isExpanded = true},
                           alphaSortComparator, true)
-    list:RegisterCategory('actionbar', {name = L["ConfigMixinActionBar"], descr = 'descr..', order = 2, isExpanded = true}, nil, true)
+    list:RegisterCategory('actionbar',
+                          {name = L["ConfigMixinActionBar"], descr = 'descr..', order = 2, isExpanded = true}, nil, true)
     list:RegisterCategory('castbar', {name = L["ConfigMixinCastBar"], descr = 'descr..', order = 3, isExpanded = true},
                           alphaSortComparator, true)
     list:RegisterCategory('flyout', {name = 'Flyout', descr = 'descr..', order = 3.5, isExpanded = true},
                           orderSortComparator, true)
-    list:RegisterCategory('misc', {name = L["ConfigMixinMisc"], descr = 'descr..', order = 4, isExpanded = true}, alphaSortComparator,
-                          true)
-    list:RegisterCategory('unitframes', {name = L["ConfigMixinUnitframes"], descr = 'descr..', order = 5, isExpanded = true},
+    list:RegisterCategory('misc', {name = L["ConfigMixinMisc"], descr = 'descr..', order = 4, isExpanded = true},
+                          alphaSortComparator, true)
+    list:RegisterCategory('unitframes',
+                          {name = L["ConfigMixinUnitframes"], descr = 'descr..', order = 5, isExpanded = true},
                           alphaSortComparator, true)
 
     self.SettingsDataTable = {}
