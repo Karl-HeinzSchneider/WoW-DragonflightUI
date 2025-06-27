@@ -385,6 +385,10 @@ do
     L["FlyoutButtonCustomFormat"] = "自定义弹出按钮 %d"
     L["FlyoutCustomNameFormat"] = "自定义弹出按钮 %d"
     L["FlyoutCustomNameDescFormat"] = "每个角色的弹出按钮，拥有最多12个额外的动作按钮。"
+
+    -- L["FlyoutHeaderClassPresets"] = "Class Presets"
+    -- L["FlyoutHeaderClassPresetsDesc"] =
+    -- "Sets the flyout settings and also the buttons of the flyout to a character specific preset."
 end
 
 -- Castbar

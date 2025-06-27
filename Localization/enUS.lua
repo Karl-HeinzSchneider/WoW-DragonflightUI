@@ -386,6 +386,10 @@ do
     L["FlyoutButtonCustomFormat"] = "Custom Flyout %d"
     L["FlyoutCustomNameFormat"] = "Custom Flyout %d"
     L["FlyoutCustomNameDescFormat"] = "Per-character flyout button with up to 12 additional actionbuttons."
+
+    L["FlyoutHeaderClassPresets"] = "Class Presets"
+    L["FlyoutHeaderClassPresetsDesc"] =
+        "Sets the flyout settings and also the buttons of the flyout to a character specific preset."
 end
 
 -- Castbar
