@@ -2,7 +2,6 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local rc = LibStub("LibRangeCheck-3.0")
-AuraDurationsDB = nil;
 local auraDurations = LibStub:GetLibrary('AuraDurations-1.0')
 local mName = 'Unitframe'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
