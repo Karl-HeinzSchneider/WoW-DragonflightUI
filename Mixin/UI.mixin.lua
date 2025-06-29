@@ -2325,7 +2325,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
         local scroll = greeting.ScrollBox
         scroll:SetSize(300, 403)
         if DF.API.Version.IsMoP then
-            scroll:SetHeight(320) -- TODO
+            scroll:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -65)
         else
             scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
         end
@@ -2342,7 +2342,11 @@ function DragonflightUIMixin:ChangeGossipFrame()
         bg:SetTexCoord(0.0009765625, 0.29296875, 0.0009765625, 0.3984375)
         bg:SetSize(299, 407)
         bg:SetDrawLayer('BACKGROUND', 0)
-        bg:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 7, -62)
+        if DF.API.Version.IsMoP then
+            bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -62)
+        else
+            bg:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 7, -62)
+        end
     end
 
     do
