@@ -1,5 +1,8 @@
 local isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
--- if not isClassic then return; end
+local addonName, addonTable = ...
+local standalone = (addonName == 'AuraDurations');
+
+if standalone and not isClassic then return; end
 
 local lib = LibStub:NewLibrary("AuraDurations-1.0", 1);
 
@@ -44,6 +47,7 @@ local defaults = {
 local frame = CreateFrame("Frame");
 lib.frame = frame;
 lib.Defaults = defaults
+lib.IsStandalone = standalone
 
 function frame:SetDefaults()
     for k, v in pairs(defaults) do AuraDurationsDB[k] = v; end
@@ -54,10 +58,7 @@ function frame:AddMissingKeys()
 end
 
 function frame:SetState(state)
-    if not frame.AuraDurationsDB then
-        frame:PLAYER_LOGIN('PLAYER_LOGIN')
-        frame:UnregisterEvent('PLAYER_LOGIN')
-    end
+    if not standalone then frame:Embed() end
     for k, v in pairs(state) do AuraDurationsDB[k] = v; end
 
     self:Update()
@@ -75,7 +76,10 @@ frame:SetScript("OnEvent", function(self, event, ...)
     return self[event](self, event, ...);
 end)
 
-frame:RegisterEvent("PLAYER_LOGIN")
+-- standalone uses PLAYER_LOGIN
+-- embeded adds the functionality when you call SetState() 
+if standalone then frame:RegisterEvent("PLAYER_LOGIN") end
+
 function frame:PLAYER_LOGIN(event, ...)
     -- print(event, ...)
 
@@ -98,6 +102,15 @@ function frame:PLAYER_LOGIN(event, ...)
     hooksecurefunc("TargetFrame_UpdateAuras", frame.TargetBuffHook)
     hooksecurefunc("CompactUnitFrame_UtilSetBuff", frame.CompactUnitFrameBuffHook)
     hooksecurefunc("CompactUnitFrame_UtilSetDebuff", frame.CompactUnitFrameDeBuffHook)
+end
+
+function frame:Embed()
+    if frame.IsEmbeded then return false; end
+
+    frame:PLAYER_LOGIN('EMBED')
+
+    frame.IsEmbeded = true;
+    return true;
 end
 
 local largeBuffList = {};
