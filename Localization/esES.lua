@@ -15,10 +15,10 @@ do
     L["ModuleTooltipCastbar"] =
         "Este módulo modifica la barra de lanzamiento predeterminada.\nAñade opciones separadas para la barra de lanzamiento del Jugador, Enfoque y Objetivo."
     L["ModuleTooltipChat"] = "Este módulo modifica la ventana de chat predeterminada.\nEN DESARROLLO."
-    -- L["ModuleTooltipCompatibility"] = "This module adds extra compatibility for other addons."
+    L["ModuleTooltipCompatibility"] = "Este módulo añade compatibilidad adicional con otros addons."
     L["ModuleTooltipDarkmode"] =
         "Este módulo añade un modo oscuro a múltiples marcos de la interfaz de Dragonflight.\nEN DESARROLLO - ¡por favor, envía tus comentarios!"
-    -- L["ModuleTooltipFlyout"] = "Flyout"
+    L["ModuleTooltipFlyout"] = "Desplegable"
     L["ModuleTooltipMinimap"] =
         "Este módulo mejora el minimapa y el rastreador de misiones.\nAñade opciones separadas para el minimapa y el rastreador de misiones."
     -- L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
@@ -28,18 +28,18 @@ do
         "Este módulo mejora los marcos de unidad predeterminados y añade nuevas funciones como el color de clase o la salud de los enemigos (Era).\nAñade opciones separadas para los marcos de jugador, mascota, objetivo, enfoque y grupo."
     L["ModuleTooltipUtility"] = "Este módulo añade funciones y ajustes generales a la interfaz.\nEN DESARROLLO."
 
-    -- L["ModuleFlyout"] = "Flyout"
+    L["ModuleFlyout"] = "Desplegable"
     L["ModuleActionbar"] = "Barra de acción"
     L["ModuleCastbar"] = "Barra de lanzamiento"
     L["ModuleChat"] = "Chat"
     L["ModuleBuffs"] = "Beneficios"
     L["ModuleDarkmode"] = "Modo oscuro"
     L["ModuleMinimap"] = "Minimapa"
-    -- L["ModuleTooltip"] = "Tooltip"
-    -- L["ModuleUI"] = "UI"
+    L["ModuleTooltip"] = "Tooltip"
+    L["ModuleUI"] = "IU"
     L["ModuleUnitframe"] = "Marcos de unidad"
     L["ModuleUtility"] = "Utilidad"
-    -- L["ModuleCompatibility"] = "Compatibility"
+    L["ModuleCompatibility"] = "Compatibilidad"
     L["ModuleBossframe"] = "Marcos de jefe"
 end
 
@@ -61,7 +61,7 @@ do
     L["ConfigMixinUnitframes"] = "Marcos de unidad"
 
     -- modules.mixin.lua
-    -- L["ModuleConditionalMessage"] = "'|cff8080ff%s|r' was deactivated, but the corresponding function was already hooked, please '|cff8080ff/reload|r'!"
+    L["ModuleConditionalMessage"] = "'|cff8080ff%s|r' fue desactivado, pero la función correspondiente ya estaba enganchada, ¡por favor usa '|cff8080ff/reload|r'!"
 
     -- config
     L["ConfigToolbarCopyPopup"] = "Copia el enlace de abajo (Ctrl+C, Enter):"
@@ -90,13 +90,14 @@ do
     L["ProfilesErrorNewProfile"] = "ERROR: ¡El nombre del nuevo perfil no puede estar vacío!"
     L["ProfilesDialogueDeleteProfile"] = "¿Eliminar el perfil \'%s\'?"
     L["ProfilesDialogueCopyProfile"] = "Añadir nuevo perfil (copiar de \'|cff8080ff%s|r\')"
-    -- L["ProfilesImportShareHeader"] = "Import/Share"
-    -- L["ProfilesImportProfile"] = "Import Profile"
-    -- L["ProfilesImportProfileButton"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
-    -- L["ProfilesImportProfileDesc"] = "Opens the import dialogue."
-    -- L["ProfilesExportProfile"] = "Share Profile"
-    -- L["ProfilesExportProfileButton"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
-    -- L["ProfilesExportProfileDesc"] = "Opens the share dialogue."
+    L["ProfilesImportShareHeader"] = "Importar/Compartir"
+    L["ProfilesImportProfile"] = "Importar perfil"
+    L["ProfilesImportProfileButton"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Importar"
+    L["ProfilesImportProfileDesc"] = "Abre el diálogo de importación."
+    L["ProfilesExportProfile"] = "Compartir perfil"
+    L["ProfilesExportProfileButton"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Compartir"
+    L["ProfilesExportProfileDesc"] = "Abre el diálogo de compartir."
+
 end
 
 -- Editmode
@@ -110,8 +111,8 @@ do
     L["EditModeDeleteLayout"] = "Eliminar perfil"
     L["EditModeNewLayoutDisabled"] = "%s Nuevo perfil"
     L["EditModeNewLayout"] = "%s |cnPURE_GREEN_COLOR:Nuevo perfil|r"
-    -- L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Import"
-    -- L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Share"
+    L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "Importar"
+    L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "Compartir"
     L["EditModeCopyToClipboard"] = "Copiar al portapapeles |cffffd100(para compartir en línea)|r"
     L["EditModeExportProfile"] = "Exportar perfil |cff8080ff%s|r"
     L["EditModeImportProfile"] = "Importar perfil como |cff8080ff%s|r"
@@ -119,35 +120,35 @@ end
 
 -- Compat
 do
-    -- L['CompatName'] = "Compatibility"
-    -- L['CompatAuctionator'] = "Auctionator"
-    -- L['CompatAuctionatorDesc'] = "Adds compatibility for Auctionator when using the UI Module with 'Change Profession Window' enabled."
-    -- L['CompatBaganator'] = "Baganator_Skin"
-    -- L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
-    -- L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
-    -- L['CompatBaganatorEquipmentDesc'] = "Adds support for equipment sets as item source."
-    -- L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
-    -- L['CompatCharacterStatsClassicDesc'] = "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
-    -- L['CompatClassicCalendar'] = "Classic Calendar"
-    -- L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
-    -- L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
-    -- L['CompatLFGBulletinBoardDesc'] = "Adds compatibility for LFG Bulletin Board"
-    -- L['CompatMerInspect'] = "MerInspect"
-    -- L['CompatMerInspectDesc'] = "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
-    -- L['CompatRanker'] = "Ranker"
-    -- L['CompatRankerDesc'] = "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
-    -- L['CompatTacoTip'] = "TacoTip"
-    -- L['CompatTacoTipDesc'] = "Adds compatibility for TacoTip when using the UI Module with 'Change CharacterFrame' enabled."
-    -- L['CompatTDInspect'] = "TDInspect"
-    -- L['CompatTDInspectDesc'] = "Adds compatibility for TDInspect when using the UI Module with 'Change CharacterFrame' enabled."
-    -- L['CompatWhatsTraining'] = "WhatsTraining"
-    -- L['CompatWhatsTrainingDesc'] = "Adds compatibility for WhatsTraining when using the UI Module with 'Change SpellBook' enabled."
+    L['CompatName'] = "Compatibilidad"
+    L['CompatAuctionator'] = "Auctionator"
+    L['CompatAuctionatorDesc'] = "Añade compatibilidad con Auctionator al usar el Módulo de IU con 'Cambiar ventana de profesiones' activado."
+    L['CompatBaganator'] = "Baganator_Skin"
+    L['CompatBaganatorDesc'] = "Cambia la apariencia predeterminada de 'Blizzard' por una con estilo de DragonflightUI."
+    L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
+    L['CompatBaganatorEquipmentDesc'] = "Añade compatibilidad para conjuntos de equipo como fuente de objetos."
+    L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
+    L['CompatCharacterStatsClassicDesc'] = "Añade compatibilidad con CharacterStatsClassic al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatClassicCalendar'] = "Calendario clásico"
+    L['CompatClassicCalendarDesc'] = "Añade compatibilidad con el Calendario clásico."
+    L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
+    L['CompatLFGBulletinBoardDesc'] = "Añade compatibilidad con LFG Bulletin Board."
+    L['CompatMerInspect'] = "MerInspect"
+    L['CompatMerInspectDesc'] = "Añade compatibilidad con MerInspect al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatRanker'] = "Ranker"
+    L['CompatRankerDesc'] = "Añade compatibilidad con Ranker al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatTacoTip'] = "TacoTip"
+    L['CompatTacoTipDesc'] = "Añade compatibilidad con TacoTip al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatTDInspect'] = "TDInspect"
+    L['CompatTDInspectDesc'] = "Añade compatibilidad con TDInspect al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatWhatsTraining'] = "WhatsTraining"
+    L['CompatWhatsTrainingDesc'] = "Añade compatibilidad con WhatsTraining al usar el Módulo de IU con 'Cambiar libro de hechizos' activado."
 end
 
 -- __Settings
 do
     L["SettingsDefaultStringFormat"] = "\n(Predeterminado: |cff8080ff%s|r)"
-    -- L["SettingsCharacterSpecific"] = "\n\n|cff8080ff[Per-character setting]|r"
+    L["SettingsCharacterSpecific"] = "\n\n|cff8080ff[Configuración por personaje]|r"
 
     -- positionTable
     L["PositionTableHeader"] = "Escala y posición"
@@ -160,8 +161,8 @@ do
     L["PositionTableAnchorParentDesc"] = ""
     L["PositionTableAnchorFrame"] = "Marco del ancla"
     L["PositionTableAnchorFrameDesc"] = ""
-    -- L["PositionTableCustomAnchorFrame"] = "Anchor Frame (custom)"
-    -- L["PositionTableCustomAnchorFrameDesc"] = "Use this named frame as anchor frame (if it's valid). E.g. 'CharacterFrame', 'TargetFrame'..."
+    L["PositionTableCustomAnchorFrame"] = "Marco de anclaje (personalizado)"
+    L["PositionTableCustomAnchorFrameDesc"] = "Usa este marco con nombre como marco de anclaje (si es válido). Por ejemplo: 'CharacterFrame', 'TargetFrame'..."
     L["PositionTableX"] = "X"
     L["PositionTableXDesc"] = ""
     L["PositionTableY"] = "Y"
@@ -176,7 +177,7 @@ end
 
 -- actionbar
 do
-    -- L["ActionbarName"] = "Action Bar"
+    L["ActionbarName"] = "Barra de acción"
     L["ActionbarNameFormat"] = "Barra de acción %d"
 
     -- bar names
@@ -300,12 +301,13 @@ do
     L["FPSOptionsShowPingDesc"] = "Muestra la latencia en ms"
 
     -- Extra Action Button
-    -- L["ExtraActionButtonOptionsName"] = "Extra Action Button"
-    -- L["ExtraActionButtonOptionsNameDesc"] = "FPS"
-    -- L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
-    -- L["ExtraActionButtonStyleDesc"] = ""
-    -- L["ExtraActionButtonHideBackgroundTexture"] = "Hide Background Texture"
-    -- L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+    L["ExtraActionButtonOptionsName"] = "Botón de acción extra"
+    L["ExtraActionButtonOptionsNameDesc"] = "IPS"
+    L["ExtraActionButtonStyle"] = L["ButtonTableStyle"]
+    L["ExtraActionButtonStyleDesc"] = ""
+    L["ExtraActionButtonHideBackgroundTexture"] = "Ocultar textura de fondo"
+    L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+
 end
 
 -- Buffs
@@ -324,57 +326,58 @@ end
 
 -- Flyout
 do
-    -- L["FlyoutHeader"] = "Flyout"
-    -- L["FlyoutHeaderDesc"] = ""
-    -- L["FlyoutDirection"] = "Flyout Direction"
-    -- L["FlyoutDirectionDesc"] = "Flyout Direction"
-    -- L["FlyoutSpells"] = "Spells"
-    -- L["FlyoutSpellsDesc"] = "Insert SpellIDs as comma seperated values, e.g. '688, 697'."
-    -- L["FlyoutSpellsAlliance"] = "Spells (Alliance)"
-    -- L["FlyoutSpellsAllianceDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on alliance side.)"
-    -- L["FlyoutSpellsHorde"] = "Spells (Horde)"
-    -- L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(Only used on horde side.)"
-    -- L["FlyoutItems"] = "Items"
-    -- L["FlyoutItemsDesc"] = "Insert ItemIDs as comma seperated values, e.g. '6948, 8490'."
-    -- L["FlyoutCloseAfterClick"] = "Close After Click"
-    -- L["FlyoutCloseAfterClickDesc"] = "Close the flyout after pressing one of its buttons."
-    -- L["FlyoutAlwaysShow"] = "Always Show Buttons"
-    -- L["FlyoutAlwaysShowDesc"] = "Always shows the (sub) buttons, even when they are empty.\nUse this if you want to use drag&drop."
-    -- L["FlyoutIcon"] = "Icon"
-    -- L["FlyoutIconDesc"] = "Insert FileID or the file path to a texture."
-    -- L["FlyoutDisplayname"] = "Display Name"
-    -- L["FlyoutDisplaynameDesc"] = ""
-    -- L["FlyoutTooltip"] = "Tooltip"
-    -- L["FlyoutTooltipDesc"] = ""
+    L["FlyoutHeader"] = "Desplegable"
+    L["FlyoutHeaderDesc"] = ""
+    L["FlyoutDirection"] = "Dirección del desplegable"
+    L["FlyoutDirectionDesc"] = "Dirección del desplegable"
+    L["FlyoutSpells"] = "Hechizos"
+    L["FlyoutSpellsDesc"] = "Inserta los SpellIDs separados por comas, por ejemplo: '688, 697'."
+    L["FlyoutSpellsAlliance"] = "Hechizos (Alianza)"
+    L["FlyoutSpellsAllianceDesc"] = L["FlyoutSpellsDesc"] .. "\n(Solo se usa en el lado de la Alianza.)"
+    L["FlyoutSpellsHorde"] = "Hechizos (Horda)"
+    L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(Solo se usa en el lado de la Horda.)"
+    L["FlyoutItems"] = "Objetos"
+    L["FlyoutItemsDesc"] = "Inserta los ItemIDs separados por comas, por ejemplo: '6948, 8490'."
+    L["FlyoutCloseAfterClick"] = "Cerrar después de hacer clic"
+    L["FlyoutCloseAfterClickDesc"] = "Cierra el desplegable después de presionar uno de sus botones."
+    L["FlyoutAlwaysShow"] = "Mostrar siempre los botones"
+    L["FlyoutAlwaysShowDesc"] = "Muestra siempre los (sub)botones, incluso cuando están vacíos.\nÚsalo si quieres arrastrar y soltar."
+    L["FlyoutIcon"] = "Icono"
+    L["FlyoutIconDesc"] = "Inserta el FileID o la ruta de archivo de una textura."
+    L["FlyoutDisplayname"] = "Nombre para mostrar"
+    L["FlyoutDisplaynameDesc"] = ""
+    L["FlyoutTooltip"] = "Tooltip"
+    L["FlyoutTooltipDesc"] = ""
 
-    -- L["FlyoutButtonWarlock"] = "Warlock Summon Flyout"
-    -- L["FlyoutButtonMagePort"] = "Teleport Flyout"
-    -- L["FlyoutButtonMagePortals"] = "Portals Flyout"
-    -- L["FlyoutButtonMageFood"] = "Conjure Food Flyout"
-    -- L["FlyoutButtonMageWater"] = "Conjure Water Flyout"
-    -- L["FlyoutWarlock"] = "Summon Demon"
-    -- L["FlyoutWarlockDesc"] = "Summons one of your demons to you."
-    -- L["FlyoutMagePort"] = "Teleport"
-    -- L["FlyoutMagePortDesc"] = "Teleports you to a major city."
-    -- L["FlyoutMagePortals"] = "Portal"
-    -- L["FlyoutMagePortalsDesc"] = "Creates a portal, teleporting group members who use it to a major city."
-    -- L["FlyoutMageWater"] = "Conjure Water"
-    -- L["FlyoutMageWaterDesc"] = "Conjured items disappear if logged out for more than 15 minutes."
-    -- L["FlyoutMageFood"] = "Conjure Food"
-    -- L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
+    L["FlyoutButtonWarlock"] = "Desplegable de invocación (Brujo)"
+    L["FlyoutButtonMagePort"] = "Desplegable de teletransporte"
+    L["FlyoutButtonMagePortals"] = "Desplegable de portales"
+    L["FlyoutButtonMageFood"] = "Desplegable de comida conjurada"
+    L["FlyoutButtonMageWater"] = "Desplegable de agua conjurada"
+    L["FlyoutWarlock"] = "Invocar demonio"
+    L["FlyoutWarlockDesc"] = "Invoca a uno de tus demonios."
+    L["FlyoutMagePort"] = "Teletransporte"
+    L["FlyoutMagePortDesc"] = "Te teletransporta a una ciudad principal."
+    L["FlyoutMagePortals"] = "Portal"
+    L["FlyoutMagePortalsDesc"] = "Crea un portal que permite a los miembros del grupo viajar a una ciudad principal."
+    L["FlyoutMageWater"] = "Conjurar agua"
+    L["FlyoutMageWaterDesc"] = "Los objetos conjurados desaparecen si sales del juego por más de 15 minutos."
+    L["FlyoutMageFood"] = "Conjurar comida"
+    L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
 
-    -- L["FlyoutButtonCustomFormat"] = "Custom Flyout %d"
-    -- L["FlyoutCustomNameFormat"] = "Custom Flyout %d"
-    -- L["FlyoutCustomNameDescFormat"] = "Per-character flyout button with up to 12 additional actionbuttons."
+    L["FlyoutButtonCustomFormat"] = "Desplegable personalizado %d"
+    L["FlyoutCustomNameFormat"] = "Desplegable personalizado %d"
+    L["FlyoutCustomNameDescFormat"] = "Botón desplegable por personaje con hasta 12 botones de acción adicionales."
 
-    -- L["FlyoutHeaderClassPresets"] = "Class Presets"
-    -- L["FlyoutHeaderClassPresetsDesc"] =
-    -- "Sets the flyout settings and also the buttons of the flyout to a character specific preset."
+    L["FlyoutHeaderClassPresets"] = "Preajustes de clase"
+    L["FlyoutHeaderClassPresetsDesc"] =
+    "Establece la configuración del desplegable y también los botones del desplegable según un preajuste específico del personaje."
+
 end
 
 -- Castbar
 do
-    -- L["CastbarName"] = "Cast Bar"
+    L["CastbarName"] = "Barra de lanzamiento"
     L["CastbarNameFormat"] = "Barra de lanzamiento %s"
     L["CastbarTableActive"] = "Activo"
     L["CastbarTableActivateDesc"] = ""
@@ -434,9 +437,9 @@ do
     L["MinimapSkinMinimapButtons"] = "Personalizar botones del minimapa"
     L["MinimapSkinMinimapButtonsDesc"] =
         "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
-    -- L["MinimapZonePanelPosition"] = "Zone Panel Position"
-    -- L["MinimapZonePanelPositionDesc"] =
-    -- "Sets the position of the zone text panel including the frames anchored to it (e.g. calendar, tracking, mail, ..)."
+    L["MinimapZonePanelPosition"] = "Posición del panel de zona"
+    L["MinimapZonePanelPositionDesc"] =
+    "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
     L["MinimapUseStateHandler"] = "Usar controlador de estado"
     L["MinimapUseStateHandlerDesc"] =
         "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."
@@ -480,20 +483,20 @@ end
 
 -- Tooltip
 do
-    -- L["TooltipName"] = "Tooltip"
-    -- L["TooltipHeaderGameToltip"] = "GameTooltip"
-    -- L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
-    -- L["TooltipCursorAnchorHeader"] = "Cursor Anchor"
-    -- L["TooltipCursorAnchorHeaderDesc"] = ""
+    L["TooltipName"] = "Tooltip"
+    L["TooltipHeaderGameToltip"] = "Información del juego"
+    L["TooltipHeaderSpellTooltip"] = "Información de hechizo"
+    L["TooltipCursorAnchorHeader"] = "Anclaje del cursor"
+    L["TooltipCursorAnchorHeaderDesc"] = ""
     L["TooltipAnchorToMouse"] = "Anclar al cursor"
     L["TooltipAnchorToMouseDesc"] =
         "Ancla algunas herramientas (por ejemplo, UnitTooltip en WorldFrame) al cursor del ratón."
-    -- L["TooltipMouseAnchor"] = "Cursor Anchor"
-    -- L["TooltipMouseAnchorDesc"] = ""
-    -- L["TooltipMouseX"] = "X"
-    -- L["TooltipMouseXDesc"] = ""
-    -- L["TooltipMouseY"] = "Y"
-    -- L["TooltipMouseYDesc"] = ""
+    L["TooltipMouseAnchor"] = "Anclaje al cursor"
+    L["TooltipMouseAnchorDesc"] = ""
+    L["TooltipMouseX"] = "X"
+    L["TooltipMouseXDesc"] = ""
+    L["TooltipMouseY"] = "Y"
+    L["TooltipMouseYDesc"] = ""
 
     -- spelltooltip
     L["TooltipAnchorSpells"] = "Anclar hechizos"
@@ -511,8 +514,8 @@ do
     L["TooltipShowIconDesc"] = ""
 
     -- itemtooltip
-    -- L["TooltipHeaderItemTooltip"] = "ItemTooltip"
-    -- L["TooltipHeaderItemTooltipDesc"] = ""
+    L["TooltipHeaderItemTooltip"] = "Información del objeto"
+    L["TooltipHeaderItemTooltipDesc"] = ""
     L["TooltipShowItemQuality"] = "Borde de calidad del objeto"
     L["TooltipShowItemQualityDesc"] = ""
     L["TooltipShowItemQualityBackdrop"] = "Fondo de calidad del objeto"
@@ -523,8 +526,8 @@ do
     L["TooltipShowItemIDDesc"] = ""
 
     -- unittooltip
-    -- L["TooltipUnitTooltip"] = "UnitTooltip"
-    -- L["TooltipUnitTooltipDesc"] = ""
+    L["TooltipUnitTooltip"] = "Información de la unidad"
+    L["TooltipUnitTooltipDesc"] = ""
     L["TooltipUnitClassBorder"] = "Borde de clase"
     L["TooltipUnitClassBorderDesc"] = ""
     L["TooltipUnitClassBackdrop"] = "Fondo de clase"
@@ -547,14 +550,14 @@ do
     L["TooltipUnitGuildRankIndexDesc"] = ""
     L["TooltipUnitGrayOutOnDeath"] = "Aturdir al morir"
     L["TooltipUnitGrayOutOnDeathDesc"] = ""
-    -- L["TooltipUnitZone"] = "Show Zone Text"
-    -- L["TooltipUnitZoneDesc"] = ""
-    -- L["TooltipUnitHealthbar"] = "Show Health Bar"
-    -- L["TooltipUnitHealthbarDesc"] = ""
-    -- L["TooltipUnitHealthbarText"] = "Show Health Bar Text"
-    -- L["TooltipUnitHealthbarTextDesc"] = ""
-    -- L["TooltipUnitTarget"] = "Show Target"
-    -- L["TooltipUnitTargetDesc"] = "Show unit target"
+    L["TooltipUnitZone"] = "Mostrar texto de zona"
+    L["TooltipUnitZoneDesc"] = ""
+    L["TooltipUnitHealthbar"] = "Mostrar barra de salud"
+    L["TooltipUnitHealthbarDesc"] = ""
+    L["TooltipUnitHealthbarText"] = "Mostrar texto de la barra de salud"
+    L["TooltipUnitHealthbarTextDesc"] = ""
+    L["TooltipUnitTarget"] = "Mostrar objetivo"
+    L["TooltipUnitTargetDesc"] = "Mostrar objetivo de la unidad"
 end
 
 -- Unitframes
