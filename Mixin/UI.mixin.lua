@@ -2772,6 +2772,10 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
 
         slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
         slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+
+        local br = _G['EmptyQuestLogFrameBackgroundBottomRight']
+        br:ClearAllPoints()
+        br:SetPoint('TOPLEFT', _G['EmptyQuestLogFrameBackgroundTopLeft'], 'BOTTOMRIGHT', 0, 0)
     end
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
