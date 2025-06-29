@@ -1722,7 +1722,7 @@ function DragonflightUIMixin:ChangeCharacterFrameCata()
     CharacterFrameBg:SetPoint('BOTTOMRIGHT', CharacterFrame, 'BOTTOMRIGHT', 0, 3)
     -- CharacterFrameBg:SetDrawLayer('BACKGROUND', 2)
 
-    do
+    if DF.API.Version.IsCata then
         -- <Anchor point="BOTTOMLEFT" x="130" y="16"/>
         local main = _G['CharacterMainHandSlot']
         main:ClearAllPoints()
