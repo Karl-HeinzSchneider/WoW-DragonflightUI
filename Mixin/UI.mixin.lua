@@ -1834,6 +1834,62 @@ function DragonflightUIMixin:ImproveTaxiFrame()
     end)
 end
 
+function DragonflightUIMixin:ChangeTaxiFrameMists()
+    local frame = TaxiFrame
+
+    local regions = {frame:GetRegions()}
+
+    for k, child in ipairs(regions) do
+        --
+        if child:GetObjectType() == 'Texture' then
+            --
+            local drawlayer, level = child:GetDrawLayer()
+            -- print(child:GetName(), child:GetDrawLayer())
+
+            if drawlayer == 'OVERLAY' then
+                child:Hide()
+            elseif drawlayer == 'BORDER' then
+                -- child:Hide()
+            elseif drawlayer == 'BACKGROUND' then
+                -- child:Hide()
+            end
+
+            if level < 0 then child:Hide() end
+        end
+    end
+
+    frame.BottomBorder:Hide()
+    frame.RightBorder:Hide()
+    frame.LeftBorder:Hide()
+    frame.BotLeftCorner:Hide()
+    frame.BotRightCorner:Hide()
+
+    DragonflightUIMixin:AddNineSliceTextures(frame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
+    DragonflightUIMixin:FrameBackgroundSolid(frame, true)
+
+    local closeButton = frame.CloseButton
+    DragonflightUIMixin:UIPanelCloseButton(closeButton)
+    closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
+
+    frame.Bg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -3 + 1, 3)
+    frame.InsetBg:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -6 + 2, 4)
+
+    do
+        -- local map = TaxiRouteMap
+        -- map:ClearAllPoints()
+        -- map:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -62)
+        -- map:Show()
+
+        -- local taxi = TaxiMap
+        -- taxi:Show()
+        -- taxi:ClearAllPoints()
+        -- taxi:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -62)
+
+    end
+
+end
+
 function DragonflightUIMixin:ChangeLootFrame()
     local frame = LootFrame
     DragonflightUIMixin:PortraitFrameTemplate(frame)
