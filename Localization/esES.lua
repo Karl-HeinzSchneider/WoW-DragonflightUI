@@ -130,7 +130,7 @@ do
     L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
     L['CompatCharacterStatsClassicDesc'] = "Añade compatibilidad con CharacterStatsClassic al usar el módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatClassicCalendar'] = "Classic Calendar"
-    L['CompatClassicCalendarDesc'] = "Añade compatibilidad con el Calendario clásico."
+    L['CompatClassicCalendarDesc'] = "Añade compatibilidad con Classic Calendar."
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "Añade compatibilidad con LFG Bulletin Board."
     L['CompatMerInspect'] = "MerInspect"
