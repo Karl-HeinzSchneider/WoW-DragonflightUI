@@ -64,7 +64,7 @@ do
     L["ModuleConditionalMessage"] = "'|cff8080ff%s|r' fue desactivado, pero la función correspondiente ya estaba enganchada, ¡por favor usa '|cff8080ff/reload|r'!"
 
     -- config
-    L["ConfigToolbarCopyPopup"] = "Copia el enlace de abajo (Ctrl+C, Ingresa):"
+    L["ConfigToolbarCopyPopup"] = "Copia el enlace de abajo (Ctrl+C, Entrada):"
     L["ConfigToolbarDiscord"] = "Discord"
     L["ConfigToolbarDiscordTooltip"] = "Contribuye con ideas y obtén soporte."
     L["ConfigToolbarGithub"] = "Github"
