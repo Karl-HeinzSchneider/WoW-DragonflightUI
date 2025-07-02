@@ -1757,7 +1757,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         frame.CostLabel:Hide()
         frame.CostText:SetText('')
 
-        self.CreateButton:SetText(altVerb or CREATE);
+        self.CreateButton:SetText(altVerb or CREATE_PROFESSION);
 
         if (creatable) then
             self.CreateButton:Enable();
