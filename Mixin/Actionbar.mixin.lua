@@ -293,6 +293,7 @@ function DragonflightUIActionbarMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     self:UpdateStateHandler(state)
+    self:UpdatePagingStateDriver(state)
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -324,6 +325,138 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     local handler = self.StateHandler
     if not handler then return end
     handler:SetFrameRef('mainbarFrame', self.MainBarFrame)
+end
+
+function DragonflightUIActionbarMixin:AddPagingStateDriver()
+    -- print('DragonflightUIActionbarMixin:AddPagingStateDriver()')
+
+    local handler = CreateFrame("Frame", "DragonflightUIActionBarPagingHandler", self, "SecureHandlerStateTemplate")
+    self.PagingStateDriver = handler;
+    handler:SetFrameRef("MainMenuBarArtFrame", MainMenuBarArtFrame)
+    if _G['OverrideActionBar'] then handler:SetFrameRef("OverrideActionBar", OverrideActionBar) end
+
+    SecureHandlerExecute(handler, [[
+        handler = self
+        buttonsTable = newtable()
+    
+        UpdateMainActionBar = [=[
+            local page = ...
+            -- print('UpdateMainActionBar',page)
+            if page == "tempshapeshift" then
+                if HasTempShapeshiftActionBar() then
+                    page = GetTempShapeshiftBarIndex()
+                else
+                    page = 1
+                end
+            elseif page == "possess" then
+                page = handler:GetFrameRef("MainMenuBarArtFrame"):GetAttribute("actionpage")
+                if handler:GetFrameRef("OverrideActionBar") and page <= 10 then
+                    page = handler:GetFrameRef("OverrideActionBar"):GetAttribute("actionpage")
+                end
+                if page <= 10 then
+                    page = 12
+                end
+            end         
+            -- print('..',page)
+            handler:SetAttribute("actionpage", page)
+    
+            for btn in pairs(buttonsTable) do
+                btn:SetAttribute("actionpage", page)
+    
+                -- Call btn's Refresh method
+                -- btn:CallMethod("Refresh")
+            end
+        ]=]
+    ]])
+
+    for i, btn in ipairs(self.buttonTable) do
+        handler:SetFrameRef("NewButton", btn)
+        SecureHandlerExecute(handler, [[
+            buttonsTable[handler:GetFrameRef("NewButton")] = true
+        ]])
+    end
+end
+
+function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
+    if not self.PagingStateDriver then return end
+
+    local handler = self.PagingStateDriver;
+    local mode = state.stateDriver;
+    -- print('DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)', mode)
+
+    -- unregister old driver
+    UnregisterStateDriver(handler, "page")
+    -- handler:SetAttribute("state-page", "nil")
+    handler:SetAttribute("_onstate-page", nil)
+
+    local localizedClass, englishClass, classIndex = UnitClass("player");
+    if mode == 'SMART' then
+        local shouldChange = (englishClass == 'DRUID')
+        if not shouldChange then mode = 'DEFAULT' end
+    end
+
+    -- print('~>', mode)
+
+    if mode == 'DEFAULT' then
+        for i, btn in ipairs(self.buttonTable) do
+            --
+            btn:SetAttribute("useparent-actionpage", true);
+            btn:SetAttribute("actionpage", nil);
+        end
+    elseif mode == 'SMART' then
+        local driverTable = {}
+        -- 
+        tinsert(driverTable, "[overridebar][possessbar]possess")
+        -- 
+        for i = 2, 6 do
+            --
+            tinsert(driverTable, ("[bar:%d]%d"):format(i, i))
+        end
+
+        if englishClass == 'DRUID' then
+            --
+            -- tinsert(driverTable, '[stealth]42')
+            tinsert(driverTable, "[bonusbar:1,stealth]8")
+        end
+
+        for i = 1, 4 do
+            --
+            tinsert(driverTable, ("[bonusbar:%d]%d"):format(i, i + 6));
+        end
+
+        -- Fix for temp shape shift bar
+        tinsert(driverTable, "[stance:1]tempshapeshift")
+
+        tinsert(driverTable, "1")
+
+        local driver = table.concat(driverTable, ';')
+        local result, target = SecureCmdOptionParse(driver)
+
+        -- print('~~>> NOW:', result)
+
+        --
+        for i, btn in ipairs(self.buttonTable) do
+            --
+            btn:SetAttribute("useparent-actionpage", false);
+            btn:SetAttribute("actionpage", 1);
+        end
+
+        -- -- Register the init value
+        handler:SetAttribute("actionpage", result)
+
+        RegisterStateDriver(handler, "page", driver)
+
+        handler:SetAttribute("_onstate-page", [=[
+            handler:Run(UpdateMainActionBar, newstate)
+        ]=])
+        handler:SetAttribute("state-page", result)
+    elseif mode == 'NOPAGING' then
+        for i, btn in ipairs(self.buttonTable) do
+            --
+            btn:SetAttribute("useparent-actionpage", false);
+            btn:SetAttribute("actionpage", 1);
+        end
+    end
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
