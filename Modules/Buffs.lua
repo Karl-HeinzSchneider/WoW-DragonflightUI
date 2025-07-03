@@ -27,6 +27,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = false,
             hideCustom = false,
             hideCustomCond = '',
             useStateHandler = true
@@ -49,6 +50,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = false,
             hideCustom = false,
             hideCustomCond = ''
         }

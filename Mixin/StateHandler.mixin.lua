@@ -125,6 +125,7 @@ do
     visConditionalTable['hideStance'] = ''
     visConditionalTable['hideStealth'] = '[stealth]hide'
     visConditionalTable['hideNoStealth'] = '[nostealth]hide'
+    visConditionalTable['hideBattlePet'] = '[petbattle]hide'
 end
 
 function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverride)
@@ -323,6 +324,15 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             order = 108,
             group = 'headerVis',
             new = false,
+            editmode = true
+        },
+        hideBattlePet = {
+            type = 'toggle',
+            name = 'Hide In Pet Battle',
+            desc = '' .. cond('[petbattle]hide; show') .. getDefaultStr('hideBattlePet', sub),
+            order = 108.5,
+            group = 'headerVis',
+            new = true,
             editmode = true
         },
         hideCustom = {

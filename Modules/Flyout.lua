@@ -50,6 +50,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -96,6 +97,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -141,6 +143,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -186,6 +189,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -231,6 +235,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -276,6 +281,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -321,6 +327,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -366,6 +373,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -411,6 +419,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -456,6 +465,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -501,6 +511,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -546,6 +557,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -591,6 +603,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -636,6 +649,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
@@ -681,6 +695,7 @@ local defaults = {
             hideStance = false,
             hideStealth = false,
             hideNoStealth = false,
+            hideBattlePet = true,
             hideCustom = false,
             hideCustomCond = ''
         },
