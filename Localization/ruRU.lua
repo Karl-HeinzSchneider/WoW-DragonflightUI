@@ -143,8 +143,6 @@ do
         "Добавляет совместимость с CharacterStatsClassic при использовании модуля UI с включенной опцией 'Изменить окно персонажа'."
     L['CompatClassicCalendar'] = "Classic Calendar"
     L['CompatClassicCalendarDesc'] = "Добавляет совместимость с Classic Calendar."
-    -- L['CompatClique'] = "Clique"
-    -- L['CompatCliqueDesc'] = "Adds compatibility for Clique"
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "Добавляет совместимость с LFG Bulletin Board."
     L['CompatMerInspect'] = "MerInspect"

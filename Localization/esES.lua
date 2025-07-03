@@ -61,8 +61,7 @@ do
     L["ConfigMixinUnitframes"] = "Marcos de unidad"
 
     -- modules.mixin.lua
-    L["ModuleConditionalMessage"] =
-        "'|cff8080ff%s|r' fue desactivado, pero la función correspondiente ya estaba enganchada, ¡por favor usa '|cff8080ff/reload|r'!"
+    L["ModuleConditionalMessage"] = "'|cff8080ff%s|r' fue desactivado, pero la función correspondiente ya estaba enganchada, ¡por favor usa '|cff8080ff/reload|r'!"
 
     -- config
     L["ConfigToolbarCopyPopup"] = "Copia el enlace de abajo (Ctrl+C, Entrada):"
@@ -123,36 +122,27 @@ end
 do
     L['CompatName'] = "Compatibilidad"
     L['CompatAuctionator'] = "Auctionator"
-    L['CompatAuctionatorDesc'] =
-        "Añade compatibilidad con Auctionator al usar el Módulo de IU con 'Cambiar ventana de profesiones' activado."
+    L['CompatAuctionatorDesc'] = "Añade compatibilidad con Auctionator al usar el Módulo de IU con 'Cambiar ventana de profesiones' activado."
     L['CompatBaganator'] = "Baganator_Skin"
     L['CompatBaganatorDesc'] = "Cambia la apariencia predeterminada de 'Blizzard' por una con estilo de DragonflightUI."
     L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
     L['CompatBaganatorEquipmentDesc'] = "Añade compatibilidad para conjuntos de equipo como fuente de objetos."
     L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
-    L['CompatCharacterStatsClassicDesc'] =
-        "Añade compatibilidad con CharacterStatsClassic al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatCharacterStatsClassicDesc'] = "Añade compatibilidad con CharacterStatsClassic al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatClassicCalendar'] = "Calendario clásico"
     L['CompatClassicCalendarDesc'] = "Añade compatibilidad con el Calendario clásico."
-    -- L['CompatClique'] = "Clique"
-    -- L['CompatCliqueDesc'] = "Adds compatibility for Clique"
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "Añade compatibilidad con LFG Bulletin Board."
     L['CompatMerInspect'] = "MerInspect"
-    L['CompatMerInspectDesc'] =
-        "Añade compatibilidad con MerInspect al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatMerInspectDesc'] = "Añade compatibilidad con MerInspect al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatRanker'] = "Ranker"
-    L['CompatRankerDesc'] =
-        "Añade compatibilidad con Ranker al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatRankerDesc'] = "Añade compatibilidad con Ranker al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatTacoTip'] = "TacoTip"
-    L['CompatTacoTipDesc'] =
-        "Añade compatibilidad con TacoTip al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatTacoTipDesc'] = "Añade compatibilidad con TacoTip al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatTDInspect'] = "TDInspect"
-    L['CompatTDInspectDesc'] =
-        "Añade compatibilidad con TDInspect al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
+    L['CompatTDInspectDesc'] = "Añade compatibilidad con TDInspect al usar el Módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatWhatsTraining'] = "WhatsTraining"
-    L['CompatWhatsTrainingDesc'] =
-        "Añade compatibilidad con WhatsTraining al usar el Módulo de IU con 'Cambiar libro de hechizos' activado."
+    L['CompatWhatsTrainingDesc'] = "Añade compatibilidad con WhatsTraining al usar el Módulo de IU con 'Cambiar libro de hechizos' activado."
 end
 
 -- __Settings
@@ -172,8 +162,7 @@ do
     L["PositionTableAnchorFrame"] = "Marco del ancla"
     L["PositionTableAnchorFrameDesc"] = ""
     L["PositionTableCustomAnchorFrame"] = "Marco de anclaje (personalizado)"
-    L["PositionTableCustomAnchorFrameDesc"] =
-        "Usa este marco con nombre como marco de anclaje (si es válido). Por ejemplo: 'CharacterFrame', 'TargetFrame'..."
+    L["PositionTableCustomAnchorFrameDesc"] = "Usa este marco con nombre como marco de anclaje (si es válido). Por ejemplo: 'CharacterFrame', 'TargetFrame'..."
     L["PositionTableX"] = "X"
     L["PositionTableXDesc"] = ""
     L["PositionTableY"] = "Y"
@@ -352,8 +341,7 @@ do
     L["FlyoutCloseAfterClick"] = "Cerrar después de hacer clic"
     L["FlyoutCloseAfterClickDesc"] = "Cierra el desplegable después de presionar uno de sus botones."
     L["FlyoutAlwaysShow"] = "Mostrar siempre los botones"
-    L["FlyoutAlwaysShowDesc"] =
-        "Muestra siempre los (sub)botones, incluso cuando están vacíos.\nÚsalo si quieres arrastrar y soltar."
+    L["FlyoutAlwaysShowDesc"] = "Muestra siempre los (sub)botones, incluso cuando están vacíos.\nÚsalo si quieres arrastrar y soltar."
     L["FlyoutIcon"] = "Icono"
     L["FlyoutIconDesc"] = "Inserta el FileID o la ruta de archivo de una textura."
     L["FlyoutDisplayname"] = "Nombre para mostrar"
@@ -383,7 +371,7 @@ do
 
     L["FlyoutHeaderClassPresets"] = "Preajustes de clase"
     L["FlyoutHeaderClassPresetsDesc"] =
-        "Establece la configuración del desplegable y también los botones del desplegable según un preajuste específico del personaje."
+    "Establece la configuración del desplegable y también los botones del desplegable según un preajuste específico del personaje."
 
 end
 
@@ -451,7 +439,7 @@ do
         "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
     L["MinimapZonePanelPosition"] = "Posición del panel de zona"
     L["MinimapZonePanelPositionDesc"] =
-        "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
+    "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
     L["MinimapUseStateHandler"] = "Usar controlador de estado"
     L["MinimapUseStateHandlerDesc"] =
         "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."
