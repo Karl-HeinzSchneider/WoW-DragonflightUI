@@ -134,6 +134,8 @@ do
         "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatClassicCalendar'] = "Classic Calendar"
     L['CompatClassicCalendarDesc'] = "Adds compatibility for Classic Calendar"
+    L['CompatClique'] = "Clique"
+    L['CompatCliqueDesc'] = "Adds compatibility for Clique"
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "Adds compatibility for LFG Bulletin Board"
     L['CompatMerInspect'] = "MerInspect"
