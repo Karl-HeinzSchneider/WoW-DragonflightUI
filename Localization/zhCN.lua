@@ -202,6 +202,16 @@ do
     L["Horde"] = "部落"
     L["None"] = "无"
 
+    -- stateDriverTable
+    -- L["ActionbarDriverDefault"] = "Default"
+    -- L["ActionbarDriverSmart"] = "Smart"
+    -- L["ActionbarDriverNoPaging"] = "No Paging"
+
+    -- stateDriver
+    -- L['ActionbarDriverName'] = "Paging"
+    -- L['ActionbarDriverNameDesc'] =
+    --     "Changes the paging behaviour of the main action bar, e.g. when changing stance or stealth.\n'Default' - no change\n'Smart' - adds custom page for Druid cat stealth\n'No Paging' - disables all paging"
+
     -- buttonTable
     L["ButtonTableActive"] = "启用"
     L["ButtonTableActiveDesc"] = ""
