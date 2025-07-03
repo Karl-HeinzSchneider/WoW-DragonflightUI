@@ -158,7 +158,32 @@ end
 
 function DragonflightUIMicroMenuMixin:ChangeButtons()
     -- print('~~~~DragonflightUIMicroMenuMixin:ChangeButtons()')
-    if DF.Cata then
+    if DF.API.Version.IsMoP then
+        self:ChangeCharacterMicroButton()
+        self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
+        self:ChangeMicroMenuButton(AchievementMicroButton, 'Achievements')
+        self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities')
+        self:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities')
+        self:ChangeMicroMenuButton(CollectionsMicroButton, 'Collections')
+        self:ChangeMicroMenuButton(PVPMicroButton, 'AdventureGuide')
+        self:BetterPVPMicroButton(PVPMicroButton)
+        PVPMicroButtonTexture:Hide()
+        self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder')
+        self:ChangeMicroMenuButton(EJMicroButton, 'AdventureGuide')
+        self:ChangeMicroMenuButton(StoreMicroButton, 'Shop')
+        self:ChangeMicroMenuButton(MainMenuMicroButton, 'GameMenu')
+
+        MainMenuBarTextureExtender:Hide()
+
+        -- MainMenuBarPerformanceBar:ClearAllPoints()
+        MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
+        MainMenuBarPerformanceBar:SetSize(19, 39)
+        MainMenuBarPerformanceBar:Hide() -- TODO
+
+        -- self:HookMicromenuOverride()
+    elseif DF.Cata then
         self:ChangeCharacterMicroButton()
         self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
