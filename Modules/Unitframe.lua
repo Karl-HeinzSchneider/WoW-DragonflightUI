@@ -2742,7 +2742,26 @@ function Module:HideSecondaryRes(hide)
     local _, class = UnitClass('player');
 
     if class == 'WARLOCK' then
-        _G['ShardBarFrame']:SetShown(not hide);
+        if DF.API.Version.IsCata then
+            _G['ShardBarFrame']:SetShown(not hide);
+        else
+            -- MoP onwards; 
+            local spec = C_SpecializationInfo.GetSpecialization()
+
+            if spec == SPEC_WARLOCK_AFFLICTION then
+                _G['ShardBarFrame']:SetShown(not hide);
+                _G['BurningEmbersBarFrame']:SetShown(false);
+                _G['DemonicFuryBarFrame']:SetShown(false);
+            elseif spec == SPEC_WARLOCK_DESTRUCTION then
+                _G['ShardBarFrame']:SetShown(false);
+                _G['BurningEmbersBarFrame']:SetShown(not hide);
+                _G['DemonicFuryBarFrame']:SetShown(false);
+            else
+                _G['ShardBarFrame']:SetShown(false);
+                _G['BurningEmbersBarFrame']:SetShown(false);
+                _G['DemonicFuryBarFrame']:SetShown(not hide);
+            end
+        end
     elseif class == 'DRUID' then
         if hide then
             _G['EclipseBarFrame']:Hide()
@@ -2778,7 +2797,22 @@ function Module:HookSecondaryRes()
         Module.SecondaryResToHide = _G['MonkHarmonyBar'];
     end
 
-    if Module.SecondaryResToHide then
+    if not Module.SecondaryResToHide then return end
+
+    if Module.SecondaryResToHide == _G['ShardBarFrame'] and not DF.API.Version.IsCata then
+        -- warlock MoP onwards
+        frame:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
+
+        local t = {_G['ShardBarFrame'], _G['BurningEmbersBarFrame'], _G['DemonicFuryBarFrame']}
+
+        for k, v in ipairs(t) do
+            v:HookScript('OnShow', function()
+                --
+                -- print('onshow')
+                if Module.db.profile.player.hideSecondaryRes then v:Hide() end
+            end)
+        end
+    else
         Module.SecondaryResToHide:HookScript('OnShow', function()
             --
             -- print('onshow')
@@ -3150,11 +3184,15 @@ function Module.ChangePlayerframe()
 
     if DF.Wrath then RuneFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 54 - 3, 34 - 3) end
 
-    if DF.Cata then
-        PaladinPowerBar:SetPoint('TOP', PlayerFrame, 'BOTTOM', 43, 39 - 2)
-        ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1)
+    if DF.Cata then PaladinPowerBar:SetPoint('TOP', PlayerFrame, 'BOTTOM', 43, 39 - 2) end
+
+    if DF.API.Version.IsCata then ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1) end
+    if DF.API.Version.IsMoP then
+        _G['MonkHarmonyBar']:SetPoint('TOP', 49 - 5, -46);
+        _G['WarlockPowerFrame']:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 3);
+        _G['ShardBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', 0, 0 + 2)
+        _G['BurningEmbersBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', -21, 1 + 2)
     end
-    if DF.API.Version.IsMoP then _G['MonkHarmonyBar']:SetPoint('TOP', 49 - 5, -46) end
 
     if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
 end
@@ -5264,6 +5302,8 @@ function frame:OnEvent(event, arg1)
         end
     elseif event == 'SETTINGS_LOADED' then
         Module:RefreshOptionScreens()
+    elseif event == 'PLAYER_SPECIALIZATION_CHANGED' then
+        Module:HideSecondaryRes(Module.db.profile.player.hideSecondaryRes)
     end
 end
 
