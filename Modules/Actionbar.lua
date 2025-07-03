@@ -49,6 +49,8 @@ local defaults = {
             shortenKeybind = false,
             useKeyDown = false,
             keybindFontSize = 16,
+            -- state
+            stateDriver = 'SMART',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -657,6 +659,12 @@ local gryphonsTable = {
     {value = 'NONE', text = L["None"], tooltip = 'descr', label = 'label'}
 }
 
+local stateDriverTable = {
+    {value = 'DEFAULT', text = L["ActionbarDriverDefault"], tooltip = 'descr', label = 'label'},
+    {value = 'SMART', text = L["ActionbarDriverSmart"], tooltip = 'descr', label = 'label'},
+    {value = 'NOPAGING', text = L["ActionbarDriverNoPaging"], tooltip = 'descr', label = 'label'}
+}
+
 if DF.Cata then
     --
     table.insert(frameTable,
@@ -898,6 +906,16 @@ local function GetBarOption(n)
                 order = 51.0,
                 editmode = true,
                 blizzard = true
+            },
+            stateDriver = {
+                type = 'select',
+                name = L["ActionbarDriverName"],
+                desc = L["ActionbarDriverNameDesc"] .. getDefaultStr('stateDriver', barname),
+                dropdownValues = stateDriverTable,
+                group = 'headerButtons',
+                order = 52.0,
+                editmode = true,
+                new = true
             }
         }
 
@@ -1937,6 +1955,7 @@ function Module:SetupActionbarFrames()
 
     createStuff(1, 'ActionButton')
     Module.bar1:SetupMainBar()
+    Module.bar1:AddPagingStateDriver()
     createStuff(2, 'MultiBarBottomLeftButton')
     createStuff(3, 'MultiBarBottomRightButton')
     createStuff(4, 'MultiBarLeftButton')
@@ -1944,8 +1963,10 @@ function Module:SetupActionbarFrames()
 
     for i = 1, 5 do
         local bar = Module['bar' .. i]
-        bar:StyleButtons()
-        bar:HookQuickbindMode()
+        if bar then
+            bar:StyleButtons()
+            bar:HookQuickbindMode()
+        end
     end
 
     -- secure handler
