@@ -835,6 +835,7 @@ end
 
 function DragonflightUIMixin:ChangeInspectFrame()
     if not InspectFrame or InspectFrame.DFHooked then return end
+    if DF.API.Version.IsMoP then return end-- TODO
 
     do
         local regions = {InspectPaperDollFrame:GetRegions()}
@@ -904,11 +905,13 @@ function DragonflightUIMixin:ChangeInspectFrame()
         InspectTalentFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
         InspectTalentFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
 
-        InspectTalentFrameCloseButton:Hide()
+        if InspectTalentFrameCloseButton then InspectTalentFrameCloseButton:Hide() end
 
-        local pointsBar = InspectTalentFramePointsBar
-        pointsBar:ClearAllPoints()
-        pointsBar:SetPoint('BOTTOM', InspectFrame, 'BOTTOM', 0, 4)
+        if InspectTalentFramePointsBar then
+            local pointsBar = InspectTalentFramePointsBar
+            pointsBar:ClearAllPoints()
+            pointsBar:SetPoint('BOTTOM', InspectFrame, 'BOTTOM', 0, 4)
+        end
 
         local scroll = InspectTalentFrameScrollFrame
         scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66)
