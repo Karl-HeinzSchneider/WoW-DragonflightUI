@@ -135,6 +135,8 @@ do
         "当启用'修改角色窗口'时，为CharacterStatsClassic添加兼容支持"
     L['CompatClassicCalendar'] = "Classic Calendar"
     L['CompatClassicCalendarDesc'] = "为Classic Calendar添加兼容支持"
+    -- L['CompatClique'] = "Clique"
+    -- L['CompatCliqueDesc'] = "Adds compatibility for Clique"
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "为LFG Bulletin Board添加兼容支持"
     L['CompatMerInspect'] = "MerInspect"
@@ -387,8 +389,7 @@ do
     L["FlyoutCustomNameDescFormat"] = "每个角色的弹出按钮，拥有最多12个额外的动作按钮。"
 
     L["FlyoutHeaderClassPresets"] = "职业预设"
-    L["FlyoutHeaderClassPresetsDesc"] =
-        "将弹出按钮预设设置为角色专有预设。"
+    L["FlyoutHeaderClassPresetsDesc"] = "将弹出按钮预设设置为角色专有预设。"
 end
 
 -- Castbar
