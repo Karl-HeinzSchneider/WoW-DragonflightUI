@@ -330,4 +330,6 @@ function Module:Cata()
 end
 
 function Module:Mists()
+    Module:CreateBossFrames()
+    Module:HideDefault()
 end
