@@ -413,6 +413,9 @@ end
 do
     L["CastbarName"] = "Cast Bar"
     L["CastbarNameFormat"] = "%s Cast Bar"
+    L["CastbarNamePlayer"] = format(L["CastbarNameFormat"], 'Player')
+    L["CastbarNameTarget"] = format(L["CastbarNameFormat"], 'Target')
+    L["CastbarNameFocus"] = format(L["CastbarNameFormat"], 'Focus')
     L["CastbarTableActive"] = "Active"
     L["CastbarTableActivateDesc"] = ""
     L["CastbarTableStyle"] = L["ButtonTableStyle"]

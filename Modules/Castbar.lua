@@ -276,7 +276,15 @@ function AddCastbarTable(optionTable, sub)
     end
 end
 
-local optionsPlayer = {type = 'group', name = 'DragonflightUI - ' .. mName, get = getOption, set = setOption, args = {}}
+local optionsPlayer = {
+    type = 'group',
+    name = L["CastbarNamePlayer"],
+    advancedName = 'Castbars',
+    sub = 'player',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 if DF.Era then
     local moreOptions = {
         showRank = {
@@ -371,7 +379,15 @@ local optionsPlayerEditmode = {
     }
 }
 
-local optionsTarget = {type = 'group', name = 'DragonflightUI - ' .. mName, get = getOption, set = setOption, args = {}}
+local optionsTarget = {
+    type = 'group',
+    name = L["CastbarNameTarget"],
+    advancedName = 'Castbars',
+    sub = 'target',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 AddCastbarTable(optionsTarget, 'target')
 DF.Settings:AddPositionTable(Module, optionsTarget, 'target', 'Target', getDefaultStr, frameTable)
 
@@ -454,7 +470,15 @@ local optionsTargetEditmode = {
     }
 }
 
-local optionsFocus = {type = 'group', name = 'DragonflightUI - ' .. mName, get = getOption, set = setOption, args = {}}
+local optionsFocus = {
+    type = 'group',
+    name = L["CastbarNameFocus"],
+    advancedName = 'Castbars',
+    sub = 'focus',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 AddCastbarTable(optionsFocus, 'focus')
 DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTable)
 
@@ -563,50 +587,35 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('player', {
-        order = 1,
-        name = 'Player',
-        descr = 'Player Cast Bar',
-        isNew = false
-        --
-        -- sub = 'player',
-        -- options = optionsPlayer,
-        -- default = function()
-        --     setDefaultSubValues('player')
-        -- end
-    })
+    register('player', {order = 1, name = optionsPlayer.name, descr = 'Player Cast Bar', isNew = false})
 
-    register('target', {order = 2, name = 'Target', descr = 'Target Cast Bar', isNew = false})
+    register('target', {order = 2, name = optionsTarget.name, descr = 'Target Cast Bar', isNew = false})
 
-    if DF.Wrath then register('focus', {order = 3, name = 'Focus', descr = 'Focus Cast Bar', isNew = false}) end
+    if DF.Wrath then
+        register('focus', {order = 3, name = optionsFocus.name, descr = 'Focus Cast Bar', isNew = false})
+    end
 end
 
 function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterSettingsData('player', 'castbar', {
-        name = 'Player',
-        sub = 'player',
         options = optionsPlayer,
         default = function()
-            setDefaultSubValues('player')
+            setDefaultSubValues(optionsPlayer.sub)
         end
     })
 
     DF.ConfigModule:RegisterSettingsData('target', 'castbar', {
-        name = 'Target',
-        sub = 'target',
         options = optionsTarget,
         default = function()
-            setDefaultSubValues('target')
+            setDefaultSubValues(optionsTarget.sub)
         end
     })
 
     if DF.Wrath then
         DF.ConfigModule:RegisterSettingsData('focus', 'castbar', {
-            name = 'Focus',
-            sub = 'focus',
             options = optionsFocus,
             default = function()
-                setDefaultSubValues('focus')
+                setDefaultSubValues(optionsFocus.sub)
             end
         })
     end
@@ -637,16 +646,13 @@ function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
     EditModeModule:AddEditModeToFrame(Module.PlayerCastbar)
     Module.PlayerCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'PlayerCastbar'
+        return optionsPlayer.name
     end)
     Module.PlayerCastbar.DFEditModeSelection:RegisterOptions({
-        name = 'PlayerCastbar',
-        sub = 'player',
-        advancedName = 'Castbars',
         options = optionsPlayer,
         extra = optionsPlayerEditmode,
         default = function()
-            setDefaultSubValues('player')
+            setDefaultSubValues(optionsPlayer.sub)
         end,
         moduleRef = self
     });
@@ -657,16 +663,13 @@ function Module:AddEditMode()
 
     EditModeModule:AddEditModeToFrame(Module.TargetCastbar)
     Module.TargetCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'TargetCastbar'
+        return optionsTarget.name
     end)
     Module.TargetCastbar.DFEditModeSelection:RegisterOptions({
-        name = 'TargetCastbar',
-        sub = 'target',
-        advancedName = 'Castbars',
         options = optionsTarget,
         extra = optionsTargetEditmode,
         default = function()
-            setDefaultSubValues('target')
+            setDefaultSubValues(optionsTarget.sub)
         end,
         moduleRef = self,
         showFunction = function()
@@ -681,16 +684,14 @@ function Module:AddEditMode()
     if DF.Wrath then
         EditModeModule:AddEditModeToFrame(Module.FocusCastbar)
         Module.FocusCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'FocusCastbar'
+            return optionsFocus.name
+
         end)
         Module.FocusCastbar.DFEditModeSelection:RegisterOptions({
-            name = 'FocusCastbar',
-            sub = 'focus',
-            advancedName = 'Castbars',
             options = optionsFocus,
             extra = optionsFocusEditmode,
             default = function()
-                setDefaultSubValues('focus')
+                setDefaultSubValues(optionsFocus.sub)
             end,
             moduleRef = self,
             showFunction = function()
