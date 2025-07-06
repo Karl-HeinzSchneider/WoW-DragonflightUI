@@ -145,6 +145,9 @@ do
     L['CompatClassicCalendarDesc'] = "Добавляет совместимость с Classic Calendar."
     -- L['CompatClique'] = "Clique"
     -- L['CompatCliqueDesc'] = "Adds compatibility for Clique"
+    -- L['CompatLeatrixPlus'] = "LeatrixPlus"
+    -- L['CompatLeatrixPlusDesc'] =
+    -- "Adds compatibility for LeatrixPlus, e.g. removes the ugly classc color name background on the PlayerFrame."
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "Добавляет совместимость с LFG Bulletin Board."
     L['CompatMerInspect'] = "MerInspect"

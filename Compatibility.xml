@@ -5,6 +5,7 @@
 	<Include file="Compatibility/CharacterStatsClassic.lua" />
 	<Include file="Compatibility/ClassicCalendar.lua" />
 	<Include file="Compatibility/Clique.lua" />
+	<Include file="Compatibility/LeatrixPlus.lua" />
 	<Include file="Compatibility/LFGBulletinBoard.lua" />
 	<Include file="Compatibility/MerInspect.lua" />
 	<Include file="Compatibility/Ranker.lua" />
