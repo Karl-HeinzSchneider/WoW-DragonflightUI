@@ -2024,12 +2024,7 @@ function Module:SetupActionbarFrames()
                     local flyoutHandler = owner:GetFrameRef("flyoutHandler")
                     if flyoutHandler then
                         flyoutHandler:Hide()
-                    end
-
-                    if IsModifiedClick("PICKUPACTION") then
-                        -- print('PICKUPACTION')
-                        return false;
-                    end                    
+                    end                               
 
                     if button == 'Keybind' then    
                         local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")                         
@@ -2039,6 +2034,11 @@ function Module:SetupActionbarFrames()
                         end
                         return false
                     end
+
+                    if IsModifiedClick("PICKUPACTION") then
+                        -- print('PICKUPACTION')
+                        return false;
+                    end  
 
                   
                     if down then 
