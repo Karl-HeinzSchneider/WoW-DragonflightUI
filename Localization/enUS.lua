@@ -484,6 +484,7 @@ end
 -- UI
 do
     L["UIUtility"] = "Utility"
+    L["UIName"] = "UI"
     L["UIChangeBags"] = "Change Bags"
     L["UIChangeBagsDesc"] = ""
     L["UIColoredInventoryItems"] = "Colored Inventory Items"
