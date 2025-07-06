@@ -1241,7 +1241,7 @@ function Module:AddUnitLine(self, unit, index)
         --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
         if class == 'worldboss' then
             -- e.g. ?? Boss
-            unitLine:SetFormattedText("%s %s |r|cffffffff%s", levelString, 'Boss', creature)
+            unitLine:SetFormattedText("%s %s |r|cffffffff%s", levelString, BOSS, creature)
         elseif class == 'rareelite' then
             -- e.g. 69+ Rare
             unitLine:SetFormattedText("%s%s |r|cffffffff%s", levelString, format("+ |cffff00da%s", ITEM_QUALITY3_DESC),
