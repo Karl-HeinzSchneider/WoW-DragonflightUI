@@ -529,6 +529,7 @@ end
 -- Tooltip
 do
     L["TooltipName"] = "Tooltip"
+    L["TooltipAnchorName"] = "Tooltip Anchor"
     L["TooltipHeaderGameToltip"] = "GameTooltip"
     L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
     L["TooltipCursorAnchorHeader"] = "Cursor Anchor"
