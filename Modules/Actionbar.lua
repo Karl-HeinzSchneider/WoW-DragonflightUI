@@ -850,8 +850,10 @@ end
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
-        name = 'Actionbar' .. n,
-        desc = 'Actionbar' .. n,
+        name = L["ActionbarNameFormat"]:format(n),
+        desc = L["ActionbarNameFormat"]:format(n),
+        advancedName = 'ActionBars',
+        sub = barname,
         get = getOption,
         set = setOption,
         type = 'group',
@@ -1153,7 +1155,16 @@ local function GetBarExtraOptions(n)
     return extra;
 end
 
-local petOptions = {name = 'PetBar', desc = 'PetBar', get = getOption, set = setOption, type = 'group', args = {}}
+local petOptions = {
+    name = L["PetBar"],
+    advancedName = 'PetBar',
+    sub = 'pet',
+    desc = '',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
 AddButtonTable(petOptions, 'pet')
 DF.Settings:AddPositionTable(Module, petOptions, 'pet', 'Pet Bar', getDefaultStr,
                              frameTableWithout('DragonflightUIPetBar'))
@@ -1198,6 +1209,8 @@ local optionsPetEdtimode = {
 local xpOptions = {
     name = L["XPOptionsName"],
     desc = L["XPOptionsDesc"],
+    advancedName = 'XPBar',
+    sub = 'xp',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1288,6 +1301,8 @@ local optionsXpEdtimode = {
 local repOptions = {
     name = L["RepOptionsName"],
     desc = L["RepOptionsDesc"],
+    advancedName = 'RepBar',
+    sub = 'rep',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1369,7 +1384,9 @@ local optionsRepEdtimode = {
 }
 
 local stanceOptions = {
-    name = 'StanceBar',
+    name = L["StanceBar"],
+    advancedName = 'StanceBar',
+    sub = 'stance',
     desc = 'StanceBar',
     get = getOption,
     set = setOption,
@@ -1415,7 +1432,16 @@ local optionsStanceEdtimode = {
     }
 }
 
-local totemOptions = {name = 'Totembar', desc = 'Totembar', get = getOption, set = setOption, type = 'group', args = {}}
+local totemOptions = {
+    name = L["TotemBar"],
+    desc = L["TotemBar"],
+    advancedName = 'TotemBar',
+    sub = 'totem',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, totemOptions, 'totem', 'Totem Bar', getDefaultStr,
                              frameTableWithout('MultiCastActionBarFrame'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, totemOptions, 'totem', 'TotemBar', getDefaultStr)
@@ -1452,8 +1478,10 @@ local optionsTotemEdtimode = {
 }
 
 local possessOptions = {
-    name = 'Possessbar',
-    desc = 'Possessbar',
+    name = L["PossessBar"],
+    desc = L["PossessBar"],
+    advancedName = 'PossessBar',
+    sub = 'possess',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1509,6 +1537,8 @@ local optionsPossessEdtimode = {
 local bagsOptions = {
     name = L["BagsOptionsName"],
     desc = L["BagsOptionsDesc"],
+    advancedName = 'Bags',
+    sub = 'bags',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1654,8 +1684,10 @@ local optionsBagsEdtimode = {
 }
 
 local microOptions = {
-    name = 'Micromenu',
     desc = 'Micromenu',
+    name = L["MicroMenu"],
+    advancedName = 'MicroMenu',
+    sub = 'micro',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1706,6 +1738,8 @@ local optionsMicroEditmode = {
 local fpsOptions = {
     name = L["FPSOptionsName"],
     desc = L["FPSOptionsDesc"],
+    advancedName = 'FPS',
+    sub = 'fps',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1789,6 +1823,8 @@ local optionsFPSEditmode = {
 local extraActionButtonOptions = {
     name = L["ExtraActionButtonOptionsName"],
     desc = L["ExtraActionButtonOptionsNameDesc"],
+    advancedName = 'ExtraActionButton',
+    sub = 'extraActionButton',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1898,19 +1934,19 @@ function Module:RegisterSettings()
 
     for i = 1, 8 do register('actionbar' .. i, {order = i, name = 'Action Bar ' .. i, descr = 'desc', isNew = false}) end
 
-    register('petbar', {order = 9, name = 'Pet Bar', descr = 'desc', isNew = false})
-    register('xpbar', {order = 10, name = 'XP Bar', descr = 'desc', isNew = false})
-    register('repbar', {order = 11, name = 'Rep Bar', descr = 'desc', isNew = false})
-    register('possessbar', {order = 12, name = 'Possess Bar', descr = 'desc', isNew = false})
-    register('stancebar', {order = 13, name = 'Stance Bar', descr = 'desc', isNew = false})
+    register('petbar', {order = 9, name = petOptions.name, descr = 'desc', isNew = false})
+    register('xpbar', {order = 10, name = xpOptions.name, descr = 'desc', isNew = false})
+    register('repbar', {order = 11, name = repOptions.name, descr = 'desc', isNew = false})
+    register('possessbar', {order = 12, name = possessOptions.name, descr = 'desc', isNew = false})
+    register('stancebar', {order = 13, name = stanceOptions.name, descr = 'desc', isNew = false})
 
-    register('bags', {order = 15, name = 'Bags', descr = 'desc', isNew = false})
-    register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
-    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = false})
+    register('bags', {order = 15, name = bagsOptions.name, descr = 'desc', isNew = false})
+    register('micromenu', {order = 16, name = microOptions.name, descr = 'desc', isNew = false})
+    register('fps', {order = 17, name = fpsOptions.name, descr = 'desc', isNew = false})
 
     if DF.Cata then
-        register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false})
-        register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = false})
+        register('totembar', {order = 14, name = totemOptions.name, descr = 'desc', isNew = false})
+        register('extraactionbutton', {order = 8.5, name = extraActionButtonOptions.name, descr = 'desc', isNew = false})
     end
 end
 

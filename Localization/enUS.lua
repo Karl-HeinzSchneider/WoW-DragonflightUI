@@ -276,7 +276,7 @@ do
     L["ExtraOptionsClassicLayoutDesc"] = ""
 
     -- XP
-    L["XPOptionsName"] = "XP"
+    L["XPOptionsName"] = "XP Bar"
     L["XPOptionsDesc"] = "XP"
     L["XPOptionsStyle"] = L["ButtonTableStyle"]
     L["XPOptionsStyleDesc"] = ""
@@ -290,7 +290,7 @@ do
     L["XPOptionsShowXPPercentDesc"] = ""
 
     -- rep
-    L["RepOptionsName"] = "Rep"
+    L["RepOptionsName"] = "Rep Bar"
     L["RepOptionsDesc"] = "Rep"
     L["RepOptionsStyle"] = L["ButtonTableStyle"]
     L["RepOptionsStyleDesc"] = ""
