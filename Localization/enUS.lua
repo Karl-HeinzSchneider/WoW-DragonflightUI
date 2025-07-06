@@ -345,6 +345,7 @@ end
 -- Buffs
 do
     L["BuffsOptionsName"] = "Buffs"
+    L["DebuffsOptionsName"] = "Debuffs---"
     L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
     L["BuffsOptionsStyleDesc"] = ""
 
