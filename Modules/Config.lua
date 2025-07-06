@@ -424,6 +424,11 @@ function Module:RegisterSettingsElement(id, categoryID, data, firstTime)
 end
 
 function Module:RegisterSettingsData(id, categoryID, data)
+    -- @TODO - compat
+    data.name = data.name or data.options.name;
+    data.desc = data.desc or data.options.desc;
+    data.sub = data.sub or data.options.sub;
+
     Module.ConfigFrame:RegisterSettingsData(id, categoryID, data)
 end
 
