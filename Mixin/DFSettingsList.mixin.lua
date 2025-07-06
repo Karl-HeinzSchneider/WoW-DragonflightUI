@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local CreateColor = DFCreateColor;
 
 DFSettingsListMixin = CreateFromMixins(CallbackRegistryMixin);
@@ -139,6 +140,7 @@ function DFSettingsListMixin:Display(data, small)
     -- self.DataProvider:Flush()
     -- self.DataProvider = CreateTreeDataProvider()
     -- self.ScrollView:SetDataProvider(self.DataProvider)
+    -- print('display:', data.name)
 
     self.Args_Data = data;
     self.Args_Small = small;
@@ -175,6 +177,57 @@ function DFSettingsListMixin:Display(data, small)
         self.Header.DefaultsButton:SetText('')
         self.Header.DefaultsButton:SetScript('OnClick', function()
         end)
+    end
+
+    if data.options.advancedName ~= nil then
+        self.Header.EditModeButton:Show()
+
+        local editmodeModule = DF.API.Modules:GetModule('Editmode')
+
+        local function getOption(info)
+            -- print('getOption??', info[1])
+            local newInfo = {}
+            newInfo[1] = 'advanced'
+            newInfo[2] = info[1]
+            return editmodeModule:GetOption(newInfo)
+        end
+
+        local function setOption(info, value)
+            -- print('setOption??', info[1], value)
+            local newInfo = {}
+            newInfo[1] = 'advanced'
+            newInfo[2] = info[1]
+            editmodeModule:SetOption(newInfo, value)
+            editmodeModule:SetEditMode(editmodeModule.IsEditMode)
+        end
+
+        local args = {
+            name = data.options.name,
+            desc = "desc",
+            set = setOption,
+            get = getOption,
+            key = data.options.advancedName
+        }
+
+        self.Header.EditModeButton:Init(args)
+
+        self:UnregisterCallback('OnDefaults', self.Header.EditModeButton);
+        self:UnregisterCallback('OnRefresh', self.Header.EditModeButton);
+
+        self:RegisterCallback('OnDefaults', function(btn, message)
+            --
+            -- print('OnDefaults')
+            -- print(self.Header.EditModeButton, message)
+            self.Header.EditModeButton:Init(args);
+        end, button)
+        self:RegisterCallback('OnRefresh', function(btn, message)
+            --
+            -- print('OnRefresh')
+            -- print(self.Header.EditModeButton, message)
+            self.Header.EditModeButton:Init(args);
+        end, self.Header.EditModeButton)
+    else
+        self.Header.EditModeButton:Hide()
     end
 
     local getFunc;
@@ -1059,4 +1112,62 @@ function DFSettingsListDropdownContainerMixin:Init(node)
         self.Button.Dropdown:SetupMenu(function(_, _)
         end)
     end
+end
+
+DFSettingsListEditModeButtonMixin = {}
+
+function DFSettingsListEditModeButtonMixin:OnLoad()
+    -- print('DFSettingsListEditModeButtonMixin:OnLoad()')
+
+    self.Text:SetText(L["EditModeVisible"])
+
+    local l = self.Text:GetStringWidth()
+
+    local padding = 4;
+    self:SetWidth(l + padding + 30)
+
+    local cb = self.Checkbox
+    cb:SetPoint('LEFT', self.Text, 'RIGHT', padding, 0)
+
+    self.Tooltip:HookScript('OnEnter', function()
+        SettingsTooltip:SetOwner(self.Checkbox, 'ANCHOR_RIGHT', 0, 0);
+        self:TooltipFunc()
+        SettingsTooltip:Show();
+    end)
+end
+
+function DFSettingsListEditModeButtonMixin:Init(args)
+    -- self.Text:SetText(args.name);
+    -- self.Text:Show();
+
+    self:SetTooltip(args.name, args.desc);
+
+    self.Checkbox:UnregisterCallback('OnValueChanged', self)
+    self.Checkbox:SetValue(args.get({args.key}), true);
+    self.Checkbox:RegisterCallback('OnValueChanged', function(cb, checked)
+        -- print('OnValueChanged', checked)
+        args.set({args.key}, checked)
+    end, self)
+
+    self.Tooltip:SetScript('OnMouseDown', function()
+        self.Checkbox:SetValue(not self.Checkbox:GetChecked())
+        self.Checkbox:TriggerEvent(DFSettingsListCheckboxMixin.Event.OnValueChanged, self.Checkbox:GetChecked())
+    end)
+
+    self.Tooltip:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    self.Tooltip:HookScript('OnEnter', function()
+        SettingsTooltip:SetOwner(self.Checkbox, 'ANCHOR_RIGHT', 0, 0);
+        self:TooltipFunc()
+        SettingsTooltip:Show();
+    end)
+end
+
+function DFSettingsListEditModeButtonMixin:SetTooltip(name, desc)
+    local tooltipFunc = GenerateClosure(Settings.InitTooltip, name, desc or '');
+    self.Tooltip:SetTooltipFunc(tooltipFunc);
+    self.TooltipFunc = tooltipFunc;
+end
+
+function DFSettingsListEditModeButtonMixin:TooltipFunc()
+    -- print('TooltipFunc()')
 end

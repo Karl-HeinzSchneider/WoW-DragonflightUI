@@ -117,6 +117,7 @@ do
     L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipboard |cffffd100(to share online)|r"
     L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
     L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
+    L["EditModeVisible"] = "Edit Mode Visibility"
 end
 
 -- Compat

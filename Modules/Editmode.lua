@@ -242,11 +242,11 @@ function Module:OnEnable()
     Module:ApplySettings()
     Module:RegisterOptionScreens()
 
-    -- self:SecureHook(DF, 'RefreshConfig', function()
-    --     -- print('RefreshConfig', mName)
-    --     Module:ApplySettings()
-    --     Module:RefreshOptionScreens()
-    -- end)
+    self:SecureHook(DF, 'RefreshConfig', function()
+        -- print('RefreshConfig', mName)
+        Module:ApplySettings()
+        Module:RefreshOptionScreens()
+    end)
 end
 
 function Module:OnDisable()
@@ -286,7 +286,7 @@ function Module:RefreshOptionScreens()
 
     local configFrame = DF.ConfigModule.ConfigFrame
     local cat = 'Misc'
-    configFrame:RefreshCatSub(cat, 'Darkmode')
+    -- configFrame:RefreshCatSub(cat, 'Darkmode')
 end
 
 function Module:ApplySettings()

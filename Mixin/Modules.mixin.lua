@@ -71,7 +71,7 @@ end
 function DragonflightUIModulesMixin:SetOption(info, value)
     local key = info[1]
     local sub = info[2]
-    -- print('setOption', key, sub)
+    -- print('setOption', self:GetName(), '|', key, sub, value)
 
     if sub then
         local t = self.db.profile[key]

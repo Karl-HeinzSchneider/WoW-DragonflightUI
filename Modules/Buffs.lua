@@ -121,6 +121,7 @@ local frameTable = {
 local buffsOptions = {
     type = 'group',
     name = L["BuffsOptionsName"],
+    advancedName = 'Buffs',
     get = getOption,
     set = setOption,
     args = {
@@ -232,7 +233,14 @@ local optionsBuffEditmode = {
     }
 }
 
-local debuffsOptions = {type = 'group', name = 'Debuffs', get = getOption, set = setOption, args = {}}
+local debuffsOptions = {
+    type = 'group',
+    name = 'Debuffs',
+    advancedName = 'Debuffs',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr)
 local optionsDebuffEditmode = {
@@ -386,9 +394,9 @@ function Module:AddEditMode()
     end)
 
     Module.DFBuffFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Buffs',
+        name = buffsOptions.name,
         sub = 'buffs',
-        advancedName = 'Buffs',
+        advancedName = buffsOptions.advancedName,
         options = buffsOptions,
         extra = optionsBuffEditmode,
         default = function()
@@ -408,9 +416,9 @@ function Module:AddEditMode()
     end)
 
     Module.DFDebuffFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Debuffs',
+        name = debuffsOptions.name,
         sub = 'debuffs',
-        advancedName = 'Debuffs',
+        advancedName = debuffsOptions.advancedName,
         options = debuffsOptions,
         extra = optionsDebuffEditmode,
         default = function()
