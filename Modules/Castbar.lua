@@ -588,7 +588,6 @@ function Module:RegisterSettings()
     end
 
     register('player', {order = 1, name = optionsPlayer.name, descr = 'Player Cast Bar', isNew = false})
-
     register('target', {order = 2, name = optionsTarget.name, descr = 'Target Cast Bar', isNew = false})
 
     if DF.Wrath then
