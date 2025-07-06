@@ -1192,6 +1192,9 @@ function DFProfessionMixin:SetCurrentProfession()
         end
     end
 
+    -- I hate blizzard (bug only on german locale)
+    if nameLoc == 'Runenschmieden' then nameLoc = 'Runen schmieden'; end
+
     for k, v in pairs(self.ProfessionTable) do
         if v.nameLoc == nameLoc then
             self.SelectedProfession = k;
