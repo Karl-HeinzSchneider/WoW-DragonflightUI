@@ -194,6 +194,7 @@ local defaults = {
             y = 0,
             padding = 10,
             orientation = 'vertical',
+            disableBuffTooltip = 'INCOMBAT',
             -- Visibility
             showMouseover = false,
             hideAlways = false,
@@ -280,6 +281,12 @@ local portraitExtraTable = {
     {value = 'elite', text = 'Elite', tooltip = 'descr', label = 'label'},
     {value = 'rare', text = 'Rare', tooltip = 'descr', label = 'label'},
     {value = 'worldboss', text = 'World Boss', tooltip = 'descr', label = 'label'}
+}
+
+local partyBuffTooltipTable = {
+    {value = 'NEVER', text = 'Never', tooltip = 'descr', label = 'label'},
+    {value = 'ALWAYS', text = 'Always', tooltip = 'descr', label = 'label'},
+    {value = 'INCOMBAT', text = 'In Combat', tooltip = 'descr', label = 'label'}
 }
 
 if DF.Wrath then
@@ -1216,6 +1223,16 @@ if true then
             order = 2,
             group = 'headerStyling',
             editmode = true
+        },
+        disableBuffTooltip = {
+            type = 'select',
+            name = L["PartyFrameDisableBuffTooltip"],
+            desc = L["PartyFrameDisableBuffTooltipDesc"] .. getDefaultStr('disableBuffTooltip', 'party'),
+            dropdownValues = partyBuffTooltipTable,
+            order = 3,
+            group = 'headerStyling',
+            editmode = true,
+            new = true
         },
         padding = {
             type = 'range',
@@ -4755,6 +4772,7 @@ function Module.ChangePartyFrame()
                 healthbar.DFTextString:SetText(health .. ' / ' .. max_health)
                 healthbar.DFTextString:Show()
             end
+            PartyMemberBuffTooltip_Update(pf);
         end)
         healthbar:HookScript('OnLeave', function(self)
             healthbar.DFTextString:Hide()
@@ -4807,6 +4825,7 @@ function Module.ChangePartyFrame()
                 end
                 manabar.DFTextString:Show()
             end
+            PartyMemberBuffTooltip_Update(pf);
         end)
         manabar:HookScript('OnLeave', function(self)
             manabar.DFTextString:Hide()
@@ -4818,33 +4837,6 @@ function Module.ChangePartyFrame()
         -- debuff
         local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
         debuffOne:SetPoint('TOPLEFT', 120, -20)
-
-        hooksecurefunc('PartyMemberBuffTooltip_Update', function(self)
-            -- print('PartyMemberBuffTooltip_Update', self:GetName())
-
-            local point, relativeTo, relativePoint, xOfs, yOfs = PartyMemberBuffTooltip:GetPoint(1)
-
-            if relativeTo == pf then
-                -- print('sAME')
-                -- print(point, relativeTo:GetName(), relativePoint, xOfs, yOfs)
-                -- PartyMemberBuffTooltip:SetPoint('TOPLEFT', portrait, 'TOPLEFT', 32, -2.5)
-                -- print('scale', PartyMemberBuffTooltip:GetScale())
-                -- print(portrait:GetHeight(), PartyMemberBuffTooltip:GetHeight())
-                -- PartyMemberBuffTooltip:SetScale(pf:GetScale())
-                PartyMemberBuffTooltip:ClearAllPoints()
-                PartyMemberBuffTooltip:SetPoint('LEFT', pf, 'RIGHT', 0, 0)
-
-                local scale = pf:GetScale()
-                if scale > 2 then
-                    scale = 2
-                else
-                end
-                PartyMemberBuffTooltip:SetScale(0.8 * scale)
-
-            end
-
-            -- [07:05:37] TOPLEFT PartyMemberFrame1 TOPLEFT 47 -30
-        end)
 
         -- CompactUnitFrame_UpdateInRange
         local function updateRange()
@@ -4870,6 +4862,41 @@ function Module.ChangePartyFrame()
             Module.UpdatePartyHPBar(i)
         end)
     end
+
+    hooksecurefunc('PartyMemberBuffTooltip_Update', function(self)
+        -- print('PartyMemberBuffTooltip_Update', self:GetName())
+        local tooltip = PartyMemberBuffTooltip;
+
+        local state = Module.db.profile.party;
+        local disableBuffTooltip = state.disableBuffTooltip
+
+        if disableBuffTooltip == 'NEVER' then
+            -- do nothing
+        elseif disableBuffTooltip == 'ALWAYS' then
+            tooltip:Hide()
+            return;
+        elseif disableBuffTooltip == 'INCOMBAT' then
+            if InCombatLockdown() then
+                tooltip:Hide()
+                return;
+            end
+        end
+
+        if state.orientation == 'vertical' then
+            tooltip:ClearAllPoints()
+            tooltip:SetPoint('LEFT', self, 'RIGHT', 0, 0)
+        else
+            tooltip:ClearAllPoints()
+            tooltip:SetPoint('BOTTOMRIGHT', self, 'TOPRIGHT', 0, 0)
+        end
+
+        local scale = state.scale;
+        if scale > 2 then
+            scale = 2
+        else
+        end
+        tooltip:SetScale(0.8 * scale)
+    end)
 end
 
 function Module:UpdatePartyState(state)
@@ -4892,18 +4919,25 @@ function Module:UpdatePartyState(state)
 
     for i = 2, 4 do
         local pf = _G['PartyMemberFrame' .. i]
+        pf:ClearAllPoints()
 
         if state.orientation == 'vertical' then
-            pf:ClearAllPoints()
             pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'BOTTOMLEFT', 0, -state.padding)
         else
-            pf:ClearAllPoints()
             pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'TOPRIGHT', state.padding, 0)
         end
     end
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
+
+        local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
+        if state.orientation == 'vertical' then
+            debuffOne:SetPoint('TOPLEFT', 120, -20)
+        else
+            debuffOne:SetPoint('TOPLEFT', 40 + 2, -40)
+        end
+
         Module.UpdatePartyHPBar(i)
         TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
         TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])

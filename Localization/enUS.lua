@@ -715,6 +715,8 @@ do
     L["PartyFrameClassColorDesc"] = "Enable class colors for the healthbar"
     L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
     L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+    L["PartyFrameDisableBuffTooltip"] = "Disable Buff Tooltip"
+    L["PartyFrameDisableBuffTooltipDesc"] = "Disables the (on mouseover) buff tooltip."
 
     -- raid
     L["RaidFrameName"] = "Raid Frame"
