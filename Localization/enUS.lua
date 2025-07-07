@@ -118,6 +118,9 @@ do
     L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
     L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
     L["EditModeVisible"] = "Edit Mode Visibility"
+    L["EditModeVisibleDescFormat"] =
+        "Sets the visiblity of the current frame and every other frame with the same category (|cff8080ff%s|r) while edit mode is active."
+
 end
 
 -- Compat

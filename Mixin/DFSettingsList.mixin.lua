@@ -203,7 +203,7 @@ function DFSettingsListMixin:Display(data, small)
 
         local args = {
             name = data.options.name,
-            desc = "desc",
+            desc = format(L["EditModeVisibleDescFormat"], data.options.advancedName),
             set = setOption,
             get = getOption,
             key = data.options.advancedName
@@ -1140,7 +1140,8 @@ function DFSettingsListEditModeButtonMixin:Init(args)
     -- self.Text:SetText(args.name);
     -- self.Text:Show();
 
-    self:SetTooltip(args.name, args.desc);
+    -- self:SetTooltip(args.name, args.desc);
+    self:SetTooltip(L["EditModeVisible"], args.desc);
 
     self.Checkbox:UnregisterCallback('OnValueChanged', self)
     self.Checkbox:SetValue(args.get({args.key}), true);
