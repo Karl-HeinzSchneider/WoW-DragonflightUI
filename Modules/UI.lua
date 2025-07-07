@@ -63,7 +63,8 @@ end
 
 local UIOptions = {
     type = 'group',
-    name = L["UIUtility"],
+    name = L["UIName"],
+    sub = "first",
     get = getOption,
     set = setOption,
     args = {
@@ -225,16 +226,14 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('ui', {order = 0, name = 'UI', descr = 'UIsss', isNew = false})
+    register('ui', {order = 0, name = UIOptions.name, descr = 'UIsss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterSettingsData('ui', 'misc', {
-        name = 'UI',
-        sub = 'first',
         options = UIOptions,
         default = function()
-            setDefaultSubValues('first')
+            setDefaultSubValues(UIOptions.sub)
         end
     })
 end

@@ -850,8 +850,10 @@ end
 local function GetBarOption(n)
     local barname = 'bar' .. n
     local opt = {
-        name = 'Actionbar' .. n,
-        desc = 'Actionbar' .. n,
+        name = L["ActionbarNameFormat"]:format(n),
+        desc = L["ActionbarNameFormat"]:format(n),
+        advancedName = 'ActionBars',
+        sub = barname,
         get = getOption,
         set = setOption,
         type = 'group',
@@ -1153,7 +1155,16 @@ local function GetBarExtraOptions(n)
     return extra;
 end
 
-local petOptions = {name = 'PetBar', desc = 'PetBar', get = getOption, set = setOption, type = 'group', args = {}}
+local petOptions = {
+    name = L["PetBar"],
+    advancedName = 'PetBar',
+    sub = 'pet',
+    desc = '',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
 AddButtonTable(petOptions, 'pet')
 DF.Settings:AddPositionTable(Module, petOptions, 'pet', 'Pet Bar', getDefaultStr,
                              frameTableWithout('DragonflightUIPetBar'))
@@ -1198,6 +1209,8 @@ local optionsPetEdtimode = {
 local xpOptions = {
     name = L["XPOptionsName"],
     desc = L["XPOptionsDesc"],
+    advancedName = 'XPBar',
+    sub = 'xp',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1288,6 +1301,8 @@ local optionsXpEdtimode = {
 local repOptions = {
     name = L["RepOptionsName"],
     desc = L["RepOptionsDesc"],
+    advancedName = 'RepBar',
+    sub = 'rep',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1369,7 +1384,9 @@ local optionsRepEdtimode = {
 }
 
 local stanceOptions = {
-    name = 'StanceBar',
+    name = L["StanceBar"],
+    advancedName = 'StanceBar',
+    sub = 'stance',
     desc = 'StanceBar',
     get = getOption,
     set = setOption,
@@ -1415,7 +1432,16 @@ local optionsStanceEdtimode = {
     }
 }
 
-local totemOptions = {name = 'Totembar', desc = 'Totembar', get = getOption, set = setOption, type = 'group', args = {}}
+local totemOptions = {
+    name = L["TotemBar"],
+    desc = L["TotemBar"],
+    advancedName = 'TotemBar',
+    sub = 'totem',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, totemOptions, 'totem', 'Totem Bar', getDefaultStr,
                              frameTableWithout('MultiCastActionBarFrame'))
 DragonflightUIStateHandlerMixin:AddStateTable(Module, totemOptions, 'totem', 'TotemBar', getDefaultStr)
@@ -1452,8 +1478,10 @@ local optionsTotemEdtimode = {
 }
 
 local possessOptions = {
-    name = 'Possessbar',
-    desc = 'Possessbar',
+    name = L["PossessBar"],
+    desc = L["PossessBar"],
+    advancedName = 'PossessBar',
+    sub = 'possess',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1509,6 +1537,8 @@ local optionsPossessEdtimode = {
 local bagsOptions = {
     name = L["BagsOptionsName"],
     desc = L["BagsOptionsDesc"],
+    advancedName = 'Bags',
+    sub = 'bags',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1654,8 +1684,10 @@ local optionsBagsEdtimode = {
 }
 
 local microOptions = {
-    name = 'Micromenu',
     desc = 'Micromenu',
+    name = L["MicroMenu"],
+    advancedName = 'MicroMenu',
+    sub = 'micro',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1706,6 +1738,8 @@ local optionsMicroEditmode = {
 local fpsOptions = {
     name = L["FPSOptionsName"],
     desc = L["FPSOptionsDesc"],
+    advancedName = 'FPS',
+    sub = 'fps',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1789,6 +1823,8 @@ local optionsFPSEditmode = {
 local extraActionButtonOptions = {
     name = L["ExtraActionButtonOptionsName"],
     desc = L["ExtraActionButtonOptionsNameDesc"],
+    advancedName = 'ExtraActionButton',
+    sub = 'extraActionButton',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1898,19 +1934,19 @@ function Module:RegisterSettings()
 
     for i = 1, 8 do register('actionbar' .. i, {order = i, name = 'Action Bar ' .. i, descr = 'desc', isNew = false}) end
 
-    register('petbar', {order = 9, name = 'Pet Bar', descr = 'desc', isNew = false})
-    register('xpbar', {order = 10, name = 'XP Bar', descr = 'desc', isNew = false})
-    register('repbar', {order = 11, name = 'Rep Bar', descr = 'desc', isNew = false})
-    register('possessbar', {order = 12, name = 'Possess Bar', descr = 'desc', isNew = false})
-    register('stancebar', {order = 13, name = 'Stance Bar', descr = 'desc', isNew = false})
+    register('petbar', {order = 9, name = petOptions.name, descr = 'desc', isNew = false})
+    register('xpbar', {order = 10, name = xpOptions.name, descr = 'desc', isNew = false})
+    register('repbar', {order = 11, name = repOptions.name, descr = 'desc', isNew = false})
+    register('possessbar', {order = 12, name = possessOptions.name, descr = 'desc', isNew = false})
+    register('stancebar', {order = 13, name = stanceOptions.name, descr = 'desc', isNew = false})
 
-    register('bags', {order = 15, name = 'Bags', descr = 'desc', isNew = false})
-    register('micromenu', {order = 16, name = 'Micromenu', descr = 'desc', isNew = false})
-    register('fps', {order = 17, name = 'FPS', descr = 'desc', isNew = false})
+    register('bags', {order = 15, name = bagsOptions.name, descr = 'desc', isNew = false})
+    register('micromenu', {order = 16, name = microOptions.name, descr = 'desc', isNew = false})
+    register('fps', {order = 17, name = fpsOptions.name, descr = 'desc', isNew = false})
 
     if DF.Cata then
-        register('totembar', {order = 14, name = 'Totem Bar', descr = 'desc', isNew = false})
-        register('extraactionbutton', {order = 8.5, name = 'Extra Action Button', descr = 'desc', isNew = false})
+        register('totembar', {order = 14, name = totemOptions.name, descr = 'desc', isNew = false})
+        register('extraactionbutton', {order = 8.5, name = extraActionButtonOptions.name, descr = 'desc', isNew = false})
     end
 end
 
@@ -2165,17 +2201,14 @@ function Module:AddEditMode()
         local bar = Module['bar' .. i]
 
         EditModeModule:AddEditModeToFrame(bar)
+        local optionsBar = GetBarOption(i)
 
         bar.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Actionbar' .. i
+            return optionsBar.name
         end)
 
-        local optionsBar = GetBarOption(i)
         local optionsBarExtra = GetBarExtraOptions(i)
         bar.DFEditModeSelection:RegisterOptions({
-            name = 'Actionbar' .. i,
-            sub = 'bar' .. i,
-            advancedName = 'ActionBars',
             options = optionsBar,
             extra = optionsBarExtra,
             default = function()
@@ -2197,13 +2230,10 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(f)
 
         f.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Extra Action Button'
+            return extraActionButtonOptions.name
         end)
 
         f.DFEditModeSelection:RegisterOptions({
-            name = 'Extra Action Button',
-            sub = 'extraActionButton',
-            advancedName = 'ExtraActionButton',
             options = extraActionButtonOptions,
             extra = extraActionButtonOptionsEditmode,
             default = function()
@@ -2221,14 +2251,11 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.petbar)
 
     Module.petbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Petbar'
+        return petOptions.name
     end)
 
     Module.petbar.DFEditModeSelection:RegisterOptions({
-        name = 'Petbar',
-        sub = 'pet',
         options = petOptions,
-        advancedName = 'PetBar',
         extra = optionsPetEdtimode,
         default = function()
             setDefaultSubValues('pet')
@@ -2240,13 +2267,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.xpbar)
 
     Module.xpbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'XPbar'
+        return xpOptions.name
     end)
 
     Module.xpbar.DFEditModeSelection:RegisterOptions({
-        name = 'XPbar',
-        sub = 'xp',
-        advancedName = 'XPBar',
         options = xpOptions,
         extra = optionsXpEdtimode,
         default = function()
@@ -2259,13 +2283,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.repbar)
 
     Module.repbar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Repbar'
+        return repOptions.name
     end)
 
     Module.repbar.DFEditModeSelection:RegisterOptions({
-        name = 'Repbar',
-        sub = 'rep',
-        advancedName = 'RepBar',
         options = repOptions,
         extra = optionsRepEdtimode,
         default = function()
@@ -2278,13 +2299,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(PossessBarFrame)
 
     PossessBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Possessbar'
+        return possessOptions.name
     end)
 
     PossessBarFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Possessbar',
-        sub = 'possess',
-        advancedName = 'PossessBar',
         options = possessOptions,
         extra = optionsPossessEdtimode,
         default = function()
@@ -2303,13 +2321,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.stancebar)
 
     Module.stancebar.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Stancebar'
+        return stanceOptions.name
     end)
 
     Module.stancebar.DFEditModeSelection:RegisterOptions({
-        name = 'Stancebar',
-        sub = 'stance',
-        advancedName = 'StanceBar',
         options = stanceOptions,
         extra = optionsStanceEdtimode,
         default = function()
@@ -2323,13 +2338,10 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(MultiCastActionBarFrame)
 
         MultiCastActionBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Totembar'
+            return totemOptions.name
         end)
 
         MultiCastActionBarFrame.DFEditModeSelection:RegisterOptions({
-            name = 'Totembar',
-            sub = 'totem',
-            advancedName = 'TotemBar',
             options = totemOptions,
             extra = optionsTotemEdtimode,
             default = function()
@@ -2343,13 +2355,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(MainMenuBarBackpackButton)
 
     MainMenuBarBackpackButton.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Bags'
+        return bagsOptions.name
     end)
 
     MainMenuBarBackpackButton.DFEditModeSelection:RegisterOptions({
-        name = 'Bags',
-        sub = 'bags',
-        advancedName = 'Bags',
         options = bagsOptions,
         extra = optionsBagsEdtimode,
         default = function()
@@ -2363,13 +2372,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.MicroFrame)
 
     Module.MicroFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Micromenu'
+        return microOptions.name
     end)
 
     Module.MicroFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Micromenu',
-        sub = 'micro',
-        advancedName = 'MicroMenu',
         options = microOptions,
         extra = optionsMicroEditmode,
         default = function()
@@ -2382,13 +2388,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.FPSFrame)
 
     Module.FPSFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'FPS'
+        return fpsOptions.name
     end)
 
     Module.FPSFrame.DFEditModeSelection:RegisterOptions({
-        name = 'FPS',
-        sub = 'fps',
-        advancedName = 'FPS',
         options = fpsOptions,
         extra = optionsFPSEditmode,
         default = function()
@@ -2402,8 +2405,6 @@ function Module:RegisterOptionScreens()
     for i = 1, 8 do
         local optionsBar = GetBarOption(i)
         DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
-            name = 'Actionbar' .. i,
-            sub = 'bar' .. i,
             options = optionsBar,
             default = function()
                 setDefaultSubValues('bar' .. i)
@@ -2413,8 +2414,6 @@ function Module:RegisterOptionScreens()
 
     if DF.Cata then
         DF.ConfigModule:RegisterSettingsData('extraactionbutton', 'actionbar', {
-            name = 'Extra Action Button',
-            sub = 'extraActionButton',
             options = extraActionButtonOptions,
             default = function()
                 setDefaultSubValues('extraActionButton')
@@ -2423,8 +2422,6 @@ function Module:RegisterOptionScreens()
     end
 
     DF.ConfigModule:RegisterSettingsData('petbar', 'actionbar', {
-        name = 'Petbar',
-        sub = 'pet',
         options = petOptions,
         default = function()
             setDefaultSubValues('pet')
@@ -2432,8 +2429,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('xpbar', 'actionbar', {
-        name = 'XPbar',
-        sub = 'xp',
         options = xpOptions,
         default = function()
             setDefaultSubValues('xp')
@@ -2441,8 +2436,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('repbar', 'actionbar', {
-        name = 'Repbar',
-        sub = 'rep',
         options = repOptions,
         default = function()
             setDefaultSubValues('rep')
@@ -2450,8 +2443,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('possessbar', 'actionbar', {
-        name = 'Possessbar',
-        sub = 'possess',
         options = possessOptions,
         default = function()
             setDefaultSubValues('possess')
@@ -2459,8 +2450,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('stancebar', 'actionbar', {
-        name = 'Stancebar',
-        sub = 'stance',
         options = stanceOptions,
         default = function()
             setDefaultSubValues('stance')
@@ -2468,8 +2457,6 @@ function Module:RegisterOptionScreens()
     })
     if DF.Cata then
         DF.ConfigModule:RegisterSettingsData('totembar', 'actionbar', {
-            name = 'Totembar',
-            sub = 'totem',
             options = totemOptions,
             default = function()
                 setDefaultSubValues('totem')
@@ -2477,8 +2464,6 @@ function Module:RegisterOptionScreens()
         })
     end
     DF.ConfigModule:RegisterSettingsData('bags', 'actionbar', {
-        name = 'Bags',
-        sub = 'bags',
         options = bagsOptions,
         default = function()
             setDefaultSubValues('bags')
@@ -2487,8 +2472,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('micromenu', 'actionbar', {
-        name = 'Micromenu',
-        sub = 'micro',
         options = microOptions,
         default = function()
             setDefaultSubValues('micro')
@@ -2496,8 +2479,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('fps', 'actionbar', {
-        name = 'FPS',
-        sub = 'fps',
         options = fpsOptions,
         default = function()
             setDefaultSubValues('fps')

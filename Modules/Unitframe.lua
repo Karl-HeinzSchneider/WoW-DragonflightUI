@@ -318,8 +318,10 @@ local function setPreset(T, preset, sub)
 end
 
 local optionsPlayer = {
-    name = 'Player',
+    name = L["PlayerFrameName"],
     desc = L["PlayerFrameDesc"],
+    advancedName = 'PlayerFrame',
+    sub = "player",
     get = getOption,
     set = setOption,
     type = 'group',
@@ -540,8 +542,10 @@ local optionsPlayerEditmode = {
 }
 
 local optionsAltPower = {
-    name = 'AltPower',
-    desc = L["TargetFrameDesc"],
+    name = L["PowerBarAltName"],
+    desc = L["PowerBarAltNameDesc"],
+    advancedName = 'Player_PowerBarAlt',
+    sub = "altpower",
     get = getOption,
     set = setOption,
     type = 'group',
@@ -581,8 +585,10 @@ local optionsAltPowerEditmode = {
 }
 
 local optionsTarget = {
-    name = 'Target',
+    name = L["TargetFrameName"],
     desc = L["TargetFrameDesc"],
+    advancedName = 'TargetFrame',
+    sub = "target",
     get = getOption,
     set = setOption,
     type = 'group',
@@ -866,6 +872,8 @@ local optionsTargetEditmode = {
 local optionsTargetOfTarget = {
     name = 'TargetOfTarget',
     desc = L["TargetFrameDesc"],
+    advancedName = 'TargetOfTargetFrame',
+    sub = 'tot',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -905,8 +913,10 @@ local optionsTargetOfTargetEditmode = {
 }
 
 local optionsPet = {
-    name = 'Pet',
+    name = L["PetFrameName"],
     desc = L["PetFrameDesc"],
+    advancedName = 'PetFrame',
+    sub = 'pet',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1007,8 +1017,10 @@ local optionsPetEditmode = {
 }
 
 local optionsFocus = {
-    name = 'Focus',
     desc = L["FocusFrameDesc"],
+    name = L["FocusFrameName"],
+    advancedName = 'FocusFrame',
+    sub = 'focus',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1095,8 +1107,9 @@ local optionsFocusEditmode = {
 }
 
 local optionsFocusTarget = {
-    name = 'FocusTarget',
-    desc = L["TargetFrameDesc"],
+    name = L["FocusFrameToTName"],
+    advancedName = 'FocusTargetFrame',
+    sub = 'focusTarget',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1136,8 +1149,10 @@ local optionsFocusTargetEditmode = {
 }
 
 local optionsParty = {
-    name = 'Party',
+    name = L["PartyFrameName"],
     desc = L["PartyFrameDesc"],
+    advancedName = 'PartyFrame',
+    sub = 'party',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1286,8 +1301,9 @@ local optionsPartyEditmode = {
 }
 
 local optionsRaid = {
-    name = 'Party',
-    desc = 'PartyframeDesc',
+    name = L["RaidFrameName"],
+    advancedName = 'RaidFrame',
+    sub = 'raid',
     get = getOption,
     set = setOption,
     type = 'group',
@@ -1663,18 +1679,18 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('party', {order = 0, name = 'Party', descr = 'Partyss', isNew = false})
-    register('pet', {order = 0, name = 'Pet', descr = 'Petss', isNew = false})
-    register('player', {order = 0, name = 'Player', descr = 'Playerss', isNew = false})
-    register('raid', {order = 0, name = 'Raid', descr = 'Raidss', isNew = false})
-    register('target', {order = 0, name = 'Target', descr = 'Targetss', isNew = true})
-    register('targetoftarget', {order = 0, name = 'TargetOfTarget', descr = 'Targetss', isNew = false})
+    register('party', {order = 0, name = optionsParty.name, descr = 'Partyss', isNew = false})
+    register('pet', {order = 0, name = optionsPet.name, descr = 'Petss', isNew = false})
+    register('player', {order = 0, name = optionsPlayer.name, descr = 'Playerss', isNew = false})
+    register('raid', {order = 0, name = optionsRaid.name, descr = 'Raidss', isNew = false})
+    register('target', {order = 0, name = optionsTarget.name, descr = 'Targetss', isNew = true})
+    register('targetoftarget', {order = 0, name = optionsTargetOfTarget.name, descr = 'Targetss', isNew = false})
 
     if DF.Wrath then
-        register('focus', {order = 0, name = 'Focus', descr = 'Focusss', isNew = false})
-        register('focustarget', {order = 0, name = 'FocusTarget', descr = 'Focusss', isNew = false})
+        register('focus', {order = 0, name = optionsFocus.name, descr = 'Focusss', isNew = false})
+        register('focustarget', {order = 0, name = optionsFocusTarget.name, descr = 'Focusss', isNew = false})
     end
-    if DF.Cata then register('altpower', {order = 0, name = 'Player_PowerBarAlt', descr = 'Focusss', isNew = false}) end
+    if DF.Cata then register('altpower', {order = 0, name = optionsAltPower.name, descr = 'Focusss', isNew = false}) end
 end
 
 function Module:RegisterOptionScreens()
@@ -1688,16 +1704,12 @@ function Module:RegisterOptionScreens()
 
     if DF.Wrath then
         DF.ConfigModule:RegisterSettingsData('focus', 'unitframes', {
-            name = 'Focus',
-            sub = 'focus',
             options = optionsFocus,
             default = function()
                 setDefaultSubValues('focus')
             end
         })
         DF.ConfigModule:RegisterSettingsData('focustarget', 'unitframes', {
-            name = 'FocusTarget',
-            sub = 'focusTarget',
             options = optionsFocusTarget,
             default = function()
                 setDefaultSubValues('focusTarget')
@@ -1706,8 +1718,6 @@ function Module:RegisterOptionScreens()
     end
 
     DF.ConfigModule:RegisterSettingsData('party', 'unitframes', {
-        name = 'Party',
-        sub = 'party',
         options = optionsParty,
         default = function()
             setDefaultSubValues('party')
@@ -1715,8 +1725,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('raid', 'unitframes', {
-        name = 'Raid',
-        sub = 'raid',
         options = optionsRaid
         -- default = function()
         --     setDefaultSubValues('party')
@@ -1724,8 +1732,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('pet', 'unitframes', {
-        name = 'Pet',
-        sub = 'pet',
         options = optionsPet,
         default = function()
             setDefaultSubValues('pet')
@@ -1733,8 +1739,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('player', 'unitframes', {
-        name = 'Player',
-        sub = 'player',
         options = optionsPlayer,
         default = function()
             setDefaultSubValues('player')
@@ -1743,8 +1747,6 @@ function Module:RegisterOptionScreens()
 
     if DF.Cata then
         DF.ConfigModule:RegisterSettingsData('altpower', 'unitframes', {
-            name = 'Altpower',
-            sub = 'altpower',
             options = optionsAltPower,
             default = function()
                 setDefaultSubValues('altpower')
@@ -1753,8 +1755,6 @@ function Module:RegisterOptionScreens()
     end
 
     DF.ConfigModule:RegisterSettingsData('target', 'unitframes', {
-        name = 'Target',
-        sub = 'target',
         options = optionsTarget,
         default = function()
             setDefaultSubValues('target')
@@ -1762,8 +1762,6 @@ function Module:RegisterOptionScreens()
     })
 
     DF.ConfigModule:RegisterSettingsData('targetoftarget', 'unitframes', {
-        name = 'TargetOfTarget',
-        sub = 'tot',
         options = optionsTargetOfTarget,
         default = function()
             setDefaultSubValues('tot')
@@ -2103,13 +2101,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(PlayerFrame)
 
     PlayerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'PlayerFrame'
+        return optionsPlayer.name
     end)
 
     PlayerFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Player',
-        sub = 'player',
-        advancedName = 'PlayerFrame',
         options = optionsPlayer,
         extra = optionsPlayerEditmode,
         default = function()
@@ -2124,13 +2119,10 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(f)
 
         f.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Player_PowerBarAlt'
+            return optionsAltPower.name
         end)
 
         f.DFEditModeSelection:RegisterOptions({
-            name = 'Player_PowerBarAlt',
-            sub = 'altpower',
-            advancedName = 'Player_PowerBarAlt',
             options = optionsAltPower,
             extra = optionsAltPowerEditmode,
             default = function()
@@ -2148,13 +2140,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(PetFrame)
 
     PetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'PetFrame'
+        return optionsPet.name
     end)
 
     PetFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Pet',
-        sub = 'pet',
-        advancedName = 'PetFrame',
         options = optionsPet,
         extra = optionsPetEditmode,
         default = function()
@@ -2172,13 +2161,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(fakeTarget)
 
     fakeTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'TargetFrame'
+        return optionsTarget.name
     end)
 
     fakeTarget.DFEditModeSelection:RegisterOptions({
-        name = 'Target',
-        sub = 'target',
-        advancedName = 'TargetFrame',
         options = optionsTarget,
         extra = optionsTargetEditmode,
         parentExtra = TargetFrame,
@@ -2211,13 +2197,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(fakeTargetOfTarget)
 
     fakeTargetOfTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'TargetOfTarget'
+        return optionsTargetOfTarget.name
     end)
 
     fakeTargetOfTarget.DFEditModeSelection:RegisterOptions({
-        name = 'TargetOfTarget',
-        sub = 'tot',
-        advancedName = 'TargetOfTargetFrame',
         options = optionsTargetOfTarget,
         extra = optionsTargetOfTargetEditmode,
         default = function()
@@ -2242,13 +2225,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(fakeParty)
 
     fakeParty.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'PartyFrame'
+        return optionsParty.name
     end)
 
     fakeParty.DFEditModeSelection:RegisterOptions({
-        name = 'Party',
-        sub = 'party',
-        advancedName = 'PartyFrame',
         options = optionsParty,
         extra = optionsPartyEditmode,
         -- parentExtra = Module.PartyMoveFrame,
@@ -2300,7 +2280,7 @@ function Module:AddEditMode()
             EditModeModule:AddEditModeToFrame(f)
 
             f.DFEditModeSelection:SetGetLabelTextFunction(function()
-                return 'Raidframe'
+                return optionsRaid.name
             end)
 
             f.DFEditModeSelection:ClearAllPoints()
@@ -2308,9 +2288,6 @@ function Module:AddEditMode()
             f.DFEditModeSelection:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 11)
 
             f.DFEditModeSelection:RegisterOptions({
-                name = 'Raid',
-                sub = 'raid',
-                advancedName = 'RaidFrame',
                 options = optionsRaid,
                 extra = optionsRaidEditmode,
                 -- parentExtra = FocusFrame,
@@ -2381,13 +2358,10 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(fakeFocus)
 
         fakeFocus.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'FocusFrame'
+            return optionsFocus.name
         end)
 
         fakeFocus.DFEditModeSelection:RegisterOptions({
-            name = 'Focus',
-            sub = 'focus',
-            advancedName = 'FocusFrame',
             options = optionsFocus,
             extra = optionsFocusEditmode,
             parentExtra = FocusFrame,
@@ -2420,13 +2394,10 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(fakeFocusTarget)
 
         fakeFocusTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'FocusTarget'
+            return optionsFocusTarget.name
         end)
 
         fakeFocusTarget.DFEditModeSelection:RegisterOptions({
-            name = 'FocusTarget',
-            sub = 'focusTarget',
-            advancedName = 'FocusTargetFrame',
             options = optionsFocusTarget,
             extra = optionsFocusTargetEditmode,
             default = function()
