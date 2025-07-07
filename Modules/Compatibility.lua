@@ -82,7 +82,8 @@ local compatOptions = {
             type = 'toggle',
             name = L["CompatClique"],
             desc = L["CompatCliqueDesc"] .. getDefaultStr('clique', 'general'),
-            order = 21
+            order = 21,
+            new = true
         },
         leatrixPlus = {
             type = 'toggle',
