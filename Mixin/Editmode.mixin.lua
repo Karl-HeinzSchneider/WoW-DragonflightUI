@@ -744,6 +744,13 @@ end
 function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     -- print('DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)')
     -- DevTools_Dump(data)
+
+    -- @TODO - compat
+    data.name = data.name or data.options.name;
+    data.desc = data.desc or data.options.desc;
+    data.sub = data.sub or data.options.sub;
+    data.advancedName = data.advancedName or data.options.advancedName;
+
     self.parentExtra = data.parentExtra
 
     self.AdvancedName = data.advancedName;

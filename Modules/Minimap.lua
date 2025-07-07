@@ -119,6 +119,8 @@ local frameTableTracker = {
 local minimapOptions = {
     type = 'group',
     name = L["MinimapName"],
+    advancedName = 'Minimap',
+    sub = 'minimap',
     get = getOption,
     set = setOption,
     args = {
@@ -270,7 +272,15 @@ local optionsMinimapEditmode = {
     }
 }
 
-local trackerOptions = {type = 'group', name = 'Tracker', get = getOption, set = setOption, args = {}}
+local trackerOptions = {
+    type = 'group',
+    name = L["MinimapTrackerName"],
+    advancedName = 'Tracker',
+    sub = 'tracker',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, trackerOptions, 'tracker', 'Tracker', getDefaultStr, frameTableTracker)
 
 local optionsTrackerEditmode = {
@@ -305,7 +315,15 @@ local optionsTrackerEditmode = {
     }
 }
 
-local optionsDurability = {type = 'group', name = 'Durability', get = getOption, set = setOption, args = {}}
+local optionsDurability = {
+    type = 'group',
+    name = L["MinimapDurabilityName"],
+    advancedName = 'Durability',
+    sub = 'durability',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, optionsDurability, 'durability', 'Durability', getDefaultStr, frameTableTracker)
 
 local optionsDurabilityEditmode = {
@@ -340,7 +358,15 @@ local optionsDurabilityEditmode = {
     }
 }
 
-local optionsLFG = {type = 'group', name = 'LFG', get = getOption, set = setOption, args = {}}
+local optionsLFG = {
+    type = 'group',
+    name = L["MinimapLFGName"],
+    advancedName = 'LFG',
+    sub = 'lfg',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, optionsLFG, 'lfg', 'LFG', getDefaultStr, frameTableTracker)
 
 local optionsLFGEditmode = {
@@ -417,46 +443,38 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('minimap', {order = 1, name = 'Minimap', descr = 'Minimapss', isNew = false})
-    register('questtracker', {order = 1, name = 'Quest Tracker', descr = 'Trackers', isNew = false})
-    register('durability', {order = 1, name = 'Durability', descr = 'Durablityss', isNew = false})
-    register('lfg', {order = 1, name = 'LFG', descr = 'LFGss', isNew = false})
+    register('minimap', {order = 1, name = minimapOptions.name, descr = 'Minimapss', isNew = false})
+    register('questtracker', {order = 1, name = trackerOptions.name, descr = 'Trackers', isNew = false})
+    register('durability', {order = 1, name = optionsDurability.name, descr = 'Durablityss', isNew = false})
+    register('lfg', {order = 1, name = optionsLFG.name, descr = 'LFGss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterSettingsData('minimap', 'misc', {
-        name = 'Minimap',
-        sub = 'minimap',
         options = minimapOptions,
         default = function()
-            setDefaultSubValues('minimap')
+            setDefaultSubValues(minimapOptions.sub)
         end
     })
 
     DF.ConfigModule:RegisterSettingsData('questtracker', 'misc', {
-        name = 'Questtracker',
-        sub = 'tracker',
         options = trackerOptions,
         default = function()
-            setDefaultSubValues('tracker')
+            setDefaultSubValues(trackerOptions.sub)
         end
     })
 
     DF.ConfigModule:RegisterSettingsData('durability', 'misc', {
-        name = 'Durability',
-        sub = 'durability',
         options = optionsDurability,
         default = function()
-            setDefaultSubValues('durability')
+            setDefaultSubValues(optionsDurability.sub)
         end
     })
 
     DF.ConfigModule:RegisterSettingsData('lfg', 'misc', {
-        name = 'LFG',
-        sub = 'lfg',
         options = optionsLFG,
         default = function()
-            setDefaultSubValues('lfg')
+            setDefaultSubValues(optionsLFG.sub)
         end
     })
 end
@@ -615,17 +633,14 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Minimap)
 
     Minimap.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Minimap'
+        return minimapOptions.name
     end)
 
     Minimap.DFEditModeSelection:RegisterOptions({
-        name = 'Minimap',
-        sub = 'minimap',
-        advancedName = 'Minimap',
         options = minimapOptions,
         extra = optionsMinimapEditmode,
         default = function()
-            setDefaultSubValues('minimap')
+            setDefaultSubValues(minimapOptions.sub)
         end,
         moduleRef = self
     });
@@ -641,17 +656,14 @@ function Module:AddEditMode()
         EditModeModule:AddEditModeToFrame(trackerFrame)
 
         trackerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return 'Questtracker'
+            return trackerOptions.name
         end)
 
         trackerFrame.DFEditModeSelection:RegisterOptions({
-            name = 'Questtracker',
-            sub = 'tracker',
-            advancedName = 'Tracker',
             options = trackerOptions,
             extra = optionsTrackerEditmode,
             default = function()
-                setDefaultSubValues('tracker')
+                setDefaultSubValues(trackerOptions.sub)
             end,
             moduleRef = self,
             prio = -5
@@ -672,13 +684,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.DurabilityContainer)
 
     Module.DurabilityContainer.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Durability'
+        return optionsDurability.name
     end)
 
     Module.DurabilityContainer.DFEditModeSelection:RegisterOptions({
-        name = 'Durability',
-        sub = 'durability',
-        advancedName = 'Durability',
         options = optionsDurability,
         extra = optionsDurabilityEditmode,
         showFunction = function()
@@ -688,7 +697,7 @@ function Module:AddEditMode()
             -- DurabilityFrame_SetAlerts()
         end,
         default = function()
-            setDefaultSubValues('durability')
+            setDefaultSubValues(optionsDurability.sub)
         end,
         moduleRef = self
     });
@@ -701,13 +710,10 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.LFG)
 
     Module.LFG.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'LFG'
+        return optionsLFG.name
     end)
 
     Module.LFG.DFEditModeSelection:RegisterOptions({
-        name = 'LFG',
-        sub = 'lfg',
-        advancedName = 'LFG',
         options = optionsLFG,
         prio = 5,
         extra = optionsLFGEditmode,
@@ -718,7 +724,7 @@ function Module:AddEditMode()
             --
         end,
         default = function()
-            setDefaultSubValues('lfg')
+            setDefaultSubValues(optionsLFG.sub)
         end,
         moduleRef = self
     });

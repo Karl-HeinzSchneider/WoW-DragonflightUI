@@ -123,7 +123,9 @@ end
 
 local generalOptions = {
     type = 'group',
-    name = 'GameTooltip',
+    name = L["TooltipName"],
+    advancedName = 'GameTooltip',
+    sub = "general",
     get = getOption,
     set = setOption,
     args = {
@@ -494,17 +496,15 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('tooltip', {order = 0, name = 'Tooltip', descr = '...', isNew = false})
+    register('tooltip', {order = 0, name = generalOptions.name, descr = '...', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterSettingsData('tooltip', 'misc', {
-        name = 'Tooltip',
-        sub = 'general',
         options = generalOptions,
         sortComparator = generalOptions.sortComparator,
         default = function()
-            setDefaultSubValues('general')
+            setDefaultSubValues(generalOptions.sub)
         end
     })
 end
@@ -546,18 +546,15 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(f)
 
     f.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Tooltip Anchor'
+        return L["TooltipAnchorName"]
     end)
 
     f.DFEditModeSelection:RegisterOptions({
-        name = 'GameTooltip',
-        sub = 'general',
-        advancedName = 'GameTooltip',
         options = generalOptions,
         extra = optionsGeneralEditmode,
         -- parentExtra = TargetFrame,
         default = function()
-            setDefaultSubValues('general')
+            setDefaultSubValues(generalOptions.sub)
         end,
         moduleRef = self
         -- showFunction = function()

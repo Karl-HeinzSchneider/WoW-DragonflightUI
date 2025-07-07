@@ -121,6 +121,8 @@ local frameTable = {
 local buffsOptions = {
     type = 'group',
     name = L["BuffsOptionsName"],
+    advancedName = 'Buffs',
+    sub = 'buffs',
     get = getOption,
     set = setOption,
     args = {
@@ -232,7 +234,15 @@ local optionsBuffEditmode = {
     }
 }
 
-local debuffsOptions = {type = 'group', name = 'Debuffs', get = getOption, set = setOption, args = {}}
+local debuffsOptions = {
+    type = 'group',
+    name = L["DebuffsOptionsName"],
+    advancedName = 'Debuffs',
+    sub = 'debuffs',
+    get = getOption,
+    set = setOption,
+    args = {}
+}
 DF.Settings:AddPositionTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr, frameTable)
 DragonflightUIStateHandlerMixin:AddStateTable(Module, debuffsOptions, 'debuffs', 'Debuffs', getDefaultStr)
 local optionsDebuffEditmode = {
@@ -309,26 +319,22 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('buffs', {order = 1, name = 'Buffs', descr = 'Buffsss', isNew = false})
-    register('debuffs', {order = 1, name = 'Debuffs', descr = 'Debuffsss', isNew = false})
+    register('buffs', {order = 1, name = buffsOptions.name, descr = 'Buffsss', isNew = false})
+    register('debuffs', {order = 1, name = debuffsOptions.name, descr = 'Debuffsss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
     DF.ConfigModule:RegisterSettingsData('buffs', 'misc', {
-        name = 'Buffs',
-        sub = 'buffs',
         options = buffsOptions,
         default = function()
-            setDefaultSubValues('buffs')
+            setDefaultSubValues(buffsOptions.sub)
         end
     })
 
     DF.ConfigModule:RegisterSettingsData('debuffs', 'misc', {
-        name = 'Debuffs',
-        sub = 'debuffs',
         options = debuffsOptions,
         default = function()
-            setDefaultSubValues('debuffs')
+            setDefaultSubValues(debuffsOptions.sub)
         end
     })
 end
@@ -382,17 +388,14 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.DFBuffFrame)
 
     Module.DFBuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Buffs'
+        return buffsOptions.name
     end)
 
     Module.DFBuffFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Buffs',
-        sub = 'buffs',
-        advancedName = 'Buffs',
         options = buffsOptions,
         extra = optionsBuffEditmode,
         default = function()
-            setDefaultSubValues('buffs')
+            setDefaultSubValues(buffsOptions.sub)
         end,
         moduleRef = self
     });
@@ -404,17 +407,14 @@ function Module:AddEditMode()
     EditModeModule:AddEditModeToFrame(Module.DFDebuffFrame)
 
     Module.DFDebuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return 'Debuffs'
+        return debuffsOptions.name
     end)
 
     Module.DFDebuffFrame.DFEditModeSelection:RegisterOptions({
-        name = 'Debuffs',
-        sub = 'debuffs',
-        advancedName = 'Debuffs',
         options = debuffsOptions,
         extra = optionsDebuffEditmode,
         default = function()
-            setDefaultSubValues('debuffs')
+            setDefaultSubValues(buffsOptions.sub)
         end,
         moduleRef = self
     });

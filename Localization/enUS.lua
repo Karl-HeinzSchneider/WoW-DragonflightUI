@@ -117,6 +117,10 @@ do
     L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "Copy To Clipboard |cffffd100(to share online)|r"
     L["EditModeExportProfile"] = "Export profile |cff8080ff%s|r"
     L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
+    L["EditModeVisible"] = "Edit Mode Visibility"
+    L["EditModeVisibleDescFormat"] =
+        "Sets the visiblity of the current frame and every other frame with the same category (|cff8080ff%s|r) while edit mode is active."
+
 end
 
 -- Compat
@@ -275,7 +279,7 @@ do
     L["ExtraOptionsClassicLayoutDesc"] = ""
 
     -- XP
-    L["XPOptionsName"] = "XP"
+    L["XPOptionsName"] = "XP Bar"
     L["XPOptionsDesc"] = "XP"
     L["XPOptionsStyle"] = L["ButtonTableStyle"]
     L["XPOptionsStyleDesc"] = ""
@@ -289,7 +293,7 @@ do
     L["XPOptionsShowXPPercentDesc"] = ""
 
     -- rep
-    L["RepOptionsName"] = "Rep"
+    L["RepOptionsName"] = "Rep Bar"
     L["RepOptionsDesc"] = "Rep"
     L["RepOptionsStyle"] = L["ButtonTableStyle"]
     L["RepOptionsStyleDesc"] = ""
@@ -344,6 +348,7 @@ end
 -- Buffs
 do
     L["BuffsOptionsName"] = "Buffs"
+    L["DebuffsOptionsName"] = "Debuffs"
     L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
     L["BuffsOptionsStyleDesc"] = ""
 
@@ -411,6 +416,9 @@ end
 do
     L["CastbarName"] = "Cast Bar"
     L["CastbarNameFormat"] = "%s Cast Bar"
+    L["CastbarNamePlayer"] = format(L["CastbarNameFormat"], 'Player')
+    L["CastbarNameTarget"] = format(L["CastbarNameFormat"], 'Target')
+    L["CastbarNameFocus"] = format(L["CastbarNameFormat"], 'Focus')
     L["CastbarTableActive"] = "Active"
     L["CastbarTableActivateDesc"] = ""
     L["CastbarTableStyle"] = L["ButtonTableStyle"]
@@ -470,11 +478,16 @@ do
     L["MinimapUseStateHandler"] = "Use State Handler"
     L["MinimapUseStateHandlerDesc"] =
         "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
+
+    L["MinimapTrackerName"] = "Tracker"
+    L["MinimapDurabilityName"] = "Durability"
+    L["MinimapLFGName"] = "LFG"
 end
 
 -- UI
 do
     L["UIUtility"] = "Utility"
+    L["UIName"] = "UI"
     L["UIChangeBags"] = "Change Bags"
     L["UIChangeBagsDesc"] = ""
     L["UIColoredInventoryItems"] = "Colored Inventory Items"
@@ -520,6 +533,7 @@ end
 -- Tooltip
 do
     L["TooltipName"] = "Tooltip"
+    L["TooltipAnchorName"] = "Tooltip Anchor"
     L["TooltipHeaderGameToltip"] = "GameTooltip"
     L["TooltipHeaderSpellTooltip"] = "SpellTooltip"
     L["TooltipCursorAnchorHeader"] = "Cursor Anchor"
@@ -599,7 +613,8 @@ do
     L["UnitFramesName"] = "Unitframes"
 
     -- Player
-    L["PlayerFrameDesc"] = "Player frame settings"
+    L["PlayerFrameName"] = "PlayerFrame"
+    L["PlayerFrameDesc"] = "PlayerFrame settings"
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "Class Color"
     L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar"
@@ -621,7 +636,12 @@ do
     L["PlayerFrameHideAlternatePowerBar"] = "Hide Druid Alternate Power Bar"
     L["PlayerFrameHideAlternatePowerBarDesc"] = "Hide the Druid Alternate Power Bar (Mana Bar while Bear/Cat form)."
 
+    -- PowerBar_Alt
+    L["PowerBarAltName"] = "Player_PowerBarAlt"
+    L["PowerBarAltNameDesc"] = ""
+
     -- Target
+    L["TargetFrameName"] = "Target Frame"
     L["TargetFrameDesc"] = "Target frame settings"
     L["TargetFrameStyle"] = L["ButtonTableStyle"]
     L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
@@ -661,6 +681,7 @@ do
     L["TargetFrameDynamicBuffSizeDesc"] = "Increases the size of the player buffs and debuffs on the target."
 
     -- Pet
+    L["PetFrameName"] = "PetFrame"
     L["PetFrameDesc"] = "Pet frame settings"
     L["PetFrameStyle"] = L["ButtonTableStyle"]
     L["PetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
@@ -673,6 +694,8 @@ do
     L["PetFrameHideIndicatorDesc"] = "Hide the hit indicator"
 
     -- Focus
+    L["FocusFrameName"] = "FocusFrame"
+    L["FocusFrameToTName"] = "FocusFrameToT"
     L["FocusFrameDesc"] = "Focus frame settings"
     L["FocusFrameStyle"] = L["ButtonTableStyle"]
     L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
@@ -685,12 +708,16 @@ do
     L["FocusFrameHideNameBackgroundDesc"] = "Hide the name background"
 
     -- party
-    L["PartyFrameDesc"] = "Party frame settings"
+    L["PartyFrameName"] = "PartyFrame"
+    L["PartyFrameDesc"] = "PartyFrame settings"
     L["PartyFrameStyle"] = L["ButtonTableStyle"]
     L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
     L["PartyFrameClassColorDesc"] = "Enable class colors for the healthbar"
     L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
     L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+
+    -- raid
+    L["RaidFrameName"] = "Raid Frame"
 end
 
 -- keybindings
