@@ -835,7 +835,7 @@ end
 
 function DragonflightUIMixin:ChangeInspectFrame()
     if not InspectFrame or InspectFrame.DFHooked then return end
-    if DF.API.Version.IsMoP then return end-- TODO
+    if DF.API.Version.IsMoP then return end -- TODO
 
     do
         local regions = {InspectPaperDollFrame:GetRegions()}
@@ -2340,16 +2340,37 @@ function DragonflightUIMixin:ChangeGossipFrame()
 
     do
         local tex = base .. 'questbackgroundparchment'
+
+        local anchorFrame;
+
+        if DF.API.Version.IsMoP then
+            anchorFrame = frame;
+
+            local r = {frame:GetRegions()}
+
+            -- hide default background
+            for k, child in ipairs(r) do
+                if child:GetObjectType() == 'Texture' then
+                    local w, h = child:GetSize()
+                    local layer = child:GetDrawLayer()
+
+                    if layer == 'BACKGROUND' and w == 512 and h == 512 then
+                        --
+                        child:Hide()
+                    end
+                end
+            end
+
+        else
+            anchorFrame = greeting;
+        end
+
         local bg = frame:CreateTexture('DFQuestBackground')
+        bg:SetPoint('TOPLEFT', anchorFrame, 'TOPLEFT', 7, -62)
         bg:SetTexture(tex)
         bg:SetTexCoord(0.0009765625, 0.29296875, 0.0009765625, 0.3984375)
         bg:SetSize(299, 407)
         bg:SetDrawLayer('BACKGROUND', 0)
-        if DF.API.Version.IsMoP then
-            bg:SetPoint('TOPLEFT', frame, 'TOPLEFT', 7, -62)
-        else
-            bg:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 7, -62)
-        end
     end
 
     do
