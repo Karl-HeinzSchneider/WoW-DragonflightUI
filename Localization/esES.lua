@@ -21,7 +21,7 @@ do
     L["ModuleTooltipFlyout"] = "Desplegable"
     L["ModuleTooltipMinimap"] =
         "Este módulo mejora el minimapa y el rastreador de misiones.\nAñade opciones separadas para el minimapa y el rastreador de misiones."
-    -- L["ModuleTooltipTooltip"] = "This module enhances GameTooltips.\nWORK IN PROGRESS"
+    L["ModuleTooltipTooltip"] = "Este módulo mejora los tooltips del juego.\nEN DESARROLLO"
     L["ModuleTooltipUI"] =
         "Este módulo añade un estilo moderno a diferentes ventanas como el marco de personaje. También añade rediseños específicos de la Era con el nuevo libro de hechizos, el marco de talentos y la ventana de profesiones."
     L["ModuleTooltipUnitframe"] =
@@ -134,11 +134,10 @@ do
         "Añade compatibilidad con CharacterStatsClassic al usar el módulo de IU con 'Cambiar marco de personaje' activado."
     L['CompatClassicCalendar'] = "Classic Calendar"
     L['CompatClassicCalendarDesc'] = "Añade compatibilidad con Classic Calendar."
-    -- L['CompatClique'] = "Clique"
-    -- L['CompatCliqueDesc'] = "Adds compatibility for Clique"
-    -- L['CompatLeatrixPlus'] = "LeatrixPlus"
-    -- L['CompatLeatrixPlusDesc'] =
-    -- "Adds compatibility for LeatrixPlus, e.g. removes the ugly classc color name background on the PlayerFrame."
+    L['CompatClique'] = "Clique"
+    L['CompatCliqueDesc'] = "Añade compatibilidad con Clique"
+    L['CompatLeatrixPlus'] = "Leatrix Plus"
+    L['CompatLeatrixPlusDesc'] = "Añade compatibilidad con LeatrixPlus."
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "Añade compatibilidad con LFG Bulletin Board."
     L['CompatMerInspect'] = "MerInspect"
@@ -210,14 +209,13 @@ do
     L["None"] = "Ninguno"
 
     -- stateDriverTable
-    -- L["ActionbarDriverDefault"] = "Default"
-    -- L["ActionbarDriverSmart"] = "Smart"
-    -- L["ActionbarDriverNoPaging"] = "No Paging"
+    L["ActionbarDriverDefault"] = "Predeterminado"
+    L["ActionbarDriverSmart"] = "Inteligente"
+    L["ActionbarDriverNoPaging"] = "Sin paginación"
 
     -- stateDriver
-    -- L['ActionbarDriverName'] = "Paging"
-    -- L['ActionbarDriverNameDesc'] =
-    --     "Changes the paging behaviour of the main action bar, e.g. when changing stance or stealth.\n'Default' - no change\n'Smart' - adds custom page for Druid cat stealth\n'No Paging' - disables all paging"
+    L['ActionbarDriverName'] = "Paginación"
+    L['ActionbarDriverNameDesc'] = "Cambia el comportamiento de paginación de la barra de acción principal, por ejemplo, al cambiar de actitud o al entrar en sigilo.\n'Predeterminado' - sin cambios\n'Inteligente' - añade una página personalizada para el sigilo en forma felina del druida\n'Sin paginación' - desactiva toda la paginación"
 
     -- buttonTable
     L["ButtonTableActive"] = "Activo"
@@ -587,7 +585,7 @@ end
 
 -- Unitframes
 do
-    -- L["UnitFramesName"] = "Unitframes"
+    L["UnitFramesName"] = "Marcos de unidad"
 
     -- Player
     L["PlayerFrameDesc"] = "Configuración del marco del jugador"
