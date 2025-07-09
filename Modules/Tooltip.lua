@@ -707,6 +707,16 @@ function Module:HookFunctions()
             end)
         end
     end
+
+    -- hooksecurefunc('GameTooltip_Hide', function()
+    --     print('GameTooltip_Hide')
+    --     GameTooltip.DFHook = false;
+    -- end)
+
+    hooksecurefunc(GameTooltip, 'Hide', function()
+        -- print('GameTooltip:Hide()')
+        GameTooltip.DFHook = false;
+    end)
 end
 
 function Module:SetDefaultBackdrop(self)
@@ -844,7 +854,10 @@ function Module:SetExtraStringTable(self, strTable)
 end
 
 function Module:OnTooltipSetSpell(self)
-    -- print('OnTooltipSetSpell', tip:GetName())
+    -- print('OnTooltipSetSpell', self:GetName())
+    if self.DFHook then return end
+    self.DFHook = true;
+
     local state = Module.db.profile.general;
 
     local spellName, spellId = self:GetSpell();
