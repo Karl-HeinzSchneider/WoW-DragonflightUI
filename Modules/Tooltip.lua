@@ -707,16 +707,6 @@ function Module:HookFunctions()
             end)
         end
     end
-
-    -- hooksecurefunc('GameTooltip_Hide', function()
-    --     print('GameTooltip_Hide')
-    --     GameTooltip.DFHook = false;
-    -- end)
-
-    hooksecurefunc(GameTooltip, 'Hide', function()
-        -- print('GameTooltip:Hide()')
-        GameTooltip.DFHook = false;
-    end)
 end
 
 function Module:SetDefaultBackdrop(self)
@@ -855,8 +845,16 @@ end
 
 function Module:OnTooltipSetSpell(self)
     -- print('OnTooltipSetSpell', self:GetName())
-    if self.DFHook then return end
-    self.DFHook = true;
+
+    -- fix talent tooltip
+    if DF.API.Version.IsMoP then
+        local timestamp = GetTime()
+        if self.DFTime == timestamp then
+            -- print('SAME')
+            return;
+        end
+        self.DFTime = timestamp
+    end
 
     local state = Module.db.profile.general;
 
