@@ -2861,6 +2861,8 @@ function DragonflightUIMixin:ChangeQuestLogFrameCata()
             -- print('QuestLog_Update')
             count.Update()
         end)
+
+        _G['QuestLogCount']:SetSize(82.8, 20)
     end
 
     -- default -16 
