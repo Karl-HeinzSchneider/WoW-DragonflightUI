@@ -463,6 +463,13 @@ function Module:ChangeFrames()
         end)
 
         Module:FuncOrWaitframe('Blizzard_TalentUI', function()
+            -- @TODO: HACK for CN
+            if not MAX_NUM_TALENTS or type(MAX_NUM_TALENTS) ~= 'number' then
+                --
+                print(
+                    '~~Temporary overriding MAX_NUM_TALENTS inside DragonflightUI classic, should only happen if blizzard bug exists.~~')
+                MAX_NUM_TALENTS = 28;
+            end
             DragonflightUIMixin:PortraitFrameTemplate(_G['PlayerTalentFrame'])
         end)
 
