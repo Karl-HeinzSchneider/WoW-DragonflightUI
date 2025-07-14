@@ -2129,58 +2129,51 @@ function DragonflightUIMixin:ShowQuestXP()
     local function hookFunc(questLogIndex)
         local point, relativeToOrig, relativePoint, xOfs, yOfs = QuestLogSpacerFrame:GetPoint(1)
         -- print('relativeTo', relativeToOrig:GetName())
+        -- print(point, relativeToOrig, relativePoint, xOfs, yOfs)
 
-        local relativeTo = relativeToOrig;
-
-        if relativeToOrig == _G["QuestLogSpellLearnText"] then
-            relativeTo = QuestLogItem1
-        else
-            local numChoices = GetNumQuestLogChoices(questLogIndex)
-            local numRewards = GetNumQuestLogRewards(questLogIndex)
-
-            -- print('choices:', numChoices, ', rewards:', numRewards)
-
-            local num = numChoices + numRewards;
-            if num > 0 then
-                if numRewards % 2 == 0 then num = num - 1; end
-
-                local choose = _G['QuestLogItem' .. num];
-                if choose then relativeTo = choose end
-                -- print('choose', choose:GetName())
-            else
-                -- print('leave')
-            end
-        end
+        local relativeTo = relativeToOrig
 
         local str = QuestLogFrame.DFQuestXP
         local strXP = QuestLogFrame.DFQuestXP2
         local rewardText = _G['QuestLogRewardTitleText']
-        -- local learnSpellText = _G["QuestLogSpellLearnText"];
+
+        local receiveText = _G['QuestLogItemReceiveText']
+        local chooseText = _G['QuestLogItemChooseText']
+
+        str:ClearAllPoints()
+
+        if receiveText:IsVisible() then
+            str:SetPoint('LEFT', receiveText, 'LEFT', 0, 0)
+        elseif chooseText:IsVisible() then
+            str:SetPoint('LEFT', chooseText, 'LEFT', 0, 0)
+        else
+            str:SetPoint('LEFT', rewardText, 'LEFT', 3, 0)
+        end
+
+        local material = QuestFrame_GetMaterial();
+        QuestFrame_SetTextColor(str, material);
 
         if rewardText:IsShown() then
             -- 'You will also receive' 
             str:SetText(REWARD_ITEMS)
+            str:SetPoint('TOP', relativeTo, 'BOTTOM', 0, -5)
 
-            str:ClearAllPoints()
-            str:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', 0, -15)
             QuestFrame_SetAsLastShown(str, nil)
         else
-            local material = QuestFrame_GetMaterial();
             rewardText:Show();
             QuestFrame_SetTitleTextColor(rewardText, material);
             QuestFrame_SetAsLastShown(rewardText, nil);
 
             -- 'You will receive'
             str:SetText(REWARD_ITEMS_ONLY)
+            str:SetPoint('TOP', rewardText, 'BOTTOM', 0, -5)
 
-            str:ClearAllPoints()
-            str:SetPoint('TOPLEFT', rewardText, 'BOTTOMLEFT', 3, -5)
             QuestFrame_SetAsLastShown(str, nil)
         end
 
         local xp = GetQuestLogRewardXP()
-        ---@diagnostic disable-next-line: param-type-mismatch
-        strXP:SetText(FormatLargeNumber(xp) .. ' XP')
+        local xpText = FormatLargeNumber(xp) .. ' XP';
+        strXP:SetText(xpText)
 
         if QuestLogFrame.DFCompletedQuestsFrame then QuestLogFrame.DFCompletedQuestsFrame:Update() end
     end
