@@ -3328,23 +3328,25 @@ function DragonflightUIMixin:ChangeSpellbookEra()
 
         end
 
-        hooksecurefunc('SpellButton_UpdateButton', function(self)
-            --
-            local name = self:GetName()
+        if SpellButton_UpdateButton then
+            hooksecurefunc('SpellButton_UpdateButton', function(self)
+                --
+                local name = self:GetName()
 
-            local spellname = _G[name .. 'SpellName']
-            spellname:ClearAllPoints()
-            spellname:SetPoint('LEFT', self, 'RIGHT', 8, 4)
-            spellname:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                local spellname = _G[name .. 'SpellName']
+                spellname:ClearAllPoints()
+                spellname:SetPoint('LEFT', self, 'RIGHT', 8, 4)
+                spellname:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 
-            local icon = _G[name .. 'IconTexture']
+                local icon = _G[name .. 'IconTexture']
 
-            if self.isPassive then
-                self.ShowSlotFrame(false)
-            else
-                self.ShowSlotFrame(icon:IsVisible())
-            end
-        end)
+                if self.isPassive then
+                    self.ShowSlotFrame(false)
+                else
+                    self.ShowSlotFrame(icon:IsVisible())
+                end
+            end)
+        end
     end
 
     local checkbox = ShowAllSpellRanksCheckBox or ShowAllSpellRanksCheckbox
