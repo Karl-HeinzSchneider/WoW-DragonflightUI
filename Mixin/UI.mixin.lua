@@ -2907,8 +2907,51 @@ function DragonflightUIMixin:AddQuestLevel()
     end)
 
     -- Log
+    if DF.API.Version.IsMoP then
+        hooksecurefunc('QuestLogTitleButton_Resize', function(questLogTitle)
+            local questNormalText = questLogTitle.normalText;
 
-    if DF.Cata then
+            -- CUSTOM
+            local questIndex = questLogTitle:GetID()
+
+            local title, level, suggestedGroup, isHeader, suffix = questInfo(questIndex)
+
+            if title and level and not isHeader then
+                --
+                local padding = (level > 0 and level < 10) and '0' or ''
+                local questLogText = ' [' .. padding .. level .. suffix .. '] ' .. title
+
+                local normal = questLogTitle.normalText
+                normal:SetText(questLogText)
+            end
+            --
+
+            questNormalText:SetWidth(0);
+            questLogTitle:SetText(questLogTitle:GetText());
+
+            local questTitleTag = questLogTitle.tag;
+            local questCheck = questLogTitle.check;
+
+            local rightEdge;
+            if (questTitleTag:IsShown()) then
+                if (questCheck:IsShown()) then
+                    rightEdge = questLogTitle:GetLeft() + questLogTitle:GetWidth() - questTitleTag:GetWidth() - 4 -
+                                    questCheck:GetWidth() - 2;
+                else
+                    rightEdge = questLogTitle:GetLeft() + questLogTitle:GetWidth() - questTitleTag:GetWidth() - 4;
+                end
+            else
+                if (questCheck:IsShown()) then
+                    rightEdge = questLogTitle:GetLeft() + questLogTitle:GetWidth() - questCheck:GetWidth() - 2;
+                else
+                    rightEdge = questLogTitle:GetLeft() + questLogTitle:GetWidth();
+                end
+            end
+            -- subtract from the text width the number of pixels that overrun the right edge
+            local questNormalTextWidth = questNormalText:GetWidth() - max(questNormalText:GetRight() - rightEdge, 0);
+            questNormalText:SetWidth(questNormalTextWidth);
+        end)
+    elseif DF.Cata then
         --
         hooksecurefunc('QuestLogTitleButton_Resize', function(btn)
             --
