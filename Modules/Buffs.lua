@@ -611,7 +611,7 @@ function Module.MoveDebuffs()
 
         local state = Module.db.profile.debuffs
         local buff = _G[buttonName .. index];
-        buff:SetScale(state.scale)
+        buff:SetScale(state.scale or 1.0)
         buff:SetParent(f)
         -- buff:Show()
 
