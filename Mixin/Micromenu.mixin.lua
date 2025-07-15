@@ -64,6 +64,9 @@ function DragonflightUIMicroMenuMixin:OnLoad()
     end)
 
     UpdateMicroButtonsParent(self)
+
+    local talentAlert = _G['TalentMicroButtonAlert']
+    if talentAlert then talentAlert:SetPoint('BOTTOM', _G['TalentMicroButton'], 'TOP', 0, -8 + 16); end
 end
 
 function DragonflightUIMicroMenuMixin:OnUpdateMicroButtonsParent(parent)
