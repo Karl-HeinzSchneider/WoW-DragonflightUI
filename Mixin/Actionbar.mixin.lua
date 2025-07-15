@@ -34,7 +34,7 @@ function DragonflightUIActionbarMixin:Init()
     self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    self:SetScript('OnEvent', function(event, arg1)
+    self:SetScript('OnEvent', function(self, event, arg1)
         if InCombatLockdown() then return end
         self:Update()
     end)
@@ -251,6 +251,9 @@ function DragonflightUIActionbarMixin:Update()
 
                 btn:UpdateHotkeyDisplayText(state.shortenKeybind)
             end
+
+            if btn.overlay then self:FixGlow(btn) end
+
             index = index + 1
         end
     end
@@ -1285,6 +1288,46 @@ function DragonflightUIActionbarMixin:HookGrid()
     hooksecurefunc('ActionButton_ShowGrid', function(btn)
         if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 1); end
     end)
+end
+
+function DragonflightUIActionbarMixin:FixGlow(btn)
+    -- print('~~~FixGlow', btn:GetName())
+    if not btn.overlay then return end
+
+    -- local isGlowing = btn.overlay.animIn:IsPlaying()
+    -- print('~~>> isGlowing?', isGlowing)
+    -- if not isGlowing then return end
+    -- print('GLOWING')
+
+    -- self.overlay = ActionButton_GetOverlayGlow();
+    local frameWidth, frameHeight = btn:GetSize();
+    btn.overlay:SetParent(btn);
+    btn.overlay:ClearAllPoints();
+    -- Make the height/width available before the next frame:
+    btn.overlay:SetSize(frameWidth * 1.4, frameHeight * 1.4);
+    btn.overlay:SetPoint("TOPLEFT", btn, "TOPLEFT", -frameWidth * 0.2, frameHeight * 0.2);
+    btn.overlay:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", frameWidth * 0.2, -frameHeight * 0.2);
+    -- self.overlay.animIn:Play();
+
+    btn.overlay.animOut:Stop();
+    btn.overlay.animIn:Play();
+end
+
+function DragonflightUIActionbarMixin:HookGlow()
+    -- print('DragonflightUIActionbarMixin:HookGlow()')
+
+    hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
+        self:FixGlow(btn)
+    end)
+
+    -- hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
+    --     -- print('~ActionButton_ShowOverlayGlow', btn:GetName(), btn.overlay:GetSize())
+    --     fixGlow(btn)
+    -- end)
+
+    -- hooksecurefunc('ActionButton_HideOverlayGlow', function(btn)
+    --     -- print('~ActionButton_HideOverlayGlow', btn:GetName())
+    -- end)
 end
 
 DragonflightUIPetbarMixin = CreateFromMixins(DragonflightUIActionbarMixin)
