@@ -1,0 +1,185 @@
+
+2018 -- 1283 Blacksmithing
+2108 -- 1328 Leatherworking
+2259 -- 1374 Alchemy
+2366 -- 1418 Herb Gathering
+2368 -- 1419 Herb Gathering
+2383 -- 1442 Find Herbs
+2550 -- 1532 Cooking
+2580 -- 1568 Find Minerals
+2575 -- 1569 Mining
+2576 -- 1570 Mining
+2656 -- 1597 Smelting
+3100 -- 1792 Blacksmithing
+3101 -- 1793 Alchemy
+3102 -- 1794 Cooking
+3104 -- 1795 Leatherworking
+3273 -- 1836 First Aid
+3274 -- 1837 First Aid
+3413 -- 1906 Cooking
+3464 -- 1938 Alchemy
+3538 -- 2005 Blacksmithing
+3564 -- 2036 Mining
+3570 -- 2041 Herb Gathering
+3811 -- 2161 Leatherworking
+3908 -- 2356 Tailoring
+3909 -- 2357 Tailoring
+3910 -- 2358 Tailoring
+4036 -- 2410 Engineering
+4037 -- 2411 Engineering
+4038 -- 2412 Engineering
+7411 -- 4286 Enchanting
+7412 -- 4287 Enchanting
+7413 -- 4288 Enchanting
+7620 -- 4344 Fishing
+7731 -- 4345 Fishing
+7732 -- 4346 Fishing
+7738 -- 4348 Fishing Poles
+7924 -- 4416 First Aid
+8388 -- 4682 Find Minerals
+8613 -- 4766 Skinning
+8617 -- 4767 Skinning
+8618 -- 4768 Skinning
+9785 -- 5226 Blacksmithing
+10248 -- 5487 Mining
+10662 -- 5706 Leatherworking
+10768 -- 5746 Skinning
+10846 -- 5766 First Aid
+11611 -- 6056 Alchemy
+11993 -- 6216 Herb Gathering
+12180 -- 6625 Tailoring
+12656 -- 6882 Engineering
+13262 -- 7316 Disenchant
+13920 -- 7656 Enchanting
+818 -- 8676 Cooking Fire
+18248 -- 10242 Fishing
+18260 -- 10253 Cooking
+20222 -- 11491 Goblin Engineer
+20219 -- 11492 Gnomish Engineer
+25229 -- 13166 Jewelcrafting
+25230 -- 13167 Jewelcrafting
+26790 -- 13541 Tailoring
+27028 -- 13543 First Aid
+28029 -- 13859 Enchanting
+28596 -- 13960 Alchemy
+28677 -- 14007 Elixir Master
+28675 -- 14008 Potion Master
+28672 -- 14009 Transmutation Master
+28695 -- 14010 Herb Gathering
+28894 -- 14016 Jewelcrafting
+28895 -- 14017 Jewelcrafting
+28897 -- 14018 Jewelcrafting
+29354 -- 14112 Mining
+29844 -- 14248 Blacksmithing
+30350 -- 14347 Engineering
+31252 -- 14606 Prospecting
+32549 -- 14888 Leatherworking
+32605 -- 14898 Herb Gathering
+32606 -- 14899 Mining
+32678 -- 14907 Skinning
+33095 -- 14943 Fishing
+33359 -- 15021 Cooking
+43308 -- 16032 Find Fish
+45357 -- 16187 Inscription
+45358 -- 16188 Inscription
+45359 -- 16189 Inscription
+45360 -- 16190 Inscription
+45361 -- 16191 Inscription
+45363 -- 16192 Inscription
+49383 -- 17018 Engineering
+45542 -- 17155 First Aid
+50300 -- 17443 Herb Gathering
+50305 -- 17444 Skinning
+50310 -- 17446 Mining
+51005 -- 17561 Milling
+51296 -- 17590 Cooking
+51294 -- 17591 Fishing
+51304 -- 17592 Alchemy
+51300 -- 17593 Blacksmithing
+51313 -- 17594 Enchanting
+51306 -- 17595 Engineering
+51311 -- 17596 Jewelcrafting
+51302 -- 17597 Leatherworking
+51309 -- 17598 Tailoring
+53040 -- 17984 Toughness
+53120 -- 17987 Toughness
+53121 -- 17988 Toughness
+53122 -- 17989 Toughness
+53123 -- 17990 Toughness
+53124 -- 17991 Toughness
+53125 -- 17993 Master of Anatomy
+53662 -- 18277 Master of Anatomy
+53663 -- 18278 Master of Anatomy
+53664 -- 18279 Master of Anatomy
+53665 -- 18280 Master of Anatomy
+53666 -- 18281 Master of Anatomy
+10846 -- 19181 First Aid
+55428 -- 19355 Lifeblood
+55480 -- 19356 Lifeblood
+55500 -- 19357 Lifeblood
+55501 -- 19358 Lifeblood
+55502 -- 19359 Lifeblood
+55503 -- 19360 Lifeblood
+59390 -- 20150 Northern Cloth Scavenging
+66587 -- 21173 MoP Spells ptr
+73318 -- 21437 Jewelcrafting
+73979 -- 21562 Searching for Artifacts
+74258 -- 21612 Enchanting
+74495 -- 21617 Master of Anatomy
+74496 -- 21618 Toughness
+74497 -- 21619 Lifeblood
+74519 -- 21620 Herb Gathering
+74517 -- 21621 Mining
+74522 -- 21622 Skinning
+74559 -- 21630 First Aid
+75156 -- 21650 Tailoring
+76666 -- 21832 Blacksmithing
+78670 -- 21894 Archaeology
+80731 -- 22022 Alchemy
+80451 -- 22025 Survey
+81199 -- 22073 Leatherworking
+81708 -- 22119 Lifeblood
+82774 -- 22172 Engineering
+86008 -- 22540 Inscription
+88053 -- 22946 Cooking
+88868 -- 23376 Fishing
+88961 -- 23385 Archaeology
+89718 -- 23459 Archaeology
+89719 -- 23460 Archaeology
+89720 -- 23461 Archaeology
+89721 -- 23462 Archaeology
+89722 -- 23463 Archaeology
+92806 -- 23758 Survey Mastery
+92807 -- 23759 Survey Mastery
+92808 -- 23760 Survey Mastery
+92809 -- 23761 Survey Mastery
+92810 -- 23762 Survey Mastery
+92811 -- 23763 Survey Mastery
+92812 -- 23764 Survey Mastery
+74268 -- 23765 Track Archaeology Chests
+82207 -- 24065 Explosive Bolts
+102161 -- 24587 Mining
+102163 -- 24588 Toughness
+102216 -- 24602 Skinning
+102219 -- 24603 Master of Anatomy
+104115 -- 24786 Release Fire Spirit
+104381 -- 24813 Cooking
+105206 -- 24824 Alchemy
+110393 -- 25375 Archaeology
+110396 -- 25376 Blacksmithing
+110400 -- 25377 Enchanting
+110403 -- 25378 Engineering
+110406 -- 25387 First Aid
+110410 -- 25388 Fishing
+110413 -- 25389 Herb Gathering
+110417 -- 25391 Inscription
+110420 -- 25395 Jewelcrafting
+110423 -- 25396 Leatherworking
+110426 -- 25397 Tailoring
+121279 -- 26365 Lifeblood
+131474 -- 27481 Fishing
+131476 -- 27501 Fishing
+131490 -- 27502 Fishing
+405005 -- 48447 MoP Spells ptr
+413897 -- 48777 MoP Spells ptr
+414814 -- 48796 MoP Spells ptr

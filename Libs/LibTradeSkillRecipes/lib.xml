@@ -1,0 +1,16 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Script file="LibTradeSkillRecipes.lua"/>
+  <Script file="recipes\1\items.lua"/>
+  <Script file="recipes\1\enchantments.lua"/>
+  <Script file="recipes\1\skill_lines.lua"/>
+  <Script file="recipes\2\items.lua"/>
+  <Script file="recipes\2\enchantments.lua"/>
+  <Script file="recipes\2\skill_lines.lua"/>
+  <Script file="recipes\3\items.lua"/>
+  <Script file="recipes\3\enchantments.lua"/>
+  <Script file="recipes\3\skill_lines.lua"/>
+  <Script file="recipes\10\items.lua"/>
+  <Script file="recipes\10\enchantments.lua"/>
+  <Script file="recipes\10\skill_lines.lua"/>
+  <Script file="recipes\expansions.lua"/>
+</Ui>
