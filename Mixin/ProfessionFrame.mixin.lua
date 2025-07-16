@@ -1,5 +1,7 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+local LibTradeSkillRecipes = LibStub("LibTradeSkillRecipes-1")
+
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 local CreateColor = DFCreateColor;
@@ -16,6 +18,10 @@ function DFProfessionMixin:OnLoad()
     self.ProfessionTable = {}
     self.SelectedProfession = ''
     self.SelectedSkillID = ''
+
+    local tt = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
+    tt:SetOwner(WorldFrame, "ANCHOR_NONE");
+    self.ScanningTooltip = tt
 
     self:SetupFrameStyle()
     self:SetupSchematics()
@@ -1708,12 +1714,6 @@ function DFProfessionMixin:UpdateHeader()
 end
 
 function DFProfessionMixin:GetRecipeQuality(index)
-    if not self.ScanningTooltip then
-        local tt = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
-        tt:SetOwner(WorldFrame, "ANCHOR_NONE");
-        self.ScanningTooltip = tt
-    end
-
     if not index or index == 0 then return 1 end
 
     local tooltip = self.ScanningTooltip
@@ -1742,7 +1742,67 @@ function DFProfessionMixin:GetRecipeQuality(index)
         C_Item.GetItemInfo(link)
     if not itemLevel or not itemId then return 1 end
 
-    return itemRarity
+    return itemRarity, itemId
+end
+
+---returns expansionID, or -1 if not found
+---@param index number
+---@return number
+function DFProfessionMixin:GetRecipeExpansion(index)
+    if not index or index == 0 then return -1 end
+    local tooltip = self.ScanningTooltip
+
+    if self.TradeSkillOpen then
+        tooltip:SetTradeSkillItem(index)
+
+        local _, link = tooltip:GetItem()
+        local _, spellID = tooltip:GetSpell()
+
+        local info;
+        if link then
+            -- print('~~ITEM')
+
+            local itemString = string.match(link, "item[%-?%d:]+")
+            if not itemString then return -1; end
+
+            local _, itemIdStr = strsplit(":", itemString)
+            local itemId = tonumber(itemIdStr)
+            if not itemId or itemId == "" then return -1; end
+
+            info = LibTradeSkillRecipes:GetInfoByItemId(itemId)
+
+        elseif spellID then
+            -- print('~~SPELL')
+            info = LibTradeSkillRecipes:GetInfoBySpellId(spellID)
+        end
+
+        if not info then return -1 end
+
+        local expansion;
+
+        if info[1] then
+            expansion = info[1].expansionId;
+        elseif info.expansionId then
+            expansion = info.expansionId;
+        end
+
+        if type(expansion) ~= 'number' then expansion = -1 end
+        return expansion
+    elseif self.CraftOpen then
+        tooltip:SetCraftSpell(index)
+
+        local _, spellID = tooltip:GetSpell()
+
+        local info = LibTradeSkillRecipes:GetInfoBySpellId(spellID)
+
+        if info and info[1] then
+            local expansion = info[1].expansionId;
+            if type(expansion) ~= 'number' then expansion = -1 end
+            return expansion;
+        end
+    end
+
+    return -1;
 end
 
 function DFProfessionMixin:UpdateRecipe(id)
@@ -1755,6 +1815,13 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         frame.SkillName:SetText(skillName)
         frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+
+        if not DF.API.Version.IsClassic then
+            --
+            local expansion = self:GetRecipeExpansion(id);
+            frame.SkillName:SetText((skillName or '') .. " E:" .. expansion)
+            frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+        end
 
         local quality = self:GetRecipeQuality(id)
         local r, g, b, hex = C_Item.GetItemQualityColor(quality)
