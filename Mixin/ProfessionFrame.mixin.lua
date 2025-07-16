@@ -19,7 +19,11 @@ function DFProfessionMixin:OnLoad()
 
     self:SetupFrameStyle()
     self:SetupSchematics()
-    self:SetupDropdown()
+    if DF.API.Version.IsMoP then
+        self:SetupDropdownMists()
+    else
+        self:SetupDropdown()
+    end
     self:SetupTabs()
     self:SetupFavorite()
     self:Minimize(self.minimized)
@@ -766,6 +770,107 @@ function DFProfessionMixin:SetupDropdown()
                 end
             end
 
+        end
+    end
+    drop:SetupMenu(generator)
+end
+
+function DFProfessionMixin:SetupDropdownMists()
+    local drop = self.RecipeList.FilterButton
+    drop.Text:SetPoint('TOP', drop, 'TOP', 0, 0)
+
+    local generator = function(dropdown, rootDescription)
+        rootDescription:SetTag("MENU_PROFESSIONS_FILTER");
+        -- rootDescription:CreateTitle('TITLETEST')
+
+        -- DFFilter_HasSkillUp
+        do
+            local function IsSelected()
+                return DFFilter['DFFilter_HasSkillUp'].enabled;
+            end
+
+            local function SetChecked(checked)
+                if checked then
+                    DFFilter['DFFilter_HasSkillUp'].enabled = true
+                    DFFilter['DFFilter_HasSkillUp'].filter = {easy = true, medium = true, optimal = true}
+                else
+                    DFFilter['DFFilter_HasSkillUp'].enabled = false
+                    DFFilter['DFFilter_HasSkillUp'].filter = DFFilter['DFFilter_HasSkillUp'].filterDefault
+                end
+            end
+
+            rootDescription:CreateCheckbox(L["ProfessionFrameHasSkillUp"], IsSelected, function()
+                SetChecked(not DFFilter['DFFilter_HasSkillUp'].enabled)
+                self:UpdateRecipeList()
+                self:CheckFilter()
+            end);
+        end
+
+        -- DFFilter_HaveMaterials
+        do
+            local function IsSelected()
+                return DFFilter['DFFilter_HaveMaterials'].enabled;
+            end
+
+            local function SetChecked(checked)
+                if checked then
+                    DFFilter['DFFilter_HaveMaterials'].enabled = true
+                else
+                    DFFilter['DFFilter_HaveMaterials'].enabled = false
+                end
+            end
+
+            rootDescription:CreateCheckbox(L["ProfessionFrameHasMaterials"], IsSelected, function()
+                SetChecked(not DFFilter['DFFilter_HaveMaterials'].enabled)
+                self:UpdateRecipeList()
+                self:CheckFilter()
+            end);
+        end
+
+        rootDescription:CreateDivider();
+
+        -- slots
+        do
+            local function IsSlotChecked(filterIndex)
+                return GetTradeSkillInvSlotFilter(filterIndex) == 1;
+            end
+
+            local function SetSlotChecked(filterIndex)
+                if (IsSlotChecked(filterIndex)) then
+                    SetTradeSkillInvSlotFilter(filterIndex, 0, 1);
+                else
+                    SetTradeSkillInvSlotFilter(filterIndex, 1, 1);
+                end
+                self:UpdateRecipeList()
+                self:CheckFilter()
+            end
+
+            local slotsSubmenu = rootDescription:CreateButton(TRADESKILL_FILTER_SLOTS);
+            for filterIndex, name in ipairs({GetTradeSkillInvSlots()}) do
+                slotsSubmenu:CreateCheckbox(name, IsSlotChecked, SetSlotChecked, filterIndex);
+            end
+
+        end
+        -- category
+        do
+            local function IsSubClassSelected(filterIndex)
+                return GetTradeSkillSubClassFilter(filterIndex) == 1;
+            end
+
+            local function SetSubClassSelected(filterIndex)
+                local on = 1;
+                if (IsSubClassSelected(filterIndex)) then on = 0; end
+                SetTradeSkillSubClassFilter(filterIndex, on, 0);
+                self:UpdateRecipeList()
+                self:CheckFilter()
+            end
+
+            local subClassSubmenu = rootDescription:CreateButton(TRADESKILL_FILTER_CATEGORY);
+            for index, name in ipairs({GetTradeSkillSubClasses()}) do
+                if (name ~= "") then
+                    subClassSubmenu:CreateCheckbox(name, IsSubClassSelected, SetSubClassSelected, index);
+                end
+            end
         end
     end
     drop:SetupMenu(generator)

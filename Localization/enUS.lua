@@ -521,7 +521,7 @@ do
                                                    "Spell Penetration %d \n(Reduces enemy resistances by %d)."
 
     -- ProfessionFrame
-    L["ProfessionFrameHasSkillUp"] = "Has skill up"
+    L["ProfessionFrameHasSkillUp"] = TRADESKILL_FILTER_HAS_SKILL_UP or "Has skill up"
     L["ProfessionFrameHasMaterials"] = CRAFT_IS_MAKEABLE
     L["ProfessionFrameSubclass"] = "Subclass"
     L["ProfessionFrameSlot"] = "Slot"
