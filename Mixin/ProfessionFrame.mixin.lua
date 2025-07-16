@@ -1633,7 +1633,8 @@ function DFProfessionMixin:GetRecipeQuality(index)
     if not itemId or itemId == "" then return 1; end
 
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
-          itemTexture, itemSellPrice, classID = C_Item.GetItemInfo(link)
+          itemTexture, itemSellPrice, classID, subclassID, bindType, expansionID, setID, isCraftingReagent =
+        C_Item.GetItemInfo(link)
     if not itemLevel or not itemId then return 1 end
 
     return itemRarity
@@ -1650,7 +1651,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         frame.SkillName:SetText(skillName)
         frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
 
-        local quality = DFProfessionMixin:GetRecipeQuality(id)
+        local quality = self:GetRecipeQuality(id)
         local r, g, b, hex = C_Item.GetItemQualityColor(quality)
         frame.SkillName:SetTextColor(r, g, b)
 
@@ -1831,7 +1832,7 @@ function DFProfessionMixin:UpdateRecipe(id)
         end
         frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
 
-        local quality = DFProfessionMixin:GetRecipeQuality(id)
+        local quality = self:GetRecipeQuality(id)
         local r, g, b, hex = C_Item.GetItemQualityColor(quality)
         frame.SkillName:SetTextColor(r, g, b)
 
