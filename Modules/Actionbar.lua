@@ -1006,6 +1006,13 @@ local function GetBarOption(n)
 
     -- if n > 5 then opt.args.hideAlways.editmode = true; end
 
+    -- @HACK TODO
+    if n == 4 then
+        opt.name = L["ActionbarNameFormat"]:format(5)
+    elseif n == 5 then
+        opt.name = L["ActionbarNameFormat"]:format(4)
+    end
+
     return opt
 end
 local function GetBarExtraOptions(n)
@@ -2424,7 +2431,14 @@ end
 
 function Module:RegisterOptionScreens()
     for i = 1, 8 do
-        local optionsBar = GetBarOption(i)
+        local optionsBar
+        if i == 4 then
+            optionsBar = GetBarOption(5)
+        elseif i == 5 then
+            optionsBar = GetBarOption(4)
+        else
+            optionsBar = GetBarOption(i)
+        end
         DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
             options = optionsBar,
             default = function()
