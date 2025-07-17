@@ -1976,8 +1976,8 @@ function DFProfessionMixin:UpdateRecipe(id)
         end
         self.CreateButton:Show();
 
-        -- self.InputBox:SetNumber(GetTradeskillRepeatCount());
-        self.InputBox:SetNumber(1);
+        self.InputBox:SetNumber(GetTradeskillRepeatCount() or 1);
+        -- self.InputBox:SetNumber(1);
 
         if (altVerb) then
             self.CreateAllButton:Hide();
