@@ -1798,6 +1798,8 @@ function DFProfessionMixin:GetRecipeExpansion(index)
     local tooltip = self.ScanningTooltip
 
     if self.TradeSkillOpen then
+        local numSkills = GetNumTradeSkills()
+        if index > numSkills then return -1; end
         tooltip:SetTradeSkillItem(index)
 
         local _, link = tooltip:GetItem()
