@@ -1790,6 +1790,28 @@ function DFProfessionMixin:GetRecipeQuality(index)
     return itemRarity, itemId
 end
 
+function DFProfessionMixin:IsRecipeSpell(index)
+    if not index or index == 0 then return 1 end
+
+    local tooltip = self.ScanningTooltip
+
+    if self.TradeSkillOpen then
+        tooltip:SetTradeSkillItem(index)
+
+        local _, spellID = tooltip:GetSpell()
+
+        if spellID then
+            return true
+        else
+            return false
+        end
+        -- elseif self.CraftOpen then
+        --     return false;
+    else
+        return false
+    end
+end
+
 ---returns expansionID, or -1 if not found
 ---@param index number
 ---@return number
@@ -1878,7 +1900,16 @@ function DFProfessionMixin:UpdateRecipe(id)
         end
 
         local quality = self:GetRecipeQuality(id)
-        local r, g, b, hex = C_Item.GetItemQualityColor(quality)
+        local r, g, b;
+        if quality == 1 then
+            if self:IsRecipeSpell(id) then
+                r, g, b = GameFontNormal:GetTextColor()
+            else
+                r, g, b = C_Item.GetItemQualityColor(quality)
+            end
+        else
+            r, g, b = C_Item.GetItemQualityColor(quality)
+        end
         frame.SkillName:SetTextColor(r, g, b)
 
         DragonflightUIItemColorMixin:UpdateOverlayQuality(frame.SkillIcon, quality)
