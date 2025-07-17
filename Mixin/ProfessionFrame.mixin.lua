@@ -429,6 +429,7 @@ function DFProfessionMixin:SetupFrameStyle()
         trainingFrame:Hide()
     end
 
+    if _G['TradeSkillHighlightFrame'] then _G['TradeSkillHighlightFrame']:SetAlpha(0) end
 end
 
 function DFProfessionMixin:UpdateTrainingPoints()
@@ -777,6 +778,9 @@ function DFProfessionMixin:SetupDropdown()
             end
 
         end
+
+        -- expansions
+        self:AddExpansionDropdownFilter(rootDescription);
     end
     drop:SetupMenu(generator)
 end
@@ -878,8 +882,36 @@ function DFProfessionMixin:SetupDropdownMists()
                 end
             end
         end
+
+        -- expansions
+        self:AddExpansionDropdownFilter(rootDescription);
     end
     drop:SetupMenu(generator)
+end
+
+function DFProfessionMixin:AddExpansionDropdownFilter(rootDescription)
+    if DF.API.Version.IsClassic then return end
+
+    rootDescription:CreateDivider();
+
+    local currentExpansion = GetExpansionLevel()
+
+    for i = 0, currentExpansion do
+        --
+        local function IsSelected()
+            return (DFFilter['DFFilter_Expansion'].filter)[i]
+        end
+
+        local function SetChecked(checked)
+            (DFFilter['DFFilter_Expansion'].filter)[i] = checked;
+        end
+
+        rootDescription:CreateCheckbox(_G["EXPANSION_NAME" .. i], IsSelected, function()
+            SetChecked(not (DFFilter['DFFilter_Expansion'].filter)[i])
+            self:UpdateRecipeList()
+            self:CheckFilter()
+        end);
+    end
 end
 
 function DFProfessionMixin:SetupTabs()
@@ -2210,8 +2242,21 @@ function DFProfessionMixin:UpdateRecipe(id)
 end
 
 function DFProfessionMixin:ResetFilter()
+    -- print('ResetFilter')
     DFFilter['DFFilter_HasSkillUp'].enabled = false
     DFFilter['DFFilter_HaveMaterials'].enabled = false
+
+    if DFFilter['DFFilter_Expansion'] then
+        -- print('DFFilter_Expansion')
+        local filter = DFFilter['DFFilter_Expansion'].filter;
+        local filterDefault = DFFilter['DFFilter_Expansion'].filterDefault;
+        for k, v in pairs(filterDefault) do
+            -- print(k, v);
+            filter[k] = true;
+        end
+        -- DevTools_Dump(filter)
+    end
+
     SetTradeSkillSubClassFilter(0, true, 1)
     SetTradeSkillInvSlotFilter(0, true, 1)
 
@@ -2227,6 +2272,17 @@ function DFProfessionMixin:AreFilterDefault()
 
     if DFFilter['DFFilter_HasSkillUp'].enabled then return false end
     if DFFilter['DFFilter_HaveMaterials'].enabled then return false end
+
+    if DFFilter['DFFilter_Expansion'] then
+        --
+        for k, v in pairs(DFFilter['DFFilter_Expansion'].filter) do
+            --
+            if v == false then
+                --
+                return false;
+            end
+        end
+    end
 
     return true
 end
@@ -2372,6 +2428,33 @@ do
     end
 
     DFFilter['DFFilter_Searchbox'] = {name = 'DFFilter_Searchbox', func = DFFilter_Searchbox, enabled = true}
+end
+
+-- expansion
+if not DF.API.Version.IsClassic then
+    local DFFilter_Expansion = function(elementData)
+        local expansion = elementData.expansion
+        local filter = DFFilter['DFFilter_Expansion'].filter
+
+        -- print('DFFilter_Expansion', elementData.expansion, filter[expansion])
+
+        if expansion == -1 then return true; end
+
+        if filter[expansion] then
+            return true
+        else
+            return false
+        end
+    end
+
+    DFFilter['DFFilter_Expansion'] = {
+        name = 'DFFilter_Expansion',
+        filterDefault = {[0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true},
+        filter = {},
+        func = DFFilter_Expansion,
+        enabled = true
+    }
+    DFFilter['DFFilter_Expansion'].filter = DFFilter['DFFilter_Expansion'].filterDefault
 end
 
 ------------------------------
@@ -2532,6 +2615,8 @@ end
 function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     local dataProvider = CreateTreeDataProvider();
 
+    local parent = self:GetParent();
+
     local filterTable = DFFilter
     local numSkills = GetNumTradeSkills()
     local headerID = 0
@@ -2550,7 +2635,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
             headerID = i
         else
             -- print('--', skillName)
-            local isFavorite = self:GetParent():IsRecipeFavorite(skillName)
+            local isFavorite = parent:IsRecipeFavorite(skillName)
 
             local data = {
                 id = i,
@@ -2565,6 +2650,12 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                     numSkills = numSkills
                 }
             }
+
+            if not DF.API.Version.IsClassic then
+                --
+                local expansion = parent:GetRecipeExpansion(i);
+                data.expansion = expansion;
+            end
 
             local filtered = true
 
