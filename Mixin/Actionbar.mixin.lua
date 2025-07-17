@@ -460,11 +460,28 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         ]=])
         handler:SetAttribute("state-page", result)
     elseif mode == 'NOPAGING' then
+        local driverTable = {}
+        -- 
+        tinsert(driverTable, "[overridebar][possessbar]possess")
+        tinsert(driverTable, "1")
+
+        local driver = table.concat(driverTable, ';')
+        local result, target = SecureCmdOptionParse(driver)
+
         for i, btn in ipairs(self.buttonTable) do
             --
             btn:SetAttribute("useparent-actionpage", false);
             btn:SetAttribute("actionpage", 1);
         end
+
+        -- Register the init value
+        handler:SetAttribute("actionpage", result)
+
+        RegisterStateDriver(handler, "page", driver)
+
+        handler:SetAttribute("_onstate-page", [=[
+            handler:Run(UpdateMainActionBar, newstate)
+        ]=])
     end
 end
 
