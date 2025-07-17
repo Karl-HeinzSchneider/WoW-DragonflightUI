@@ -233,7 +233,10 @@ do
     L["ButtonTableOrientation"] = "Orientation"
     L["ButtonTableOrientationDesc"] = "Orientation"
     L["ButtonTableGrowthDirection"] = "Growth Direction"
-    L["ButtonTableGrowthDirectionDesc"] = ""
+    L["ButtonTableGrowthDirectionDesc"] =
+        "Sets the direction in which the bar 'grows' when using multiple rows(/columns)."
+    L["ButtonTableFlyoutDirection"] = "Flyout Direction"
+    L["ButtonTableFlyoutDirectionDesc"] = "Sets the direction of SpellFlyout."
     L["ButtonTableReverseButtonOrder"] = "Reverse Button Order"
     L["ButtonTableReverseButtonOrderDesc"] = ""
     L["ButtonTableNumRows"] = "Number of Rows"

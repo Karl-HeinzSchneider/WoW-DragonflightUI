@@ -32,6 +32,13 @@ DF.Settings.OrientationTable = {
     {value = 'vertical', text = 'Vertical', tooltip = 'descr', label = 'label'}
 }
 
+DF.Settings.FlyoutDirectionTable = {
+    {value = 'UP', text = 'Up', tooltip = 'descr', label = 'label'},
+    {value = 'RIGHT', text = 'Right', tooltip = 'descr', label = 'label'},
+    {value = 'DOWN', text = 'Down', tooltip = 'descr', label = 'label'},
+    {value = 'LEFT', text = 'Left', tooltip = 'descr', label = 'label'}
+}
+
 DF.Settings.GrowthDirectionTable = {
     {value = 'up', text = 'Up', tooltip = 'descr', label = 'label'},
     {value = 'down', text = 'Down', tooltip = 'descr', label = 'label'}

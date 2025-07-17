@@ -31,6 +31,7 @@ local defaults = {
             y = 10,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
@@ -75,6 +76,7 @@ local defaults = {
             y = 0,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
@@ -113,6 +115,7 @@ local defaults = {
             y = 0,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
@@ -150,6 +153,7 @@ local defaults = {
             x = -64,
             y = 0,
             orientation = 'horizontal',
+            flyoutDirection = 'UP',
             growthDirection = 'up',
             reverse = false,
             buttonScale = 0.8,
@@ -188,6 +192,7 @@ local defaults = {
             y = 0,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 3,
@@ -225,6 +230,7 @@ local defaults = {
             y = 0,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
@@ -262,6 +268,7 @@ local defaults = {
             y = 0,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
@@ -299,6 +306,7 @@ local defaults = {
             y = 0,
             orientation = 'horizontal',
             growthDirection = 'up',
+            flyoutDirection = 'UP',
             reverse = false,
             buttonScale = 0.8,
             rows = 1,
@@ -733,6 +741,16 @@ function AddButtonTable(optionTable, sub)
             new = true,
             editmode = true
         },
+        flyoutDirection = {
+            type = 'select',
+            name = L["ButtonTableFlyoutDirection"],
+            desc = L["ButtonTableFlyoutDirectionDesc"] .. getDefaultStr('flyoutDirection', sub),
+            dropdownValues = DF.Settings.FlyoutDirectionTable,
+            order = 7.2,
+            group = 'headerButtons',
+            new = true,
+            editmode = true
+        },
         reverse = {
             type = 'toggle',
             name = L["ButtonTableReverseButtonOrder"],
@@ -840,6 +858,8 @@ function AddButtonTable(optionTable, sub)
             editmode = true
         }
     }
+
+    if DF.API.Version.IsEra or DF.API.Version.IsTBC then extraOptions['flyoutDirection'] = nil; end
 
     for k, v in pairs(extraOptions) do
         --

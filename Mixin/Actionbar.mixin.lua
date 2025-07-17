@@ -195,6 +195,12 @@ function DragonflightUIActionbarMixin:Update()
                 btn:SetPoint(anchor, self, anchor, dy, sgn * dx)
             end
 
+            if state.flyoutDirection == 'UP' then
+                btn:UpdateFlyoutDirection(nil)
+            else
+                btn:UpdateFlyoutDirection(state.flyoutDirection)
+            end
+
             -- btn:GetAttribute("showgrid") can be nil
             -- if state.alwaysShow then
             -- if btn:GetAttribute("showgrid") then
@@ -926,8 +932,9 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
 
     function btn:UpdateFlyoutDirection(dir)
         btn:SetAttribute("flyoutDirection", dir);
+        if self.action then ActionButton_UpdateFlyout(btn); end
     end
-    btn:UpdateFlyoutDirection(nil)
+    btn:UpdateFlyoutDirection(nil);
 
     btn.DragonflightFixHotkeyPosition = function()
         local hotkey = _G[btnName .. 'HotKey']
