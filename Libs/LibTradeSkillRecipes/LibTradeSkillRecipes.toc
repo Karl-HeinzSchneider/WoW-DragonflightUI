@@ -1,0 +1,11 @@
+## Interface: 100107
+## Title: LibTradeSkillRecipes
+## Notes: Library providing mappings between trade skills, recipes, spells, items, and enchantments.
+## Author: spags
+## Version: v15
+## X-Date: 2024-02-22T07:02:35Z
+## X-Curse-Project-ID: 911126
+## X-Category: Library
+
+LibStub\LibStub.lua
+lib-retail.xml

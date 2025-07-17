@@ -1,5 +1,7 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+local LibTradeSkillRecipes = LibStub("LibTradeSkillRecipes-1")
+
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 local CreateColor = DFCreateColor;
@@ -16,6 +18,10 @@ function DFProfessionMixin:OnLoad()
     self.ProfessionTable = {}
     self.SelectedProfession = ''
     self.SelectedSkillID = ''
+
+    local tt = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
+    tt:SetOwner(WorldFrame, "ANCHOR_NONE");
+    self.ScanningTooltip = tt
 
     self:SetupFrameStyle()
     self:SetupSchematics()
@@ -423,6 +429,7 @@ function DFProfessionMixin:SetupFrameStyle()
         trainingFrame:Hide()
     end
 
+    if _G['TradeSkillHighlightFrame'] then _G['TradeSkillHighlightFrame']:SetAlpha(0) end
 end
 
 function DFProfessionMixin:UpdateTrainingPoints()
@@ -501,6 +508,19 @@ function DFProfessionMixin:SetupSchematics()
     -- name:SetPoint('LEFT', icon, 'RIGHT', 14, 17)
     name:SetPoint('TOPLEFT', icon, 'TOPRIGHT', 14, 0)
     frame.SkillName = name
+
+    if not DF.API.Version.IsClassic then
+        local expansion = frame:CreateFontString('DragonflightUIProfession' .. 'ExpansionName', 'BACKGROUND',
+                                                 'GameFontNormalSmall')
+        expansion:SetSize(244, 14)
+        expansion:SetText('')
+        expansion:SetJustifyH('LEFT')
+        -- expansion:SetJustifyH('RIGHT')
+        -- expansion:SetPoint('BOTTOMLEFT', icon, 'TOPLEFT', 0, 2)
+        expansion:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 7, 4)
+        -- expansion:SetPoint('LEFT', self.FavoriteButton, 'RIGHT', 4, 0)
+        frame.ExpansionName = expansion
+    end
 
     local req = frame:CreateFontString('DragonflightUIProfession' .. 'RequirementLabel', 'BACKGROUND',
                                        'GameFontHighlightSmall')
@@ -771,6 +791,9 @@ function DFProfessionMixin:SetupDropdown()
             end
 
         end
+
+        -- expansions
+        self:AddExpansionDropdownFilter(rootDescription);
     end
     drop:SetupMenu(generator)
 end
@@ -872,8 +895,36 @@ function DFProfessionMixin:SetupDropdownMists()
                 end
             end
         end
+
+        -- expansions
+        self:AddExpansionDropdownFilter(rootDescription);
     end
     drop:SetupMenu(generator)
+end
+
+function DFProfessionMixin:AddExpansionDropdownFilter(rootDescription)
+    if DF.API.Version.IsClassic then return end
+
+    rootDescription:CreateDivider();
+
+    local currentExpansion = GetExpansionLevel()
+
+    for i = 0, currentExpansion do
+        --
+        local function IsSelected()
+            return (DFFilter['DFFilter_Expansion'].filter)[i]
+        end
+
+        local function SetChecked(checked)
+            (DFFilter['DFFilter_Expansion'].filter)[i] = checked;
+        end
+
+        rootDescription:CreateCheckbox(_G["EXPANSION_NAME" .. i], IsSelected, function()
+            SetChecked(not (DFFilter['DFFilter_Expansion'].filter)[i])
+            self:UpdateRecipeList()
+            self:CheckFilter()
+        end);
+    end
 end
 
 function DFProfessionMixin:SetupTabs()
@@ -1708,12 +1759,6 @@ function DFProfessionMixin:UpdateHeader()
 end
 
 function DFProfessionMixin:GetRecipeQuality(index)
-    if not self.ScanningTooltip then
-        local tt = CreateFrame("GameTooltip", "DragonflightUIScanningTooltip", nil, "GameTooltipTemplate")
-        tt:SetOwner(WorldFrame, "ANCHOR_NONE");
-        self.ScanningTooltip = tt
-    end
-
     if not index or index == 0 then return 1 end
 
     local tooltip = self.ScanningTooltip
@@ -1742,7 +1787,69 @@ function DFProfessionMixin:GetRecipeQuality(index)
         C_Item.GetItemInfo(link)
     if not itemLevel or not itemId then return 1 end
 
-    return itemRarity
+    return itemRarity, itemId
+end
+
+---returns expansionID, or -1 if not found
+---@param index number
+---@return number
+function DFProfessionMixin:GetRecipeExpansion(index)
+    if not index or index == 0 then return -1 end
+    local tooltip = self.ScanningTooltip
+
+    if self.TradeSkillOpen then
+        local numSkills = GetNumTradeSkills()
+        if index > numSkills then return -1; end
+        tooltip:SetTradeSkillItem(index)
+
+        local _, link = tooltip:GetItem()
+        local _, spellID = tooltip:GetSpell()
+
+        local info;
+        if link then
+            -- print('~~ITEM')
+
+            local itemString = string.match(link, "item[%-?%d:]+")
+            if not itemString then return -1; end
+
+            local _, itemIdStr = strsplit(":", itemString)
+            local itemId = tonumber(itemIdStr)
+            if not itemId or itemId == "" then return -1; end
+
+            info = LibTradeSkillRecipes:GetInfoByItemId(itemId)
+
+        elseif spellID then
+            -- print('~~SPELL')
+            info = LibTradeSkillRecipes:GetInfoBySpellId(spellID)
+        end
+
+        if not info then return -1 end
+
+        local expansion;
+
+        if info[1] then
+            expansion = info[1].expansionId;
+        elseif info.expansionId then
+            expansion = info.expansionId;
+        end
+
+        if type(expansion) ~= 'number' then expansion = -1 end
+        return expansion
+    elseif self.CraftOpen then
+        tooltip:SetCraftSpell(index)
+
+        local _, spellID = tooltip:GetSpell()
+
+        local info = LibTradeSkillRecipes:GetInfoBySpellId(spellID)
+
+        if info and info[1] then
+            local expansion = info[1].expansionId;
+            if type(expansion) ~= 'number' then expansion = -1 end
+            return expansion;
+        end
+    end
+
+    return -1;
 end
 
 function DFProfessionMixin:UpdateRecipe(id)
@@ -1755,6 +1862,20 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         frame.SkillName:SetText(skillName)
         frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+
+        if not DF.API.Version.IsClassic then
+            --
+            local expansion = self:GetRecipeExpansion(id);
+            -- frame.SkillName:SetText((skillName or '') .. " E:" .. expansion)
+            -- frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+            if expansion == -1 then
+                frame.ExpansionName:Hide()
+            else
+                frame.ExpansionName:Show()
+                local txt = string.format(L["ProfessionExpansionFormat"], _G["EXPANSION_NAME" .. expansion])
+                frame.ExpansionName:SetText(txt)
+            end
+        end
 
         local quality = self:GetRecipeQuality(id)
         local r, g, b, hex = C_Item.GetItemQualityColor(quality)
@@ -1837,13 +1958,13 @@ function DFProfessionMixin:UpdateRecipe(id)
 
                 local function UpdateTooltip(self)
                     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
-                    GameTooltip:SetTradeSkillItem(id, self:GetID());
+                    GameTooltip:SetTradeSkillItem(id, i);
                     CursorUpdate(self);
                 end
                 reagent:SetScript('OnEnter', UpdateTooltip)
 
                 local function OnClick(self)
-                    HandleModifiedItemClick(GetTradeSkillReagentItemLink(id, self:GetID()));
+                    HandleModifiedItemClick(GetTradeSkillReagentItemLink(id, i));
                 end
                 reagent:SetScript('OnClick', OnClick)
 
@@ -1852,6 +1973,8 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         for i = numReagents + 1, MAX_TRADE_SKILL_REAGENTS do
             local reagent = frame.ReagentTable[i]
+            reagent:SetScript('OnEnter', nil)
+            reagent:SetScript('OnClick', nil)
             reagent:Hide()
         end
 
@@ -1877,8 +2000,8 @@ function DFProfessionMixin:UpdateRecipe(id)
         end
         self.CreateButton:Show();
 
-        -- self.InputBox:SetNumber(GetTradeskillRepeatCount());
-        self.InputBox:SetNumber(1);
+        self.InputBox:SetNumber(GetTradeskillRepeatCount() or 1);
+        -- self.InputBox:SetNumber(1);
 
         if (altVerb) then
             self.CreateAllButton:Hide();
@@ -2143,8 +2266,21 @@ function DFProfessionMixin:UpdateRecipe(id)
 end
 
 function DFProfessionMixin:ResetFilter()
+    -- print('ResetFilter')
     DFFilter['DFFilter_HasSkillUp'].enabled = false
     DFFilter['DFFilter_HaveMaterials'].enabled = false
+
+    if DFFilter['DFFilter_Expansion'] then
+        -- print('DFFilter_Expansion')
+        local filter = DFFilter['DFFilter_Expansion'].filter;
+        local filterDefault = DFFilter['DFFilter_Expansion'].filterDefault;
+        for k, v in pairs(filterDefault) do
+            -- print(k, v);
+            filter[k] = true;
+        end
+        -- DevTools_Dump(filter)
+    end
+
     SetTradeSkillSubClassFilter(0, true, 1)
     SetTradeSkillInvSlotFilter(0, true, 1)
 
@@ -2160,6 +2296,17 @@ function DFProfessionMixin:AreFilterDefault()
 
     if DFFilter['DFFilter_HasSkillUp'].enabled then return false end
     if DFFilter['DFFilter_HaveMaterials'].enabled then return false end
+
+    if DFFilter['DFFilter_Expansion'] then
+        --
+        for k, v in pairs(DFFilter['DFFilter_Expansion'].filter) do
+            --
+            if v == false then
+                --
+                return false;
+            end
+        end
+    end
 
     return true
 end
@@ -2305,6 +2452,33 @@ do
     end
 
     DFFilter['DFFilter_Searchbox'] = {name = 'DFFilter_Searchbox', func = DFFilter_Searchbox, enabled = true}
+end
+
+-- expansion
+if not DF.API.Version.IsClassic then
+    local DFFilter_Expansion = function(elementData)
+        local expansion = elementData.expansion
+        local filter = DFFilter['DFFilter_Expansion'].filter
+
+        -- print('DFFilter_Expansion', elementData.expansion, filter[expansion])
+
+        if expansion == -1 then return true; end
+
+        if filter[expansion] then
+            return true
+        else
+            return false
+        end
+    end
+
+    DFFilter['DFFilter_Expansion'] = {
+        name = 'DFFilter_Expansion',
+        filterDefault = {[0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true},
+        filter = {},
+        func = DFFilter_Expansion,
+        enabled = true
+    }
+    DFFilter['DFFilter_Expansion'].filter = DFFilter['DFFilter_Expansion'].filterDefault
 end
 
 ------------------------------
@@ -2465,6 +2639,8 @@ end
 function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     local dataProvider = CreateTreeDataProvider();
 
+    local parent = self:GetParent();
+
     local filterTable = DFFilter
     local numSkills = GetNumTradeSkills()
     local headerID = 0
@@ -2483,7 +2659,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
             headerID = i
         else
             -- print('--', skillName)
-            local isFavorite = self:GetParent():IsRecipeFavorite(skillName)
+            local isFavorite = parent:IsRecipeFavorite(skillName)
 
             local data = {
                 id = i,
@@ -2498,6 +2674,12 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                     numSkills = numSkills
                 }
             }
+
+            if not DF.API.Version.IsClassic then
+                --
+                local expansion = parent:GetRecipeExpansion(i);
+                data.expansion = expansion;
+            end
 
             local filtered = true
 

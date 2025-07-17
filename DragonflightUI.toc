@@ -36,6 +36,7 @@ Libs\LibDBIcon-1.0\lib.xml
 Libs\LibQuestXP\LibQuestXP-Classic.xml
 Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
 Libs\TaintLess\TaintLess.xml
+Libs\LibTradeSkillRecipes\lib.xml
 
 Embed\AuraDurations\AuraDurations_embed.xml
 

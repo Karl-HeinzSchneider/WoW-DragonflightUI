@@ -528,6 +528,7 @@ do
     L["ProfessionCheckAll"] = "Check All"
     L["ProfessionUnCheckAll"] = "Uncheck All"
     L["ProfessionFavorites"] = "Favorites"
+    L["ProfessionExpansionFormat"] = "|cFFFFFFFFRecipe from|r %s"
 end
 
 -- Tooltip
