@@ -509,6 +509,19 @@ function DFProfessionMixin:SetupSchematics()
     name:SetPoint('TOPLEFT', icon, 'TOPRIGHT', 14, 0)
     frame.SkillName = name
 
+    if not DF.API.Version.IsClassic then
+        local expansion = frame:CreateFontString('DragonflightUIProfession' .. 'ExpansionName', 'BACKGROUND',
+                                                 'GameFontNormalSmall')
+        expansion:SetSize(244, 14)
+        expansion:SetText('')
+        expansion:SetJustifyH('LEFT')
+        -- expansion:SetJustifyH('RIGHT')
+        -- expansion:SetPoint('BOTTOMLEFT', icon, 'TOPLEFT', 0, 2)
+        expansion:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 7, 4)
+        -- expansion:SetPoint('LEFT', self.FavoriteButton, 'RIGHT', 4, 0)
+        frame.ExpansionName = expansion
+    end
+
     local req = frame:CreateFontString('DragonflightUIProfession' .. 'RequirementLabel', 'BACKGROUND',
                                        'GameFontHighlightSmall')
     req:SetPoint('TOPLEFT', name, 'BOTTOMLEFT', 0, -4)
@@ -1851,8 +1864,15 @@ function DFProfessionMixin:UpdateRecipe(id)
         if not DF.API.Version.IsClassic then
             --
             local expansion = self:GetRecipeExpansion(id);
-            frame.SkillName:SetText((skillName or '') .. " E:" .. expansion)
-            frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+            -- frame.SkillName:SetText((skillName or '') .. " E:" .. expansion)
+            -- frame.SkillName:SetWidth(frame.SkillName:GetUnboundedStringWidth())
+            if expansion == -1 then
+                frame.ExpansionName:Hide()
+            else
+                frame.ExpansionName:Show()
+                local txt = string.format(L["ProfessionExpansionFormat"], _G["EXPANSION_NAME" .. expansion])
+                frame.ExpansionName:SetText(txt)
+            end
         end
 
         local quality = self:GetRecipeQuality(id)
@@ -1936,13 +1956,13 @@ function DFProfessionMixin:UpdateRecipe(id)
 
                 local function UpdateTooltip(self)
                     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
-                    GameTooltip:SetTradeSkillItem(id, self:GetID());
+                    GameTooltip:SetTradeSkillItem(id, i);
                     CursorUpdate(self);
                 end
                 reagent:SetScript('OnEnter', UpdateTooltip)
 
                 local function OnClick(self)
-                    HandleModifiedItemClick(GetTradeSkillReagentItemLink(id, self:GetID()));
+                    HandleModifiedItemClick(GetTradeSkillReagentItemLink(id, i));
                 end
                 reagent:SetScript('OnClick', OnClick)
 
@@ -1951,6 +1971,8 @@ function DFProfessionMixin:UpdateRecipe(id)
 
         for i = numReagents + 1, MAX_TRADE_SKILL_REAGENTS do
             local reagent = frame.ReagentTable[i]
+            reagent:SetScript('OnEnter', nil)
+            reagent:SetScript('OnClick', nil)
             reagent:Hide()
         end
 
