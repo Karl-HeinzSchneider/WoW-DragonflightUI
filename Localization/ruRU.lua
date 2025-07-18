@@ -176,9 +176,9 @@ do
     L["PositionTableAnchorDesc"] = "Якорь"
     L["PositionTableAnchorParent"] = "Родительский якорь"
     L["PositionTableAnchorParentDesc"] = ""
-    L["PositionTableAnchorFrame"] = "Рамка якора"
+    L["PositionTableAnchorFrame"] = "Рамка якоря"
     L["PositionTableAnchorFrameDesc"] = ""
-    L["PositionTableCustomAnchorFrame"] = "Рамка якора (пользовательская)"
+    L["PositionTableCustomAnchorFrame"] = "Рамка якоря (пользовательская)"
     L["PositionTableCustomAnchorFrameDesc"] =
         "Используйте эту именованную рамку как якорь (если она действительна). Например, 'CharacterFrame', 'TargetFrame'..."
     L["PositionTableX"] = "X"
@@ -275,7 +275,7 @@ do
     L["ExtraOptionsPreset"] = "Предустановка"
     L["ExtraOptionsResetToDefaultPosition"] = "Сбросить на стандартную позицию"
     L["ExtraOptionsPresetDesc"] =
-        "Устанавливает масштаб, якорь, родительский якорь, рамку якора, X и Y на значения выбранной предустановки, но не изменяет другие настройки."
+        "Устанавливает масштаб, якорь, родительский якорь, рамку якоря, X и Y на значения выбранной предустановки, но не изменяет другие настройки."
     L["ExtraOptionsModernLayout"] = "Современный макет (по умолчанию)"
     L["ExtraOptionsModernLayoutDesc"] = ""
     L["ExtraOptionsClassicLayout"] = "Классический макет (боковая панель)"
