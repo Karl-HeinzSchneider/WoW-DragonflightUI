@@ -1822,7 +1822,14 @@ function DFProfessionMixin:GetRecipeExpansion(index)
     if self.TradeSkillOpen then
         local numSkills = GetNumTradeSkills()
         if index > numSkills then return -1; end
-        tooltip:SetTradeSkillItem(index)
+
+        local retOK, ret1 = pcall(function()
+            tooltip:SetTradeSkillItem(index)
+        end);
+        if not retOK then
+            -- print('ERR', index, numSkills)
+            return -1
+        end
 
         local _, link = tooltip:GetItem()
         local _, spellID = tooltip:GetSpell()
