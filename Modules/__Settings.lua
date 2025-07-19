@@ -44,6 +44,19 @@ DF.Settings.GrowthDirectionTable = {
     {value = 'down', text = 'Down', tooltip = 'descr', label = 'label'}
 }
 
+DF.Settings.ModifierTable = {
+    {value = 'NONE', text = NONE_KEY, tooltip = 'descr', label = 'label'},
+    {value = 'ALT', text = ALT_KEY, tooltip = 'descr', label = 'label'},
+    {value = 'CTRL', text = CTRL_KEY, tooltip = 'descr', label = 'label'},
+    {value = 'SHIFT', text = SHIFT_KEY, tooltip = 'descr', label = 'label'}
+}
+
+DF.Settings.ModifierTableWithoutNone = {
+    {value = 'ALT', text = ALT_KEY, tooltip = 'descr', label = 'label'},
+    {value = 'CTRL', text = CTRL_KEY, tooltip = 'descr', label = 'label'},
+    {value = 'SHIFT', text = SHIFT_KEY, tooltip = 'descr', label = 'label'}
+}
+
 DF.Settings.ValidateFrame = function(t)
     if not t or t == '' then return false end
     local f = _G[t];

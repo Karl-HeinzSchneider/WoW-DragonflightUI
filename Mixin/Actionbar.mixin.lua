@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 DragonflightUIEditModeMixin = {}
 
@@ -487,7 +488,7 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
 end
 
 function DragonflightUIActionbarMixin:AddTargetStateDriver()
-    print('DragonflightUIActionbarMixin:AddTargetStateDriver()')
+    -- print('DragonflightUIActionbarMixin:AddTargetStateDriver()')
     local handler = CreateFrame("Frame", "DragonflightUIActionBarTargetHandler", self, "SecureHandlerStateTemplate")
     self.TargetStateDriver = handler;
 
@@ -603,6 +604,9 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
     for i, btn in ipairs(self.buttonTable) do
         --
         btn:SetAttribute('smarttarget', state.useMouseover or state.useAutoAssist);
+
+        btn:SetAttribute('checkselfcast', state.selfCast and true or nil);
+        btn:SetAttribute('checkfocuscast', state.focusCast and true or nil);
     end
 
     local preSelf = '';
@@ -651,6 +655,132 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
     SecureHandlerExecute(handler, [[
       --UpdateAllButtonStates()
     ]])
+end
+
+function DragonflightUIActionbarMixin:AddTargetStateTable(Module, opt, getDefaultStr)
+    local sub = opt.sub;
+
+    local extraOptions = {
+        headerTargetDriver = {
+            type = 'header',
+            name = L['ActionbarTargetDriverHeader'],
+            desc = '',
+            order = 30,
+            isExpanded = true,
+            editmode = true
+        },
+        useMouseover = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverUseMouseover'],
+            desc = L['ActionbarTargetDriverUseMouseoverDesc'] .. getDefaultStr('useMouseover', sub),
+            order = 110.1,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        mouseoverModifier = {
+            type = 'select',
+            name = L["ActionbarTargetDriverMouseOverModifier"],
+            desc = L["ActionbarTargetDriverMouseOverModifierDesc"] .. getDefaultStr('mouseoverModifier', sub),
+            dropdownValues = DF.Settings.ModifierTable,
+            order = 110.15,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        useAutoAssist = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverUseAutoAssist'],
+            desc = L['ActionbarTargetDriverUseAutoAssistDesc'] .. getDefaultStr('useAutoAssist', sub),
+            order = 115,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        focusCast = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverFocusCast'],
+            desc = L['ActionbarTargetDriverFocusCastDesc'] .. getDefaultStr('focusCast', sub),
+            order = 105.3,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        focusCastModifier = {
+            type = 'select',
+            name = L["ActionbarTargetDriverFocusCastModifier"],
+            desc = L["ActionbarTargetDriverFocusCastModifierDesc"],
+            dropdownValues = DF.Settings.ModifierTable,
+            order = 105.35,
+            group = 'headerTargetDriver',
+            blizzard = true,
+            editmode = true
+        },
+        selfCast = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverSelfCast'],
+            desc = L['ActionbarTargetDriverSelfCastDesc'] .. getDefaultStr('selfCast', sub),
+            order = 100.4,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        selfCastModifier = {
+            type = 'select',
+            name = L["ActionbarTargetDriverSelfCastModifier"],
+            desc = L["ActionbarTargetDriverSelfCastModifierDesc"],
+            dropdownValues = DF.Settings.ModifierTableWithoutNone,
+            order = 100.45,
+            group = 'headerTargetDriver',
+            blizzard = true,
+            editmode = true
+        }
+    }
+
+    local origGet = opt.get;
+    local origSet = opt.set;
+
+    local newGet = function(info)
+        local key = info[1]
+        local subKey = info[2]
+
+        if subKey == 'selfCastModifier' then
+            local value = GetModifiedClick("SELFCAST");
+            return value;
+        elseif subKey == 'focusCastModifier' then
+            local value = GetModifiedClick("FOCUSCAST");
+            return value;
+        end
+
+        return origGet(info)
+    end
+
+    local newSet = function(info, value)
+        local key = info[1]
+        local subKey = info[2]
+
+        if subKey == 'selfCastModifier' then
+            --
+            SetModifiedClick('SELFCAST', value)
+            return;
+        elseif subKey == 'focusCastModifier' then
+            --
+            SetModifiedClick('FOCUSCAST', value)
+            return;
+        end
+
+        origSet(info, value)
+    end
+
+    opt.get = newGet;
+    opt.set = newSet;
+
+    if DF.API.Version.IsEra then extraOptions.focusCast = nil; end
+
+    for k, v in pairs(extraOptions) do
+        --
+        opt.args[k] = v
+    end
 end
 
 function DragonflightUIActionbarMixin:AddGryphons()
