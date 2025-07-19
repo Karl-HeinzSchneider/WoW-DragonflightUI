@@ -611,13 +611,13 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
     local preFocus = '';
     if not DF.API.Version.IsEra and state.focusCast then preFocus = '[mod:FOCUSCAST,@focus,exists,nodead]focus;' end
 
-    local helpDriver, harmDriver, allDriver = '', '', '';
-
     local modifier = '';
     if state.mouseoverModifier and state.mouseoverModifier ~= 'NONE' then
         --
         modifier = ',mod:' .. state.mouseoverModifier;
     end
+
+    local helpDriver, harmDriver, allDriver = '', '', '';
 
     if state.useMouseover then
         helpDriver = string.format('[@mouseover,exists,help%s]mouseover;', modifier);
