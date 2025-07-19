@@ -50,6 +50,12 @@ local defaults = {
             shortenKeybind = false,
             useKeyDown = false,
             keybindFontSize = 16,
+            -- mouseover
+            useMouseover = true,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- state
             stateDriver = 'SMART',
             -- Visibility
@@ -2008,6 +2014,7 @@ function Module:SetupActionbarFrames()
     createStuff(1, 'ActionButton')
     Module.bar1:SetupMainBar()
     Module.bar1:AddPagingStateDriver()
+    Module.bar1:AddTargetStateDriver()
     createStuff(2, 'MultiBarBottomLeftButton')
     createStuff(3, 'MultiBarBottomRightButton')
     createStuff(4, 'MultiBarLeftButton')
