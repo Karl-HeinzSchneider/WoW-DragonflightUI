@@ -1247,6 +1247,7 @@ petOptions.args.scale = nil;
 petOptions.args.hideMacro = nil;
 petOptions.args.macroFontSize = nil;
 petOptions.args.buttons.max = 10;
+petOptions.args.flyoutDirection = nil;
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, petOptions, 'pet', 'PetBar', getDefaultStr)
 local optionsPetEdtimode = {
@@ -1473,6 +1474,7 @@ DF.Settings:AddPositionTable(Module, stanceOptions, 'stance', 'Stance Bar', getD
                              frameTableWithout('DragonflightUIStanceBar'))
 stanceOptions.args.scale = nil;
 stanceOptions.args.buttons.max = 10;
+stanceOptions.args.flyoutDirection = nil;
 
 DragonflightUIStateHandlerMixin:AddStateTable(Module, stanceOptions, 'stance', 'StanceBar', getDefaultStr)
 local optionsStanceEdtimode = {
