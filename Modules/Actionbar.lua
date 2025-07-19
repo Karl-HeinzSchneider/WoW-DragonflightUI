@@ -50,6 +50,12 @@ local defaults = {
             shortenKeybind = false,
             useKeyDown = false,
             keybindFontSize = 16,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- state
             stateDriver = 'SMART',
             -- Visibility
@@ -82,6 +88,12 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = true,
@@ -121,6 +133,12 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = true,
@@ -160,6 +178,12 @@ local defaults = {
             rows = 3,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = true,
@@ -198,6 +222,12 @@ local defaults = {
             rows = 3,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = true,
@@ -236,6 +266,12 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = false,
@@ -274,6 +310,12 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = false,
@@ -312,6 +354,12 @@ local defaults = {
             rows = 1,
             buttons = 12,
             padding = 2,
+            -- mouseover
+            useMouseover = false,
+            mouseoverModifier = 'NONE',
+            useAutoAssist = false,
+            focusCast = false,
+            selfCast = false,
             -- Style
             alwaysShow = true,
             activate = false,
@@ -1003,7 +1051,7 @@ local function GetBarOption(n)
 
     -- AddStateTable(opt, barname, 'Actionbar' .. n)
     DragonflightUIStateHandlerMixin:AddStateTable(Module, opt, barname, 'Actionbar' .. n, getDefaultStr)
-
+    DragonflightUIActionbarMixin:AddTargetStateTable(Module, opt, getDefaultStr)
     -- if n > 5 then opt.args.hideAlways.editmode = true; end
 
     -- @HACK TODO
@@ -2152,6 +2200,11 @@ function Module:SetupActionbarFrames()
         -- print('ActionButton_UpdateHotkeys')        
         if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
     end)
+
+    for i = 1, 8 do
+        local bar = Module['bar' .. i]
+        if bar then bar:AddTargetStateDriver() end
+    end
 
     do
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbar', UIParent, 'DragonflightUIPetbarFrameTemplate')

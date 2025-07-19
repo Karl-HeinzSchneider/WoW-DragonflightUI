@@ -223,6 +223,56 @@ do
     L['ActionbarDriverNameDesc'] =
         "Changes the paging behaviour of the main action bar, e.g. when changing stance or stealth.\n'Default' - no change\n'Smart' - adds custom page for Druid cat stealth\n'No Paging' - disables all paging"
 
+    -- targetStateDriver
+    L["ActionbarTargetDriverConditionalFormat"] = "\n\n(This is equivalent to the macro conditional: |cff8080ff%s|r)\n"
+    L["ActionbarTargetDriverMultipleConditionalFormat"] =
+        "\n\n(This is equivalent to the following macro conditional (depending on the |cfffffffftype|r of spell): %s)\n"
+
+    local function cond(str)
+        return string.format(L["ActionbarTargetDriverConditionalFormat"], str)
+    end
+
+    local function condMultiple(t)
+        local str = '';
+
+        for k, v in ipairs(t) do
+            --
+            str = string.format('%s%s', str, string.format('\n(|cffffffff%s|r) |cff8080ff%s|r', v.type, v.str))
+        end
+
+        return string.format(L["ActionbarTargetDriverMultipleConditionalFormat"], str)
+    end
+
+    L['ActionbarTargetDriverHeader'] = "Target Selection"
+    L['ActionbarTargetDriverUseMouseover'] = "Use Mouseover Casting"
+    L['ActionbarTargetDriverUseMouseoverDesc'] =
+        "When this is enabled, actionbuttons try to target the unit under the mouse cursor." .. condMultiple({
+            {type = 'help', str = '[@mouseover, exists, help, mod:XY]'},
+            {type = 'harm', str = '[@mouseover, nodead, exists, harm, mod:XY]'},
+            {type = 'both', str = '[@mouseover, nodead, exists, mod:XY]'}
+        })
+    L['ActionbarTargetDriverMouseOverModifier'] = "Mouseover Cast Key"
+    L['ActionbarTargetDriverMouseOverModifierDesc'] =
+        "When held this key will allow casting on the mouseover target, even if an enemy is targeted."
+    L['ActionbarTargetDriverUseAutoAssist'] = "Use Auto-Assist Casting"
+    L['ActionbarTargetDriverUseAutoAssistDesc'] =
+        "When this is enabled, actionbuttons try to automatically cast on your target's target if your current target is not valid for the selected spell." ..
+            condMultiple({
+                {type = 'help', str = '[help]target; [@targettarget, help]targettarget'},
+                {type = 'harm', str = '[harm]target; [@targettarget, harm]targettarget'}
+            })
+    L['ActionbarTargetDriverFocusCast'] = "Focus Cast"
+    L['ActionbarTargetDriverFocusCastDesc'] =
+        "When this is enabled (and 'Focus Cast Key' is set), actionbuttons try to target the focus target." ..
+            cond('[mod:FOCUSCAST, @focus, exists, nodead]')
+    L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "Focus Cast Key"
+    L['ActionbarTargetDriverFocusCastModifierDesc'] =
+        "When held this key will allow casting on the focus target, even if an enemy is targeted."
+    L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "Self Cast")
+    L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "") .. cond('[mod: SELFCAST]')
+    L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "Self Cast Key"
+    L['ActionbarTargetDriverSelfCastModifierDesc'] = OPTION_TOOLTIP_AUTO_SELF_CAST_KEY_TEXT or ""
+
     -- buttonTable
     L["ButtonTableActive"] = "Active"
     L["ButtonTableActiveDesc"] = ""

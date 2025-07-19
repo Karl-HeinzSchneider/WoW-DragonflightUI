@@ -1,4 +1,5 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 DragonflightUIEditModeMixin = {}
 
@@ -303,6 +304,7 @@ function DragonflightUIActionbarMixin:Update()
 
     self:UpdateStateHandler(state)
     self:UpdatePagingStateDriver(state)
+    self:UpdateTargetStateDriver(state)
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -482,6 +484,302 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         handler:SetAttribute("_onstate-page", [=[
             handler:Run(UpdateMainActionBar, newstate)
         ]=])
+    end
+end
+
+function DragonflightUIActionbarMixin:AddTargetStateDriver()
+    -- print('DragonflightUIActionbarMixin:AddTargetStateDriver()')
+    local handler = CreateFrame("Frame", "DragonflightUIActionBarTargetHandler", self, "SecureHandlerStateTemplate")
+    self.TargetStateDriver = handler;
+
+    SecureHandlerExecute(handler, [[
+        handler = self
+        buttonsTable = newtable()
+    
+        UpdateAllButtonStates = [=[
+            local type, state = ...;
+            -- print('UpdateAllButtonStates', type, state)    
+            
+            handler:SetAttribute(type, state)  
+    
+            for btn in pairs(buttonsTable) do
+                btn:SetAttribute(type, state)  
+                if btn:GetAttribute("UpdateTargetState") then
+                    local page = btn:RunAttribute("GetActionPage");
+                    local slotID = btn:RunAttribute("GetActionSlotID",page);
+                    btn:RunAttribute("UpdateTargetState",slotID)                
+                end
+            end
+        ]=]       
+    ]])
+
+    handler:SetAttribute('_onstate-target-help', [[
+        local state = (newstate ~= 'nil') and newstate or nil;
+        handler:Run(UpdateAllButtonStates, 'target-help', state);
+    ]])
+    handler:SetAttribute('_onstate-target-harm', [[
+        local state = (newstate ~= 'nil') and newstate or nil;
+        handler:Run(UpdateAllButtonStates, 'target-harm', state);
+    ]])
+    handler:SetAttribute('_onstate-target-all', [[
+        local state = (newstate ~= 'nil') and newstate or nil;
+        handler:Run(UpdateAllButtonStates, 'target-all', state);
+    ]])
+
+    handler:SetAttribute('OnStateChanged', [[
+        print('OnStateChanged')
+        print('---------')
+    ]])
+
+    for i, btn in ipairs(self.buttonTable) do
+        handler:SetFrameRef("NewButton", btn)
+        SecureHandlerExecute(handler, [[
+            buttonsTable[handler:GetFrameRef("NewButton")] = true
+        ]])
+        btn:SetAttribute('GetActionPage', [[   
+            if self:GetAttribute('useparent-actionpage') then
+                return self:GetParent():GetAttribute('actionpage')                
+            else    
+                return self:GetAttribute('actionpage')
+            end
+        ]])
+        -- ActionButton_CalculateAction
+        btn:SetAttribute('GetActionSlotID', [[  
+            local page = ...
+            local ID = self:GetID()
+
+            if ID > 0 then 
+                if not page then
+                    page = GetActionBarPage()
+                    if btn.isExtra then
+                        page = GetExtraBarPage()
+                    elseif btn.buttonType == 'MULTICASTACTIONBUTTON' then
+                        page = GetMultiCastBarIndex()
+                    end
+                end
+                return (ID + ((page-1)*12))
+            else
+                return self:GetAttribute('action') or 1;
+            end  
+        ]])
+        btn:SetAttribute('UpdateTargetState', [[
+            local slot = ...;
+
+            self:SetAttribute('targettype', nil)
+            self:SetAttribute('unit', nil)
+        
+            if self:GetAttribute('smarttarget') then
+                local type, action = GetActionInfo(slot);
+
+                if type == 'spell' and action > 0 then                  
+                    if IsSpellHelpful(action) == IsSpellHarmful(action) then
+                        self:SetAttribute('targettype',3)
+                        self:SetAttribute('unit',self:GetAttribute('target-all'))
+                    elseif IsSpellHelpful(action) then
+                            self:SetAttribute('targettype',1)
+                        self:SetAttribute('unit',self:GetAttribute('target-help'))
+                    elseif IsSpellHarmful(action) then
+                            self:SetAttribute('targettype',2)
+                        self:SetAttribute('unit',self:GetAttribute('target-harm'))
+                    end                  
+                end
+            end
+        ]])
+    end
+end
+
+function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
+    if not self.TargetStateDriver then return end
+
+    local handler = self.TargetStateDriver;
+
+    UnregisterStateDriver(handler, 'target-help');
+    UnregisterStateDriver(handler, 'target-harm');
+    UnregisterStateDriver(handler, 'target-all');
+
+    handler:SetAttribute('state-target-help', 'nil')
+    handler:SetAttribute('state-target-harm', 'nil')
+    handler:SetAttribute('state-target-all', 'nil')
+
+    for i, btn in ipairs(self.buttonTable) do
+        --
+        btn:SetAttribute('smarttarget', state.useMouseover or state.useAutoAssist);
+
+        btn:SetAttribute('checkselfcast', state.selfCast and true or nil);
+        btn:SetAttribute('checkfocuscast', state.focusCast and true or nil);
+    end
+
+    local preSelf = '';
+    if state.selfCast then preSelf = '[mod:SELFCAST]player;' end
+
+    local preFocus = '';
+    if not DF.API.Version.IsEra and state.focusCast then preFocus = '[mod:FOCUSCAST,@focus,exists,nodead]focus;' end
+
+    local modifier = '';
+    if state.mouseoverModifier and state.mouseoverModifier ~= 'NONE' then
+        --
+        modifier = ',mod:' .. state.mouseoverModifier;
+    end
+
+    local helpDriver, harmDriver, allDriver = '', '', '';
+
+    if state.useMouseover then
+        helpDriver = string.format('[@mouseover,exists,help%s]mouseover;', modifier);
+        harmDriver = string.format('[@mouseover,nodead,exists,harm%s]mouseover;', modifier);
+        allDriver = string.format('[@mouseover,nodead,exists%s]mouseover;', modifier);
+    end
+
+    if state.useAutoAssist then
+        helpDriver = helpDriver .. '[help]nil; [@targettarget, help]targettarget';
+        harmDriver = harmDriver .. '[harm]nil; [@targettarget, harm]targettarget';
+    end
+
+    if helpDriver ~= '' then
+        --
+        helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
+        RegisterStateDriver(handler, 'target-help', helpDriver)
+    end
+
+    if harmDriver ~= '' then
+        --
+        harmDriver = string.format('%s%s nil', preFocus, harmDriver)
+        RegisterStateDriver(handler, 'target-harm', harmDriver)
+    end
+
+    if allDriver ~= '' then
+        --
+        allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
+        RegisterStateDriver(handler, 'target-all', allDriver)
+    end
+
+    SecureHandlerExecute(handler, [[
+      --UpdateAllButtonStates()
+    ]])
+end
+
+function DragonflightUIActionbarMixin:AddTargetStateTable(Module, opt, getDefaultStr)
+    local sub = opt.sub;
+
+    local extraOptions = {
+        headerTargetDriver = {
+            type = 'header',
+            name = L['ActionbarTargetDriverHeader'],
+            desc = '',
+            order = 30,
+            isExpanded = true,
+            editmode = true
+        },
+        useMouseover = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverUseMouseover'],
+            desc = L['ActionbarTargetDriverUseMouseoverDesc'] .. getDefaultStr('useMouseover', sub),
+            order = 110.1,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        mouseoverModifier = {
+            type = 'select',
+            name = L["ActionbarTargetDriverMouseOverModifier"],
+            desc = L["ActionbarTargetDriverMouseOverModifierDesc"] .. getDefaultStr('mouseoverModifier', sub),
+            dropdownValues = DF.Settings.ModifierTable,
+            order = 110.15,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        useAutoAssist = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverUseAutoAssist'],
+            desc = L['ActionbarTargetDriverUseAutoAssistDesc'] .. getDefaultStr('useAutoAssist', sub),
+            order = 115,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        focusCast = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverFocusCast'],
+            desc = L['ActionbarTargetDriverFocusCastDesc'] .. getDefaultStr('focusCast', sub),
+            order = 105.3,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        focusCastModifier = {
+            type = 'select',
+            name = L["ActionbarTargetDriverFocusCastModifier"],
+            desc = L["ActionbarTargetDriverFocusCastModifierDesc"],
+            dropdownValues = DF.Settings.ModifierTable,
+            order = 105.35,
+            group = 'headerTargetDriver',
+            blizzard = true,
+            editmode = true
+        },
+        selfCast = {
+            type = 'toggle',
+            name = L['ActionbarTargetDriverSelfCast'],
+            desc = L['ActionbarTargetDriverSelfCastDesc'] .. getDefaultStr('selfCast', sub),
+            order = 100.4,
+            group = 'headerTargetDriver',
+            new = true,
+            editmode = true
+        },
+        selfCastModifier = {
+            type = 'select',
+            name = L["ActionbarTargetDriverSelfCastModifier"],
+            desc = L["ActionbarTargetDriverSelfCastModifierDesc"],
+            dropdownValues = DF.Settings.ModifierTableWithoutNone,
+            order = 100.45,
+            group = 'headerTargetDriver',
+            blizzard = true,
+            editmode = true
+        }
+    }
+
+    local origGet = opt.get;
+    local origSet = opt.set;
+
+    local newGet = function(info)
+        local key = info[1]
+        local subKey = info[2]
+
+        if subKey == 'selfCastModifier' then
+            local value = GetModifiedClick("SELFCAST");
+            return value;
+        elseif subKey == 'focusCastModifier' then
+            local value = GetModifiedClick("FOCUSCAST");
+            return value;
+        end
+
+        return origGet(info)
+    end
+
+    local newSet = function(info, value)
+        local key = info[1]
+        local subKey = info[2]
+
+        if subKey == 'selfCastModifier' then
+            --
+            SetModifiedClick('SELFCAST', value)
+            return;
+        elseif subKey == 'focusCastModifier' then
+            --
+            SetModifiedClick('FOCUSCAST', value)
+            return;
+        end
+
+        origSet(info, value)
+    end
+
+    opt.get = newGet;
+    opt.set = newSet;
+
+    if DF.API.Version.IsEra then extraOptions.focusCast = nil; end
+
+    for k, v in pairs(extraOptions) do
+        --
+        opt.args[k] = v
     end
 end
 
