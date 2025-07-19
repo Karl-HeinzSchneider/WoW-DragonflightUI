@@ -119,7 +119,8 @@ do
     L["EditModeImportProfile"] = "Import profile as |cff8080ff%s|r"
     L["EditModeVisible"] = "Edit Mode Visibility"
     L["EditModeVisibleDescFormat"] =
-        "Sets the visiblity of the current frame and every other frame with the same category (|cff8080ff%s|r) while edit mode is active."
+        "Sets the visiblity of the current frame and every other frame with the same category (|cff8080ff%s|r) while edit mode is active." ..
+            "\n\nYou can always set this through the |cff8080ffAdvanced Options|r on the main edit mode window, or the DragonflightUI |cff8080ffConfig Window|r."
 
 end
 

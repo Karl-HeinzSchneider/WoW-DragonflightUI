@@ -129,13 +129,22 @@ function DragonflightUIEditModeFrameMixin:SetupOptions(data, main)
     scrollBox:ClearAllPoints()
     if main then
         scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50 - 20)
+
+        displayFrame.Header.DefaultsButton:Hide()
+        displayFrame.Header:Hide()
     else
-        scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50)
+        scrollBox:SetPoint('TOPLEFT', displayFrame, 'TOPLEFT', -2, -50 - 20)
+
+        displayFrame.Header.Title:Hide()
+        displayFrame.Header.HorizontalDivider:SetPoint('TOPLEFT', 25, -60)
+        displayFrame.Header.HorizontalDivider:SetPoint('TOPRIGHT', -25, -60)
+
+        displayFrame.Header.DefaultsButton:SetPoint('TOPRIGHT', -32, -32)
+
+        displayFrame.Header.EditModeButton:ClearAllPoints()
+        displayFrame.Header.EditModeButton:SetPoint('RIGHT', displayFrame.Header.DefaultsButton, 'LEFT', -8, 0)
     end
     scrollBox:SetPoint('BOTTOMRIGHT', displayFrame, 'BOTTOMRIGHT', -8 - 18, 20 + 10)
-
-    displayFrame.Header.DefaultsButton:Hide()
-    displayFrame.Header:Hide()
 end
 
 function DragonflightUIEditModeFrameMixin:SetupAdvancedOptions(data)
@@ -780,6 +789,9 @@ function DFEditModeSystemSelectionBaseMixin:RegisterOptions(data)
     local filteredOptions = {
         type = data.options.type,
         name = data.options.name,
+        advancedName = data.options.advancedName,
+        sub = data.options.sub,
+        default = data.options.default,
         get = data.options.get,
         set = data.options.set,
         args = {}

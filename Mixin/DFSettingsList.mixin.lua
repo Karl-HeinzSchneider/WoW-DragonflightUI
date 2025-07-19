@@ -160,8 +160,6 @@ function DFSettingsListMixin:Display(data, small)
         return
     end
 
-    -- DevTools_Dump(data.name)
-
     self.Header.Title:SetText(data.name)
 
     if data.default then
