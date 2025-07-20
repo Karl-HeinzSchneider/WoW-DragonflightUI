@@ -119,8 +119,9 @@ do
     L["EditModeExportProfile"] = "Экспортировать профиль |cff8080ff%s|r"
     L["EditModeImportProfile"] = "Импортировать профиль как |cff8080ff%s|r"
     L["EditModeVisible"] = "Видимость режима редактирования"
-    L["EditModeVisibleDescFormat"] =
-        "Устанавливает видимость текущей рамки и всех других рамок той же категории (|cff8080ff%s|r), пока активен режим редактирования."
+	L["EditModeVisibleDescFormat"] =
+        "Устанавливает видимость текущего фрейма и всех других фреймов той же категории (|cff8080ff%s|r) во время активного режима редактирования." ..
+            "\n\nВы всегда можете настроить это через |cff8080ffРасширенные настройки|r в главном окне режима редактирования или в окне |cff8080ffКонфигурации|r DragonflightUI."
 end
 
 -- Compat
@@ -223,6 +224,56 @@ do
     L['ActionbarDriverNameDesc'] =
         "Изменяет поведение переключения основной панели действий, например, при смене стойки или скрытности.\n'По умолчанию' - без изменений\n'Умный' - добавляет пользовательскую страницу для скрытности кота друида\n'Без переключения' - отключает все переключения"
 
+  -- targetStateDriver
+    L["ActionbarTargetDriverConditionalFormat"] = "\n\n(Это эквивалентно макроусловию: |cff8080ff%s|r)\n"
+    L["ActionbarTargetDriverMultipleConditionalFormat"] =
+        "\n\n(Это эквивалентно следующим макроусловиям (в зависимости от |cffffffffтипа|r заклинания): %s)\n"
+
+    local function cond(str)
+        return string.format(L["ActionbarTargetDriverConditionalFormat"], str)
+    end
+
+    local function condMultiple(t)
+        local str = '';
+
+        for k, v in ipairs(t) do
+            --
+            str = string.format('%s%s', str, string.format('\n(|cffffffff%s|r) |cff8080ff%s|r', v.type, v.str))
+        end
+
+        return string.format(L["ActionbarTargetDriverMultipleConditionalFormat"], str)
+    end
+
+    L['ActionbarTargetDriverHeader'] = "Выбор цели"
+    L['ActionbarTargetDriverUseMouseover'] = "Использовать наведение мыши для каста"
+    L['ActionbarTargetDriverUseMouseoverDesc'] =
+        "Когда включено, кнопки действий пытаются выбрать целью юнита под курсором мыши." .. condMultiple({
+            {type = 'help', str = '[@mouseover, exists, help, mod:XY]'},
+            {type = 'harm', str = '[@mouseover, nodead, exists, harm, mod:XY]'},
+            {type = 'both', str = '[@mouseover, nodead, exists, mod:XY]'}
+        })
+    L['ActionbarTargetDriverMouseOverModifier'] = "Клавиша для каста при наведении"
+    L['ActionbarTargetDriverMouseOverModifierDesc'] =
+        "При удержании этой клавиши будет возможно выполнение каста на цель под курсором, даже если выбрана вражеская цель."
+    L['ActionbarTargetDriverUseAutoAssist'] = "Использовать автоассист для каста"
+    L['ActionbarTargetDriverUseAutoAssistDesc'] =
+        "Когда включено, кнопки действий автоматически пытаются выполнить каст на цель вашей цели, если текущая цель не подходит для выбранного заклинания." ..
+            condMultiple({
+                {type = 'help', str = '[help]target; [@targettarget, help]targettarget'},
+                {type = 'harm', str = '[harm]target; [@targettarget, harm]targettarget'}
+            })
+    L['ActionbarTargetDriverFocusCast'] = "Каст на фокус"
+    L['ActionbarTargetDriverFocusCastDesc'] =
+        "Когда включено (и установлена 'Клавиша для каста на фокус'), кнопки действий пытаются выбрать целью фокус." ..
+            cond('[mod:FOCUSCAST, @focus, exists, nodead]')
+    L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "Клавиша для каста на фокус"
+    L['ActionbarTargetDriverFocusCastModifierDesc'] =
+        "При удержании этой клавиши будет возможно выполнение каста на цель фокуса, даже если выбрана вражеская цель."
+    L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "Каст на себя")
+    L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "") .. cond('[mod: SELFCAST]')
+    L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "Клавиша для каста на себя"
+    L['ActionbarTargetDriverSelfCastModifierDesc'] = OPTION_TOOLTIP_AUTO_SELF_CAST_KEY_TEXT or ""  
+    
     -- buttonTable
     L["ButtonTableActive"] = "Активно"
     L["ButtonTableActiveDesc"] = ""
