@@ -582,6 +582,7 @@ end
 
 function Module:GameTooltipSetDefaultAnchor(self, parent)
     -- DF:Debug(Module, 'GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
+    print('GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
     local state = Module.db.profile.general;
 
     -- spells
@@ -623,6 +624,11 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
             -- units etc
             self:ClearAllPoints();
             self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
+            return;
+        end
+
+        if DF.Era and parent == _G['LFGMinimapFrame'] then
+            self:SetOwner(parent, 'ANCHOR_BOTTOMLEFT');
             return;
         end
     end
