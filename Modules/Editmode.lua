@@ -40,6 +40,7 @@ local defaults = {
             -- tooltip
             GameTooltip = true,
             -- UI
+            WidgetBelow = true,
             -- unitframes
             PlayerFrame = true,
             Player_PowerBarAlt = true,
@@ -201,6 +202,7 @@ if true then
     displayTable['GameTooltip'] = L['TooltipName']
     displayTable['Player_PowerBarAlt'] = L['PowerBarAltName']
     displayTable['GroupLootContainer'] = L['GroupLootContainerName']
+    displayTable['WidgetBelow'] = L['WidgetBelowName']
 
     local function AddTableToCategory(t, header)
         for k, v in ipairs(t) do
@@ -235,7 +237,9 @@ if true then
     AddTableToCategory(framesFrames, 'headerFrames')
 
     -- misc
-    local miscFrames = {'Bags', 'FPS', 'LFG', 'GroupLootContainer', 'Minimap', 'Tracker', 'Durability', 'GameTooltip'}
+    local miscFrames = {
+        'Bags', 'FPS', 'LFG', 'GroupLootContainer', 'Minimap', 'Tracker', 'Durability', 'GameTooltip', 'WidgetBelow'
+    }
     if DF.Cata then table.insert(miscFrames, 'Player_PowerBarAlt') end
     AddTableToCategory(miscFrames, 'headerMisc')
 

@@ -401,6 +401,10 @@ do
     -- Roll
     L["GroupLootContainerName"] = "Group Loot Container"
     L["GroupLootContainerDesc"] = ""
+
+    -- widget below
+    L["WidgetBelowName"] = "Widget Below Minimap"
+    L["WidgetBelowNameDesc"] = ""
 end
 
 -- Buffs
