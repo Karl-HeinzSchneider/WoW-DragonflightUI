@@ -1373,29 +1373,6 @@ function Module.MoveTrackerFunc()
 end
 
 function Module:ChangeLFG()
-    -- local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', Minimap)
-    -- Mixin(lfg, DragonflightUILFGButtonImprovedMixin)
-    -- lfg:Init()
-    -- -- lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
-    -- lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-    -- Module.LFG = lfg
-
-    -- if DF.Cata or DF.Wrath then
-    --     MiniMapLFGFrame:ClearAllPoints()
-    --     -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
-    --     MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-    --     MiniMapLFGFrameBorder:Hide()
-    --     MiniMapLFGFrameIcon:Hide()
-
-    --     lfg:HookCata()
-    -- elseif DF.Era then
-    --     DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
-    --         --
-    --         Module:ChangeLFGEra();
-    --     end)
-
-    -- end
-
     local addEditmode = function()
         local EditModeModule = DF:GetModule('Editmode');
 
@@ -1442,7 +1419,7 @@ function Module:ChangeLFG()
     elseif DF.Era then
         DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
             --
-            print('~~~~Blizzard_GroupFinder_VanillaStyle')
+            -- print('~~~~Blizzard_GroupFinder_VanillaStyle')
             Module.LFG = _G['LFGMinimapFrame']
             Module.LFG:Raise()
 
@@ -1457,24 +1434,6 @@ function Module:ChangeLFG()
             addEditmode()
         end)
     end
-end
-
-function Module:ChangeLFGEra()
-    local lfg = Module.LFG;
-
-    local btn = _G.LFGMinimapFrame
-    btn:SetParent(Minimap)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    local LFGMinimapFrameBorder = _G['LFGMinimapFrameBorder']
-    LFGMinimapFrameBorder:SetTexture(base .. 'minimap-trackingborder')
-    LFGMinimapFrameBorder:SetSize(50, 50)
-
-    lfg:HookEra()
-
-    local db = Module.db.profile
-    local state = db.lfg
-    lfg:UpdateState(state);
 end
 
 function Module.ChangeDifficulty()
