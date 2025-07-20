@@ -12,15 +12,14 @@ do
 
     L["ModuleTooltipActionbar"] =
         "该模块全面改造默认动作条，包括微型菜单和背包按钮。\n为动作条1-8、宠物/经验/声望/控制/姿态/图腾条、背包和微型菜单提供独立选项。"
-    L["ModuleTooltipBossframe"] = "该模块添加自定义首领框架。\n开发中。"
-    L["ModuleTooltipBuffs"] =
-        "该模块修改默认增益效果框架。\n为增益和减益效果提供独立选项。"
+    L["ModuleTooltipBossframe"] = "该模块添加自定义首领框体。\n开发中。"
+    L["ModuleTooltipBuffs"] = "该模块修改默认增益效果框体。\n为增益和减益效果提供独立选项。"
     L["ModuleTooltipCastbar"] =
         "该模块修改默认施法条。\n为玩家/焦点/目标施法条提供独立选项。"
     L["ModuleTooltipChat"] = "该模块修改默认聊天窗口。\n开发中。"
     L["ModuleTooltipCompatibility"] = "该模块为其他插件提供额外兼容性支持。"
     L["ModuleTooltipDarkmode"] =
-        "该模块为DragonflightUI的多个框架添加暗黑模式。\n开发中 - 请反馈意见！"
+        "该模块为DragonflightUI的多个框体添加暗黑模式。\n开发中 - 请反馈意见！"
     L["ModuleTooltipFlyout"] = "弹出按钮"
     L["ModuleTooltipMinimap"] =
         "该模块全面改造默认小地图和任务追踪器。\n为小地图和任务追踪器提供独立选项。"
@@ -28,7 +27,7 @@ do
     L["ModuleTooltipUI"] =
         "该模块为角色窗口等界面添加现代UI风格，并针对怀旧服重做法术书、天赋窗和专业窗口。"
     L["ModuleTooltipUnitframe"] =
-        "该模块全面改造默认单位框架，添加职业染色等功能。\n为玩家/宠物/目标/焦点/小队框架提供独立选项。"
+        "该模块全面改造默认单位框体，添加职业染色等功能。\n为玩家/宠物/目标/焦点/小队框体提供独立选项。"
     L["ModuleTooltipUtility"] = "该模块提供通用UI功能和调整。\n开发中"
 
     L["ModuleFlyout"] = "弹出按钮"
@@ -115,10 +114,14 @@ do
     L["EditModeNewLayout"] = "%s |cnPURE_GREEN_COLOR:新建配置|r"
     L["EditModeImportLayout"] = HUD_EDIT_MODE_IMPORT_LAYOUT or "导入"
     L["EditModeShareLayout"] = HUD_EDIT_MODE_SHARE_LAYOUT or "分享"
-    L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or
-                                       "复制到剪贴板 |cffffd100(用于在线分享)|r"
+    L["EditModeCopyToClipboard"] = HUD_EDIT_MODE_COPY_TO_CLIPBOARD or "复制到剪贴板 |cffffd100(用于在线分享)|r"
     L["EditModeExportProfile"] = "导出配置 |cff8080ff%s|r"
     L["EditModeImportProfile"] = "导入配置为 |cff8080ff%s|r"
+    L["EditModeVisible"] = "编辑模式可见"
+    L["EditModeVisibleDescFormat"] =
+        "当编辑模式激活时，设置当前框体和具有相同类别(|cff8080ff%s|r)的其他框体的可见性。" ..
+            "\n\n你可以在编辑模式的主窗口的|cff8080ff高级选项|r或DragonflightUI的|cff8080ff设置窗口|r进行设置。"
+
 end
 
 -- Compat
@@ -135,11 +138,10 @@ do
         "当启用'修改角色窗口'时，为CharacterStatsClassic添加兼容支持"
     L['CompatClassicCalendar'] = "Classic Calendar"
     L['CompatClassicCalendarDesc'] = "为Classic Calendar添加兼容支持"
-    -- L['CompatClique'] = "Clique"
-    -- L['CompatCliqueDesc'] = "Adds compatibility for Clique"
-    -- L['CompatLeatrixPlus'] = "LeatrixPlus"
-    -- L['CompatLeatrixPlusDesc'] =
-    -- "Adds compatibility for LeatrixPlus, e.g. removes the ugly classc color name background on the PlayerFrame."
+    L['CompatClique'] = "Clique"
+    L['CompatCliqueDesc'] = "为Clique添加兼容支持"
+    L['CompatLeatrixPlus'] = "LeatrixPlus"
+    L['CompatLeatrixPlusDesc'] = "增加了 LeatrixPlus 兼容，例如移除了玩家框体上难看的职业色名称的背景。"
     L['CompatLFGBulletinBoard'] = "LFG Bulletin Board"
     L['CompatLFGBulletinBoardDesc'] = "为LFG Bulletin Board添加兼容支持"
     L['CompatMerInspect'] = "MerInspect"
@@ -168,11 +170,11 @@ do
     L["PositionTableAnchorDesc"] = "锚点"
     L["PositionTableAnchorParent"] = "父级锚点"
     L["PositionTableAnchorParentDesc"] = ""
-    L["PositionTableAnchorFrame"] = "锚点框架"
+    L["PositionTableAnchorFrame"] = "锚点框体"
     L["PositionTableAnchorFrameDesc"] = ""
-    L["PositionTableCustomAnchorFrame"] = "锚点框架(自定义)"
+    L["PositionTableCustomAnchorFrame"] = "锚点框体(自定义)"
     L["PositionTableCustomAnchorFrameDesc"] =
-        "使用指定名称的框架作为锚点(如有效)。例如'CharacterFrame', 'TargetFrame'..."
+        "使用指定名称的框体作为锚点(如有效)。例如'CharacterFrame', 'TargetFrame'..."
     L["PositionTableX"] = "X"
     L["PositionTableXDesc"] = ""
     L["PositionTableY"] = "Y"
@@ -206,14 +208,64 @@ do
     L["None"] = "无"
 
     -- stateDriverTable
-    -- L["ActionbarDriverDefault"] = "Default"
-    -- L["ActionbarDriverSmart"] = "Smart"
-    -- L["ActionbarDriverNoPaging"] = "No Paging"
+    L["ActionbarDriverDefault"] = "默认"
+    L["ActionbarDriverSmart"] = "智能"
+    L["ActionbarDriverNoPaging"] = "不分页"
 
     -- stateDriver
-    -- L['ActionbarDriverName'] = "Paging"
-    -- L['ActionbarDriverNameDesc'] =
-    --     "Changes the paging behaviour of the main action bar, e.g. when changing stance or stealth.\n'Default' - no change\n'Smart' - adds custom page for Druid cat stealth\n'No Paging' - disables all paging"
+    L['ActionbarDriverName'] = "分页"
+    L['ActionbarDriverNameDesc'] =
+        "改变主动作条分页行为，例如当改变姿态或隐身时。\n'默认' - 不改变\n'智能' - 为猫德隐身增加自定义分页\n'不分页' - 禁用全部分页"
+
+    -- targetStateDriver
+    L["ActionbarTargetDriverConditionalFormat"] = "\n\n(这相当于宏命令的条件: |cff8080ff%s|r)\n"
+    L["ActionbarTargetDriverMultipleConditionalFormat"] =
+        "\n\n(这相当于跟随宏命令的条件 (基于技能|cffffffff类型|r): %s)\n"
+
+    local function cond(str)
+        return string.format(L["ActionbarTargetDriverConditionalFormat"], str)
+    end
+
+    local function condMultiple(t)
+        local str = '';
+
+        for k, v in ipairs(t) do
+            --
+            str = string.format('%s%s', str, string.format('\n(|cffffffff%s|r) |cff8080ff%s|r', v.type, v.str))
+        end
+
+        return string.format(L["ActionbarTargetDriverMultipleConditionalFormat"], str)
+    end
+
+    L['ActionbarTargetDriverHeader'] = "目标选择"
+    L['ActionbarTargetDriverUseMouseover'] = "使用鼠标指向施法"
+    L['ActionbarTargetDriverUseMouseoverDesc'] =
+        "启用时，动作按钮将尝试瞄准鼠标指向目标单位" .. condMultiple({
+            {type = 'help', str = '[@mouseover, exists, help, mod:XY]'},
+            {type = 'harm', str = '[@mouseover, nodead, exists, harm, mod:XY]'},
+            {type = 'both', str = '[@mouseover, nodead, exists, mod:XY]'}
+        })
+    L['ActionbarTargetDriverMouseOverModifier'] = "鼠标指向施法按键"
+    L['ActionbarTargetDriverMouseOverModifierDesc'] =
+        "当按住此键时，即便目标已存在，也将对鼠标指向的目标施法。"
+    L['ActionbarTargetDriverUseAutoAssist'] = "使用自动协助施法"
+    L['ActionbarTargetDriverUseAutoAssistDesc'] =
+        "启用时，如果你选中的法术不能对当前目标释放，动作按钮将尝试自动对你目标的目标施法。" ..
+            condMultiple({
+                {type = 'help', str = '[help]target; [@targettarget, help]targettarget'},
+                {type = 'harm', str = '[harm]target; [@targettarget, harm]targettarget'}
+            })
+    L['ActionbarTargetDriverFocusCast'] = "焦点施法"
+    L['ActionbarTargetDriverFocusCastDesc'] =
+        "启用时（并已设置'焦点施法按键'），动作按钮将尝试对焦点目标施法。" ..
+            cond('[mod:FOCUSCAST, @focus, exists, nodead]')
+    L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "焦点施法按键"
+    L['ActionbarTargetDriverFocusCastModifierDesc'] =
+        "按住此键时，即便目标已存在，也将对焦点目标施法。"
+    L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "自我施法")
+    L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "开启此选项后，如果你的当前目标为非友方目标或没有目标，则可以对友方目标施放的法术会自动对你本人施放。") .. cond('[mod: SELFCAST]')
+    L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "自我施法按键"
+    L['ActionbarTargetDriverSelfCastModifierDesc'] = OPTION_TOOLTIP_AUTO_SELF_CAST_KEY_TEXT or "按住这个键之后施法目标会变成自己，即使你当前锁定的目标是某个敌对怪物或玩家。"
 
     -- buttonTable
     L["ButtonTableActive"] = "启用"
@@ -226,6 +278,9 @@ do
     L["ButtonTableOrientationDesc"] = "方向"
     L["ButtonTableGrowthDirection"] = "延展方向"
     L["ButtonTableGrowthDirectionDesc"] = ""
+        "设置使用多行/列时动作条的延展方向。"
+    L["ButtonTableFlyoutDirection"] = "弹出方向"
+    L["ButtonTableFlyoutDirectionDesc"] = "设置技能弹出方向。"
     L["ButtonTableReverseButtonOrder"] = "反转按钮顺序"
     L["ButtonTableReverseButtonOrderDesc"] = ""
     L["ButtonTableNumRows"] = "行数"
@@ -256,8 +311,7 @@ do
     L["MoreOptionsGryphons"] = "狮鹫装饰"
     L["MoreOptionsGryphonsDesc"] = "狮鹫装饰"
     L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "按下快捷键时施法"
-    L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or
-                                         "在按下快捷键时施法，而不是在松开快捷键时施法。"
+    L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or "在按下快捷键时施法，而不是在松开快捷键时施法。"
     L["MoreOptionsIconRangeColor"] = "超出距离图标染色"
     L["MoreOptionsIconRangeColorDesc"] = "当技能超出距离时改变图标颜色，类似RedRange/tullaRange效果"
 
@@ -340,6 +394,7 @@ end
 -- Buffs
 do
     L["BuffsOptionsName"] = "增益效果"
+    L["DebuffsOptionsName"] = "减益效果"
     L["BuffsOptionsStyle"] = L["ButtonTableStyle"]
     L["BuffsOptionsStyleDesc"] = ""
 
@@ -348,7 +403,7 @@ do
 
     L["BuffsOptionsUseStateHandler"] = "使用状态处理器"
     L["BuffsOptionsUseStateHandlerDesc"] =
-        "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框架变为安全框架。"
+        "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框体变为安全框体。"
 end
 
 -- Flyout
@@ -365,7 +420,6 @@ do
     L["FlyoutSpellsHordeDesc"] = L["FlyoutSpellsDesc"] .. "\n(仅用于部落阵营)"
     L["FlyoutItems"] = "物品"
     L["FlyoutItemsDesc"] = "输入逗号分隔的物品ID, 例如 '6948, 8490'。"
-
     L["FlyoutCloseAfterClick"] = "点击后关闭"
     L["FlyoutCloseAfterClickDesc"] = "按下其中一个按钮后关闭弹出框。"
     L["FlyoutAlwaysShow"] = "总是显示按钮"
@@ -384,10 +438,8 @@ do
     -- L["FlyoutButtonWarlock"] = "术士"
     L["FlyoutButtonMageFood"] = "造食术"
     L["FlyoutButtonMageWater"] = "造水术"
-
     L["FlyoutWarlock"] = "召唤恶魔"
     L["FlyoutWarlockDesc"] = "召唤一个恶魔到你身边。"
-
     L["FlyoutMagePort"] = "传送"
     L["FlyoutMagePortDesc"] = "传送你到一个主城。"
     L["FlyoutMagePortals"] = "传送门"
@@ -408,7 +460,10 @@ end
 -- Castbar
 do
     L["CastbarName"] = "施法条"
-    L["CastbarNameFormat"] = "%s 施法条"
+    L["CastbarNameFormat"] = "%s施法条"
+    L["CastbarNamePlayer"] = format(L["CastbarNameFormat"], "玩家")
+    L["CastbarNameTarget"] = format(L["CastbarNameFormat"], "目标")
+    L["CastbarNameFocus"] = format(L["CastbarNameFormat"], "焦点")
     L["CastbarTableActive"] = "启用"
     L["CastbarTableActivateDesc"] = ""
     L["CastbarTableStyle"] = L["ButtonTableStyle"]
@@ -439,7 +494,7 @@ do
     L["CastbarTableShowTicksDesc"] = ""
     L["CastbarTableAutoAdjust"] = "自动调整"
     L["CastbarTableAutoAdjustDesc"] =
-        "根据增益/减益数量自动调整Y轴偏移 - 当施法条锚定在目标/焦点框架下方时很有用"
+        "根据增益/减益数量自动调整Y轴偏移 - 当施法条锚定在目标/焦点框体下方时很有用"
     L["CastbarTableShowRank"] = "显示等级"
     L["CastbarTableShowRankDesc"] = ""
     L["CastbarTableShowChannelName"] = "显示引导名称"
@@ -463,23 +518,27 @@ do
     L["MinimapSkinMinimapButtons"] = "美化小地图按钮"
     L["MinimapSkinMinimapButtonsDesc"] = "使用LibDBIcon美化小地图按钮(多数插件使用此库)"
     L["MinimapZonePanelPosition"] = "区域面板位置"
-    L["MinimapZonePanelPositionDesc"] =
-        "设置区域文本面板的位置，包括锚定在上面的框体（例如：日历、跟踪、邮件等）。"
+    L["MinimapZonePanelPositionDesc"] = "设置区域文本面板的位置。"
     L["MinimapUseStateHandler"] = "使用状态处理器"
     L["MinimapUseStateHandlerDesc"] =
-        "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框架变为安全框架。"
+        "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框体变为安全框体。"
+
+    L["MinimapTrackerName"] = "追踪器"
+    L["MinimapDurabilityName"] = "耐久"
+    L["MinimapLFGName"] = "LFG"
 end
 
 -- UI
 do
     L["UIUtility"] = "实用功能"
+    L["UIName"] = "UI"
     L["UIChangeBags"] = "修改背包"
     L["UIChangeBagsDesc"] = ""
     L["UIColoredInventoryItems"] = "物品品质染色"
     L["UIColoredInventoryItemsDesc"] = "根据物品品质显示不同颜色边框"
     L["UIShowQuestlevel"] = "显示任务等级"
     L["UIShowQuestlevelDesc"] = "在任务名称旁显示任务等级"
-    L["UIFrames"] = "窗口框架"
+    L["UIFrames"] = "框体"
     L["UIFramesDesc"] = "修改各类游戏窗口的选项"
     L["UIChangeCharacterFrame"] = "修改角色窗口"
     L["UIChangeCharacterFrameDesc"] = "修改角色窗口外观"
@@ -512,18 +571,19 @@ do
     L["ProfessionCheckAll"] = "全选"
     L["ProfessionUnCheckAll"] = "取消全选"
     L["ProfessionFavorites"] = "收藏"
+    L["ProfessionExpansionFormat"] = "|cFFFFFFFF配方来自|r %s"
 end
 
 -- Tooltip
 do
     L["TooltipName"] = "提示框"
+    L["TooltipAnchorName"] = "T提示框锚点"
     L["TooltipHeaderGameToltip"] = "游戏提示框"
     L["TooltipHeaderSpellTooltip"] = "法术提示框"
-
     L["TooltipCursorAnchorHeader"] = "鼠标锚点"
     L["TooltipCursorAnchorHeaderDesc"] = ""
     L["TooltipAnchorToMouse"] = "锚定到鼠标"
-    L["TooltipAnchorToMouseDesc"] = "将部分提示框(如世界框架的单位提示)锚定到鼠标光标"
+    L["TooltipAnchorToMouseDesc"] = "将部分提示框(如世界框体的单位提示)锚定到鼠标光标"
     L["TooltipMouseAnchor"] = "鼠标锚点"
     L["TooltipMouseAnchorDesc"] = ""
     L["TooltipMouseX"] = "X轴"
@@ -542,14 +602,12 @@ do
     L["TooltipShowSpellIconDesc"] = ""
     L["TooltipShowIconID"] = "显示图标ID"
     L["TooltipShowIconIDDesc"] = ""
-
     L["TooltipShowIcon"] = "显示图标"
     L["TooltipShowIconDesc"] = ""
 
     -- itemtooltip
     L["TooltipHeaderItemTooltip"] = "物品提示框"
     L["TooltipHeaderItemTooltipDesc"] = ""
-
     L["TooltipShowItemQuality"] = "物品品质边框"
     L["TooltipShowItemQualityDesc"] = ""
     L["TooltipShowItemQualityBackdrop"] = "物品品质背景"
@@ -562,17 +620,14 @@ do
     -- unittooltip
     L["TooltipUnitTooltip"] = "单位提示框"
     L["TooltipUnitTooltipDesc"] = ""
-
     L["TooltipUnitClassBorder"] = "职业边框"
     L["TooltipUnitClassBorderDesc"] = ""
     L["TooltipUnitClassBackdrop"] = "职业背景"
     L["TooltipUnitClassBackdropDesc"] = ""
-
     L["TooltipUnitReactionBorder"] = "声望边框"
     L["TooltipUnitReactionBorderDesc"] = ""
     L["TooltipUnitReactionBackdrop"] = "声望背景"
     L["TooltipUnitReactionBackdropDesc"] = ""
-
     L["TooltipUnitClassName"] = "职业名称"
     L["TooltipUnitClassNameDesc"] = ""
     L["TooltipUnitTitle"] = "显示头衔"
@@ -599,10 +654,11 @@ end
 
 -- Unitframes
 do
-    L["UnitFramesName"] = "单位框架"
+    L["UnitFramesName"] = "单位框体"
 
     -- Player
-    L["PlayerFrameDesc"] = "玩家框架设置"
+    L["PlayerFrameName"] = "玩家框体"
+    L["PlayerFrameDesc"] = "玩家框体设置"
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "职业颜色"
     L["PlayerFrameClassColorDesc"] = "生命条使用职业颜色"
@@ -613,19 +669,23 @@ do
     L["PlayerFrameBiggerHealthbar"] = "加宽生命条"
     L["PlayerFrameBiggerHealthbarDesc"] = "启用更宽的生命条"
     L["PlayerFramePortraitExtra"] = "头像边框"
-    L["PlayerFramePortraitExtraDesc"] =
-        "在玩家框体周围显示一个精英、稀有或世界首领样式的边框。"
+    L["PlayerFramePortraitExtraDesc"] = "在玩家框体周围显示一个精英、稀有或世界首领样式的边框。"
     L["PlayerFrameHideRedStatus"] = "隐藏战斗红色光效"
     L["PlayerFrameHideRedStatusDesc"] = "隐藏战斗中的红色状态光效"
     L["PlayerFrameHideHitIndicator"] = "隐藏命中指示器"
-    L["PlayerFrameHideHitIndicatorDesc"] = "隐藏玩家框架上的命中指示器"
+    L["PlayerFrameHideHitIndicatorDesc"] = "隐藏玩家框体上的命中指示器"
     L["PlayerFrameHideSecondaryRes"] = "隐藏次要资源"
     L["PlayerFrameHideSecondaryResDesc"] = "隐藏次要资源条，如灵魂碎片"
     L["PlayerFrameHideAlternatePowerBar"] = "隐藏德鲁伊备用能量条"
     L["PlayerFrameHideAlternatePowerBarDesc"] = "隐藏德鲁伊熊/猫形态时的备用能量条(法力条)"
 
+    -- PowerBar_Alt
+    L["PowerBarAltName"] = "玩家备用能量条"
+    L["PowerBarAltNameDesc"] = ""
+
     -- Target
-    L["TargetFrameDesc"] = "目标框架设置"
+    L["TargetFrameName"] = "目标框体"
+    L["TargetFrameDesc"] = "目标框体设置"
     L["TargetFrameStyle"] = L["ButtonTableStyle"]
     L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
     L["TargetFrameClassColorDesc"] = "生命条使用职业颜色"
@@ -641,29 +701,31 @@ do
     L["TargetFrameThreatGlowDesc"] = "启用仇恨光效"
     L["TargetFrameHideNameBackground"] = "隐藏名称背景"
     L["TargetFrameHideNameBackgroundDesc"] = "隐藏目标名称的背景"
-    L["TargetFrameComboPointsOnPlayerFrame"] = "连击点显示在玩家框架"
-    L["TargetFrameComboPointsOnPlayerFrameDesc"] = "在玩家框架上显示连击点数"
+    L["TargetFrameComboPointsOnPlayerFrame"] = "连击点显示在玩家框体"
+    L["TargetFrameComboPointsOnPlayerFrameDesc"] = "在玩家框体上显示连击点数"
     L["TargetFrameHideComboPoints"] = "隐藏连击点"
-    L["TargetFrameHideComboPointsDesc"] = "隐藏连击点数框架"
+    L["TargetFrameHideComboPointsDesc"] = "隐藏连击点数框体"
     L["TargetFrameFadeOut"] = "淡出效果"
-    L["TargetFrameFadeOutDesc"] = "当目标距离超过*淡出距离*时淡出目标框架"
+    L["TargetFrameFadeOutDesc"] = "当目标距离超过*淡出距离*时淡出目标框体"
     L["TargetFrameFadeOutDistance"] = "淡出距离"
     L["TargetFrameFadeOutDistanceDesc"] =
         "设置触发淡出效果的距离(码)。\n注意: 并非所有值都有效，因使用'LibRangeCheck-3.0'库。\n计算方式为'最小距离 >= 淡出距离'"
 
-    -- Target Buffs/Debuffs section (not in zhCN.lua)
-    -- L["TargetFrameHeaderBuffs"] = "Buffs/Debuffs"
-    -- L["TargetFrameAuraSizeSmall"] = "Aura Size Small"
-    -- L["TargetFrameAuraSizeSmallDesc"] = "Sets the size of non player auras on the TargetFrame when using 'Dynamic Buff Size'."
-    -- L["TargetFrameAuraSizeLarge"] = "Aura Size"
-    -- L["TargetFrameAuraSizeLargeDesc"] = "Sets the size of an aura on the TargetFrame."
-    -- L["TargetFrameNoDebuffFilter"] = "Show All Enemy Debuffs"
-    -- L["TargetFrameNoDebuffFilterDesc"] = "Displays friendly and enemy debuffs on the TargetFrame, and not just your own."
-    -- L["TargetFrameDynamicBuffSize"] = "Dynamic Buff Size"
-    -- L["TargetFrameDynamicBuffSizeDesc"] = "Increases the size of the player buffs and debuffs on the target."
+    L["TargetFrameHeaderBuffs"] = "增益/减益"
+    L["TargetFrameAuraSizeSmall"] = "小光环图标"
+    L["TargetFrameAuraSizeSmallDesc"] =
+        "当使用'动态增益图标大小'时设置目标框体上非玩家光环图标的大小。"
+    L["TargetFrameAuraSizeLarge"] = "光环图标大小"
+    L["TargetFrameAuraSizeLargeDesc"] = "设置目标框体上的光环图标大小。"
+    L["TargetFrameNoDebuffFilter"] = "显示全部敌人的减益"
+    L["TargetFrameNoDebuffFilterDesc"] =
+        "在目标框体上显示友方和敌方的减益效果，不仅仅是你施加的。"
+    L["TargetFrameDynamicBuffSize"] = "动态增益图标大小"
+    L["TargetFrameDynamicBuffSizeDesc"] = "在目标框体上增大玩家的增益/减益效果图标大小。"
 
     -- Pet
-    L["PetFrameDesc"] = "宠物框架设置"
+    L["PetFrameName"] = "宠物框体"
+    L["PetFrameDesc"] = "宠物框体设置"
     L["PetFrameStyle"] = L["ButtonTableStyle"]
     L["PetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
     L["PetFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
@@ -675,24 +737,32 @@ do
     L["PetFrameHideIndicatorDesc"] = "隐藏命中指示器"
 
     -- Focus
-    L["FocusFrameDesc"] = "焦点框架设置"
+    L["FocusFrameName"] = "焦点框体"
+    L["FocusFrameToTName"] = "焦点框体ToT"
+    L["FocusFrameDesc"] = "焦点框体设置"
     L["FocusFrameStyle"] = L["ButtonTableStyle"]
     L["FocusFrameClassColor"] = L["PlayerFrameClassColor"]
     L["FocusFrameClassColorDesc"] = "生命条使用职业颜色"
     L["FocusFrameClassIcon"] = L["PlayerFrameClassIcon"]
-    L["FocusFrameClassIconDesc"] = "为焦点框架使用职业图标作为头像"
+    L["FocusFrameClassIconDesc"] = "为焦点框体使用职业图标作为头像"
     L["FocusFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
     L["FocusFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
     L["FocusFrameHideNameBackground"] = L["TargetFrameHideNameBackground"]
     L["FocusFrameHideNameBackgroundDesc"] = "隐藏焦点名称背景"
 
     -- party
-    L["PartyFrameDesc"] = "小队框架设置"
+    L["PartyFrameName"] = "小队框体"
+    L["PartyFrameDesc"] = "小队框体设置"
     L["PartyFrameStyle"] = L["ButtonTableStyle"]
     L["PartyFrameClassColor"] = L["PlayerFrameClassColor"]
     L["PartyFrameClassColorDesc"] = "生命条使用职业颜色"
     L["PartyFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
     L["PartyFrameBreakUpLargeNumbersDesc"] = L["PlayerFrameBreakUpLargeNumbersDesc"]
+    L["PartyFrameDisableBuffTooltip"] = "禁用增益效果提示框"
+    L["PartyFrameDisableBuffTooltipDesc"] = "禁用鼠标悬浮时增益的提示框。"
+
+    -- raid
+    L["RaidFrameName"] = "团队框体"
 end
 
 -- keybindings
@@ -730,7 +800,7 @@ do
     }
 
     local NUM_MOUSE_BUTTONS = 31
-    for i = 1, NUM_MOUSE_BUTTONS do KEY_REPLACEMENTS["BUTTON" .. i] = "鼠标" .. i end
+    for i = 1, NUM_MOUSE_BUTTONS do KEY_REPLACEMENTS["BUTTON" .. i] = "B" .. i end
 
     for k, v in pairs(KEY_REPLACEMENTS) do L_CN[k] = v; end
     DF.KEY_REPLACEMENTS = KEY_REPLACEMENTS;

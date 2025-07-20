@@ -254,7 +254,7 @@ do
         })
     L['ActionbarTargetDriverMouseOverModifier'] = "Mouseover Cast Key"
     L['ActionbarTargetDriverMouseOverModifierDesc'] =
-        "When held this key will allow casting on the mouseover target, even if an enemy is targeted."
+        "When held this key will allow casting on the mouseover target, even if an unit is targeted."
     L['ActionbarTargetDriverUseAutoAssist'] = "Use Auto-Assist Casting"
     L['ActionbarTargetDriverUseAutoAssistDesc'] =
         "When this is enabled, actionbuttons try to automatically cast on your target's target if your current target is not valid for the selected spell." ..
@@ -268,7 +268,7 @@ do
             cond('[mod:FOCUSCAST, @focus, exists, nodead]')
     L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "Focus Cast Key"
     L['ActionbarTargetDriverFocusCastModifierDesc'] =
-        "When held this key will allow casting on the focus target, even if an enemy is targeted."
+        "When held this key will allow casting on the focus target, even if an unit is targeted."
     L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "Self Cast")
     L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "") .. cond('[mod: SELFCAST]')
     L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "Self Cast Key"
