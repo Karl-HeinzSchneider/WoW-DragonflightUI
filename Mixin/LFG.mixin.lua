@@ -189,7 +189,7 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
         self.EyeFoundInitial.EyeFoundInitialAnim = animationGroup
     end
 
-    -- found
+    -- found loop
     do
         local f = CreateFrame('Frame', nil, self)
         f:SetSize(btnSize, btnSize)
@@ -220,6 +220,99 @@ function DragonflightUIEyeTemplateMixin:OnLoad()
         self.EyeFoundLoop.EyeFoundLoopAnim = animationGroup
     end
 
+    -- poke initial
+    do
+        local f = CreateFrame('Frame', nil, self)
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
+
+        local searchingTexture = f:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-poke-initial')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(6)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(66)
+        animation:SetDuration(1.5)
+
+        f:Hide()
+
+        self.EyePokeInitial = f
+        self.EyePokeInitial.EyePokeInitialAnim = animationGroup
+    end
+
+    -- poke loop
+    do
+        local f = CreateFrame('Frame', nil, self)
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
+
+        local searchingTexture = f:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-poke-loop')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(6)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(62)
+        animation:SetDuration(1.5)
+
+        f:Hide()
+
+        self.EyePokeLoop = f
+        self.EyePokeLoop.EyePokeLoopAnim = animationGroup
+    end
+
+    -- poke end
+    do
+        local f = CreateFrame('Frame', nil, self)
+        f:SetSize(btnSize, btnSize)
+        f:SetPoint('CENTER', self, 'CENTER', 0, 0)
+
+        local searchingTexture = f:CreateTexture('DragonflightUILFGMouseoverFlipbookTexture')
+        searchingTexture:SetAllPoints()
+        searchingTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\groupfinder-eye-flipbook-poke-end')
+        -- searchingTexture:SetBlendMode('BLEND')
+
+        local animationGroup = searchingTexture:CreateAnimationGroup()
+        local animation = animationGroup:CreateAnimation('Flipbook', 'LFGMouseoverFlipbookAnimation')
+
+        animationGroup:SetLooping('NONE')
+
+        animation:SetOrder(1)
+        local size = 44 * 1
+        animation:SetFlipBookFrameWidth(size)
+        animation:SetFlipBookFrameHeight(size)
+        animation:SetFlipBookRows(4)
+        animation:SetFlipBookColumns(11)
+        animation:SetFlipBookFrames(36)
+        animation:SetDuration(1.5)
+
+        f:Hide()
+
+        self.EyePokeEnd = f
+        self.EyePokeEnd.EyePokeEndAnim = animationGroup
+    end
+
     -- self.EyeSearchingLoop = f
     -- self.EyeSearchingLoop.EyeSearchingLoopAnim = animationGroup
 end
@@ -234,6 +327,7 @@ end
 
 -- Era
 function DragonflightUIEyeTemplateMixin:StartIdleAnimation()
+    -- print('StartIdleAnimation')
     self:StopAnimating();
 
     self:PlayAnim(self.EyeIdle, self.EyeIdle.EyeIdleLoopAnim);
@@ -242,6 +336,7 @@ function DragonflightUIEyeTemplateMixin:StartIdleAnimation()
 end
 
 function DragonflightUIEyeTemplateMixin:StartSearchingAnimation()
+    -- print('StartSearchingAnimation')
     self:StopAnimating();
 
     self:PlayAnim(self.EyeSearchingLoop, self.EyeSearchingLoop.EyeSearchingLoopAnim);
@@ -250,6 +345,7 @@ function DragonflightUIEyeTemplateMixin:StartSearchingAnimation()
 end
 
 function DragonflightUIEyeTemplateMixin:StartHoverAnimation()
+    -- print('StartHoverAnimation')
     self:StopAnimating();
 
     self:PlayAnim(self.EyeMouseOver, self.EyeMouseOver.EyeMouseOverAnim);
@@ -258,6 +354,7 @@ function DragonflightUIEyeTemplateMixin:StartHoverAnimation()
 end
 
 function DragonflightUIEyeTemplateMixin:StartFoundAnimationInit()
+    -- print('StartFoundAnimationInit')
     self:StopAnimating();
 
     self:PlayAnim(self.EyeFoundInitial, self.EyeFoundInitial.EyeFoundInitialAnim);
@@ -266,12 +363,40 @@ function DragonflightUIEyeTemplateMixin:StartFoundAnimationInit()
 end
 
 function DragonflightUIEyeTemplateMixin:StartFoundAnimationLoop()
+    -- print('StartFoundAnimationLoop')
     self:StopAnimating();
 
     self:PlayAnim(self.EyeFoundLoop, self.EyeFoundLoop.EyeFoundLoopAnim);
     -- self:PlayAnim(self.EyeFoundLoop, self.GlowBackLoop.GlowBackLoopAnim);
 
     self.currAnim = LFG_EYE_FOUND_LOOP_ANIM;
+end
+
+function DragonflightUIEyeTemplateMixin:StartPokeAnimationInitial()
+    -- print('StartPokeAnimationInitial')
+    self:StopAnimating();
+
+    self:PlayAnim(self.EyePokeInitial, self.EyePokeInitial.EyePokeInitialAnim);
+
+    self.currAnim = LFG_EYE_POKE_INIT_ANIM;
+end
+
+function DragonflightUIEyeTemplateMixin:StartPokeAnimationLoop()
+    -- print('StartPokeAnimationLoop')
+    self:StopAnimating();
+
+    self:PlayAnim(self.EyePokeLoop, self.EyePokeLoop.EyePokeLoopAnim);
+
+    self.currAnim = LFG_EYE_POKE_LOOP_ANIM;
+end
+
+function DragonflightUIEyeTemplateMixin:StartPokeAnimationEnd()
+    -- print('StartPokeAnimationEnd')
+    self:StopAnimating();
+
+    self:PlayAnim(self.EyePokeEnd, self.EyePokeEnd.EyePokeEndAnim);
+
+    self.currAnim = LFG_EYE_POKE_END_ANIM;
 end
 
 function DragonflightUIEyeTemplateMixin:SetStaticMode(set)
@@ -311,305 +436,12 @@ function DragonflightUIEyeTemplateMixin:StopAnimating()
     self.currActiveAnims = {};
 end
 
-DragonflightUILFGButtonMixin = {}
-
+-- IMPROVED
 local LFG_ANGER_INC_VAL = 30;
 local LFG_ANGER_DEC_VAL = 1;
 local LFG_ANGER_INIT_VAL = 60;
 local LFG_ANGER_END_VAL = 75;
 local LFG_ANGER_CAP_VAL = 90;
-
-function DragonflightUILFGButtonMixin:Init()
-    -- print('Init')
-    self:SetSize(btnSize, btnSize)
-
-    do
-        local eye = CreateFrame('Frame', 'DragonflightUILFGEye', self)
-        eye:SetParent(self)
-        eye:SetSize(btnSize, btnSize)
-        eye:SetPoint('CENTER')
-        Mixin(eye, DragonflightUIEyeTemplateMixin)
-        eye:OnLoad()
-
-        -- eye:StartInitialAnimation()
-
-        self.Eye = eye
-    end
-
-    self:Hide()
-
-    self:HookScript('OnUpdate', GenerateClosure(self.OnUpdate, self))
-    self:HookScript('OnLoad', GenerateClosure(self.OnLoad, self))
-    self:HookScript('OnShow', GenerateClosure(self.OnShow, self))
-    self:HookScript('OnHide', GenerateClosure(self.OnHide, self))
-
-    self:HookScript('OnEnter', GenerateClosure(self.OnEnter, self))
-    self:HookScript('OnLeave', GenerateClosure(self.OnLeave, self))
-
-    self:OnLoad()
-
-    self:SetScript('OnEvent', GenerateClosure(self.OnEvent, self))
-    -- self:SetScript('OnEvent', self.OnEvent)
-
-    self:RegisterEvent("LFG_PROPOSAL_SHOW");
-    self:RegisterEvent("LFG_PROPOSAL_FAILED");
-    self:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-    --[[  QueueStatusFrame:HookScript('OnShow', function(frame)
-        frame:ClearAllPoints()
-        frame:SetPoint('TOPRIGHT', self, 'BOTTOMLEFT', 0, 6)
-    end) ]]
-end
-
-function DragonflightUILFGButtonMixin:HookCata()
-    MiniMapLFGFrame:HookScript('OnShow', function()
-        --       
-        --  self.parent.DFEditMode
-        self:Show()
-    end)
-
-    MiniMapLFGFrame:HookScript('OnHide', function()
-        --  
-        if self.DFEditMode then return; end
-        self:Hide()
-    end)
-
-    MiniMapLFGFrame:HookScript('OnEnter', function()
-        --       
-        self:OnEnter()
-    end)
-
-    MiniMapLFGFrame:HookScript('OnLeave', function()
-        --  
-        self:OnLeave()
-    end)
-
-    self:SetShown(MiniMapLFGFrame:IsShown());
-
-    self.LastUpdate = GetTime()
-
-    function self:SetEditMode(edit)
-        -- print('self:SetEditMode(edit)', edit)
-        if edit then
-            self:Show()
-        else
-            self:SetShown(MiniMapLFGFrame:IsShown());
-        end
-    end
-
-    function self:UpdateBlizzard()
-        local state = self.state;
-
-        local parent;
-        if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-            parent = _G[state.customAnchorFrame]
-        else
-            parent = _G[state.anchorFrame]
-        end
-
-        -- MiniMapLFGFrame:SetIgnoreParentScale(parent == 'UIParent')
-
-        MiniMapLFGFrame:SetParent(parent)
-        MiniMapLFGFrame:SetScale(state.scale)
-        MiniMapLFGFrame:ClearAllPoints()
-        MiniMapLFGFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    end
-end
-
-function DragonflightUILFGButtonMixin:HookEra()
-    -- print('~~HookEra()')
-    self.Era = true;
-
-    _G.LFGMinimapFrame:HookScript('OnShow', function()
-        --       
-        --  self.parent.DFEditMode
-        self:Show()
-    end)
-
-    _G.LFGMinimapFrame:HookScript('OnHide', function()
-        --  
-        if self.DFEditMode then return; end
-        self:Hide()
-    end)
-
-    _G.LFGMinimapFrame:HookScript('OnEnter', function()
-        --       
-        self:OnEnter()
-    end)
-
-    _G.LFGMinimapFrame:HookScript('OnLeave', function()
-        --  
-        self:OnLeave()
-    end)
-
-    self:SetShown(_G.LFGMinimapFrame:IsShown());
-
-    self.LastUpdate = GetTime()
-
-    function self:SetEditMode(edit)
-        -- print('self:SetEditMode(edit)', edit)
-        if edit then
-            self:Show()
-        else
-            self:SetShown(C_LFGInfo.CanPlayerUsePremadeGroup())
-        end
-    end
-
-    function self:UpdateBlizzard()
-        -- print('self:UpdateBlizzard()')
-        local state = self.state;
-
-        local f = _G.LFGMinimapFrame;
-
-        local parent;
-        if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-            parent = _G[state.customAnchorFrame]
-        else
-            parent = _G[state.anchorFrame]
-        end
-
-        f:SetParent(parent)
-        f:SetScale(state.scale)
-        f:ClearAllPoints()
-        f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    end
-end
-
-function DragonflightUILFGButtonMixin:UpdateState(state)
-    self.state = state;
-    self:Update()
-end
-
-function DragonflightUILFGButtonMixin:Update()
-    -- print('DragonflightUILFGButtonMixin:Update()')
-    local state = self.state;
-
-    local parent;
-    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-        parent = _G[state.customAnchorFrame]
-    else
-        parent = _G[state.anchorFrame]
-    end
-
-    self:SetScale(state.scale)
-    self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-
-    if self.UpdateBlizzard then self:UpdateBlizzard() end
-end
-
-function DragonflightUILFGButtonMixin:OnLoad()
-    -- print('DragonflightUILFGButtonMixin:OnLoad()')
-    -- self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-    self.glowLocks = {};
-    self.angerVal = 0;
-    self.LastUpdate = GetTime()
-
-    -- self:HookScript('OnClick', GenerateClosure(self.OnClick, self)) 
-
-    self:EnableMouse(false)
-end
-
-function DragonflightUILFGButtonMixin:OnShow()
-    -- print('DragonflightUILFGButtonMixin:OnShow()')
-
-    self.Eye:Show()
-    self.Eye:StartInitialAnimation();
-end
-
-function DragonflightUILFGButtonMixin:OnHide()
-    -- print('DragonflightUILFGButtonMixin:OnHide()')
-    QueueStatusFrame:Hide();
-
-    self.Eye:StopAnimating()
-    self.Eye:Hide()
-end
-
-function DragonflightUILFGButtonMixin:OnEnter()
-    -- print('DragonflightUILFGButtonMixin:OnEnter()')
-    self.cursorOnButton = true;
-
-    if (self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM or self.Eye.currAnim == LFG_EYE_NONE_ANIM) then
-        self.Eye:StartHoverAnimation();
-    end
-
-    QueueStatusFrame:Show();
-end
-
-function DragonflightUILFGButtonMixin:OnLeave()
-    -- print('DragonflightUILFGButtonMixin:OnLeave()')
-    self.cursorOnButton = false;
-
-    if (self.Eye.currAnim == LFG_EYE_HOVER_ANIM) then self.Eye:StartSearchingAnimation(); end
-
-    QueueStatusFrame:Hide();
-end
-
-function DragonflightUILFGButtonMixin:OnUpdate()
-    -- print('DragonflightUILFGButtonMixin:OnUpdate()')
-
-    -- Animation state machine
-    if (self:IsInitialEyeAnimFinished()) then
-        if self.Era then
-            self.Eye:StartIdleAnimation();
-        else
-            self.Eye:StartSearchingAnimation();
-        end
-    elseif (self:IsFoundInitialAnimFinished()) then
-        self.Eye:StartFoundAnimationLoop();
-    elseif (self:ShouldStartHoverAnim()) then
-        self.Eye:StartHoverAnimation();
-    end
-
-    local updateInterval = 0.15;
-
-    if not self.DFEditMode then return; end
-
-    if GetTime() - self.LastUpdate >= updateInterval then
-        self.LastUpdate = GetTime()
-        -- print('self:OnUpdate') 
-        if self.UpdateBlizzard then self:UpdateBlizzard() end
-    end
-end
-
-function DragonflightUILFGButtonMixin:OnEvent(self, event, ...)
-    -- print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
-
-    if event == "LFG_PROPOSAL_SHOW" then
-        self.Eye:StartFoundAnimationInit();
-    elseif event == "LFG_PROPOSAL_FAILED" then
-        self.Eye:StartSearchingAnimation();
-    elseif event == "LFG_LIST_ACTIVE_ENTRY_UPDATE" then
-        if (C_LFGList.HasActiveEntryInfo()) then
-            self.Eye:StartSearchingAnimation();
-        else
-            self.Eye:StartIdleAnimation();
-        end
-    end
-end
-
-function DragonflightUILFGButtonMixin:OnClick(self, button)
-    -- print('DragonflightUILFGButtonMixin', button)
-    if (button == "RightButton") then
-        -- QueueStatusDropDown_Show(self.DropDown, self:GetName());
-    end
-    -- MiniMapLFGFrame_OnClick(MiniMapLFGFrame, button)
-
-end
-
-function DragonflightUILFGButtonMixin:IsInitialEyeAnimFinished()
-    return self.Eye.currAnim == LFG_EYE_INIT_ANIM and not self.Eye.EyeInitial.EyeInitialAnim:IsPlaying();
-end
-
-function DragonflightUILFGButtonMixin:IsFoundInitialAnimFinished()
-    return self.Eye.currAnim == LFG_EYE_FOUND_INIT_ANIM and not self.Eye.EyeFoundInitial.EyeFoundInitialAnim:IsPlaying();
-end
-
-function DragonflightUILFGButtonMixin:ShouldStartHoverAnim()
-    return self.cursorOnButton and self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM;
-end
-
--- IMPROVED
-
 DragonflightUILFGButtonImprovedMixin = {}
 
 function DragonflightUILFGButtonImprovedMixin:Init()
@@ -618,6 +450,7 @@ function DragonflightUILFGButtonImprovedMixin:Init()
     self.glowLocks = {};
     self.angerVal = 0;
     self.LastUpdate = GetTime()
+
     self:EnableMouse(false)
 
     do
@@ -686,8 +519,10 @@ function DragonflightUILFGButtonImprovedMixin:HookScripts()
 
     def:HookScript('OnEnter', function()
         --     
-        print('OnEnter')
+        -- print('OnEnter')
         self.cursorOnButton = true;
+
+        if (self.Eye:IsStaticMode()) then return; end
 
         if (self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM or self.Eye.currAnim == LFG_EYE_NONE_ANIM) then
             self.Eye:StartHoverAnimation();
@@ -703,8 +538,10 @@ function DragonflightUILFGButtonImprovedMixin:HookScripts()
 
     def:HookScript('OnLeave', function()
         --  
-        print('OnLeave')
+        -- print('OnLeave')
         self.cursorOnButton = false;
+
+        if (self.Eye:IsStaticMode()) then return; end
 
         if (self.Eye.currAnim == LFG_EYE_HOVER_ANIM) then self.Eye:StartSearchingAnimation(); end
     end)
@@ -715,28 +552,55 @@ function DragonflightUILFGButtonImprovedMixin:HookScripts()
         self:OnUpdate()
     end)
 
+    def:HookScript('OnClick', function()
+        --  
+        -- print('OnClick')
+        -- self:OnUpdate()
+        if (button == "RightButton") then
+        else
+            -- Angry Eye
+            self.angerVal = self.angerVal + LFG_ANGER_INC_VAL;
+        end
+    end)
+
     self:SetScript('OnEvent', GenerateClosure(self.OnEvent, self))
 end
 
 function DragonflightUILFGButtonImprovedMixin:OnUpdate()
     -- print('DragonflightUILFGButtonMixin:OnUpdate()')
+    if (self.Eye:IsStaticMode()) then
+        -- self.Eye.texture:Show();
+        return;
+    end
+
+    -- self.Eye.texture:Hide();
 
     -- Animation state machine
-    if (self:IsInitialEyeAnimFinished()) then
-        if self.Era then
+    if (self:IsInitialEyeAnimFinished() or self:IsPokeEndAnimFinished()) then
+        if DF.Era then
             self.Eye:StartIdleAnimation();
         else
             self.Eye:StartSearchingAnimation();
         end
+        -- self.Eye:StartSearchingAnimation();
     elseif (self:IsFoundInitialAnimFinished()) then
         self.Eye:StartFoundAnimationLoop();
+    elseif (self:ShouldStartPokeInitAnim()) then
+        self.Eye:StartPokeAnimationInitial();
+    elseif (self:IsPokeInitAnimFinished()) then
+        self.Eye:StartPokeAnimationLoop();
+    elseif (self:ShouldStartPokeEndAnim()) then
+        self.Eye:StartPokeAnimationEnd();
     elseif (self:ShouldStartHoverAnim()) then
         self.Eye:StartHoverAnimation();
     end
+
+    self.angerVal = self.angerVal - LFG_ANGER_DEC_VAL;
+    self.angerVal = Clamp(self.angerVal, 0, LFG_ANGER_CAP_VAL);
 end
 
 function DragonflightUILFGButtonImprovedMixin:OnEvent(self, event, ...)
-    print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
+    -- print('DragonflightUILFGButtonMixin:OnEvent()', event, ...)
 
     if event == "LFG_PROPOSAL_SHOW" then
         self.Eye:StartFoundAnimationInit();
@@ -761,5 +625,24 @@ end
 
 function DragonflightUILFGButtonImprovedMixin:ShouldStartHoverAnim()
     return self.cursorOnButton and self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM;
+end
+
+function DragonflightUILFGButtonImprovedMixin:ShouldStartPokeInitAnim()
+    return self.angerVal >= LFG_ANGER_INIT_VAL and
+               (self.Eye.currAnim == LFG_EYE_HOVER_ANIM or self.Eye.currAnim == LFG_EYE_SEARCHING_ANIM or
+                   self.Eye.currAnim == LFG_EYE_IDLE);
+end
+
+function DragonflightUILFGButtonImprovedMixin:IsPokeInitAnimFinished()
+    return self.Eye.currAnim == LFG_EYE_POKE_INIT_ANIM and not self.Eye.EyePokeInitial.EyePokeInitialAnim:IsPlaying();
+end
+
+function DragonflightUILFGButtonImprovedMixin:ShouldStartPokeEndAnim()
+    return self.angerVal < LFG_ANGER_END_VAL and
+               (self.Eye.currAnim == LFG_EYE_POKE_LOOP_ANIM or self:IsPokeInitAnimFinished());
+end
+
+function DragonflightUILFGButtonImprovedMixin:IsPokeEndAnimFinished()
+    return self.Eye.currAnim == LFG_EYE_POKE_END_ANIM and not self.Eye.EyePokeEnd.EyePokeEndAnim:IsPlaying();
 end
 
