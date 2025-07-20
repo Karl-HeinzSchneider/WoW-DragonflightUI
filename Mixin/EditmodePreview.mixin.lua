@@ -1471,3 +1471,98 @@ function DragonflightUIEditModePreviewAltPowerBarMixin:OnLoad()
     -- self:SetupFrame()
     -- self:SetRandomUnit()
 end
+
+DragonflightUIEditModeGroupLootContainerPreviewMixin = {}
+
+local maxTimerValue = 42 * 1000; -- 60000
+
+function DragonflightUIEditModeGroupLootContainerPreviewMixin:OnLoad()
+    -- print('DragonflightUIEditModeGroupLootContainerPreviewMixin:OnLoad()')
+    self.Timer:SetMinMaxValues(0, maxTimerValue)
+
+    self:SetNewItem(19431)
+    -- self.TimerValue = fastrandom(0, 0.9 * maxTimerValue);
+end
+
+function DragonflightUIEditModeGroupLootContainerPreviewMixin:OnShow()
+    -- print('OnShow')
+    self:SetNewItem(self:GetRandomItem())
+    self.TimerValue = fastrandom(0, 0.9 * maxTimerValue);
+end
+
+do
+    local alreadyRandom = {};
+    local maxReroll = 5;
+    local randomItemTable = {19431, 22691, 22589, 19356, 19909, 19019, 1728, 23054, 19395, 22954, 19379, 21663, 21126}
+    local maxItems = #randomItemTable;
+
+    function DragonflightUIEditModeGroupLootContainerPreviewMixin:GetRandomItem()
+        -- 19431
+        local rand;
+
+        for k = 1, maxReroll do
+            rand = fastrandom(1, maxItems);
+            -- print('rand', rand)
+            if not alreadyRandom[rand] then
+                alreadyRandom[rand] = true;
+                return randomItemTable[rand]
+            else
+                -- print('REROLL', k, rand)
+            end
+        end
+        return randomItemTable[rand]
+    end
+end
+
+function DragonflightUIEditModeGroupLootContainerPreviewMixin:SetNewItem(id)
+    local item = Item:CreateFromItemID(id)
+
+    item:ContinueOnItemLoad(function()
+        local name = item:GetItemName()
+        local icon = item:GetItemIcon()
+        local quality = item:GetItemQuality()
+
+        self.Name:SetText(name)
+        local color = ITEM_QUALITY_COLORS[quality or 0];
+        self.Name:SetVertexColor(color.r, color.g, color.b);
+        self.IconFrame.Icon:SetTexture(icon)
+        self.IconFrame.Count:Hide();
+
+        local bindOnPickUp = true;
+        if (bindOnPickUp) then
+            self:SetBackdrop({
+                bgFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Background",
+                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
+                tile = true,
+                tileSize = 32,
+                edgeSize = 32,
+                insets = {left = 11, right = 12, top = 12, bottom = 11}
+            });
+            _G[self:GetName() .. "Corner"]:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Gold-Corner");
+            _G[self:GetName() .. "Decoration"]:Show();
+        else
+            self:SetBackdrop({
+                bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+                tile = true,
+                tileSize = 32,
+                edgeSize = 32,
+                insets = {left = 11, right = 12, top = 12, bottom = 11}
+            });
+            _G[self:GetName() .. "Corner"]:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Corner");
+            _G[self:GetName() .. "Decoration"]:Hide();
+        end
+    end)
+
+end
+
+function DragonflightUIEditModeGroupLootContainerPreviewMixin:OnUpdate(elapsed)
+    self.TimerValue = self.TimerValue + elapsed * 1000
+
+    if self.TimerValue >= maxTimerValue then
+        self:SetNewItem(self:GetRandomItem())
+        self.TimerValue = 0;
+    end
+
+    self.Timer:SetValue(self.TimerValue)
+end

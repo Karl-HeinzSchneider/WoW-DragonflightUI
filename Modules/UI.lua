@@ -342,9 +342,11 @@ function Module:AddEditMode()
         moduleRef = self,
         showFunction = function()
             --         
+            fakeRoll.FakePreview:Show()
         end,
         hideFunction = function()
             --
+            fakeRoll.FakePreview:Hide()
         end
     });
 end
@@ -873,6 +875,12 @@ function Module:ChangeGroupLootContainer()
     local fakeRoll = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerPreview', UIParent)
     fakeRoll:SetSize(256, 100)
     Module.PreviewRoll = fakeRoll
+
+    local fakePreview = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerFakeLootPreview', fakeRoll,
+                                    'DFEditModePreviewGroupLootTemplate')
+    fakePreview:SetPoint('CENTER')
+
+    fakeRoll.FakePreview = fakePreview
 end
 
 function Module:UpdateGroupLootContainerState(state)

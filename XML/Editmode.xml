@@ -160,4 +160,208 @@
 	</Frame>
 	<Frame name="DFEditModePreviewRaidTemplate" mixin="DragonflightUIEditModePreviewRaidMixin" virtual="true">
 	</Frame>
+	<Frame name="DFEditModePreviewGroupLootTemplate" mixin="DragonflightUIEditModeGroupLootContainerPreviewMixin" inherits="BackdropTemplate" hidden="true" virtual="true">
+		<Size x="243" y="84" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentSlotTexture" file="Interface\Buttons\UI-EmptySlot">
+					<Size>
+						<AbsDimension x="64" y="64" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="3" y="-3" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentNameFrame" file="Interface\MerchantFrame\UI-Merchant-LabelSlots">
+					<Size>
+						<AbsDimension x="128" y="64" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentSlotTexture" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="-9" y="-10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString parentKey="Name" name="$parentName" inherits="GameFontNormalSmall" text="Item Name" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="90" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentSlotTexture" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="-5" y="5" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentDecoration" file="Interface\DialogFrame\UI-DialogBox-Gold-Dragon" hidden="true">
+					<Size>
+						<AbsDimension x="120" y="120" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-30" y="15" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentCorner" file="Interface\DialogFrame\UI-DialogBox-Corner">
+					<Size>
+						<AbsDimension x="32" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-6" y="-7" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="IconFrame" enableMouse="true">
+				<Size x="34" y="34" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSlotTexture" x="15" y="-15" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon">
+							<Size x="34" y="34" />
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Count" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+							<Anchors>
+								<Anchor point="BOTTOMRIGHT" x="-5" y="2" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<!--
+				<Scripts>
+				<OnLoad>
+				self.hasItem = 1;
+				</OnLoad>
+				<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetLootRollItem(self:GetParent().rollID);
+				CursorUpdate(self);
+				</OnEnter>
+				<OnLeave>
+				GameTooltip:Hide();
+				ResetCursor();
+				</OnLeave>
+				<OnUpdate>
+				if ( GameTooltip:IsOwned(self) ) then
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetLootRollItem(self:GetParent().rollID);
+				end
+				CursorOnUpdate(self);
+				</OnUpdate>
+				<OnClick>
+				HandleModifiedItemClick(GetLootRollItemLink(self:GetParent().rollID));
+				</OnClick>
+				</Scripts>
+				-->
+			</Button>
+			<Button parentKey="NeedButton" inherits="LootRollButtonTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-37" y="-14" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+					</OnClick>
+					<OnLoad>
+						self.tooltipText=NEED;
+					</OnLoad>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
+			</Button>
+			<Button parentKey="PassButton" inherits="UIPanelCloseButton" id="0">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentCorner" relativePoint="TOPRIGHT" x="5" y="5" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(PASS);
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</Button>
+			<Button parentKey="GreedButton" inherits="LootRollButtonTemplate" id="2">
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.NeedButton" relativePoint="BOTTOM" x="-2" y="2" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+					</OnClick>
+					<OnLoad>
+						self.tooltipText=GREED;
+					</OnLoad>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Coin-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Coin-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Coin-Down" />
+			</Button>
+			<StatusBar parentKey="Timer" drawLayer="ARTWORK" minValue="0" maxValue="60000" defaultValue="0">
+				<Size x="152" y="10" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSlotTexture" relativePoint="BOTTOMLEFT" x="13" y="10" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND" textureSubLevel="-1">
+						<Texture parentKey="Background" setAllPoints="true">
+							<Color r="0" g="0" b="0" />
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\PaperDollInfoFrame\UI-Character-Skills-BarBorder">
+							<Size x="156" y="20" />
+							<Anchors>
+								<Anchor point="TOP" x="0" y="5" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self:GetStatusBarTexture():SetDrawLayer("BACKGROUND");
+					</OnLoad>
+					<!--
+					<OnUpdate>
+					GroupLootFrame_OnUpdate(self, elapsed);
+					</OnUpdate>
+					-->
+				</Scripts>
+				<BarTexture parentKey="Bar" file="Interface\PaperDollInfoFrame\UI-Character-Skills-Bar" />
+				<BarColor r="1.0" g="1.0" b="0" />
+			</StatusBar>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnUpdate method="OnUpdate" />
+			<OnShow method="OnShow" />
+		</Scripts>
+	</Frame>
 </Ui>
