@@ -212,11 +212,13 @@ function DFSettingsCategoryListMixin:EnableElement(id, categoryID)
     local oldNodeData = oldNode:GetData();
     oldNodeData.isEnabled = true;
 
-    self.DataProvider:InsertInParentByPredicate(oldNodeData, function(node)
-        local nodeData = node:GetData()
+    local parentNode = self.DataProvider:FindElementDataByPredicate(function(node)
+        local data = node:GetData();
+        return data.id == categoryID;
+    end, false)
 
-        return nodeData.id == categoryID
-    end)
+    parentNode:Insert(oldNodeData)
+    parentNode:Invalidate()
 end
 
 function DFSettingsCategoryListMixin:FindElementDataByPredicate(predicate)
