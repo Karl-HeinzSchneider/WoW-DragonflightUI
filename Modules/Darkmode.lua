@@ -18,6 +18,9 @@ local defaults = {
             -- Minimap
             minimapDesaturate = true,
             minimapColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
+            -- ui
+            uiDesaturate = true,
+            uiColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
             -- Actionbar
             actionbarDesaturate = true,
             actionbarColor = CreateColor(0.4, 0.4, 0.4):GenerateHexColorNoAlpha(),
@@ -120,6 +123,28 @@ local generalOptions = {
             name = L["DarkmodeColor"],
             desc = '' .. getDefaultStr('minimapColor', 'general', '#'),
             group = 'headerMinimap',
+            order = 201
+        },
+        headerUI = {
+            type = 'header',
+            name = L["UIName"],
+            desc = '...',
+            order = 200,
+            isExpanded = true,
+            sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        uiDesaturate = {
+            type = 'toggle',
+            name = L["DarkmodeDesaturate"],
+            desc = '' .. getDefaultStr('minimapuiDesaturateDesaturate', 'general'),
+            group = 'headerUI',
+            order = 200.5
+        },
+        uiColor = {
+            type = 'color',
+            name = L["DarkmodeColor"],
+            desc = '' .. getDefaultStr('uiColor', 'general', '#'),
+            group = 'headerUI',
             order = 201
         },
         headerActionbar = {
@@ -293,6 +318,7 @@ function Module:ApplySettings()
     Module:UpdateFlyout(state)
     Module:UpdateBuff(state)
     Module:UpdateCastbar(state)
+    Module:UpdateUI(state)
 end
 
 function Module:UpdateMinimapButton(btn)
@@ -379,30 +405,37 @@ function Module:UpdateMinimap(state)
     end
 
     if DF.Era then
-        if _G['LFGMinimapFrameBorder'] then
-            _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
-            _G['LFGMinimapFrameBorder']:SetVertexColor(c:GetRGB())
-        else
-            if not f.DarkModeLFGHooked then
-                f.DarkModeLFGHooked = true
+        -- if _G['LFGMinimapFrameBorder'] then
+        --     _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
+        --     _G['LFGMinimapFrameBorder']:SetVertexColor(c:GetRGB())
+        -- else
+        --     if not f.DarkModeLFGHooked then
+        --         f.DarkModeLFGHooked = true
 
-                hooksecurefunc(minimapModule, 'ChangeLFGEra', function()
-                    --
-                    local db = Module.db.profile
-                    local state = db.general
-                    if _G['LFGMinimapFrameBorder'] then
-                        _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
-                        _G['LFGMinimapFrameBorder']:SetVertexColor(c:GetRGB())
-                    end
-                end)
-            end
-        end
+        --         hooksecurefunc(minimapModule, 'ChangeLFGEra', function()
+        --             --
+        --             local db = Module.db.profile
+        --             local state = db.general
+        --             if _G['LFGMinimapFrameBorder'] then
+        --                 _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
+        --                 _G['LFGMinimapFrameBorder']:SetVertexColor(c:GetRGB())
+        --             end
+        --         end)
+        --     end
+        -- end
 
         if _G['MiniMapTrackingBorder'] then
             _G['MiniMapTrackingBorder']:SetDesaturated(state.minimapDesaturate)
             _G['MiniMapTrackingBorder']:SetVertexColor(c:GetRGB())
         end
     end
+end
+
+function Module:UpdateUI(state)
+    local moduleName = 'UI'
+    local uiModule = DF:GetModule(moduleName)
+
+    if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
 end
 
 function Module:UpdateUnitframe(state)
