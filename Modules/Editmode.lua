@@ -24,6 +24,7 @@ local defaults = {
             RepBar = true,
             ExtraActionButton = true,
             FlyoutBar = true,
+            GroupLootContainer = true,
             -- Bossframe
             BossFrames = true,
             -- buffs,
