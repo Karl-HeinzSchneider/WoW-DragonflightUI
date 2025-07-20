@@ -28,6 +28,16 @@ local defaults = {
             changeTrainer = true,
             changeTalents = true,
             questLevel = true
+        },
+        roll = {
+            scale = 1,
+            anchorFrame = 'UIParent',
+            customAnchorFrame = '',
+            anchor = 'BOTTOM',
+            anchorParent = 'BOTTOM',
+            x = 300, -- 0
+            y = 200, -- 152 = default blizz
+            hideBackgroundTexture = false
         }
     }
 }
@@ -60,6 +70,25 @@ end
 local function setOption(info, value)
     Module:SetOption(info, value)
 end
+
+local function setPreset(T, preset, sub)
+    -- print('setPreset')
+    -- DevTools_Dump(T)
+    -- print('---')
+    -- DevTools_Dump(preset)
+
+    for k, v in pairs(preset) do
+        --
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
+end
+
+local frameTable = {
+    {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'}
+    -- {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
+}
 
 local UIOptions = {
     type = 'group',
@@ -144,6 +173,51 @@ if DF.Era or (DF.Wrath and not DF.Cata) then
     for k, v in pairs(moreOptions) do UIOptions.args[k] = v end
 end
 
+local rollOptions = {
+    name = L["GroupLootContainerName"],
+    desc = L["GroupLootContainerDesc"],
+    advancedName = 'GroupLootContainer',
+    sub = 'roll',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {}
+}
+DF.Settings:AddPositionTable(Module, rollOptions, 'roll', 'GroupLootContainer', getDefaultStr, frameTable)
+-- DragonflightUIStateHandlerMixin:AddStateTable(Module, rollOptions, 'possess', 'PossessBar', getDefaultStr)
+rollOptions.args.scale = nil;
+local rollOptionsEditmode = {
+    name = 'possess',
+    desc = 'possess',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.roll
+                local defaultsTable = defaults.profile.roll
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'roll')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, ...)
@@ -207,6 +281,7 @@ function Module:OnEnable()
 
     Module:ApplySettings()
     Module:RegisterOptionScreens()
+    Module:AddEditMode()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -227,6 +302,7 @@ function Module:RegisterSettings()
     end
 
     register('ui', {order = 0, name = UIOptions.name, descr = 'UIsss', isNew = false})
+    register('roll', {order = 18, name = rollOptions.name, descr = 'desc', isNew = true})
 end
 
 function Module:RegisterOptionScreens()
@@ -236,6 +312,41 @@ function Module:RegisterOptionScreens()
             setDefaultSubValues(UIOptions.sub)
         end
     })
+
+    DF.ConfigModule:RegisterSettingsData('roll', 'misc', {
+        options = rollOptions,
+        default = function()
+            setDefaultSubValues('roll')
+        end
+    })
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+
+    -- GroupLootContainer 
+    local fakeRoll = Module.PreviewRoll
+
+    EditModeModule:AddEditModeToFrame(fakeRoll)
+
+    fakeRoll.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return rollOptions.name
+    end)
+
+    fakeRoll.DFEditModeSelection:RegisterOptions({
+        options = rollOptions,
+        extra = rollOptionsEditmode,
+        default = function()
+            setDefaultSubValues('roll')
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --         
+        end,
+        hideFunction = function()
+            --
+        end
+    });
 end
 
 function Module:RefreshOptionScreens()
@@ -248,10 +359,13 @@ function Module:RefreshOptionScreens()
     end
 
     refreshCat('UI')
+    refreshCat('roll')
+
+    Module.PreviewRoll.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings()
-    local db = Module.db.profile.first
+function Module:ApplySettings(sub)
+    local db = Module.db.profile
 
     self:ConditionalOption('changeBag', 'first', 'Change Bags', function()
         Module:ChangeBags()
@@ -317,6 +431,8 @@ function Module:ApplySettings()
     self:ConditionalOption('questLevel', 'first', 'Show Questlevel', function()
         DragonflightUIMixin:AddQuestLevel()
     end)
+
+    Module:UpdateGroupLootContainerState(db.roll)
 end
 
 function Module:ChangeFrames()
@@ -393,6 +509,7 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
+        Module:ChangeGroupLootContainer()
     elseif Version.IsTBC then
     elseif Version.IsWotlk then
         DragonflightUIMixin:ChangeQuestLogFrameCata()
@@ -436,6 +553,7 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
+        Module:ChangeGroupLootContainer()
     elseif Version.IsCata then
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
         DragonflightUIMixin:ChangeCharacterFrameCata()
@@ -485,6 +603,7 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
+        Module:ChangeGroupLootContainer()
     elseif Version.IsMoP then
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
         DragonflightUIMixin:ChangeCharacterFrameCata()
@@ -527,6 +646,7 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
+        Module:ChangeGroupLootContainer()
     end
 end
 
@@ -747,6 +867,34 @@ end
 
 function Module:HookColorInspect()
     DragonflightUIItemColorMixin:HookInspectFrame()
+end
+
+function Module:ChangeGroupLootContainer()
+    local fakeRoll = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerPreview', UIParent)
+    fakeRoll:SetSize(256, 100)
+    Module.PreviewRoll = fakeRoll
+end
+
+function Module:UpdateGroupLootContainerState(state)
+    -- print('UpdateGroupLootContainerState')
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
+    local preview = Module.PreviewRoll;
+    preview:ClearAllPoints()
+    preview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    -- preview:SetScale(state.scale)
+    preview:SetScale(1)
+
+    local f = _G['GroupLootContainer']
+    f.ignoreFramePositionManager = true;
+    f:ClearAllPoints()
+    f:SetPoint('BOTTOM', preview, 'BOTTOM', 0, 0)
 end
 
 function Module:Era()

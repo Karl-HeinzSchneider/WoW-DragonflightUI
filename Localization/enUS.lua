@@ -397,6 +397,10 @@ do
     L["ExtraActionButtonStyleDesc"] = ""
     L["ExtraActionButtonHideBackgroundTexture"] = "Hide Background Texture"
     L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+
+    -- Roll
+    L["GroupLootContainerName"] = "Group Loot Container"
+    L["GroupLootContainerDesc"] = ""
 end
 
 -- Buffs
