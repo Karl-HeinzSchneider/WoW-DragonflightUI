@@ -877,8 +877,8 @@ local optionsTargetEditmode = {
 }
 
 local optionsTargetOfTarget = {
-    name = 'TargetOfTarget',
-    desc = L["TargetFrameDesc"],
+    name = L["TargetOfTargetFrameName"],
+    desc = L["TargetOfTargetFrameDesc"],
     advancedName = 'TargetOfTargetFrame',
     sub = 'tot',
     get = getOption,

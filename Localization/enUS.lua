@@ -739,6 +739,9 @@ do
     L["TargetFrameDynamicBuffSize"] = "Dynamic Buff Size"
     L["TargetFrameDynamicBuffSizeDesc"] = "Increases the size of the player buffs and debuffs on the target."
 
+    -- ToT
+    L["TargetOfTargetFrameName"] = "Target Of Target"
+    L["TargetOfTargetFrameDesc"] = ""
     -- Pet
     L["PetFrameName"] = "PetFrame"
     L["PetFrameDesc"] = "Pet frame settings"

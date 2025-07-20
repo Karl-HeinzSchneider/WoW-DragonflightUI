@@ -165,12 +165,49 @@ if true then
         }
     }
 
+    local displayTable = {}
+    -- actionbar
+    displayTable['ActionBars'] = L['ActionbarName']
+    displayTable['FlyoutBar'] = L['ModuleFlyout']
+    displayTable['MicroMenu'] = L['MicroMenu']
+    displayTable['PetBar'] = L['PetBar']
+    displayTable['PossessBar'] = L['PossessBar']
+    displayTable['StanceBar'] = L['StanceBar']
+    displayTable['TotemBar'] = L['TotemBar']
+    displayTable['ExtraActionButton'] = L['ExtraActionButtonOptionsName']
+
+    -- combat
+    displayTable['Buffs'] = L['BuffsOptionsName']
+    displayTable['Debuffs'] = L['DebuffsOptionsName']
+    displayTable['Castbars'] = L['CastbarName']
+
+    -- frames
+    displayTable['PlayerFrame'] = L['PlayerFrameName']
+    displayTable['PetFrame'] = L['PetFrameName']
+    displayTable['TargetFrame'] = L['TargetFrameName']
+    displayTable['TargetOfTargetFrame'] = L['TargetOfTargetFrameName']
+    displayTable['FocusFrame'] = L['FocusFrameName']
+    displayTable['FocusTargetFrame'] = L['FocusFrameToTName']
+    displayTable['PartyFrame'] = L['PartyFrameName']
+    displayTable['RaidFrame'] = L['RaidFrameName']
+
+    -- misc
+    displayTable['Bags'] = L['BagsOptionsName']
+    displayTable['FPS'] = L['FPSOptionsName']
+    displayTable['LFG'] = L['MinimapLFGName']
+    displayTable['Minimap'] = L['MinimapName']
+    displayTable['Tracker'] = L['MinimapTrackerName']
+    displayTable['Durability'] = L['MinimapDurabilityName']
+    displayTable['GameTooltip'] = L['TooltipName']
+    displayTable['Player_PowerBarAlt'] = L['PowerBarAltName']
+    displayTable['GroupLootContainer'] = L['GroupLootContainerName']
+
     local function AddTableToCategory(t, header)
         for k, v in ipairs(t) do
             --
             advancedOptions.args[v] = {
                 type = 'toggle',
-                name = v,
+                name = displayTable[v] or v,
                 desc = '' .. getDefaultStr(v, 'advanced'),
                 order = k,
                 small = true,
@@ -198,7 +235,7 @@ if true then
     AddTableToCategory(framesFrames, 'headerFrames')
 
     -- misc
-    local miscFrames = {'Bags', 'FPS', 'LFG', 'Minimap', 'Tracker', 'Durability', 'GameTooltip'}
+    local miscFrames = {'Bags', 'FPS', 'LFG', 'GroupLootContainer', 'Minimap', 'Tracker', 'Durability', 'GameTooltip'}
     if DF.Cata then table.insert(miscFrames, 'Player_PowerBarAlt') end
     AddTableToCategory(miscFrames, 'headerMisc')
 
