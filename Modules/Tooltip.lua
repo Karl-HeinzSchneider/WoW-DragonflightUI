@@ -625,6 +625,11 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
             self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
             return;
         end
+
+        if DF.Era and parent == _G['LFGMinimapFrame'] then
+            self:SetOwner(parent, 'ANCHOR_BOTTOMLEFT');
+            return;
+        end
     end
 
     if parent and _G['DragonflightUIXPBar'] and _G['DragonflightUIXPBar'].Bar and parent ==

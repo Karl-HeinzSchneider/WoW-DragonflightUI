@@ -493,7 +493,7 @@ function Module:RefreshOptionScreens()
     Minimap.DFEditModeSelection:RefreshOptionScreen();
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
     Module.DurabilityContainer.DFEditModeSelection:RefreshOptionScreen()
-    Module.LFG.DFEditModeSelection:RefreshOptionScreen()
+    if Module.LFG then Module.LFG.DFEditModeSelection:RefreshOptionScreen() end
 end
 
 function Module:ApplySettings(sub)
@@ -507,7 +507,7 @@ function Module:ApplySettings(sub)
     Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
     Module.UpdateDurabilityState(db.durability)
-    if Module.LFG then Module.LFG:UpdateState(db.lfg) end
+    Module:UpdateLFGState(db.lfg)
 end
 
 local frame = CreateFrame('FRAME')
@@ -705,30 +705,6 @@ function Module:AddEditMode()
     -- TODO: add fake preview
     function Module.DurabilityContainer:SetEditMode()
     end
-
-    -- LFG
-    EditModeModule:AddEditModeToFrame(Module.LFG)
-
-    Module.LFG.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return optionsLFG.name
-    end)
-
-    Module.LFG.DFEditModeSelection:RegisterOptions({
-        options = optionsLFG,
-        prio = 5,
-        extra = optionsLFGEditmode,
-        showFunction = function()
-            --
-        end,
-        hideFunction = function()
-            --
-        end,
-        default = function()
-            setDefaultSubValues(optionsLFG.sub)
-        end,
-        moduleRef = self
-    });
-
 end
 
 function Module.UpdateMinimapState(state)
@@ -926,6 +902,25 @@ function Module.MoveMinimap(x, y)
     -- MinimapCluster:ClearAllPoints()
     -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
     -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', x, y)
+end
+
+function Module:UpdateLFGState(state)
+    local container = Module.LFG
+    if not container then return end
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
+    container:SetIgnoreParentScale(parent == UIParent)
+    container:SetParent(parent)
+
+    container:SetScale(state.scale)
+    container:ClearAllPoints()
+    container:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 end
 
 function Module.ChangeZoom()
@@ -1378,27 +1373,89 @@ function Module.MoveTrackerFunc()
 end
 
 function Module:ChangeLFG()
-    local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', Minimap)
-    Mixin(lfg, DragonflightUILFGButtonMixin)
-    lfg:Init()
-    -- lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
-    lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-    Module.LFG = lfg
+    -- local lfg = CreateFrame('Button', 'DragonflightUILFGButtonFrame', Minimap)
+    -- Mixin(lfg, DragonflightUILFGButtonImprovedMixin)
+    -- lfg:Init()
+    -- -- lfg:SetPoint('CENTER', MiniMapLFGFrame, 'CENTER', 0, 0)
+    -- lfg:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
+    -- Module.LFG = lfg
 
-    if DF.Cata or DF.Wrath then
-        MiniMapLFGFrame:ClearAllPoints()
-        -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
-        MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
-        MiniMapLFGFrameBorder:Hide()
-        MiniMapLFGFrameIcon:Hide()
+    -- if DF.Cata or DF.Wrath then
+    --     MiniMapLFGFrame:ClearAllPoints()
+    --     -- MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 10, 30)
+    --     MiniMapLFGFrame:SetPoint('CENTER', Minimap, 'CENTER', -62.38, -41.63)
+    --     MiniMapLFGFrameBorder:Hide()
+    --     MiniMapLFGFrameIcon:Hide()
 
-        lfg:HookCata()
+    --     lfg:HookCata()
+    -- elseif DF.Era then
+    --     DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+    --         --
+    --         Module:ChangeLFGEra();
+    --     end)
+
+    -- end
+
+    local addEditmode = function()
+        local EditModeModule = DF:GetModule('Editmode');
+
+        local lfg = Module.LFG
+        EditModeModule:AddEditModeToFrame(lfg)
+
+        lfg.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return optionsLFG.name
+        end)
+
+        lfg.DFEditModeSelection:RegisterOptions({
+            options = optionsLFG,
+            prio = 5,
+            extra = optionsLFGEditmode,
+            showFunction = function()
+                --
+            end,
+            hideFunction = function()
+                --
+                MiniMapLFGFrame_OnEvent(Module.LFG, 'LFG_UPDATE')
+            end,
+            default = function()
+                setDefaultSubValues(optionsLFG.sub)
+            end,
+            moduleRef = self
+        });
+    end
+
+    if DF.Wrath then
+        Module.LFG = _G['MiniMapLFGFrame']
+
+        -- Module.LFG:SetFrameLevel(10)
+        Module.LFG:Raise()
+
+        local LFGEye = CreateFrame('Frame', 'DragonflightUILFGButtonFrame', Module.LFG)
+        Mixin(LFGEye, DragonflightUILFGButtonImprovedMixin)
+        LFGEye:SetPoint('CENTER', Module.LFG, 'CENTER', 0, 0)
+        LFGEye:Init()
+        LFGEye:EnableMouse(false)
+
+        Module.LFGEye = LFGEye
+
+        addEditmode()
     elseif DF.Era then
         DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
             --
-            Module:ChangeLFGEra();
-        end)
+            print('~~~~Blizzard_GroupFinder_VanillaStyle')
+            Module.LFG = _G['LFGMinimapFrame']
+            Module.LFG:Raise()
 
+            local LFGEye = CreateFrame('Frame', 'DragonflightUILFGButtonFrame', Module.LFG)
+            Mixin(LFGEye, DragonflightUILFGButtonImprovedMixin)
+            LFGEye:SetPoint('CENTER', Module.LFG, 'CENTER', 0, 0)
+            LFGEye:Init()
+            LFGEye:EnableMouse(false)
+
+            Module.LFGEye = LFGEye
+
+            addEditmode()
+        end)
     end
 end
 
