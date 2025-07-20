@@ -551,9 +551,9 @@ function DragonflightUIActionbarMixin:AddTargetStateDriver()
             if ID > 0 then 
                 if not page then
                     page = GetActionBarPage()
-                    if btn.isExtra then
+                    if self.isExtra then
                         page = GetExtraBarPage()
-                    elseif btn.buttonType == 'MULTICASTACTIONBUTTON' then
+                    elseif self.buttonType == 'MULTICASTACTIONBUTTON' then
                         page = GetMultiCastBarIndex()
                     end
                 end
