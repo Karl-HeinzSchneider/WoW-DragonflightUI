@@ -1392,7 +1392,11 @@ function Module:ChangeLFG()
             end,
             hideFunction = function()
                 --
-                MiniMapLFGFrame_OnEvent(Module.LFG, 'LFG_UPDATE')
+                if DF.Wrath then
+                    MiniMapLFGFrame_OnEvent(Module.LFG, 'LFG_UPDATE')
+                elseif DF.Era then
+                    Module.LFG:Show()
+                end
             end,
             default = function()
                 setDefaultSubValues(optionsLFG.sub)
