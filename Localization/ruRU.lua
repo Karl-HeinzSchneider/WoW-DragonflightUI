@@ -254,7 +254,7 @@ do
         })
     L['ActionbarTargetDriverMouseOverModifier'] = "Клавиша для каста при наведении"
     L['ActionbarTargetDriverMouseOverModifierDesc'] =
-        "При удержании этой клавиши будет возможно выполнение каста на цель под курсором, даже если выбрана вражеская цель."
+        "При удержании этой клавиши будет возможно выполнение каста на цель под курсором, даже если выбран юнит."
     L['ActionbarTargetDriverUseAutoAssist'] = "Использовать автоассист для каста"
     L['ActionbarTargetDriverUseAutoAssistDesc'] =
         "Когда включено, кнопки действий автоматически пытаются выполнить каст на цель вашей цели, если текущая цель не подходит для выбранного заклинания." ..
@@ -268,7 +268,7 @@ do
             cond('[mod:FOCUSCAST, @focus, exists, nodead]')
     L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "Клавиша для каста на фокус"
     L['ActionbarTargetDriverFocusCastModifierDesc'] =
-        "При удержании этой клавиши будет возможно выполнение каста на цель фокуса, даже если выбрана вражеская цель."
+        "При удержании этой клавиши будет возможно выполнение каста на цель фокуса, даже если выбран юнит."
     L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "Каст на себя")
     L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "") .. cond('[mod: SELFCAST]')
     L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "Клавиша для каста на себя"
