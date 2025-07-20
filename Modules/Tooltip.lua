@@ -582,7 +582,6 @@ end
 
 function Module:GameTooltipSetDefaultAnchor(self, parent)
     -- DF:Debug(Module, 'GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
-    print('GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
     local state = Module.db.profile.general;
 
     -- spells
