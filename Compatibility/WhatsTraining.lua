@@ -5,7 +5,7 @@ function DF.Compatibility:WhatsTraining()
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
-    hooksecurefunc("SpellBookFrame_UpdateSkillLineTabs", function()
+    local function SpellBookFrame_UpdateSkillLineTabs_Hook()
         local frame = _G['WhatsTrainingFrame']
         if frame and frame.DFHooked then return end
 
@@ -89,5 +89,10 @@ function DF.Compatibility:WhatsTraining()
         local scroll = _G['WhatsTrainingFrameScrollBar']
         -- scroll:SetPoint('TOPLEFT', frame, 'TOPLEFT', 120, -75)
         -- scroll:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -65, 81)
-    end)
+    end
+    if SpellBookFrame_UpdateSkillLineTabs then
+        hooksecurefunc("SpellBookFrame_UpdateSkillLineTabs", SpellBookFrame_UpdateSkillLineTabs_Hook)
+    else
+        hooksecurefunc(SpellBookFrame, "UpdateSkillLineTabs", SpellBookFrame_UpdateSkillLineTabs_Hook)
+    end
 end
