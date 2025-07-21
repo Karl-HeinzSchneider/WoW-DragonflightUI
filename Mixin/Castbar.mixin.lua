@@ -4,6 +4,18 @@ local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Casti
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
 local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
 
+local fishingTable = {
+    [7620] = APPRENTICE,
+    [7731] = JOURNEYMAN,
+    [7732] = EXPERT,
+    [18248] = ARTISAN,
+    [33095] = MASTER, -- bc
+    [51294] = GRAND_MASTER, -- wotlk
+    [88868] = ILLUSTRIOUS, -- cata
+    [110412] = ZEN_MASTER -- mop
+}
+local fishingName = GetSpellInfo(7620)
+
 DragonFlightUICastbarMixin = {}
 
 function DragonFlightUICastbarMixin:OnLoad(unit)
@@ -215,7 +227,12 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
         end
     elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
         local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellId = UnitChannelInfo(unit);
-        local subText = GetSpellSubtext(spellId) or ''
+        local subText;
+        if name == fishingName then
+            subText = ''
+        else
+            subText = GetSpellSubtext(spellId) or ''
+        end
         if not self.showRank then subText = '' end
         if subText ~= '' then
             text = name
