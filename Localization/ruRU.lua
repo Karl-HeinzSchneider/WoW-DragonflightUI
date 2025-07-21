@@ -399,6 +399,14 @@ do
     L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
 end
 
+ -- Roll
+    L["GroupLootContainerName"] = "Контейнер групповой добычи"
+    L["GroupLootContainerDesc"] = ""
+   
+-- widget below
+    L["WidgetBelowName"] = "Виджет под миникартой"
+    L["WidgetBelowNameDesc"] = ""
+
 -- Buffs
 do
     L["BuffsOptionsName"] = "Баффы"
@@ -734,7 +742,10 @@ do
     L["TargetFrameDynamicBuffSize"] = "Динамический размер баффов"
     L["TargetFrameDynamicBuffSizeDesc"] = "Увеличивает размер баффов и дебаффов игрока на цели."
 
-    -- Pet
+     -- ToT
+    L["TargetOfTargetFrameName"] = "Цель цели"
+    L["TargetOfTargetFrameDesc"] = ""
+     -- Pet
     L["PetFrameName"] = "Рамка питомца"
     L["PetFrameDesc"] = "Настройки рамки питомца"
     L["PetFrameStyle"] = L["ButtonTableStyle"]
