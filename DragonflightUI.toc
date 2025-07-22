@@ -82,28 +82,8 @@ XML\UI.xml
 
 XML\DFColorPicker.xml
 
-# Config
+## 
 Modules\__Settings.lua
-Modules\Config.lua
-
-# Modules
-Modules\Profiles.lua
-Modules\Editmode.lua
-
-Modules\Actionbar.lua
-Modules\Bossframe.lua
-Modules\Buffs.lua
-Modules\Castbar.lua
-Modules\Chat.lua
-Modules\Flyout.lua
-Modules\Minimap.lua
-Modules\Tooltip.lua
-Modules\UI.lua
-Modules\Unitframe.lua
-Modules\Utility.lua
-
-Modules\Darkmode.lua
-
-#
 Compatibility.xml
-Modules\Compatibility.lua
+Modules\LoadModules.xml
+

@@ -1,0 +1,16 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
+	<Include file="Core/Load.xml" />
+	<Include file="Actionbar/Load.xml" />
+	<Include file="Bossframe/Load.xml" />
+	<Include file="Buffs/Load.xml" />
+	<Include file="Castbar/Load.xml" />
+	<Include file="Chat/Load.xml" />
+	<Include file="Flyout/Load.xml" />
+	<Include file="Minimap/Load.xml" />
+	<Include file="Tooltip/Load.xml" />
+	<Include file="UI/Load.xml" />
+	<Include file="Unitframe/Load.xml" />
+	<Include file="Utility/Load.xml" />
+	<Include file="Darkmode/Load.xml" />
+	<Include file="Compatibility/Load.xml" />
+</Ui>
