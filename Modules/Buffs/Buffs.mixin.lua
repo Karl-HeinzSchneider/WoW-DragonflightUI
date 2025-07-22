@@ -223,7 +223,7 @@ function SubModuleMixin:Setup()
     EditModeModule:AddEditModeToFrame(self.DFBuffFrame)
 
     self.DFBuffFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return buffsOptions.name
+        return self.Options.name
     end)
 
     self.DFBuffFrame.DFEditModeSelection:RegisterOptions({
