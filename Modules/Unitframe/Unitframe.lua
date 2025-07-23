@@ -123,15 +123,17 @@ end
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
-    if true then return end
 
     self:EnableAddonSpecific()
+
+    Module:ApplySettings()
+
+    if true then return end
 
     Module.AddStateUpdater()
     Module:AddEditMode()
 
     Module:SaveLocalSettings()
-    Module:ApplySettings()
 
     hooksecurefunc('UIParent_UpdateTopFramePositions', function()
         Module:SaveLocalSettings()
@@ -177,12 +179,7 @@ end
 
 function Module:RegisterOptionScreens()
     if DF.Wrath then
-        DF.ConfigModule:RegisterSettingsData('focus', 'unitframes', {
-            options = optionsFocus,
-            default = function()
-                setDefaultSubValues('focus')
-            end
-        })
+
         DF.ConfigModule:RegisterSettingsData('focustarget', 'unitframes', {
             options = optionsFocusTarget,
             default = function()
@@ -253,6 +250,13 @@ function Module:RefreshOptionScreens()
     refreshCat('Target')
     refreshCat('TargetOfTarget')
 
+    if DF.Wrath then
+        self.SubFocus.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
+        -- Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
+    end
+
+    if true then return end
+
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
 
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
@@ -260,11 +264,7 @@ function Module:RefreshOptionScreens()
     Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
-    if DF.Wrath then
-        --  FocusFrame.DFEditModeSelection:RefreshOptionScreen();
-        Module.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
-        Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
-    end
+
     if DF.Cata then Module.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 end
 
@@ -330,6 +330,10 @@ end
 function Module:ApplySettings(sub)
     local db = Module.db.profile
     local orig = defaults.profile
+
+    self.SubFocus:UpdateState(db.focus)
+
+    if true then return end
 
     -- if sub then
     --     if sub == "target" then
@@ -453,23 +457,7 @@ function Module:ApplySettings(sub)
 
     if DF.Wrath then
         -- focus
-        do
-            local obj = db.focus
-            local objLocal = localSettings.focus
-
-            Module.MoveFocusFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
-            FocusFrame:SetUserPlaced(true)
-
-            FocusFrame:SetScale(obj.scale)
-            Module.ReApplyFocusFrame()
-            Module.ReApplyFocusToT()
-            FocusFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
-            TextStatusBar_UpdateTextString(FocusFrameHealthBar)
-            FocusFrameNameBackground:SetShown(not obj.hideNameBackground)
-
-            FocusFrame:UpdateStateHandler(obj)
-            Module.PreviewFocus:UpdateState(obj);
-        end
+        do end
 
         -- focus target
         do
@@ -482,47 +470,6 @@ function Module:ApplySettings(sub)
 
             Module.PreviewFocusTarget:UpdateState(obj);
         end
-    end
-end
-
-function Module.MovePlayerTargetPreset(name)
-    local db = Module.db.profile
-
-    if name == 'DEFAULT' then
-        local orig = defaults.profile
-
-        db.playerOverride = false
-        db.playerAnchor = orig.playerAnchor
-        db.playerAnchorParent = orig.playerAnchorParent
-        db.playerX = orig.playerX
-        db.playerY = orig.playerY
-
-        db.targetOverride = false
-        db.targetAnchor = orig.targetAnchor
-        db.targetAnchorParent = orig.targetAnchorParent
-        db.targetX = orig.targetX
-        db.targetY = orig.targetY
-
-        Module:ApplySettings()
-    elseif name == 'CENTER' then
-        local deltaX = 50
-        local deltaY = 180
-
-        db.playerOverride = true
-        db.playerAnchor = 'CENTER'
-        db.playerAnchorParent = 'CENTER'
-        -- player and target frame center is not perfect/identical
-        db.playerX = -107.5 - deltaX
-        db.playerY = -deltaY
-
-        db.targetOverride = true
-        db.targetAnchor = 'CENTER'
-        db.targetAnchorParent = 'CENTER'
-        -- see above
-        db.targetX = 112 + deltaX
-        db.targetY = -deltaY
-
-        Module:ApplySettings()
     end
 end
 
@@ -548,12 +495,6 @@ function Module.AddStateUpdater()
     Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
     TargetFrame:InitStateHandler()
     TargetFrame:SetUnit('target')
-
-    if DF.Wrath then
-        Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
-        FocusFrame:InitStateHandler()
-        FocusFrame:SetUnit('focus')
-    end
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
@@ -818,39 +759,6 @@ function Module:AddEditMode()
 
     if DF.Wrath then
         -- Focus
-        local fakeFocus = CreateFrame('Frame', 'DragonflightUIEditModeFocusFramePreview', UIParent,
-                                      'DFEditModePreviewTargetTemplate')
-        fakeFocus:OnLoad()
-        Module.PreviewFocus = fakeFocus;
-
-        EditModeModule:AddEditModeToFrame(fakeFocus)
-
-        fakeFocus.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return optionsFocus.name
-        end)
-
-        fakeFocus.DFEditModeSelection:RegisterOptions({
-            options = optionsFocus,
-            extra = optionsFocusEditmode,
-            parentExtra = FocusFrame,
-            default = function()
-                setDefaultSubValues('focus')
-            end,
-            moduleRef = self,
-            showFunction = function()
-                --
-                -- FocusFrame.unit = 'player';
-                -- TargetFrame_Update(FocusFrame);
-                -- FocusFrame:Show()
-                FocusFrame:SetAlpha(0)
-            end,
-            hideFunction = function()
-                --
-                -- FocusFrame.unit = 'focus';
-                -- TargetFrame_Update(FocusFrame);
-                FocusFrame:SetAlpha(1)
-            end
-        });
 
         -- focus target
         local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
@@ -2264,259 +2172,6 @@ function Module.ChangeToT()
     TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 5, -20)
 end
 
-function Module.ChangeFocusFrame()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    FocusFrameTextureFrameTexture:Hide()
-    FocusFrameBackground:Hide()
-
-    if not frame.FocusFrameBackground then
-        local background = FocusFrame:CreateTexture('DragonflightUIFocusFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
-        frame.FocusFrameBackground = background
-    end
-
-    if not frame.FocusFrameBorder then
-        local border = FocusFrame:CreateTexture('DragonflightUIFocusFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-        border:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
-        frame.FocusFrameBorder = border
-    end
-
-    FocusFramePortrait:SetDrawLayer('BACKGROUND', -1)
-    FocusFramePortrait:SetSize(56, 56)
-    local CorrectionY = -3
-    local CorrectionX = -5
-    FocusFramePortrait:SetPoint('TOPRIGHT', FocusFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
-
-    FocusFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', FocusFramePortrait, 'TOP', 0, 2)
-
-    FocusFrameNameBackground:ClearAllPoints()
-    FocusFrameNameBackground:SetTexture(base)
-    FocusFrameNameBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
-    FocusFrameNameBackground:SetSize(135, 18)
-    FocusFrameNameBackground:ClearAllPoints()
-    FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
-
-    if not FocusFrameNameBackground.DFHooked then
-        FocusFrameNameBackground.DFHooked = true
-
-        FocusFrameNameBackground:HookScript('OnShow', function()
-            --          
-            local db = Module.db.profile.focus
-            if db.hideNameBackground then
-                -- 
-                FocusFrameNameBackground:Hide()
-            end
-        end)
-    end
-
-    -- @TODO: change text spacing
-    FocusFrameTextureFrameName:ClearAllPoints()
-    FocusFrameTextureFrameName:SetPoint('BOTTOM', FocusFrameHealthBar, 'TOP', 10, 3 - 2)
-    FocusFrameTextureFrameName:SetSize(100, 12)
-
-    FocusFrameTextureFrameLevelText:ClearAllPoints()
-    FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
-    FocusFrameTextureFrameLevelText:SetHeight(12)
-
-    FocusFrameTextureFrameDeadText:ClearAllPoints()
-    FocusFrameTextureFrameDeadText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
-
-    FocusFrameTextureFrameUnconsciousText:ClearAllPoints()
-    FocusFrameTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
-
-    local dx = 5
-    -- health vs mana bar
-    local deltaSize = 132 - 125
-
-    FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
-    FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
-    FocusFrameTextureFrame.HealthBarTextLeft:SetPoint('LEFT', FocusFrameHealthBar, 'LEFT', dx, 0)
-    FocusFrameTextureFrame.HealthBarTextRight:SetPoint('RIGHT', FocusFrameHealthBar, 'RIGHT', -dx, 0)
-
-    FocusFrameTextureFrame.ManaBarText:ClearAllPoints()
-    FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -deltaSize / 2, 0)
-    FocusFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', dx, 0)
-    FocusFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
-
-    -- Health 119,12
-    FocusFrameHealthBar:ClearAllPoints()
-    FocusFrameHealthBar:SetSize(125, 20)
-    FocusFrameHealthBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, 0)
-    --[[    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
-    )
-    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
-    -- Mana 119,12
-    FocusFrameManaBar:ClearAllPoints()
-    -- FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
-    FocusFrameManaBar:SetPoint('TOPLEFT', FocusFrameHealthBar, 'BOTTOMLEFT', 0, -1)
-    FocusFrameManaBar:SetSize(134, 10)
-    FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
-    FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    if not FocusFrameManaBar.DFMask then
-        local manaMask = FocusFrameManaBar:CreateMaskTexture()
-        manaMask:SetPoint('TOPLEFT', FocusFrameManaBar, 'TOPLEFT', -61, 3)
-        manaMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        manaMask:SetTexCoord(0, 1, 0, 1)
-        manaMask:SetSize(256, 16)
-        FocusFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
-        FocusFrameManaBar.DFMask = manaMask;
-    end
-
-    -- CUSTOM HealthText
-    if not frame.FocusFrameHealthBarText then
-        local FocusFrameHealthBarDummy = CreateFrame('FRAME', 'FocusFrameHealthBarDummy')
-        FocusFrameHealthBarDummy:SetPoint('LEFT', FocusFrameHealthBar, 'LEFT', 0, 0)
-        FocusFrameHealthBarDummy:SetPoint('TOP', FocusFrameHealthBar, 'TOP', 0, 0)
-        FocusFrameHealthBarDummy:SetPoint('RIGHT', FocusFrameHealthBar, 'RIGHT', 0, 0)
-        FocusFrameHealthBarDummy:SetPoint('BOTTOM', FocusFrameHealthBar, 'BOTTOM', 0, 0)
-        FocusFrameHealthBarDummy:SetParent(FocusFrame)
-        FocusFrameHealthBarDummy:SetFrameStrata('LOW')
-        FocusFrameHealthBarDummy:SetFrameLevel(3)
-        FocusFrameHealthBarDummy:EnableMouse(true)
-
-        frame.FocusFrameHealthBarDummy = FocusFrameHealthBarDummy
-
-        local t = FocusFrameHealthBarDummy:CreateFontString('FocusFrameHealthBarText', 'OVERLAY', 'TextStatusBarText')
-
-        t:SetPoint('CENTER', FocusFrameHealthBarDummy, 0, 0)
-        t:SetText('HP')
-        t:Hide()
-        frame.FocusFrameHealthBarText = t
-
-        FocusFrameHealthBarDummy:HookScript('OnEnter', function(self)
-            if FocusFrameTextureFrame.HealthBarTextRight:IsVisible() or FocusFrameTextureFrame.HealthBarText:IsVisible() then
-            else
-                Module.UpdateFocusText()
-                frame.FocusFrameHealthBarText:Show()
-            end
-        end)
-        FocusFrameHealthBarDummy:HookScript('OnLeave', function(self)
-            frame.FocusFrameHealthBarText:Hide()
-        end)
-    end
-
-    -- CUSTOM ManaText
-    if not frame.FocusFrameManaBarText then
-        local FocusFrameManaBarDummy = CreateFrame('FRAME', 'FocusFrameManaBarDummy')
-        FocusFrameManaBarDummy:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', 0, 0)
-        FocusFrameManaBarDummy:SetPoint('TOP', FocusFrameManaBar, 'TOP', 0, 0)
-        FocusFrameManaBarDummy:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', 0, 0)
-        FocusFrameManaBarDummy:SetPoint('BOTTOM', FocusFrameManaBar, 'BOTTOM', 0, 0)
-        FocusFrameManaBarDummy:SetParent(FocusFrame)
-        FocusFrameManaBarDummy:SetFrameStrata('LOW')
-        FocusFrameManaBarDummy:SetFrameLevel(3)
-        FocusFrameManaBarDummy:EnableMouse(true)
-
-        frame.FocusFrameManaBarDummy = FocusFrameManaBarDummy
-
-        local t = FocusFrameManaBarDummy:CreateFontString('FocusFrameManaBarText', 'OVERLAY', 'TextStatusBarText')
-
-        t:SetPoint('CENTER', FocusFrameManaBarDummy, -dx, 0)
-        t:SetText('MANA')
-        t:Hide()
-        frame.FocusFrameManaBarText = t
-
-        FocusFrameManaBarDummy:HookScript('OnEnter', function(self)
-            if FocusFrameTextureFrame.ManaBarTextRight:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
-            else
-                Module.UpdateFocusText()
-                frame.FocusFrameManaBarText:Show()
-            end
-        end)
-        FocusFrameManaBarDummy:HookScript('OnLeave', function(self)
-            frame.FocusFrameManaBarText:Hide()
-        end)
-    end
-
-    FocusFrameFlash:SetTexture('')
-
-    FocusFrameToTDebuff1:SetPoint('TOPLEFT', FocusFrameToT, 'TOPRIGHT', 25, -20)
-
-    if not frame.FocusFrameFlash then
-        local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
-        flash:SetDrawLayer('BACKGROUND', 2)
-        flash:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat')
-        flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-        flash:SetSize(256, 128)
-        flash:SetScale(1)
-        flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-        flash:SetBlendMode('ADD')
-        frame.FocusFrameFlash = flash
-    end
-
-    hooksecurefunc(FocusFrameFlash, 'Show', function()
-        -- print('show')
-        FocusFrameFlash:SetTexture('')
-        frame.FocusFrameFlash:Show()
-        if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
-        else
-            -- print('go flash')
-            local dt = 0.5
-            UIFrameFlash(frame.FocusFrameFlash, dt, dt, -1)
-        end
-    end)
-
-    hooksecurefunc(FocusFrameFlash, 'Hide', function()
-        -- print('hide')
-        FocusFrameFlash:SetTexture('')
-        if (UIFrameIsFlashing(frame.FocusFrameFlash)) then UIFrameFlashStop(frame.FocusFrameFlash) end
-        frame.FocusFrameFlash:Hide()
-    end)
-
-    if not frame.FocusExtra then
-        local extra = FocusFrame:CreateTexture('DragonflightUIFocusFramePortraitExtra')
-        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
-        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-        extra:SetSize(80, 79)
-        extra:SetDrawLayer('ARTWORK', 3)
-        extra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
-
-        extra.UpdateStyle = function()
-            local class = UnitClassification('focus')
-            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
-            if class == 'worldboss' then
-                frame.FocusExtra:Show()
-                frame.FocusExtra:SetSize(99, 81)
-                frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 13, 1)
-            elseif class == 'rareelite' or class == 'rare' then
-                frame.FocusExtra:Show()
-                frame.FocusExtra:SetSize(80, 79)
-                frame.FocusExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
-                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
-            elseif class == 'elite' then
-                frame.FocusExtra:Show()
-                frame.FocusExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-                frame.FocusExtra:SetSize(80, 79)
-                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
-            else
-                local name, realm = UnitName('target')
-                if Module.famous[name] then
-                    frame.FocusExtra:Show()
-                    frame.FocusExtra:SetSize(99, 81)
-                    frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                    frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 13, 1)
-                else
-                    frame.FocusExtra:Hide()
-                end
-            end
-        end
-
-        frame.FocusExtra = extra
-    end
-end
 -- ChangeFocusFrame()
 -- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
 -- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
@@ -2525,44 +2180,6 @@ end
 function Module.MoveFocusFrame(anchor, anchorOther, anchorFrame, dx, dy)
     FocusFrame:ClearAllPoints()
     FocusFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
-end
-
-function Module.ReApplyFocusFrame()
-    if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
-        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-        local localizedClass, englishClass, classIndex = UnitClass('focus')
-        FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-    else
-        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-        FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-    end
-
-    local powerType, powerTypeString = UnitPowerType('focus')
-
-    if powerTypeString == 'MANA' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
-    end
-
-    FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    FocusFrameFlash:SetTexture('')
-
-    if frame.FocusExtra then frame.FocusExtra:UpdateStyle() end
 end
 
 function Module.ChangeFocusToT()
@@ -2613,25 +2230,6 @@ function Module.ChangeFocusToT()
 
     FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
     FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
-end
-
-function Module.UpdateFocusText()
-    -- print('UpdateFocusText')
-    if UnitExists('focus') then
-        local max_health = UnitHealthMax('focus')
-        local health = UnitHealth('focus')
-
-        frame.FocusFrameHealthBarText:SetText(health .. ' / ' .. max_health)
-
-        local max_mana = UnitPowerMax('focus')
-        local mana = UnitPower('focus')
-
-        if max_mana == 0 then
-            frame.FocusFrameManaBarText:SetText('')
-        else
-            frame.FocusFrameManaBarText:SetText(mana .. ' / ' .. max_mana)
-        end
-    end
 end
 
 function Module.HookFunctions()
@@ -3439,17 +3037,11 @@ function frame:OnEvent(event, arg1)
     if true then return end
     -- print(event, arg1)
     if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
-        Module.UpdateFocusText()
     elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
     elseif event == 'PET_BAR_UPDATE' then
         -- print('PET_BAR_UPDATE')      
     elseif event == 'UNIT_POWER_UPDATE' then
         -- print(event, arg1)
-    elseif event == 'UNIT_HEALTH' and arg1 == 'focus' then
-        Module.UpdateFocusText()
-    elseif event == 'PLAYER_FOCUS_CHANGED' then
-        Module.ReApplyFocusFrame()
-        Module.UpdateFocusText()
     elseif event == 'PLAYER_ENTERING_WORLD' then
         -- print('PLAYER_ENTERING_WORLD')
         Module.CreatePlayerFrameTextures()
@@ -3461,10 +3053,7 @@ function frame:OnEvent(event, arg1)
         Module.ReApplyTargetFrame()
         Module.ChangeStatusIcons()
         Module.CreateRestFlipbook()
-        if DF.Wrath then
-            Module.ChangeFocusFrame()
-            Module.ChangeFocusToT()
-        end
+        if DF.Wrath then Module.ChangeFocusToT() end
         Module:ChangeFonts()
         Module:ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
@@ -3774,5 +3363,9 @@ function Module:Cata()
 end
 
 function Module:Mists()
-    Module:Wrath()
+    -- Module:Wrath()
+
+    self.SubFocus:Setup()
+    if true then return end
+
 end
