@@ -19,20 +19,15 @@ function SubModuleMixin:SetDefaults()
         classcolor = false,
         classicon = false,
         breakUpLargeNumbers = true,
+        hideNameBackground = false,
         scale = 1.0,
         override = false,
         anchorFrame = 'UIParent',
         customAnchorFrame = '',
         anchor = 'TOPLEFT',
         anchorParent = 'TOPLEFT',
-        x = -19,
-        y = -4,
-        biggerHealthbar = false,
-        portraitExtra = 'none',
-        hideRedStatus = false,
-        hideIndicator = false,
-        hideSecondaryRes = false,
-        hideAlternatePowerBar = false,
+        x = 250,
+        y = -170,
         -- Visibility
         showMouseover = false,
         hideAlways = false,
@@ -84,18 +79,43 @@ function SubModuleMixin:SetupOptions()
         Module:RefreshOptionScreens()
     end
 
-    local optionsPlayer = {
-        name = L["PlayerFrameName"],
-        desc = L["PlayerFrameDesc"],
-        advancedName = 'PlayerFrame',
-        sub = "player",
+    local frameTable = {
+        {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+        {value = 'PlayerFrame', text = 'PlayerFrame', tooltip = 'descr', label = 'label'},
+        {value = 'TargetFrame', text = 'TargetFrame', tooltip = 'descr', label = 'label'},
+        {value = 'CompactRaidFrameManager', text = 'CompactRaidFrameManager', tooltip = 'descr', label = 'label'}
+    }
+
+    if DF.Wrath then
+        table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
+    end
+
+    local function frameTableWithout(without)
+        local newTable = {}
+
+        for k, v in ipairs(frameTable) do
+            --
+            if v.value ~= without then
+                --      
+                table.insert(newTable, v);
+            end
+        end
+
+        return newTable
+    end
+
+    local optionsFocus = {
+        desc = L["FocusFrameDesc"],
+        name = L["FocusFrameName"],
+        advancedName = 'FocusFrame',
+        sub = 'focus',
         get = getOption,
         set = setOption,
         type = 'group',
         args = {
             headerStyling = {
                 type = 'header',
-                name = L["PlayerFrameStyle"],
+                name = L["FocusFrameStyle"],
                 desc = '',
                 order = 20,
                 isExpanded = true,
@@ -103,16 +123,16 @@ function SubModuleMixin:SetupOptions()
             },
             classcolor = {
                 type = 'toggle',
-                name = L["PlayerFrameClassColor"],
-                desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
+                name = L["FocusFrameClassColor"],
+                desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focus'),
                 group = 'headerStyling',
                 order = 7,
                 editmode = true
             },
             classicon = {
                 type = 'toggle',
-                name = L["PlayerFrameClassIcon"],
-                desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
+                name = L["FocusFrameClassIcon"],
+                desc = L["FocusFrameClassIconDesc"] .. getDefaultStr('classicon', 'focus'),
                 group = 'headerStyling',
                 order = 7.1,
                 disabled = true,
@@ -121,44 +141,16 @@ function SubModuleMixin:SetupOptions()
             },
             breakUpLargeNumbers = {
                 type = 'toggle',
-                name = L["PlayerFrameBreakUpLargeNumbers"],
-                desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
+                name = L["FocusFrameBreakUpLargeNumbers"],
+                desc = L["FocusFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'focus'),
                 group = 'headerStyling',
                 order = 8,
                 editmode = true
             },
-            biggerHealthbar = {
+            hideNameBackground = {
                 type = 'toggle',
-                name = L["PlayerFrameBiggerHealthbar"],
-                desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
-                group = 'headerStyling',
-                order = 9,
-                new = false,
-                editmode = true
-            },
-            portraitExtra = {
-                type = 'select',
-                name = L["PlayerFramePortraitExtra"],
-                desc = L["PlayerFramePortraitExtraDesc"] .. getDefaultStr('portraitExtra', 'player'),
-                dropdownValues = portraitExtraTable,
-                order = 9.5,
-                group = 'headerStyling',
-                new = true,
-                editmode = true
-            },
-            hideRedStatus = {
-                type = 'toggle',
-                name = L["PlayerFrameHideRedStatus"],
-                desc = L["PlayerFrameHideRedStatusDesc"] .. getDefaultStr('hideRedStatus', 'player'),
-                group = 'headerStyling',
-                order = 10,
-                new = false,
-                editmode = true
-            },
-            hideIndicator = {
-                type = 'toggle',
-                name = L["PlayerFrameHideHitIndicator"],
-                desc = L["PlayerFrameHideHitIndicatorDesc"] .. getDefaultStr('hideIndicator', 'player'),
+                name = L["FocusFrameHideNameBackground"],
+                desc = L["FocusFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'focus'),
                 group = 'headerStyling',
                 order = 11,
                 new = false,
@@ -167,119 +159,12 @@ function SubModuleMixin:SetupOptions()
         }
     }
 
-    if DF.Cata then
-        optionsPlayer.args['hideSecondaryRes'] = {
-            type = 'toggle',
-            name = L["PlayerFrameHideSecondaryRes"],
-            desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
-            group = 'headerStyling',
-            order = 12,
-            new = false,
-            editmode = true
-        }
-    end
-    if DF.Era then
-        local localizedClass, englishClass, classIndex = UnitClass('player');
-        if englishClass == 'DRUID' then
-            optionsPlayer.args['hideAlternatePowerBar'] = {
-                type = 'toggle',
-                name = L["PlayerFrameHideAlternatePowerBar"],
-                desc = L["PlayerFrameHideAlternatePowerBarDesc"] .. getDefaultStr('hideAlternatePowerBar', 'player'),
-                group = 'headerStyling',
-                order = 13,
-                new = false,
-                editmode = true
-            }
-        end
-    end
+    DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTableWithout('FocusFrame'))
 
-    if true then
-        local moreOptions = {
-            statusText = {
-                type = 'select',
-                name = STATUSTEXT_LABEL,
-                desc = OPTION_TOOLTIP_STATUS_TEXT_DISPLAY,
-                values = {
-                    ['None'] = 'None',
-                    ['Percent'] = 'Percent',
-                    ['Both'] = 'Both',
-                    ['Numeric Value'] = 'Numeric Value'
-                },
-                dropdownValues = statusTextTable,
-                group = 'headerStyling',
-                order = 10,
-                blizzard = true,
-                editmode = true
-            }
-        }
-
-        for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
-
-        local CVAR_VALUE_NUMERIC = "NUMERIC";
-        local CVAR_VALUE_PERCENT = "PERCENT";
-        local CVAR_VALUE_BOTH = "BOTH";
-        local CVAR_VALUE_NONE = "NONE";
-
-        optionsPlayer.get = function(info)
-            local key = info[1]
-            local sub = info[2]
-
-            if sub == 'statusText' then
-                local statusTextDisplay = C_CVar.GetCVar("statusTextDisplay");
-                if statusTextDisplay == CVAR_VALUE_NUMERIC then
-                    return 'Numeric Value';
-                elseif statusTextDisplay == CVAR_VALUE_PERCENT then
-                    return 'Percent';
-                elseif statusTextDisplay == CVAR_VALUE_BOTH then
-                    return 'Both';
-                elseif statusTextDisplay == CVAR_VALUE_NONE then
-                    return 'None';
-                end
-            else
-                return getOption(info)
-            end
-        end
-
-        local textStatusBars = {
-            PlayerFrameHealthBar, PlayerFrameManaBar, PetFrameHealthBar, PetFrameManaBar, TargetFrameHealthBar,
-            TargetFrameManaBar, FocusFrameHealthBar, FocusFrameManaBar
-        }
-
-        local function CVarChangedCB()
-            for k, v in ipairs(textStatusBars) do if v then TextStatusBar_UpdateTextString(v) end end
-        end
-
-        optionsPlayer.set = function(info, value)
-            local key = info[1]
-            local sub = info[2]
-
-            if sub == 'statusText' then
-                if value == 'Numeric Value' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_NUMERIC);
-                    SetCVar("statusText", "1");
-                elseif value == 'Percent' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_PERCENT);
-                    SetCVar("statusText", "1");
-                elseif value == 'Both' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_BOTH);
-                    SetCVar("statusText", "1");
-                elseif value == 'None' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_NONE);
-                    SetCVar("statusText", "0");
-                end
-                CVarChangedCB()
-            else
-                setOption(info, value)
-            end
-        end
-    end
-    DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr,
-                                 frameTableWithout('PlayerFrame'))
-
-    DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
-    local optionsPlayerEditmode = {
-        name = 'Player',
-        desc = 'PlayerframeDesc',
+    DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr)
+    local optionsFocusEditmode = {
+        name = 'Focus',
+        desc = 'Focus',
         get = getOption,
         set = setOption,
         type = 'group',
@@ -290,7 +175,7 @@ function SubModuleMixin:SetupOptions()
                 btnName = L["ExtraOptionsResetToDefaultPosition"],
                 desc = L["ExtraOptionsPresetDesc"],
                 func = function()
-                    local dbTable = Module.db.profile.player
+                    local dbTable = Module.db.profile.focus
                     local defaultsTable = self.Defaults
                     -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
                     setPreset(dbTable, {
@@ -309,8 +194,8 @@ function SubModuleMixin:SetupOptions()
         }
     }
 
-    self.Options = optionsPlayer;
-    self.OptionsEditmode = optionsPlayerEditmode;
+    self.Options = optionsFocus;
+    self.OptionsEditmode = optionsFocusEditmode;
 end
 
 function SubModuleMixin:Setup()

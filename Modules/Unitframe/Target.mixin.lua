@@ -19,20 +19,31 @@ function SubModuleMixin:SetDefaults()
         classcolor = false,
         classicon = false,
         breakUpLargeNumbers = true,
+        enableNumericThreat = true,
+        numericThreatAnchor = 'TOP',
+        enableThreatGlow = true,
+        comboPointsOnPlayerFrame = false,
+        hideComboPoints = false,
+        hideNameBackground = false,
+        fadeOut = false,
+        fadeOutDistance = 40,
         scale = 1.0,
         override = false,
         anchorFrame = 'UIParent',
         customAnchorFrame = '',
         anchor = 'TOPLEFT',
         anchorParent = 'TOPLEFT',
-        x = -19,
+        x = 250,
         y = -4,
-        biggerHealthbar = false,
-        portraitExtra = 'none',
-        hideRedStatus = false,
-        hideIndicator = false,
-        hideSecondaryRes = false,
-        hideAlternatePowerBar = false,
+        -- buff - from AuraDurations
+        auraSizeSmall = 17, -- SMALL_AURA_SIZE,
+        auraSizeLarge = 21, -- LARGE_AURA_SIZE,
+        auraOffsetY = 1, -- AURA_OFFSET_Y,
+        noDebuffFilter = true, -- noBuffDebuffFilterOnTarget
+        dynamicBuffSize = true, -- showDynamicBuffSize
+        auraRowWidth = 122, -- AURA_ROW_WIDTH
+        totAuraRowWidth = 101, -- TOT_AURA_ROW_WIDTH
+        numTotAuraRows = 2, -- NUM_TOT_AURA_ROWS
         -- Visibility
         showMouseover = false,
         hideAlways = false,
@@ -84,18 +95,49 @@ function SubModuleMixin:SetupOptions()
         Module:RefreshOptionScreens()
     end
 
-    local optionsPlayer = {
-        name = L["PlayerFrameName"],
-        desc = L["PlayerFrameDesc"],
-        advancedName = 'PlayerFrame',
-        sub = "player",
+    local frameTable = {
+        {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+        {value = 'PlayerFrame', text = 'PlayerFrame', tooltip = 'descr', label = 'label'},
+        {value = 'TargetFrame', text = 'TargetFrame', tooltip = 'descr', label = 'label'},
+        {value = 'CompactRaidFrameManager', text = 'CompactRaidFrameManager', tooltip = 'descr', label = 'label'}
+    }
+
+    local partyBuffTooltipTable = {
+        {value = 'NEVER', text = 'Never', tooltip = 'descr', label = 'label'},
+        {value = 'ALWAYS', text = 'Always', tooltip = 'descr', label = 'label'},
+        {value = 'INCOMBAT', text = 'In Combat', tooltip = 'descr', label = 'label'}
+    }
+
+    if DF.Wrath then
+        table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
+    end
+
+    local function frameTableWithout(without)
+        local newTable = {}
+
+        for k, v in ipairs(frameTable) do
+            --
+            if v.value ~= without then
+                --      
+                table.insert(newTable, v);
+            end
+        end
+
+        return newTable
+    end
+
+    local optionsTarget = {
+        name = L["TargetFrameName"],
+        desc = L["TargetFrameDesc"],
+        advancedName = 'TargetFrame',
+        sub = "target",
         get = getOption,
         set = setOption,
         type = 'group',
         args = {
             headerStyling = {
                 type = 'header',
-                name = L["PlayerFrameStyle"],
+                name = L["TargetFrameStyle"],
                 desc = '',
                 order = 20,
                 isExpanded = true,
@@ -103,16 +145,16 @@ function SubModuleMixin:SetupOptions()
             },
             classcolor = {
                 type = 'toggle',
-                name = L["PlayerFrameClassColor"],
-                desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
+                name = L["TargetFrameClassColor"],
+                desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'target'),
                 group = 'headerStyling',
                 order = 7,
                 editmode = true
             },
             classicon = {
                 type = 'toggle',
-                name = L["PlayerFrameClassIcon"],
-                desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
+                name = L["TargetFrameClassIcon"],
+                desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'target'),
                 group = 'headerStyling',
                 order = 7.1,
                 disabled = true,
@@ -121,165 +163,227 @@ function SubModuleMixin:SetupOptions()
             },
             breakUpLargeNumbers = {
                 type = 'toggle',
-                name = L["PlayerFrameBreakUpLargeNumbers"],
-                desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
+                name = L["TargetFrameBreakUpLargeNumbers"],
+                desc = L["TargetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'target'),
                 group = 'headerStyling',
                 order = 8,
                 editmode = true
             },
-            biggerHealthbar = {
+            enableThreatGlow = {
                 type = 'toggle',
-                name = L["PlayerFrameBiggerHealthbar"],
-                desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
-                group = 'headerStyling',
-                order = 9,
-                new = false,
-                editmode = true
-            },
-            portraitExtra = {
-                type = 'select',
-                name = L["PlayerFramePortraitExtra"],
-                desc = L["PlayerFramePortraitExtraDesc"] .. getDefaultStr('portraitExtra', 'player'),
-                dropdownValues = portraitExtraTable,
-                order = 9.5,
-                group = 'headerStyling',
-                new = true,
-                editmode = true
-            },
-            hideRedStatus = {
-                type = 'toggle',
-                name = L["PlayerFrameHideRedStatus"],
-                desc = L["PlayerFrameHideRedStatusDesc"] .. getDefaultStr('hideRedStatus', 'player'),
+                name = L["TargetFrameThreatGlow"],
+                desc = L["TargetFrameThreatGlowDesc"] .. getDefaultStr('enableThreatGlow', 'target'),
                 group = 'headerStyling',
                 order = 10,
+                disabled = true,
+                editmode = true
+            },
+            hideNameBackground = {
+                type = 'toggle',
+                name = L["TargetFrameHideNameBackground"],
+                desc = L["TargetFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'target'),
+                group = 'headerStyling',
+                order = 11,
                 new = false,
                 editmode = true
             },
-            hideIndicator = {
+            comboPointsOnPlayerFrame = {
                 type = 'toggle',
-                name = L["PlayerFrameHideHitIndicator"],
-                desc = L["PlayerFrameHideHitIndicatorDesc"] .. getDefaultStr('hideIndicator', 'player'),
+                name = L["TargetFrameComboPointsOnPlayerFrame"],
+                desc = L["TargetFrameComboPointsOnPlayerFrameDesc"] ..
+                    getDefaultStr('comboPointsOnPlayerFrame', 'target'),
                 group = 'headerStyling',
-                order = 11,
+                order = 12,
+                new = false,
+                editmode = true
+            },
+            hideComboPoints = {
+                type = 'toggle',
+                name = L["TargetFrameHideComboPoints"],
+                desc = L["TargetFrameHideComboPointsDesc"] .. getDefaultStr('hideComboPoints', 'target'),
+                group = 'headerStyling',
+                order = 12.5,
+                new = false,
+                editmode = true
+            },
+            fadeOut = {
+                type = 'toggle',
+                name = L["TargetFrameFadeOut"],
+                desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'target'),
+                group = 'headerStyling',
+                order = 9.5,
+                new = false,
+                editmode = true
+            },
+            fadeOutDistance = {
+                type = 'range',
+                name = L["TargetFrameFadeOutDistance"],
+                desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'target'),
+                min = 0,
+                max = 50,
+                bigStep = 1,
+                order = 9.6,
+                group = 'headerStyling',
                 new = false,
                 editmode = true
             }
         }
     }
 
-    if DF.Cata then
-        optionsPlayer.args['hideSecondaryRes'] = {
+    if DF.Era then
+        -- numericThreatAnchor
+        optionsTarget.args['enableNumericThreat'] = {
             type = 'toggle',
-            name = L["PlayerFrameHideSecondaryRes"],
-            desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
+            name = L["TargetFrameNumericThreat"],
+            desc = L["TargetFrameNumericThreatDesc"] .. getDefaultStr('enableNumericThreat', 'target'),
             group = 'headerStyling',
-            order = 12,
-            new = false,
+            order = 9,
+            disabled = not DF.Era,
             editmode = true
         }
-    end
-    if DF.Era then
-        local localizedClass, englishClass, classIndex = UnitClass('player');
-        if englishClass == 'DRUID' then
-            optionsPlayer.args['hideAlternatePowerBar'] = {
-                type = 'toggle',
-                name = L["PlayerFrameHideAlternatePowerBar"],
-                desc = L["PlayerFrameHideAlternatePowerBarDesc"] .. getDefaultStr('hideAlternatePowerBar', 'player'),
-                group = 'headerStyling',
-                order = 13,
-                new = false,
-                editmode = true
-            }
-        end
+        optionsTarget.args['numericThreatAnchor'] = {
+            type = 'select',
+            name = L["TargetFrameNumericThreatAnchor"],
+            desc = L["TargetFrameNumericThreatAnchorDesc"] .. getDefaultStr('numericThreatAnchor', 'target'),
+            dropdownValues = DF.Settings.DropdownCrossAnchorTable,
+            order = 9.5,
+            group = 'headerStyling',
+            editmode = true
+        }
     end
 
     if true then
         local moreOptions = {
-            statusText = {
-                type = 'select',
-                name = STATUSTEXT_LABEL,
-                desc = OPTION_TOOLTIP_STATUS_TEXT_DISPLAY,
-                values = {
-                    ['None'] = 'None',
-                    ['Percent'] = 'Percent',
-                    ['Both'] = 'Both',
-                    ['Numeric Value'] = 'Numeric Value'
-                },
-                dropdownValues = statusTextTable,
+            targetOfTarget = {
+                type = 'toggle',
+                name = SHOW_TARGET_OF_TARGET_TEXT,
+                desc = OPTION_TOOLTIP_SHOW_TARGET_OF_TARGET,
                 group = 'headerStyling',
-                order = 10,
+                order = 15,
+                blizzard = true,
+                editmode = true
+            },
+            buffsOnTop = {
+                type = 'toggle',
+                name = BUFFS_ON_TOP,
+                desc = '',
+                group = 'headerStyling',
+                order = 16,
                 blizzard = true,
                 editmode = true
             }
         }
 
-        for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
+        if true then
+            moreOptions['headerBuffs'] = {
+                type = 'header',
+                name = L["TargetFrameHeaderBuffs"],
+                desc = '',
+                order = 19,
+                isExpanded = true,
+                editmode = true
+            }
+            moreOptions['buffsOnTop'].group = 'headerBuffs'
 
-        local CVAR_VALUE_NUMERIC = "NUMERIC";
-        local CVAR_VALUE_PERCENT = "PERCENT";
-        local CVAR_VALUE_BOTH = "BOTH";
-        local CVAR_VALUE_NONE = "NONE";
+            moreOptions['auraSizeSmall'] = {
+                type = 'range',
+                name = L["TargetFrameAuraSizeSmall"],
+                desc = L["TargetFrameAuraSizeSmallDesc"] .. getDefaultStr('auraSizeSmall', 'target'),
+                min = 8,
+                max = 64,
+                bigStep = 1,
+                group = 'headerBuffs',
+                order = 4,
+                new = true,
+                editmode = true
+            }
+            moreOptions['auraSizeLarge'] = {
+                type = 'range',
+                name = L["TargetFrameAuraSizeLarge"],
+                desc = L["TargetFrameAuraSizeLargeDesc"] .. getDefaultStr('auraSizeLarge', 'target'),
+                min = 8,
+                max = 64,
+                bigStep = 1,
+                group = 'headerBuffs',
+                order = 2,
+                new = true,
+                editmode = true
+            }
+            moreOptions['noDebuffFilter'] = {
+                type = 'toggle',
+                name = L["TargetFrameNoDebuffFilter"],
+                desc = L["TargetFrameNoDebuffFilterDesc"] .. getDefaultStr('noDebuffFilter', 'target'),
+                group = 'headerBuffs',
+                order = 1,
+                new = true,
+                editmode = true
+            }
+            moreOptions['dynamicBuffSize'] = {
+                type = 'toggle',
+                name = L["TargetFrameDynamicBuffSize"],
+                desc = L["TargetFrameDynamicBuffSizeDesc"] .. getDefaultStr('dynamicBuffSize', 'target'),
+                group = 'headerBuffs',
+                order = 3,
+                new = true,
+                editmode = true
+            }
+        end
 
-        optionsPlayer.get = function(info)
+        for k, v in pairs(moreOptions) do optionsTarget.args[k] = v end
+
+        optionsTarget.get = function(info)
             local key = info[1]
             local sub = info[2]
 
-            if sub == 'statusText' then
-                local statusTextDisplay = C_CVar.GetCVar("statusTextDisplay");
-                if statusTextDisplay == CVAR_VALUE_NUMERIC then
-                    return 'Numeric Value';
-                elseif statusTextDisplay == CVAR_VALUE_PERCENT then
-                    return 'Percent';
-                elseif statusTextDisplay == CVAR_VALUE_BOTH then
-                    return 'Both';
-                elseif statusTextDisplay == CVAR_VALUE_NONE then
-                    return 'None';
+            if sub == 'targetOfTarget' then
+                local tot = C_CVar.GetCVar("showTargetOfTarget");
+                if tot == '1' then
+                    return true
+                else
+                    return false
+                end
+            elseif sub == 'buffsOnTop' then
+                if TARGET_FRAME_BUFFS_ON_TOP then
+                    return true
+                else
+                    return false
                 end
             else
                 return getOption(info)
             end
         end
 
-        local textStatusBars = {
-            PlayerFrameHealthBar, PlayerFrameManaBar, PetFrameHealthBar, PetFrameManaBar, TargetFrameHealthBar,
-            TargetFrameManaBar, FocusFrameHealthBar, FocusFrameManaBar
-        }
-
-        local function CVarChangedCB()
-            for k, v in ipairs(textStatusBars) do if v then TextStatusBar_UpdateTextString(v) end end
-        end
-
-        optionsPlayer.set = function(info, value)
+        optionsTarget.set = function(info, value)
             local key = info[1]
             local sub = info[2]
 
-            if sub == 'statusText' then
-                if value == 'Numeric Value' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_NUMERIC);
-                    SetCVar("statusText", "1");
-                elseif value == 'Percent' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_PERCENT);
-                    SetCVar("statusText", "1");
-                elseif value == 'Both' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_BOTH);
-                    SetCVar("statusText", "1");
-                elseif value == 'None' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_NONE);
-                    SetCVar("statusText", "0");
+            if sub == 'targetOfTarget' then
+                if value then
+                    SetCVar("showTargetOfTarget", "1");
+                else
+                    SetCVar("showTargetOfTarget", "0");
                 end
-                CVarChangedCB()
+            elseif sub == 'buffsOnTop' then
+                if value then
+                    TARGET_FRAME_BUFFS_ON_TOP = true
+                    TargetFrame.buffsOnTop = true
+                else
+                    TARGET_FRAME_BUFFS_ON_TOP = false
+                    TargetFrame.buffsOnTop = false
+                end
+                TargetFrame_UpdateAuras(TargetFrame)
             else
                 setOption(info, value)
             end
         end
     end
-    DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr,
-                                 frameTableWithout('PlayerFrame'))
+    DF.Settings:AddPositionTable(Module, optionsTarget, 'target', 'Target', getDefaultStr,
+                                 frameTableWithout('TargetFrame'))
 
-    DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
-    local optionsPlayerEditmode = {
-        name = 'Player',
-        desc = 'PlayerframeDesc',
+    DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsTarget, 'target', 'Target', getDefaultStr)
+    local optionsTargetEditmode = {
+        name = 'Target',
+        desc = 'Targetframedesc',
         get = getOption,
         set = setOption,
         type = 'group',
@@ -290,7 +394,7 @@ function SubModuleMixin:SetupOptions()
                 btnName = L["ExtraOptionsResetToDefaultPosition"],
                 desc = L["ExtraOptionsPresetDesc"],
                 func = function()
-                    local dbTable = Module.db.profile.player
+                    local dbTable = Module.db.profile.target
                     local defaultsTable = self.Defaults
                     -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
                     setPreset(dbTable, {
@@ -308,9 +412,8 @@ function SubModuleMixin:SetupOptions()
             }
         }
     }
-
-    self.Options = optionsPlayer;
-    self.OptionsEditmode = optionsPlayerEditmode;
+    self.Options = optionsTarget;
+    self.OptionsEditmode = optionsTargetEditmode;
 end
 
 function SubModuleMixin:Setup()

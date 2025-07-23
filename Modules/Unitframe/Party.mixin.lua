@@ -17,22 +17,18 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
-        classicon = false,
         breakUpLargeNumbers = true,
         scale = 1.0,
         override = false,
-        anchorFrame = 'UIParent',
+        anchorFrame = 'CompactRaidFrameManager',
         customAnchorFrame = '',
         anchor = 'TOPLEFT',
-        anchorParent = 'TOPLEFT',
-        x = -19,
-        y = -4,
-        biggerHealthbar = false,
-        portraitExtra = 'none',
-        hideRedStatus = false,
-        hideIndicator = false,
-        hideSecondaryRes = false,
-        hideAlternatePowerBar = false,
+        anchorParent = 'TOPRIGHT',
+        x = 0,
+        y = 0,
+        padding = 10,
+        orientation = 'vertical',
+        disableBuffTooltip = 'INCOMBAT',
         -- Visibility
         showMouseover = false,
         hideAlways = false,
@@ -84,18 +80,43 @@ function SubModuleMixin:SetupOptions()
         Module:RefreshOptionScreens()
     end
 
-    local optionsPlayer = {
-        name = L["PlayerFrameName"],
-        desc = L["PlayerFrameDesc"],
-        advancedName = 'PlayerFrame',
-        sub = "player",
+    local frameTable = {
+        {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+        {value = 'PlayerFrame', text = 'PlayerFrame', tooltip = 'descr', label = 'label'},
+        {value = 'TargetFrame', text = 'TargetFrame', tooltip = 'descr', label = 'label'},
+        {value = 'CompactRaidFrameManager', text = 'CompactRaidFrameManager', tooltip = 'descr', label = 'label'}
+    }
+
+    if DF.Wrath then
+        table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
+    end
+
+    local function frameTableWithout(without)
+        local newTable = {}
+
+        for k, v in ipairs(frameTable) do
+            --
+            if v.value ~= without then
+                --      
+                table.insert(newTable, v);
+            end
+        end
+
+        return newTable
+    end
+
+    local optionsParty = {
+        name = L["PartyFrameName"],
+        desc = L["PartyFrameDesc"],
+        advancedName = 'PartyFrame',
+        sub = 'party',
         get = getOption,
         set = setOption,
         type = 'group',
         args = {
             headerStyling = {
                 type = 'header',
-                name = L["PlayerFrameStyle"],
+                name = L["PartyFrameStyle"],
                 desc = '',
                 order = 20,
                 isExpanded = true,
@@ -103,183 +124,118 @@ function SubModuleMixin:SetupOptions()
             },
             classcolor = {
                 type = 'toggle',
-                name = L["PlayerFrameClassColor"],
-                desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
+                name = L["PartyFrameClassColor"],
+                desc = L["PartyFrameClassColorDesc"] .. getDefaultStr('classcolor', 'party'),
                 group = 'headerStyling',
                 order = 7,
                 editmode = true
             },
-            classicon = {
-                type = 'toggle',
-                name = L["PlayerFrameClassIcon"],
-                desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
-                group = 'headerStyling',
-                order = 7.1,
-                disabled = true,
-                new = false,
-                editmode = true
-            },
             breakUpLargeNumbers = {
                 type = 'toggle',
-                name = L["PlayerFrameBreakUpLargeNumbers"],
-                desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
+                name = L["PartyFrameBreakUpLargeNumbers"],
+                desc = L["PartyFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'party'),
                 group = 'headerStyling',
                 order = 8,
-                editmode = true
-            },
-            biggerHealthbar = {
-                type = 'toggle',
-                name = L["PlayerFrameBiggerHealthbar"],
-                desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
-                group = 'headerStyling',
-                order = 9,
-                new = false,
-                editmode = true
-            },
-            portraitExtra = {
-                type = 'select',
-                name = L["PlayerFramePortraitExtra"],
-                desc = L["PlayerFramePortraitExtraDesc"] .. getDefaultStr('portraitExtra', 'player'),
-                dropdownValues = portraitExtraTable,
-                order = 9.5,
-                group = 'headerStyling',
-                new = true,
-                editmode = true
-            },
-            hideRedStatus = {
-                type = 'toggle',
-                name = L["PlayerFrameHideRedStatus"],
-                desc = L["PlayerFrameHideRedStatusDesc"] .. getDefaultStr('hideRedStatus', 'player'),
-                group = 'headerStyling',
-                order = 10,
-                new = false,
-                editmode = true
-            },
-            hideIndicator = {
-                type = 'toggle',
-                name = L["PlayerFrameHideHitIndicator"],
-                desc = L["PlayerFrameHideHitIndicatorDesc"] .. getDefaultStr('hideIndicator', 'player'),
-                group = 'headerStyling',
-                order = 11,
-                new = false,
                 editmode = true
             }
         }
     }
 
-    if DF.Cata then
-        optionsPlayer.args['hideSecondaryRes'] = {
-            type = 'toggle',
-            name = L["PlayerFrameHideSecondaryRes"],
-            desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
-            group = 'headerStyling',
-            order = 12,
-            new = false,
-            editmode = true
-        }
-    end
-    if DF.Era then
-        local localizedClass, englishClass, classIndex = UnitClass('player');
-        if englishClass == 'DRUID' then
-            optionsPlayer.args['hideAlternatePowerBar'] = {
-                type = 'toggle',
-                name = L["PlayerFrameHideAlternatePowerBar"],
-                desc = L["PlayerFrameHideAlternatePowerBarDesc"] .. getDefaultStr('hideAlternatePowerBar', 'player'),
-                group = 'headerStyling',
-                order = 13,
-                new = false,
-                editmode = true
-            }
-        end
-    end
-
     if true then
         local moreOptions = {
-            statusText = {
-                type = 'select',
-                name = STATUSTEXT_LABEL,
-                desc = OPTION_TOOLTIP_STATUS_TEXT_DISPLAY,
-                values = {
-                    ['None'] = 'None',
-                    ['Percent'] = 'Percent',
-                    ['Both'] = 'Both',
-                    ['Numeric Value'] = 'Numeric Value'
-                },
-                dropdownValues = statusTextTable,
+            useCompactPartyFrames = {
+                type = 'toggle',
+                name = USE_RAID_STYLE_PARTY_FRAMES,
+                desc = OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES,
                 group = 'headerStyling',
-                order = 10,
+                order = 15,
                 blizzard = true,
+                editmode = true
+            },
+            raidFrameBtn = {
+                type = 'execute',
+                name = 'Raid Frame Settings',
+                btnName = 'Open',
+                func = function()
+                    Settings.OpenToCategory(Settings.INTERFACE_CATEGORY_ID, RAID_FRAMES_LABEL);
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+                end,
+                group = 'headerStyling',
+                order = 16,
+                blizzard = true,
+                editmode = true
+            },
+            orientation = {
+                type = 'select',
+                name = L["ButtonTableOrientation"],
+                desc = L["ButtonTableOrientationDesc"] .. getDefaultStr('orientation', 'party'),
+                dropdownValues = DF.Settings.OrientationTable,
+                order = 2,
+                group = 'headerStyling',
+                editmode = true
+            },
+            disableBuffTooltip = {
+                type = 'select',
+                name = L["PartyFrameDisableBuffTooltip"],
+                desc = L["PartyFrameDisableBuffTooltipDesc"] .. getDefaultStr('disableBuffTooltip', 'party'),
+                dropdownValues = partyBuffTooltipTable,
+                order = 3,
+                group = 'headerStyling',
+                editmode = true,
+                new = true
+            },
+            padding = {
+                type = 'range',
+                name = L["ButtonTablePadding"],
+                desc = L["ButtonTablePaddingDesc"] .. getDefaultStr('padding', 'party'),
+                min = -50,
+                max = 50,
+                bigStep = 1,
+                order = 3,
+                group = 'headerStyling',
                 editmode = true
             }
         }
 
-        for k, v in pairs(moreOptions) do optionsPlayer.args[k] = v end
+        for k, v in pairs(moreOptions) do optionsParty.args[k] = v end
 
-        local CVAR_VALUE_NUMERIC = "NUMERIC";
-        local CVAR_VALUE_PERCENT = "PERCENT";
-        local CVAR_VALUE_BOTH = "BOTH";
-        local CVAR_VALUE_NONE = "NONE";
-
-        optionsPlayer.get = function(info)
+        optionsParty.get = function(info)
             local key = info[1]
             local sub = info[2]
 
-            if sub == 'statusText' then
-                local statusTextDisplay = C_CVar.GetCVar("statusTextDisplay");
-                if statusTextDisplay == CVAR_VALUE_NUMERIC then
-                    return 'Numeric Value';
-                elseif statusTextDisplay == CVAR_VALUE_PERCENT then
-                    return 'Percent';
-                elseif statusTextDisplay == CVAR_VALUE_BOTH then
-                    return 'Both';
-                elseif statusTextDisplay == CVAR_VALUE_NONE then
-                    return 'None';
+            if sub == 'useCompactPartyFrames' then
+                local value = C_CVar.GetCVar("useCompactPartyFrames");
+                if value == '1' then
+                    return true
+                else
+                    return false
                 end
             else
                 return getOption(info)
             end
         end
 
-        local textStatusBars = {
-            PlayerFrameHealthBar, PlayerFrameManaBar, PetFrameHealthBar, PetFrameManaBar, TargetFrameHealthBar,
-            TargetFrameManaBar, FocusFrameHealthBar, FocusFrameManaBar
-        }
-
-        local function CVarChangedCB()
-            for k, v in ipairs(textStatusBars) do if v then TextStatusBar_UpdateTextString(v) end end
-        end
-
-        optionsPlayer.set = function(info, value)
+        optionsParty.set = function(info, value)
             local key = info[1]
             local sub = info[2]
 
-            if sub == 'statusText' then
-                if value == 'Numeric Value' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_NUMERIC);
-                    SetCVar("statusText", "1");
-                elseif value == 'Percent' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_PERCENT);
-                    SetCVar("statusText", "1");
-                elseif value == 'Both' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_BOTH);
-                    SetCVar("statusText", "1");
-                elseif value == 'None' then
-                    SetCVar("statusTextDisplay", CVAR_VALUE_NONE);
-                    SetCVar("statusText", "0");
+            if sub == 'useCompactPartyFrames' then
+                if value then
+                    SetCVar("useCompactPartyFrames", "1");
+                else
+                    SetCVar("useCompactPartyFrames", "0");
                 end
-                CVarChangedCB()
             else
                 setOption(info, value)
             end
         end
     end
-    DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr,
-                                 frameTableWithout('PlayerFrame'))
+    DF.Settings:AddPositionTable(Module, optionsParty, 'party', 'Party', getDefaultStr, frameTable)
 
-    DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr)
-    local optionsPlayerEditmode = {
-        name = 'Player',
-        desc = 'PlayerframeDesc',
+    DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsParty, 'party', 'Party', getDefaultStr)
+    local optionsPartyEditmode = {
+        name = 'party',
+        desc = 'party',
         get = getOption,
         set = setOption,
         type = 'group',
@@ -290,7 +246,7 @@ function SubModuleMixin:SetupOptions()
                 btnName = L["ExtraOptionsResetToDefaultPosition"],
                 desc = L["ExtraOptionsPresetDesc"],
                 func = function()
-                    local dbTable = Module.db.profile.player
+                    local dbTable = Module.db.profile.party
                     local defaultsTable = self.Defaults
                     -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
                     setPreset(dbTable, {
@@ -299,7 +255,9 @@ function SubModuleMixin:SetupOptions()
                         anchorParent = defaultsTable.anchorParent,
                         anchorFrame = defaultsTable.anchorFrame,
                         x = defaultsTable.x,
-                        y = defaultsTable.y
+                        y = defaultsTable.y,
+                        orientation = defaultsTable.orientation,
+                        padding = defaultsTable.padding
                     })
                 end,
                 order = 16,
@@ -309,8 +267,8 @@ function SubModuleMixin:SetupOptions()
         }
     }
 
-    self.Options = optionsPlayer;
-    self.OptionsEditmode = optionsPlayerEditmode;
+    self.Options = optionsParty;
+    self.OptionsEditmode = optionsPartyEditmode;
 end
 
 function SubModuleMixin:Setup()

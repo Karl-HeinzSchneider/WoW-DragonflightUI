@@ -9,8 +9,8 @@ addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
 function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
-    -- self:SetDefaults()
-    -- self:SetupOptions()
+    self:SetDefaults()
+    self:SetupOptions()
     -- self:SetScript('OnEvent', self.OnEvent);
 end
 
@@ -82,6 +82,44 @@ function SubModuleMixin:SetupOptions()
         end
         Module:ApplySettings(sub)
         Module:RefreshOptionScreens()
+    end
+
+    local frameTable = {
+        {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
+        {value = 'PlayerFrame', text = 'PlayerFrame', tooltip = 'descr', label = 'label'},
+        {value = 'TargetFrame', text = 'TargetFrame', tooltip = 'descr', label = 'label'},
+        {value = 'CompactRaidFrameManager', text = 'CompactRaidFrameManager', tooltip = 'descr', label = 'label'}
+    }
+    if DF.Wrath then
+        table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
+    end
+
+    local statusTextTable = {
+        {value = 'None', text = 'None', tooltip = 'descr', label = 'label'},
+        {value = 'Percent', text = 'Percent', tooltip = 'descr', label = 'label'},
+        {value = 'Both', text = 'Both', tooltip = 'descr', label = 'label'},
+        {value = 'Numeric Value', text = 'Numeric Value', tooltip = 'descr', label = 'label'}
+    }
+
+    local portraitExtraTable = {
+        {value = 'none', text = 'None', tooltip = 'descr', label = 'label'},
+        {value = 'elite', text = 'Elite', tooltip = 'descr', label = 'label'},
+        {value = 'rare', text = 'Rare', tooltip = 'descr', label = 'label'},
+        {value = 'worldboss', text = 'World Boss', tooltip = 'descr', label = 'label'}
+    }
+
+    local function frameTableWithout(without)
+        local newTable = {}
+
+        for k, v in ipairs(frameTable) do
+            --
+            if v.value ~= without then
+                --      
+                table.insert(newTable, v);
+            end
+        end
+
+        return newTable
     end
 
     local optionsPlayer = {
