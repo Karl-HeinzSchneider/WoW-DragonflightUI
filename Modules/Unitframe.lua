@@ -1924,6 +1924,8 @@ function Module:ApplySettings(sub)
         Module.PowerBarAltPreview:ClearAllPoints()
         Module.PowerBarAltPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
         Module.PowerBarAltPreview:SetScale(state.scale)
+
+        Module:UpdatePowerBarAltPosition()
     end
 
     -- target
@@ -2146,6 +2148,9 @@ function Module:AddEditMode()
                 setDefaultSubValues('altpower')
             end,
             moduleRef = self,
+            showFunction = function()
+                Module:UpdatePowerBarAltPosition()
+            end,
             hideFunction = function()
                 --
                 f:Show()
@@ -3328,20 +3333,33 @@ function Module:AddPowerBarAlt()
     if not DF.Cata then return end
     local f = CreateFrame('FRAME', 'DragonflightUIPlayerPowerBarAlt', UIParent)
     f:SetPoint('CENTER', UIParent, 'CENTER', 0, -180)
-    f:SetSize(50, 50)
+    f:SetSize(130, 75)
     f:SetClampedToScreen(true)
 
     Module.PowerBarAltPreview = f
+    local alt = _G['PlayerPowerBarAlt']
+    alt:SetMovable(true)
+    alt:SetUserPlaced(true)
+
+    function Module:UpdatePowerBarAltPosition()
+        -- local state = Module.db.profile.altpower
+        -- alt:ClearAllPoints()
+        -- alt:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        -- alt:SetScale(state.scale)
+        alt:ClearAllPoints()
+        alt:SetParent(f)
+        alt:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    end
 
     hooksecurefunc('UnitPowerBarAlt_SetUp', function(bar, barID)
         --
         -- print('UnitPowerBarAlt_SetUp')
-        if bar.unit and UnitIsUnit(bar.unit, 'player') then
-            -- print('~~player')
-            bar:ClearAllPoints()
-            bar:SetParent(f)
-            bar:SetPoint('CENTER', f, 'CENTER', 0, 0)
-        end
+        Module:UpdatePowerBarAltPosition()
+    end)
+
+    hooksecurefunc('PlayerBuffTimerManager_UpdateTimers', function(bar)
+        -- print('PlayerBuffTimerManager_UpdateTimers')
+        Module:UpdatePowerBarAltPosition()
     end)
 end
 
