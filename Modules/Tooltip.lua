@@ -630,6 +630,10 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
             self:SetOwner(parent, 'ANCHOR_BOTTOMLEFT');
             return;
         end
+        if DF.Cata and parent == _G['PlayerPowerBarAlt'] then
+            self:SetOwner(parent, 'ANCHOR_RIGHT');
+            return;
+        end
     end
 
     if parent and _G['DragonflightUIXPBar'] and _G['DragonflightUIXPBar'].Bar and parent ==
