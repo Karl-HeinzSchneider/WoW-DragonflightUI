@@ -2695,6 +2695,14 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
             local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
             dataProvider:Insert(data)
             headerID = i
+        elseif skillType == 'subheader' then
+            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            -- dataProvider:Insert(data)
+            dataProvider:InsertInParentByPredicate(data, function(node)
+                local nodeData = node:GetData()
+                return nodeData.id == headerID
+            end)
+            headerID = i
         else
             -- print('--', skillName)
             local isFavorite = parent:IsRecipeFavorite(skillName)
