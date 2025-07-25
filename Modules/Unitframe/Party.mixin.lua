@@ -291,7 +291,7 @@ function SubModuleMixin:Setup()
 
     --
     self:ChangePartyFrame()
-    self:AddStateUpdate()
+    self:AddStateUpdater()
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
@@ -856,7 +856,7 @@ function SubModuleMixin:UpdatePartyHPBar(i)
     end
 end
 
-function SubModuleMixin:AddStateUpdate()
+function SubModuleMixin:AddStateUpdater()
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
         Mixin(pf, DragonflightUIStateHandlerMixin)
