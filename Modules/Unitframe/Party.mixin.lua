@@ -634,6 +634,10 @@ function SubModuleMixin:ChangePartyFrame()
 
         self:UpdatePartyManaBar(i)
 
+        manabar.DFUpdateFunc = function()
+            self:UpdatePartyManaBar(i)
+        end
+
         -- debuff
         local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
         debuffOne:SetPoint('TOPLEFT', 120, -20)

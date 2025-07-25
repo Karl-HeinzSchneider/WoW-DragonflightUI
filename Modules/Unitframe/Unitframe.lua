@@ -164,7 +164,7 @@ function Module:RegisterSettings()
 
     if DF.Wrath then
         register('focus', {order = 0, name = self.SubFocus.Options.name, descr = 'Focusss', isNew = false})
-        register('focustarget', {order = 0, name = self.SubFocusTarget.Options.name, descr = 'Focusss', isNew = false})
+        register('focusTarget', {order = 0, name = self.SubFocusTarget.Options.name, descr = 'Focusss', isNew = false})
     end
     if DF.Cata then
         register('altpower', {order = 0, name = self.SubAltPower.Options.name, descr = 'Focusss', isNew = false})
@@ -221,7 +221,7 @@ function Module:RefreshOptionScreens()
 
     if DF.Wrath then
         self.SubFocus.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
-        -- Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
+        self.SubFocusTarget.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
     if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
     self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
@@ -301,6 +301,8 @@ function Module:ApplySettings(sub)
     local orig = defaults.profile
 
     self.SubFocus:UpdateState(db.focus)
+    self.SubFocusTarget:UpdateState(db.focusTarget)
+
     self.SubAltPower:UpdateState(db.altpower)
     self.SubParty:UpdateState(db.party)
 
@@ -414,16 +416,7 @@ function Module:ApplySettings(sub)
         do end
 
         -- focus target
-        do
-            local obj = db.focusTarget
 
-            local anchorframe = _G[obj.anchorFrame]
-            FocusFrameToT:ClearAllPoints()
-            FocusFrameToT:SetPoint(obj.anchor, anchorframe, obj.anchorParent, obj.x, obj.y)
-            FocusFrameToT:SetScale(obj.scale)
-
-            Module.PreviewFocusTarget:UpdateState(obj);
-        end
     end
 end
 
@@ -641,37 +634,6 @@ function Module:AddEditMode()
         end
     end
 
-    if DF.Wrath then
-        -- Focus
-
-        -- focus target
-        local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
-                                            'DFEditModePreviewTargetOfTargetTemplate')
-        fakeFocusTarget:OnLoad()
-        fakeFocusTarget:SetParent(fakeFocus)
-        Module.PreviewFocusTarget = fakeFocusTarget;
-
-        EditModeModule:AddEditModeToFrame(fakeFocusTarget)
-
-        fakeFocusTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return optionsFocusTarget.name
-        end)
-
-        fakeFocusTarget.DFEditModeSelection:RegisterOptions({
-            options = optionsFocusTarget,
-            extra = optionsFocusTargetEditmode,
-            default = function()
-                setDefaultSubValues('focusTarget')
-            end,
-            moduleRef = self,
-            showFunction = function()
-                --         
-            end,
-            hideFunction = function()
-                --
-            end
-        });
-    end
 end
 
 function Module.GetCoords(key)
@@ -1018,7 +980,16 @@ function Module.HookVertexColor()
     end
 end
 
-function Module.HookEnergyBar()
+function Module:HookEnergyBar()
+    hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
+        if manaBar.DFUpdateFunc and type(manaBar.DFUpdateFunc) == 'function' then
+            --
+            print('~UnitFrameManaBar_UpdateType:', manaBar:GetName())
+            manaBar.DFUpdateFunc()
+        end
+    end)
+
+    if true then return end
     hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
         -- print('UnitFrameManaBar_UpdateType', manaBar:GetName())
         local name = manaBar:GetName()
@@ -1091,8 +1062,7 @@ function Module.HookEnergyBar()
             FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
             FocusFrameFlash:SetTexture('')
-        elseif name == 'FocusFrameToTManaBar' then
-            Module.ReApplyFocusToT()
+
         elseif name == 'PartyMemberFrame1ManaBar' then
             Module.UpdatePartyManaBar(1)
         elseif name == 'PartyMemberFrame2ManaBar' then
@@ -1908,40 +1878,6 @@ function Module.ReApplyToT()
     TargetFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
 end
 
-function Module.ReApplyFocusToT()
-    if Module.db.profile.focus.classcolor and UnitIsPlayer('focusTarget') then
-        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
-        local localizedClass, englishClass, classIndex = UnitClass('focusTarget')
-        FocusFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-    else
-        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-        FocusFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
-    end
-
-    local powerType, powerTypeString = UnitPowerType('focusTarget')
-
-    if powerTypeString == 'MANA' then
-        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' then
-        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
-    end
-
-    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
-end
-
 function Module.MoveTargetFrame(anchor, anchorOther, anchorFrame, dx, dy)
     TargetFrame:ClearAllPoints()
     TargetFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
@@ -2043,56 +1979,6 @@ end
 function Module.MoveFocusFrame(anchor, anchorOther, anchorFrame, dx, dy)
     FocusFrame:ClearAllPoints()
     FocusFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
-end
-
-function Module.ChangeFocusToT()
-    FocusFrameToT:ClearAllPoints()
-    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
-    FocusFrameToT:SetSize(93 + 27, 45)
-
-    FocusFrameToTTextureFrameTexture:SetTexture('')
-
-    FocusFrameToTBackground:Hide()
-    if not frame.FocusFrameToTBackground then
-        local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
-        background:SetDrawLayer('BACKGROUND', 1)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
-        frame.FocusFrameToTBackground = background
-    end
-
-    if not frame.FocusFrameToTBorder then
-        local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-        border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
-        frame.FocusFrameToTBorder = border
-    end
-
-    FocusFrameToTHealthBar:ClearAllPoints()
-    FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
-    FocusFrameToTHealthBar:SetFrameLevel(10)
-    FocusFrameToTHealthBar:SetSize(70.5, 10)
-
-    FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    FocusFrameToTManaBar:ClearAllPoints()
-    FocusFrameToTManaBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
-    FocusFrameToTManaBar:SetFrameLevel(10)
-    FocusFrameToTManaBar:SetSize(74, 7.5)
-
-    FocusFrameToTTextureFrameName:ClearAllPoints()
-    FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
-
-    FocusFrameToTTextureFrameDeadText:ClearAllPoints()
-    FocusFrameToTTextureFrameDeadText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
-
-    FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
-    FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
 end
 
 function Module.HookFunctions()
@@ -2647,7 +2533,6 @@ function Module:Era()
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
-    Module.HookEnergyBar()
     Module.HookPlayerStatus()
     Module.HookPlayerArt()
     Module.HookDrag()
@@ -2695,7 +2580,6 @@ function Module:Wrath()
 
     Module.HookRestFunctions()
     Module.HookVertexColor()
-    Module.HookEnergyBar()
     Module.HookPlayerStatus()
     Module.HookPlayerArt()
     Module:HookSecondaryRes()
@@ -2718,8 +2602,12 @@ function Module:Mists()
     -- Module:Wrath()
 
     self.SubFocus:Setup()
+    self.SubFocusTarget:Setup()
+
     self.SubAltPower:Setup()
     self.SubParty:Setup()
+
+    Module:HookEnergyBar()
 
     if true then return end
 end

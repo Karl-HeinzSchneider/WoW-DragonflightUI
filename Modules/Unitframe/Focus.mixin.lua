@@ -220,6 +220,10 @@ function SubModuleMixin:Setup()
     --
     self:ChangeFocusFrame()
 
+    _G['FocusFrameManaBar'].DFUpdateFunc = function()
+        self:ReApplyFocusFrame()
+    end
+
     -- state handler
     Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
     FocusFrame:InitStateHandler()

@@ -98,7 +98,24 @@ function SubModuleMixin:SetupOptions()
         get = getOption,
         set = setOption,
         type = 'group',
-        args = {}
+        args = {
+            headerStyling = {
+                type = 'header',
+                name = L["FocusFrameStyle"],
+                desc = '',
+                order = 20,
+                isExpanded = true,
+                editmode = true
+            },
+            classcolor = {
+                type = 'toggle',
+                name = L["FocusFrameClassColor"],
+                desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focusTarget'),
+                group = 'headerStyling',
+                order = 7,
+                editmode = true
+            }
+        }
     }
     DF.Settings:AddPositionTable(Module, optionsFocusTarget, 'focusTarget', 'FocusTarget', getDefaultStr, frameTable)
     local optionsFocusTargetEditmode = {
@@ -139,15 +156,52 @@ end
 
 function SubModuleMixin:Setup()
     local function setDefaultSubValues(sub)
-        Module:SetDefaultSubValues(sub)
+        self.ModuleRef:SetDefaultSubValues(sub)
     end
 
-    DF.ConfigModule:RegisterSettingsData('player', 'unitframes', {
+    DF.ConfigModule:RegisterSettingsData('focusTarget', 'unitframes', {
         options = self.Options,
         default = function()
-            setDefaultSubValues('player')
+            setDefaultSubValues('focusTarget')
         end
     })
+
+    --
+    self:ChangeFocusToT()
+    self:ReApplyFocusToT()
+
+    _G['FocusFrameToTManaBar'].DFUpdateFunc = function()
+        self:ReApplyFocusToT()
+    end
+
+    -- editmode
+    local EditModeModule = DF:GetModule('Editmode');
+    local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+                                        'DFEditModePreviewTargetOfTargetTemplate')
+    fakeFocusTarget:OnLoad()
+    fakeFocusTarget:SetParent(fakeFocus)
+    self.PreviewFocusTarget = fakeFocusTarget;
+
+    EditModeModule:AddEditModeToFrame(fakeFocusTarget)
+
+    fakeFocusTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return self.Options.name
+    end)
+
+    fakeFocusTarget.DFEditModeSelection:RegisterOptions({
+        options = self.Options,
+        extra = self.OptionsEditmode,
+        default = function()
+            setDefaultSubValues('focusTarget')
+        end,
+        moduleRef = self.ModuleRef,
+        showFunction = function()
+            --         
+        end,
+        hideFunction = function()
+            --
+        end
+    });
 end
 
 function SubModuleMixin:OnEvent(event, ...)
@@ -161,4 +215,104 @@ end
 function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
+
+    local f = FocusFrameToT
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
+    f:SetScale(state.scale)
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    f:SetUserPlaced(true)
+
+    self.PreviewFocusTarget:UpdateState(state);
+end
+
+function SubModuleMixin:ChangeFocusToT()
+    FocusFrameToT:ClearAllPoints()
+    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
+    FocusFrameToT:SetSize(93 + 27, 45)
+
+    FocusFrameToTTextureFrameTexture:SetTexture('')
+
+    FocusFrameToTBackground:Hide()
+    if not self.FocusFrameToTBackground then
+        local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
+        background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
+        self.FocusFrameToTBackground = background
+    end
+
+    if not self.FocusFrameToTBorder then
+        local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
+        border:SetDrawLayer('ARTWORK', 2)
+        border:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+        border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
+        self.FocusFrameToTBorder = border
+    end
+
+    FocusFrameToTHealthBar:ClearAllPoints()
+    FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
+    FocusFrameToTHealthBar:SetFrameLevel(10)
+    FocusFrameToTHealthBar:SetSize(70.5, 10)
+
+    FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
+
+    FocusFrameToTManaBar:ClearAllPoints()
+    FocusFrameToTManaBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
+    FocusFrameToTManaBar:SetFrameLevel(10)
+    FocusFrameToTManaBar:SetSize(74, 7.5)
+
+    FocusFrameToTTextureFrameName:ClearAllPoints()
+    FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
+
+    FocusFrameToTTextureFrameDeadText:ClearAllPoints()
+    FocusFrameToTTextureFrameDeadText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
+
+    FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
+    FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
+end
+
+function SubModuleMixin:ReApplyFocusToT()
+    if self.ModuleRef.db.profile.focusTarget.classcolor and UnitIsPlayer('focusTarget') then
+        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
+        local localizedClass, englishClass, classIndex = UnitClass('focusTarget')
+        FocusFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    else
+        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+        FocusFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
+    end
+
+    local powerType, powerTypeString = UnitPowerType('focusTarget')
+
+    if powerTypeString == 'MANA' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+    elseif powerTypeString == 'FOCUS' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+    elseif powerTypeString == 'RAGE' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+    elseif powerTypeString == 'ENERGY' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+    elseif powerTypeString == 'RUNIC_POWER' then
+        FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+    end
+
+    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
 end
