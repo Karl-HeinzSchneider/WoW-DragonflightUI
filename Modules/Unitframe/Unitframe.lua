@@ -209,15 +209,6 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    if DF.Cata then
-        DF.ConfigModule:RegisterSettingsData('altpower', 'unitframes', {
-            options = optionsAltPower,
-            default = function()
-                setDefaultSubValues('altpower')
-            end
-        })
-    end
-
     DF.ConfigModule:RegisterSettingsData('target', 'unitframes', {
         options = optionsTarget,
         default = function()
@@ -254,6 +245,7 @@ function Module:RefreshOptionScreens()
         self.SubFocus.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
         -- Module.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
+    if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 
     if true then return end
 
@@ -265,7 +257,6 @@ function Module:RefreshOptionScreens()
     Module.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
 
-    if DF.Cata then Module.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 end
 
 function Module:SaveLocalSettings()
@@ -332,6 +323,7 @@ function Module:ApplySettings(sub)
     local orig = defaults.profile
 
     self.SubFocus:UpdateState(db.focus)
+    self.SubAltPower:UpdateState(db.altpower)
 
     if true then return end
 
@@ -370,15 +362,6 @@ function Module:ApplySettings(sub)
         Module:HideAlternatePowerBar(obj.hideAlternatePowerBar)
 
         PlayerFrame:UpdateStateHandler(obj)
-    end
-    -- altpower
-    if DF.Cata then
-        local state = db.altpower;
-        local parent = _G[state.anchorFrame]
-
-        Module.PowerBarAltPreview:ClearAllPoints()
-        Module.PowerBarAltPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-        Module.PowerBarAltPreview:SetScale(state.scale)
     end
 
     -- target
@@ -521,29 +504,6 @@ function Module:AddEditMode()
         end,
         moduleRef = self
     });
-
-    if DF.Cata then
-        -- powerbaralt
-        local f = Module.PowerBarAltPreview
-        EditModeModule:AddEditModeToFrame(f)
-
-        f.DFEditModeSelection:SetGetLabelTextFunction(function()
-            return optionsAltPower.name
-        end)
-
-        f.DFEditModeSelection:RegisterOptions({
-            options = optionsAltPower,
-            extra = optionsAltPowerEditmode,
-            default = function()
-                setDefaultSubValues('altpower')
-            end,
-            moduleRef = self,
-            hideFunction = function()
-                --
-                f:Show()
-            end
-        });
-    end
 
     -- Pet
     EditModeModule:AddEditModeToFrame(PetFrame)
@@ -1468,27 +1428,6 @@ function Module:HideAlternatePowerBar(hide)
         Module.AlternatePowerBar:ClearAllPoints()
         Module.AlternatePowerBar:SetPoint('BOTTOMLEFT', PlayerFrame, 'BOTTOMLEFT', 114 + 6, 23 - 1);
     end
-end
-
-function Module:AddPowerBarAlt()
-    if not DF.Cata then return end
-    local f = CreateFrame('FRAME', 'DragonflightUIPlayerPowerBarAlt', UIParent)
-    f:SetPoint('CENTER', UIParent, 'CENTER', 0, -180)
-    f:SetSize(50, 50)
-    f:SetClampedToScreen(true)
-
-    Module.PowerBarAltPreview = f
-
-    hooksecurefunc('UnitPowerBarAlt_SetUp', function(bar, barID)
-        --
-        -- print('UnitPowerBarAlt_SetUp')
-        if bar.unit and UnitIsUnit(bar.unit, 'player') then
-            -- print('~~player')
-            bar:ClearAllPoints()
-            bar:SetParent(f)
-            bar:SetPoint('CENTER', f, 'CENTER', 0, 0)
-        end
-    end)
 end
 
 function Module.SetPlayerBiggerHealthbar(bigger)
@@ -3366,6 +3305,6 @@ function Module:Mists()
     -- Module:Wrath()
 
     self.SubFocus:Setup()
+    self.SubAltPower:Setup()
     if true then return end
-
 end
