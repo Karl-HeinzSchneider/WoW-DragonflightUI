@@ -403,6 +403,24 @@ local optionsPlayer = {
             order = 11,
             new = false,
             editmode = true
+        },
+        hideRestingGlow = {
+            type = 'toggle',
+            name = L["PlayerFrameHideRestingGlow"],
+            desc = L["PlayerFrameHideRestingGlowDesc"] .. getDefaultStr('hideRestingGlow', 'player'),
+            group = 'headerStyling',
+            order = 12,
+            new = true,
+            editmode = true
+        },
+        hideRestingIcon = {
+            type = 'toggle',
+            name = L["PlayerFrameHideRestingIcon"],
+            desc = L["PlayerFrameHideRestingIconDesc"] .. getDefaultStr('hideRestingIcon', 'player'),
+            group = 'headerStyling',
+            order = 13,
+            new = true,
+            editmode = true
         }
     }
 }
@@ -3481,6 +3499,16 @@ function Module.UpdatePlayerStatus()
         frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         PlayerStatusTexture:SetAlpha(0)
         PlayerStatusTexture:Hide()
+    end
+
+    if db.hideRestingGlow and IsResting() then
+        PlayerStatusTexture:SetAlpha(0)
+        PlayerStatusTexture:Hide()
+    end
+
+    if db.hideRestingIcon and IsResting() then
+        frame.RestIcon:Hide()
+        frame.RestIconAnimation:Stop()
     end
 end
 
