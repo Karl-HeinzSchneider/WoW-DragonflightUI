@@ -12,7 +12,6 @@ function SubModuleMixin:Init()
     self:SetDefaults()
     self:SetupOptions()
     self:SetScript('OnEvent', self.OnEvent);
-    self:RegisterEvent('CVAR_UPDATE')
 end
 
 function SubModuleMixin:SetDefaults()
@@ -289,7 +288,8 @@ function SubModuleMixin:Setup()
             setDefaultSubValues('party')
         end
     })
-
+    --
+    self:RegisterEvent('CVAR_UPDATE')
     --
     self:ChangePartyFrame()
     self:AddStateUpdater()

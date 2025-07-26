@@ -13,12 +13,6 @@ function SubModuleMixin:Init()
     self:SetupOptions()
 
     self:SetScript('OnEvent', self.OnEvent);
-    self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    self:RegisterEvent('PLAYER_FOCUS_CHANGED')
-
-    self:RegisterEvent('UNIT_HEALTH')
-    self:RegisterEvent('UNIT_POWER_UPDATE')
-    self:RegisterEvent('PLAYER_FOCUS_CHANGED')
 end
 
 function SubModuleMixin:SetDefaults()
@@ -217,6 +211,13 @@ function SubModuleMixin:Setup()
         end
     })
 
+    --
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:RegisterEvent('PLAYER_FOCUS_CHANGED')
+
+    self:RegisterEvent('UNIT_HEALTH')
+    self:RegisterEvent('UNIT_POWER_UPDATE')
+    self:RegisterEvent('PLAYER_FOCUS_CHANGED')
     --
     self:ChangeFocusFrame()
 

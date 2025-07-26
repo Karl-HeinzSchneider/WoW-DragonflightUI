@@ -11,15 +11,7 @@ function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
     self:SetupOptions()
-    self:SetScript('OnEvent', self.OnEvent);
-    self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    -- self:RegisterEvent('PLAYER_TARGET_CHANGED')
-    self:RegisterEvent('UNIT_ENTERED_VEHICLE')
-    self:RegisterEvent('UNIT_EXITED_VEHICLE')
-
-    self:RegisterEvent('ZONE_CHANGED')
-    self:RegisterEvent('ZONE_CHANGED_INDOORS')
-    self:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+    -- self:SetScript('OnEvent', self.OnEvent);  
 end
 
 function SubModuleMixin:SetDefaults()
@@ -370,6 +362,15 @@ function SubModuleMixin:Setup()
             setDefaultSubValues('player')
         end
     })
+    --
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    -- self:RegisterEvent('PLAYER_TARGET_CHANGED')
+    self:RegisterEvent('UNIT_ENTERED_VEHICLE')
+    self:RegisterEvent('UNIT_EXITED_VEHICLE')
+
+    self:RegisterEvent('ZONE_CHANGED')
+    self:RegisterEvent('ZONE_CHANGED_INDOORS')
+    self:RegisterEvent('ZONE_CHANGED_NEW_AREA')
     --
     self:CreatePlayerFrameTextures()
     self:ChangePlayerframe()

@@ -233,6 +233,10 @@ function SubModuleMixin:Setup()
     --
     self:ChangePetFrame()
 
+    _G['PetFrameManaBar'].DFUpdateFunc = function()
+        self:UpdatePetManaBarTexture();
+    end
+
     -- state
     PetFrame:SetParent(UIParent)
     Mixin(PetFrame, DragonflightUIStateHandlerMixin)
@@ -483,7 +487,7 @@ function SubModuleMixin:UpdatePetManaBarTexture()
     elseif powerTypeString == 'RAGE' then
         PetFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' then
+    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
         PetFrameManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
     elseif powerTypeString == 'RUNIC_POWER' then
