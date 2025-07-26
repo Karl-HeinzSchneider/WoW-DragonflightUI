@@ -392,7 +392,7 @@ function SubModuleMixin:ChangeFocusFrame()
 
     local dx = 5
     -- health vs mana bar
-    local deltaSize = 132 - 125
+    local deltaSize = 134 - 125
 
     FocusFrameTextureFrame.HealthBarText:ClearAllPoints()
     FocusFrameTextureFrame.HealthBarText:SetPoint('CENTER', FocusFrameHealthBar, 0, 0)
