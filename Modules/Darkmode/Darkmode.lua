@@ -443,55 +443,52 @@ function Module:UpdateUnitframe(state)
     if not DF.ConfigModule:GetModuleEnabled(moduleName) then return end
 
     local unitModule = DF:GetModule(moduleName)
-    local f = unitModule.Frame
+    local f = unitModule
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     -- player
     if not f.DarkmodePlayerStatusHooked then
         f.DarkmodePlayerStatusHooked = true
-        hooksecurefunc(unitModule, 'UpdatePlayerStatus', function()
+        hooksecurefunc(unitModule.SubPlayer, 'UpdatePlayerStatus', function()
             --  
-            local state = Module.db.profile.general
-            Module:UpdatePlayerFrame(state)
+            self:UpdatePlayerFrame(state)
         end)
     end
-    Module:UpdatePlayerFrame(state)
+    self:UpdatePlayerFrame(state)
 
     -- target
     if not f.DarkmodeTargetHooked then
         f.DarkmodeTargetHooked = true
-        hooksecurefunc(unitModule, 'ChangeToT', function()
+        hooksecurefunc(unitModule.SubTarget, 'ChangeTargetFrame', function()
             --  
-            local state = Module.db.profile.general
-            Module:UpdateTargetFrame(state)
+            self:UpdateTargetFrame(state)
         end)
     end
-    Module:UpdateTargetFrame(state)
+    self:UpdateTargetFrame(state)
 
     -- pet
-    Module:UpdatePetFrame(state)
+    self:UpdatePetFrame(state)
 
     -- party
-    Module:UpdatePartyFrame(state)
+    self:UpdatePartyFrame(state)
 
     -- focus
     if DF.Wrath then
         --      
         if not f.DarkmodeFocusHooked then
             f.DarkmodeFocusHooked = true
-            hooksecurefunc(unitModule, 'ChangeFocusToT', function()
+            hooksecurefunc(unitModule.SubFocus, 'ChangeFocusFrame', function()
                 --  
-                local state = Module.db.profile.general
-                Module:UpdateFocusFrame(state)
+                self:UpdateFocusFrame(state)
             end)
         end
-        Module:UpdateFocusFrame(state)
+        self:UpdateFocusFrame(state)
     end
 end
 
 function Module:UpdatePlayerFrame(state)
     local unitModule = DF:GetModule('Unitframe')
-    local f = unitModule.Frame
+    local f = unitModule.SubPlayer
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     if not f.PlayerFrameDeco then return end
@@ -515,7 +512,7 @@ end
 
 function Module:UpdatePetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
-    local f = unitModule.Frame
+    local f = unitModule.SubPet
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     if not f.PetFrameBackground then return end
@@ -532,18 +529,19 @@ end
 
 function Module:UpdateTargetFrame(state)
     local unitModule = DF:GetModule('Unitframe')
-    local f = unitModule.Frame
+    local f = unitModule.SubTarget
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     if not f.TargetFrameBorder then return end
 
     local targetFrameBorder = f.TargetFrameBorder
     local targetPortExtra = f.PortraitExtra
-    local targetOfTargetBorder = f.TargetFrameToTBorder
 
     targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
     targetFrameBorder:SetVertexColor(c:GetRGB())
 
+    local tot = unitModule.SubTargetOfTarget
+    local targetOfTargetBorder = tot.TargetFrameToTBorder
     targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
     targetOfTargetBorder:SetVertexColor(c:GetRGB())
 
@@ -551,14 +549,14 @@ function Module:UpdateTargetFrame(state)
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 
     -- editmode
-    local e = unitModule.PreviewTarget
+    local e = f.PreviewTarget
     e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
     e.TargetFrameBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdatePartyFrame(state)
     local unitModule = DF:GetModule('Unitframe')
-    local f = unitModule.Frame
+    local f = unitModule.SubParty
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
     for i = 1, 4 do
@@ -574,7 +572,7 @@ function Module:UpdatePartyFrame(state)
     end
 
     -- editmode
-    local e = unitModule.PreviewParty
+    local e = f.PreviewParty
     for k, v in ipairs(e.PartyFrames) do
         --
         v.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
@@ -584,14 +582,13 @@ end
 
 function Module:UpdateFocusFrame(state)
     local unitModule = DF:GetModule('Unitframe')
-    local f = unitModule.Frame
+    local f = unitModule.SubFocus
 
     if not f.FocusFrameBorder then return end
 
     local focusBorder = f.FocusFrameBorder
     local focusBackground = f.FocusFrameBackground
     local focusPortExtra = f.FocusExtra
-    local focusToTBorder = f.FocusFrameToTBorder
 
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
@@ -601,6 +598,9 @@ function Module:UpdateFocusFrame(state)
     focusBackground:SetDesaturated(state.unitframeDesaturate)
     focusBackground:SetVertexColor(c:GetRGB())
 
+    local tot = unitModule.SubFocusTarget
+    local focusToTBorder = tot.FocusFrameToTBorder
+
     focusToTBorder:SetDesaturated(state.unitframeDesaturate)
     focusToTBorder:SetVertexColor(c:GetRGB())
 
@@ -608,7 +608,7 @@ function Module:UpdateFocusFrame(state)
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 
     -- editmode
-    local e = unitModule.PreviewFocus
+    local e = f.PreviewFocus
     e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
     e.TargetFrameBorder:SetVertexColor(c:GetRGB())
 end
