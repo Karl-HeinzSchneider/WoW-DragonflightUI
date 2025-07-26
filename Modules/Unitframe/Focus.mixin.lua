@@ -221,6 +221,14 @@ function SubModuleMixin:Setup()
     --
     self:ChangeFocusFrame()
 
+    local up = function()
+        self:ReApplyFocusFrame()
+    end
+    FocusFrameHealthBar:HookScript('OnValueChanged', up)
+    FocusFrameHealthBar:HookScript('OnEvent', function(_, event, arg1)
+        if event == 'UNIT_MAXHEALTH' and arg1 == 'focus' then up() end
+    end)
+
     _G['FocusFrameManaBar'].DFUpdateFunc = function()
         self:ReApplyFocusFrame()
     end

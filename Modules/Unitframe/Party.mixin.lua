@@ -588,6 +588,14 @@ function SubModuleMixin:ChangePartyFrame()
             healthbar.DFTextString:Hide()
             self:UpdatePartyHPBar(i)
         end)
+        healthbar:HookScript('OnValueChanged', function(_)
+            -- print('OnValueChanged', i)
+            self:UpdatePartyHPBar(i)
+        end)
+        healthbar:HookScript('OnEvent', function(_, event, arg1)
+            -- print('OnValueChanged', i)
+            if event == 'UNIT_MAXHEALTH' then self:UpdatePartyHPBar(i) end
+        end)
 
         self:UpdatePartyHPBar(i)
 

@@ -672,41 +672,6 @@ function Module.HookClassIcon()
     end)
 end
 
-function Module.HookVertexColor()
-
-    for i = 1, 4 do
-        local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
-        healthbar:HookScript('OnValueChanged', function(self)
-            -- print('OnValueChanged', i)
-            Module.UpdatePartyHPBar(i)
-        end)
-        healthbar:HookScript('OnEvent', function(self, event, arg1)
-            -- print('OnValueChanged', i)
-            if event == 'UNIT_MAXHEALTH' then Module.UpdatePartyHPBar(i) end
-        end)
-    end
-
-    if DF.Wrath then
-        local updateFocusFrameHealthBar = function()
-            if Module.db.profile.focus.classcolor and UnitIsPlayer('focus') then
-                FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-                local localizedClass, englishClass, classIndex = UnitClass('focus')
-                FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-            else
-                FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-                FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-            end
-        end
-
-        FocusFrameHealthBar:HookScript('OnValueChanged', updateFocusFrameHealthBar)
-        FocusFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
-            if event == 'UNIT_MAXHEALTH' and arg1 == 'focus' then updateFocusFrameHealthBar() end
-        end)
-    end
-end
-
 function Module:HookEnergyBar()
     hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
         if manaBar.DFUpdateFunc and type(manaBar.DFUpdateFunc) == 'function' then
