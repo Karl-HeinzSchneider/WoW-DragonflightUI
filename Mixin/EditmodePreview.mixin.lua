@@ -79,10 +79,18 @@ function DragonflightUIEditModePreviewTargetMixin:SetUnit(unit)
 end
 
 function DragonflightUIEditModePreviewTargetMixin:UpdateState(state)
-    self:ClearAllPoints()
-    local parent = _G[state.anchorFrame]
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    self:SetScale(state.scale)
+    local f = self
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    f:SetScale(state.scale)
 
     if self.NameBackground then self.NameBackground:SetShown(not state.hideNameBackground) end
 

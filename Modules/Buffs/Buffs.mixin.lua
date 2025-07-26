@@ -401,9 +401,9 @@ function SubModuleMixin:AddBuffBorders()
                 if not frame.DFIconBorder then
                     --
                     DragonflightUIMixin:AddIconBorder(frame, true)
-                    frame.DFIconBorder:SetDesaturated(self.BuffDesaturate)
-                    frame.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG,
-                                                      self.BuffVertexColorB)
+                    -- frame.DFIconBorder:SetDesaturated(self.BuffDesaturate)
+                    -- frame.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG,
+                    --                                   self.BuffVertexColorB)
                 end
 
                 -- TODO: style etc
