@@ -244,6 +244,12 @@ function DFProfessionMixin:SetupFrameStyle()
         icon:SetDrawLayer('OVERLAY', 6)
         self.Icon = icon
 
+        _G['TradeSkillFramePortrait']:Hide()
+        _G['TradeSkillFramePortrait']:SetAlpha(0)
+        hooksecurefunc(_G['TradeSkillFramePortrait'], 'Show', function()
+            _G['TradeSkillFramePortrait']:Hide()
+        end)
+
         local pp = self:CreateTexture('DragonflightUIProfessionIconFrame')
         pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
         pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
