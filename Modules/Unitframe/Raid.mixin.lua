@@ -447,15 +447,106 @@ end
 
 function SubModuleMixin:Setup()
     local function setDefaultSubValues(sub)
-        Module:SetDefaultSubValues(sub)
+        self.ModuleRef:SetDefaultSubValues(sub)
     end
 
-    DF.ConfigModule:RegisterSettingsData('player', 'unitframes', {
-        options = self.Options,
-        default = function()
-            setDefaultSubValues('player')
-        end
+    DF.ConfigModule:RegisterSettingsData('raid', 'unitframes', {
+        options = self.Options
+        -- default = function()
+        --     setDefaultSubValues('raid')
+        -- end
     })
+    --
+    self:AddRaidframeRoleIcons()
+
+    -- edit mode
+    local EditModeModule = DF:GetModule('Editmode');
+    local initRaid = function()
+        --         
+        local f = _G['CompactRaidFrameManagerContainerResizeFrame']
+        _G['CompactRaidFrameManagerContainerResizeFrameResizer']:SetFrameLevel(15)
+
+        local fakeRaid = CreateFrame('Frame', 'DragonflightUIEditModeRaidFramePreview', f,
+                                     'DFEditModePreviewRaidFrameTemplate')
+        fakeRaid:OnLoad()
+        fakeRaid:SetPoint('TOPLEFT', f, 'TOPLEFT', 4, -7)
+        fakeRaid:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+
+        -- fakeRaid:ClearAllPoints()
+        -- fakeRaid:SetPoint('TOPLEFT', UIParent, 'CENTER', -50, 50)
+        -- fakeRaid:SetParent(UIParent)
+
+        fakeRaid:Show()
+
+        self.PreviewRaid = fakeRaid;
+
+        EditModeModule:AddEditModeToFrame(f)
+
+        f.DFEditModeSelection:SetGetLabelTextFunction(function()
+            return self.Options.name
+        end)
+
+        f.DFEditModeSelection:ClearAllPoints()
+        f.DFEditModeSelection:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, -7)
+        f.DFEditModeSelection:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 11)
+
+        f.DFEditModeSelection:RegisterOptions({
+            options = self.Options,
+            extra = self.OptionsEditmode,
+            -- parentExtra = FocusFrame,
+            default = function()
+                -- setDefaultSubValues('focus')
+            end,
+            moduleRef = self.ModuleRef,
+            showFunction = function()
+                --  
+                f:Show()
+                CompactRaidFrameManager_SetSetting('Locked', false)
+                f:Show()
+            end,
+            hideFunction = function()
+                --      
+                CompactRaidFrameManager_SetSetting('Locked', true)
+                CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+            end
+        });
+
+        fakeRaid:UpdateState(nil)
+
+        hooksecurefunc('CompactRaidFrameManager_UpdateContainerVisibility', function()
+            -- print('CompactRaidFrameManager_UpdateContainerVisibility')
+            if EditModeModule.IsEditMode then
+                --             
+                -- CompactRaidFrameManager_SetSetting('Locked', false)
+                C_Timer.After(0, function()
+                    --
+                    CompactRaidFrameManager_SetSetting('Locked', false)
+                end)
+            end
+        end)
+
+        f.DFEditModeSelection:HookScript('OnDragStop', function()
+            --
+            CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+        end)
+    end
+
+    if HasLoadedCUFProfiles() and CompactUnitFrameProfiles and CompactUnitFrameProfiles.variablesLoaded then
+        initRaid()
+    else
+        local waitFrame = CreateFrame('Frame')
+        waitFrame:RegisterEvent("COMPACT_UNIT_FRAME_PROFILES_LOADED")
+        waitFrame:RegisterEvent("VARIABLES_LOADED")
+        waitFrame:SetScript("OnEvent", function(waitFrame, event, arg1)
+            --
+            -- print(event)
+            waitFrame:UnregisterEvent(event);
+            if (HasLoadedCUFProfiles() and CompactUnitFrameProfiles and CompactUnitFrameProfiles.variablesLoaded) then
+                --
+                initRaid()
+            end
+        end)
+    end
 end
 
 function SubModuleMixin:OnEvent(event, ...)
@@ -464,9 +555,37 @@ end
 function SubModuleMixin:UpdateState(state)
     self.state = state;
     self:Update();
+
 end
 
 function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
+end
+
+function SubModuleMixin:AddRaidframeRoleIcons()
+    local function updateRoleIcons(f)
+        if not f.roleIcon then
+            return
+        else
+            f.roleIcon:SetDrawLayer('OVERLAY')
+            local size = f.roleIcon:GetHeight();
+            local role = UnitGroupRolesAssigned(f.unit);
+            if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
+                f.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");
+                f.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role));
+                f.roleIcon:Show();
+                f.roleIcon:SetSize(size, size);
+                if strmatch(tostring(f.unit), 'target') then f.roleIcon:Hide() end
+            else
+                f.roleIcon:Hide();
+                f.roleIcon:SetSize(1, size);
+            end
+        end
+    end
+    hooksecurefunc("CompactUnitFrame_UpdateRoleIcon", function(f)
+        --
+        -- print('CompactUnitFrame_UpdateRoleIcon')
+        updateRoleIcons(f)
+    end)
 end

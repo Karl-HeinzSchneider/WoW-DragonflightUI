@@ -670,7 +670,7 @@ function SubModuleMixin:ChangeTargetFrame()
     if DF.Wrath or DF.Era then
         local dx = 5
         -- health vs mana bar
-        local deltaSize = 132 - 125
+        local deltaSize = 134 - 125
 
         TargetFrameTextureFrame.HealthBarText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
         TargetFrameTextureFrame.HealthBarTextLeft:SetPoint('LEFT', TargetFrameHealthBar, 'LEFT', dx, 0)

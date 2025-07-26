@@ -357,7 +357,7 @@ function SubModuleMixin:ChangeFocusFrame()
 
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetTexture(base)
-    FocusFrameNameBackground:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Target-PortraitOn-Type'))
+    FocusFrameNameBackground:SetTexCoord(0.7939453125, 0.92578125, 0.3125, 0.34765625)
     FocusFrameNameBackground:SetSize(135, 18)
     FocusFrameNameBackground:ClearAllPoints()
     FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
