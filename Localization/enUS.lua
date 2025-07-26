@@ -698,6 +698,10 @@ do
     L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul shards."
     L["PlayerFrameHideAlternatePowerBar"] = "Hide Druid Alternate Power Bar"
     L["PlayerFrameHideAlternatePowerBarDesc"] = "Hide the Druid Alternate Power Bar (Mana Bar while Bear/Cat form)."
+    L["PlayerFrameHideRestingGlow"] = "Hide Resting Glow"
+    L["PlayerFrameHideRestingGlowDesc"] = "Hides the resting status glow on the player frame."
+    L["PlayerFrameHideRestingIcon"] = "Hide Resting Icon"
+    L["PlayerFrameHideRestingIconDesc"] = "Hides the resting icon on the player frame."
 
     -- PowerBar_Alt
     L["PowerBarAltName"] = "Player_PowerBarAlt"
