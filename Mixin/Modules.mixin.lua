@@ -152,7 +152,7 @@ function DragonflightUIModulesMixin:EnableAddonSpecific()
         local versionFunc = v[2]
         if Version[versionName] then
             if self[versionFunc] then
-                self[versionFunc]();
+                self[versionFunc](self);
             else
                 DF:Debug(self, 'No self.' .. versionFunc);
             end

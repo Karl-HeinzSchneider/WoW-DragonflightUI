@@ -1,8 +1,13 @@
+local addonName, addonTable = ...;
 ---@class DragonflightUI : AceAddon-3.0, AceConsole-3.0, AceComm-3.0, AceHook-3.0
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):NewAddon('DragonflightUI', 'AceConsole-3.0', 'AceComm-3.0', 'AceHook-3.0',
                                             'AceSerializer-3.0')
 local L = LibStub("AceLocale-3.0"):NewLocale("DragonflightUI", "enUS", true)
+
+addonTable.DF = DF;
+addonTable.L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI");
+addonTable.SubModuleMixins = {}
 
 local defaults = {profile = {bestnumber = 42}}
 
@@ -67,4 +72,11 @@ end
 function DF:GetClassColoredText(str, class)
     local r, g, b, a, hex = DF:GetClassColor(class)
     return "|r|c" .. hex .. str .. "|r"
+end
+
+function DF:CreateFrameFromMixinAndInit(mixinTable)
+    local f = CreateFrame('Frame');
+    Mixin(f, mixinTable);
+    f:Init();
+    return f;
 end
