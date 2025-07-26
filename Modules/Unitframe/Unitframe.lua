@@ -213,9 +213,6 @@ function Module:ApplySettings(sub)
     if DF.Cata then self.SubAltPower:UpdateState(db.altpower) end
 end
 
-local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
-Module.Frame = frame
-
 function Module:FixBlizzardBug()
     SetTextStatusBarText(PlayerFrameManaBar, PlayerFrameManaBarText)
     SetTextStatusBarText(PlayerFrameHealthBar, PlayerFrameHealthBarText)
@@ -369,33 +366,6 @@ function Module:ChangeFonts()
     end
 end
 
-function frame:OnEvent(event, arg1)
-    if true then return end
-    -- print(event, arg1)
-    if event == 'UNIT_POWER_UPDATE' and arg1 == 'focus' then
-    elseif event == 'UNIT_POWER_UPDATE' and arg1 == 'pet' then
-    elseif event == 'PET_BAR_UPDATE' then
-        -- print('PET_BAR_UPDATE')      
-    elseif event == 'UNIT_POWER_UPDATE' then
-        -- print(event, arg1)
-    elseif event == 'PLAYER_ENTERING_WORLD' then
-        -- print('PLAYER_ENTERING_WORLD')
-        Module.ChangeToT()
-        if DF.Wrath then Module.ChangeFocusToT() end
-        Module:ChangeFonts()
-        Module:ApplySettings()
-    elseif event == 'PLAYER_TARGET_CHANGED' then
-        -- Module.ApplySettings()
-
-    elseif event == 'UNIT_PORTRAIT_UPDATE' then
-        Module.RefreshPortrait()
-    elseif event == 'PORTRAITS_UPDATED' then
-        Module.RefreshPortrait()
-    elseif event == 'SETTINGS_LOADED' then
-        Module:RefreshOptionScreens()
-    end
-end
-
 function Module.RefreshPortrait()
     if UnitHasVehiclePlayerFrameUI('player') then
         -- SetPortraitTexture(PlayerPortrait, 'vehicle', true)
@@ -453,8 +423,6 @@ function Module.ApplyPortraitMask()
     maskTalentFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
 end
-
-frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:TakePicture()
     if not Module.PictureTakerFrame then
