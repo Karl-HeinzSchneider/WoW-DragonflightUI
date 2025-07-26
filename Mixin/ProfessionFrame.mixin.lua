@@ -2690,7 +2690,8 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     end
 
     for i = 1, numSkills do
-        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i);
+        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+              currentRank, maxRank, startingRank = GetTradeSkillInfo(i);
 
         if skillType == 'header' then
             local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
@@ -2698,7 +2699,17 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
             headerID = i
             subHeader = nil;
         elseif skillType == 'subheader' then
-            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            local data = {
+                id = i,
+                categoryInfo = {
+                    name = skillName,
+                    isExpanded = isExpanded == 1,
+                    showProgressBar = showProgressBar,
+                    currentRank = currentRank,
+                    maxRank = maxRank,
+                    startingRank = startingRank
+                }
+            }
             -- dataProvider:Insert(data)
             dataProvider:InsertInParentByPredicate(data, function(node)
                 local nodeData = node:GetData()
@@ -2913,6 +2924,14 @@ function DFProfessionFrameRecipeCategoryMixin:Init(node)
 
     -- local color = categoryInfo.unlearned and DISABLED_FONT_COLOR or NORMAL_FONT_COLOR;
     -- self.Label:SetVertexColor(color:GetRGB());
+
+    if categoryInfo.showProgressBar then
+        -- local str = string.format('|cffffffff[%d/%d]|r', categoryInfo.currentRank, categoryInfo.maxRank)
+        local str = string.format('[%d/%d]', categoryInfo.currentRank, categoryInfo.maxRank)
+        self.LabelRight:SetText(str);
+    else
+        self.LabelRight:SetText('');
+    end
 
     if categoryInfo.isExpanded then
         node:SetCollapsed(false, true, false)

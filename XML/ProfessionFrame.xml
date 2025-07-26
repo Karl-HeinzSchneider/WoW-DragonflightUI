@@ -339,11 +339,27 @@ UI_shared.xsd">
 	<Button name="DFProfessionFrameRecipeCategoryTemplate" mixin="DFProfessionFrameRecipeCategoryMixin" virtual="true">
 		<Size y="25" />
 		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
+					<Size x="11" y="8" />
+					<Anchors>
+						<Anchor point="RIGHT" x="-10" y="2" />
+					</Anchors>
+				</Texture>
+			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="1">
+				<FontString parentKey="LabelRight" inherits="GameFontDisableSmall" justifyH="RIGHT">
+					<Size y="10" />
+					<Anchors>
+						<!-- <Anchor point="RIGHT" x="-4" y="2" /> -->
+						<Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.CollapseIcon" x="-4" />
+					</Anchors>
+				</FontString>
 				<FontString parentKey="Label" inherits="GameFontNormal_NoShadow" justifyH="LEFT">
 					<Size y="10" />
 					<Anchors>
 						<Anchor point="LEFT" x="10" y="2" />
+						<Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.LabelRight" x="-4" />
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -368,14 +384,6 @@ UI_shared.xsd">
 					<Anchors>
 						<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeKey="$parent.LeftPiece" />
 						<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" relativeKey="$parent.RightPiece" />
-					</Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<Texture parentKey="CollapseIcon" file="Interface/AddOns/DragonflightUI/Textures/UI/professions">
-					<Size x="11" y="8" />
-					<Anchors>
-						<Anchor point="RIGHT" x="-10" y="2" />
 					</Anchors>
 				</Texture>
 			</Layer>
