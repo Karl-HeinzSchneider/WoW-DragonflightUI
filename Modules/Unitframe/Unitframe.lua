@@ -132,6 +132,7 @@ function Module:RefreshOptionScreens()
     self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
+    -- self.SubRaid.PreviewRaid.DFEditModeSelection:RefreshOptionScreen();
     self.SubTarget.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
     self.SubTargetOfTarget.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
     if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
