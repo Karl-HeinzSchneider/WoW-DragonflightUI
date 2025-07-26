@@ -471,6 +471,7 @@ function Module:Era()
     self:HookEnergyBar()
     self:ChangeFonts()
     self:HookDrag()
+    self:AddPortraitMasks()
     self:HookClassIcon()
 end
 
@@ -493,6 +494,7 @@ function Module:Wrath()
     self:HookEnergyBar()
     self:ChangeFonts()
     self:HookDrag()
+    self:AddPortraitMasks()
     self:HookClassIcon()
 end
 
@@ -512,6 +514,7 @@ function Module:Cata()
     self:HookEnergyBar()
     self:ChangeFonts()
     self:HookDrag()
+    self:AddPortraitMasks()
     self:HookClassIcon()
 end
 
