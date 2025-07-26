@@ -176,7 +176,8 @@ function SubModuleMixin:Setup()
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+    local fakeFocus = _G['DragonflightUIEditModeFocusFramePreview']
+    local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeFocusTargetOfTargetFramePreview', UIParent,
                                         'DFEditModePreviewTargetOfTargetTemplate')
     fakeFocusTarget:OnLoad()
     fakeFocusTarget:SetParent(fakeFocus)
