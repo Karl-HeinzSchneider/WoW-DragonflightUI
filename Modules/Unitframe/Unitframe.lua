@@ -225,16 +225,14 @@ function Module:RefreshOptionScreens()
     end
     if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
     self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
+    PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
 
     if true then return end
-
-    PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
 
     PetFrame.DFEditModeSelection:RefreshOptionScreen();
     -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
-
 end
 
 function Module:SaveLocalSettings()
@@ -305,6 +303,7 @@ function Module:ApplySettings(sub)
 
     self.SubAltPower:UpdateState(db.altpower)
     self.SubParty:UpdateState(db.party)
+    self.SubPlayer:UpdateState(db.player)
 
     if true then return end
 
@@ -317,33 +316,6 @@ function Module:ApplySettings(sub)
     --         -- return;
     --     end
     -- end
-
-    -- playerframe
-    do
-        local obj = db.player
-        local objLocal = localSettings.player
-
-        Module.MovePlayerFrame(obj.anchor, obj.anchorParent, obj.anchorFrame, obj.x, obj.y)
-        PlayerFrame:SetUserPlaced(true)
-
-        PlayerFrame:SetScale(obj.scale)
-        Module.ChangePlayerframe()
-        Module.SetPlayerBiggerHealthbar(obj.biggerHealthbar)
-        Module.Frame.PlayerPortraitExtra:UpdateStyle(obj.portraitExtra)
-        PlayerFrameHealthBar.breakUpLargeNumbers = obj.breakUpLargeNumbers
-        TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
-        UnitFramePortrait_Update(PlayerFrame)
-
-        if obj.hideIndicator then
-            PlayerHitIndicator:SetScale(0.01)
-        else
-            PlayerHitIndicator:SetScale(1)
-        end
-        Module:HideSecondaryRes(obj.hideSecondaryRes)
-        Module:HideAlternatePowerBar(obj.hideAlternatePowerBar)
-
-        PlayerFrame:UpdateStateHandler(obj)
-    end
 
     -- target
     do
@@ -431,8 +403,6 @@ function Module.FixBlizzardBug()
 end
 
 function Module.AddStateUpdater()
-    Mixin(PlayerFrame, DragonflightUIStateHandlerMixin)
-    PlayerFrame:InitStateHandler()
 
     PetFrame:SetParent(UIParent)
     Mixin(PetFrame, DragonflightUIStateHandlerMixin)
@@ -447,21 +417,6 @@ end
 
 function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
-    -- Player
-    EditModeModule:AddEditModeToFrame(PlayerFrame)
-
-    PlayerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return optionsPlayer.name
-    end)
-
-    PlayerFrame.DFEditModeSelection:RegisterOptions({
-        options = optionsPlayer,
-        extra = optionsPlayerEditmode,
-        default = function()
-            setDefaultSubValues('player')
-        end,
-        moduleRef = self
-    });
 
     -- Pet
     EditModeModule:AddEditModeToFrame(PetFrame)
@@ -919,16 +874,6 @@ function Module.HookClassIcon()
 end
 
 function Module.HookVertexColor()
-    PlayerFrameHealthBar:HookScript('OnValueChanged', Module.UpdatePlayerFrameHealthBar)
-    PlayerFrameHealthBar:HookScript('OnEvent', function(self, event, arg1)
-        -- if event == 'UNIT_MAXHEALTH' and arg1 == 'player' then Module.UpdatePlayerFrameHealthBar() end
-        Module.UpdatePlayerFrameHealthBar()
-    end)
-
-    PlayerFrame:HookScript('OnEvent', function(self, event, arg1)
-        -- print('onevent playerframe')
-        Module.UpdatePlayerFrameHealthBar()
-    end)
 
     local updateTargetFrameHealthBar = function()
         if Module.db.profile.target.classcolor and UnitIsPlayer('target') then
@@ -995,26 +940,6 @@ function Module:HookEnergyBar()
         local name = manaBar:GetName()
 
         if name == 'PlayerFrameManaBar' then
-            local powerType, powerTypeString = UnitPowerType('player')
-
-            if powerTypeString == 'MANA' then
-                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
-            elseif powerTypeString == 'RAGE' then
-                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
-            elseif powerTypeString == 'FOCUS' then
-                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
-            elseif powerTypeString == 'ENERGY' then
-                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
-            elseif powerTypeString == 'RUNIC_POWER' then
-                PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
-            end
-
-            PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
         elseif name == 'TargetFrameManaBar' then
             local powerType, powerTypeString = UnitPowerType('target')
@@ -1062,15 +987,6 @@ function Module:HookEnergyBar()
             FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 
             FocusFrameFlash:SetTexture('')
-
-        elseif name == 'PartyMemberFrame1ManaBar' then
-            Module.UpdatePartyManaBar(1)
-        elseif name == 'PartyMemberFrame2ManaBar' then
-            Module.UpdatePartyManaBar(2)
-        elseif name == 'PartyMemberFrame3ManaBar' then
-            Module.UpdatePartyManaBar(3)
-        elseif name == 'PartyMemberFrame4ManaBar' then
-            Module.UpdatePartyManaBar(4)
         elseif name == 'PetFrameManaBar' then
             -- frame.UpdatePetManaBarTexture()
         else
@@ -1079,386 +995,8 @@ function Module:HookEnergyBar()
     end)
 end
 
-function Module.ChangePlayerframe()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    -- Module.RefreshPortrait()
-
-    PlayerFrameTexture:Hide()
-    PlayerFrameBackground:Hide()
-    PlayerFrameVehicleTexture:Hide()
-
-    if not PlayerPortrait.DFSet then
-        PlayerPortrait.DFSet = true;
-        PlayerPortrait:ClearAllPoints()
-        PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
-        PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
-        PlayerPortrait:SetSize(56, 56)
-
-        function PlayerPortrait:fixClassSize(class)
-            --
-            -- print('fixClassSize', class)
-            if class then
-                local delta = 4.5;
-                PlayerPortrait:SetVertexOffset(1, -delta, delta)
-                PlayerPortrait:SetVertexOffset(2, -delta, -delta)
-                PlayerPortrait:SetVertexOffset(3, delta, delta)
-                PlayerPortrait:SetVertexOffset(4, delta, -delta)
-            else
-                PlayerPortrait:SetVertexOffset(1, 0, 0)
-                PlayerPortrait:SetVertexOffset(2, 0, 0)
-                PlayerPortrait:SetVertexOffset(3, 0, 0)
-                PlayerPortrait:SetVertexOffset(4, 0, 0)
-            end
-
-        end
-        PlayerPortrait:fixClassSize(false)
-    end
-
-    -- @TODO: change text spacing
-    PlayerName:ClearAllPoints()
-    PlayerName:SetPoint('BOTTOMLEFT', PlayerFrameHealthBar, 'TOPLEFT', 0, 1)
-
-    PlayerLevelText:ClearAllPoints()
-    PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 1)
-    PlayerLevelText:SetHeight(12)
-
-    -- Health 119,12
-    PlayerFrameHealthBar:SetSize(125, 20)
-    PlayerFrameHealthBar:ClearAllPoints()
-    PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
-
-    Module.UpdatePlayerFrameHealthBar()
-
-    PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
-
-    local dx = 5
-    PlayerFrameHealthBarTextLeft:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', dx, 0)
-    PlayerFrameHealthBarTextRight:SetPoint('RIGHT', PlayerFrameHealthBar, 'RIGHT', -dx, 0)
-
-    -- Mana 119,12
-    PlayerFrameManaBar:ClearAllPoints()
-    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17 + 0.5)
-    PlayerFrameManaBar:SetSize(125, 8)
-
-    PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, 0)
-    PlayerFrameManaBarTextLeft:SetPoint('LEFT', PlayerFrameManaBar, 'LEFT', dx, 0)
-    PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, 0)
-
-    local powerType, powerTypeString = UnitPowerType('player')
-
-    if powerTypeString == 'MANA' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'RAGE' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'FOCUS' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'ENERGY' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
-    end
-
-    PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    -- UI-HUD-UnitFrame-Player-PortraitOn-Status
-    PlayerStatusTexture:SetTexture(base)
-    PlayerStatusTexture:SetSize(192, 71)
-    PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
-
-    PlayerStatusTexture:ClearAllPoints()
-    PlayerStatusTexture:SetPoint('TOPLEFT', frame.PlayerFrameBorder, 'TOPLEFT', 1, 1)
-
-    if DF.Wrath then RuneFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 54 - 3, 34 - 3) end
-
-    if DF.Cata then PaladinPowerBar:SetPoint('TOP', PlayerFrame, 'BOTTOM', 43, 39 - 2) end
-
-    if DF.API.Version.IsCata then ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1) end
-    if DF.API.Version.IsMoP then
-        _G['MonkHarmonyBar']:SetPoint('TOP', 49 - 5, -46);
-        _G['WarlockPowerFrame']:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 3);
-        _G['ShardBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', 0, 0 + 2)
-        _G['BurningEmbersBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', -21, 1 + 2)
-    end
-
-    if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
-end
 -- ChangePlayerframe()
 -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-
-function Module:AddAlternatePowerBar()
-    local localizedClass, englishClass, classIndex = UnitClass('player');
-    if not englishClass == 'DRUID' then return; end
-
-    local bar = CreateFrame('StatusBar', 'DragonflightUIAlternatePowerBar', PlayerFrame, 'TextStatusBar');
-    bar:SetSize(78, 12);
-    bar:SetPoint('BOTTOMLEFT', 114 + 6, 23 - 1);
-    bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar');
-    bar:SetStatusBarColor(0, 0, 1.0);
-    Module.AlternatePowerBar = bar;
-
-    local bg = bar:CreateTexture('DragonflightUIAlternatePowerBarBackground', 'BACKGROUND');
-    bg:SetSize(78, 12);
-    bg:SetPoint('TOPLEFT', 0, 0);
-    bg:SetColorTexture(0, 0, 0, 0.5);
-
-    local border = bar:CreateTexture('DragonflightUIAlternatePowerBarBorder', 'OVERLAY');
-    border:SetSize(97, 16);
-    border:SetPoint('TOPLEFT', -10, 0);
-    border:SetTexture('Interface\\CharacterFrame\\UI-CharacterFrame-GroupIndicator');
-    border:SetTexCoord(0.0234375, 0.6875, 1.0, 0);
-
-    local text = bar:CreateFontString('DragonflightUIAlternatePowerBarText', 'OVERLAY', 'TextStatusBarText');
-    text:SetPoint('CENTER', 0, 0);
-    bar.TextString = text
-
-    local textLeft = bar:CreateFontString('DragonflightUIAlternatePowerBarTextLeft', 'OVERLAY', 'TextStatusBarText');
-    textLeft:SetPoint('LEFT', 0, 0);
-    bar.LeftText = textLeft
-
-    local textRight = bar:CreateFontString('DragonflightUIAlternatePowerBarText', 'OVERLAY', 'TextStatusBarText');
-    textRight:SetPoint('RIGHT', 0, 0);
-    bar.RightText = textRight
-
-    --
-    local ADDITIONAL_POWER_BAR_NAME = "MANA";
-    local ADDITIONAL_POWER_BAR_INDEX = 0;
-
-    local function AlternatePowerBar_Initialize(self)
-        if (not self.powerName) then
-            self.powerName = ADDITIONAL_POWER_BAR_NAME;
-            self.powerIndex = ADDITIONAL_POWER_BAR_INDEX;
-        end
-
-        self:RegisterEvent("UNIT_POWER_UPDATE"); -- "UNIT_"..self.powerName
-        self:RegisterEvent("UNIT_MAXPOWER"); -- "UNIT_MAX"..self.powerName
-        self:RegisterEvent("PLAYER_ENTERING_WORLD");
-        self:RegisterEvent("UNIT_DISPLAYPOWER");
-
-        SetTextStatusBarText(self, _G[self:GetName() .. "Text"])
-
-        local info = PowerBarColor[self.powerName];
-        self:SetStatusBarColor(info.r, info.g, info.b);
-    end
-
-    local function AlternatePowerBar_OnLoad(self)
-        self.textLockable = 1;
-        self.cvar = "StatusText"; -- DF
-        self.cvarLabel = "STATUS_TEXT_PLAYER";
-        self.capNumericDisplay = true -- DF
-        AlternatePowerBar_Initialize(self);
-        TextStatusBar_Initialize(self);
-    end
-
-    local function AlternatePowerBar_UpdateValue(self)
-        local currmana = UnitPower(self:GetParent().unit, self.powerIndex);
-        self:SetValue(currmana);
-        self.value = currmana
-    end
-
-    local function AlternatePowerBar_UpdateMaxValues(self)
-        local maxmana = UnitPowerMax(self:GetParent().unit, self.powerIndex);
-        self:SetMinMaxValues(0, maxmana);
-    end
-
-    local function AlternatePowerBar_UpdatePowerType(self)
-        if ((UnitPowerType(self:GetParent().unit) ~= self.powerIndex) and
-            (UnitPowerMax(self:GetParent().unit, self.powerIndex) ~= 0)) then
-            self.pauseUpdates = false;
-            self:Show();
-        else
-            self.pauseUpdates = true;
-            self:Hide();
-        end
-    end
-
-    local function AlternatePowerBar_OnEvent(self, event, arg1)
-        local parent = self:GetParent();
-        if (event == "UNIT_DISPLAYPOWER") then
-            AlternatePowerBar_UpdatePowerType(self);
-        elseif (event == "PLAYER_ENTERING_WORLD") then
-            AlternatePowerBar_UpdateMaxValues(self);
-            AlternatePowerBar_UpdateValue(self);
-            AlternatePowerBar_UpdatePowerType(self);
-        elseif ((event == "UNIT_MAXPOWER")) then
-            if arg1 == parent.unit then AlternatePowerBar_UpdateMaxValues(self); end
-        elseif (self:IsShown()) then
-            if ((event == "UNIT_MANA") and (arg1 == parent.unit)) then AlternatePowerBar_UpdateValue(self); end
-        end
-    end
-
-    local function AlternatePowerBar_OnUpdate(self, elapsed)
-        AlternatePowerBar_UpdateValue(self);
-    end
-
-    -- 
-    AlternatePowerBar_OnLoad(bar)
-    TextStatusBar_Initialize(bar)
-
-    bar:SetScript('OnEvent', function(self, event, ...)
-        -- 
-        AlternatePowerBar_OnEvent(self, event, ...);
-        TextStatusBar_OnEvent(self, event, ...);
-    end)
-    bar:SetScript('OnUpdate', function(self, elapsed)
-        -- 
-        AlternatePowerBar_OnUpdate(self, elapsed);
-    end)
-    -- bar:SetScript('OnMouseUp', function() end)
-end
-
-function Module:HideAlternatePowerBar(hide)
-    if not Module.AlternatePowerBar then return end
-
-    if hide then
-        Module.AlternatePowerBar:ClearAllPoints()
-        Module.AlternatePowerBar:SetPoint('BOTTOM', UIParent, 'TOP', 0, 500);
-    else
-        Module.AlternatePowerBar:ClearAllPoints()
-        Module.AlternatePowerBar:SetPoint('BOTTOMLEFT', PlayerFrame, 'BOTTOMLEFT', 114 + 6, 23 - 1);
-    end
-end
-
-function Module.SetPlayerBiggerHealthbar(bigger)
-    local border = frame.PlayerFrameBorder
-    local background = frame.PlayerFrameBackground
-
-    if not border or not background then return end
-
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    if bigger then
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn')
-        background:SetTexCoord(0, 198 / 256, 0, 71 / 128)
-        background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0 + 6)
-
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER-Plunder')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5 + 6)
-
-        PlayerStatusTexture:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn-InCombat')
-        PlayerStatusTexture:SetSize(192, 71)
-        PlayerStatusTexture:SetTexCoord(0, 192 / 256, 0, 71 / 128)
-
-        PlayerFrameHealthBar:SetSize(125, 32)
-        PlayerFrameHealthBar:ClearAllPoints()
-        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0 - 6)
-
-        PlayerFrameManaBar:SetAlpha(0)
-        PlayerFrameManaBarText:SetAlpha(0)
-        PlayerFrameManaBarTextLeft:SetAlpha(0)
-        PlayerFrameManaBarTextRight:SetAlpha(0)
-    else
-        background:SetTexture(base)
-        background:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn'))
-        background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
-
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
-
-        PlayerStatusTexture:SetTexture(base)
-        PlayerStatusTexture:SetSize(192, 71)
-        PlayerStatusTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-PortraitOn-InCombat'))
-
-        PlayerFrameHealthBar:SetSize(125, 20)
-        PlayerFrameHealthBar:ClearAllPoints()
-        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
-
-        PlayerFrameManaBar:SetAlpha(1)
-        PlayerFrameManaBarText:SetAlpha(1)
-        PlayerFrameManaBarTextLeft:SetAlpha(1)
-        PlayerFrameManaBarTextRight:SetAlpha(1)
-    end
-end
-
-function Module.UpdatePlayerStatus()
-    if not frame.PlayerFrameDeco then return end
-
-    -- TODO: fix statusglow
-    PlayerStatusGlow:Hide()
-
-    if UnitHasVehiclePlayerFrameUI and UnitHasVehiclePlayerFrameUI('player') then
-        -- TODO: vehicle stuff
-        -- frame.PlayerFrameDeco:Show()
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-        -- frame.PlayerFrameDeco:Show()
-    elseif IsResting() then
-        frame.PlayerFrameDeco:Show()
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-
-        frame.RestIcon:Show()
-        frame.RestIconAnimation:Play()
-
-        -- PlayerStatusTexture:Show()
-        -- PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
-        PlayerStatusTexture:SetAlpha(1.0)
-    elseif PlayerFrame.onHateList then
-        -- PlayerStatusTexture:Show()
-        -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-        frame.PlayerFrameDeco:Hide()
-
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-    elseif PlayerFrame.inCombat then
-        frame.PlayerFrameDeco:Hide()
-
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
-
-        -- PlayerStatusTexture:Show()
-        -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
-        PlayerStatusTexture:SetAlpha(1.0)
-    else
-        frame.PlayerFrameDeco:Show()
-
-        frame.RestIcon:Hide()
-        frame.RestIconAnimation:Stop()
-
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-    end
-
-    local db = Module.db.profile.player
-    if db.hideRedStatus and (PlayerFrame.onHateList or PlayerFrame.inCombat) then
-        --
-        frame.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        frame.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        PlayerStatusTexture:SetAlpha(0)
-        PlayerStatusTexture:Hide()
-    end
-end
-
-function Module.HookPlayerStatus()
-    hooksecurefunc('PlayerFrame_UpdateStatus', function()
-        --
-        Module.UpdatePlayerStatus()
-    end)
-end
-
-function Module.HookPlayerArt()
-    hooksecurefunc('PlayerFrame_ToPlayerArt', function()
-        -- print('PlayerFrame_ToPlayerArt')
-        Module.ChangePlayerframe()
-        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
-    end)
-end
 
 function Module.MovePlayerFrame(anchor, anchorOther, anchorFrame, dx, dy)
     PlayerFrame:ClearAllPoints()
@@ -2282,46 +1820,23 @@ function frame:OnEvent(event, arg1)
         -- print(event, arg1)
     elseif event == 'PLAYER_ENTERING_WORLD' then
         -- print('PLAYER_ENTERING_WORLD')
-        Module.CreatePlayerFrameTextures()
-        Module.ChangePlayerframe()
-        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
         Module.ChangeTargetFrame()
         Module.ChangeTargetComboFrame()
         Module.ChangeToT()
         Module.ReApplyTargetFrame()
-        Module.ChangeStatusIcons()
-        Module.CreateRestFlipbook()
         if DF.Wrath then Module.ChangeFocusToT() end
         Module:ChangeFonts()
         Module:ApplySettings()
     elseif event == 'PLAYER_TARGET_CHANGED' then
         -- Module.ApplySettings()
         Module.ReApplyTargetFrame()
-        -- Module.ChangePlayerframe()
-    elseif event == 'UNIT_ENTERED_VEHICLE' then
-        Module.ChangePlayerframe()
-        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
-    elseif event == 'UNIT_EXITED_VEHICLE' then
-        Module.ChangePlayerframe()
-        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
-    elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
-        Module.ChangePlayerframe()
-        Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
+
     elseif event == 'UNIT_PORTRAIT_UPDATE' then
         Module.RefreshPortrait()
     elseif event == 'PORTRAITS_UPDATED' then
         Module.RefreshPortrait()
-    elseif event == 'CVAR_UPDATE' then
-        if arg1 == 'statusText' or arg1 == 'statusTextDisplay' then
-            for i = 1, 4 do
-                Module.UpdatePartyHPBar(i)
-                Module.UpdatePartyManaBar(i)
-            end
-        end
     elseif event == 'SETTINGS_LOADED' then
         Module:RefreshOptionScreens()
-    elseif event == 'PLAYER_SPECIALIZATION_CHANGED' then
-        Module:HideSecondaryRes(Module.db.profile.player.hideSecondaryRes)
     end
 end
 
@@ -2531,9 +2046,8 @@ function Module:Era()
     frame:RegisterEvent('CVAR_UPDATE')
     frame:RegisterEvent('SETTINGS_LOADED')
 
-    Module.HookRestFunctions()
     Module.HookVertexColor()
-    Module.HookPlayerStatus()
+
     Module.HookPlayerArt()
     Module.HookDrag()
 
@@ -2578,20 +2092,13 @@ function Module:Wrath()
     frame:RegisterEvent('CVAR_UPDATE')
     frame:RegisterEvent('SETTINGS_LOADED')
 
-    Module.HookRestFunctions()
     Module.HookVertexColor()
-    Module.HookPlayerStatus()
-    Module.HookPlayerArt()
-    Module:HookSecondaryRes()
+
     Module.HookDrag()
 
     -- Module.ApplyPortraitMask()
     Module.HookClassIcon()
-    Module.ChangePartyFrame()
     Module.ChangePetFrame()
-    if DF.Cata then Module:AddPowerBarAlt() end
-
-    Module:CreatePlayerFrameExtra()
 end
 
 function Module:Cata()
@@ -2606,6 +2113,7 @@ function Module:Mists()
 
     self.SubAltPower:Setup()
     self.SubParty:Setup()
+    self.SubPlayer:Setup()
 
     Module:HookEnergyBar()
 

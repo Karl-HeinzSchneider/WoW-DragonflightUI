@@ -11,7 +11,8 @@ function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
     self:SetupOptions()
-    -- self:SetScript('OnEvent', self.OnEvent);
+    self:SetScript('OnEvent', self.OnEvent);
+    self:RegisterEvent('CVAR_UPDATE')
 end
 
 function SubModuleMixin:SetDefaults()
@@ -336,6 +337,15 @@ function SubModuleMixin:Setup()
 end
 
 function SubModuleMixin:OnEvent(event, ...)
+    if event == 'CVAR_UPDATE' then
+        local arg1 = ...;
+        if arg1 == 'statusText' or arg1 == 'statusTextDisplay' then
+            for i = 1, 4 do
+                self:UpdatePartyHPBar(i)
+                self:UpdatePartyManaBar(i)
+            end
+        end
+    end
 end
 
 function SubModuleMixin:UpdateState(state)
