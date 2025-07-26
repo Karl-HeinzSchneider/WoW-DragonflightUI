@@ -180,13 +180,6 @@ function Module:RegisterOptionScreens()
         -- end
     })
 
-    DF.ConfigModule:RegisterSettingsData('pet', 'unitframes', {
-        options = optionsPet,
-        default = function()
-            setDefaultSubValues('pet')
-        end
-    })
-
     DF.ConfigModule:RegisterSettingsData('target', 'unitframes', {
         options = optionsTarget,
         default = function()
@@ -226,10 +219,10 @@ function Module:RefreshOptionScreens()
     if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
     self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
+    PetFrame.DFEditModeSelection:RefreshOptionScreen();
 
     if true then return end
 
-    PetFrame.DFEditModeSelection:RefreshOptionScreen();
     -- TargetFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
@@ -304,6 +297,7 @@ function Module:ApplySettings(sub)
     self.SubAltPower:UpdateState(db.altpower)
     self.SubParty:UpdateState(db.party)
     self.SubPlayer:UpdateState(db.player)
+    self.SubPet:UpdateState(db.pet)
 
     if true then return end
 
@@ -349,47 +343,6 @@ function Module:ApplySettings(sub)
 
         Module.PreviewTargetOfTarget:UpdateState(obj);
     end
-
-    -- pet
-    do
-        local obj = db.pet
-        local objLocal = localSettings.pet
-
-        PetFrame:ClearAllPoints()
-        local offsetY = DF.Cata and Module.GetPetOffset(obj.offset) or 0
-        PetFrame:SetPoint(obj.anchor, obj.anchorFrame, obj.anchorParent, obj.x, obj.y + offsetY)
-
-        PetFrame:SetScale(obj.scale)
-        Module.ReApplyTargetFrame()
-        PetFrame.breakUpLargeNumbers = obj.breakUpLargeNumbers
-        TextStatusBar_UpdateTextString(PetFrameHealthBar)
-
-        local alpha = 1
-        if obj.hideStatusbarText then alpha = 0 end
-        PetFrameHealthBarText:SetAlpha(alpha)
-        PetFrameHealthBarTextLeft:SetAlpha(alpha)
-        PetFrameHealthBarTextRight:SetAlpha(alpha)
-
-        PetFrameManaBarText:SetAlpha(alpha)
-        PetFrameManaBarTextLeft:SetAlpha(alpha)
-        PetFrameManaBarTextRight:SetAlpha(alpha)
-
-        if obj.hideIndicator then
-            PetHitIndicator:SetScale(0.01)
-        else
-            PetHitIndicator:SetScale(1)
-        end
-
-        PetFrame:UpdateStateHandler(obj)
-    end
-
-    if DF.Wrath then
-        -- focus
-        do end
-
-        -- focus target
-
-    end
 end
 
 local frame = CreateFrame('FRAME', 'DragonflightUIUnitframeFrame', UIParent)
@@ -403,36 +356,13 @@ function Module.FixBlizzardBug()
 end
 
 function Module.AddStateUpdater()
-
-    PetFrame:SetParent(UIParent)
-    Mixin(PetFrame, DragonflightUIStateHandlerMixin)
-    PetFrame:InitStateHandler()
-    PetFrame:SetUnit('pet')
-
     Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
     TargetFrame:InitStateHandler()
     TargetFrame:SetUnit('target')
-
 end
 
 function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
-
-    -- Pet
-    EditModeModule:AddEditModeToFrame(PetFrame)
-
-    PetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return optionsPet.name
-    end)
-
-    PetFrame.DFEditModeSelection:RegisterOptions({
-        options = optionsPet,
-        extra = optionsPetEditmode,
-        default = function()
-            setDefaultSubValues('pet')
-        end,
-        moduleRef = self
-    });
 
     -- Target
     local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
@@ -1509,210 +1439,6 @@ function Module.ChangeToT()
     TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 5, -20)
 end
 
--- ChangeFocusFrame()
--- frame:RegisterUnitEvent('UNIT_POWER_UPDATE', 'focus')
--- frame:RegisterUnitEvent('UNIT_HEALTH', 'focus')
--- frame:RegisterEvent('PLAYER_FOCUS_CHANGED')
-
-function Module.MoveFocusFrame(anchor, anchorOther, anchorFrame, dx, dy)
-    FocusFrame:ClearAllPoints()
-    FocusFrame:SetPoint(anchor, anchorFrame, anchorOther, dx, dy)
-end
-
-function Module.HookFunctions()
-    hooksecurefunc(PlayerFrameTexture, 'Show', function()
-        -- print('PlayerFrameTexture - Show()')
-        -- Module.ChangePlayerframe()
-    end)
-end
-
-function Module.ChangePetFrame()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
-    PetFrameTexture:SetTexture('')
-    PetFrameTexture:Hide()
-
-    if not frame.PetAttackModeTexture then
-        -- local attack = PetFrame:CreateTexture('DragonflightUIPetAttackModeTexture')
-        local attack = PetFrameHealthBar:CreateTexture('DragonflightUIPetAttackModeTexture')
-        attack:SetDrawLayer('ARTWORK', 3)
-        attack:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status')
-        attack:SetSize(120, 49)
-        attack:SetTexCoord(0, 120 / 128, 0, 49 / 64)
-        attack:SetPoint('CENTER', PetFrame, 'CENTER', -2, 0)
-        attack:SetBlendMode('ADD')
-        attack:SetVertexColor(239 / 256, 0, 0)
-
-        attack.attackModeCounter = 0
-        attack.attackModeSign = -1
-
-        PetFrame:HookScript('OnUpdate', function(self, elapsed)
-            -- print('OnUpdate', elapsed)
-            PetAttackModeTexture:Hide()
-
-            if attack:IsShown() then
-                local alpha = 255;
-                local counter = attack.attackModeCounter + elapsed;
-                local sign = attack.attackModeSign;
-
-                if (counter > 0.5) then
-                    sign = -sign;
-                    attack.attackModeSign = sign;
-                end
-                counter = mod(counter, 0.5);
-                attack.attackModeCounter = counter;
-
-                if (sign == 1) then
-                    alpha = (55 + (counter * 400)) / 255;
-                else
-                    alpha = (255 - (counter * 400)) / 255;
-                end
-                -- attack:SetVertexColor(239 / 256, 0, 0, alpha);
-                attack:SetVertexColor(1, 0, 0, alpha);
-
-            else
-            end
-        end)
-
-        attack:Hide()
-        PetFrame:HookScript('OnEvent', function(self, event, ...)
-            if event == 'PET_ATTACK_START' then
-                attack:Show()
-            elseif event == 'PET_ATTACK_STOP' then
-                attack:Hide()
-            end
-        end)
-
-        frame.PetAttackModeTexture = attack
-    end
-
-    -- PetAttackModeTexture:ClearAllPoints()
-    -- PetAttackModeTexture:SetSize(120, 49)
-    -- local attSize = 40
-    -- PetAttackModeTexture:SetSize(attSize * 2, attSize * 2)
-
-    -- PetAttackModeTexture:SetTexCoord(0.703125, 1.0, 0, 1.0)
-    -- PetAttackModeTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status')
-    -- PetAttackModeTexture:SetTexCoord(0.441406, 0.558594, 0.3125, 0.408203)
-    -- PetAttackModeTexture:SetTexCoord(0, 120 / 128, 0, 49 / 64)
-    -- PetAttackModeTexture:SetPoint('CENTER', PetFrame, 'CENTER', -2, 0)
-    -- PetAttackModeTexture:SetVertexColor(239 / 256, 0, 0)
-
-    if not frame.PetFrameBackground then
-        local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 1)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
-        frame.PetFrameBackground = background
-    end
-
-    if not frame.PetFrameBorder then
-        local border = PetFrameHealthBar:CreateTexture('DragonflightUIPetFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
-        frame.PetFrameBorder = border
-    end
-    if PetFrameHappiness then PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -7, -2) end
-
-    PetFrameHealthBar:ClearAllPoints()
-    PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
-    PetFrameHealthBar:SetSize(70.5, 10)
-    PetFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-    PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-    PetFrameHealthBar.SetStatusBarColor = noop
-
-    PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
-
-    PetFrameManaBar:ClearAllPoints()
-    PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
-    PetFrameManaBar:SetSize(74, 7.5)
-    PetFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-    PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
-
-    frame.UpdatePetManaBarTexture = function()
-        local powerType, powerTypeString = UnitPowerType('pet')
-
-        if powerTypeString == 'MANA' then
-            PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-        elseif powerTypeString == 'FOCUS' then
-            PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
-        elseif powerTypeString == 'RAGE' then
-            PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-        elseif powerTypeString == 'ENERGY' then
-            PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
-        elseif powerTypeString == 'RUNIC_POWER' then
-            PetFrameManaBar:GetStatusBarTexture():SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
-        end
-
-        PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
-    end
-
-    hooksecurefunc('PetFrame_Update', function(self)
-        frame.UpdatePetManaBarTexture()
-    end)
-
-    local dx = 2
-    -- health vs mana bar
-    local deltaSize = 74 - 70.5
-
-    local newPetTextScale = 0.8
-
-    PetName:ClearAllPoints()
-    PetName:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
-
-    PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
-    PetFrameHealthBarTextLeft:SetPoint('LEFT', PetFrameHealthBar, 'LEFT', dx, 0)
-    PetFrameHealthBarTextRight:SetPoint('RIGHT', PetFrameHealthBar, 'RIGHT', -dx, 0)
-
-    PetFrameHealthBarText:SetScale(newPetTextScale)
-    PetFrameHealthBarTextLeft:SetScale(newPetTextScale)
-    PetFrameHealthBarTextRight:SetScale(newPetTextScale)
-
-    PetFrameManaBarText:SetPoint('CENTER', PetFrameManaBar, 'CENTER', deltaSize / 2, 0)
-    PetFrameManaBarTextLeft:ClearAllPoints()
-    PetFrameManaBarTextLeft:SetPoint('LEFT', PetFrameManaBar, 'LEFT', deltaSize + dx + 1.5, 0)
-    PetFrameManaBarTextRight:SetPoint('RIGHT', PetFrameManaBar, 'RIGHT', -dx, 0)
-
-    PetFrameManaBarText:SetScale(newPetTextScale)
-    PetFrameManaBarTextLeft:SetScale(newPetTextScale)
-    PetFrameManaBarTextRight:SetScale(newPetTextScale)
-end
-
-function Module.GetPetOffset(offset)
-    if not offset then return 0 end
-
-    local _, class = UnitClass("player");
-
-    -- default -60
-    if (class == "DEATHKNIGHT") then
-        return -15
-        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -75);
-    elseif (class == "SHAMAN" or class == "DRUID") then
-        return -40
-        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -100);
-    elseif (class == "WARLOCK") then
-        return -20
-        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -80);
-    elseif (class == "PALADIN") then
-        return -30
-        -- self:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 60, -90);
-    end
-
-    return 0
-end
-
 function Module:AddRaidframeRoleIcons()
     local function updateRoleIcons(f)
         if not f.roleIcon then
@@ -2114,6 +1840,8 @@ function Module:Mists()
     self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+
+    self.SubPet:Setup()
 
     Module:HookEnergyBar()
 
