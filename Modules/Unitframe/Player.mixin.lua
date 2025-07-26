@@ -375,6 +375,7 @@ function SubModuleMixin:Setup()
     self:CreatePlayerFrameTextures()
     self:ChangePlayerframe()
     self:CreatePlayerFrameExtra()
+    self:CreateCustomPortrait()
     -- self:ChangeStatusIcons() -- PLAYER_ENTERING_WORLD
     self:CreateRestFlipbook()
     self:HookRestFunctions()
@@ -539,33 +540,6 @@ function SubModuleMixin:ChangePlayerframe()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
 
-    if not PlayerPortrait.DFSet then
-        PlayerPortrait.DFSet = true;
-        PlayerPortrait:ClearAllPoints()
-        PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
-        PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
-        PlayerPortrait:SetSize(56, 56)
-
-        function PlayerPortrait:fixClassSize(class)
-            --
-            -- print('fixClassSize', class)
-            if class then
-                local delta = 4.5;
-                PlayerPortrait:SetVertexOffset(1, -delta, delta)
-                PlayerPortrait:SetVertexOffset(2, -delta, -delta)
-                PlayerPortrait:SetVertexOffset(3, delta, delta)
-                PlayerPortrait:SetVertexOffset(4, delta, -delta)
-            else
-                PlayerPortrait:SetVertexOffset(1, 0, 0)
-                PlayerPortrait:SetVertexOffset(2, 0, 0)
-                PlayerPortrait:SetVertexOffset(3, 0, 0)
-                PlayerPortrait:SetVertexOffset(4, 0, 0)
-            end
-
-        end
-        PlayerPortrait:fixClassSize(false)
-    end
-
     -- @TODO: change text spacing
     PlayerName:ClearAllPoints()
     PlayerName:SetPoint('BOTTOMLEFT', PlayerFrameHealthBar, 'TOPLEFT', 0, 1)
@@ -619,6 +593,32 @@ function SubModuleMixin:ChangePlayerframe()
     end
 
     if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
+end
+
+function SubModuleMixin:CreateCustomPortrait()
+    PlayerPortrait:ClearAllPoints()
+    PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
+    PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
+    PlayerPortrait:SetSize(56, 56)
+
+    function PlayerPortrait:fixClassSize(class)
+        --
+        -- print('fixClassSize', class)
+        if class then
+            local delta = 4.5;
+            PlayerPortrait:SetVertexOffset(1, -delta, delta)
+            PlayerPortrait:SetVertexOffset(2, -delta, -delta)
+            PlayerPortrait:SetVertexOffset(3, delta, delta)
+            PlayerPortrait:SetVertexOffset(4, delta, -delta)
+        else
+            PlayerPortrait:SetVertexOffset(1, 0, 0)
+            PlayerPortrait:SetVertexOffset(2, 0, 0)
+            PlayerPortrait:SetVertexOffset(3, 0, 0)
+            PlayerPortrait:SetVertexOffset(4, 0, 0)
+        end
+
+    end
+    PlayerPortrait:fixClassSize(false)
 end
 
 function SubModuleMixin:CreateRestFlipbook()

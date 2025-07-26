@@ -254,37 +254,89 @@ function Module:HookDrag()
     end
 end
 
-function Module.HookClassIcon()
-    Module:Unhook('UnitFramePortrait_Update')
-    Module:SecureHook('UnitFramePortrait_Update', function(self)
-        -- print('UnitFramePortrait_Update', self:GetName(), self.unit)
-        if not self.portrait then return end
+function Module:HookClassIcon()
+    self:Unhook('UnitFramePortrait_Update')
+    self:SecureHook('UnitFramePortrait_Update', function(portraitFrame)
+        -- print('UnitFramePortrait_Update', portraitFrame:GetName(), portraitFrame.unit)
+        if not portraitFrame.portrait then return end
 
-        local icon
-        local unit = self.unit
+        local icon = nil;
+        local unit = portraitFrame.unit;
+        local disableMasking = false;
 
         if unit == "player" then
-            icon = Module.db.profile.player.classicon
+            icon = self.db.profile.player.classicon
+            disableMasking = true
         elseif unit == "target" then
-            icon = Module.db.profile.target.classicon
+            icon = self.db.profile.target.classicon
+            disableMasking = true
         elseif unit == "focus" then
-            icon = Module.db.profile.focus.classicon
+            icon = self.db.profile.focus.classicon
+            disableMasking = true
         end
 
         if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
-            self.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
-            SetPortraitTexture(self.portrait, unit)
-            if self.portrait.fixClassSize then self.portrait:fixClassSize(false) end
+            portraitFrame.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
+            SetPortraitTexture(portraitFrame.portrait, unit, disableMasking)
+            if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(false) end
             return
         end
 
         local texCoords = CLASS_ICON_TCOORDS[select(2, UnitClass(unit))]
         if texCoords then
-            self.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
-            self.portrait:SetTexCoord(unpack(texCoords))
-            if self.portrait.fixClassSize then self.portrait:fixClassSize(true) end
+            portraitFrame.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
+            portraitFrame.portrait:SetTexCoord(unpack(texCoords))
+            if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(true) end
         end
     end)
+end
+
+function Module:AddPortraitMasks()
+    local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
+    local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+
+    local mask = PlayerFrame:CreateMaskTexture()
+    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
+    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    PlayerPortrait:AddMaskTexture(mask)
+
+    local maskTarget = TargetFrame:CreateMaskTexture()
+    maskTarget:SetAllPoints(TargetFramePortrait)
+    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    TargetFramePortrait:AddMaskTexture(maskTarget)
+
+    local maskToT = TargetFrameToT:CreateMaskTexture()
+    maskToT:SetAllPoints(TargetFrameToTPortrait)
+    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    TargetFrameToTPortrait:AddMaskTexture(maskToT)
+
+    local maskPet = PetFrame:CreateMaskTexture()
+    maskPet:SetAllPoints(PetPortrait)
+    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    PetPortrait:AddMaskTexture(maskPet)
+
+    if DF.Wrath then
+        local maskFocus = FocusFrame:CreateMaskTexture()
+        maskFocus:SetAllPoints(FocusFramePortrait)
+        maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        FocusFramePortrait:AddMaskTexture(maskFocus)
+
+        local maskFocusToT = FocusFrameToT:CreateMaskTexture()
+        maskFocusToT:SetAllPoints(FocusFrameToTPortrait)
+        maskFocusToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
+    end
+
+    -- fix portraits
+    local maskCharacterFrame = CharacterFrame:CreateMaskTexture()
+    maskCharacterFrame:SetAllPoints(CharacterFramePortrait)
+    maskCharacterFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    CharacterFramePortrait:AddMaskTexture(maskCharacterFrame)
+
+    local maskTalentFrame = PlayerTalentFrame:CreateMaskTexture()
+    maskTalentFrame:SetAllPoints(PlayerTalentFramePortrait)
+    maskTalentFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
 end
 
 function Module:HookEnergyBar()
@@ -366,64 +418,6 @@ function Module:ChangeFonts()
     end
 end
 
-function Module.RefreshPortrait()
-    if UnitHasVehiclePlayerFrameUI('player') then
-        -- SetPortraitTexture(PlayerPortrait, 'vehicle', true)
-    else
-        -- SetPortraitTexture(PlayerPortrait, 'player', true)
-    end
-end
-
-function Module.ApplyPortraitMask()
-    local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
-    local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
-
-    local mask = PlayerFrame:CreateMaskTexture()
-    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
-    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerPortrait:AddMaskTexture(mask)
-
-    -- mask:SetScale(2)
-
-    if DF.Wrath then
-        local maskFocus = FocusFrame:CreateMaskTexture()
-        maskFocus:SetAllPoints(FocusFramePortrait)
-        maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        FocusFramePortrait:AddMaskTexture(maskFocus)
-
-        local maskFocusToT = FocusFrameToT:CreateMaskTexture()
-        maskFocusToT:SetAllPoints(FocusFrameToTPortrait)
-        maskFocusToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
-    end
-
-    local maskTarget = TargetFrame:CreateMaskTexture()
-    maskTarget:SetAllPoints(TargetFramePortrait)
-    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFramePortrait:AddMaskTexture(maskTarget)
-
-    local maskToT = TargetFrameToT:CreateMaskTexture()
-    maskToT:SetAllPoints(TargetFrameToTPortrait)
-    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFrameToTPortrait:AddMaskTexture(maskToT)
-
-    local maskPet = PetFrame:CreateMaskTexture()
-    maskPet:SetAllPoints(PetPortrait)
-    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PetPortrait:AddMaskTexture(maskPet)
-
-    -- fix portraits
-    local maskCharacterFrame = CharacterFrame:CreateMaskTexture()
-    maskCharacterFrame:SetAllPoints(CharacterFramePortrait)
-    maskCharacterFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    CharacterFramePortrait:AddMaskTexture(maskCharacterFrame)
-
-    local maskTalentFrame = PlayerTalentFrame:CreateMaskTexture()
-    maskTalentFrame:SetAllPoints(PlayerTalentFramePortrait)
-    maskTalentFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
-end
-
 function Module:TakePicture()
     if not Module.PictureTakerFrame then
         local pt = CreateFrame('FRAME', 'DragonflightUIPictureTakerFrame', UIParent);
@@ -474,9 +468,10 @@ function Module:Era()
     self.SubTargetOfTarget:Setup()
     self.SubRaid:Setup()
 
-    Module:HookEnergyBar()
-    Module:ChangeFonts()
-    Module:HookDrag()
+    self:HookEnergyBar()
+    self:ChangeFonts()
+    self:HookDrag()
+    self:HookClassIcon()
 end
 
 function Module:TBC()
@@ -495,9 +490,10 @@ function Module:Wrath()
     self.SubTargetOfTarget:Setup()
     self.SubRaid:Setup()
 
-    Module:HookEnergyBar()
-    Module:ChangeFonts()
-    Module:HookDrag()
+    self:HookEnergyBar()
+    self:ChangeFonts()
+    self:HookDrag()
+    self:HookClassIcon()
 end
 
 function Module:Cata()
@@ -513,9 +509,10 @@ function Module:Cata()
     self.SubTargetOfTarget:Setup()
     self.SubRaid:Setup()
 
-    Module:HookEnergyBar()
-    Module:ChangeFonts()
-    Module:HookDrag()
+    self:HookEnergyBar()
+    self:ChangeFonts()
+    self:HookDrag()
+    self:HookClassIcon()
 end
 
 function Module:Mists()
@@ -531,7 +528,9 @@ function Module:Mists()
     self.SubTargetOfTarget:Setup()
     self.SubRaid:Setup()
 
-    Module:HookEnergyBar()
-    Module:ChangeFonts()
-    Module:HookDrag()
+    self:HookEnergyBar()
+    self:ChangeFonts()
+    self:HookDrag()
+    self:AddPortraitMasks()
+    self:HookClassIcon()
 end
