@@ -328,6 +328,16 @@ function Module:AddPortraitMasks()
         FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
     end
 
+    for i = 1, 4 do
+        local pf = _G['PartyMemberFrame' .. i]
+        local port = _G['PartyMemberFrame' .. i .. 'Portrait']
+
+        local m = pf:CreateMaskTexture()
+        m:SetAllPoints(port)
+        m:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        port:AddMaskTexture(m)
+    end
+
     -- fix portraits
     local maskCharacterFrame = CharacterFrame:CreateMaskTexture()
     maskCharacterFrame:SetAllPoints(CharacterFramePortrait)
