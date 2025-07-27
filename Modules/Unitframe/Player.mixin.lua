@@ -33,6 +33,8 @@ function SubModuleMixin:SetDefaults()
         hideIndicator = false,
         hideSecondaryRes = false,
         hideAlternatePowerBar = false,
+        hideRestingGlow = false,
+        hideRestingIcon = false,
         -- Visibility
         showMouseover = false,
         hideAlways = false,
@@ -200,6 +202,24 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 11,
                 new = false,
+                editmode = true
+            },
+            hideRestingGlow = {
+                type = 'toggle',
+                name = L["PlayerFrameHideRestingGlow"],
+                desc = L["PlayerFrameHideRestingGlowDesc"] .. getDefaultStr('hideRestingGlow', 'player'),
+                group = 'headerStyling',
+                order = 12,
+                new = true,
+                editmode = true
+            },
+            hideRestingIcon = {
+                type = 'toggle',
+                name = L["PlayerFrameHideRestingIcon"],
+                desc = L["PlayerFrameHideRestingIconDesc"] .. getDefaultStr('hideRestingIcon', 'player'),
+                group = 'headerStyling',
+                order = 13,
+                new = true,
                 editmode = true
             }
         }
@@ -478,6 +498,7 @@ function SubModuleMixin:Update()
     self:ChangePlayerframe()
     self:SetPlayerBiggerHealthbar(state.biggerHealthbar)
     self.PlayerPortraitExtra:UpdateStyle(state.portraitExtra)
+    self:UpdatePlayerStatus()
     PlayerFrameHealthBar.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     UnitFramePortrait_Update(PlayerFrame)
@@ -697,7 +718,7 @@ function SubModuleMixin:UpdatePlayerStatus()
         self.RestIcon:Show()
         self.RestIconAnimation:Play()
 
-        -- PlayerStatusTexture:Show()
+        PlayerStatusTexture:Show()
         -- PlayerStatusTexture:SetVertexColor(1.0, 0.88, 0.25, 1.0)
         PlayerStatusTexture:SetAlpha(1.0)
     elseif PlayerFrame.onHateList then
@@ -718,7 +739,7 @@ function SubModuleMixin:UpdatePlayerStatus()
 
         self.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
 
-        -- PlayerStatusTexture:Show()
+        PlayerStatusTexture:Show()
         -- PlayerStatusTexture:SetVertexColor(1.0, 0, 0, 1.0)
         PlayerStatusTexture:SetAlpha(1.0)
     else
@@ -738,6 +759,16 @@ function SubModuleMixin:UpdatePlayerStatus()
         self.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         PlayerStatusTexture:SetAlpha(0)
         PlayerStatusTexture:Hide()
+    end
+
+    if db.hideRestingGlow and IsResting() then
+        PlayerStatusTexture:SetAlpha(0)
+        PlayerStatusTexture:Hide()
+    end
+
+    if db.hideRestingIcon and IsResting() then
+        self.RestIcon:Hide()
+        self.RestIconAnimation:Stop()
     end
 end
 
