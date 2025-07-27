@@ -701,11 +701,11 @@ function SubModuleMixin:ChangeTargetFrame()
             -- print('show')
             TargetFrameFlash:SetTexture('')
             self.TargetFrameFlash:Show()
-            if (UIFrameIsFlashing(frame.TargetFrameFlash)) then
+            if (UIFrameIsFlashing(self.TargetFrameFlash)) then
             else
                 -- print('go flash')
                 local dt = 0.5
-                UIFrameFlash(frame.TargetFrameFlash, dt, dt, -1)
+                UIFrameFlash(self.TargetFrameFlash, dt, dt, -1)
             end
         end)
 
