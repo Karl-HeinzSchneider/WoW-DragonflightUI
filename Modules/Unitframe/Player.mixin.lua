@@ -383,10 +383,15 @@ function SubModuleMixin:Setup()
         end
     })
     --
+    self:SetScript('OnEvent', self.OnEvent);
+
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    -- self:RegisterEvent('PLAYER_TARGET_CHANGED')
-    self:RegisterEvent('UNIT_ENTERED_VEHICLE')
-    self:RegisterEvent('UNIT_EXITED_VEHICLE')
+    self:RegisterEvent('PLAYER_TARGET_CHANGED')
+    -- self:RegisterEvent('UNIT_ENTERED_VEHICLE')
+    -- self:RegisterEvent('UNIT_EXITED_VEHICLE')
+
+    self:RegisterUnitEvent('UNIT_ENTERED_VEHICLE', 'player')
+    self:RegisterUnitEvent('UNIT_EXITED_VEHICLE', 'player')
 
     self:RegisterEvent('ZONE_CHANGED')
     self:RegisterEvent('ZONE_CHANGED_INDOORS')
@@ -454,6 +459,7 @@ function SubModuleMixin:Setup()
 end
 
 function SubModuleMixin:OnEvent(event, ...)
+    -- print(event, ...)
     if event == 'PLAYER_ENTERING_WORLD' then
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
@@ -469,6 +475,10 @@ function SubModuleMixin:OnEvent(event, ...)
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
     elseif event == 'PLAYER_SPECIALIZATION_CHANGED' then
         self:HideSecondaryRes(self.ModuleRef.db.profile.player.hideSecondaryRes)
+    elseif event == 'PLAYER_TARGET_CHANGED' then
+        -- fallback
+        -- self:ChangePlayerframe()
+        -- self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
     end
 end
 
