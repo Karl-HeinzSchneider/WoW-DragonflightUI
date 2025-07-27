@@ -1,5 +1,7 @@
-local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
-local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+local addonName, addonTable = ...;
+local DF = addonTable.DF;
+local L = addonTable.L;
+local Helper = addonTable.Helper;
 local mName = 'Config'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
@@ -195,7 +197,9 @@ function Module:OnEnable()
         Module:Era()
     end
 
-    Module:ApplySettings()
+    Helper:Benchmark('ConfigModule:ApplySettings()', function()
+        Module:ApplySettings()
+    end, 0)
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -231,25 +235,40 @@ end
 
 function Module:ApplySettings()
     local db = Module.db.profile
-
     local modules = db.modules
 
-    DF:EnableModule('Profiles')
-    DF:EnableModule('Editmode')
+    local strFormat = 'EnableModule(%s)'
+
+    Helper:Benchmark(string.format(strFormat, 'Profiles'), function()
+        DF:EnableModule('Profiles')
+    end)
+
+    Helper:Benchmark(string.format(strFormat, 'Editmode'), function()
+        DF:EnableModule('Editmode')
+    end)
 
     for k, v in pairs(modules) do
         -- print(k, v)   
         local dfmod = DF:GetModule(k, true)
         if dfmod then
             if v and not dfmod:GetWasEnabled() then
-                if k ~= 'Darkmode' then DF:EnableModule(k) end
+                if k ~= 'Darkmode' then
+                    Helper:Benchmark(string.format(strFormat, k), function()
+                        DF:EnableModule(k)
+                    end)
+
+                end
             elseif not v and dfmod:GetWasEnabled() then
                 DF:Print("Already loaded module was deactivated, please '/reload' !")
             end
         end
     end
 
-    if modules['Darkmode'] then DF:EnableModule('Darkmode') end
+    if modules['Darkmode'] then
+        Helper:Benchmark(string.format(strFormat, 'Darkmode'), function()
+            DF:EnableModule('Darkmode')
+        end)
+    end
 
     Module.DontRefresh = true;
     DF:RefreshConfig()

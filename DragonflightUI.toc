@@ -43,6 +43,7 @@ Embed\AuraDurations\AuraDurations_embed.xml
 Mixin\DFColor.mixin.lua
 
 Core.lua
+Helper.lua
 API.xml
 Config.lua
 Version.lua
