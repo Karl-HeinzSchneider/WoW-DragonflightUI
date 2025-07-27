@@ -34,7 +34,7 @@ function DragonflightUIActionbarMixin:Init()
 
     self.stanceBar = false
 
-    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    -- self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:SetScript('OnEvent', function(self, event, arg1)
         if InCombatLockdown() then return end
         self:Update()
@@ -259,7 +259,7 @@ function DragonflightUIActionbarMixin:Update()
                 btn:UpdateHotkeyDisplayText(state.shortenKeybind)
             end
 
-            if btn.overlay then self:FixGlow(btn) end
+            -- if btn.overlay then self:FixGlow(btn) end
 
             index = index + 1
         end
