@@ -34,7 +34,7 @@ function DragonflightUIActionbarMixin:Init()
 
     self.stanceBar = false
 
-    -- self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
     self:SetScript('OnEvent', function(self, event, arg1)
         if InCombatLockdown() then return end
         self:Update()
