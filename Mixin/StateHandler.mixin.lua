@@ -105,6 +105,30 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
         frameRef:SetAttribute('state-vis', oldState)      
     ]])
     handlerTwo:SetAttribute('_onleave', [[]])
+
+    --
+    local handlerAlpha = CreateFrame('FRAME', self:GetName() .. 'HandlerAlpha', nil, 'SecureHandlerStateTemplate')
+    self.DFAlphaHandler = handlerAlpha;
+    handlerAlpha:SetFrameRef('frameRef', self)
+    handlerAlpha:SetAttribute('_onstate-alpha', [[
+        -- if not newstate then return end     
+        local frameRef = self:GetFrameRef("frameRef")
+        if not frameRef then return end     
+
+        print('newState:',newstate,' ~~~ ', frameRef:GetName())
+        print('--',frameRef:GetAttribute('alphaNormal'),frameRef:GetAttribute('alphaCombat'))
+        local newAlpha = 1.0;
+        if newstate == 'combat' then
+            newAlpha = frameRef:GetAttribute('alphaCombat') or 0.5;
+        elseif newstate == 'normal' then
+            newAlpha = frameRef:GetAttribute('alphaNormal') or 0.8;
+        elseif newstate == 'fullAlpha' then
+            newAlpha = 1.0;
+        else
+            --
+        end
+        frameRef:SetAlpha(newAlpha);
+    ]])
 end
 
 function DragonflightUIStateHandlerMixin:SetHideFrame(frame, index)
@@ -176,6 +200,35 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverr
     else
         mouseHandler:Hide()
     end
+
+    self:UpdateAlphaHandler(state)
+end
+
+function DragonflightUIStateHandlerMixin:UpdateAlphaHandler(state)
+    -- 
+    local handler = self.DFAlphaHandler
+    self:SetAttribute('alphaNormal', state.alphaNormal)
+    self:SetAttribute('alphaCombat', state.alphaCombat)
+
+    -- print(self:GetName(), state.normalAlpha, state.combatAlpha)
+
+    UnregisterStateDriver(handler, 'alpha')
+
+    local driverTable = {}
+
+    if state.EditModeActive then table.insert(driverTable, 'fullAlpha') end
+
+    table.insert(driverTable, '[combat]combat')
+    table.insert(driverTable, '[nocombat]normal')
+
+    table.insert(driverTable, 'fullAlpha') -- fallback
+
+    local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
+
+    RegisterStateDriver(handler, 'alpha', driver)
+    handler:SetAttribute('state-alpha', 'fullAlpha')
+    handler:SetAttribute('state-alpha', result)
 end
 
 function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
@@ -245,6 +298,30 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
 
     local extraOptions = {
         headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100, isExpanded = true, editmode = true},
+        alphaNormal = {
+            type = 'range',
+            name = 'Alpha',
+            desc = '' .. getDefaultStr('alphaNormal', sub),
+            min = 0.1,
+            max = 1,
+            bigStep = 0.01,
+            order = 70,
+            group = 'headerVis',
+            new = true,
+            editmode = true
+        },
+        alphaCombat = {
+            type = 'range',
+            name = 'Alpha (In Combat)',
+            desc = '' .. getDefaultStr('alphaCombat', sub),
+            min = 0.1,
+            max = 1,
+            bigStep = 0.01,
+            order = 70.5,
+            group = 'headerVis',
+            new = true,
+            editmode = true
+        },
         showMouseover = {
             type = 'toggle',
             name = 'Show On Mouseover',

@@ -51,6 +51,8 @@ function SubModuleMixin:SetDefaults()
         totAuraRowWidth = 101, -- TOT_AURA_ROW_WIDTH
         numTotAuraRows = 2, -- NUM_TOT_AURA_ROWS
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,

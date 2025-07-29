@@ -59,6 +59,8 @@ local defaults = {
             -- state
             stateDriver = 'SMART',
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -103,6 +105,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -148,8 +152,9 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
-
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -194,6 +199,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -239,6 +246,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -284,6 +293,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -329,6 +340,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -374,6 +387,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -412,6 +427,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -439,6 +456,8 @@ local defaults = {
             alwaysShowXP = false,
             showXPPercent = true,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -465,6 +484,8 @@ local defaults = {
             height = 20,
             alwaysShowRep = false,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -503,6 +524,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -526,6 +549,8 @@ local defaults = {
             x = 0,
             y = 2,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -550,6 +575,8 @@ local defaults = {
             y = 2,
             offset = false,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
@@ -578,6 +605,8 @@ local defaults = {
             offsetX = 5,
             offsetY = 95,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -602,6 +631,8 @@ local defaults = {
             y = 0,
             hidden = false,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -2629,8 +2660,8 @@ function Module:RefreshOptionScreens()
     Module.FPSFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings(sub)
-    -- print('function Module:ApplySettings(sub)', sub)
+function Module:ApplySettings(sub, key)
+    -- print('function Module:ApplySettings(sub)', sub, GetTime(), key)
     local db = Module.db.profile
 
     if not sub or sub == 'ALL' then
@@ -2678,7 +2709,7 @@ function Module:ApplySettings(sub)
         Module.UpdatePossesbarState(db.possess)
 
     elseif sub == 'bar1' then
-        Module.bar1:SetState(db.bar1)
+        Module.bar1:SetState(db.bar1, key)
 
         if db.bar1.range then
             if Module.UpdateRangeHooked then
@@ -2697,19 +2728,19 @@ function Module:ApplySettings(sub)
             end
         end
     elseif sub == 'bar2' then
-        Module.bar2:SetState(db.bar2)
+        Module.bar2:SetState(db.bar2, key)
     elseif sub == 'bar3' then
-        Module.bar3:SetState(db.bar3)
+        Module.bar3:SetState(db.bar3, key)
     elseif sub == 'bar4' then
-        Module.bar4:SetState(db.bar4)
+        Module.bar4:SetState(db.bar4, key)
     elseif sub == 'bar5' then
-        Module.bar5:SetState(db.bar5)
+        Module.bar5:SetState(db.bar5, key)
     elseif sub == 'bar6' then
-        Module.bar6:SetState(db.bar6)
+        Module.bar6:SetState(db.bar6, key)
     elseif sub == 'bar7' then
-        Module.bar7:SetState(db.bar7)
+        Module.bar7:SetState(db.bar7, key)
     elseif sub == 'bar8' then
-        Module.bar8:SetState(db.bar8)
+        Module.bar8:SetState(db.bar8, key)
     elseif sub == 'extraActionButton' then
         if DF.Cata then Module:UpdateExtraButtonState(db.extraActionButton) end
     elseif sub == 'pet' then

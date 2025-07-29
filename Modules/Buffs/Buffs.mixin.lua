@@ -25,6 +25,8 @@ function SubModuleMixin:SetDefaults()
         y = -13,
         expanded = true,
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,

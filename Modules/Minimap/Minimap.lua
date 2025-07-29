@@ -25,6 +25,8 @@ local defaults = {
             skinButtons = true,
             zonePanelPosition = 'TOP',
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,

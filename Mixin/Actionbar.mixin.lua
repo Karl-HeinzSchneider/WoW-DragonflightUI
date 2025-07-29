@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
@@ -101,10 +103,22 @@ end
     padding = 3,
     alwaysShow = true
 } ]]
-function DragonflightUIActionbarMixin:SetState(state)
+function DragonflightUIActionbarMixin:SetState(state, key)
     self.state = state
     self.savedAlwaysShow = state.alwaysShow
-    self:Update()
+
+    if key and key == 'alphaNormal' then
+        print('alphaNormal')
+        self:SetAttribute('alphaNormal', state.alphaNormal)
+        self.DFAlphaHandler:SetAttribute('state-alpha', 'update')
+        self.DFAlphaHandler:SetAttribute('state-alpha', 'normal')
+    elseif key and key == 'alphaCombat' then
+        -- print('alphaCombat')
+        self:SetAttribute('alphaCombat', state.alphaCombat)
+    else
+        self:Update()
+    end
+    -- print('SetState', key)
 end
 
 function DragonflightUIActionbarMixin:IsAnchorframeLegal()
@@ -338,9 +352,42 @@ function DragonflightUIActionbarMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    self:UpdateStateHandler(state)
-    self:UpdatePagingStateDriver(state)
-    self:UpdateTargetStateDriver(state)
+    -- optimization as state update is slow (~7ms), noticable when changing sliders etc
+    self.ShouldUpdateStateHandler = true;
+
+    Helper:Benchmark('StateUpdater' .. self:GetName(), function()
+        local newestState = self.state
+        self:UpdateStateHandler(newestState)
+        self:UpdatePagingStateDriver(newestState)
+        self:UpdateTargetStateDriver(newestState)
+    end)
+
+    -- if not self.LastStateHandlerUpdate or ((GetTime() - self.LastStateHandlerUpdate) > 1.0) then
+    --     print('instant update')
+    --     Helper:Benchmark('StateUpdater' .. self:GetName(), function()
+    --         local newestState = self.state
+    --         self:UpdateStateHandler(newestState)
+    --         self:UpdatePagingStateDriver(newestState)
+    --         self:UpdateTargetStateDriver(newestState)
+    --     end)
+    --     self.ShouldUpdateStateHandler = false;
+    --     self.LastStateHandlerUpdate = GetTime()
+    -- else
+    --     print('delayed')
+    --     C_Timer.After(2, function()
+    --         if self.ShouldUpdateStateHandler and not InCombatLockdown() then
+    --             print('UpdateStateHandler')
+    --             Helper:Benchmark('StateUpdater' .. self:GetName(), function()
+    --                 local newestState = self.state
+    --                 self:UpdateStateHandler(newestState)
+    --                 self:UpdatePagingStateDriver(newestState)
+    --                 self:UpdateTargetStateDriver(newestState)
+    --             end)
+    --             self.ShouldUpdateStateHandler = false;
+    --             self.LastStateHandlerUpdate = GetTime()
+    --         end
+    --     end)
+    -- end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -521,6 +568,49 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
             handler:Run(UpdateMainActionBar, newstate)
         ]=])
     end
+end
+
+function DragonflightUIActionbarMixin:AddAlphaStateDriver()
+    print('DragonflightUIActionbarMixin:AddAlphaStateDriver()')
+    local handler = CreateFrame("Frame", "DragonflightUIActionBarAlphaHandler", self, "SecureHandlerStateTemplate")
+    self.AlphaStateDriver = handler;
+
+    handler:SetFrameRef('frameRef', self)
+    handler:SetAttribute('_onstate-alpha', [[
+        -- if not newstate then return end     
+        local frameRef = self:GetFrameRef("frameRef")
+        if not frameRef then return end     
+
+        local newAlpha = 1.0;
+        if newstate == 'combat' then
+            newAlpha = frameRef:GetAttribute('combatAlpha') or 0.5;
+        elseif newstate == 'normal' then
+            newAlpha = frameRef:GetAttribute('normalAlpha') or 0.8;
+        else
+            --
+        end
+        frameRef:SetAlpha(newAlpha);
+    ]])
+end
+
+function DragonflightUIActionbarMixin:UpdateAlphaStateDriver(state)
+    if not self.AlphaStateDriver then return end
+    local handler = self.AlphaStateDriver
+    UnregisterStateDriver(handler, 'vis')
+
+    local driverTable = {}
+
+    table.insert(driverTable, '[combat]combat')
+    table.insert(driverTable, 'normal')
+    -- table.insert(driverTable, 'show')
+
+    local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
+
+    RegisterStateDriver(handler, 'alpha', driver)
+    handler:SetAttribute('state-alpha', 'hide')
+    handler:SetAttribute('state-alpha', 'show')
+    handler:SetAttribute('state-vis', result)
 end
 
 function DragonflightUIActionbarMixin:AddTargetStateDriver()
