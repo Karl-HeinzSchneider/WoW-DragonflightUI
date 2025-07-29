@@ -48,7 +48,7 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
     local multi;
     local shouldSetParent = false;
 
-    if not BarNumber then
+    if not barNumber then
         --
     elseif barNumber == 1 then
         shouldSetParent = true;
