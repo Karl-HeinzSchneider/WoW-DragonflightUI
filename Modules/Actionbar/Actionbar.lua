@@ -2045,7 +2045,7 @@ function Module:SetupActionbarFrames()
             end
         end
         bar:Init()
-        bar:SetButtons(buttons)
+        bar:SetButtons(buttons, n)
         Module['bar' .. n] = bar
     end
 
@@ -3149,43 +3149,43 @@ function Module.UpdatePossesbarState(state)
     PossessBarFrame:SetScale(state.scale)
 end
 
-function Module:ActivateAllActionbars()
-    Module:Print('ActivateAllActionbars', true);
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_2", true)
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_3", true)
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_4", true)
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_5", true)
-    ReloadUI()
-end
+-- function Module:ActivateAllActionbars()
+--     Module:Print('ActivateAllActionbars', true);
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_2", true)
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_3", true)
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_4", true)
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_5", true)
+--     ReloadUI()
+-- end
 
-function Module:CheckActionbarSettingsCVars()
-    -- print('Module:CheckActionbarSettingsCVars()')
-    if not self:IsEnabled() then return end
+-- function Module:CheckActionbarSettingsCVars()
+--     -- print('Module:CheckActionbarSettingsCVars()')
+--     if not self:IsEnabled() then return end
 
-    local allSet = true;
+--     local allSet = true;
 
-    for i = 2, 5 do
-        local settingProxyName = 'PROXY_SHOW_ACTIONBAR_' .. i
-        local value = Settings.GetValue(settingProxyName);
-        -- print(settingProxyName, value)
-        if not value then allSet = false end
-    end
+--     for i = 2, 5 do
+--         local settingProxyName = 'PROXY_SHOW_ACTIONBAR_' .. i
+--         local value = Settings.GetValue(settingProxyName);
+--         -- print(settingProxyName, value)
+--         if not value then allSet = false end
+--     end
 
-    if allSet then
-        DF:Debug(self, '~~>> All Actionbars Set <3')
-    else
-        Module:RegisterChatCommand('ActivateActionbars', 'ActivateAllActionbars')
+--     if allSet then
+--         DF:Debug(self, '~~>> All Actionbars Set <3')
+--     else
+--         Module:RegisterChatCommand('ActivateActionbars', 'ActivateAllActionbars')
 
-        C_Timer.After(2, function()
-            --
-            Module:Print([[At least one of the default 5 Actionbars is not activated.]])
-            Module:Print([[Please activate them through the Blizzard options and let DragonflightUI handle it.]])
-            Module:Print([[You can also type '/ActivateActionbars' to activate all at once (this also reloads the UI)]])
-            Module:Print(
-                [[Tip: If you dont need all 5 Actionbars, you can deactivate them through the Dragonflight Options like you would with Actionbar 6/7/8.]])
-        end)
-    end
-end
+--         C_Timer.After(2, function()
+--             --
+--             Module:Print([[At least one of the default 5 Actionbars is not activated.]])
+--             Module:Print([[Please activate them through the Blizzard options and let DragonflightUI handle it.]])
+--             Module:Print([[You can also type '/ActivateActionbars' to activate all at once (this also reloads the UI)]])
+--             Module:Print(
+--                 [[Tip: If you dont need all 5 Actionbars, you can deactivate them through the Dragonflight Options like you would with Actionbar 6/7/8.]])
+--         end)
+--     end
+-- end
 
 function frame:OnEvent(event, arg1)
     -- print('event', event)
@@ -3193,7 +3193,7 @@ function frame:OnEvent(event, arg1)
         -- ActivateAllActionbars() 
     elseif event == 'SETTINGS_LOADED' then
         -- print('SETTINGS_LOADED')
-        Module:CheckActionbarSettingsCVars()
+        -- Module:CheckActionbarSettingsCVars()
     elseif event == 'PLAYER_REGEN_ENABLED' then
         --
         -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)

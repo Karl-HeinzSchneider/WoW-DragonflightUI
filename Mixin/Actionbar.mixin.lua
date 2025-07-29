@@ -41,12 +41,36 @@ function DragonflightUIActionbarMixin:Init()
     end)
 end
 
-function DragonflightUIActionbarMixin:SetButtons(buttons)
+function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
     self.buttonTable = buttons
+
+    local multibarFix = (barNumber and barNumber >= 2 and barNumber <= 5)
+    local multi;
+
+    if multibarFix then
+        -- print('~~multibarFix', barNumber)
+
+        if barNumber == 2 then
+            multi = 6;
+        elseif barNumber == 3 then
+            multi = 5;
+        elseif barNumber == 4 then
+            multi = 4;
+        elseif barNumber == 5 then
+            multi = 3;
+        end
+
+        self:SetAttribute('actionpage', multi)
+    end
 
     for i = 1, #buttons do
         --
         local btn = buttons[i]
+        if multibarFix then
+            --
+            -- btn:SetAttribute('action', multi * 12 + i)
+            -- btn:SetParent(self)
+        end
         self:SetHideFrame(btn, i + 1)
     end
 end
