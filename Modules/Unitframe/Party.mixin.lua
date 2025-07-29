@@ -30,6 +30,8 @@ function SubModuleMixin:SetDefaults()
         orientation = 'vertical',
         disableBuffTooltip = 'INCOMBAT',
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,

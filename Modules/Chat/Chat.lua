@@ -16,6 +16,8 @@ local defaults = {
         sizeX = 460,
         sizeY = 207,
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,

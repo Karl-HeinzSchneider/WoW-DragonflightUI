@@ -41,6 +41,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -88,6 +90,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -135,6 +139,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -182,6 +188,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -229,6 +237,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -276,6 +286,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -323,6 +335,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -370,6 +384,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -417,6 +433,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
@@ -464,6 +482,8 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
