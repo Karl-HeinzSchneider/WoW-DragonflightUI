@@ -1662,9 +1662,10 @@ end
 function DragonflightUIActionbarMixin:HookGlow()
     -- print('DragonflightUIActionbarMixin:HookGlow()')
 
-    hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
-        self:FixGlow(btn)
-    end)
+    -- hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
+    --     print('ActionButton_ShowOverlayGlow', btn:GetName())
+    --     -- self:FixGlow(btn)
+    -- end)
 
     -- hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
     --     -- print('~ActionButton_ShowOverlayGlow', btn:GetName(), btn.overlay:GetSize())

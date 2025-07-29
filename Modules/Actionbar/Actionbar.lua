@@ -2208,7 +2208,7 @@ function Module:SetupActionbarFrames()
     createExtra(8)
 
     DragonflightUIActionbarMixin:MigrateOldKeybinds()
-    DragonflightUIActionbarMixin:HookGlow()
+    -- DragonflightUIActionbarMixin:HookGlow()
 
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
