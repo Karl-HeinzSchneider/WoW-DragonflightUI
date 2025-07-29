@@ -18,6 +18,7 @@ local defaults = {
             y = 120,
             -- mouseanchor
             anchorToMouse = false,
+            defaultAnchorWhileCombat = false,
             mouseAnchor = 'ANCHOR_CURSOR_RIGHT',
             mouseX = 16,
             mouseY = 8,
@@ -152,6 +153,14 @@ local generalOptions = {
             name = L["TooltipAnchorToMouse"],
             desc = L["TooltipAnchorToMouseDesc"] .. getDefaultStr('anchorToMouse', 'general'),
             order = 1,
+            editmode = true,
+            group = 'headerMouseAnchor'
+        },
+        defaultAnchorWhileCombat = {
+            type = 'toggle',
+            name = L["TooltipDefaultAnchorWhileCombat"],
+            desc = L["TooltipDefaultAnchorWhileCombatDesc"] .. getDefaultStr('defaultAnchorWhileCombat', 'general'),
+            order = 1.5,
             editmode = true,
             group = 'headerMouseAnchor'
         },
@@ -607,7 +616,7 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
     end
 
     --
-    if state.anchorToMouse then
+    if state.anchorToMouse and not (state.defaultAnchorWhileCombat and InCombatLockdown()) then
         --
         local focused;
         if GetMouseFoci then

@@ -603,6 +603,9 @@ do
     L["TooltipCursorAnchorHeaderDesc"] = ""
     L["TooltipAnchorToMouse"] = "Anchor on Cursor"
     L["TooltipAnchorToMouseDesc"] = "Anchors some tooltips (e.g. UnitTooltip on WorldFrame) to the mouse cursor."
+    L["TooltipDefaultAnchorWhileCombat"] = "Default Anchor In Combat"
+    L["TooltipDefaultAnchorWhileCombatDesc"] =
+        "Use default tooltip anchor while in combat instead of the mouse cursor anchor."
     L["TooltipMouseAnchor"] = "Cursor Anchor"
     L["TooltipMouseAnchorDesc"] = ""
     L["TooltipMouseX"] = "X"
