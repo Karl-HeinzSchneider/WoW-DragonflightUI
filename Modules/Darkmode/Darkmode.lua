@@ -798,15 +798,15 @@ end
 
 function Module:UpdateBuff(state)
     local unitModule = DF:GetModule('Buffs')
-    local f = unitModule.Frame
+    local f = unitModule.SubBuff
 
     if not unitModule:IsEnabled() then return end
     local c = CreateColorFromRGBHexString(state.buffColor)
 
     -- update defaults
-    unitModule.BuffVertexColorR = c.r;
-    unitModule.BuffVertexColorG = c.g;
-    unitModule.BuffVertexColorB = c.b;
+    f.BuffVertexColorR = c.r;
+    f.BuffVertexColorG = c.g;
+    f.BuffVertexColorB = c.b;
 
     local buff;
     -- player
