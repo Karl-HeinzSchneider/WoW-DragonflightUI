@@ -28,6 +28,7 @@ function SubModuleMixin:SetDefaults()
         hideAlways = false,
         hideCombat = false,
         hideOutOfCombat = false,
+        hideVehicle = false,
         hidePet = false,
         hideNoPet = false,
         hideStance = false,

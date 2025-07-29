@@ -30,6 +30,7 @@ local defaults = {
             hideCombat = false,
             hideOutOfCombat = false,
             hidePet = false,
+            hideVehicle = false,
             hideNoPet = false,
             hideStance = false,
             hideStealth = false,

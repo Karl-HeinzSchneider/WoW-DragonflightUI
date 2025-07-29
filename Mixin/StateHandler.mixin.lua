@@ -121,6 +121,7 @@ do
     visConditionalTable['hideCombat'] = '[combat]hide'
     visConditionalTable['hideOutOfCombat'] = '[nocombat]hide'
     visConditionalTable['hidePet'] = '[pet]hide'
+    visConditionalTable['hideVehicle'] = '[vehicleui]hide'
     visConditionalTable['hideNoPet'] = '[nopet]hide'
     visConditionalTable['hideStance'] = ''
     visConditionalTable['hideStealth'] = '[stealth]hide'
@@ -279,6 +280,15 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             order = 103,
             group = 'headerVis',
             new = false,
+            editmode = true
+        },
+        hideVehicle = {
+            type = 'toggle',
+            name = 'Hide With VehicleUI',
+            desc = '' .. cond('[vehicleui]hide; show') .. getDefaultStr('hideVehicle', sub),
+            order = 103.5,
+            group = 'headerVis',
+            new = true,
             editmode = true
         },
         hidePet = {
