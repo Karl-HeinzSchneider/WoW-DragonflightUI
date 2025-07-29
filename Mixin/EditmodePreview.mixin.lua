@@ -101,10 +101,9 @@ function DragonflightUIEditModePreviewTargetMixin:UpdateState(state)
     end
 
     if state.classicon then
-        local texCoords = CLASS_ICON_TCOORDS[self.Unit.class]
-        if texCoords then
-            self.TargetFramePortrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
-            self.TargetFramePortrait:SetTexCoord(unpack(texCoords))
+        if self.Unit.class then
+            local classIconAtlas = GetClassAtlas(self.Unit.class);
+            if (classIconAtlas) then self.TargetFramePortrait:SetAtlas(classIconAtlas); end
         else
             self:SetUnit(self.Unit)
             self.TargetFramePortrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)

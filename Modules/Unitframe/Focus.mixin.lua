@@ -320,7 +320,7 @@ function SubModuleMixin:Update()
     FocusFrameHealthBar.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(FocusFrameHealthBar)
     FocusFrameNameBackground:SetShown(not state.hideNameBackground)
-
+    UnitFramePortrait_Update(FocusFrame)
     FocusFrame:UpdateStateHandler(state)
     self.PreviewFocus:UpdateState(state);
 end

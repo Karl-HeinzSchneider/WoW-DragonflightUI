@@ -279,16 +279,28 @@ function Module:HookClassIcon()
         if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
             portraitFrame.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
             SetPortraitTexture(portraitFrame.portrait, unit, disableMasking)
-            if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(false) end
+            -- if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(false) end
             return
         end
 
-        local texCoords = CLASS_ICON_TCOORDS[select(2, UnitClass(unit))]
-        if texCoords then
-            portraitFrame.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
-            portraitFrame.portrait:SetTexCoord(unpack(texCoords))
-            if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(true) end
+        -- improved icons
+        local class = select(2, UnitClass(unit));
+        if class then
+            local classIconAtlas = GetClassAtlas(class);
+            if (classIconAtlas) then
+                portraitFrame.portrait:SetAtlas(classIconAtlas);
+                return;
+            end
         end
+
+        -- local texCoords = CLASS_ICON_TCOORDS[select(2, UnitClass(unit))]
+        -- texCoords = CLASS_ICON_TCOORDS['WARRIOR']
+
+        -- if texCoords then
+        --     portraitFrame.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
+        --     portraitFrame.portrait:SetTexCoord(unpack(texCoords))
+        --     if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(true) end
+        -- end
     end)
 end
 
