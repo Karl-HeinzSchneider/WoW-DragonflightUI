@@ -108,7 +108,7 @@ function DragonflightUIActionbarMixin:SetState(state, key)
     self.savedAlwaysShow = state.alwaysShow
 
     if key and key == 'alphaNormal' then
-        print('alphaNormal')
+        -- print('alphaNormal')
         self:SetAttribute('alphaNormal', state.alphaNormal)
         self.DFAlphaHandler:SetAttribute('state-alpha', 'update')
         self.DFAlphaHandler:SetAttribute('state-alpha', 'normal')

@@ -115,8 +115,8 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
         local frameRef = self:GetFrameRef("frameRef")
         if not frameRef then return end     
 
-        print('newState:',newstate,' ~~~ ', frameRef:GetName())
-        print('--',frameRef:GetAttribute('alphaNormal'),frameRef:GetAttribute('alphaCombat'))
+        -- print('newState:',newstate,' ~~~ ', frameRef:GetName())
+        -- print('--',frameRef:GetAttribute('alphaNormal'),frameRef:GetAttribute('alphaCombat'))
         local newAlpha = 1.0;
         if newstate == 'combat' then
             newAlpha = frameRef:GetAttribute('alphaCombat') or 0.5;
@@ -301,7 +301,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
         alphaNormal = {
             type = 'range',
             name = 'Alpha',
-            desc = '' .. getDefaultStr('alphaNormal', sub),
+            desc = 'Frame alpha while non-combat.' .. getDefaultStr('alphaNormal', sub),
             min = 0.1,
             max = 1,
             bigStep = 0.01,
@@ -313,7 +313,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
         alphaCombat = {
             type = 'range',
             name = 'Alpha (In Combat)',
-            desc = '' .. getDefaultStr('alphaCombat', sub),
+            desc = 'Frame alpha while in combat.' .. getDefaultStr('alphaCombat', sub),
             min = 0.1,
             max = 1,
             bigStep = 0.01,
