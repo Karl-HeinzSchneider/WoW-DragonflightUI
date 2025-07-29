@@ -181,8 +181,8 @@ function SubModuleMixin:SetupOptions()
                 btnName = L["ExtraOptionsResetToDefaultPosition"],
                 desc = L["ExtraOptionsPresetDesc"],
                 func = function()
-                    local dbTable = Module.db.profile.buffs
-                    local defaultsTable = defaults.profile.buffs
+                    local dbTable = self.ModuleRef.db.profile.buffs
+                    local defaultsTable = self.Defaults
                     setPreset(dbTable, {
                         scale = defaultsTable.scale,
                         anchor = defaultsTable.anchor,
@@ -206,7 +206,7 @@ end
 function SubModuleMixin:Setup()
     -- 
     local function setDefaultSubValues(sub)
-        Module:SetDefaultSubValues(sub)
+        self.ModuleRef:SetDefaultSubValues(sub)
     end
 
     DF.ConfigModule:RegisterSettingsData('buffs', 'misc', {
