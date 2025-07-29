@@ -2232,7 +2232,7 @@ function Module:SetupActionbarFrames()
         end
 
         bar:Init()
-        bar:SetButtons(buttons)
+        bar:SetButtons(buttons, 69)
         bar:StyleButtons()
         bar:StylePetButton()
         bar:SetIgnoreRange(true)
@@ -2249,7 +2249,7 @@ function Module:SetupActionbarFrames()
         end
 
         bar:Init()
-        bar:SetButtons(buttons)
+        bar:SetButtons(buttons, 42)
         bar:StyleButtons()
         bar:ReplaceNormalTexture2()
         bar.stanceBar = true

@@ -46,10 +46,12 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
 
     local multibarFix = (barNumber and barNumber >= 2 and barNumber <= 5)
     local multi;
+    local shouldSetParent = false;
 
-    if multibarFix then
+    if (barNumber and barNumber == 1) then
+        shouldSetParent = true;
+    elseif multibarFix then
         -- print('~~multibarFix', barNumber)
-
         if barNumber == 2 then
             multi = 6;
         elseif barNumber == 3 then
@@ -60,18 +62,26 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
             multi = 3;
         end
 
-        self:SetAttribute('actionpage', multi)
+        if multi then self:SetAttribute('actionpage', multi) end
+        shouldSetParent = true;
+    elseif (barNumber and barNumber == 42) then
+        -- stance
+        shouldSetParent = true
+    elseif (barNumber and barNumber == 69) then
+        -- pet
+        shouldSetParent = true
     end
 
     for i = 1, #buttons do
         --
         local btn = buttons[i]
-        if multibarFix then
+        if shouldSetParent then
             --
             -- btn:SetAttribute('action', multi * 12 + i)
             btn:SetParent(self)
+        else
+            self:SetHideFrame(btn, i + 1)
         end
-        self:SetHideFrame(btn, i + 1)
     end
 end
 
@@ -1854,6 +1864,7 @@ function DragonflightUIStancebarMixinCode:Update()
             -- else
             --     btn:SetAttribute("showgrid", 0)
             -- end
+            btn:SetAttribute("showgrid", 0)
 
             if state.hideArt then
                 if btn.DFDeco then btn.DFDeco:Hide() end
@@ -1893,39 +1904,39 @@ function DragonflightUIStancebarMixinCode:Update()
     -- self:UpdateGrid(state.alwaysShow)
 
     -- mainbar only
-    if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
+    -- if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
 
-    if self.numberFrame then self:UpdateNumberFrame() end
+    -- if self.numberFrame then self:UpdateNumberFrame() end
 
     -- if self.decoFrame then self.decoFrame.update(state) end
 
-    if state.activate ~= nil and false then
-        --
-        -- print('state.activate ~= nil', state.activate, self:GetName())
-        -- self:SetShown(state.activate)
-        if state.activate == false then
-            if self.stanceBar then self:Hide() end
-            for i = 1, btnCount do
-                local btn = buttonTable[i]
-                btn:ClearAllPoints()
-                btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
-                btn:Hide()
-                if btn.decoDF then btn.decoDF:Hide() end
-            end
-        else
-            if self.stanceBar then
-                self:Show()
-                for i = 1, btnCount do
-                    local btn = buttonTable[i]
+    -- if state.activate ~= nil and false then
+    --     --
+    --     -- print('state.activate ~= nil', state.activate, self:GetName())
+    --     -- self:SetShown(state.activate)
+    --     if state.activate == false then
+    --         if self.stanceBar then self:Hide() end
+    --         for i = 1, btnCount do
+    --             local btn = buttonTable[i]
+    --             btn:ClearAllPoints()
+    --             btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
+    --             btn:Hide()
+    --             if btn.decoDF then btn.decoDF:Hide() end
+    --         end
+    --     else
+    --         if self.stanceBar then
+    --             self:Show()
+    --             for i = 1, btnCount do
+    --                 local btn = buttonTable[i]
 
-                    if btn.action then
-                        --
-                        if HasAction(btn.action) then btn:Show() end
-                    end
-                end
-            end
-        end
-    end
+    --                 if btn.action then
+    --                     --
+    --                     if HasAction(btn.action) then btn:Show() end
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end
 
     local isLegal, loopStr = self:IsAnchorframeLegal();
     local loopStrFixed, _ = gsub(loopStr, 'DragonflightUI', 'DF')
@@ -1954,6 +1965,8 @@ function DragonflightUIStancebarMixinCode:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     self:UpdateStateHandler(state)
+
+    StanceBar_UpdateState()
 end
 
 DragonflightUIStancebarMixin = CreateFromMixins(DragonflightUIActionbarMixin, DragonflightUIStancebarMixinCode)
