@@ -48,7 +48,9 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
     local multi;
     local shouldSetParent = false;
 
-    if (barNumber and barNumber == 1) then
+    if not BarNumber then
+        --
+    elseif barNumber == 1 then
         shouldSetParent = true;
     elseif multibarFix then
         -- print('~~multibarFix', barNumber)
@@ -64,10 +66,10 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
 
         if multi then self:SetAttribute('actionpage', multi) end
         shouldSetParent = true;
-    elseif (barNumber and barNumber == 42) then
+    elseif barNumber == 42 then
         -- stance
         shouldSetParent = true
-    elseif (barNumber and barNumber == 69) then
+    elseif barNumber == 69 then
         -- pet
         shouldSetParent = true
     end
