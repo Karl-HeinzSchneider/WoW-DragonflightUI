@@ -104,10 +104,10 @@ local defaults = {
             keybindFontSize = 16,
             -- Visibility
             showMouseover = false,
-
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -153,6 +153,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -197,6 +198,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -241,6 +243,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -285,6 +288,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -329,6 +333,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -373,6 +378,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -410,6 +416,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -436,6 +443,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -461,6 +469,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -498,6 +507,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -520,6 +530,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -542,6 +553,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -570,6 +582,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = true,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -593,6 +606,7 @@ local defaults = {
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -2045,7 +2059,7 @@ function Module:SetupActionbarFrames()
             end
         end
         bar:Init()
-        bar:SetButtons(buttons)
+        bar:SetButtons(buttons, n)
         Module['bar' .. n] = bar
     end
 
@@ -2818,6 +2832,29 @@ function Module.HookAlwaysShowActionbar()
 
 end
 
+function Module:RemoveActionbarAnimations()
+    -- print('~RemoveActionbarAnimations')
+
+    local function remove(bar)
+        if not bar then return end
+        local group = bar.slideOut;
+        if not group then return end
+
+        for i, anim in ipairs({group:GetAnimations()}) do
+            if anim:GetObjectType() == "Translation" then
+
+                -- You can now modify its properties
+                anim:SetOffset(0, 0)
+                anim:SetDuration(0.0001)
+            end
+        end
+    end
+    remove(_G['MainMenuBar'])
+    remove(_G['MultiBarRight'])
+    remove(_G['MultiBarLeft'])
+    -- remove(_G['OverrideActionBar'])
+end
+
 function Module.ChangeButtonSpacing()
     local spacing = 3 -- default: 6
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
@@ -2863,264 +2900,6 @@ function Module.HookPetBar()
     -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
 end
 
-function Module.MoveSideBarsDynamic(shouldMove)
-    local gap = 3
-    local delta = 70
-
-    if shouldMove then
-        local db = Module.db.profile
-        local rows = db.sideRows
-        local buttons = db.sideButtons
-        -- print('dynamic', rows, buttons)
-
-        -- right
-        do
-            for i = 1, 12 do
-                local btn = _G['MultiBarRightButton' .. i]
-                -- btn:Show()
-                btn:ClearAllPoints()
-            end
-
-            local modulo = buttons % rows
-            -- print('modulo', modulo)
-
-            local index = 12
-            local firstButtons = {}
-
-            for i = 1, rows do
-                local rowButtons = buttons / rows
-
-                if i <= modulo then
-                    rowButtons = math.ceil(rowButtons)
-                else
-                    rowButtons = math.floor(rowButtons)
-                end
-                -- print('row', i, rowButtons)
-
-                for j = rowButtons, 1, -1 do
-                    -- print('loop j=', j, index)
-                    local btn = _G['MultiBarRightButton' .. (index)]
-                    local btnNext = _G['MultiBarRightButton' .. (index - 1)]
-                    btn:Show()
-                    if j == 1 then
-                        if i == 1 then
-                            btn:SetPoint('LEFT', _G['ActionButton12'], 'RIGHT', delta, 0)
-                            firstButtons[1] = btn
-                        else
-                            local anchor = firstButtons[i - 1]
-                            btn:SetPoint('BOTTOM', anchor, 'TOP', 0, gap)
-                            firstButtons[i] = btn
-
-                        end
-                    else
-                        btn:SetPoint('LEFT', btnNext, 'RIGHT', gap, 0)
-                    end
-
-                    index = index - 1
-                end
-            end
-
-            for i = index, 1, -1 do
-                -- print('hide', i)
-                local btn = _G['MultiBarRightButton' .. (index)]
-                btn:Hide()
-            end
-        end
-
-        -- left
-        do
-            for i = 1, 12 do
-                local btn = _G['MultiBarLeftButton' .. i]
-                -- btn:Show()
-                btn:ClearAllPoints()
-            end
-
-            local modulo = buttons % rows
-            -- print('modulo', modulo)
-
-            local index = 12
-            local firstButtons = {}
-
-            for i = 1, rows do
-                local rowButtons = buttons / rows
-
-                if i <= modulo then
-                    rowButtons = math.ceil(rowButtons)
-                else
-                    rowButtons = math.floor(rowButtons)
-                end
-                -- print('row', i, rowButtons)
-
-                for j = rowButtons, 1, -1 do
-                    -- print('loop j=', j, index)
-                    local btn = _G['MultiBarLeftButton' .. (index)]
-                    local btnNext = _G['MultiBarLeftButton' .. (index + 1)]
-                    btn:Show()
-                    if j == rowButtons then
-                        if i == 1 then
-                            btn:SetPoint('RIGHT', _G['ActionButton1'], 'LEFT', -delta, 0)
-                            firstButtons[1] = btn
-                        else
-                            local anchor = firstButtons[i - 1]
-                            btn:SetPoint('BOTTOM', anchor, 'TOP', 0, gap)
-                            firstButtons[i] = btn
-
-                        end
-                    else
-                        btn:SetPoint('RIGHT', btnNext, 'LEFT', -gap, 0)
-                    end
-
-                    index = index - 1
-                end
-            end
-
-            for i = index, 1, -1 do
-                -- print('hide', i)
-                local btn = _G['MultiBarLeftButton' .. (index)]
-                btn:Hide()
-            end
-        end
-    else
-        -- Default
-        -- right
-        _G['MultiBarRightButton1']:ClearAllPoints()
-        _G['MultiBarRightButton1']:SetPoint('TOPRIGHT', MultiBarRight, 'TOPRIGHT', -2, -gap)
-
-        for i = 2, 12 do
-            _G['MultiBarRightButton' .. i]:ClearAllPoints()
-            _G['MultiBarRightButton' .. i]:SetPoint('TOP', _G['MultiBarRightButton' .. (i - 1)], 'BOTTOM', 0, -gap)
-        end
-
-        -- left
-        _G['MultiBarLeftButton1']:ClearAllPoints()
-        _G['MultiBarLeftButton1']:SetPoint('TOPRIGHT', MultiBarLeft, 'TOPRIGHT', -2, -gap)
-
-        for i = 2, 12 do
-            _G['MultiBarLeftButton' .. i]:ClearAllPoints()
-            _G['MultiBarLeftButton' .. i]:SetPoint('TOP', _G['MultiBarLeftButton' .. (i - 1)], 'BOTTOM', 0, -gap)
-        end
-    end
-end
-
-function Module.MoveSideBars(shouldMove)
-    local gap = 3
-    local delta = 70
-
-    if shouldMove then
-        -- right
-        for i = 1, 12 do _G['MultiBarRightButton' .. i]:ClearAllPoints() end
-
-        -- first row 1 2 3 4
-        _G['MultiBarRightButton1']:SetPoint('LEFT', MultiBarBottomRightButton12, 'RIGHT', delta, 0)
-        for i = 2, 4 do
-            _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
-        end
-
-        -- second row 5 6 7 8
-        _G['MultiBarRightButton5']:SetPoint('TOP', _G['MultiBarRightButton1'], 'BOTTOM', 0, -gap)
-        for i = 6, 8 do
-            _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
-        end
-
-        -- third row 9 10 11 12
-        _G['MultiBarRightButton9']:SetPoint('TOP', _G['MultiBarRightButton5'], 'BOTTOM', 0, -gap)
-        for i = 10, 12 do
-            _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
-        end
-
-        -- left
-        for i = 1, 12 do _G['MultiBarLeftButton' .. i]:ClearAllPoints() end
-
-        -- first row 1 2 3 4
-        _G['MultiBarLeftButton4']:SetPoint('RIGHT', MultiBarBottomRightButton1, 'LEFT', -delta, 0)
-        for i = 1, 3 do
-            _G['MultiBarLeftButton' .. i]:SetPoint('RIGHT', _G['MultiBarLeftButton' .. (i + 1)], 'LEFT', -gap, 0)
-        end
-
-        -- second row 5 6 7 8
-        _G['MultiBarLeftButton5']:SetPoint('TOP', _G['MultiBarLeftButton1'], 'BOTTOM', 0, -gap)
-        for i = 6, 8 do
-            _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
-        end
-
-        -- third row 9 10 11 12
-        _G['MultiBarLeftButton9']:SetPoint('TOP', _G['MultiBarLeftButton5'], 'BOTTOM', 0, -gap)
-        for i = 10, 12 do
-            _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
-        end
-    else
-        -- Default
-        -- right
-        _G['MultiBarRightButton1']:ClearAllPoints()
-        _G['MultiBarRightButton1']:SetPoint('TOPRIGHT', MultiBarRight, 'TOPRIGHT', -2, -gap)
-
-        for i = 2, 12 do
-            _G['MultiBarRightButton' .. i]:ClearAllPoints()
-            _G['MultiBarRightButton' .. i]:SetPoint('TOP', _G['MultiBarRightButton' .. (i - 1)], 'BOTTOM', 0, -gap)
-        end
-
-        -- left
-        _G['MultiBarLeftButton1']:ClearAllPoints()
-        _G['MultiBarLeftButton1']:SetPoint('TOPRIGHT', MultiBarLeft, 'TOPRIGHT', -2, -gap)
-
-        for i = 2, 12 do
-            _G['MultiBarLeftButton' .. i]:ClearAllPoints()
-            _G['MultiBarLeftButton' .. i]:SetPoint('TOP', _G['MultiBarLeftButton' .. (i - 1)], 'BOTTOM', 0, -gap)
-        end
-    end
-end
-
-function Module.MoveSideBarsOLD()
-    -- left
-    local gap = 3
-    local dx = 220
-    _G['MultiBarLeftButton1']:ClearAllPoints()
-    _G['MultiBarLeftButton1']:SetPoint('LEFT', ActionButton1, 'LEFT', -dx, 80)
-
-    for i = 2, 4 do
-        _G['MultiBarLeftButton' .. i]:ClearAllPoints()
-        _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
-    end
-
-    _G['MultiBarLeftButton5']:ClearAllPoints()
-    _G['MultiBarLeftButton5']:SetPoint('LEFT', ActionButton1, 'LEFT', -dx, 40)
-    for i = 6, 8 do
-        _G['MultiBarLeftButton' .. i]:ClearAllPoints()
-        _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
-    end
-
-    _G['MultiBarLeftButton9']:ClearAllPoints()
-    _G['MultiBarLeftButton9']:SetPoint('LEFT', ActionButton1, 'LEFT', -dx, 0)
-    for i = 10, 12 do
-        _G['MultiBarLeftButton' .. i]:ClearAllPoints()
-        _G['MultiBarLeftButton' .. i]:SetPoint('LEFT', _G['MultiBarLeftButton' .. (i - 1)], 'RIGHT', gap, 0)
-    end
-
-    -- right
-    local dxRight = dx - 4 * 36 - 3 * gap
-    _G['MultiBarRightButton1']:ClearAllPoints()
-    _G['MultiBarRightButton1']:SetPoint('LEFT', ActionButton12, 'RIGHT', dxRight, 80)
-
-    for i = 2, 4 do
-        _G['MultiBarRightButton' .. i]:ClearAllPoints()
-        _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
-    end
-
-    _G['MultiBarRightButton5']:ClearAllPoints()
-    _G['MultiBarRightButton5']:SetPoint('LEFT', ActionButton12, 'RIGHT', dxRight, 40)
-    for i = 6, 8 do
-        _G['MultiBarRightButton' .. i]:ClearAllPoints()
-        _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
-    end
-
-    _G['MultiBarRightButton9']:ClearAllPoints()
-    _G['MultiBarRightButton9']:SetPoint('LEFT', ActionButton12, 'RIGHT', dxRight, 0)
-    for i = 10, 12 do
-        _G['MultiBarRightButton' .. i]:ClearAllPoints()
-        _G['MultiBarRightButton' .. i]:SetPoint('LEFT', _G['MultiBarRightButton' .. (i - 1)], 'RIGHT', gap, 0)
-    end
-end
-
 -- TODO
 function Module.MoveTotem()
     MultiCastActionBarFrame.ignoreFramePositionManager = true
@@ -3149,43 +2928,43 @@ function Module.UpdatePossesbarState(state)
     PossessBarFrame:SetScale(state.scale)
 end
 
-function Module:ActivateAllActionbars()
-    Module:Print('ActivateAllActionbars', true);
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_2", true)
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_3", true)
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_4", true)
-    Settings.SetValue("PROXY_SHOW_ACTIONBAR_5", true)
-    ReloadUI()
-end
+-- function Module:ActivateAllActionbars()
+--     Module:Print('ActivateAllActionbars', true);
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_2", true)
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_3", true)
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_4", true)
+--     Settings.SetValue("PROXY_SHOW_ACTIONBAR_5", true)
+--     ReloadUI()
+-- end
 
-function Module:CheckActionbarSettingsCVars()
-    -- print('Module:CheckActionbarSettingsCVars()')
-    if not self:IsEnabled() then return end
+-- function Module:CheckActionbarSettingsCVars()
+--     -- print('Module:CheckActionbarSettingsCVars()')
+--     if not self:IsEnabled() then return end
 
-    local allSet = true;
+--     local allSet = true;
 
-    for i = 2, 5 do
-        local settingProxyName = 'PROXY_SHOW_ACTIONBAR_' .. i
-        local value = Settings.GetValue(settingProxyName);
-        -- print(settingProxyName, value)
-        if not value then allSet = false end
-    end
+--     for i = 2, 5 do
+--         local settingProxyName = 'PROXY_SHOW_ACTIONBAR_' .. i
+--         local value = Settings.GetValue(settingProxyName);
+--         -- print(settingProxyName, value)
+--         if not value then allSet = false end
+--     end
 
-    if allSet then
-        DF:Debug(self, '~~>> All Actionbars Set <3')
-    else
-        Module:RegisterChatCommand('ActivateActionbars', 'ActivateAllActionbars')
+--     if allSet then
+--         DF:Debug(self, '~~>> All Actionbars Set <3')
+--     else
+--         Module:RegisterChatCommand('ActivateActionbars', 'ActivateAllActionbars')
 
-        C_Timer.After(2, function()
-            --
-            Module:Print([[At least one of the default 5 Actionbars is not activated.]])
-            Module:Print([[Please activate them through the Blizzard options and let DragonflightUI handle it.]])
-            Module:Print([[You can also type '/ActivateActionbars' to activate all at once (this also reloads the UI)]])
-            Module:Print(
-                [[Tip: If you dont need all 5 Actionbars, you can deactivate them through the Dragonflight Options like you would with Actionbar 6/7/8.]])
-        end)
-    end
-end
+--         C_Timer.After(2, function()
+--             --
+--             Module:Print([[At least one of the default 5 Actionbars is not activated.]])
+--             Module:Print([[Please activate them through the Blizzard options and let DragonflightUI handle it.]])
+--             Module:Print([[You can also type '/ActivateActionbars' to activate all at once (this also reloads the UI)]])
+--             Module:Print(
+--                 [[Tip: If you dont need all 5 Actionbars, you can deactivate them through the Dragonflight Options like you would with Actionbar 6/7/8.]])
+--         end)
+--     end
+-- end
 
 function frame:OnEvent(event, arg1)
     -- print('event', event)
@@ -3193,7 +2972,7 @@ function frame:OnEvent(event, arg1)
         -- ActivateAllActionbars() 
     elseif event == 'SETTINGS_LOADED' then
         -- print('SETTINGS_LOADED')
-        Module:CheckActionbarSettingsCVars()
+        -- Module:CheckActionbarSettingsCVars()
     elseif event == 'PLAYER_REGEN_ENABLED' then
         --
         -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
@@ -3777,6 +3556,7 @@ function Module:Era()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
+    Module:RemoveActionbarAnimations()
 
     Module.HookPetBar()
     -- Module.MoveTotem()
@@ -3804,6 +3584,7 @@ function Module:Wrath()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
+    Module:RemoveActionbarAnimations()
 
     Module.HookPetBar()
     Module.MoveTotem()
