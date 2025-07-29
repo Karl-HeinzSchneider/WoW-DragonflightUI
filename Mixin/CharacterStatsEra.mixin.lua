@@ -773,13 +773,15 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end,
 
         ["Blessing of Wisdom"] = function(id)
+            local talent_mod = GetTalentModifier("Improved Blessing of Wisdom", 0.1)
             local rank = spellid_wisdom_to_rank[id] or 1
-            return rank == 6 and 33 or 5 + (5 * rank)
+            return (rank == 6 and 33 or 5 + (5 * rank)) * talent_mod
         end,
 
         ["Greater Blessing of Wisdom"] = function(id)
+            local talent_mod = GetTalentModifier("Improved Blessing of Wisdom", 0.1)
             local rank = spellid_greaterwis_to_rank[id] or 1
-            return rank == 2 and 33 or 30
+            return (rank == 2 and 33 or 30) * talent_mod
         end
     }
 
