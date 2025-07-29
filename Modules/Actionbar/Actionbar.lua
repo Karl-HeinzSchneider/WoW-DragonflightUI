@@ -2832,6 +2832,29 @@ function Module.HookAlwaysShowActionbar()
 
 end
 
+function Module:RemoveActionbarAnimations()
+    -- print('~RemoveActionbarAnimations')
+
+    local function remove(bar)
+        if not bar then return end
+        local group = bar.slideOut;
+        if not group then return end
+
+        for i, anim in ipairs({group:GetAnimations()}) do
+            if anim:GetObjectType() == "Translation" then
+
+                -- You can now modify its properties
+                anim:SetOffset(0, 0)
+                anim:SetDuration(0.0001)
+            end
+        end
+    end
+    remove(_G['MainMenuBar'])
+    remove(_G['MultiBarRight'])
+    remove(_G['MultiBarLeft'])
+    -- remove(_G['OverrideActionBar'])
+end
+
 function Module.ChangeButtonSpacing()
     local spacing = 3 -- default: 6
     local buttonTable = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'ActionButton'}
@@ -3533,6 +3556,7 @@ function Module:Era()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
+    Module:RemoveActionbarAnimations()
 
     Module.HookPetBar()
     -- Module.MoveTotem()
@@ -3560,6 +3584,7 @@ function Module:Wrath()
     Module.ChangeActionbar()
     Module.CreateNewXPBar()
     Module.CreateNewRepBar()
+    Module:RemoveActionbarAnimations()
 
     Module.HookPetBar()
     Module.MoveTotem()
