@@ -7,6 +7,8 @@ function DF.Compatibility:LeatrixPlus()
     -- print('orig', origX, origY)
 
     local fixPlayerNameBackground = function()
+        local _, _, _, x, y = TargetFrameNameBackground:GetPoint(1)
+
         local children = {PlayerFrame:GetChildren()}
 
         for k, child in ipairs(children) do
@@ -31,7 +33,7 @@ function DF.Compatibility:LeatrixPlus()
                     -- print(xOfs == -origX)
                     -- print(yOfs == origY)
 
-                    if (xOfs == -origX) and (yOfs == origY) then
+                    if ((xOfs == -origX) and (yOfs == origY)) or ((xOfs == -x) and (yOfs == y)) then
                         -- should be leatrix
                         -- print('leatrix?')
                         local regions = {child:GetRegions()}
@@ -43,7 +45,7 @@ function DF.Compatibility:LeatrixPlus()
                                 -- print(drawlayer, level)
                                 if drawlayer == 'BORDER' and level == 0 then
                                     -- should be namebackground
-                                    -- print('found!')
+                                    -- print('leatrix found!')
                                     cr:Hide()
                                 end
                             end
