@@ -717,19 +717,115 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end
     })
 
+    local ignore_index = { -- 19 is tabard
+        [4] = true, -- Shirt
+    }
+
+    local function GetTalentModifier(talent_name, modifier_strength)
+        local numTabs = GetNumTalentTabs();
+        local talent_mod = 1
+        for i=1, numTabs do
+            local numTalents = GetNumTalents(i)
+            for j=1, numTalents do
+                local name_talent, _, _, _, rank, maxrank = GetTalentInfo(i, j)
+                if name_talent == talent_name and rank > 0 then
+                    talent_mod = 1 + (rank * modifier_strength)
+                end
+            end
+        end
+        return talent_mod
+    end
+    local spellid_manaspring_to_rank = {
+        [5677] = 1,
+        [10491] = 2,
+        [10493] = 3,
+        [10494] = 4
+    }
+    local spellid_manatide_to_rank = {
+        [16191] = 1,
+        [17355] = 2,
+        [17360] = 3
+    }
+    local filtered_names = {
+        ["Mana Spring"] = function(id)
+            local rank = spellid_manaspring_to_rank[id] or 1
+            local talent_mod = GetTalentModifier("Restorative Totems", 0.05)
+            local base = id == 24853 and 27 or 2 + (2 * rank) * talent_mod --check for ancient mana spring totem
+
+            return (base * 5)/2
+        end,
+
+        ["Mana Tide"] = function(id)
+            local rank = spellid_manatide_to_rank[id] or 1
+            return (((110 + (60 * rank))/3) * 10) / 2
+        end,
+    }
+
+    local mana_oil_ids = {
+        [2629] = 12,
+        [2625] = 8,
+        [2624] = 4
+    }
+
+    local function GetRealManaRegen() --Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
+        local base, casting = GetManaRegen()
+        local casting_mp5 = 0
+
+        for i=0, 18 do
+            if not ignore_index[i] then
+                local link = GetInventoryItemLink("player", i)
+                if link then
+                    local stats = GetItemStats(link)
+                    if stats then
+                        --[[
+                        for name, data in pairs(stats) do
+                            print(name..": "..data)
+                        end
+                        ]]
+                        if stats.ITEM_MOD_POWER_REGEN0_SHORT then --For some reason mp5 internally is 1 lower, need to increase for displays sake
+                            casting_mp5 = casting_mp5 + 1
+                        end
+                        casting_mp5 = casting_mp5 + (stats.ITEM_MOD_POWER_REGEN0_SHORT or 0)
+                    end
+                end
+            end
+        end
+        
+        local failures = 0
+        for i=1, 100 do
+            local name, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
+            if not name then
+                failures = failures + 1
+                if failures > 2 then break end
+            elseif filtered_names[name] then
+                casting_mp5 = casting_mp5 + filtered_names[name](spellId)
+            end
+        end
+
+        main_hand_enchant, _, _, enchant_id, off_hand_enchant, _, _, offhand_enchant_id = GetWeaponEnchantInfo()
+        if main_hand_enchant and mana_oil_ids[enchant_id] then
+            casting_mp5 = casting_mp5 + mana_oil_ids[enchant_id]
+        end
+        if off_hand_enchant and mana_oil_ids[offhand_enchant_id] then
+            casting_mp5 = casting_mp5 + mana_oil_ids[offhand_enchant_id]
+        end
+        casting_mp5 = casting_mp5 / 5
+        return base + casting_mp5, casting + casting_mp5
+    end
+
     self:RegisterElement('mana', 'spell', {
         order = 8,
         name = MANA_REGEN,
         descr = '..',
         func = function()
-            local base, casting = GetManaRegen()
+            local base, casting = GetRealManaRegen()
 
             local newTable = {}
             newTable[1] = {left = MANA_REGEN}
             -- newTable[2] = {left = 'Mana every 5s', right = string.format(' %.2f', base * 5)}
             -- newTable[3] = {left = 'Mana every 5s while casting', right = string.format(' %.2f', casting * 5)}
-            newTable[2] = {left = 'Mana every 5s while casting', right = BreakUpLargeNumbers(casting * 5)}
-            newTable[3] = {left = 'Mana every 5s while not casting', right = BreakUpLargeNumbers(base * 5)}
+            newTable[2] = {left = 'Mana every 2/5s while casting', right = BreakUpLargeNumbers(casting * 2).."/"..BreakUpLargeNumbers(casting * 5)}
+            newTable[3] = {left = 'Mana every 2/5s while not casting', right = BreakUpLargeNumbers(base * 2).."/"..BreakUpLargeNumbers(base * 5)}
 
             return newTable[3].right, nil, nil, newTable;
         end
