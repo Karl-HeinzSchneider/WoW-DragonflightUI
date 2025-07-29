@@ -746,6 +746,14 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [17355] = 2,
         [17360] = 3
     }
+    local spellid_wisdom_to_rank = {
+        [19742] = 1,
+        [19850] = 2,
+        [19852] = 3,
+        [19853] = 4,
+        [19854] = 5,
+        [25290] = 6
+    }
     local filtered_names = {
         ["Mana Spring"] = function(id)
             local rank = spellid_manaspring_to_rank[id] or 1
@@ -758,6 +766,11 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         ["Mana Tide"] = function(id)
             local rank = spellid_manatide_to_rank[id] or 1
             return (((110 + (60 * rank))/3) * 10) / 2
+        end,
+
+        ["Blessing Of Wisdom"] = function(id)
+            local rank = spellid_wisdom_to_rank[id] or 1
+            return rank == 6 and 33 or 5 + (5 * rank)
         end,
     }
 
