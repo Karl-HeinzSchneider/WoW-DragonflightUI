@@ -69,7 +69,7 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
         if multibarFix then
             --
             -- btn:SetAttribute('action', multi * 12 + i)
-            -- btn:SetParent(self)
+            btn:SetParent(self)
         end
         self:SetHideFrame(btn, i + 1)
     end
