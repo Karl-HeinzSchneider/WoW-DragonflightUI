@@ -2227,7 +2227,7 @@ function Module:SetupActionbarFrames()
                                 'DragonflightUIActionbarFrameTemplate')
 
         bar:Init()
-        bar:SetButtons(btns)
+        bar:SetButtons(btns, n)
         Module['bar' .. n] = bar
 
         bar:StyleButtons()
