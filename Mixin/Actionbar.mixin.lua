@@ -388,6 +388,8 @@ function DragonflightUIActionbarMixin:Update()
     --         end
     --     end)
     -- end
+
+    if self.StylePetButton then PetActionBar_Update() end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
