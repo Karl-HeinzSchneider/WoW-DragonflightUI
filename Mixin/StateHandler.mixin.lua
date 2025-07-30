@@ -110,6 +110,7 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
     local handlerAlpha = CreateFrame('FRAME', self:GetName() .. 'HandlerAlpha', nil, 'SecureHandlerStateTemplate')
     self.DFAlphaHandler = handlerAlpha;
     handlerAlpha:SetFrameRef('frameRef', self)
+    handlerAlpha:SetFrameRef('MainHandler', handler)
     handlerAlpha:SetAttribute('_onstate-alpha', [[
         -- if not newstate then return end     
         local frameRef = self:GetFrameRef("frameRef")
@@ -128,6 +129,13 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
             --
         end
         frameRef:SetAlpha(newAlpha);
+      
+        local MainHandler = self:GetFrameRef("MainHandler")
+
+        for i=1,13 do
+            local f = MainHandler:GetFrameRef('HideFrame'..i)
+            if f then f:SetAlpha(newAlpha) end
+        end   
     ]])
 end
 
