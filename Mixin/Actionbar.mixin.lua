@@ -53,7 +53,7 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
     if not barNumber then
         --
     elseif barNumber == 1 then
-        shouldSetParent = true;
+        -- shouldSetParent = true;
     elseif multibarFix then
         -- print('~~multibarFix', barNumber)
         if barNumber == 2 then
