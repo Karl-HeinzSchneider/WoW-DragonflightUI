@@ -256,6 +256,8 @@ function Module:HookDrag()
 end
 
 function Module:HookClassIcon()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
+
     self:Unhook('UnitFramePortrait_Update')
     self:SecureHook('UnitFramePortrait_Update', function(portraitFrame)
         -- print('UnitFramePortrait_Update', portraitFrame:GetName(), portraitFrame.unit)
@@ -286,10 +288,17 @@ function Module:HookClassIcon()
         -- improved icons
         local class = select(2, UnitClass(unit));
         if class then
-            local classIconAtlas = GetClassAtlas(class);
-            if (classIconAtlas) then
-                portraitFrame.portrait:SetAtlas(classIconAtlas);
+            if class == 'MONK' then
+                local tex = base .. 'classicon-monk';
+                portraitFrame.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1);
+                portraitFrame.portrait:SetTexture(tex);
                 return;
+            else
+                local classIconAtlas = GetClassAtlas(class);
+                if (classIconAtlas) then
+                    portraitFrame.portrait:SetAtlas(classIconAtlas);
+                    return;
+                end
             end
         end
 
