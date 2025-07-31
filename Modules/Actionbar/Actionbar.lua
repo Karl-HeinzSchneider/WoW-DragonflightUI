@@ -43,6 +43,8 @@ local defaults = {
             hideArt = false,
             hideScrolling = false,
             gryphons = 'DEFAULT',
+            hideBorder = true,
+            hideDivider = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -993,6 +995,22 @@ local function GetBarOption(n)
                 desc = L["MoreOptionsHideBarScrollingDesc"] .. getDefaultStr('hideScrolling', barname),
                 group = 'headerButtons',
                 order = 51.3,
+                editmode = true
+            },
+            hideBorder = {
+                type = 'toggle',
+                name = L["MoreOptionsHideBorder"],
+                desc = L["MoreOptionsHideBorderDesc"] .. getDefaultStr('hideBorder', barname),
+                group = 'headerButtons',
+                order = 51.4,
+                editmode = true
+            },
+            hideDivider = {
+                type = 'toggle',
+                name = L["MoreOptionsHideDivider"],
+                desc = L["MoreOptionsHideDividerDesc"] .. getDefaultStr('hideDivider', barname),
+                group = 'headerButtons',
+                order = 51.5,
                 editmode = true
             },
             gryphons = {

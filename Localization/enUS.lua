@@ -316,6 +316,11 @@ do
     L["MoreOptionsHideBarArtDesc"] = ""
     L["MoreOptionsHideBarScrolling"] = "Hide Bar Scrolling"
     L["MoreOptionsHideBarScrollingDesc"] = ""
+    L["MoreOptionsHideBorder"] = "Hide Border Art"
+    L["MoreOptionsHideBorderDesc"] = "*Work in Progress*"
+    L["MoreOptionsHideDivider"] = "Hide Bar Divider"
+    L["MoreOptionsHideDividerDesc"] = ""
+
     L["MoreOptionsGryphons"] = "Gryphons"
     L["MoreOptionsGryphonsDesc"] = "Gryphons"
     L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "Use Key Down"

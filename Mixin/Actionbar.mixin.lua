@@ -324,6 +324,7 @@ function DragonflightUIActionbarMixin:Update()
 
     -- mainbar only
     if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
+    if self.BorderArt then self.BorderArt:SetShown(not state.hideBorder) end
 
     if self.numberFrame then self:UpdateNumberFrame() end
 
@@ -1132,6 +1133,25 @@ function DragonflightUIActionbarMixin:AddDecoNew()
         tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
         self.decoFrame.decoTable[i] = tex
     end ]]
+
+    do
+        --     ["Interface/HUD/UIActionBarFrame2x"]={
+        -- 	["UI-HUD-ActionBar-Frame"]={55, 55, 0.0078125, 0.867188, 0.0078125, 0.867188, false, false, "2x", slice={20, 20, 25, 25, tile=true}},
+        -- }, -- Interface/HUD/UIActionBarFrame2x
+        local texTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x'
+        local borderArt = UIParent:CreateTexture('DragonflightUIActionbarBorderArt')
+        borderArt:SetTexture(texTwo)
+        borderArt:SetSize(110, 110)
+        borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
+        -- borderArt:SetTexCoord(0, 1, 0, 1)
+
+        borderArt:SetPoint('TOPLEFT', self, 'TOPLEFT', -4, 4)
+        borderArt:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 8, -7)
+        borderArt:SetTextureSliceMode(1)
+        borderArt:SetTextureSliceMargins(20, 20, 25, 25)
+
+        self.BorderArt = borderArt;
+    end
 end
 
 function DragonflightUIActionbarMixin:AddDeco()

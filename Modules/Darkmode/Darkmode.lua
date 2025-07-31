@@ -621,17 +621,21 @@ function Module:UpdateActionbar(state)
     local f = unitModule.Frame
     local c = CreateColorFromRGBHexString(state.actionbarColor)
 
-    local mainbar = unitModule.bar1
-    if not mainbar then return end
+    do
+        local mainbar = unitModule.bar1
+        if not mainbar then return end
 
-    local gryphonLeft = mainbar.gryphonLeft.texture
-    local gryphonRight = mainbar.gryphonRight.texture
+        local gryphonLeft = mainbar.gryphonLeft.texture
+        local gryphonRight = mainbar.gryphonRight.texture
+        local borderArt = mainbar.BorderArt
 
-    gryphonLeft:SetDesaturated(state.actionbarDesaturate)
-    gryphonLeft:SetVertexColor(c:GetRGB())
+        local t = {gryphonLeft, gryphonRight, borderArt}
 
-    gryphonRight:SetDesaturated(state.actionbarDesaturate)
-    gryphonRight:SetVertexColor(c:GetRGB())
+        for k, v in ipairs(t) do
+            v:SetDesaturated(state.actionbarDesaturate)
+            v:SetVertexColor(c:GetRGB())
+        end
+    end
 
     local barTable = {}
     for i = 1, 8 do
