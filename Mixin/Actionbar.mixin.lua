@@ -1139,7 +1139,7 @@ function DragonflightUIActionbarMixin:AddDecoNew()
         -- 	["UI-HUD-ActionBar-Frame"]={55, 55, 0.0078125, 0.867188, 0.0078125, 0.867188, false, false, "2x", slice={20, 20, 25, 25, tile=true}},
         -- }, -- Interface/HUD/UIActionBarFrame2x
         local texTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x'
-        local borderArt = UIParent:CreateTexture('DragonflightUIActionbarBorderArt')
+        local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt')
         borderArt:SetTexture(texTwo)
         borderArt:SetSize(110, 110)
         borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
