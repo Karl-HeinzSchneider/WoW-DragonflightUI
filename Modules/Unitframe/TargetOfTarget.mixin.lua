@@ -383,7 +383,11 @@ function SubModuleMixin:ChangeToT()
 end
 
 function SubModuleMixin:ReApplyToT()
-    if self.ModuleRef.db.profile.tot.classcolor and UnitIsPlayer('targettarget') then
+    if (not UnitPlayerControlled('targettarget') and UnitIsTapDenied('targettarget')) then
+        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+        TargetFrameToTHealthBar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+    elseif self.ModuleRef.db.profile.tot.classcolor and UnitIsPlayer('targettarget') then
         TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('targettarget')

@@ -592,7 +592,11 @@ function SubModuleMixin:ChangeFocusFrame()
 end
 
 function SubModuleMixin:ReApplyFocusFrame()
-    if self.ModuleRef.db.profile.focus.classcolor and UnitIsPlayer('focus') then
+    if (not UnitPlayerControlled('focus') and UnitIsTapDenied('focus')) then
+        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+        FocusFrameHealthBar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+    elseif self.ModuleRef.db.profile.focus.classcolor and UnitIsPlayer('focus') then
         FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('focus')

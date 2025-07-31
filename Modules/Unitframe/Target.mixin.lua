@@ -802,7 +802,11 @@ function SubModuleMixin:ChangeTargetFrame()
 end
 
 function SubModuleMixin:ReApplyTargetFrame()
-    if self.ModuleRef.db.profile.target.classcolor and UnitIsPlayer('target') then
+    if (not UnitPlayerControlled('target') and UnitIsTapDenied('target')) then
+        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+        TargetFrameHealthBar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+    elseif self.ModuleRef.db.profile.target.classcolor and UnitIsPlayer('target') then
         TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('target')
