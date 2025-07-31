@@ -276,6 +276,12 @@ function Module:HookClassIcon()
         elseif unit == "focus" then
             icon = self.db.profile.focus.classicon
             disableMasking = true
+        elseif unit == "targettarget" then
+            icon = self.db.profile.tot.classicon
+            disableMasking = true
+        elseif unit == "focustarget" then
+            icon = self.db.profile.focusTarget.classicon
+            disableMasking = true
         end
 
         if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
