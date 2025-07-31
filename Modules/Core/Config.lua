@@ -107,7 +107,7 @@ local modulesOptions = {
             name = L["ModuleFlyout"],
             desc = L["ModuleTooltipFlyout"] .. getDefaultStr('Flyout', 'modules'),
             order = 4.5,
-            new = true,
+            new = false,
             group = 'headerModules'
         },
         Minimap = {
@@ -153,7 +153,7 @@ local modulesOptions = {
             name = L["ModuleCompatibility"],
             desc = L["ModuleTooltipCompatibility"] .. getDefaultStr('Compatibility', 'modules'),
             order = 25,
-            new = true,
+            new = false,
             group = 'headerModules'
         }
     }

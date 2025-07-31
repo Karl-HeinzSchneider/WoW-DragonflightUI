@@ -1088,7 +1088,7 @@ function Module:RegisterSettings()
 
     for i = 1, numCustomButtons do
         --
-        register('custom' .. i, {order = i, name = customOptionsTable[i].name, descr = '...', isNew = true})
+        register('custom' .. i, {order = i, name = customOptionsTable[i].name, descr = '...', isNew = false})
     end
 end
 
