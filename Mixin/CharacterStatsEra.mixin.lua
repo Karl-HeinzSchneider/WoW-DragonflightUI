@@ -765,7 +765,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [25694] = 3 -- Smoked Sagefish
     }
      local mana_regeneration_ids = {
-        [24363] = 12 --Mageblood Potion,
+        [24363] = 12, --Mageblood Potion
         [18194] = 8 -- Nightfin Soup
     }
     local filtered_names = {
