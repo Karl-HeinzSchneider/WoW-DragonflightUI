@@ -19,6 +19,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        reactioncolor = false,
         classicon = false,
         fadeOut = false,
         fadeOutDistance = 40,
@@ -117,6 +118,15 @@ function SubModuleMixin:SetupOptions()
                 desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focusTarget'),
                 group = 'headerStyling',
                 order = 7,
+                editmode = true
+            },
+            reactioncolor = {
+                type = 'toggle',
+                name = L["TargetFrameReactionColor"],
+                desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'focusTarget'),
+                group = 'headerStyling',
+                order = 7.05,
+                new = true,
                 editmode = true
             },
             classicon = {
@@ -368,6 +378,10 @@ function SubModuleMixin:ReApplyFocusToT()
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('focusTarget')
         FocusFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    elseif self.ModuleRef.db.profile.focusTarget.reactioncolor then
+        FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
+        FocusFrameToTHealthBar:SetStatusBarColor(DF:GetUnitSelectionColor('focusTarget'));
     else
         FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')

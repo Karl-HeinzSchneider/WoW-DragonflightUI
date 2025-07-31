@@ -19,6 +19,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        reactioncolor = false,
         classicon = false,
         fadeOut = false,
         fadeOutDistance = 40,
@@ -125,6 +126,15 @@ function SubModuleMixin:SetupOptions()
                 order = 7,
                 editmode = true,
                 new = true
+            },
+            reactioncolor = {
+                type = 'toggle',
+                name = L["TargetFrameReactionColor"],
+                desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'tot'),
+                group = 'headerStyling',
+                order = 7.05,
+                new = true,
+                editmode = true
             },
             classicon = {
                 type = 'toggle',
@@ -378,6 +388,10 @@ function SubModuleMixin:ReApplyToT()
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('targettarget')
         TargetFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    elseif self.ModuleRef.db.profile.tot.reactioncolor then
+        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
+        TargetFrameToTHealthBar:SetStatusBarColor(DF:GetUnitSelectionColor('targettarget'));
     else
         TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')

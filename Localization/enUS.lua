@@ -688,7 +688,7 @@ do
     L["PlayerFrameDesc"] = "PlayerFrame settings"
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "Class Color"
-    L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar"
+    L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar."
     L["PlayerFrameClassIcon"] = "Class Icon Portrait"
     L["PlayerFrameClassIconDesc"] = "Enable class icon as portrait (currently disabled)"
     L["PlayerFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
@@ -720,7 +720,9 @@ do
     L["TargetFrameDesc"] = "Target frame settings"
     L["TargetFrameStyle"] = L["ButtonTableStyle"]
     L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
-    L["TargetFrameClassColorDesc"] = "Enable class colors for the health bar"
+    L["TargetFrameClassColorDesc"] = L["PlayerFrameClassColorDesc"]
+    L["TargetFrameReactionColor"] = "Reaction Color"
+    L["TargetFrameReactionColorDesc"] = "Enable reaction colors for the health bar."
     L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
     L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
     L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]

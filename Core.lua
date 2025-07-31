@@ -69,6 +69,12 @@ function DF:GetClassColor(class, alpha)
     end
 end
 
+-- TODO
+function DF:GetUnitSelectionColor(unit)
+    local red, green, blue, alpha = UnitSelectionColor(unit)
+    return red, green, blue, alpha;
+end
+
 function DF:GetClassColoredText(str, class)
     local r, g, b, a, hex = DF:GetClassColor(class)
     return "|r|c" .. hex .. str .. "|r"
