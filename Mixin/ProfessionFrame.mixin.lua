@@ -1310,6 +1310,27 @@ function DFProfessionMixin:IsRecipeFavorite(info)
     end
 end
 
+local collapsedTable = {}
+function DFProfessionMixin:SetExpanded(info, value)
+    -- print('SetExpanded', info, value)
+    if value then
+        collapsedTable[info] = nil;
+    else
+        collapsedTable[info] = true;
+    end
+    -- self:IsExpanded(info)
+end
+
+function DFProfessionMixin:IsExpanded(info)
+    if collapsedTable[info] then
+        -- print('IsExpanded', info, false)
+        return false
+    else
+        -- print('IsExpanded', info, true)
+        return true
+    end
+end
+
 function DFProfessionMixin:Refresh(force)
     -- print('DFProfessionMixin:Refresh(force)', force)
     self:UpdateProfessionData()
@@ -2534,6 +2555,8 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
     -- print('DFProfessionFrameRecipeListTemplateMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
+    local professionFrame = self:GetParent()
+
     self.selectedSkill = 2
     self.selectedSkillTable = {}
     -- print('self.selectedSkill', self.selectedSkill)
@@ -2556,6 +2579,7 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
                 button:SetScript("OnClick", function(button, buttonName)
                     node:ToggleCollapsed();
                     button:SetCollapseState(node:IsCollapsed());
+                    professionFrame:SetExpanded(elementData.categoryInfo.expandedKey, not node:IsCollapsed());
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 
                     if elementData.categoryInfo.isExpanded then
@@ -2700,7 +2724,11 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
               currentRank, maxRank, startingRank = GetTradeSkillInfo(i);
 
         if skillType == 'header' then
-            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            local data = {
+                id = i,
+                categoryInfo = {name = skillName, isExpanded = isExpanded == 1, expandedKey = 'HEADER-' .. skillName}
+            }
+            data.categoryInfo.isExpanded = parent:IsExpanded(data.categoryInfo.expandedKey)
             dataProvider:Insert(data)
             headerID = i
             subHeader = nil;
@@ -2710,12 +2738,14 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                 categoryInfo = {
                     name = skillName,
                     isExpanded = isExpanded == 1,
+                    expandedKey = 'SUBHEADER-' .. skillName,
                     showProgressBar = showProgressBar,
                     currentRank = currentRank,
                     maxRank = maxRank,
                     startingRank = startingRank
                 }
             }
+            data.categoryInfo.isExpanded = parent:IsExpanded(data.categoryInfo.expandedKey)
             -- dataProvider:Insert(data)
             dataProvider:InsertInParentByPredicate(data, function(node)
                 local nodeData = node:GetData()
