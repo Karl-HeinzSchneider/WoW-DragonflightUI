@@ -3,6 +3,8 @@ local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
 
+local RangeCheck = LibStub("LibRangeCheck-3.0")
+
 local subModuleName = 'TargetOfTarget';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
@@ -17,7 +19,9 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
-        -- classicon = false,
+        classicon = false,
+        fadeOut = false,
+        fadeOutDistance = 40,
         -- breakUpLargeNumbers = true,   
         -- hideNameBackground = false,
         scale = 1.0,
@@ -104,7 +108,56 @@ function SubModuleMixin:SetupOptions()
         get = getOption,
         set = setOption,
         type = 'group',
-        args = {}
+        args = {
+            headerStyling = {
+                type = 'header',
+                name = L["TargetFrameStyle"],
+                desc = '',
+                order = 20,
+                isExpanded = true,
+                editmode = true
+            },
+            classcolor = {
+                type = 'toggle',
+                name = L["TargetFrameClassColor"],
+                desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'tot'),
+                group = 'headerStyling',
+                order = 7,
+                editmode = true,
+                new = true
+            },
+            classicon = {
+                type = 'toggle',
+                name = L["TargetFrameClassIcon"],
+                desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'tot'),
+                group = 'headerStyling',
+                order = 7.1,
+                disabled = true,
+                new = true,
+                editmode = true
+            },
+            fadeOut = {
+                type = 'toggle',
+                name = L["TargetFrameFadeOut"],
+                desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'tot'),
+                group = 'headerStyling',
+                order = 9.5,
+                new = true,
+                editmode = true
+            },
+            fadeOutDistance = {
+                type = 'range',
+                name = L["TargetFrameFadeOutDistance"],
+                desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'tot'),
+                min = 0,
+                max = 50,
+                bigStep = 1,
+                order = 9.6,
+                group = 'headerStyling',
+                new = true,
+                editmode = true
+            }
+        }
     }
     DF.Settings:AddPositionTable(Module, optionsTargetOfTarget, 'tot', 'TargetOfTarget', getDefaultStr, frameTable)
     local optionsTargetOfTargetEditmode = {
@@ -222,6 +275,9 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     f:SetScale(state.scale)
 
+    self:ReApplyToT()
+    UnitFramePortrait_Update(TargetFrameToT)
+
     self.PreviewTargetOfTarget:UpdateState(state);
 end
 
@@ -264,6 +320,18 @@ function SubModuleMixin:ChangeToT()
     TargetFrameToTManaBar:SetFrameLevel(10)
     TargetFrameToTManaBar:SetSize(74, 7.5)
 
+    if not TargetFrameToTManaBar.DFMask then
+        local manaMask = TargetFrameToTManaBar:CreateMaskTexture()
+        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
+        manaMask:SetPoint('CENTER', TargetFrameToTManaBar, 'CENTER', 0, 0)
+        manaMask:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
+            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetSize(74, 7)
+        TargetFrameToTManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        TargetFrameToTManaBar.DFMask = manaMask;
+    end
+
     TargetFrameToTTextureFrameName:ClearAllPoints()
     TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1 + totDelta)
 
@@ -274,10 +342,38 @@ function SubModuleMixin:ChangeToT()
     TargetFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
 
     TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 5, -20)
+
+    if not TargetFrameToT.DFRangeHooked then
+        TargetFrameToT.DFRangeHooked = true;
+
+        local state = self.ModuleRef.db.profile.tot
+
+        if not RangeCheck then return end
+        local function updateRange()
+            local minRange, maxRange = RangeCheck:GetRange('targettarget')
+            -- print(minRange, maxRange)
+
+            if not state.fadeOut then
+                TargetFrameToT:SetAlpha(1);
+                return;
+            end
+
+            if minRange and minRange >= state.fadeOutDistance then
+                TargetFrameToT:SetAlpha(0.55);
+                -- elseif maxRange and maxRange >= 40 then
+                --     TargetFrame:SetAlpha(0.55);
+            else
+                TargetFrameToT:SetAlpha(1);
+            end
+        end
+
+        TargetFrameToT:HookScript('OnUpdate', updateRange)
+        TargetFrameToT:HookScript('OnEvent', updateRange)
+    end
 end
 
 function SubModuleMixin:ReApplyToT()
-    if self.ModuleRef.db.profile.target.classcolor and UnitIsPlayer('targettarget') then
+    if self.ModuleRef.db.profile.tot.classcolor and UnitIsPlayer('targettarget') then
         TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
         local localizedClass, englishClass, classIndex = UnitClass('targettarget')

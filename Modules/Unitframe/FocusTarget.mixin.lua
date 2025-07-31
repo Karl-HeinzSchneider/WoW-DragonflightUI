@@ -3,6 +3,8 @@ local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
 
+local RangeCheck = LibStub("LibRangeCheck-3.0")
+
 local subModuleName = 'FocusTarget';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
@@ -17,7 +19,9 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
-        -- classicon = false,
+        classicon = false,
+        fadeOut = false,
+        fadeOutDistance = 40,
         -- breakUpLargeNumbers = true,   
         -- hideNameBackground = false,
         scale = 1.0,
@@ -113,6 +117,37 @@ function SubModuleMixin:SetupOptions()
                 desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focusTarget'),
                 group = 'headerStyling',
                 order = 7,
+                editmode = true
+            },
+            classicon = {
+                type = 'toggle',
+                name = L["TargetFrameClassIcon"],
+                desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'focusTarget'),
+                group = 'headerStyling',
+                order = 7.1,
+                disabled = true,
+                new = false,
+                editmode = true
+            },
+            fadeOut = {
+                type = 'toggle',
+                name = L["TargetFrameFadeOut"],
+                desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'focusTarget'),
+                group = 'headerStyling',
+                order = 9.5,
+                new = false,
+                editmode = true
+            },
+            fadeOutDistance = {
+                type = 'range',
+                name = L["TargetFrameFadeOutDistance"],
+                desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'focusTarget'),
+                min = 0,
+                max = 50,
+                bigStep = 1,
+                order = 9.6,
+                group = 'headerStyling',
+                new = false,
                 editmode = true
             }
         }
@@ -231,6 +266,9 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     f:SetUserPlaced(true)
 
+    self:ReApplyFocusToT()
+    UnitFramePortrait_Update(FocusFrameToT)
+
     self.PreviewFocusTarget:UpdateState(state);
 end
 
@@ -274,6 +312,18 @@ function SubModuleMixin:ChangeFocusToT()
     FocusFrameToTManaBar:SetFrameLevel(10)
     FocusFrameToTManaBar:SetSize(74, 7.5)
 
+    if not FocusFrameToTManaBar.DFMask then
+        local manaMask = FocusFrameToTManaBar:CreateMaskTexture()
+        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
+        manaMask:SetPoint('CENTER', FocusFrameToTManaBar, 'CENTER', 0, 0)
+        manaMask:SetTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
+            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetSize(74, 7)
+        FocusFrameToTManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        FocusFrameToTManaBar.DFMask = manaMask;
+    end
+
     FocusFrameToTTextureFrameName:ClearAllPoints()
     FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
@@ -282,6 +332,34 @@ function SubModuleMixin:ChangeFocusToT()
 
     FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
     FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
+
+    if not FocusFrameToT.DFRangeHooked then
+        FocusFrameToT.DFRangeHooked = true;
+
+        local state = self.ModuleRef.db.profile.focusTarget
+
+        if not RangeCheck then return end
+        local function updateRange()
+            local minRange, maxRange = RangeCheck:GetRange('focusTarget')
+            -- print(minRange, maxRange)
+
+            if not state.fadeOut then
+                FocusFrameToT:SetAlpha(1);
+                return;
+            end
+
+            if minRange and minRange >= state.fadeOutDistance then
+                FocusFrameToT:SetAlpha(0.55);
+                -- elseif maxRange and maxRange >= 40 then
+                --     TargetFrame:SetAlpha(0.55);
+            else
+                FocusFrameToT:SetAlpha(1);
+            end
+        end
+
+        FocusFrameToT:HookScript('OnUpdate', updateRange)
+        FocusFrameToT:HookScript('OnEvent', updateRange)
+    end
 end
 
 function SubModuleMixin:ReApplyFocusToT()
@@ -307,7 +385,7 @@ function SubModuleMixin:ReApplyFocusToT()
     elseif powerTypeString == 'RAGE' then
         FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' then
+    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
         FocusFrameToTManaBar:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
     elseif powerTypeString == 'RUNIC_POWER' then
