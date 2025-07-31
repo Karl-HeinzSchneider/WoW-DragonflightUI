@@ -760,7 +760,7 @@ function Module:UpdateMinimapZonePanelPosition(pos)
 
     if pos == 'TOP' then
         -- default
-        f:SetPoint('CENTER', Minimap, 'TOP', 0, 25)
+        f:SetPoint('CENTER', Minimap, 'TOP', 0, 20)
 
         if DF.Wrath or DF.Cata then
             MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
@@ -776,7 +776,7 @@ function Module:UpdateMinimapZonePanelPosition(pos)
         Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
         Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
     else
-        f:SetPoint('CENTER', Minimap, 'BOTTOM', 0, -25)
+        f:SetPoint('CENTER', Minimap, 'BOTTOM', 0, -20)
 
         if DF.Wrath or DF.Cata then
             MiniMapMailFrame:SetPoint('BOTTOMRIGHT', MiniMapTracking, 'TOPRIGHT', 2, 1)
@@ -971,25 +971,32 @@ function Module.HookMouseWheel()
     end)
 end
 
-function Module.CreateMinimapInfoFrame()
-    local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', UIParent)
-    f:SetSize(170, 22)
-    f:SetScale(0.8)
-    f:SetParent(Minimap)
-    f:SetPoint('CENTER', Minimap, 'TOP', 0, 25)
+function Module:CreateMinimapInfoFrame()
+    local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', Minimap)
+    f:SetSize(136, 18)
+    f:SetPoint('CENTER', Minimap, 'TOP', 0, 16)
 
     local background = f:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
-    background:ClearAllPoints()
-    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapBorder')
-    background:SetSize(170, 38)
-    background:SetPoint('LEFT', f, 'LEFT', 0, -8)
+
+    -- ["UI-HUD-Minimap-Button"]={19.5, 19, 0.861328, 0.9375, 0.392578, 0.429688, false, false, "2x"},
+    local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
+    background:SetTexture(texture)
+    background:SetSize(39, 38)
+    background:SetTexCoord(0.861328, 0.9375, 0.392578, 0.429688)
+
+    background:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
+    background:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
+    background:SetTextureSliceMode(1)
+    background:SetTextureSliceMargins(20, 20, 25, 25)
+
+    -- background:SetPoint('LEFT', f, 'LEFT', 0, -8)
 
     f.Background = background
 
     frame.MinimapInfo = f
 end
 
-function Module.ChangeCalendar()
+function Module:ChangeCalendar()
     GameTimeFrame:ClearAllPoints()
     -- GameTimeFrame:SetPoint('CENTER', MinimapCluster, 'TOPRIGHT', -16, -20)
     GameTimeFrame:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 0, -2)
@@ -1024,61 +1031,63 @@ function Module.UpdateCalendar()
 
         local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime()
         local day = currentCalendarTime.monthDay
-        -- print('UpdateCalendar', day, GetCoords('UI-HUD-Calendar-' .. day .. '-Up'))
-        ---@diagnostic disable-next-line: param-type-mismatch
-        frame.CalendarButtonText:SetText(day)
-
-        -- @TODO
-        -- button:GetNormalTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-' .. day .. '-Up'))
-        -- button:GetHighlightTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-' .. day .. '-Mouseover'))
-        -- button:GetPushedTexture():SetTexCoord(GetCoords('UI-HUD-Calendar-' .. day .. '-Down'))
-
-        local fix
+        frame.CalendarButtonText:SetText(tostring(day))
     else
         -- print('no Calendarbutton => RIP')
     end
 end
 
 function Module.HookCalendar()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar32'
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar'
 
-    local button = CreateFrame('Button', 'DragonflightUICalendarButton', Minimap)
-    -- button:SetPoint('CENTER', 0, 75)
-    local size = 24
-    button:SetSize(size * 1.105, size)
-    button:SetScale(0.8)
+    local f = CreateFrame('Frame', 'DragonflightUICalendarButtonFrame', Minimap)
+    f:SetSize(18, 18)
+    f:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 1, 0)
 
-    -- button:SetParent(Minimap)
-    -- local relativeScale = 0.8
-    -- workaround, because sometimes the button dissappears when parent = Minimap
-    -- hooksecurefunc(Minimap, 'SetScale', function()
-    --     -- button:SetScale(Minimap:GetScale() * relativeScale)
-    -- end)
+    local bg = f:CreateTexture('DragonflightUICalendarButtonFrameBackground', "BACKGROUND")
+    bg:SetPoint('TOPLEFT')
+    bg:SetPoint('BOTTOMRIGHT')
+    bg:SetSize(18, 18)
+    bg:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
+    bg:SetTexCoord(0.861328125, 0.9375, 0.392578125, 0.4296875)
 
-    button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
+    local button = CreateFrame('Button', 'DragonflightUICalendarButton', f, 'SecureActionButtonTemplate')
+    button:SetSize(18, 18)
+    button:SetPoint('CENTER')
 
-    -- button:ClearAllPoints()
-    -- button:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', -2, -2)
+    if DF.Wrath then
+        button:SetAttribute('type', 'macro')
+        button:SetAttribute('macrotext', '/click GameTimeFrame')
 
-    local text = button:CreateFontString('DragonflightUICalendarButtonText', 'ARTWORK', 'GameFontBlack')
-    text:SetText('12')
-    text:SetPoint('CENTER', -2, 1)
-
-    button:SetScript('OnClick', function()
-        if DF.Wrath then
-            ToggleCalendar()
-        elseif DF.Era then
+    elseif DF.Era then
+        button:SetScript('OnClick', function()
             Module:Print(
                 "Era doesn't have an ingame Calendar, sorry. Consider using 'Classic Calendar' by 'Toxiix', and this button will magically work...")
-        end
-    end)
+        end)
+    end
 
-    button:SetNormalTexture(base)
-    button:SetPushedTexture(base)
-    button:SetHighlightTexture(base)
-    button:GetNormalTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Up'))
-    button:GetHighlightTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Mouseover'))
-    button:GetPushedTexture():SetTexCoord(Module.GetCoords('UI-HUD-Calendar-1-Down'))
+    local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
+    button:SetNormalTexture(microTexture)
+    button:SetPushedTexture(microTexture)
+    button:SetHighlightTexture(microTexture)
+    -- button:GetNormalTexture():SetTexCoord(0.258789, 0.321289, 0.822266, 0.982422)
+    -- button:GetHighlightTexture():SetTexCoord(0.258789, 0.321289, 0.658203, 0.818359)
+    -- -- button:GetPushedTexture():SetTexCoord(0.194336, 0.256836, 0.822266, 0.982422)
+    -- button:GetPushedTexture():SetTexCoord(0.258789, 0.321289, 0.822266, 0.982422)
+
+    button:GetNormalTexture():SetTexCoord(0.258789, 0.321289, 0.494141, 0.654297)
+    button:GetHighlightTexture():SetTexCoord(0.258789, 0.321289, 0.330078, 0.490234)
+    button:GetHighlightTexture():SetVertexColor(1, 1, 0)
+    button:GetPushedTexture():SetTexCoord(0.258789, 0.321289, 0.494141, 0.654297)
+
+    local text = button:CreateFontString('DragonflightUICalendarButtonText', 'ARTWORK', 'GameFontBlackSmall')
+    text:SetText('12')
+    text:SetPoint('CENTER', 0, 0.5)
+    text:SetJustifyH("CENTER")
+    text:SetJustifyV("MIDDLE")
+
+    local path, size, flags = text:GetFont()
+    text:SetFont(path, 10 - 4, flags)
 
     frame.CalendarButton = button
     frame.CalendarButtonText = text
@@ -1092,11 +1101,11 @@ function Module.HookCalendar()
         GameTimeCalendarInvitesTexture:ClearAllPoints()
         GameTimeCalendarInvitesTexture:SetParent(button)
         GameTimeCalendarInvitesTexture:SetPoint('CENTER', text, 'CENTER', 0, 0)
-        GameTimeCalendarInvitesTexture:SetSize(size, size)
+        GameTimeCalendarInvitesTexture:SetSize(18, 18)
         GameTimeCalendarInvitesTexture:SetScale(1)
         GameTimeCalendarInvitesTexture:SetDrawLayer('OVERLAY', 2)
 
-        local glowSize = size + 10
+        local glowSize = 18 + 10
         GameTimeCalendarInvitesGlow:ClearAllPoints()
         GameTimeCalendarInvitesGlow:SetParent(button)
         GameTimeCalendarInvitesGlow:SetPoint('CENTER', text, 'CENTER', 0, 0)
@@ -1129,13 +1138,17 @@ function Module.HookCalendar()
     end
 end
 
-function Module.ChangeClock()
+function Module:ChangeClock()
     if DF:IsAddOnLoaded('Blizzard_TimeManager') then
         local regions = {TimeManagerClockButton:GetRegions()}
         regions[1]:Hide()
         TimeManagerClockButton:ClearAllPoints()
-        TimeManagerClockButton:SetPoint('RIGHT', frame.MinimapInfo, 'RIGHT', 5, 0)
+        TimeManagerClockButton:SetSize(40, 16)
+        TimeManagerClockButton:SetPoint('RIGHT', frame.MinimapInfo, 'RIGHT', 0, 0)
         TimeManagerClockButton:SetParent(frame.MinimapInfo)
+
+        local path, size, flags = TimeManagerClockTicker:GetFont()
+        TimeManagerClockTicker:SetFont(path, 10 - 1, flags)
 
         TimeManagerAlarmFiredTexture:SetPoint("TOPLEFT", TimeManagerClockButton, "TOPLEFT", 0, 5)
         TimeManagerAlarmFiredTexture:SetPoint("BOTTOMRIGHT", TimeManagerClockButton, "BOTTOMRIGHT", -2, -11)
@@ -1144,50 +1157,65 @@ function Module.ChangeClock()
     end
 end
 
-function Module.ChangeZoneText()
+function Module:ChangeZoneText()
     MinimapZoneTextButton:ClearAllPoints()
-    MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 1, 0)
+    MinimapZoneTextButton:SetSize(130, 16)
     MinimapZoneTextButton:SetParent(frame.MinimapInfo)
-    MinimapZoneTextButton:SetSize(130, 12)
+    MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 4, 0)
+    MinimapZoneTextButton:SetPoint('RIGHT', TimeManagerClockTicker, 'LEFT', -2, 0)
 
     MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetSize(130, 12)
-    MinimapZoneText:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 1, 0)
+    MinimapZoneText:SetSize(130, 10)
+    MinimapZoneText:SetPoint('LEFT', MinimapZoneTextButton, 'LEFT', 1, 0)
+    MinimapZoneText:SetPoint('RIGHT', MinimapZoneTextButton, 'RIGHT', -1, 0)
+    -- MinimapZoneText:SetFontObject(GameFontSmall)
+    -- MinimapZoneText:SetJustifyH('CENTER')
+    -- MinimapZoneText:SetJustifyV('MIDDLE')
+    local path, size, flags = MinimapZoneText:GetFont()
+    MinimapZoneText:SetFont(path, 12 - 2, flags)
 end
 
-function Module.ChangeTracking()
+function Module:ChangeTracking()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
 
     MiniMapTracking:ClearAllPoints()
     -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
-    MiniMapTracking:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
-    MiniMapTracking:SetScale(0.75)
+    MiniMapTracking:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', -1, 0)
+    -- MiniMapTracking:SetScale(0.75)
+    MiniMapTracking:SetSize(18, 18)
     MiniMapTracking:SetFrameStrata('MEDIUM')
     MiniMapTrackingIcon:Hide()
 
     -- MiniMapTrackingBackground:Hide()
     MiniMapTrackingBackground:ClearAllPoints()
     MiniMapTrackingBackground:SetPoint('CENTER', MiniMapTracking, 'CENTER')
+    MiniMapTrackingBackground:SetSize(18, 18)
     MiniMapTrackingBackground:SetTexture(base)
     MiniMapTrackingBackground:SetTexCoord(0.861328125, 0.9375, 0.392578125, 0.4296875)
 
     MiniMapTrackingButtonBorder:Hide()
 
-    MiniMapTrackingButton:SetSize(19.5, 19)
+    MiniMapTrackingButton:SetSize(14, 15)
     MiniMapTrackingButton:ClearAllPoints()
     MiniMapTrackingButton:SetPoint('CENTER', MiniMapTracking, 'CENTER')
 
+    -- ["UI-HUD-Minimap-Tracking-Down"]={16, 15, 0.162109, 0.224609, 0.507812, 0.537109, false, false, "2x"},
+    -- ["UI-HUD-Minimap-Tracking-Mouseover"]={15, 14, 0.228516, 0.287109, 0.507812, 0.535156, false, false, "2x"},
+    -- ["UI-HUD-Minimap-Tracking-Up"]={15, 14, 0.291016, 0.349609, 0.507812, 0.535156, false, false, "2x"},
+
     MiniMapTrackingButton:SetNormalTexture(base)
-    MiniMapTrackingButton:GetNormalTexture():SetTexCoord(0.291015625, 0.349609375, 0.5078125, 0.53515625)
+    MiniMapTrackingButton:GetNormalTexture():SetTexCoord(0.291016, 0.349609, 0.507812, 0.535156)
     MiniMapTrackingButton:SetHighlightTexture(base)
-    MiniMapTrackingButton:GetHighlightTexture():SetTexCoord(0.228515625, 0.287109375, 0.5078125, 0.53515625)
+    MiniMapTrackingButton:GetHighlightTexture():SetTexCoord(0.228516, 0.287109, 0.507812, 0.535156)
     MiniMapTrackingButton:SetPushedTexture(base)
-    MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109375, 0.224609375, 0.5078125, 0.537109375)
+    -- MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109, 0.224609, 0.507812, 0.537109)
+    MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.228516, 0.287109, 0.507812, 0.535156)
+
 end
 
 local MiniMapTrackingFrame = MiniMapTrackingFrame or MiniMapTracking
 
-function Module.ChangeTrackingEra()
+function Module:ChangeTrackingEra()
     --  MiniMapTrackingFrame:ClearAllPoints()
     -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
     -- MiniMapTrackingFrame:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
@@ -1614,10 +1642,10 @@ function Module:Era()
     Module.HideDefaultStuff()
     Module.MoveDefaultStuff()
     Module.ChangeZoom()
-    Module.CreateMinimapInfoFrame()
-    Module.ChangeClock()
-    Module.ChangeZoneText()
-    Module.ChangeTrackingEra()
+    Module:CreateMinimapInfoFrame()
+    Module:ChangeClock()
+    Module:ChangeZoneText()
+    Module:ChangeTrackingEra()
     Module.UpdateTrackingEra()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
@@ -1642,11 +1670,11 @@ function Module:Wrath()
     Module.HideDefaultStuff()
     Module.MoveDefaultStuff()
     Module.ChangeZoom()
-    Module.CreateMinimapInfoFrame()
-    Module.ChangeCalendar()
-    Module.ChangeClock()
-    Module.ChangeZoneText()
-    Module.ChangeTracking()
+    Module:CreateMinimapInfoFrame()
+    Module:ChangeCalendar()
+    Module:ChangeClock()
+    Module:ChangeZoneText()
+    Module:ChangeTracking()
     Module.DrawMinimapBorder()
     Module.MoveTracker()
     Module:ChangeLFG()
