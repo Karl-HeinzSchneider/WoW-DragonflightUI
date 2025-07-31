@@ -1147,6 +1147,10 @@ function Module:ChangeClock()
         TimeManagerClockButton:SetPoint('RIGHT', frame.MinimapInfo, 'RIGHT', 0, 0)
         TimeManagerClockButton:SetParent(frame.MinimapInfo)
 
+        TimeManagerClockButton:HookScript('OnEnter', function()
+            TimeManagerClockButton_UpdateTooltip()
+        end)
+
         local path, size, flags = TimeManagerClockTicker:GetFont()
         TimeManagerClockTicker:SetFont(path, 10 - 1, flags)
 
