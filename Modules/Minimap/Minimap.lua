@@ -1077,7 +1077,7 @@ function Module.HookCalendar()
 
     button:GetNormalTexture():SetTexCoord(0.258789, 0.321289, 0.494141, 0.654297)
     button:GetHighlightTexture():SetTexCoord(0.258789, 0.321289, 0.330078, 0.490234)
-    button:GetHighlightTexture():SetVertexColor(1, 1, 0)
+    button:GetHighlightTexture():SetVertexColor(1, 1, 0, 0.5)
     button:GetPushedTexture():SetTexCoord(0.258789, 0.321289, 0.494141, 0.654297)
 
     local text = button:CreateFontString('DragonflightUICalendarButtonText', 'ARTWORK', 'GameFontBlackSmall')
