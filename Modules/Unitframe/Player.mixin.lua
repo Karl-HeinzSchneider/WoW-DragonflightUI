@@ -624,6 +624,7 @@ function SubModuleMixin:ChangePlayerframe()
         _G['WarlockPowerFrame']:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 3);
         _G['ShardBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', 0, 0 + 2)
         _G['BurningEmbersBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', -21, 1 + 2)
+        _G['PriestBarFrame']:SetPoint('TOP', PlayerFrame, 'BOTTOM', 53 - 3, 37 - 1)
     end
 
     if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
@@ -871,6 +872,9 @@ function SubModuleMixin:HideSecondaryRes(hide)
     elseif class == 'MONK' then
         _G['MonkHarmonyBar']:SetShown(not hide)
         _G['MonkStaggerBar']:SetShown(not hide)
+    elseif class == 'PRIEST' then
+        -- _G['PriestBarFrame']:SetShown(not hide)
+        _G['PriestBarFrame']:CheckAndShow();
     end
 end
 
@@ -887,6 +891,8 @@ function SubModuleMixin:HookSecondaryRes()
         self.SecondaryResToHide = _G['RuneFrame'];
     elseif class == 'MONK' then
         self.SecondaryResToHide = _G['MonkHarmonyBar'];
+    elseif class == 'PRIEST' then
+        self.SecondaryResToHide = _G['PriestBarFrame'];
     end
 
     if not self.SecondaryResToHide then return end
