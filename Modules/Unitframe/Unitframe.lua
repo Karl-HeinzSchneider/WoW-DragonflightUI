@@ -322,58 +322,47 @@ function Module:AddPortraitMasks()
     local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
     local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
 
-    local mask = PlayerFrame:CreateMaskTexture()
-    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
-    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerPortrait:AddMaskTexture(mask)
+    do
+        local mask = PlayerFrame:CreateMaskTexture()
+        mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
+        mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        PlayerPortrait:AddMaskTexture(mask)
+    end
 
-    local maskTarget = TargetFrame:CreateMaskTexture()
-    maskTarget:SetAllPoints(TargetFramePortrait)
-    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFramePortrait:AddMaskTexture(maskTarget)
+    local function addMask(f, port, maskTexture)
+        if not f or not port then return end
+        if not maskTexture then maskTexture = circularMaskTexture end
+        local mask = f:CreateMaskTexture()
+        mask:SetAllPoints(port)
+        mask:SetTexture(maskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        port:AddMaskTexture(mask)
+    end
 
-    local maskToT = TargetFrameToT:CreateMaskTexture()
-    maskToT:SetAllPoints(TargetFrameToTPortrait)
-    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFrameToTPortrait:AddMaskTexture(maskToT)
+    addMask(TargetFrame, TargetFramePortrait)
+    addMask(self.SubTarget.PreviewTarget, self.SubTarget.PreviewTarget.TargetFramePortrait)
+    addMask(TargetFrameToT, TargetFrameToTPortrait)
+    addMask(self.SubTargetOfTarget.PreviewTargetOfTarget,
+            self.SubTargetOfTarget.PreviewTargetOfTarget.TargetFramePortrait)
 
-    local maskPet = PetFrame:CreateMaskTexture()
-    maskPet:SetAllPoints(PetPortrait)
-    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PetPortrait:AddMaskTexture(maskPet)
+    addMask(PetFrame, PetPortrait)
 
     if DF.Wrath then
-        local maskFocus = FocusFrame:CreateMaskTexture()
-        maskFocus:SetAllPoints(FocusFramePortrait)
-        maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        FocusFramePortrait:AddMaskTexture(maskFocus)
-
-        local maskFocusToT = FocusFrameToT:CreateMaskTexture()
-        maskFocusToT:SetAllPoints(FocusFrameToTPortrait)
-        maskFocusToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
+        addMask(FocusFrame, FocusFramePortrait)
+        addMask(self.SubFocus.PreviewFocus, self.SubFocus.PreviewFocus.TargetFramePortrait)
+        addMask(FocusFrameToT, FocusFrameToTPortrait)
+        addMask(self.SubFocusTarget.PreviewFocusTarget, self.SubFocusTarget.PreviewFocusTarget.TargetFramePortrait)
     end
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
         local port = _G['PartyMemberFrame' .. i .. 'Portrait']
 
-        local m = pf:CreateMaskTexture()
-        m:SetAllPoints(port)
-        m:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        port:AddMaskTexture(m)
+        addMask(pf, port)
     end
 
     -- fix portraits
-    local maskCharacterFrame = CharacterFrame:CreateMaskTexture()
-    maskCharacterFrame:SetAllPoints(CharacterFramePortrait)
-    maskCharacterFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    CharacterFramePortrait:AddMaskTexture(maskCharacterFrame)
-
-    local maskTalentFrame = PlayerTalentFrame:CreateMaskTexture()
-    maskTalentFrame:SetAllPoints(PlayerTalentFramePortrait)
-    maskTalentFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
+    addMask(CharacterFrame, CharacterFramePortrait)
+    addMask(PlayerTalentFrame, PlayerTalentFramePortrait)
 end
 
 function Module:HookEnergyBar()
