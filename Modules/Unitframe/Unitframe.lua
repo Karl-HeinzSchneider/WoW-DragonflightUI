@@ -462,6 +462,12 @@ function Module:TakePicture()
         port:SetPoint('BOTTOMRIGHT', tex, 'BOTTOMRIGHT', -border, border)
         pt.Portrait = port;
 
+        local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+        local mask = pt:CreateMaskTexture()
+        mask:SetAllPoints(port)
+        mask:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        port:AddMaskTexture(mask)
+
         pt:Hide()
         Module.PictureTakerFrame = pt;
 
