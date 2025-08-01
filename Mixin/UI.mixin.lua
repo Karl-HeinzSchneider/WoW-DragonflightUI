@@ -3990,10 +3990,16 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         local tab = _G[name .. 'TabButton' .. i]
 
         if tab then
+            -- print('TabButton:', frame:GetName())
             --         
             DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
 
-            if i > 1 then tab.DFChangePoint = true end
+            if i == 1 then
+                tab.DFFirst = true
+                tab.DFFirstOffsetY = 2;
+            elseif i > 1 then
+                tab.DFChangePoint = true
+            end
         end
     end
 
@@ -4032,7 +4038,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         if SpellBookFrame_Update then
             hooksecurefunc('SpellBookFrame_Update', function()
                 --
-                --  print('SpellBookFrame_Update')
+                -- print('SpellBookFrame_Update')
                 setTabWidths()
             end)
         end
@@ -4116,22 +4122,28 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         for i = 1, 5 do
             local tab = _G[name .. 'Tab' .. i]
             if tab then
-                tab.DFFirst = nil
-                tab.DFChangePoint = nil
+                if i == 1 then
+                    tab.DFFirst = true
+                elseif i > 1 then
+                    tab.DFChangePoint = false
+                end
+                DragonflightUIMixin:TabResize(tab)
             end
         end
         hooksecurefunc('PlayerTalentFrame_UpdateTabs', function()
             --  
+            -- print('PlayerTalentFrame_UpdateTabs')
             local lastElem = nil
             for i = 1, NUM_TALENT_FRAME_TABS do
                 local tab = _G["PlayerTalentFrameTab" .. i];
                 if (tab:IsShown()) then
-                    tab:SetWidth(78)
+                    -- tab:SetWidth(78)
+                    DragonflightUIMixin:ResizeTab(tab, nil, nil, 70)
                     tab:ClearAllPoints();
                     if lastElem then
                         tab:SetPoint('TOPLEFT', lastElem, 'TOPRIGHT', 4, 0)
                     else
-                        tab:SetPoint('TOPLEFT', PlayerTalentFrame, 'BOTTOMLEFT', 12, 1)
+                        tab:SetPoint('TOPLEFT', PlayerTalentFrame, 'BOTTOMLEFT', 12, 2)
                     end
                     lastElem = tab
                 end
@@ -4145,7 +4157,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
             if tab then
                 --        
                 local text = _G[name .. 'Tab' .. i .. 'Text']
-                tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+                -- tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
                 DragonflightUIMixin:TabResize(tab)
             end
         end
@@ -4199,7 +4211,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         newDung:Show()
         newDung:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 12, 1)
         newDung:GetFontString():SetText(DUNGEONS)
-        newDung.DFTabWidth = math.max(newDung:GetFontString():GetWrappedWidth() + 16, 78)
+        -- newDung.DFTabWidth = math.max(newDung:GetFontString():GetWrappedWidth() + 16, 78)
         DragonflightUIMixin:CharacterFrameTabButtonTemplate(newDung, true)
 
         local raid = _G[name .. 'RaidTab']
@@ -4213,7 +4225,7 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         newRaid:Show()
         newRaid:SetPoint('TOPLEFT', newDung, 'TOPRIGHT', 4, 0)
         newRaid:GetFontString():SetText(RAIDS)
-        newRaid.DFTabWidth = math.max(newRaid:GetFontString():GetWrappedWidth() + 16, 78)
+        -- newRaid.DFTabWidth = math.max(newRaid:GetFontString():GetWrappedWidth() + 16, 78)
         DragonflightUIMixin:CharacterFrameTabButtonTemplate(newRaid, true)
     elseif name == 'MacroFrame' then
         --  
@@ -4350,13 +4362,31 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 local tab = _G[name .. 'Tab' .. i]
                 if tab then
                     local text = _G['FriendsFrameTab' .. i .. 'Text']
-                    tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+                    -- tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
 
                     if i == 1 then
                         tab:ClearAllPoints()
                         tab:SetPoint('TOPLEFT', FriendsFrame, 'BOTTOMLEFT', 6, -1)
                     end
                 end
+            end
+            if DF.API.Version.IsMoP then
+                hooksecurefunc('FriendsFrame_UpdateGuildTabVisibility', function()
+                    --
+                    -- print('FriendsFrame_UpdateGuildTabVisibility')
+                    if InCombatLockdown() then return end -- TODO
+
+                    for i = 1, 5 do
+                        --
+                        local tab = _G[name .. 'Tab' .. i]
+                        if tab then
+                            -- if i ~= 1 then tab.DFChangePoint = true; end
+                            DragonflightUIMixin:TabResize(tab)
+                        end
+                    end
+                    local raidTab = _G["FriendsFrameTab" .. FRIEND_TAB_RAID];
+                    raidTab:SetPoint('TOPLEFT', _G["FriendsFrameTab" .. FRIEND_TAB_WHO], 'TOPRIGHT', 4, 0)
+                end)
             end
         end
 
@@ -4399,10 +4429,23 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
         for i = 1, 5 do
             local tab = _G[name .. 'Tab' .. i]
 
+            -- if tab then
+            --     --
+            --     local text = _G[name .. 'Tab' .. i .. 'Text']
+            --     tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+            --     DragonflightUIMixin:TabResize(tab)
+            -- end
+
             if tab then
-                --
-                local text = _G[name .. 'Tab' .. i .. 'Text']
-                tab.DFTabWidth = math.max(text:GetWrappedWidth() + 16, 78)
+                -- print('TabButton:', frame:GetName())  
+                if i == 1 then
+                    tab.DFFirst = true
+                    tab.DFFirstOffsetY = 2;
+                    tab.DFTabMaxWidth = 200;
+                else
+                    tab.DFChangePoint = true;
+                    tab.DFTabMaxWidth = 200;
+                end
                 DragonflightUIMixin:TabResize(tab)
             end
         end
@@ -4425,18 +4468,37 @@ function DragonflightUIMixin:PortraitFrameTemplate(frame)
                 end
             end
         end
+    elseif name == 'PVEFrame' then
+        for i = 1, 5 do
+            local tab = _G[name .. 'Tab' .. i]
+
+            if tab then
+                -- print('TabButton:', frame:GetName())  
+                if i == 1 then
+                    tab.DFFirst = true
+                    tab.DFFirstOffsetY = 2;
+                    tab.DFTabMaxWidth = 200;
+                else
+                    tab.DFChangePoint = true;
+                    tab.DFTabMaxWidth = 200;
+                end
+                DragonflightUIMixin:TabResize(tab)
+            end
+        end
     end
 end
 
 function DragonflightUIMixin:TabResize(btn)
     -- PanelTemplates_TabResize(btn, 35, nil, 60, 80);
-    btn:SetWidth(btn.DFTabWidth or 78)
+    -- btn:SetWidth(btn.DFTabWidth or 78)
+    self:ResizeTab(btn, btn.DFPadding, btn.DFTabWidth, btn.DFTabMinWidth or 64, btn.DFTabMaxWidth or 140)
 
     if btn.DFFirst then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
-        btn:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', btn.DFFirstOffsetX or 6, 1)
+        btn:SetPoint('TOPLEFT', relativeTo, 'BOTTOMLEFT', btn.DFFirstOffsetX or 6, btn.DFFirstOffsetY or 1)
     elseif btn.DFChangePoint then
         local point, relativeTo, relativePoint, xOfs, yOfs = btn:GetPoint(1)
+        -- print(btn:GetName(), relativeTo:GetName())
         btn:ClearAllPoints()
         btn:SetPoint('TOPLEFT', relativeTo, 'TOPRIGHT', 4, 0)
     end
