@@ -874,7 +874,14 @@ function SubModuleMixin:HideSecondaryRes(hide)
         _G['MonkStaggerBar']:SetShown(not hide)
     elseif class == 'PRIEST' then
         -- _G['PriestBarFrame']:SetShown(not hide)
-        _G['PriestBarFrame']:CheckAndShow();
+        -- _G['PriestBarFrame']:CheckAndShow();
+        local spec = C_SpecializationInfo.GetSpecialization();
+        if (spec == SPEC_PRIEST_SHADOW) then
+            if (_G['PriestBarFrame'].hasReqLevel) then
+                --
+                _G['PriestBarFrame']:SetShown(not hide)
+            end
+        end
     end
 end
 
@@ -910,6 +917,23 @@ function SubModuleMixin:HookSecondaryRes()
                 if self.ModuleRef.db.profile.player.hideSecondaryRes then v:Hide() end
             end)
         end
+    elseif self.SecondaryResToHide == _G['PriestBarFrame'] then
+        self.SecondaryResToHide:HookScript('OnShow', function()
+            --
+            -- print('onshow')
+            if self.ModuleRef.db.profile.player.hideSecondaryRes then self.SecondaryResToHide:Hide() end
+        end)
+        hooksecurefunc(_G['PriestBarFrame'], 'CheckAndShow', function()
+            local spec = C_SpecializationInfo.GetSpecialization();
+            if (spec == SPEC_PRIEST_SHADOW) then
+                if (_G['PriestBarFrame'].hasReqLevel) then
+                    --
+                    if self.ModuleRef.db.profile.player.hideSecondaryRes then
+                        _G['PriestBarFrame']:Hide()
+                    end
+                end
+            end
+        end)
     else
         self.SecondaryResToHide:HookScript('OnShow', function()
             --
