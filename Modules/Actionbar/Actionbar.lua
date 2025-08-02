@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
@@ -2679,6 +2681,12 @@ function Module:RefreshOptionScreens()
 end
 
 function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     -- print('function Module:ApplySettings(sub)', sub, GetTime(), key)
     local db = Module.db.profile
 

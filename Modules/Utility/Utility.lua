@@ -1,4 +1,5 @@
----@class DragonflightUI
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper; ---@class DragonflightUI
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Utility'
@@ -115,10 +116,10 @@ function Module:RefreshOptionScreens()
     refreshCat('Utility')
 end
 
-function Module:ApplySettings()
-    local db = Module.db.profile
-
-    Module:HookFriendsColor(db.first.friendsColor)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
 end
 
 function Module:SetupLookupTable()

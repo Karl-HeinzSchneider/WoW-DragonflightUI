@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local mName = 'Chat'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
@@ -222,7 +224,13 @@ function Module:RefreshOptionScreens()
     -- ChatFrame1.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
 
     local parent;

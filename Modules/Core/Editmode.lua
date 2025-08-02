@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Editmode'
@@ -335,7 +337,13 @@ function Module:RefreshOptionScreens()
     -- configFrame:RefreshCatSub(cat, 'Darkmode')
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
     local state = db.general
 
