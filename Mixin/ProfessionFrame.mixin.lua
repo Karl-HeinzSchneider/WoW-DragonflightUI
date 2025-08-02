@@ -1178,16 +1178,17 @@ function DFProfessionMixin:UpdateTabs()
 
     for k, v in ipairs(tabs) do
         --
-        local w = v.Text:GetWrappedWidth()
-        local newW = math.max(w + 16, 78)
+        -- local w = v.Text:GetWrappedWidth()
+        -- local newW = math.max(w + 16, 78)
         if v:IsShown() then
-            v:SetWidth(newW)
+            -- v:SetWidth(newW)
             v:ClearAllPoints()
             if tmp then
                 v:SetPoint('LEFT', tmp, 'RIGHT', 4, 0)
             else
                 v:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 2)
             end
+            DragonflightUIMixin:ResizeTab(v)
             tmp = v
         else
             v:SetWidth(0.01)
