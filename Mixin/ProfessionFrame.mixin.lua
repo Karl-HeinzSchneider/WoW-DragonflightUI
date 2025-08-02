@@ -2736,9 +2736,12 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                     numAvailable = numAvailable,
                     isExpanded = isExpanded,
                     altVerb = altVerb,
+                    numSkillUps = numSkillUps,
                     numSkills = numSkills
                 }
             }
+            if skillType == 'easy' and numSkillUps == 0 then data.recipeInfo.numSkillUps = 1; end
+            -- if numSkillUps > 1 and skillType == "optimal" then print(skillName, numSkillUps) end
 
             if not DF.API.Version.IsClassic then
                 --
@@ -2988,6 +2991,13 @@ end
 local PROFESSIONS_SKILL_UP_EASY = "Low chance of gaining skill"
 local PROFESSIONS_SKILL_UP_MEDIUM = "High chance of gaining skill"
 local PROFESSIONS_SKILL_UP_OPTIMAL = "Guaranteed chance of gaining %d skill ups"
+local PROFESSIONS_SKILL_UP_OPTIMAL_SINGLE = "Guaranteed chance of gaining skill"
+
+local DifficultyColors = {
+    ['optimal'] = DIFFICULT_DIFFICULTY_COLOR,
+    ['medium'] = FAIR_DIFFICULTY_COLOR,
+    ['easy'] = EASY_DIFFICULTY_COLOR
+};
 
 function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
     local elementData = node:GetData();
@@ -3028,28 +3038,37 @@ function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
         tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM
     elseif skillType == 'optimal' then
         icon:SetTexCoord(0.263184, 0.269531, 0.0537109, 0.0683594)
-        tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL
+        if recipeInfo.numSkillUps > 1 then
+            tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL
+        else
+            tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL_SINGLE
+        end
     elseif skillType == 'difficult' then
         --
         icon:Hide()
     end
 
+    self.SkillUps:Hide();
     if tooltipSkillUpString then
         local isDifficultyOptimal = skillType == 'optimal'
-        local numSkillUps = recipeInfo.numSkillUps and recipeInfo.numSkillUps or 1;
+        local numSkillUps = recipeInfo.numSkillUps;
         local hasMultipleSkillUps = numSkillUps > 1;
         local hasSkillUps = numSkillUps > 0;
         local showText = hasMultipleSkillUps and isDifficultyOptimal;
+        self.SkillUps.Text:SetText(''); -- ?
         self.SkillUps.Text:SetShown(showText);
-        -- print('->', isDifficultyOptimal, numSkillUps, hasMultipleSkillUps, hasSkillUps, showText)
+        -- print(recipeInfo.name, elementData.id, '->', isDifficultyOptimal, numSkillUps, hasMultipleSkillUps, hasSkillUps,
+        --       showText)
         if hasSkillUps then
+            -- print('hasSkillUps', numSkillUps, recipeInfo.name)
             if showText then
                 self.SkillUps.Text:SetText(numSkillUps);
-                -- self.SkillUps.Text:SetVertexColor(DifficultyColors[recipeInfo.relativeDifficulty]:GetRGB());
+                self.SkillUps.Text:SetVertexColor(DifficultyColors[recipeInfo.skillType]:GetRGB());
             end
 
             self.SkillUps:SetScript("OnEnter", function()
                 self:OnEnter();
+                -- print('OnEnter,', tooltipSkillUpString)
                 GameTooltip:SetOwner(self.SkillUps, "ANCHOR_RIGHT");
                 GameTooltip_AddNormalLine(GameTooltip, tooltipSkillUpString:format(numSkillUps));
                 GameTooltip:Show();
@@ -3057,7 +3076,7 @@ function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
         else
             self.SkillUps:SetScript("OnEnter", nil);
         end
-
+        self.SkillUps:Show();
     end
 
     local count = recipeInfo.numAvailable -- + 69
