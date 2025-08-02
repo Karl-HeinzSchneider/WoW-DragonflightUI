@@ -33,6 +33,21 @@ function DF:OnDisable()
     -- Called when the addon is disabled
 end
 
+function DF:EnableModule(name, force)
+    force = force and true or false;
+    -- DF:GetModule(k, true)
+    -- EnableModuleIfNotAlreadyEnabled
+    local module = self:GetModule(name)
+    local wasAlready = module:GetWasEnabled()
+    DF:Debug(module, string.format('DF:EnableModule(%s,%s,%s)', name, tostring(force), tostring(wasAlready)))
+
+    if wasAlready then
+        if force then return module:Enable() end
+    else
+        return module:Enable()
+    end
+end
+
 local name, realm = UnitName('player')
 local showDebug = name == 'Zimtdev'
 DF.ShowDebug = showDebug;

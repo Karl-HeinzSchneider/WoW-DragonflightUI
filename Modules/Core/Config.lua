@@ -271,7 +271,7 @@ function Module:ApplySettings()
     end
 
     Module.DontRefresh = true;
-    DF:RefreshConfig()
+    -- DF:RefreshConfig()
     Module.DontRefresh = false;
 end
 
