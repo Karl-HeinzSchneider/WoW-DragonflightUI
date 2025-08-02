@@ -3071,7 +3071,7 @@ function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
         tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM
     elseif skillType == 'optimal' then
         icon:SetTexCoord(0.263184, 0.269531, 0.0537109, 0.0683594)
-        if recipeInfo.numSkillUps > 1 then
+        if recipeInfo.numSkillUps and recipeInfo.numSkillUps > 1 then
             tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL
         else
             tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL_SINGLE
@@ -3084,7 +3084,7 @@ function DFProfessionFrameRecipeMixin:Init(node, hideCraftableCount)
     self.SkillUps:Hide();
     if tooltipSkillUpString then
         local isDifficultyOptimal = skillType == 'optimal'
-        local numSkillUps = recipeInfo.numSkillUps;
+        local numSkillUps = recipeInfo.numSkillUps and recipeInfo.numSkillUps or 1;
         local hasMultipleSkillUps = numSkillUps > 1;
         local hasSkillUps = numSkillUps > 0;
         local showText = hasMultipleSkillUps and isDifficultyOptimal;
