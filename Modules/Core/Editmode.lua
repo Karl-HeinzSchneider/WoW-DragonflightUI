@@ -44,6 +44,7 @@ local defaults = {
             -- unitframes
             PlayerFrame = true,
             Player_PowerBarAlt = true,
+            PlayerSecondaryRes = true,
             PetFrame = true,
             TargetFrame = true,
             TargetOfTargetFrame = true,
@@ -184,6 +185,7 @@ if true then
 
     -- frames
     displayTable['PlayerFrame'] = L['PlayerFrameName']
+    displayTable['PlayerSecondaryRes'] = L['PlayerSecondaryResName']
     displayTable['PetFrame'] = L['PetFrameName']
     displayTable['TargetFrame'] = L['TargetFrameName']
     displayTable['TargetOfTargetFrame'] = L['TargetOfTargetFrameName']
@@ -229,7 +231,9 @@ if true then
     AddTableToCategory(combatFrames, 'headerCombat');
 
     -- frames
-    local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame', 'PartyFrame', 'RaidFrame'}
+    local framesFrames = {
+        'PlayerFrame', 'PlayerSecondaryRes', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame', 'PartyFrame', 'RaidFrame'
+    }
     if DF.Wrath then
         table.insert(framesFrames, 'FocusFrame')
         table.insert(framesFrames, 'FocusTargetFrame')

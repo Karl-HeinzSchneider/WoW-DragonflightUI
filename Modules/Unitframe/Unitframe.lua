@@ -14,6 +14,7 @@ Module.SubFocusTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixin
 Module.SubParty = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Party'])
 Module.SubPet = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['PetFrame'])
 Module.SubPlayer = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['PlayerFrame'])
+Module.SubPlayerSecondaryRes = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['PlayerFrameSecondaryRes'])
 Module.SubRaid = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['RaidFrame'])
 Module.SubTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Target'])
 Module.SubTargetOfTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['TargetOfTarget'])
@@ -30,6 +31,7 @@ local defaults = {
         party = Module.SubParty.Defaults,
         pet = Module.SubPet.Defaults,
         player = Module.SubPlayer.Defaults,
+        playerSecondaryRes = Module.SubPlayerSecondaryRes.Defaults,
         raid = Module.SubRaid.Defaults,
         target = Module.SubTarget.Defaults,
         tot = Module.SubTargetOfTarget.Defaults
@@ -92,6 +94,8 @@ function Module:RegisterSettings()
     register('party', {order = 0, name = self.SubParty.Options.name, descr = 'Partyss', isNew = false})
     register('pet', {order = 0, name = self.SubPet.Options.name, descr = 'Petss', isNew = false})
     register('player', {order = 0, name = self.SubPlayer.Options.name, descr = 'players', isNew = false})
+    register('playerSecondaryRes',
+             {order = 0, name = self.SubPlayerSecondaryRes.Options.name, descr = 'players', isNew = true})
     register('raid', {order = 0, name = self.SubRaid.Options.name, descr = 'Raidss', isNew = false})
     register('target', {order = 0, name = self.SubTarget.Options.name, descr = 'Targetss', isNew = false})
     register('targetoftarget', {order = 0, name = self.SubTargetOfTarget.Options.name, descr = 'Targetss', isNew = true})
@@ -117,6 +121,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Party')
     refreshCat('Pet')
     refreshCat('Player')
+    refreshCat('playerSecondaryRes')
     refreshCat('Raid')
     refreshCat('Target')
     refreshCat('TargetOfTarget')
@@ -201,6 +206,7 @@ function Module:ApplySettings(sub)
 
     self.SubParty:UpdateState(db.party)
     self.SubPlayer:UpdateState(db.player)
+    self.SubPlayerSecondaryRes:UpdateState(db.playerSecondaryRes)
     self.SubPet:UpdateState(db.pet)
     self.SubTarget:UpdateState(db.target)
     self.SubTargetOfTarget:UpdateState(db.tot)
@@ -494,6 +500,7 @@ function Module:Era()
 
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
@@ -517,6 +524,7 @@ function Module:Wrath()
     -- self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
@@ -537,6 +545,7 @@ function Module:Cata()
     self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
@@ -557,6 +566,7 @@ function Module:Mists()
     self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
