@@ -711,6 +711,10 @@ do
     L["PlayerFrameHideRestingIcon"] = "Hide Resting Icon"
     L["PlayerFrameHideRestingIconDesc"] = "Hides the resting icon on the player frame."
 
+    -- Player Secondary< Res
+    L["PlayerSecondaryResName"] = "Player Secondary Ressource"
+    L["PlayerSecondaryResNameDesc"] = ""
+
     -- PowerBar_Alt
     L["PowerBarAltName"] = "Player_PowerBarAlt"
     L["PowerBarAltNameDesc"] = ""
