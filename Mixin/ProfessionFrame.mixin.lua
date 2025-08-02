@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local LibTradeSkillRecipes = LibStub("LibTradeSkillRecipes-1")
@@ -1332,7 +1334,9 @@ function DFProfessionMixin:Refresh(force)
     end
 
     self:UpdateHeader()
+    -- Helper:Benchmark('Refresh- > self:UpdateRecipeList()', function()
     self:UpdateRecipeList()
+    -- end, 0)
     -- self:UpdateRecipe()
     self:CheckFilter()
 end
@@ -1819,44 +1823,43 @@ function DFProfessionMixin:IsRecipeSpell(index)
     end
 end
 
+local recipeExpansionSum = 0;
 ---returns expansionID, or -1 if not found
 ---@param index number
 ---@return number
 function DFProfessionMixin:GetRecipeExpansion(index)
     if not index or index == 0 then return -1 end
-    local tooltip = self.ScanningTooltip
 
     if self.TradeSkillOpen then
         local numSkills = GetNumTradeSkills()
         if index > numSkills then return -1; end
 
-        local retOK, ret1 = pcall(function()
-            tooltip:SetTradeSkillItem(index)
-        end);
-        if not retOK then
-            -- print('ERR', index, numSkills)
-            return -1
-        end
-
-        local _, link = tooltip:GetItem()
-        local _, spellID = tooltip:GetSpell()
-
         local info;
-        if link then
-            -- print('~~ITEM')
-
-            local itemString = string.match(link, "item[%-?%d:]+")
-            if not itemString then return -1; end
-
-            local _, itemIdStr = strsplit(":", itemString)
-            local itemId = tonumber(itemIdStr)
-            if not itemId or itemId == "" then return -1; end
-
-            info = LibTradeSkillRecipes:GetInfoByItemId(itemId)
-
-        elseif spellID then
-            -- print('~~SPELL')
-            info = LibTradeSkillRecipes:GetInfoBySpellId(spellID)
+        do
+            local itemLink = GetTradeSkillItemLink(index);
+            if itemLink then
+                local itemID = tonumber(itemLink:match("item:(%d+)")) or nil;
+                if not itemID then return -1 end
+                -- local _, dur = Helper:Benchmark('LibTradeSkillRecipes:GetInfoByItemId()' .. itemID, function()
+                info = LibTradeSkillRecipes:GetInfoByItemId(itemID)
+                -- end, 4)
+                -- recipeExpansionSum = recipeExpansionSum + dur;
+            else
+                -- no item? try spell
+                local tooltip = self.ScanningTooltip
+                local retOK, ret1 = pcall(function()
+                    tooltip:SetTradeSkillItem(index)
+                end);
+                if not retOK then
+                    -- print('ERR', index, numSkills)
+                    return -1
+                end
+                local _, spellID = tooltip:GetSpell()
+                -- local _, dur = Helper:Benchmark('LibTradeSkillRecipes:GetInfoByItemId()' .. itemID, function()
+                info = LibTradeSkillRecipes:GetInfoBySpellId(spellID)
+                -- end, 4)
+                -- recipeExpansionSum = recipeExpansionSum + dur; 
+            end
         end
 
         if not info then return -1 end
@@ -1872,6 +1875,7 @@ function DFProfessionMixin:GetRecipeExpansion(index)
         if type(expansion) ~= 'number' then expansion = -1 end
         return expansion
     elseif self.CraftOpen then
+        local tooltip = self.ScanningTooltip
         tooltip:SetCraftSpell(index)
 
         local _, spellID = tooltip:GetSpell()
@@ -2385,7 +2389,9 @@ function DFProfessionMixin:UpdateRecipeList()
 
         local oldScroll = recipeList.ScrollBox:GetScrollPercentage()
 
+        -- Helper:Benchmark('UpdateRecipeListTradeskill', function()
         recipeList:UpdateRecipeListTradeskill()
+        -- end, 1)
 
         recipeList:SelectRecipe(index, true)
         self.FavoriteButton:UpdateFavoriteState()
@@ -2692,14 +2698,29 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     local subHeader = nil;
     local subHeaderNodesTable = {}
 
+    local headerCache = {}
+    local subHeaderCache = {}
+
+    -- local summer = 0;
+    -- local filtersum = 0;
+    -- local insertsum = 0;
+    -- local getsum = 0;
+
+    -- recipeExpansionSum = 0;
     do
         local data = {id = 0, categoryInfo = {name = L["ProfessionFavorites"], isExpanded = true}}
-        dataProvider:Insert(data)
+        headerCache[0] = dataProvider:Insert(data)
     end
 
+    local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+          currentRank, maxRank, startingRank;
+
     for i = 1, numSkills do
-        local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
-              currentRank, maxRank, startingRank = GetTradeSkillInfo(i);
+        -- local _, dur = Helper:Benchmark('GetTradeSkillInfo' .. i, function()
+        skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar, currentRank, maxRank, startingRank =
+            GetTradeSkillInfo(i);
+        -- end, 2)
+        -- getsum = getsum + dur;
 
         if skillType == 'header' then
             local data = {
@@ -2707,7 +2728,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                 skillType = skillType,
                 categoryInfo = {name = skillName, isExpanded = isExpanded == 1}
             }
-            dataProvider:Insert(data)
+            headerCache[i] = dataProvider:Insert(data)
             headerID = i
             subHeader = nil;
         elseif skillType == 'subheader' then
@@ -2723,19 +2744,11 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                     startingRank = startingRank
                 }
             }
-            -- dataProvider:Insert(data)
-            -- dataProvider:InsertInParentByPredicate(data, function(node)
-            --     local nodeData = node:GetData()
-            --     return nodeData.id == headerID
-            -- end)
-            local foundNode = dataProvider:FindElementDataByPredicate(function(node)
-                local nodeData = node:GetData()
-                return nodeData.id == headerID
-            end, TreeDataProviderConstants.IncludeCollapsed);
-
+            local foundNode = headerCache[headerID];
             if foundNode then
                 local newNode = foundNode:Insert(data);
                 table.insert(subHeaderNodesTable, newNode)
+                subHeaderCache[i] = newNode;
                 subHeader = i
             else
                 -- should not happen
@@ -2760,16 +2773,19 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                 }
             }
             if skillType == 'easy' and numSkillUps == 0 then data.recipeInfo.numSkillUps = 1; end
-            -- if numSkillUps > 1 and skillType == "optimal" then print(skillName, numSkillUps) end
 
             if not DF.API.Version.IsClassic then
                 --
+                -- local _, dur = Helper:Benchmark('GetRecipeExpansion' .. i, function()
                 local expansion = parent:GetRecipeExpansion(i);
                 data.expansion = expansion;
+                -- end, 2)
+                -- summer = summer + dur;
             end
 
             local filtered = true
 
+            -- local _, dur = Helper:Benchmark('CheckFilter' .. i, function()
             for k, filter in pairs(filterTable) do
                 --
                 if filter.enabled then
@@ -2780,30 +2796,38 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                     end
                 end
             end
+            -- end, 2)
+            -- filtersum = filtersum + dur;
 
             if filtered then
-                --
-                local idToCheck;
-                if subHeader then
-                    idToCheck = subHeader;
+                --              
+                local foundNode;
+                -- local _, dur = Helper:Benchmark('Insert' .. i, function()
+                if data.isFavorite then
+                    foundNode = headerCache[0];
+                elseif subHeader then
+                    foundNode = subHeaderCache[subHeader];
                 else
-                    idToCheck = headerID
+                    foundNode = headerCache[headerID];
                 end
-                dataProvider:InsertInParentByPredicate(data, function(node)
-                    local nodeData = node:GetData()
 
-                    if data.isFavorite then
-                        return nodeData.id == 0
-                    else
-
-                        return nodeData.id == idToCheck
-                    end
-                end)
+                if foundNode then
+                    --
+                    local newNode = foundNode:Insert(data);
+                else
+                    -- should not happen
+                end
+                -- end, 2)
+                -- insertsum = insertsum + dur;
             end
         end
     end
 
-    -- DevTools_Dump(dataProvider)
+    -- print('----SUM-GetRecipeExpansion', summer * 1000, 'ms')
+    -- print('----SUM-CheckFilter', filtersum * 1000, 'ms')
+    -- print('----SUM-Insert', insertsum * 1000, 'ms')
+    -- print('----SUM-GetTradeSkillInfo', getsum * 1000, 'ms')
+    -- print('----SUM-LibTradeSkillRecipes:GetInfoByItemId()', recipeExpansionSum * 1000, 'ms')
 
     local nodes = dataProvider:GetChildrenNodes()
     local nodesToRemove = {}
@@ -2842,7 +2866,9 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     end
 
     -- print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
+    -- Helper:Benchmark('self.ScrollBox:SetDataProvider(dataProvider)', function()
     self.ScrollBox:SetDataProvider(dataProvider);
+    -- end, 2)
 end
 
 function DFProfessionFrameRecipeListMixin:UpdateRecipeListCraft()
