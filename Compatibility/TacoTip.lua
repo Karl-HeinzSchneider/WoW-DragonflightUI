@@ -1,9 +1,11 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 function DF.Compatibility:TacoTipCharacter()
+    -- print('DF.Compatibility:TacoTipCharacter()')
+    local f = CharacterModelFrame or CharacterModelScene
     local text = _G['PersonalGearScoreText']
     text:ClearAllPoints()
-    text:SetPoint('BOTTOMLEFT', CharacterModelFrame, 'BOTTOMLEFT', 10, 30)
+    text:SetPoint('BOTTOMLEFT', f, 'BOTTOMLEFT', 10, 30)
 
     local score = _G['PersonalGearScore']
     score:ClearAllPoints()
@@ -11,7 +13,7 @@ function DF.Compatibility:TacoTipCharacter()
 
     local itemlvltext = _G['PersonalAvgItemLvlText']
     itemlvltext:ClearAllPoints()
-    itemlvltext:SetPoint('BOTTOMRIGHT', CharacterModelFrame, 'BOTTOMRIGHT', -10, 30)
+    itemlvltext:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -10, 30)
 
     local itemlvl = _G['PersonalAvgItemLvl']
     itemlvl:ClearAllPoints()
