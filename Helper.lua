@@ -10,7 +10,7 @@ function Helper:Benchmark(label, func, level)
     -- level = level or 1;
     if level < 1 then
         local firstStr = string.format('|cffffd100-----Start Bench: |r|cff8080ff%s|r-----', label)
-        print(firstStr)
+        -- print(firstStr)
         DF:Debug(DF, firstStr)
     end
     local startTime = GetTimePreciseSec()
@@ -25,7 +25,7 @@ function Helper:Benchmark(label, func, level)
     --                           duration * 1000, duration)
     local str = string.format("|cffffd100%sBench: |r|cff8080ff%s|r took |cffffd100%.4f|r ms", levelStr, label,
                               duration * 1000)
-    print(str)
+    -- print(str)
     DF:Debug(DF, str)
     return results, duration, startTime, endTime;
 end
