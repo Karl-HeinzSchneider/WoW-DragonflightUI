@@ -2689,6 +2689,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     local numSkills = GetNumTradeSkills()
     local headerID = 0
     local subHeader = nil;
+    local subHeaderNodesTable = {}
 
     do
         local data = {id = 0, categoryInfo = {name = L["ProfessionFavorites"], isExpanded = true}}
@@ -2700,13 +2701,18 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
               currentRank, maxRank, startingRank = GetTradeSkillInfo(i);
 
         if skillType == 'header' then
-            local data = {id = i, categoryInfo = {name = skillName, isExpanded = isExpanded == 1}}
+            local data = {
+                id = i,
+                skillType = skillType,
+                categoryInfo = {name = skillName, isExpanded = isExpanded == 1}
+            }
             dataProvider:Insert(data)
             headerID = i
             subHeader = nil;
         elseif skillType == 'subheader' then
             local data = {
                 id = i,
+                skillType = skillType,
                 categoryInfo = {
                     name = skillName,
                     isExpanded = isExpanded == 1,
@@ -2717,17 +2723,29 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
                 }
             }
             -- dataProvider:Insert(data)
-            dataProvider:InsertInParentByPredicate(data, function(node)
+            -- dataProvider:InsertInParentByPredicate(data, function(node)
+            --     local nodeData = node:GetData()
+            --     return nodeData.id == headerID
+            -- end)
+            local foundNode = dataProvider:FindElementDataByPredicate(function(node)
                 local nodeData = node:GetData()
                 return nodeData.id == headerID
-            end)
-            subHeader = i
+            end, TreeDataProviderConstants.IncludeCollapsed);
+
+            if foundNode then
+                local newNode = foundNode:Insert(data);
+                table.insert(subHeaderNodesTable, newNode)
+                subHeader = i
+            else
+                -- should not happen
+            end
         else
             -- print('--', skillName)
             local isFavorite = parent:IsRecipeFavorite(skillName)
 
             local data = {
                 id = i,
+                skillType = skillType,
                 isFavorite = isFavorite,
                 isTradeskill = true,
                 recipeInfo = {
@@ -2789,16 +2807,30 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
     local nodes = dataProvider:GetChildrenNodes()
     local nodesToRemove = {}
     -- print('NODES', #nodes)
+    -- print('~SubHeaderNODES', #subHeaderNodesTable)
 
-    for k, child in ipairs(nodes) do
+    for k, sub in ipairs(subHeaderNodesTable) do
+        --      
+        local childNodes = sub:GetNodes();
+        local numChildNodes = #childNodes
+        -- print(k, sub, numChildNodes)
+        if numChildNodes < 1 then
+            -- print('<<')
+            local p = sub.parent
+            p:Remove(sub)
+        end
+    end
+
+    for k, node in ipairs(nodes) do
         --
-        local numChildNodes = #child:GetNodes()
+        local childNodes = node:GetNodes();
+        local numChildNodes = #childNodes
         -- print('numChildNodes', numChildNodes)
         if numChildNodes < 1 then
             --
             -- print('remove node')
             -- dataProvider:Remove(child)
-            table.insert(nodesToRemove, child)
+            table.insert(nodesToRemove, node)
         end
     end
 
