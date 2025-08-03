@@ -134,6 +134,9 @@ do
     L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
     L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
     L['CompatBaganatorEquipmentDesc'] = "Adds support for equipment sets as item source."
+    L['CompatBisTracker'] = "BISTracker"
+    L['CompatBisTrackerDesc'] =
+        "Adds compatibility for BISTracker when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
     L['CompatCharacterStatsClassicDesc'] =
         "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."

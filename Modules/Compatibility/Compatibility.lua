@@ -14,6 +14,7 @@ local defaults = {
             auctionator = true,
             baganator = true,
             baganatorEquipment = true,
+            bisTracker = true,
             characterstatsclassic = true,
             classicalendar = true,
             clique = true,
@@ -67,6 +68,12 @@ local compatOptions = {
             type = 'toggle',
             name = L["CompatBaganator"],
             desc = L["CompatBaganatorDesc"] .. getDefaultStr('baganator', 'general'),
+            order = 21
+        },
+        bisTracker = {
+            type = 'toggle',
+            name = L["CompatBisTracker"],
+            desc = L["CompatBisTrackerDesc"] .. getDefaultStr('bisTracker', 'general'),
             order = 21
         },
         characterstatsclassic = {
@@ -244,6 +251,19 @@ function Module:ApplySettingsInternal(sub, key)
 
     self:ConditionalOption('baganatorEquipment', 'general', L['CompatBaganatorEquipment'], function()
         DF.Compatibility:FuncOrWaitframe('Baganator', DF.Compatibility.BaganatorEquipment)
+    end)
+
+    self:ConditionalOption('bisTracker', 'general', L['CompatBisTracker'], function()
+        if UIModule['changeCharacterframe' .. 'Hooked'] then
+            Module:FuncOrWaitframe('BiSTracker', DF.Compatibility.BiSTracker)
+        else
+            DF.API.Modules:HookModuleFunction('UI', 'ApplySettings', function()
+                if UIModule['changeCharacterframe' .. 'Hooked'] and not Module['BiSTracker' .. 'Func'] then
+                    Module['BiSTracker' .. 'Func'] = true
+                    Module:FuncOrWaitframe('BiSTracker', DF.Compatibility.BiSTracker)
+                end
+            end)
+        end
     end)
 
     -- self:ConditionalOption('characterstatsclassic', 'general', L['CompatCharacterStatsClassic'], function()

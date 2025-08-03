@@ -1,7 +1,7 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 function DF.Compatibility:Pawn()
-    print('DF.Compatibility:Pawn()');
+    -- print('DF.Compatibility:Pawn()');
     local btn = _G['PawnUI_InventoryPawnButton']
     if not btn then return end
 
