@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
@@ -44,6 +46,8 @@ function DragonFlightUIConfigMixin:OnLoad()
 
     self:SetupSettingsCategorys()
     self:AddToolbar()
+
+    self:TestSearches()
 end
 
 function DragonFlightUIConfigMixin:OnShow()
@@ -130,6 +134,7 @@ function DragonFlightUIConfigMixin:SetupSettingsCategorys()
                           alphaSortComparator, true)
 
     self.SettingsDataTable = {}
+    DFSETTINGSDATATABLE = self.SettingsDataTable
 
     EventRegistry:RegisterCallback("DFSettingsCategoryListMixin.Event.OnSelectionChanged", function(_, newSelected, _)
         --
@@ -424,4 +429,75 @@ function DragonFlightUIConfigMixin:AddToolbar()
             v:SetPoint('LEFT', btnT[k - 1], 'RIGHT', 4, 0);
         end
     end
+end
+
+function DragonFlightUIConfigMixin:TestSearches()
+    print('DragonFlightUIConfigMixin:TestSearches()')
+
+    local t = {'x', 'Actionbar', 'gryph', 'modules'}
+
+    for k, v in ipairs(t) do
+        C_Timer.After(3, function()
+            Helper:Benchmark('SearchSettings:' .. v, function()
+                self:SearchSettings(v)
+            end, 0, DF)
+        end)
+    end
+end
+
+local match = function(str, text)
+    return strfind(strupper(str), strupper(text))
+end
+
+--  ~20% faster lol
+local matchOptimized = function(str, text)
+    return strfind(strupper(str), text)
+end
+
+local optionTableSearchKeys = {'name', 'desc', 'advancedName'}
+local optionElementSearchKeys = {'name', 'desc'}
+
+local foundFormat = '~> %s:'
+local foundElementFormat = '~> v.%s:'
+
+function DragonFlightUIConfigMixin:SearchSettings(text)
+    print('SearchSettings :', text)
+    local textUpper = strupper(text)
+
+    local count = 0;
+
+    for k, v in pairs(self.SettingsDataTable) do
+        --
+        -- print(k, v, v.name)
+        local options = v.options
+
+        for _, searchKey in ipairs(optionTableSearchKeys) do
+            --
+            if options[searchKey] then
+                --
+                if matchOptimized(options[searchKey], textUpper) then
+                    count = count + 1;
+                    -- print(string.format(foundFormat, searchKey), options[searchKey])
+                end
+            end
+        end
+
+        local args = options.args;
+        for key, opt in pairs(args) do
+            --
+            -- print(key, opt)
+            for _, searchKey in ipairs(optionElementSearchKeys) do
+                --
+                if opt[searchKey] then
+                    --
+                    if matchOptimized(opt[searchKey], textUpper) then
+                        count = count + 1;
+                        -- print(string.format(foundElementFormat, searchKey))
+                    end
+                end
+            end
+        end
+    end
+
+    print('~~>> FOUND: ', count)
 end
