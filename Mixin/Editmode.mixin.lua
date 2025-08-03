@@ -113,7 +113,7 @@ end
 
 function DragonflightUIEditModeFrameMixin:SetupOptions(data, main)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'DFSettingsList')
-    displayFrame:Display(data, true)
+    if data.shouldDisplayAsap then displayFrame:Display(data, true) end
     self.DisplayFrame = displayFrame
     self.DataOptions = data;
 
@@ -153,7 +153,7 @@ end
 
 function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'DFSettingsList')
-    displayFrame:Display(data, true)
+    if data.shouldDisplayAsap then displayFrame:Display(data, true) end
     self.DisplayFrameExtra = displayFrame
     self.DataExtraOptions = data;
 
@@ -872,7 +872,13 @@ end
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
     -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
     -- self.SelectionOptions
-    self.SelectionOptions.DisplayFrame:CallRefresh()
+    -- self.SelectionOptions.DisplayFrame:CallRefresh()
+    if self.SelectionOptions.DisplayFrame and self.SelectionOptions.DataOptions then
+        self.SelectionOptions.DisplayFrame:Display(self.SelectionOptions.DataOptions, true)
+    end
+    if self.SelectionOptions.DisplayFrameExtra and self.SelectionOptions.DataExtraOptions then
+        self.SelectionOptions.DisplayFrameExtra:Display(self.SelectionOptions.DataExtraOptions, true)
+    end
 end
 
 ----------

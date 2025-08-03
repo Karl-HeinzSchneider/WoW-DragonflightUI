@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
@@ -2045,13 +2047,22 @@ function Module:OnEnable()
     Module.Temp = {}
     Module.UpdateRangeHooked = false
 
-    self:EnableAddonSpecific()
+    Helper:Benchmark('EnableAddonSpecific', function()
+        self:EnableAddonSpecific()
+    end, 0, self)
+    Helper:Benchmark('SetupActionbarFrames', function()
+        self:SetupActionbarFrames()
+    end, 0, self)
+    Helper:Benchmark('AddStateUpdater', function()
+        Module.AddStateUpdater()
+    end, 0, self)
+    Helper:Benchmark('AddEditMode', function()
+        self:AddEditMode()
+    end, 0, self)
+    local _, dur = Helper:Benchmark('RegisterOptionScreens', function()
+        self:RegisterOptionScreens()
+    end, 0, self)
 
-    Module:SetupActionbarFrames()
-    Module.AddStateUpdater()
-    Module:AddEditMode()
-
-    Module:RegisterOptionScreens()
     Module:ApplySettings('ALL')
 
     self:SecureHook(DF, 'RefreshConfig', function()
@@ -2550,17 +2561,20 @@ end
 function Module:RegisterOptionScreens()
     for i = 1, 8 do
         local optionsBar
+        local defaultsIndex = i;
         if i == 4 then
             optionsBar = GetBarOption(5)
+            defaultsIndex = 5;
         elseif i == 5 then
             optionsBar = GetBarOption(4)
+            defaultsIndex = 4;
         else
             optionsBar = GetBarOption(i)
         end
         DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
             options = optionsBar,
             default = function()
-                setDefaultSubValues('bar' .. i)
+                setDefaultSubValues('bar' .. defaultsIndex)
             end
         })
     end
@@ -2616,6 +2630,7 @@ function Module:RegisterOptionScreens()
             end
         })
     end
+
     DF.ConfigModule:RegisterSettingsData('bags', 'actionbar', {
         options = bagsOptions,
         default = function()
@@ -2679,6 +2694,12 @@ function Module:RefreshOptionScreens()
 end
 
 function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     -- print('function Module:ApplySettings(sub)', sub, GetTime(), key)
     local db = Module.db.profile
 

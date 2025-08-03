@@ -1,10 +1,13 @@
 --
 DFSettingsCategoryListMixin = CreateFromMixins(CallbackRegistryMixin);
-DFSettingsCategoryListMixin:GenerateCallbackEvents({"OnSelectionChanged"});
+DFSettingsCategoryListMixin:GenerateCallbackEvents({"OnSelectionChanged", "OnRefresh"});
 
 function DFSettingsCategoryListMixin:OnLoad()
     -- print('DFSettingsCategoryListMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self)
+
+    self.CategoryCache = {}
+    self.ElementCache = {}
 
     self.DataProvider = CreateTreeDataProvider();
     local sortComparator = function(a, b)
@@ -40,8 +43,17 @@ function DFSettingsCategoryListMixin:OnLoad()
             end
             factory("DFSettingsCategoryHeader", Initializer);
         elseif elementData.elementInfo then
+            -- local key = categoryID .. '_' .. id
             local function Initializer(button, node)
                 button:Init(node, false);
+                self:UnregisterCallback('OnRefresh', button);
+                self:RegisterCallback('OnRefresh', function(_, message)
+                    --
+                    if message == elementData.key then
+                        -- print('OnRefresh', message)
+                        button:Init(node, false);
+                    end
+                end, button)
 
                 if elementData.key == self.selectedElement then self.selectionBehavior:Select(button) end
                 local selected = self.selectionBehavior:IsElementDataSelected(node);
@@ -130,6 +142,7 @@ function DFSettingsCategoryListMixin:SelectElement(id, scrollToElement)
 end
 
 function DFSettingsCategoryListMixin:RegisterCategory(id, info, sortComparator, isDragonflight)
+    -- print('RegisterCategory', id, info, sortComparator, isDragonflight)
     local dataProvider = self.DataProvider;
 
     local data = {
@@ -146,6 +159,8 @@ function DFSettingsCategoryListMixin:RegisterCategory(id, info, sortComparator, 
     }
 
     local node = dataProvider:Insert(data)
+    self.CategoryCache[id] = node;
+    -- print('CategoryCache', id)
 
     local affectChildren = false;
     local skipSort = true;
@@ -161,7 +176,7 @@ function DFSettingsCategoryListMixin:RegisterCategory(id, info, sortComparator, 
 end
 
 function DFSettingsCategoryListMixin:RegisterElement(id, categoryID, info)
-    local dataProvider = self.DataProvider;
+    -- local dataProvider = self.DataProvider;
 
     local data = {
         id = id,
@@ -177,12 +192,14 @@ function DFSettingsCategoryListMixin:RegisterElement(id, categoryID, info)
         }
     }
 
-    -- dataProvider:Insert(data)
-    dataProvider:InsertInParentByPredicate(data, function(node)
-        local nodeData = node:GetData()
-
-        return nodeData.id == data.categoryID
-    end)
+    local catNode = self.CategoryCache[categoryID]
+    if catNode then
+        local node = catNode:Insert(data)
+        self.ElementCache[data.key] = node;
+    else
+        -- should not happen?
+        -- print('no catnode', id, categoryID)
+    end
 end
 
 function DFSettingsCategoryListMixin:UpdateElementData(id, categoryID, info)
@@ -201,24 +218,12 @@ end
 
 function DFSettingsCategoryListMixin:EnableElement(id, categoryID)
     local key = categoryID .. '_' .. id;
-    local oldNode = self.DataProvider:FindElementDataByPredicate(function(node)
-        local data = node:GetData();
-        return data.key == key;
-    end, false)
 
-    local skipInvalidation = true;
-    self.DataProvider:Remove(oldNode, skipInvalidation);
-
+    local oldNode = self.ElementCache[key];
     local oldNodeData = oldNode:GetData();
     oldNodeData.isEnabled = true;
 
-    local parentNode = self.DataProvider:FindElementDataByPredicate(function(node)
-        local data = node:GetData();
-        return data.id == categoryID;
-    end, false)
-
-    parentNode:Insert(oldNodeData)
-    parentNode:Invalidate()
+    self:TriggerEvent(DFSettingsCategoryListMixin.Event.OnRefresh, key)
 end
 
 function DFSettingsCategoryListMixin:FindElementDataByPredicate(predicate)
