@@ -8,6 +8,7 @@
 	<Include file="Compatibility/LeatrixPlus.lua" />
 	<Include file="Compatibility/LFGBulletinBoard.lua" />
 	<Include file="Compatibility/MerInspect.lua" />
+	<Include file="Compatibility/Pawn.lua" />
 	<Include file="Compatibility/Ranker.lua" />
 	<Include file="Compatibility/TacoTip.lua" />
 	<Include file="Compatibility/TDInspect.lua" />

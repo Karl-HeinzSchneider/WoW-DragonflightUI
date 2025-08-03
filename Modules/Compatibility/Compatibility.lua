@@ -20,6 +20,7 @@ local defaults = {
             leatrixPlus = true,
             lfgbulletinboard = true,
             merinspect = true,
+            pawn = true,
             ranker = true,
             tacotip = true,
             tdinspect = true,
@@ -104,6 +105,13 @@ local compatOptions = {
             name = L["CompatMerInspect"],
             desc = L["CompatMerInspectDesc"] .. getDefaultStr('merinspect', 'general'),
             order = 21
+        },
+        pawn = {
+            type = 'toggle',
+            name = L["CompatPawn"],
+            desc = L["CompatPawnDesc"] .. getDefaultStr('pawn', 'general'),
+            order = 21,
+            new = true
         },
         ranker = {
             type = 'toggle',
@@ -315,6 +323,19 @@ function Module:ApplySettingsInternal(sub, key)
                     Module['merinspect' .. 'Func'] = true
                     Module:FuncOrWaitframe('MerInspect', DF.Compatibility.MerInspect)
                     Module:FuncOrWaitframe('MerInspect-classic-era', DF.Compatibility.MerInspectClassicEra)
+                end
+            end)
+        end
+    end)
+
+    self:ConditionalOption('pawn', 'general', L['CompatPawn'], function()
+        if UIModule['changeCharacterframe' .. 'Hooked'] then
+            Module:FuncOrWaitframe('Pawn', DF.Compatibility.Pawn)
+        else
+            DF.API.Modules:HookModuleFunction('UI', 'ApplySettings', function()
+                if UIModule['changeCharacterframe' .. 'Hooked'] and not Module['Pawn' .. 'Func'] then
+                    Module['Pawn' .. 'Func'] = true
+                    Module:FuncOrWaitframe('Pawn', DF.Compatibility.Pawn)
                 end
             end)
         end

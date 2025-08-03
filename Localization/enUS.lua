@@ -149,6 +149,8 @@ do
     L['CompatMerInspect'] = "MerInspect"
     L['CompatMerInspectDesc'] =
         "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
+    L['CompatPawn'] = "Pawn"
+    L['CompatPawnDesc'] = "Adds compatibility for Pawn when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatRanker'] = "Ranker"
     L['CompatRankerDesc'] =
         "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
