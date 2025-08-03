@@ -484,11 +484,6 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     local mode = state.stateDriver;
     -- print('DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)', mode)
 
-    -- unregister old driver
-    UnregisterStateDriver(handler, "page")
-    -- handler:SetAttribute("state-page", "nil")
-    handler:SetAttribute("_onstate-page", nil)
-
     local localizedClass, englishClass, classIndex = UnitClass("player");
     if mode == 'SMART' then
         local shouldChange = (englishClass == 'DRUID')
@@ -498,6 +493,12 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     -- print('~>', mode)
 
     if mode == 'DEFAULT' then
+        if self.DriverCache then
+            UnregisterStateDriver(handler, "page");
+            handler:SetAttribute("_onstate-page", nil);
+            self.DriverCache = nil;
+        end
+
         for i, btn in ipairs(self.buttonTable) do
             --
             btn:SetAttribute("useparent-actionpage", true);
@@ -530,6 +531,12 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         tinsert(driverTable, "1")
 
         local driver = table.concat(driverTable, ';')
+
+        if driver == self.DriverCache then return; end
+        self.DriverCache = driver;
+        UnregisterStateDriver(handler, "page")
+        handler:SetAttribute("_onstate-page", nil)
+
         local result, target = SecureCmdOptionParse(driver)
 
         -- print('~~>> NOW:', result)
@@ -557,6 +564,12 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         tinsert(driverTable, "1")
 
         local driver = table.concat(driverTable, ';')
+
+        if driver == self.DriverCache then return; end
+        self.DriverCache = driver;
+        UnregisterStateDriver(handler, "page")
+        handler:SetAttribute("_onstate-page", nil)
+
         local result, target = SecureCmdOptionParse(driver)
 
         for i, btn in ipairs(self.buttonTable) do
@@ -725,22 +738,6 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
     local handler = self.TargetStateDriver;
 
-    UnregisterStateDriver(handler, 'target-help');
-    UnregisterStateDriver(handler, 'target-harm');
-    UnregisterStateDriver(handler, 'target-all');
-
-    handler:SetAttribute('state-target-help', 'nil')
-    handler:SetAttribute('state-target-harm', 'nil')
-    handler:SetAttribute('state-target-all', 'nil')
-
-    for i, btn in ipairs(self.buttonTable) do
-        --
-        btn:SetAttribute('smarttarget', state.useMouseover or state.useAutoAssist);
-
-        btn:SetAttribute('checkselfcast', state.selfCast and true or nil);
-        btn:SetAttribute('checkfocuscast', state.focusCast and true or nil);
-    end
-
     local preSelf = '';
     if state.selfCast then preSelf = '[mod:SELFCAST]player;' end
 
@@ -766,27 +763,62 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
         harmDriver = harmDriver .. '[harm]nil; [@targettarget, harm]targettarget';
     end
 
-    if helpDriver ~= '' then
+    local changed = false;
+    if helpDriver ~= self.HelpDriverCache then
         --
-        helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
-        RegisterStateDriver(handler, 'target-help', helpDriver)
+        changed = true;
+        self.HelpDriverCache = helpDriver;
+        UnregisterStateDriver(handler, 'target-help');
+        handler:SetAttribute('state-target-help', 'nil')
+
+        if helpDriver ~= '' then
+            --
+            helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
+            RegisterStateDriver(handler, 'target-help', helpDriver)
+        end
     end
 
-    if harmDriver ~= '' then
+    if harmDriver ~= self.HarmDriverCache then
         --
-        harmDriver = string.format('%s%s nil', preFocus, harmDriver)
-        RegisterStateDriver(handler, 'target-harm', harmDriver)
+        changed = true;
+        self.HarmDriverCache = harmDriver;
+        UnregisterStateDriver(handler, 'target-harm');
+        handler:SetAttribute('state-target-harm', 'nil')
+
+        if harmDriver ~= '' then
+            --
+            harmDriver = string.format('%s%s nil', preFocus, harmDriver)
+            RegisterStateDriver(handler, 'target-harm', harmDriver)
+        end
     end
 
-    if allDriver ~= '' then
+    if allDriver ~= self.AllDriverCache then
         --
-        allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
-        RegisterStateDriver(handler, 'target-all', allDriver)
+        changed = true;
+        self.AllDriverCache = allDriver;
+        UnregisterStateDriver(handler, 'target-all');
+        handler:SetAttribute('state-target-all', 'nil')
+
+        if allDriver ~= '' then
+            --
+            allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
+            RegisterStateDriver(handler, 'target-all', allDriver)
+        end
     end
 
-    SecureHandlerExecute(handler, [[
+    if changed then
+        for i, btn in ipairs(self.buttonTable) do
+            --
+            btn:SetAttribute('smarttarget', state.useMouseover or state.useAutoAssist);
+
+            btn:SetAttribute('checkselfcast', state.selfCast and true or nil);
+            btn:SetAttribute('checkfocuscast', state.focusCast and true or nil);
+        end
+
+        SecureHandlerExecute(handler, [[
       --UpdateAllButtonStates()
     ]])
+    end
 end
 
 function DragonflightUIActionbarMixin:AddTargetStateTable(Module, opt, getDefaultStr)
