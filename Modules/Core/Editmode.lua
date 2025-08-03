@@ -27,6 +27,7 @@ local defaults = {
             ExtraActionButton = true,
             FlyoutBar = true,
             GroupLootContainer = true,
+            VehicleLeave = true,
             -- Bossframe
             BossFrames = true,
             -- buffs,
@@ -179,6 +180,7 @@ if true then
     displayTable['StanceBar'] = L['StanceBar']
     displayTable['TotemBar'] = L['TotemBar']
     displayTable['ExtraActionButton'] = L['ExtraActionButtonOptionsName']
+    displayTable['VehicleLeave'] = L['VehicleLeaveButton']
 
     -- combat
     displayTable['Buffs'] = L['BuffsOptionsName']
@@ -224,7 +226,9 @@ if true then
     end
 
     -- actionbar
-    local actionbarFrames = {'ActionBars', 'FlyoutBar', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
+    local actionbarFrames = {
+        'ActionBars', 'FlyoutBar', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar', 'VehicleLeave'
+    };
     if DF.Cata then table.insert(actionbarFrames, 'ExtraActionButton') end
     AddTableToCategory(actionbarFrames, 'headerActionbar');
 

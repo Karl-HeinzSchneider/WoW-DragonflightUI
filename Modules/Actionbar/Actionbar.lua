@@ -11,8 +11,11 @@ end
 
 Mixin(Module, DragonflightUIModulesMixin)
 
+Module.SubVehicleLeave = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['VehicleLeaveButton'])
+
 local defaults = {
     profile = {
+        vehicleLeave = Module.SubVehicleLeave.Defaults,
         scale = 1,
         x = 0,
         y = 0,
@@ -2095,6 +2098,8 @@ function Module:RegisterSettings()
     register('micromenu', {order = 16, name = microOptions.name, descr = 'desc', isNew = false})
     register('fps', {order = 17, name = fpsOptions.name, descr = 'desc', isNew = false})
 
+    register('vehicleLeave', {order = 18, name = self.SubVehicleLeave.Options.name, descr = 'desc', isNew = true})
+
     if DF.Cata then
         register('totembar', {order = 14, name = totemOptions.name, descr = 'desc', isNew = false})
         register('extraactionbutton', {order = 8.5, name = extraActionButtonOptions.name, descr = 'desc', isNew = false})
@@ -2691,6 +2696,8 @@ function Module:RefreshOptionScreens()
     MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
     Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.FPSFrame.DFEditModeSelection:RefreshOptionScreen();
+
+    self.SubVehicleLeave.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings(sub, key)
@@ -2747,6 +2754,7 @@ function Module:ApplySettingsInternal(sub, key)
 
         Module.UpdatePossesbarState(db.possess)
 
+        self.SubVehicleLeave:UpdateState(db.vehicleLeave)
     elseif sub == 'bar1' then
         Module.bar1:SetState(db.bar1, key)
 
@@ -2800,6 +2808,8 @@ function Module:ApplySettingsInternal(sub, key)
         Module.MicroFrame:UpdateState(db.micro)
     elseif sub == 'fps' then
         Module.FPSFrame:SetState(db.fps)
+    elseif sub == 'vehicleLeave' then
+        self.SubVehicleLeave:UpdateState(db.vehicleLeave)
     end
 end
 
@@ -3645,6 +3655,8 @@ function Module:Era()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()
     Module.HookBags()
+
+    self.SubVehicleLeave:Setup()
 end
 
 function Module:TBC()
@@ -3673,6 +3685,8 @@ function Module:Wrath()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()
     Module.HookBags()
+
+    self.SubVehicleLeave:Setup()
 end
 
 function Module:Cata()

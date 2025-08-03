@@ -410,6 +410,10 @@ do
     -- widget below
     L["WidgetBelowName"] = "Widget Below Minimap"
     L["WidgetBelowNameDesc"] = ""
+
+    -- widget below
+    L["VehicleLeaveButton"] = "Vehicle Leave Button"
+    L["VehicleLeaveButtonDesc"] = ""
 end
 
 -- Buffs
