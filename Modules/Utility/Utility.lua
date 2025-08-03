@@ -122,6 +122,12 @@ function Module:ApplySettings(sub, key)
     end, 0, self)
 end
 
+function Module:ApplySettingsInternal(sub, key)
+    local db = Module.db.profile
+
+    Module:HookFriendsColor(db.first.friendsColor)
+end
+
 function Module:SetupLookupTable()
     local localClassTable = {}
     if GetLocale() ~= "enUS" then
