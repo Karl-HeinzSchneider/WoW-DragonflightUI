@@ -1188,9 +1188,9 @@ function DFProfessionMixin:UpdateTabs()
             if tmp then
                 v:SetPoint('LEFT', tmp, 'RIGHT', 4, 0)
             else
-                v:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 2)
+                v:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 12, 3)
             end
-            DragonflightUIMixin:ResizeTab(v)
+            DragonflightUIMixin:ResizeTab(v, nil, nil, 64)
             tmp = v
         else
             v:SetWidth(0.01)
