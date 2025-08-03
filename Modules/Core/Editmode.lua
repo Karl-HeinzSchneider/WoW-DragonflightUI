@@ -316,7 +316,8 @@ function Module:RegisterOptionScreens()
         options = generalOptions,
         default = function()
             setDefaultSubValues('general')
-        end
+        end,
+        shouldDisplayAsap = true
     }, true)
 
     Module.EditModeFrame:SetupAdvancedOptions({
@@ -325,7 +326,8 @@ function Module:RegisterOptionScreens()
         options = advancedOptions,
         default = function()
             setDefaultSubValues('advanced')
-        end
+        end,
+        shouldDisplayAsap = true
     })
 end
 
