@@ -2561,17 +2561,20 @@ end
 function Module:RegisterOptionScreens()
     for i = 1, 8 do
         local optionsBar
+        local defaultsIndex = i;
         if i == 4 then
             optionsBar = GetBarOption(5)
+            defaultsIndex = 5;
         elseif i == 5 then
             optionsBar = GetBarOption(4)
+            defaultsIndex = 4;
         else
             optionsBar = GetBarOption(i)
         end
         DF.ConfigModule:RegisterSettingsData('actionbar' .. i, 'actionbar', {
             options = optionsBar,
             default = function()
-                setDefaultSubValues('bar' .. i)
+                setDefaultSubValues('bar' .. defaultsIndex)
             end
         })
     end
