@@ -2062,9 +2062,6 @@ function Module:OnEnable()
     local _, dur = Helper:Benchmark('RegisterOptionScreens', function()
         self:RegisterOptionScreens()
     end, 0, self)
-    C_Timer.After(1, function()
-        print('~~~>>>>', 'RegisterOptionScreens took ' .. (dur * 1000) .. 'ms')
-    end)
 
     Module:ApplySettings('ALL')
 
@@ -2562,7 +2559,6 @@ function Module:AddEditMode()
 end
 
 function Module:RegisterOptionScreens()
-    -- [01:28:01] ~~~>>>> RegisterOptionScreens took 127.74899999931ms
     for i = 1, 8 do
         local optionsBar
         if i == 4 then
@@ -2632,7 +2628,6 @@ function Module:RegisterOptionScreens()
         })
     end
 
-    -- [01:27:40] ~~~>>>> RegisterOptionScreens took 15.913800001726ms
     DF.ConfigModule:RegisterSettingsData('bags', 'actionbar', {
         options = bagsOptions,
         default = function()
@@ -2641,7 +2636,6 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    -- [01:27:19] ~~~>>>> RegisterOptionScreens took 15.700999996625ms
     DF.ConfigModule:RegisterSettingsData('micromenu', 'actionbar', {
         options = microOptions,
         default = function()
@@ -2649,7 +2643,6 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    -- [01:27:03] ~~~>>>> RegisterOptionScreens took 15.616399999999ms
     DF.ConfigModule:RegisterSettingsData('fps', 'actionbar', {
         options = fpsOptions,
         default = function()
