@@ -140,7 +140,7 @@ function DFSettingsListMixin:Display(data, small)
     -- self.DataProvider:Flush()
     -- self.DataProvider = CreateTreeDataProvider()
     -- self.ScrollView:SetDataProvider(self.DataProvider)
-    -- print('display:', data.name)
+    -- print('display:', data.name, small)
 
     self.Args_Data = data;
     self.Args_Small = small;

@@ -159,14 +159,6 @@ function DragonFlightUIConfigMixin:RegisterSettingsData(id, categoryID, data)
     local key = categoryID .. '_' .. id;
     self.SettingsDataTable[key] = data;
 
-    local node = self.DFSettingsCategoryList:FindElementDataByKey(key)
-    -- print('node?!', key, node:GetData().key)
-    if not node then print(id, categoryID, data) end
-    local nodeData = node:GetData()
-    -- print('node?!', key, nodeData.key)
-
-    -- nodeData.isEnabled = true;
-    -- self.DFSettingsCategoryList:UpdateElementData(id, categoryID, nodeData)
     self.DFSettingsCategoryList:EnableElement(id, categoryID)
 
     if self.DFSettingsCategoryList.selectedElement == key then self.Container.DFSettingsList:Display(data) end
