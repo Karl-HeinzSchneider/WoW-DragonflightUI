@@ -133,6 +133,9 @@ do
     L['CompatBaganatorDesc'] = "将默认'暴雪'皮肤改为DragonflightUI风格"
     L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
     L['CompatBaganatorEquipmentDesc'] = "增加将装备套装作为物品来源的支持"
+    L['CompatBisTracker'] = "BISTracker"
+    L['CompatBisTrackerDesc'] =
+        "在启用'修改角色窗口'时，为 BISTracker 添加兼容支持。"
     L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
     L['CompatCharacterStatsClassicDesc'] =
         "当启用'修改角色窗口'时，为CharacterStatsClassic添加兼容支持"
@@ -146,6 +149,8 @@ do
     L['CompatLFGBulletinBoardDesc'] = "为LFG Bulletin Board添加兼容支持"
     L['CompatMerInspect'] = "MerInspect"
     L['CompatMerInspectDesc'] = "当启用'修改角色窗口'时，为MerInspect添加兼容支持"
+    L['CompatPawn'] = "Pawn"
+    L['CompatPawnDesc'] = "在启用'修改角色窗口'时，为 Pawn 添加兼容支持。"
     L['CompatRanker'] = "Ranker"
     L['CompatRankerDesc'] = "当启用'修改角色窗口'时，为Ranker添加兼容支持"
     L['CompatTacoTip'] = "TacoTip"
@@ -307,6 +312,11 @@ do
     L["MoreOptionsHideBarArtDesc"] = ""
     L["MoreOptionsHideBarScrolling"] = "隐藏条滚动动画"
     L["MoreOptionsHideBarScrollingDesc"] = ""
+    L["MoreOptionsHideBorder"] = "隐藏边框装饰"
+    L["MoreOptionsHideBorderDesc"] = "*开发中*"
+    L["MoreOptionsHideDivider"] = "隐藏分栏"
+    L["MoreOptionsHideDividerDesc"] = ""
+
     L["MoreOptionsGryphons"] = "狮鹫装饰"
     L["MoreOptionsGryphonsDesc"] = "狮鹫装饰"
     L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "按下快捷键时施法"
@@ -388,6 +398,18 @@ do
     L["ExtraActionButtonStyleDesc"] = ""
     L["ExtraActionButtonHideBackgroundTexture"] = "隐藏背景纹理"
     L["ExtraActionButtonHideBackgroundTextureDesc"] = ""
+
+    -- Roll
+    L["GroupLootContainerName"] = "掉落拾取窗口"
+    L["GroupLootContainerDesc"] = ""
+
+    -- widget below
+    L["WidgetBelowName"] = "小地图下面的小部件"
+    L["WidgetBelowNameDesc"] = ""
+
+    -- widget below
+    L["VehicleLeaveButton"] = "载具离开按钮"
+    L["VehicleLeaveButtonDesc"] = ""
 end
 
 -- Buffs
@@ -583,6 +605,8 @@ do
     L["TooltipCursorAnchorHeaderDesc"] = ""
     L["TooltipAnchorToMouse"] = "锚定到鼠标"
     L["TooltipAnchorToMouseDesc"] = "将部分提示框(如世界框体的单位提示)锚定到鼠标光标"
+    L["TooltipDefaultAnchorWhileCombat"] = "战斗中默认锚点"
+    L["TooltipDefaultAnchorWhileCombatDesc"] = "在战斗中用默认鼠标提示锚点代替鼠标光标锚点。"
     L["TooltipMouseAnchor"] = "鼠标锚点"
     L["TooltipMouseAnchorDesc"] = ""
     L["TooltipMouseX"] = "X轴"
@@ -677,6 +701,14 @@ do
     L["PlayerFrameHideSecondaryResDesc"] = "隐藏次要资源条，如灵魂碎片"
     L["PlayerFrameHideAlternatePowerBar"] = "隐藏德鲁伊备用能量条"
     L["PlayerFrameHideAlternatePowerBarDesc"] = "隐藏德鲁伊熊/猫形态时的备用能量条(法力条)"
+    L["PlayerFrameHideRestingGlow"] = "隐藏休息闪烁"
+    L["PlayerFrameHideRestingGlowDesc"] = "隐藏休息状态时玩家框体上的闪烁。"
+    L["PlayerFrameHideRestingIcon"] = "隐藏休息图标"
+    L["PlayerFrameHideRestingIconDesc"] = "隐藏玩家框体上的休息图标。"
+
+    -- Player Secondary< Res
+    L["PlayerSecondaryResName"] = "玩家次要资源"
+    L["PlayerSecondaryResNameDesc"] = ""
 
     -- PowerBar_Alt
     L["PowerBarAltName"] = "玩家备用能量条"
@@ -688,6 +720,8 @@ do
     L["TargetFrameStyle"] = L["ButtonTableStyle"]
     L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
     L["TargetFrameClassColorDesc"] = "生命条使用职业颜色"
+    L["TargetFrameReactionColor"] = "生命条使用阵营颜色"
+    L["TargetFrameReactionColorDesc"] = "为生命条启用阵营颜色。"
     L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
     L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
     L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
@@ -722,6 +756,9 @@ do
     L["TargetFrameDynamicBuffSize"] = "动态增益图标大小"
     L["TargetFrameDynamicBuffSizeDesc"] = "在目标框体上增大玩家的增益/减益效果图标大小。"
 
+    -- ToT
+    L["TargetOfTargetFrameName"] = "目标的目标"
+    L["TargetOfTargetFrameDesc"] = ""
     -- Pet
     L["PetFrameName"] = "宠物框体"
     L["PetFrameDesc"] = "宠物框体设置"

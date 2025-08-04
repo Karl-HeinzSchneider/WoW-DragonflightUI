@@ -36,7 +36,7 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'BOTTOM',
             anchorParent = 'BOTTOM',
-            x = 300, -- 0
+            x = 425, -- 0
             y = 200 -- 152 = default blizz
         },
         widgetBelow = {
