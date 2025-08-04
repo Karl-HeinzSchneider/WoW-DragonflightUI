@@ -308,7 +308,7 @@ function SubModuleMixin:ChangeToTFrame(self, frame)
     port:SetDrawLayer('BACKGROUND', 0)
 
     if not self[frame:GetName() .. 'Background'] then
-        local background = frame:CreateTexture('DragonflightUITargetToTFrameBackground')
+        local background = frame:CreateTexture('DragonflightUI' .. frame:GetName() .. 'Background')
         background:SetDrawLayer('BACKGROUND', 1)
         background:SetTexture(tex2xBase .. 'ui-hud-unitframe-targetoftarget-portraiton-2x')
         background:SetTexCoord(0, 240 / 256, 0, 98 / 128)
@@ -325,8 +325,7 @@ function SubModuleMixin:ChangeToTFrame(self, frame)
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
 
     if not healthBar.DFMask then
-        local hpMask = PetFrameHealthBar:CreateMaskTexture()
-
+        local hpMask = healthBar:CreateMaskTexture()
         healthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
         healthBar.DFMask = hpMask
         hpMask:ClearAllPoints()

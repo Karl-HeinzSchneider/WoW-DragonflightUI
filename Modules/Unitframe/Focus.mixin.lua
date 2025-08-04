@@ -343,37 +343,17 @@ function SubModuleMixin:ChangeFocusFrame()
     FocusFrameTextureFrameTexture:Hide()
     FocusFrameBackground:Hide()
 
-    if not frame.FocusFrameBackground then
-        local background = FocusFrame:CreateTexture('DragonflightUIFocusFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
-        frame.FocusFrameBackground = background
-    end
+    FocusFrame.Portrait = FocusFramePortrait;
+    FocusFrame.Name = FocusFrameTextureFrameName;
+    FocusFrame.NameBackground = FocusFrameNameBackground;
+    FocusFrame.Flash = FocusFrameFlash;
+    FocusFrame.LevelText = FocusFrameTextureFrameLevelText;
+    FocusFrame.DeadText = FocusFrameTextureFrameDeadText;
+    FocusFrame.UnconsciousText = FocusFrameTextureFrameUnconsciousText;
 
-    if not frame.FocusFrameBorder then
-        local border = FocusFrame:CreateTexture('DragonflightUIFocusFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-        border:SetPoint('LEFT', FocusFrame, 'LEFT', 0, -32.5 + 10)
-        frame.FocusFrameBorder = border
-    end
-
-    FocusFramePortrait:SetDrawLayer('BACKGROUND', -1)
-    FocusFramePortrait:SetSize(56, 56)
-    local CorrectionY = -3
-    local CorrectionX = -5
-    FocusFramePortrait:SetPoint('TOPRIGHT', FocusFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
+    self.ModuleRef.SubTarget:ChangeTargetFrameGeneral(self, FocusFrame)
 
     FocusFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', FocusFramePortrait, 'TOP', 0, 2)
-
-    FocusFrameNameBackground:ClearAllPoints()
-    FocusFrameNameBackground:SetTexture(base)
-    FocusFrameNameBackground:SetTexCoord(0.7939453125, 0.92578125, 0.3125, 0.34765625)
-    FocusFrameNameBackground:SetSize(135, 18)
-    FocusFrameNameBackground:ClearAllPoints()
-    FocusFrameNameBackground:SetPoint('BOTTOMLEFT', FocusFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
 
     if not FocusFrameNameBackground.DFHooked then
         FocusFrameNameBackground.DFHooked = true
@@ -388,21 +368,6 @@ function SubModuleMixin:ChangeFocusFrame()
         end)
     end
 
-    -- @TODO: change text spacing
-    FocusFrameTextureFrameName:ClearAllPoints()
-    FocusFrameTextureFrameName:SetPoint('BOTTOM', FocusFrameHealthBar, 'TOP', 10, 3 - 2)
-    FocusFrameTextureFrameName:SetSize(100, 12)
-
-    FocusFrameTextureFrameLevelText:ClearAllPoints()
-    FocusFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', FocusFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
-    FocusFrameTextureFrameLevelText:SetHeight(12)
-
-    FocusFrameTextureFrameDeadText:ClearAllPoints()
-    FocusFrameTextureFrameDeadText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
-
-    FocusFrameTextureFrameUnconsciousText:ClearAllPoints()
-    FocusFrameTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameHealthBar, 'CENTER', 0, 0)
-
     local dx = 5
     -- health vs mana bar
     local deltaSize = 134 - 125
@@ -416,35 +381,6 @@ function SubModuleMixin:ChangeFocusFrame()
     FocusFrameTextureFrame.ManaBarText:SetPoint('CENTER', FocusFrameManaBar, -deltaSize / 2, 0)
     FocusFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', FocusFrameManaBar, 'LEFT', dx, 0)
     FocusFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', FocusFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
-
-    -- Health 119,12
-    FocusFrameHealthBar:ClearAllPoints()
-    FocusFrameHealthBar:SetSize(125, 20)
-    FocusFrameHealthBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1, 0)
-    --[[    FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health'
-    )
-    FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
-    -- Mana 119,12
-    FocusFrameManaBar:ClearAllPoints()
-    -- FocusFrameManaBar:SetPoint('RIGHT', FocusFramePortrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
-    FocusFrameManaBar:SetPoint('TOPLEFT', FocusFrameHealthBar, 'BOTTOMLEFT', 0, -1)
-    FocusFrameManaBar:SetSize(134, 10)
-    FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
-    FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    if not FocusFrameManaBar.DFMask then
-        local manaMask = FocusFrameManaBar:CreateMaskTexture()
-        manaMask:SetPoint('TOPLEFT', FocusFrameManaBar, 'TOPLEFT', -61, 3)
-        manaMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        manaMask:SetTexCoord(0, 1, 0, 1)
-        manaMask:SetSize(256, 16)
-        FocusFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
-        FocusFrameManaBar.DFMask = manaMask;
-    end
 
     -- CUSTOM HealthText
     if not frame.FocusFrameHealthBarText then
@@ -470,7 +406,7 @@ function SubModuleMixin:ChangeFocusFrame()
         FocusFrameHealthBarDummy:HookScript('OnEnter', function(self)
             if FocusFrameTextureFrame.HealthBarTextRight:IsVisible() or FocusFrameTextureFrame.HealthBarText:IsVisible() then
             else
-                Module.UpdateFocusText()
+                frame:UpdateFocusText()
                 frame.FocusFrameHealthBarText:Show()
             end
         end)
@@ -503,7 +439,7 @@ function SubModuleMixin:ChangeFocusFrame()
         FocusFrameManaBarDummy:HookScript('OnEnter', function(self)
             if FocusFrameTextureFrame.ManaBarTextRight:IsVisible() or FocusFrameTextureFrame.ManaBarText:IsVisible() then
             else
-                Module.UpdateFocusText()
+                frame:UpdateFocusText()
                 frame.FocusFrameManaBarText:Show()
             end
         end)
@@ -512,83 +448,7 @@ function SubModuleMixin:ChangeFocusFrame()
         end)
     end
 
-    FocusFrameFlash:SetTexture('')
-
     FocusFrameToTDebuff1:SetPoint('TOPLEFT', FocusFrameToT, 'TOPRIGHT', 25, -20)
-
-    if not frame.FocusFrameFlash then
-        local flash = FocusFrame:CreateTexture('DragonflightUIFocusFrameFlash')
-        flash:SetDrawLayer('BACKGROUND', 2)
-        flash:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat')
-        flash:SetPoint('CENTER', FocusFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-        flash:SetSize(256, 128)
-        flash:SetScale(1)
-        flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-        flash:SetBlendMode('ADD')
-        frame.FocusFrameFlash = flash
-    end
-
-    hooksecurefunc(FocusFrameFlash, 'Show', function()
-        -- print('show')
-        FocusFrameFlash:SetTexture('')
-        frame.FocusFrameFlash:Show()
-        if (UIFrameIsFlashing(frame.FocusFrameFlash)) then
-        else
-            -- print('go flash')
-            local dt = 0.5
-            UIFrameFlash(frame.FocusFrameFlash, dt, dt, -1)
-        end
-    end)
-
-    hooksecurefunc(FocusFrameFlash, 'Hide', function()
-        -- print('hide')
-        FocusFrameFlash:SetTexture('')
-        if (UIFrameIsFlashing(frame.FocusFrameFlash)) then UIFrameFlashStop(frame.FocusFrameFlash) end
-        frame.FocusFrameFlash:Hide()
-    end)
-
-    if not frame.FocusExtra then
-        local extra = FocusFrame:CreateTexture('DragonflightUIFocusFramePortraitExtra')
-        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
-        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-        extra:SetSize(80, 79)
-        extra:SetDrawLayer('ARTWORK', 3)
-        extra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
-
-        extra.UpdateStyle = function()
-            local class = UnitClassification('focus')
-            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
-            if class == 'worldboss' then
-                frame.FocusExtra:Show()
-                frame.FocusExtra:SetSize(99, 81)
-                frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 13, 1)
-            elseif class == 'rareelite' or class == 'rare' then
-                frame.FocusExtra:Show()
-                frame.FocusExtra:SetSize(80, 79)
-                frame.FocusExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
-                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
-            elseif class == 'elite' then
-                frame.FocusExtra:Show()
-                frame.FocusExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-                frame.FocusExtra:SetSize(80, 79)
-                frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 4, 1)
-            else
-                local name, realm = UnitName('target')
-                if Module.famous[name] then
-                    frame.FocusExtra:Show()
-                    frame.FocusExtra:SetSize(99, 81)
-                    frame.FocusExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                    frame.FocusExtra:SetPoint('CENTER', FocusFramePortrait, 'CENTER', 13, 1)
-                else
-                    frame.FocusExtra:Hide()
-                end
-            end
-        end
-
-        frame.FocusExtra = extra
-    end
 end
 
 function SubModuleMixin:ReApplyFocusFrame()
