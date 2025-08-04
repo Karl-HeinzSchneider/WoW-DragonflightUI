@@ -526,13 +526,9 @@ function Module:UpdatePetFrame(state)
     if not f.PetFrameBackground then return end
 
     local petBackground = f.PetFrameBackground
-    local petBorder = f.PetFrameBorder
 
     petBackground:SetDesaturated(state.unitframeDesaturate)
     petBackground:SetVertexColor(c:GetRGB())
-
-    petBorder:SetDesaturated(state.unitframeDesaturate)
-    petBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateTargetFrame(state)
