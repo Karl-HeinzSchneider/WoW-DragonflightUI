@@ -291,6 +291,83 @@ function SubModuleMixin:Update()
     self.PreviewTargetOfTarget:UpdateState(state);
 end
 
+function SubModuleMixin:ChangeToTFrame(self, frame)
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
+    local port = frame.Portrait or _G[frame:GetName() .. 'Portrait']
+    local healthBar = _G[frame:GetName() .. 'HealthBar']
+    local manaBar = _G[frame:GetName() .. 'ManaBar']
+    local name = frame.Name;
+
+    frame:SetSize(120, 49)
+
+    local portDelta = 0.5; -- not 100% centered without it
+    port:SetSize(37, 37)
+    port:ClearAllPoints()
+    port:SetPoint('TOPLEFT', frame, 'TOPLEFT', 5 + portDelta, -5 + portDelta)
+    port:SetDrawLayer('BACKGROUND', 0)
+
+    if not self[frame:GetName() .. 'Background'] then
+        local background = frame:CreateTexture('DragonflightUITargetToTFrameBackground')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-targetoftarget-portraiton-2x')
+        background:SetTexCoord(0, 240 / 256, 0, 98 / 128)
+        background:SetSize(120, 49)
+        background:SetPoint('CENTER', frame, 'CENTER', 0, 0)
+
+        self[frame:GetName() .. 'Background'] = background
+    end
+
+    healthBar:ClearAllPoints()
+    healthBar:SetPoint('BOTTOMLEFT', port, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    healthBar:SetSize(70, 10 + 0.5)
+    healthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+
+    if not healthBar.DFMask then
+        local hpMask = PetFrameHealthBar:CreateMaskTexture()
+
+        healthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        healthBar.DFMask = hpMask
+        hpMask:ClearAllPoints()
+        hpMask:SetPoint('TOPLEFT', healthBar, 'TOPLEFT', -29, 3)
+        hpMask:SetTexture(tex2xBase .. 'uipartyframeportraitonhealthmask', 'CLAMPTOBLACKADDITIVE',
+                          'CLAMPTOBLACKADDITIVE')
+        hpMask:SetTexCoord(0, 1, 0, 1)
+        hpMask:SetSize(128, 16 + 0.5)
+    end
+
+    manaBar:ClearAllPoints()
+    manaBar:SetPoint('TOPLEFT', healthBar, 'BOTTOMLEFT', -4, -1 + 0.5)
+    manaBar:SetSize(74, 7 + 0.5)
+    manaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+    manaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+
+    if not manaBar.DFMask then
+        local manaMask = manaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -27, 4)
+        manaMask:SetTexture(tex2xBase .. 'uipartyframeportraitonmanamask', 'CLAMPTOBLACKADDITIVE',
+                            'CLAMPTOBLACKADDITIVE')
+        -- hpMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(128, 16 + 0.5)
+        manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        manaBar.DFMask = manaMask
+    end
+
+    name:ClearAllPoints()
+    -- name:SetPoint('LEFT', port, 'RIGHT', 1 + 1, 2 + 12 - 1)
+    name:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', 0, 1)
+    name:SetJustifyH('LEFT')
+    name:SetJustifyV('BOTTOM')
+    name:SetFontObject(GameFontNormalSmall)
+    name:SetSize(68, 10)
+
+    local debuff1 = _G[frame:GetName() .. 'Debuff1']
+    if debuff1 then debuff1:SetPoint('TOPLEFT', frame, 'TOPRIGHT', 5, -20) end
+end
+
 function SubModuleMixin:ChangeToT()
     local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
 
@@ -298,81 +375,21 @@ function SubModuleMixin:ChangeToT()
     TargetFrameToT:ClearAllPoints()
     TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
 
-    TargetFrameToT:SetSize(120, 49)
-
-    local portDelta = 0.5; -- not 100% centered without it
-    TargetFrameToTPortrait:SetSize(37, 37)
-    TargetFrameToTPortrait:ClearAllPoints()
-    TargetFrameToTPortrait:SetPoint('TOPLEFT', TargetFrameToT, 'TOPLEFT', 5 + portDelta, -5 + portDelta)
-    TargetFrameToTPortrait:SetDrawLayer('BACKGROUND', 0)
+    TargetFrameToT.Name = TargetFrameToTTextureFrameName
+    self:ChangeToTFrame(self, TargetFrameToT)
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
 
     -- TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
     local totDelta = 1
 
-    if not self.TargetFrameToTBackground then
-        local background = TargetFrameToT:CreateTexture('DragonflightUITargetToTFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 1)
-        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-targetoftarget-portraiton-2x')
-        background:SetTexCoord(0, 240 / 256, 0, 98 / 128)
-        background:SetSize(120, 49)
-        background:SetPoint('CENTER', TargetFrameToT, 'CENTER', 0, 0)
-
-        self.TargetFrameToTBackground = background
-    end
-
     TargetFrameToTBackground:Hide()
-
-    TargetFrameToTHealthBar:ClearAllPoints()
-    TargetFrameToTHealthBar:SetPoint('BOTTOMLEFT', TargetFrameToTPortrait, 'RIGHT', 2 - portDelta,
-                                     -2.75 - portDelta - 0.5)
-    TargetFrameToTHealthBar:SetSize(70, 10 + 0.5)
-    TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-
-    if not TargetFrameToTHealthBar.DFMask then
-        local hpMask = PetFrameHealthBar:CreateMaskTexture()
-
-        TargetFrameToTHealthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
-        TargetFrameToTHealthBar.DFMask = hpMask
-        hpMask:ClearAllPoints()
-        hpMask:SetPoint('TOPLEFT', TargetFrameToTHealthBar, 'TOPLEFT', -29, 3)
-        hpMask:SetTexture(tex2xBase .. 'uipartyframeportraitonhealthmask', 'CLAMPTOBLACKADDITIVE',
-                          'CLAMPTOBLACKADDITIVE')
-        hpMask:SetTexCoord(0, 1, 0, 1)
-        hpMask:SetSize(128, 16 + 0.5)
-    end
-
-    TargetFrameToTManaBar:ClearAllPoints()
-    TargetFrameToTManaBar:SetPoint('TOPLEFT', TargetFrameToTHealthBar, 'BOTTOMLEFT', -4, -1 + 0.5)
-    TargetFrameToTManaBar:SetSize(74, 7 + 0.5)
-    TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-    TargetFrameToTManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
-
-    if not TargetFrameToTManaBar.DFMask then
-        local manaMask = TargetFrameToTManaBar:CreateMaskTexture()
-        manaMask:ClearAllPoints()
-        manaMask:SetPoint('TOPLEFT', TargetFrameToTManaBar, 'TOPLEFT', -27, 4)
-        manaMask:SetTexture(tex2xBase .. 'uipartyframeportraitonmanamask', 'CLAMPTOBLACKADDITIVE',
-                            'CLAMPTOBLACKADDITIVE')
-        -- hpMask:SetTexCoord(0, 1, 0, 1)
-        manaMask:SetSize(128, 16 + 0.5)
-        TargetFrameToTManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
-        TargetFrameToTManaBar.DFMask = manaMask
-    end
-
-    TargetFrameToTTextureFrameName:ClearAllPoints()
-    TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1 + totDelta)
 
     TargetFrameToTTextureFrameDeadText:ClearAllPoints()
     TargetFrameToTTextureFrameDeadText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
 
     TargetFrameToTTextureFrameUnconsciousText:ClearAllPoints()
     TargetFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
-
-    TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 5, -20)
 
     if not TargetFrameToT.DFRangeHooked then
         TargetFrameToT.DFRangeHooked = true;
