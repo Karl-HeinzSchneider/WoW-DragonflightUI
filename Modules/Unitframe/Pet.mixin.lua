@@ -315,20 +315,27 @@ end
 
 function SubModuleMixin:ChangePetFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
 
     PetFrame:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 100, -70)
     PetFrameTexture:SetTexture('')
     PetFrameTexture:Hide()
 
+    PetFrame:SetSize(120, 49)
+
+    PetPortrait:SetSize(37, 37)
+    PetPortrait:ClearAllPoints()
+    PetPortrait:SetPoint('TOPLEFT', PetFrame, 'TOPLEFT', 5, -5)
+
     if not self.PetAttackModeTexture then
         -- local attack = PetFrame:CreateTexture('DragonflightUIPetAttackModeTexture')
         local attack = PetFrameHealthBar:CreateTexture('DragonflightUIPetAttackModeTexture')
         attack:SetDrawLayer('ARTWORK', 3)
-        attack:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status')
+        attack:SetTexture(tex2xBase .. 'ui-hud-unitframe-targetoftarget-portraiton-status-2x')
+        attack:SetTexCoord(0, 240 / 256, 0, 98 / 128)
         attack:SetSize(120, 49)
-        attack:SetTexCoord(0, 120 / 128, 0, 49 / 64)
-        attack:SetPoint('CENTER', PetFrame, 'CENTER', -2, 0)
+        attack:SetPoint('CENTER', PetFrame, 'CENTER', 0, 0)
+
         attack:SetBlendMode('ADD')
         attack:SetVertexColor(239 / 256, 0, 0)
 
@@ -375,53 +382,60 @@ function SubModuleMixin:ChangePetFrame()
         self.PetAttackModeTexture = attack
     end
 
-    -- PetAttackModeTexture:ClearAllPoints()
-    -- PetAttackModeTexture:SetSize(120, 49)
-    -- local attSize = 40
-    -- PetAttackModeTexture:SetSize(attSize * 2, attSize * 2)
-
-    -- PetAttackModeTexture:SetTexCoord(0.703125, 1.0, 0, 1.0)
-    -- PetAttackModeTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Status')
-    -- PetAttackModeTexture:SetTexCoord(0.441406, 0.558594, 0.3125, 0.408203)
-    -- PetAttackModeTexture:SetTexCoord(0, 120 / 128, 0, 49 / 64)
-    -- PetAttackModeTexture:SetPoint('CENTER', PetFrame, 'CENTER', -2, 0)
-    -- PetAttackModeTexture:SetVertexColor(239 / 256, 0, 0)
-
     if not self.PetFrameBackground then
         local background = PetFrame:CreateTexture('DragonflightUIPetFrameBackground')
         background:SetDrawLayer('BACKGROUND', 1)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-targetoftarget-portraiton-2x')
+        background:SetTexCoord(0, 240 / 256, 0, 98 / 128)
+        background:SetSize(120, 49)
+        background:SetPoint('CENTER', PetFrame, 'CENTER', 0, 0)
+
         self.PetFrameBackground = background
     end
 
-    if not self.PetFrameBorder then
-        local border = PetFrameHealthBar:CreateTexture('DragonflightUIPetFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PetPortrait, 'CENTER', -25 + 1, -10)
-        self.PetFrameBorder = border
-    end
     if PetFrameHappiness then PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -7, -2) end
 
     PetFrameHealthBar:ClearAllPoints()
-    PetFrameHealthBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 + 1 - 2 + 0.5, 0)
-    PetFrameHealthBar:SetSize(70.5, 10)
+    PetFrameHealthBar:SetPoint('BOTTOMLEFT', PetPortrait, 'RIGHT', 2, -2.75)
+    PetFrameHealthBar:SetSize(70, 10)
     PetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
     PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
     PetFrameHealthBar.SetStatusBarColor = noop
 
+    if not PetFrameHealthBar.DFMask then
+        local hpMask = PetFrameHealthBar:CreateMaskTexture()
+
+        PetFrameHealthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        PetFrameHealthBar.DFMask = hpMask
+        hpMask:ClearAllPoints()
+        hpMask:SetPoint('TOPLEFT', PetFrameHealthBar, 'TOPLEFT', -29, 3)
+        hpMask:SetTexture(tex2xBase .. 'uipartyframeportraitonhealthmask', 'CLAMPTOBLACKADDITIVE',
+                          'CLAMPTOBLACKADDITIVE')
+        hpMask:SetTexCoord(0, 1, 0, 1)
+        hpMask:SetSize(128, 16)
+    end
+
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
 
     PetFrameManaBar:ClearAllPoints()
-    PetFrameManaBar:SetPoint('LEFT', PetPortrait, 'RIGHT', 1 - 2 - 1.5 + 1 - 2 + 0.5, 2 - 10 - 1)
-    PetFrameManaBar:SetSize(74, 7.5)
+    PetFrameManaBar:SetPoint('TOPLEFT', PetFrameHealthBar, 'BOTTOMLEFT', -4, -1)
+    PetFrameManaBar:SetSize(74, 7)
     PetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
     PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+
+    if not PetFrameManaBar.DFMask then
+        local manaMask = PetFrameManaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', PetFrameManaBar, 'TOPLEFT', -27, 4)
+        manaMask:SetTexture(tex2xBase .. 'uipartyframeportraitonmanamask', 'CLAMPTOBLACKADDITIVE',
+                            'CLAMPTOBLACKADDITIVE')
+        -- hpMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(128, 16)
+        PetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        PetFrameManaBar.DFMask = manaMask
+    end
 
     hooksecurefunc('PetFrame_Update', function(_)
         self:UpdatePetManaBarTexture()
