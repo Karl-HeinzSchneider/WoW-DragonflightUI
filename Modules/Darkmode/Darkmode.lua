@@ -501,12 +501,12 @@ function Module:UpdatePlayerFrame(state)
 
     if not f.PlayerFrameDeco then return end
 
-    local playerFrameBorder = f.PlayerFrameBorder
+    local playerFrameBackground = f.PlayerFrameBackground
     local playerFrameDeco = f.PlayerFrameDeco
     local playerFramePortaitExtra = f.PlayerPortraitExtra
 
-    playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    playerFrameBorder:SetVertexColor(c:GetRGB())
+    playerFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    playerFrameBackground:SetVertexColor(c:GetRGB())
 
     playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
     playerFrameDeco:SetVertexColor(c:GetRGB())

@@ -513,47 +513,28 @@ end
 
 function SubModuleMixin:CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
 
     if not self.PlayerFrameBackground then
         local background = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
-
-        background:SetTexture(base)
-        background:SetTexCoord(0.7890625, 0.982421875, 0.001953125, 0.140625)
-        background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
+        background:SetTexelSnappingBias(0.0)
+        background:SetSnapToPixelGrid(false)
         self.PlayerFrameBackground = background
-    end
-
-    if not self.PlayerFrameBorder then
-        local border = PlayerFrameHealthBar:CreateTexture('DragonflightUIPlayerFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
-        self.PlayerFrameBorder = border
     end
 
     if not self.PlayerFrameDeco then
         local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
         textureSmall:SetDrawLayer('OVERLAY', 5)
-        textureSmall:SetTexture(base)
-        textureSmall:SetTexCoord(0.953125, 0.9755859375, 0.259765625, 0.3046875)
-        local delta = 15
-        textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
-        textureSmall:SetSize(23, 23)
-        textureSmall:SetScale(1)
+        textureSmall:SetTexture(tex2xBase .. 'ui-hud-unitframe-player-portraiton-cornerembellishment-2x')
+        textureSmall:SetTexCoord(0, 44 / 64, 0, 44 / 64)
+        textureSmall:SetSize(22, 22)
+        textureSmall:SetPoint('CENTER', PlayerFrame, 'CENTER', -32 + 1.5, -9.5)
+
         self.PlayerFrameDeco = textureSmall
     end
 end
 
 function SubModuleMixin:ChangePlayerframe()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    -- Module.RefreshPortrait()
-
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
@@ -566,11 +547,6 @@ function SubModuleMixin:ChangePlayerframe()
     PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 1)
     PlayerLevelText:SetHeight(12)
 
-    -- Health 119,12
-    PlayerFrameHealthBar:SetSize(125, 20)
-    PlayerFrameHealthBar:ClearAllPoints()
-    PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
-
     self:UpdatePlayerFrameHealthBar()
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
@@ -579,24 +555,12 @@ function SubModuleMixin:ChangePlayerframe()
     PlayerFrameHealthBarTextLeft:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', dx, 0)
     PlayerFrameHealthBarTextRight:SetPoint('RIGHT', PlayerFrameHealthBar, 'RIGHT', -dx, 0)
 
-    -- Mana 119,12
-    PlayerFrameManaBar:ClearAllPoints()
-    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17 + 0.5)
-    PlayerFrameManaBar:SetSize(125, 8)
-
-    PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, 0)
-    PlayerFrameManaBarTextLeft:SetPoint('LEFT', PlayerFrameManaBar, 'LEFT', dx, 0)
-    PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, 0)
+    local dy = -0.75;
+    PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, dy)
+    PlayerFrameManaBarTextLeft:SetPoint('LEFT', PlayerFrameManaBar, 'LEFT', dx, dy)
+    PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, dy)
 
     self:UpdatePlayerFrameManaBar()
-
-    -- UI-HUD-UnitFrame-Player-PortraitOn-Status
-    PlayerStatusTexture:SetTexture(base)
-    PlayerStatusTexture:SetSize(192, 71)
-    PlayerStatusTexture:SetTexCoord(0.1943359375, 0.3818359375, 0.169921875, 0.30859375)
-
-    PlayerStatusTexture:ClearAllPoints()
-    PlayerStatusTexture:SetPoint('TOPLEFT', self.PlayerFrameBorder, 'TOPLEFT', 1, 1)
 
     if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
 end
@@ -605,26 +569,26 @@ function SubModuleMixin:CreateCustomPortrait()
     PlayerPortrait:ClearAllPoints()
     PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
     PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
-    PlayerPortrait:SetSize(56, 56)
+    PlayerPortrait:SetSize(57, 57)
 
-    function PlayerPortrait:fixClassSize(class)
-        --
-        -- print('fixClassSize', class)
-        if class then
-            local delta = 4.5;
-            PlayerPortrait:SetVertexOffset(1, -delta, delta)
-            PlayerPortrait:SetVertexOffset(2, -delta, -delta)
-            PlayerPortrait:SetVertexOffset(3, delta, delta)
-            PlayerPortrait:SetVertexOffset(4, delta, -delta)
-        else
-            PlayerPortrait:SetVertexOffset(1, 0, 0)
-            PlayerPortrait:SetVertexOffset(2, 0, 0)
-            PlayerPortrait:SetVertexOffset(3, 0, 0)
-            PlayerPortrait:SetVertexOffset(4, 0, 0)
-        end
+    -- function PlayerPortrait:fixClassSize(class)
+    --     --
+    --     -- print('fixClassSize', class)
+    --     if class then
+    --         local delta = 4.5;
+    --         PlayerPortrait:SetVertexOffset(1, -delta, delta)
+    --         PlayerPortrait:SetVertexOffset(2, -delta, -delta)
+    --         PlayerPortrait:SetVertexOffset(3, delta, delta)
+    --         PlayerPortrait:SetVertexOffset(4, delta, -delta)
+    --     else
+    --         PlayerPortrait:SetVertexOffset(1, 0, 0)
+    --         PlayerPortrait:SetVertexOffset(2, 0, 0)
+    --         PlayerPortrait:SetVertexOffset(3, 0, 0)
+    --         PlayerPortrait:SetVertexOffset(4, 0, 0)
+    --     end
 
-    end
-    PlayerPortrait:fixClassSize(false)
+    -- end
+    -- PlayerPortrait:fixClassSize(false)
 end
 
 function SubModuleMixin:CreateRestFlipbook()
@@ -698,7 +662,6 @@ function SubModuleMixin:UpdatePlayerStatus()
         -- frame.PlayerFrameDeco:Show()
     elseif IsResting() then
         self.PlayerFrameDeco:Show()
-        self.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
 
         self.RestIcon:Show()
         self.RestIconAnimation:Play()
@@ -714,7 +677,6 @@ function SubModuleMixin:UpdatePlayerStatus()
         self.RestIcon:Hide()
         self.RestIconAnimation:Stop()
 
-        self.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
         self.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
     elseif PlayerFrame.inCombat then
         self.PlayerFrameDeco:Hide()
@@ -733,14 +695,12 @@ function SubModuleMixin:UpdatePlayerStatus()
         self.RestIcon:Hide()
         self.RestIconAnimation:Stop()
 
-        self.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         self.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
     end
 
     local db = self.ModuleRef.db.profile.player
     if db.hideRedStatus and (PlayerFrame.onHateList or PlayerFrame.inCombat) then
         --
-        self.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         self.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         PlayerStatusTexture:SetAlpha(0)
         PlayerStatusTexture:Hide()
@@ -870,55 +830,91 @@ function SubModuleMixin:UpdatePlayerFrameManaBar()
 end
 
 function SubModuleMixin:SetPlayerBiggerHealthbar(bigger)
-    local border = self.PlayerFrameBorder
     local background = self.PlayerFrameBackground
 
-    if not border or not background then return end
+    if not background then return end
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local base2 = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe2x'
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
+    if not PlayerFrameHealthBar.DFMask then
+        local hpMask = PlayerFrameHealthBar:CreateMaskTexture()
+
+        PlayerFrameHealthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        PlayerFrameHealthBar.DFMask = hpMask
+
+        function PlayerFrameHealthBar.DFMask:SetBigger(big)
+            if big then
+                hpMask:ClearAllPoints()
+                hpMask:SetPoint('TOPLEFT', PlayerFrameHealthBar, 'TOPLEFT', -2, -0.5)
+                hpMask:SetTexture(tex2xBase .. 'plunderstormplayerhealthbarmask2x', 'CLAMPTOBLACKADDITIVE',
+                                  'CLAMPTOBLACKADDITIVE')
+                hpMask:SetSize(128, 32)
+            else
+                hpMask:ClearAllPoints()
+                hpMask:SetPoint('TOPLEFT', PlayerFrameHealthBar, 'TOPLEFT', -2, 6)
+                hpMask:SetTexture(tex2xBase .. 'uiunitframeplayerhealthmask2x', 'CLAMPTOBLACKADDITIVE',
+                                  'CLAMPTOBLACKADDITIVE')
+                hpMask:SetSize(128, 32)
+            end
+        end
+    end
+
+    if not PlayerFrameManaBar.DFMask then
+        local manaMask = PlayerFrameManaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', PlayerFrameManaBar, 'TOPLEFT', -2, 2)
+        manaMask:SetTexture(tex2xBase .. 'uiunitframeplayermanamask2x', 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        -- hpMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(128, 16)
+        PlayerFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        PlayerFrameManaBar.DFMask = manaMask
+    end
 
     if bigger then
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn')
-        background:SetTexCoord(0, 198 / 256, 0, 71 / 128)
+        background:SetTexture(tex2xBase .. 'plunderstorm-ui-hud-unitframe-player-portraiton-2x')
+        background:SetTexCoord(0, 396 / 512, 0, 142 / 256)
         background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0 + 6)
-
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER-Plunder')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5 + 6)
+        background:SetPoint('CENTER', PlayerFrame, 'CENTER', 16, 6.05)
 
         PlayerStatusTexture:SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn-InCombat')
         PlayerStatusTexture:SetSize(192, 71)
         PlayerStatusTexture:SetTexCoord(0, 192 / 256, 0, 71 / 128)
 
-        PlayerFrameHealthBar:SetSize(125, 32)
+        PlayerFrameHealthBar:SetSize(124, 32)
         PlayerFrameHealthBar:ClearAllPoints()
-        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0 - 6)
+        PlayerFrameHealthBar:SetPoint('CENTER', PlayerFrame, 'CENTER', 46.95, 0)
+        PlayerFrameHealthBar.DFMask:SetBigger(true)
 
         PlayerFrameManaBar:SetAlpha(0)
         PlayerFrameManaBarText:SetAlpha(0)
         PlayerFrameManaBarTextLeft:SetAlpha(0)
         PlayerFrameManaBarTextRight:SetAlpha(0)
     else
-        background:SetTexture(base)
-        background:SetTexCoord(0.7890625, 0.982421875, 0.001953125, 0.140625)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-player-portraiton-2x')
+        background:SetTexCoord(0, 396 / 512, 0, 142 / 256)
+
         background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
+        background:ClearAllPoints()
+        background:SetPoint('CENTER', PlayerFrame, 'CENTER', 16, 6.05)
 
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+        -- ["UI-HUD-UnitFrame-Player-PortraitOn-Status"]={196, 71, 0.194824, 0.38623, 0.166992, 0.305664, false, false, "2x"},
+        PlayerStatusTexture:SetTexture(tex2xBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Status')
+        PlayerStatusTexture:SetSize(196, 71)
+        PlayerStatusTexture:SetTexCoord(0, 392 / 512, 0, 142 / 256)
+        PlayerStatusTexture:ClearAllPoints()
+        PlayerStatusTexture:SetPoint('CENTER', PlayerFrame, 'CENTER', 16 - 1, 6.05 + 1)
 
-        PlayerStatusTexture:SetTexture(base)
-        PlayerStatusTexture:SetSize(192, 71)
-        PlayerStatusTexture:SetTexCoord(0.1943359375, 0.3818359375, 0.169921875, 0.30859375)
-
-        PlayerFrameHealthBar:SetSize(125, 20)
+        PlayerFrameHealthBar:SetSize(124, 20)
         PlayerFrameHealthBar:ClearAllPoints()
-        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
+        PlayerFrameHealthBar:SetPoint('CENTER', PlayerFrame, 'CENTER', 46.95, 5.5)
+        PlayerFrameHealthBar.DFMask:SetBigger(false)
+
+        PlayerFrameManaBar:SetSize(124, 10.5)
+        PlayerFrameManaBar:ClearAllPoints()
+        PlayerFrameManaBar:SetPoint('CENTER', PlayerFrame, 'CENTER', 46.95, -10)
 
         PlayerFrameManaBar:SetAlpha(1)
         PlayerFrameManaBarText:SetAlpha(1)
