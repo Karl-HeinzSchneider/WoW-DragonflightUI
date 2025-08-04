@@ -545,9 +545,9 @@ function Module:UpdateTargetFrame(state)
     targetFrameBorder:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubTargetOfTarget
-    local targetOfTargetBorder = tot.TargetFrameToTBorder
-    targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
-    targetOfTargetBorder:SetVertexColor(c:GetRGB())
+    local TargetFrameToTBackground = tot.TargetFrameToTBackground
+    TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+    TargetFrameToTBackground:SetVertexColor(c:GetRGB())
 
     -- TODO
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)

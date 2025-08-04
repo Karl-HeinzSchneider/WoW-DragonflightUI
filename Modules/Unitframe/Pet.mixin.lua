@@ -323,9 +323,10 @@ function SubModuleMixin:ChangePetFrame()
 
     PetFrame:SetSize(120, 49)
 
+    local portDelta = 0.5;
     PetPortrait:SetSize(37, 37)
     PetPortrait:ClearAllPoints()
-    PetPortrait:SetPoint('TOPLEFT', PetFrame, 'TOPLEFT', 5, -5)
+    PetPortrait:SetPoint('TOPLEFT', PetFrame, 'TOPLEFT', 5 + portDelta, -5 + portDelta)
 
     if not self.PetAttackModeTexture then
         -- local attack = PetFrame:CreateTexture('DragonflightUIPetAttackModeTexture')
@@ -396,8 +397,8 @@ function SubModuleMixin:ChangePetFrame()
     if PetFrameHappiness then PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -7, -2) end
 
     PetFrameHealthBar:ClearAllPoints()
-    PetFrameHealthBar:SetPoint('BOTTOMLEFT', PetPortrait, 'RIGHT', 2, -2.75)
-    PetFrameHealthBar:SetSize(70, 10)
+    PetFrameHealthBar:SetPoint('BOTTOMLEFT', PetPortrait, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    PetFrameHealthBar:SetSize(70, 10 + 0.5)
     PetFrameHealthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
     PetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
@@ -413,14 +414,14 @@ function SubModuleMixin:ChangePetFrame()
         hpMask:SetTexture(tex2xBase .. 'uipartyframeportraitonhealthmask', 'CLAMPTOBLACKADDITIVE',
                           'CLAMPTOBLACKADDITIVE')
         hpMask:SetTexCoord(0, 1, 0, 1)
-        hpMask:SetSize(128, 16)
+        hpMask:SetSize(128, 16 + 0.5)
     end
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
 
     PetFrameManaBar:ClearAllPoints()
-    PetFrameManaBar:SetPoint('TOPLEFT', PetFrameHealthBar, 'BOTTOMLEFT', -4, -1)
-    PetFrameManaBar:SetSize(74, 7)
+    PetFrameManaBar:SetPoint('TOPLEFT', PetFrameHealthBar, 'BOTTOMLEFT', -4, -1 + 0.5)
+    PetFrameManaBar:SetSize(74, 7 + 0.5)
     PetFrameManaBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
     PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
@@ -432,7 +433,7 @@ function SubModuleMixin:ChangePetFrame()
         manaMask:SetTexture(tex2xBase .. 'uipartyframeportraitonmanamask', 'CLAMPTOBLACKADDITIVE',
                             'CLAMPTOBLACKADDITIVE')
         -- hpMask:SetTexCoord(0, 1, 0, 1)
-        manaMask:SetSize(128, 16)
+        manaMask:SetSize(128, 16 + 0.5)
         PetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
         PetFrameManaBar.DFMask = manaMask
     end
