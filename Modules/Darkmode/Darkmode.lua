@@ -603,10 +603,10 @@ function Module:UpdateFocusFrame(state)
     focusBackground:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubFocusTarget
-    local focusToTBorder = tot.FocusFrameToTBorder
+    local FocusFrameToTBackground = tot.FocusFrameToTBackground
 
-    focusToTBorder:SetDesaturated(state.unitframeDesaturate)
-    focusToTBorder:SetVertexColor(c:GetRGB())
+    FocusFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+    FocusFrameToTBackground:SetVertexColor(c:GetRGB())
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)

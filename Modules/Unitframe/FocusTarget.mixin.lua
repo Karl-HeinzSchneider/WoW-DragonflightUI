@@ -287,55 +287,14 @@ function SubModuleMixin:ChangeFocusToT()
     FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
     FocusFrameToT:SetSize(93 + 27, 45)
 
+    FocusFrameToT.Portrait = FocusFrameToTPortrait;
+    FocusFrameToT.Name = FocusFrameToTTextureFrameName;
+
+    self.ModuleRef.SubTargetOfTarget:ChangeToTFrame(self, FocusFrameToT)
+
     FocusFrameToTTextureFrameTexture:SetTexture('')
 
     FocusFrameToTBackground:Hide()
-    if not self.FocusFrameToTBackground then
-        local background = FocusFrameToTTextureFrame:CreateTexture('DragonflightUIFocusFrameToTBackground')
-        background:SetDrawLayer('BACKGROUND', 1)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
-        self.FocusFrameToTBackground = background
-    end
-
-    if not self.FocusFrameToTBorder then
-        local border = FocusFrameToTHealthBar:CreateTexture('DragonflightUIFocusFrameToTBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-        border:SetPoint('LEFT', FocusFrameToTPortrait, 'CENTER', -25 + 1, -10 + 1)
-        self.FocusFrameToTBorder = border
-    end
-
-    FocusFrameToTHealthBar:ClearAllPoints()
-    FocusFrameToTHealthBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 0 + 1)
-    FocusFrameToTHealthBar:SetFrameLevel(10)
-    FocusFrameToTHealthBar:SetSize(70.5, 10)
-
-    FocusFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-    FocusFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    FocusFrameToTManaBar:ClearAllPoints()
-    FocusFrameToTManaBar:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1)
-    FocusFrameToTManaBar:SetFrameLevel(10)
-    FocusFrameToTManaBar:SetSize(74, 7.5)
-
-    if not FocusFrameToTManaBar.DFMask then
-        local manaMask = FocusFrameToTManaBar:CreateMaskTexture()
-        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
-        manaMask:SetPoint('CENTER', FocusFrameToTManaBar, 'CENTER', 0, 0)
-        manaMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        manaMask:SetSize(74, 7)
-        FocusFrameToTManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
-        FocusFrameToTManaBar.DFMask = manaMask;
-    end
-
-    FocusFrameToTTextureFrameName:ClearAllPoints()
-    FocusFrameToTTextureFrameName:SetPoint('LEFT', FocusFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1)
 
     FocusFrameToTTextureFrameDeadText:ClearAllPoints()
     FocusFrameToTTextureFrameDeadText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
