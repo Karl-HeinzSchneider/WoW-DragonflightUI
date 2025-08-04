@@ -3,6 +3,7 @@ local activeSpec = 1
 local selectedSpec = 1;
 local frameRef = nil
 ------------
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 DragonflightUITalentsPanelMixin = {}
 
@@ -827,13 +828,17 @@ local PlayerClassRoleTable = {
     {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Rogue 
     {{'HEALER'}, {'HEALER'}, {'DAMAGER'}}, -- Priest  
     {{'TANK'}, {'DAMAGER'}, {'DAMAGER'}}, -- DeathKnight 
-    {{'DAMAGER'}, {'DAMAGER', 'TANK'}, {'HEALER'}}, -- Shaman 
-    {{'DAMAGER', 'HEALER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Mage 
+    {{'DAMAGER'}, {'DAMAGER'}, {'HEALER'}}, -- Shaman 
+    {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Mage 
     {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Warlock 
     {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}}, -- Monk 
     {{'DAMAGER'}, {'DAMAGER', 'TANK'}, {'HEALER'}}, -- Druid 
     {{'DAMAGER'}, {'DAMAGER'}, {'DAMAGER'}} -- Demon Hunter 
 }
+if DF.API.Version.IsSoD then
+    PlayerClassRoleTable[8][1] = {'DAMAGER', 'HEALER'} -- mage heal
+    PlayerClassRoleTable[7][2] = {'DAMAGER', 'TANK'} -- shaman tank
+end
 
 function DragonflightUITalentsPanelMixin:GetPlayerRole(panelID)
     local localizedClass, englishClass, classIndex = UnitClass('player');
