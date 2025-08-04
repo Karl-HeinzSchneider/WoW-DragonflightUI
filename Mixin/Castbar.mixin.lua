@@ -55,6 +55,8 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     border:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
     border:SetDrawLayer('OVERLAY')
     self.Icon.Border = border;
+
+    if unit == 'player' then self:AddTradeSkill() end
 end
 
 function DragonFlightUICastbarMixin:OnShow()
@@ -70,7 +72,7 @@ function DragonFlightUICastbarMixin:OnShow()
 end
 
 function DragonFlightUICastbarMixin:OnEvent(event, ...)
-    -- print('event:', event)
+    -- print('event:', event, ...)
     -- if true then return end
     if self.DFEditMode then
         return
@@ -137,6 +139,42 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             -- local desiredShowFalse = false;
             -- self:UpdateShownState(desiredShowFalse);
             return;
+        end
+
+        if isTradeSkill and self.TSAdded then
+            --    
+            -- unitTarget, castGUID, spellID
+            local _, _, spellID = ...;
+            self.TSSpellID = spellID;
+
+            if not self.TSStartTime then
+                -- print('new TSStartTime')
+                self.TSStartTime = startTime;
+                local duration = endTime - startTime
+                self.TSDuration = duration;
+                local total = duration * self.TSRepeatCount;
+                self.TSTotalTime = total;
+                self.TSEndTime = startTime + total;
+            end
+
+            startTime = self.TSStartTime;
+            endTime = self.TSEndTime;
+
+            -- print('~', startTime, endTime)
+
+            -- local tradeSkillCount = GetTradeskillRepeatCount() or 1;
+            -- print('~> Tradeskill', self.TSRepeatCount)
+
+            if self.TSRepeatCount > 1 then
+                --
+                -- subText = string.format(' (x%d)', tradeSkillCount)
+                subText = string.format(' (%d/%d)', self.TSCompleted + 1, self.TSRepeatCount)
+            end
+
+            texture = self.TSIcon or texture;
+            self.TSCrafting = true;
+        else
+            self.TSCrafting = false;
         end
 
         -- self.barType = self:GetEffectiveType(false, notInterruptible, isTradeSkill, false);
@@ -355,6 +393,12 @@ function DragonFlightUICastbarMixin:UpdateInterruptibleState(notInterruptible)
         end
 
         -- if (self.Icon and self.iconWhenNoninterruptible) then self.Icon:SetShown(not notInterruptible); end
+
+        self.TSStartTime = nil;
+        self.TSEndTime = nil;
+        self.TSTotalTime = nil;
+        self.TSDuration = nil;
+        self.TSCrafting = false;
     end
 end
 
@@ -497,8 +541,12 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
             self.Flash:Show();
         end ]]
         if not self.reverseChanneling and not self.channeling then
-            self:SetValue(self.maxValue);
-            self:UpdateCastTimeText();
+            if self.TSAdded and self.TSCrafting then
+                --
+            else
+                self:SetValue(self.maxValue);
+                self:UpdateCastTimeText();
+            end
         end
 
         -- self:PlayFadeAnim();
@@ -528,6 +576,20 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
         self.flash = true;
         self.fadeOut = true;
         self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME; ]]
+    end
+
+    -- if not self.TSAdded then return end
+    if self.TSCrafting then
+        if tonumber(self.TSRepeatCount) - tonumber(self.TSCompleted) <= 0 then
+            -- print('~~> FINISHED')
+            self.TSStartTime = nil;
+            self.TSEndTime = nil;
+            self.TSTotalTime = nil;
+            self.TSDuration = nil;
+            self.TSCrafting = false;
+        else
+            -- print('~~> NOT YET FINISHED')
+        end
     end
 end
 
@@ -893,4 +955,44 @@ function DragonFlightUICastbarMixin:AdjustPosition()
         --
         self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     end
+end
+
+function DragonFlightUICastbarMixin:AddTradeSkill()
+    -- print('DragonFlightUICastbarMixin:AddTradeSkill()')
+    self.TSAdded = true;
+
+    hooksecurefunc('DoTradeSkill', function(index, count)
+        -- print('DoTradeSkill', index, count)
+        -- local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+        --       currentRank, maxRank, startingRank = GetTradeSkillInfo(index)
+        local skillName = GetTradeSkillInfo(index)
+        local icon = GetTradeSkillIcon(index);
+
+        -- local itemLink = GetTradeSkillItemLink(index);
+        -- local itemID = tonumber(itemLink:match("item:(%d+)")) or nil;
+        -- print(skillName, icon)
+
+        self.TSName = skillName;
+        self.TSIcon = icon;
+        -- self.TradeSkillItemID = itemID;
+        self.TSCompleted = 0;
+        self.TSRepeatCount = count;
+
+        self.TSStartTime = nil;
+        self.TSEndTime = nil;
+        self.TSTotalTime = nil;
+        self.TSDuration = nil;
+    end)
+
+    -- EventRegistry:RegisterFrameEventAndCallback(frameEvent, func, [owner], ...) : 
+    -- owner - Registers a callback to a Frame Event (e.g. PLAYER_ENTERING_WORLD)
+    EventRegistry:RegisterFrameEventAndCallback('UNIT_SPELLCAST_SUCCEEDED', function(_, unitTarget, castGUID, spellID)
+        if unitTarget ~= 'player' then return end
+        -- print('~~UNIT_SPELLCAST_SUCCEEDED', unitTarget, castGUID, spellID)
+
+        if spellID == self.TSSpellID then
+            --
+            self.TSCompleted = self.TSCompleted + 1;
+        end
+    end, self)
 end
