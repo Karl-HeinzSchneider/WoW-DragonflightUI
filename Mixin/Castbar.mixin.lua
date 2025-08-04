@@ -1,6 +1,7 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 -- print('MIXIN!')
 local standardRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarStandard2'
+local craftingRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarCrafting2'
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
 local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
 
@@ -179,9 +180,13 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
 
         -- self.barType = self:GetEffectiveType(false, notInterruptible, isTradeSkill, false);
         -- self:SetStatusBarTexture(self:GetTypeInfo(self.barType).filling);
-        self:SetStatusBarTexture(standardRef)
+        if isTradeSkill then
+            self:SetStatusBarTexture(craftingRef)
+        else
+            self:SetStatusBarTexture(standardRef)
+        end
 
-        if notInterruptible then
+        if notInterruptible and not isTradeSkill then
             self:SetStatusBarDesaturated(true)
         else
             self:SetStatusBarDesaturated(false)
