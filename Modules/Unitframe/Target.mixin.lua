@@ -556,8 +556,8 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
     local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
 
     local port = frame.Portrait or _G[frame:GetName() .. 'Portrait']
-    local healthBar = _G[frame:GetName() .. 'HealthBar']
-    local manaBar = _G[frame:GetName() .. 'ManaBar']
+    local healthBar = frame.HealthBar or _G[frame:GetName() .. 'HealthBar']
+    local manaBar = frame.ManaBar or _G[frame:GetName() .. 'ManaBar']
     local name = frame.Name;
     local nameBackground = frame.NameBackground;
     local flash = frame.Flash;

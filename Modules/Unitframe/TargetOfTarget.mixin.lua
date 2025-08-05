@@ -295,8 +295,8 @@ function SubModuleMixin:ChangeToTFrame(self, frame)
     local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
 
     local port = frame.Portrait or _G[frame:GetName() .. 'Portrait']
-    local healthBar = _G[frame:GetName() .. 'HealthBar']
-    local manaBar = _G[frame:GetName() .. 'ManaBar']
+    local healthBar = self.HealthBar or _G[frame:GetName() .. 'HealthBar']
+    local manaBar = self.ManaBar or _G[frame:GetName() .. 'ManaBar']
     local name = frame.Name;
 
     frame:SetSize(120, 49)
