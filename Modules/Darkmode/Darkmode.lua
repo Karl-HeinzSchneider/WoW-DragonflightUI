@@ -588,16 +588,12 @@ function Module:UpdateFocusFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.SubFocus
 
-    if not f.FocusFrameBorder then return end
+    if not f.TargetFrameBackground then return end
 
-    local focusBorder = f.FocusFrameBorder
-    local focusBackground = f.FocusFrameBackground
-    local focusPortExtra = f.FocusExtra
+    local focusBackground = f.TargetFrameBackground
+    local focusPortExtra = f.PortraitExtra
 
     local c = CreateColorFromRGBHexString(state.unitframeColor)
-
-    focusBorder:SetDesaturated(state.unitframeDesaturate)
-    focusBorder:SetVertexColor(c:GetRGB())
 
     focusBackground:SetDesaturated(state.unitframeDesaturate)
     focusBackground:SetVertexColor(c:GetRGB())
@@ -613,8 +609,8 @@ function Module:UpdateFocusFrame(state)
 
     -- editmode
     local e = f.PreviewFocus
-    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
+    e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBackground:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateActionbar(state)

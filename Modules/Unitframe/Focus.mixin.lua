@@ -494,7 +494,7 @@ function SubModuleMixin:ReApplyFocusFrame()
 
     FocusFrameFlash:SetTexture('')
 
-    if self.FocusExtra then self.FocusExtra:UpdateStyle() end
+    if self.PortraitExtra then self.PortraitExtra:UpdateStyle() end
 end
 
 function SubModuleMixin:UpdateFocusText()
