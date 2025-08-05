@@ -552,88 +552,223 @@ function SubModuleMixin:Update()
     self.PreviewTarget:UpdateState(state);
 end
 
+function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
+    local port = frame.Portrait or _G[frame:GetName() .. 'Portrait']
+    local healthBar = frame.HealthBar or _G[frame:GetName() .. 'HealthBar']
+    local manaBar = frame.ManaBar or _G[frame:GetName() .. 'ManaBar']
+    local name = frame.Name;
+    local nameBackground = frame.NameBackground;
+    local flash = frame.Flash;
+    local levelText = frame.LevelText or _G[self:GetName() '..TextureFrameLevelText']
+    local deadText = TargetFrame.DeadText;
+    local unconsciousText = TargetFrame.UnconsciousText;
+
+    local portDelta = 0; -- not 100% centered without it
+    port:SetSize(56, 56)
+    port:ClearAllPoints()
+    port:SetPoint('CENTER', frame, 'CENTER', 41, 8)
+    port:SetDrawLayer('BACKGROUND', 0)
+
+    if not self[frame:GetName() .. 'Background'] then
+        local background = frame:CreateTexture('DragonflightUI' .. frame:GetName() .. 'Background')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-target-portraiton-2x')
+        background:SetTexCoord(0, 384 / 512, 0, 134 / 256)
+        background:SetSize(192, 67)
+        background:SetPoint('CENTER', frame, 'CENTER', -20, 6)
+
+        self[frame:GetName() .. 'Background'] = background
+        self.TargetFrameBackground = background;
+    end
+
+    healthBar:ClearAllPoints()
+    healthBar:SetPoint('CENTER', frame, 'CENTER', -50.5, 6)
+    healthBar:SetSize(126, 20)
+    healthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+
+    if not healthBar.DFMask then
+        local hpMask = healthBar:CreateMaskTexture()
+        healthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        healthBar.DFMask = hpMask
+        hpMask:ClearAllPoints()
+        hpMask:SetPoint('TOPLEFT', healthBar, 'TOPLEFT', -1, 6)
+        hpMask:SetTexture(tex2xBase .. 'uiunitframetargethealthmask2x', 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        hpMask:SetTexCoord(0, 1, 0, 1)
+        hpMask:SetSize(128 + 1, 32)
+    end
+
+    manaBar:ClearAllPoints()
+    manaBar:SetPoint('TOPLEFT', healthBar, 'BOTTOMLEFT', 0, -1)
+    manaBar:SetSize(134, 10)
+    manaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+    manaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+
+    if not manaBar.DFMask then
+        local manaMask = manaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -62, 3)
+        manaMask:SetTexture(tex2xBase .. 'uiunitframetargetmanamask2x', 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(256 + 3, 16)
+        manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        manaBar.DFMask = manaMask
+    end
+
+    if nameBackground then
+        nameBackground:SetTexture(tex2xBase .. 'ui-hud-unitframe-target-portraiton-type-2x')
+        nameBackground:SetTexCoord(0, 270 / 512, 0, 35 / 64)
+        nameBackground:SetSize(135, 17.5)
+        nameBackground:ClearAllPoints()
+        nameBackground:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', -1 + 0.5, -3)
+    end
+
+    name:ClearAllPoints()
+    -- name:SetPoint('LEFT', port, 'RIGHT', 1 + 1, 2 + 12 - 1)
+    name:SetPoint('BOTTOMRIGHT', healthBar, 'TOPRIGHT', -2, 1)
+    name:SetJustifyH('CENTER')
+    name:SetJustifyV('MIDDLE')
+    name:SetFontObject(GameFontNormalSmall)
+    name:SetSize(100, 12)
+
+    if levelText then
+        levelText:SetJustifyH('LEFT')
+        levelText:SetJustifyV('MIDDLE')
+        levelText:SetFontObject(GameFontNormalSmall)
+
+        function frame:DFFixLevelText()
+            levelText:ClearAllPoints()
+            levelText:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', 5, 1)
+            levelText:SetHeight(12)
+            levelText:SetWidth(15)
+        end
+        frame:DFFixLevelText()
+
+        local module = DF:GetModule('Unitframe');
+        if module and not module.TargetFrameNameHooked then
+            module.TargetFrameNameHooked = true;
+            hooksecurefunc('TargetFrame_UpdateLevelTextAnchor', function(f, targetLevel)
+                if f.DFFixLevelText and type(f.DFFixLevelText) == 'function' then
+                    -- print('DFFixLevelText hook', f:GetName())
+                    f:DFFixLevelText();
+                end
+            end)
+        end
+    end
+
+    if deadText then
+        deadText:ClearAllPoints()
+        deadText:SetPoint('CENTER', healthBar, 'CENTER', 0, 0)
+    end
+
+    if unconsciousText then
+        unconsciousText:ClearAllPoints()
+        unconsciousText:SetPoint('CENTER', healthBar, 'CENTER', 0, 0)
+    end
+
+    if flash and DF.Wrath then
+        flash:SetTexture('')
+
+        if not self.TargetFrameFlash then
+            local newFlash = frame:CreateTexture('DragonflightUITargetFrameFlash')
+            newFlash:SetDrawLayer('ARTWORK', 2)
+            newFlash:SetTexture(tex2xBase .. 'ui-hud-unitframe-target-portraiton-incombat-2x')
+            newFlash:SetTexCoord(0, 376 / 512, 0, 134 / 256)
+            newFlash:SetSize(188, 67)
+            newFlash:SetPoint('CENTER', frame, 'CENTER', -21 + 0.5, 7 + 0.5)
+
+            newFlash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+            newFlash:SetBlendMode('ADD')
+            self.TargetFrameFlash = newFlash
+        end
+
+        hooksecurefunc(flash, 'Show', function()
+            -- print('show')
+            flash:SetTexture('')
+            self.TargetFrameFlash:Show()
+            if (UIFrameIsFlashing(self.TargetFrameFlash)) then
+            else
+                -- print('go flash')
+                local dt = 0.5
+                UIFrameFlash(self.TargetFrameFlash, dt, dt, -1)
+            end
+        end)
+
+        hooksecurefunc(flash, 'Hide', function()
+            -- print('hide')
+            flash:SetTexture('')
+            if (UIFrameIsFlashing(self.TargetFrameFlash)) then UIFrameFlashStop(self.TargetFrameFlash) end
+            self.TargetFrameFlash:Hide()
+        end)
+    end
+
+    if not self.PortraitExtra then
+        local extra = frame:CreateTexture('DragonflightUI' .. frame:GetName() .. 'PortraitExtra')
+        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+        extra:SetSize(80, 79)
+        extra:SetDrawLayer('ARTWORK', 3)
+        extra:SetPoint('CENTER', port, 'CENTER', 4, 1)
+
+        extra.UpdateStyle = function()
+            local class = UnitClassification(frame.unit)
+            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+            if class == 'worldboss' then
+                self.PortraitExtra:Show()
+                self.PortraitExtra:SetSize(99, 81)
+                self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 13, 1)
+            elseif class == 'rareelite' or class == 'rare' then
+                self.PortraitExtra:Show()
+                self.PortraitExtra:SetSize(80, 79)
+                self.PortraitExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+                self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 4, 1)
+            elseif class == 'elite' then
+                self.PortraitExtra:Show()
+                self.PortraitExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+                self.PortraitExtra:SetSize(80, 79)
+                self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 4, 1)
+            else
+                local targetName, realm = UnitName('target')
+                if self.ModuleRef.famous[targetName] then
+                    self.PortraitExtra:Show()
+                    self.PortraitExtra:SetSize(99, 81)
+                    self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                    self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 13, 1)
+                else
+                    self.PortraitExtra:Hide()
+                end
+            end
+        end
+
+        self.PortraitExtra = extra
+    end
+end
+
 function SubModuleMixin:ChangeTargetFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     TargetFrameTextureFrameTexture:Hide()
     TargetFrameBackground:Hide()
 
-    if not self.TargetFrameBackground then
-        local background = TargetFrame:CreateTexture('DragonflightUITargetFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
-        self.TargetFrameBackground = background
-    end
+    TargetFrame.Portrait = TargetFramePortrait;
+    TargetFrame.Name = TargetFrameTextureFrameName;
+    TargetFrame.NameBackground = TargetFrameNameBackground;
+    TargetFrame.Flash = TargetFrameFlash;
+    TargetFrame.LevelText = TargetFrameTextureFrameLevelText;
+    TargetFrame.DeadText = TargetFrameTextureFrameDeadText;
+    TargetFrame.UnconsciousText = TargetFrameTextureFrameUnconsciousText;
 
-    if not self.TargetFrameBorder then
-        local border = TargetFrame:CreateTexture('DragonflightUITargetFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-        border:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
-        self.TargetFrameBorder = border
-    end
-
-    TargetFramePortrait:SetDrawLayer('BACKGROUND', -1)
-    TargetFramePortrait:SetSize(56, 56)
-    local CorrectionY = -3
-    local CorrectionX = -5
-    TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
+    self:ChangeTargetFrameGeneral(self, TargetFrame)
 
     -- TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER',TargetFrameTextureFrame,'TOPRIGHT',-73,-14)
     -- TargetFrameTextureFrameRaidTargetIcon:GetHeight()
     TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', TargetFramePortrait, 'TOP', 0, 2)
 
-    -- TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)
-
-    -- @TODO: change text spacing
-    TargetFrameTextureFrameName:ClearAllPoints()
-    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3 - 2)
-    TargetFrameTextureFrameName:SetSize(100, 12)
-
-    TargetFrameTextureFrameLevelText:ClearAllPoints()
-    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
-    TargetFrameTextureFrameLevelText:SetHeight(12)
-
-    TargetFrameTextureFrameDeadText:ClearAllPoints()
-    TargetFrameTextureFrameDeadText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
-
-    TargetFrameTextureFrameUnconsciousText:ClearAllPoints()
-    TargetFrameTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
-
-    -- Health 119,12
-    TargetFrameHealthBar:ClearAllPoints()
-    TargetFrameHealthBar:SetSize(125, 20)
-    TargetFrameHealthBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, 0)
-    --[[     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-    )
-    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
-    -- Mana 119,12
-    TargetFrameManaBar:ClearAllPoints()
-    -- TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5 + 1, -18 + 1 + 0.5)
-    TargetFrameManaBar:SetPoint('TOPLEFT', TargetFrameHealthBar, 'BOTTOMLEFT', 0, -1)
-    TargetFrameManaBar:SetSize(134, 10)
-    TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    if not TargetFrameManaBar.DFMask then
-        local manaMask = TargetFrameManaBar:CreateMaskTexture()
-        manaMask:SetPoint('TOPLEFT', TargetFrameManaBar, 'TOPLEFT', -61, 3)
-        manaMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        manaMask:SetTexCoord(0, 1, 0, 1)
-        manaMask:SetSize(256, 16)
-        TargetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
-        TargetFrameManaBar.DFMask = manaMask
-    end
-
-    TargetFrameNameBackground:SetTexture(base)
-    TargetFrameNameBackground:SetTexCoord(0.7939453125, 0.92578125, 0.3125, 0.34765625)
-    TargetFrameNameBackground:SetSize(135, 18)
-    TargetFrameNameBackground:ClearAllPoints()
-    TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
+    -- TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)  
 
     if not TargetFrameNameBackground.DFHooked then
         TargetFrameNameBackground.DFHooked = true
@@ -692,84 +827,6 @@ function SubModuleMixin:ChangeTargetFrame()
         TargetFrameTextureFrame.ManaBarText:SetPoint('CENTER', TargetFrameManaBar, 'CENTER', -deltaSize / 2, 0)
         TargetFrameTextureFrame.ManaBarTextLeft:SetPoint('LEFT', TargetFrameManaBar, 'LEFT', dx, 0)
         TargetFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', TargetFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
-    end
-
-    if DF.Wrath then
-        TargetFrameFlash:SetTexture('')
-
-        if not self.TargetFrameFlash then
-            local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
-            flash:SetDrawLayer('BACKGROUND', 2)
-            flash:SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat')
-            flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-            flash:SetSize(256, 128)
-            flash:SetScale(1)
-            flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-            flash:SetBlendMode('ADD')
-            self.TargetFrameFlash = flash
-        end
-
-        hooksecurefunc(TargetFrameFlash, 'Show', function()
-            -- print('show')
-            TargetFrameFlash:SetTexture('')
-            self.TargetFrameFlash:Show()
-            if (UIFrameIsFlashing(self.TargetFrameFlash)) then
-            else
-                -- print('go flash')
-                local dt = 0.5
-                UIFrameFlash(self.TargetFrameFlash, dt, dt, -1)
-            end
-        end)
-
-        hooksecurefunc(TargetFrameFlash, 'Hide', function()
-            -- print('hide')
-            TargetFrameFlash:SetTexture('')
-            if (UIFrameIsFlashing(self.TargetFrameFlash)) then UIFrameFlashStop(self.TargetFrameFlash) end
-            self.TargetFrameFlash:Hide()
-        end)
-    end
-
-    if not self.PortraitExtra then
-        local extra = TargetFrame:CreateTexture('DragonflightUITargetFramePortraitExtra')
-        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
-        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-        extra:SetSize(80, 79)
-        extra:SetDrawLayer('ARTWORK', 3)
-        extra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
-
-        extra.UpdateStyle = function()
-            local class = UnitClassification('target')
-            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
-            if class == 'worldboss' then
-                self.PortraitExtra:Show()
-                self.PortraitExtra:SetSize(99, 81)
-                self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 13, 1)
-            elseif class == 'rareelite' or class == 'rare' then
-                self.PortraitExtra:Show()
-                self.PortraitExtra:SetSize(80, 79)
-                self.PortraitExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
-                self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
-            elseif class == 'elite' then
-                self.PortraitExtra:Show()
-                self.PortraitExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-                self.PortraitExtra:SetSize(80, 79)
-                self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
-            else
-                local name, realm = UnitName('target')
-                if self.ModuleRef.famous[name] then
-                    self.PortraitExtra:Show()
-                    self.PortraitExtra:SetSize(99, 81)
-                    self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                    self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 13, 1)
-                else
-                    self.PortraitExtra:Hide()
-                end
-            end
-        end
-
-        self.PortraitExtra = extra
     end
 
     if not TargetFrame.DFRangeHooked then

@@ -501,12 +501,12 @@ function Module:UpdatePlayerFrame(state)
 
     if not f.PlayerFrameDeco then return end
 
-    local playerFrameBorder = f.PlayerFrameBorder
+    local playerFrameBackground = f.PlayerFrameBackground
     local playerFrameDeco = f.PlayerFrameDeco
     local playerFramePortaitExtra = f.PlayerPortraitExtra
 
-    playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    playerFrameBorder:SetVertexColor(c:GetRGB())
+    playerFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    playerFrameBackground:SetVertexColor(c:GetRGB())
 
     playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
     playerFrameDeco:SetVertexColor(c:GetRGB())
@@ -526,13 +526,9 @@ function Module:UpdatePetFrame(state)
     if not f.PetFrameBackground then return end
 
     local petBackground = f.PetFrameBackground
-    local petBorder = f.PetFrameBorder
 
     petBackground:SetDesaturated(state.unitframeDesaturate)
     petBackground:SetVertexColor(c:GetRGB())
-
-    petBorder:SetDesaturated(state.unitframeDesaturate)
-    petBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateTargetFrame(state)
@@ -540,26 +536,26 @@ function Module:UpdateTargetFrame(state)
     local f = unitModule.SubTarget
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
-    if not f.TargetFrameBorder then return end
+    if not f.TargetFrameBackground then return end
 
-    local targetFrameBorder = f.TargetFrameBorder
+    local TargetFrameBackground = f.TargetFrameBackground
     local targetPortExtra = f.PortraitExtra
 
-    targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    targetFrameBorder:SetVertexColor(c:GetRGB())
+    TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    TargetFrameBackground:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubTargetOfTarget
-    local targetOfTargetBorder = tot.TargetFrameToTBorder
-    targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
-    targetOfTargetBorder:SetVertexColor(c:GetRGB())
+    local TargetFrameToTBackground = tot.TargetFrameToTBackground
+    TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+    TargetFrameToTBackground:SetVertexColor(c:GetRGB())
 
     -- TODO
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 
     -- editmode
     local e = f.PreviewTarget
-    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
+    e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBackground:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdatePartyFrame(state)
@@ -607,10 +603,10 @@ function Module:UpdateFocusFrame(state)
     focusBackground:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubFocusTarget
-    local focusToTBorder = tot.FocusFrameToTBorder
+    local FocusFrameToTBackground = tot.FocusFrameToTBackground
 
-    focusToTBorder:SetDesaturated(state.unitframeDesaturate)
-    focusToTBorder:SetVertexColor(c:GetRGB())
+    FocusFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+    FocusFrameToTBackground:SetVertexColor(c:GetRGB())
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)

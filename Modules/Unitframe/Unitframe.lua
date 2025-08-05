@@ -337,7 +337,7 @@ function Module:AddPortraitMasks()
 
     do
         local mask = PlayerFrame:CreateMaskTexture()
-        mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
+        mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, -1)
         mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
         PlayerPortrait:AddMaskTexture(mask)
     end

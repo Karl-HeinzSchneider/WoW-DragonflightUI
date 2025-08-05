@@ -52,8 +52,8 @@ function DragonflightUIEditModePreviewTargetMixin:SetUnit(unit)
             if not self.TargetFramePortrait.CircleMask then
                 local circleMask = self:CreateMaskTexture()
                 circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
-                circleMask:SetPoint('TOPLEFT', self.TargetFramePortrait, 'TOPLEFT', 0, 0)
-                circleMask:SetPoint('BOTTOMRIGHT', self.TargetFramePortrait, 'BOTTOMRIGHT', 0, 0)
+                circleMask:SetPoint('TOPLEFT', self.TargetFramePortrait, 'TOPLEFT', 1, -1)
+                circleMask:SetPoint('BOTTOMRIGHT', self.TargetFramePortrait, 'BOTTOMRIGHT', -1, 1)
                 self.TargetFramePortrait:AddMaskTexture(circleMask)
                 self.TargetFramePortrait.CircleMask = circleMask;
             end
@@ -122,24 +122,24 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     textureFrame:SetFrameLevel(3)
     self.TextureFrame = textureFrame
 
-    local background = self:CreateTexture('DragonflightUITargetFrameBackground')
-    background:SetDrawLayer('BACKGROUND', 2)
-    background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-    background:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
-    self.TargetFrameBackground = background
+    -- local background = self:CreateTexture('DragonflightUITargetFrameBackground')
+    -- background:SetDrawLayer('BACKGROUND', 2)
+    -- background:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
+    -- background:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
+    -- self.TargetFrameBackground = background
 
-    local border = self.TextureFrame:CreateTexture('DragonflightUITargetFrameBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-    border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
-    self.TargetFrameBorder = border
+    -- local border = self.TextureFrame:CreateTexture('DragonflightUITargetFrameBorder')
+    -- border:SetDrawLayer('ARTWORK', 2)
+    -- border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+    -- border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
+    -- self.TargetFrameBorder = border
 
     local portrait = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetFramePortrait')
-    portrait:SetDrawLayer('ARTWORK', 1)
+    portrait:SetDrawLayer('BACKGROUND', 0)
     portrait:SetSize(56, 56)
-    local CorrectionY = -3
-    local CorrectionX = -5
-    portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
+    -- local CorrectionY = -3
+    -- local CorrectionX = -5
+    -- portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
     self.TargetFramePortrait = portrait
     function portrait:UpdatePortrait(id)
         if not id then return end
@@ -153,45 +153,13 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     -- portraitBackground:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
     -- portraitBackground:SetTexture("Interface\\AddOns\\rTextures\\portrait_back")
 
-    local extra = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetFramePortraitExtra')
-    extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
-    extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-    extra:SetSize(80, 79)
-    extra:SetDrawLayer('ARTWORK', 3)
-    extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
-    self.PortraitExtra = extra
-
-    function extra:UpdateStyle(class)
-        -- local class = UnitClassification('target')
-        --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
-        if class == 'worldboss' then
-            extra:Show()
-            extra:SetSize(99, 81)
-            extra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-            extra:SetPoint('CENTER', portrait, 'CENTER', 13, 1)
-        elseif class == 'rareelite' or class == 'rare' then
-            extra:Show()
-            extra:SetSize(80, 79)
-            extra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
-            extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
-        elseif class == 'elite' then
-            extra:Show()
-            extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-            extra:SetSize(80, 79)
-            extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
-        else
-            local name, realm = UnitName('target')
-            if false then
-                extra:Show()
-                extra:SetSize(99, 81)
-                extra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                extra:SetPoint('CENTER', portrait, 'CENTER', 13, 1)
-            else
-                extra:Hide()
-            end
-        end
-    end
-    -- self.PortraitExtra:UpdateStyle('worldboss')
+    -- local extra = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetFramePortraitExtra')
+    -- extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+    -- extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+    -- extra:SetSize(80, 79)
+    -- extra:SetDrawLayer('ARTWORK', 3)
+    -- extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
+    -- self.PortraitExtra = extra
 
     local healthBar = CreateFrame("StatusBar", nil, self)
     healthBar:SetSize(125, 20)
@@ -228,14 +196,14 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     manaBar:SetMinMaxValues(0, 100)
     manaBar:SetValue(100)
 
-    local manaMask = manaBar:CreateMaskTexture()
-    manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -61, 3)
-    manaMask:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-        'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    manaMask:SetTexCoord(0, 1, 0, 1)
-    manaMask:SetSize(256, 16)
-    manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+    -- local manaMask = manaBar:CreateMaskTexture()
+    -- manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -61, 3)
+    -- manaMask:SetTexture(
+    --     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
+    --     'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    -- manaMask:SetTexCoord(0, 1, 0, 1)
+    -- manaMask:SetSize(256, 16)
+    -- manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
     self.ManaBar = manaBar
     function manaBar:SetPowerType(powerTypeString)
@@ -316,6 +284,54 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     end
     nameBackground:SetColor('blue')
     self.NameBackground = nameBackground
+
+    -- OVERRIDE FUNC
+
+    self.Portrait = self.TargetFramePortrait;
+    -- self.HealthBar = self.HealthBar;
+    -- self.ManaBar = self.ManaBar
+    self.Name = self.FontName;
+    -- self.NameBackground = self.NameBackground;
+    -- self.Flash = ***;
+    self.LevelText = self.FontLevel;
+    -- self.DeadText = ***;
+    -- self.UnconsciousText = ***;
+
+    self.ModuleRef = DF:GetModule('Unitframe');
+    self.ModuleRef.SubTarget:ChangeTargetFrameGeneral(self, self)
+
+    local extra = self.PortraitExtra;
+    function extra:UpdateStyle(class)
+        -- local class = UnitClassification('target')
+        --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+        if class == 'worldboss' then
+            extra:Show()
+            extra:SetSize(99, 81)
+            extra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+            extra:SetPoint('CENTER', portrait, 'CENTER', 13, 1)
+        elseif class == 'rareelite' or class == 'rare' then
+            extra:Show()
+            extra:SetSize(80, 79)
+            extra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+            extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
+        elseif class == 'elite' then
+            extra:Show()
+            extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+            extra:SetSize(80, 79)
+            extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
+        else
+            -- local name, realm = UnitName('target')
+            if false then
+                extra:Show()
+                extra:SetSize(99, 81)
+                extra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                extra:SetPoint('CENTER', portrait, 'CENTER', 13, 1)
+            else
+                extra:Hide()
+            end
+        end
+    end
+    self.PortraitExtra:UpdateStyle('worldboss')
 end
 
 ------ target of target
@@ -342,10 +358,10 @@ function DragonflightUIEditModePreviewTargetOfTargetMixin:SetupFrame()
     local totDelta = 1
 
     local portrait = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetOfTargetFramePortrait')
-    portrait:SetDrawLayer('ARTWORK', 1)
-    portrait:SetSize(35, 35)
+    portrait:SetDrawLayer('BACKGROUND', 0)
+    portrait:SetSize(37, 37)
 
-    portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', 6, -6)
+    -- portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', 6, -6)
     self.TargetFramePortrait = portrait
     function portrait:UpdatePortrait(id)
         if not id then return end
@@ -354,18 +370,18 @@ function DragonflightUIEditModePreviewTargetOfTargetMixin:SetupFrame()
     end
     portrait:UpdatePortrait('player')
 
-    local background = self:CreateTexture('DragonflightUITargetOfTargetFrameBackground')
-    background:SetDrawLayer('BACKGROUND', 2)
-    background:SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-    background:SetPoint('LEFT', portrait, 'CENTER', -25 + 1, -10 + totDelta)
-    self.TargetFrameBackground = background
+    -- local background = self:CreateTexture('DragonflightUITargetOfTargetFrameBackground')
+    -- background:SetDrawLayer('BACKGROUND', 2)
+    -- background:SetTexture(
+    --     'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    -- background:SetPoint('LEFT', portrait, 'CENTER', -25 + 1, -10 + totDelta)
+    -- self.TargetFrameBackground = background
 
-    local border = self.TextureFrame:CreateTexture('DragonflightUITargetOfTargetFrameBorder')
-    border:SetDrawLayer('ARTWORK', 2)
-    border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-    border:SetPoint('LEFT', portrait, 'CENTER', -25 + 1, -10 + totDelta)
-    self.TargetFrameBorder = border
+    -- local border = self.TextureFrame:CreateTexture('DragonflightUITargetOfTargetFrameBorder')
+    -- border:SetDrawLayer('ARTWORK', 2)
+    -- border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
+    -- border:SetPoint('LEFT', portrait, 'CENTER', -25 + 1, -10 + totDelta)
+    -- self.TargetFrameBorder = border
 
     local healthBar = CreateFrame("StatusBar", nil, self)
     healthBar:SetSize(70.5, 10)
@@ -489,6 +505,53 @@ function DragonflightUIEditModePreviewTargetOfTargetMixin:SetupFrame()
     -- end
     -- nameBackground:SetColor('blue')
     -- self.NameBackground = nameBackground
+
+    -- OVERRIDE FUNC
+
+    self.Portrait = self.TargetFramePortrait;
+    -- self.HealthBar = self.HealthBar;
+    -- self.ManaBar = self.ManaBar
+    self.Name = self.FontName;
+    -- self.Flash = ***;
+    -- self.DeadText = ***;
+    -- self.UnconsciousText = ***;
+
+    self.ModuleRef = DF:GetModule('Unitframe');
+    self.ModuleRef.SubTargetOfTarget:ChangeToTFrame(self, self)
+
+    self.PortraitExtra = nil;
+    -- local extra = self.PortraitExtra;
+    -- function extra:UpdateStyle(class)
+    --     -- local class = UnitClassification('target')
+    --     --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+    --     if class == 'worldboss' then
+    --         extra:Show()
+    --         extra:SetSize(99, 81)
+    --         extra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+    --         extra:SetPoint('CENTER', portrait, 'CENTER', 13, 1)
+    --     elseif class == 'rareelite' or class == 'rare' then
+    --         extra:Show()
+    --         extra:SetSize(80, 79)
+    --         extra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+    --         extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
+    --     elseif class == 'elite' then
+    --         extra:Show()
+    --         extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+    --         extra:SetSize(80, 79)
+    --         extra:SetPoint('CENTER', portrait, 'CENTER', 4, 1)
+    --     else
+    --         -- local name, realm = UnitName('target')
+    --         if false then
+    --             extra:Show()
+    --             extra:SetSize(99, 81)
+    --             extra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+    --             extra:SetPoint('CENTER', portrait, 'CENTER', 13, 1)
+    --         else
+    --             extra:Hide()
+    --         end
+    --     end
+    -- end
+    -- self.PortraitExtra:UpdateStyle('worldboss')
 end
 
 ------- party frame
