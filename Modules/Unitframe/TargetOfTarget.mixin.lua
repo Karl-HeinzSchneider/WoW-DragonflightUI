@@ -316,6 +316,7 @@ function SubModuleMixin:ChangeToTFrame(self, frame)
         background:SetPoint('CENTER', frame, 'CENTER', 0, 0)
 
         self[frame:GetName() .. 'Background'] = background
+        self.TargetFrameBackground = background;
     end
 
     healthBar:ClearAllPoints()

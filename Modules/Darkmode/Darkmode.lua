@@ -536,13 +536,13 @@ function Module:UpdateTargetFrame(state)
     local f = unitModule.SubTarget
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
-    if not f.TargetFrameBorder then return end
+    if not f.TargetFrameBackground then return end
 
-    local targetFrameBorder = f.TargetFrameBorder
+    local TargetFrameBackground = f.TargetFrameBackground
     local targetPortExtra = f.PortraitExtra
 
-    targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    targetFrameBorder:SetVertexColor(c:GetRGB())
+    TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    TargetFrameBackground:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubTargetOfTarget
     local TargetFrameToTBackground = tot.TargetFrameToTBackground
@@ -554,8 +554,8 @@ function Module:UpdateTargetFrame(state)
 
     -- editmode
     local e = f.PreviewTarget
-    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
+    e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBackground:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdatePartyFrame(state)
