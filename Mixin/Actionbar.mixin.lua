@@ -442,22 +442,37 @@ function DragonflightUIActionbarMixin:AddPagingStateDriver()
         UpdateMainActionBar = [=[
             local page = ...
             -- print('UpdateMainActionBar',page)
-            if page == "tempshapeshift" then
-                if HasTempShapeshiftActionBar() then
-                    page = GetTempShapeshiftBarIndex()
+            -- if page == "tempshapeshift" then
+            --     if HasTempShapeshiftActionBar() then
+            --         page = GetTempShapeshiftBarIndex()
+            --     else
+            --         page = 1
+            --     end
+            if page == "possess" then
+                -- page = handler:GetFrameRef("MainMenuBarArtFrame"):GetAttribute("actionpage")
+                -- if handler:GetFrameRef("OverrideActionBar") and page <= 10 then
+                --     page = handler:GetFrameRef("OverrideActionBar"):GetAttribute("actionpage")
+                -- end
+                -- if page <= 10 then
+                --     page = 12
+                -- end
+                if HasVehicleActionBar() then
+                    page = GetVehicleBarIndex();
+                elseif HasOverrideActionBar() then
+                    page = GetOverrideBarIndex();               
+                elseif HasTempShapeshiftActionBar() then
+                    page = GetTempShapeshiftBarIndex();    
+                elseif HasBonusActionBar() then
+                    page = GetBonusBarIndex();
                 else
-                    page = 1
+                    page = nil;
                 end
-            elseif page == "possess" then
-                page = handler:GetFrameRef("MainMenuBarArtFrame"):GetAttribute("actionpage")
-                if handler:GetFrameRef("OverrideActionBar") and page <= 10 then
-                    page = handler:GetFrameRef("OverrideActionBar"):GetAttribute("actionpage")
-                end
-                if page <= 10 then
-                    page = 12
+                if not page then
+                    print('DragonflightUI: Actionbar1 cant determine vehicle/possess action bar page, please report this!')
+                    page = 12;
                 end
             end         
-            -- print('..',page)
+            -- print('~>UpdateMainActionBar',page)
             handler:SetAttribute("actionpage", page)
     
             for btn in pairs(buttonsTable) do
@@ -477,6 +492,29 @@ function DragonflightUIActionbarMixin:AddPagingStateDriver()
     end
 end
 
+-- local function OnEvent(self, event)
+--     print(event)
+--     local vehicleui = SecureCmdOptionParse("[vehicleui] 1; 0")
+--     local possessbar = SecureCmdOptionParse("[possessbar] 1; 0")
+--     local overridebar = SecureCmdOptionParse("[overridebar] 1; 0")
+--     local shapeshift = SecureCmdOptionParse("[shapeshift] 1; 0")
+--     local bonusbar = SecureCmdOptionParse("[bonusbar] 1; 0")
+--     if vehicleui == "1" then print("vehicleui") end
+--     if possessbar == "1" then print("possessbar") end
+--     if overridebar == "1" then print("overridebar") end
+--     if shapeshift == "1" then print("shapeshift") end
+--     if bonusbar == "1" then print("bonusbar") end
+--     print("barpage: " .. GetActionBarPage())
+--     print("type: " .. type(vehicleui))
+-- end
+
+-- local barCheck = CreateFrame("Frame")
+-- barCheck:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+-- barCheck:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+-- barCheck:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+-- barCheck:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
+-- barCheck:SetScript("OnEvent", OnEvent)
+
 function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     if not self.PagingStateDriver then return end
 
@@ -487,7 +525,7 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     local localizedClass, englishClass, classIndex = UnitClass("player");
     if mode == 'SMART' then
         local shouldChange = (englishClass == 'DRUID')
-        if not shouldChange then mode = 'DEFAULT' end
+        -- if not shouldChange then mode = 'DEFAULT' end
     end
 
     -- print('~>', mode)
@@ -507,7 +545,7 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     elseif mode == 'SMART' then
         local driverTable = {}
         -- 
-        tinsert(driverTable, "[overridebar][possessbar]possess")
+        tinsert(driverTable, "[overridebar][possessbar][shapeshift]possess")
         -- 
         for i = 2, 6 do
             --
@@ -526,7 +564,7 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         end
 
         -- Fix for temp shape shift bar
-        tinsert(driverTable, "[stance:1]tempshapeshift")
+        -- tinsert(driverTable, "[stance:1]possess")
 
         tinsert(driverTable, "1")
 
