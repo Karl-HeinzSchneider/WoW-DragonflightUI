@@ -36,7 +36,7 @@ function DF.Compatibility:Clique()
         _G['TargetFrameTextureFrameUnconsciousText']:SetPropagateMouseMotion(true);
 
         _G['DragonflightUITargetFrameBackground']:SetPropagateMouseMotion(true);
-        _G['DragonflightUITargetFrameBorder']:SetPropagateMouseMotion(true);
+        -- _G['DragonflightUITargetFrameBorder']:SetPropagateMouseMotion(true);
 
         _G['TargetFrameHealthBar']:SetPropagateMouseMotion(true);
         _G['TargetFrameTextureFrame'].HealthBarTextLeft:SetPropagateMouseMotion(true);
