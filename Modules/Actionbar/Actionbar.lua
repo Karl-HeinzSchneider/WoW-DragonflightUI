@@ -12,10 +12,12 @@ end
 Mixin(Module, DragonflightUIModulesMixin)
 
 Module.SubVehicleLeave = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['VehicleLeaveButton'])
+Module.SubActionbarRange = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['ActionbarRange'])
 
 local defaults = {
     profile = {
         vehicleLeave = Module.SubVehicleLeave.Defaults,
+        actionbarRange = Module.SubActionbarRange.Defaults,
         scale = 1,
         x = 0,
         y = 0,
@@ -107,6 +109,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -154,6 +157,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -201,6 +205,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -248,6 +253,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -295,6 +301,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = false,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -342,6 +349,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = false,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -389,6 +397,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = false,
+            range = true,
             hideMacro = false,
             macroFontSize = 14,
             hideKeybind = false,
@@ -909,6 +918,15 @@ function AddButtonTable(optionTable, sub)
             order = 50.1,
             editmode = true
         },
+        range = {
+            type = 'toggle',
+            name = L["MoreOptionsIconRangeColor"],
+            desc = L["MoreOptionsIconRangeColorDesc"] .. getDefaultStr('range', sub),
+            group = 'headerStyling',
+            order = 51.1,
+            new = true,
+            editmode = true
+        },
         hideMacro = {
             type = 'toggle',
             name = L["ButtonTableHideMacroText"],
@@ -944,7 +962,7 @@ function AddButtonTable(optionTable, sub)
             group = 'headerStyling',
             order = 56.05,
             editmode = true,
-            new = true
+            new = false
         },
         keybindFontSize = {
             type = 'range',
@@ -1027,14 +1045,6 @@ local function GetBarOption(n)
                 dropdownValues = gryphonsTable,
                 group = 'headerButtons',
                 order = 51.4,
-                editmode = true
-            },
-            range = {
-                type = 'toggle',
-                name = L["MoreOptionsIconRangeColor"],
-                desc = L["MoreOptionsIconRangeColorDesc"] .. getDefaultStr('range', barname),
-                group = 'headerButtons',
-                order = 51.1,
                 editmode = true
             },
             useKeyDown = {
@@ -2049,7 +2059,6 @@ function Module:OnEnable()
     C_CVar.SetCVar("alwaysShowActionBars", 1)
 
     Module.Temp = {}
-    Module.UpdateRangeHooked = false
 
     Helper:Benchmark('EnableAddonSpecific', function()
         self:EnableAddonSpecific()
@@ -2100,6 +2109,7 @@ function Module:RegisterSettings()
     register('fps', {order = 17, name = fpsOptions.name, descr = 'desc', isNew = false})
 
     register('vehicleLeave', {order = 18, name = self.SubVehicleLeave.Options.name, descr = 'desc', isNew = true})
+    register('actionbarRange', {order = 8.5, name = self.SubActionbarRange.Options.name, descr = 'desc', isNew = true})
 
     if DF.Cata then
         register('totembar', {order = 14, name = totemOptions.name, descr = 'desc', isNew = false})
@@ -2301,7 +2311,6 @@ function Module:SetupActionbarFrames()
         bar:SetButtons(buttons, 69)
         bar:StyleButtons()
         bar:StylePetButton()
-        bar:SetIgnoreRange(true)
         Module['petbar'] = bar
     end
 
@@ -2727,23 +2736,6 @@ function Module:ApplySettingsInternal(sub, key)
         Module.repbar:SetState(db.rep)
         Module.stancebar:SetState(db.stance)
 
-        if db.bar1.range then
-            if Module.UpdateRangeHooked then
-                -- already hooked
-            else
-                self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
-                    DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
-                end)
-                Module.UpdateRangeHooked = true
-            end
-        else
-            if Module.UpdateRangeHooked then
-                -- remove hook      
-                Module.UpdateRangeHooked = false
-                self:Unhook('ActionButton_UpdateRangeIndicator')
-            end
-        end
-
         if DF.Cata then
             Module.UpdateTotemState(db.totem)
             Module:UpdateExtraButtonState(db.extraActionButton)
@@ -2756,25 +2748,9 @@ function Module:ApplySettingsInternal(sub, key)
         Module.UpdatePossesbarState(db.possess)
 
         self.SubVehicleLeave:UpdateState(db.vehicleLeave)
+        self.SubActionbarRange:UpdateState(db.actionbarRange)
     elseif sub == 'bar1' then
         Module.bar1:SetState(db.bar1, key)
-
-        if db.bar1.range then
-            if Module.UpdateRangeHooked then
-                -- already hooked
-            else
-                self:SecureHook('ActionButton_UpdateRangeIndicator', function(self, checksRange, inRange)
-                    DragonflightUIActionbarMixin:UpdateRange(self, checksRange, inRange)
-                end)
-                Module.UpdateRangeHooked = true
-            end
-        else
-            if Module.UpdateRangeHooked then
-                -- remove hook      
-                Module.UpdateRangeHooked = false
-                self:Unhook('ActionButton_UpdateRangeIndicator')
-            end
-        end
     elseif sub == 'bar2' then
         Module.bar2:SetState(db.bar2, key)
     elseif sub == 'bar3' then
@@ -2811,6 +2787,8 @@ function Module:ApplySettingsInternal(sub, key)
         Module.FPSFrame:SetState(db.fps)
     elseif sub == 'vehicleLeave' then
         self.SubVehicleLeave:UpdateState(db.vehicleLeave)
+    elseif sub == 'actionbarRange' then
+        self.SubActionbarRange:UpdateState(db.actionbarRange)
     end
 end
 
@@ -3658,6 +3636,7 @@ function Module:Era()
     Module.HookBags()
 
     self.SubVehicleLeave:Setup()
+    self.SubActionbarRange:Setup()
 end
 
 function Module:TBC()
@@ -3688,6 +3667,7 @@ function Module:Wrath()
     Module.HookBags()
 
     self.SubVehicleLeave:Setup()
+    self.SubActionbarRange:Setup()
 end
 
 function Module:Cata()
