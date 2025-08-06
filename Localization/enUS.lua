@@ -835,6 +835,10 @@ do
 
     -- raid
     L["RaidFrameName"] = "Raid Frame"
+
+    -- Bosss
+    L["BossFrameName"] = "BossFrame"
+    L["BossFrameNameDesc"] = "Boss frame settings"
 end
 
 -- keybindings

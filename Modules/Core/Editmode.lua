@@ -197,6 +197,7 @@ if true then
     displayTable['FocusTargetFrame'] = L['FocusFrameToTName']
     displayTable['PartyFrame'] = L['PartyFrameName']
     displayTable['RaidFrame'] = L['RaidFrameName']
+    displayTable['BossFrames'] = L['BossFrameName']
 
     -- misc
     displayTable['Bags'] = L['BagsOptionsName']
@@ -243,6 +244,8 @@ if true then
     if DF.Wrath then
         table.insert(framesFrames, 'FocusFrame')
         table.insert(framesFrames, 'FocusTargetFrame')
+        table.insert(framesFrames, 'BossFrames')
+
     end
     AddTableToCategory(framesFrames, 'headerFrames')
 
