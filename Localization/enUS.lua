@@ -331,7 +331,8 @@ do
     L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "Use Key Down"
     L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or "Activates abilities on key down."
     L["MoreOptionsIconRangeColor"] = "Icon Range Color"
-    L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange"
+    L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange." ..
+                                             "\nFor settings, see settings category 'Action Bar Range'."
 
     L["ExtraOptionsPreset"] = "Preset"
     L["ExtraOptionsResetToDefaultPosition"] = "Reset to Default Position"
@@ -341,6 +342,27 @@ do
     L["ExtraOptionsModernLayoutDesc"] = ""
     L["ExtraOptionsClassicLayout"] = "Classic Layout (sidebar)"
     L["ExtraOptionsClassicLayoutDesc"] = ""
+
+    -- Range
+    L["ActionbarRangeName"] = "Action Bar Range"
+    L["ActionbarRangeNameDesc"] = ""
+
+    L["ActionbarRangeHeader"] = "Range Settings"
+    L["ActionbarRangeHeaderDesc"] = ""
+
+    L["ActionbarRangeHeaderHotkey"] = "Keybind" -- HotKey
+    L["ActionbarRangeHeaderHotkeyDesc"] = ""
+    L["ActionbarRangeHotkeyColor"] = "Normal"
+    L["ActionbarRangeHotkeyColorDesc"] = "Normal keybind font color."
+    L["ActionbarRangeHotkeyOutOfRangeColor"] = "Out Of Range"
+    L["ActionbarRangeHotkeyOutOfRangeColorDesc"] = "Keybind font color when out of range."
+
+    L["ActionbarRangeHeaderNotUsable"] = "Not Usable"
+    L["ActionbarRangeHeaderNotUsableDesc"] = ""
+    L["ActionbarRangeHeaderOutOfRange"] = "Out Of Range"
+    L["ActionbarRangeHeaderOutOfRangeDesc"] = ""
+    L["ActionbarRangeHeaderOutOfMana"] = "Out Of Mana"
+    L["ActionbarRangeHeaderOutOfManaDesc"] = ""
 
     -- XP
     L["XPOptionsName"] = "XP Bar"

@@ -330,6 +330,8 @@ function DragonflightUIActionbarMixin:Update()
 
     -- if self.decoFrame then self.decoFrame.update(state) end
 
+    self:SetIgnoreRange(not state.range)
+
     local isLegal, loopStr = self:IsAnchorframeLegal();
     local loopStrFixed, _ = gsub(loopStr, 'DragonflightUI', 'DF')
     -- print(loopStrFixed)
@@ -1208,19 +1210,19 @@ function DragonflightUIActionbarMixin:AddDecoNew()
         --     ["Interface/HUD/UIActionBarFrame2x"]={
         -- 	["UI-HUD-ActionBar-Frame"]={55, 55, 0.0078125, 0.867188, 0.0078125, 0.867188, false, false, "2x", slice={20, 20, 25, 25, tile=true}},
         -- }, -- Interface/HUD/UIActionBarFrame2x
-        local texTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x'
-        local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt')
-        borderArt:SetTexture(texTwo)
-        borderArt:SetSize(110, 110)
-        borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
-        -- borderArt:SetTexCoord(0, 1, 0, 1)
+        -- local texTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x'
+        -- local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt')
+        -- borderArt:SetTexture(texTwo)
+        -- borderArt:SetSize(110, 110)
+        -- borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
+        -- -- borderArt:SetTexCoord(0, 1, 0, 1)
 
-        borderArt:SetPoint('TOPLEFT', self, 'TOPLEFT', -4, 4)
-        borderArt:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 8, -7)
-        borderArt:SetTextureSliceMode(1)
-        borderArt:SetTextureSliceMargins(20, 20, 25, 25)
+        -- borderArt:SetPoint('TOPLEFT', self, 'TOPLEFT', -4, 4)
+        -- borderArt:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 8, -7)
+        -- borderArt:SetTextureSliceMode(1)
+        -- borderArt:SetTextureSliceMargins(20, 20, 25, 25)
 
-        self.BorderArt = borderArt;
+        -- self.BorderArt = borderArt;
     end
 end
 
@@ -1606,55 +1608,19 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
     end
 end
 
-function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
-    if btn.ignoreRange then return end
-    local mask = btn.Icon
-    if not mask then return end
-
-    -- local normal = btn:GetNormalTexture()
-    -- normal:SetVertexColor(0.5, 0.5, 1.0, 1.0)
-
-    local isUsable, notEnoughMana = IsUsableAction(btn.action);
-
-    -- mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-    -- mask:SetDesaturated(true)
-    if true then return end
-    if not isUsable then
-        -- mask:SetVertexColor(0.4, 0.4, 0.4, 1.0)
-        mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        mask:SetDesaturated(true)
-    elseif (checksRange) then
-        if (inRange) then
-            if notEnoughMana then
-                mask:SetVertexColor(0.5, 0.5, 1.0, 1.0)
-                mask:SetDesaturated(true)
-            else
-                mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-                mask:SetDesaturated(false)
-            end
-        else
-            -- mask:SetVertexColor(1, 0.3, 0.1, 1)
-            -- mask:SetVertexColor(0.9, 0.1, 0.1, 1)
-            mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            mask:SetDesaturated(true)
-        end
-    else
-        if notEnoughMana then
-            mask:SetVertexColor(0.5, 0.5, 1.0, 1.0)
-            mask:SetDesaturated(true)
-        else
-            mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            mask:SetDesaturated(false)
-        end
-    end
-end
-
 function DragonflightUIActionbarMixin:SetIgnoreRange(ignore)
     local count = #(self.buttonTable)
 
     for i = 1, count do
         local btn = self.buttonTable[i]
         btn.ignoreRange = ignore
+
+        local icon = btn.Icon
+        icon:SetVertexColor(1.0, 1.0, 1.0, 1.0) -- default
+        icon:SetDesaturated(false) -- default
+
+        btn.checksRange = nil;
+        btn.inRange = nil;
     end
 end
 
