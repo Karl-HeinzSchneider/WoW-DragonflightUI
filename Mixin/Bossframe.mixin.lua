@@ -111,7 +111,7 @@ function DragonflightUIBossframeMixin:Update()
 end
 
 function DragonflightUIBossframeMixin:UpdatePortrait(unit)
-    SetPortraitTexture(self.Portrait, unit, false)
+    SetPortraitTexture(self.Portrait, unit)
 end
 
 function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
