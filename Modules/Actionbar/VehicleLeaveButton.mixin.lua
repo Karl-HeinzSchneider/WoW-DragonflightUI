@@ -237,7 +237,7 @@ function SubModuleMixin:Update()
         parent = _G[state.anchorFrame]
     end
 
-    f:SetParent(parent)
+    -- f:SetParent(parent)
     f:SetScale(state.scale)
 
     f:ClearAllPoints()
