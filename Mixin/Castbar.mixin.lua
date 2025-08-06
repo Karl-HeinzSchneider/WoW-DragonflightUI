@@ -142,7 +142,7 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             return;
         end
 
-        if isTradeSkill and self.TSAdded then
+        if isTradeSkill and self.TSAdded and self.TSRepeatCount then
             --    
             -- unitTarget, castGUID, spellID
             local _, _, spellID = ...;
@@ -176,6 +176,15 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             self.TSCrafting = true;
         else
             self.TSCrafting = false;
+            self.TSSpellID = nil;
+
+            self.TSStartTime = nil;
+            self.TSEndTime = nil;
+            self.TSTotalTime = nil;
+            self.TSDuration = nil;
+            self.TSCrafting = false;
+            self.TSRepeatCount = nil;
+            self.TSCompleted = nil;
         end
 
         -- self.barType = self:GetEffectiveType(false, notInterruptible, isTradeSkill, false);
@@ -592,6 +601,9 @@ function DragonFlightUICastbarMixin:HandleCastStop(event, ...)
             self.TSTotalTime = nil;
             self.TSDuration = nil;
             self.TSCrafting = false;
+            self.TSRepeatCount = nil;
+            self.TSCompleted = nil;
+            self.TSSpellID = nil;
         else
             -- print('~~> NOT YET FINISHED')
         end
@@ -995,9 +1007,9 @@ function DragonFlightUICastbarMixin:AddTradeSkill()
         if unitTarget ~= 'player' then return end
         -- print('~~UNIT_SPELLCAST_SUCCEEDED', unitTarget, castGUID, spellID)
 
-        if spellID == self.TSSpellID then
+        if self.TSSpellID and spellID == self.TSSpellID then
             --
-            self.TSCompleted = self.TSCompleted + 1;
+            self.TSCompleted = (self.TSCompleted or 0) + 1;
         end
     end, self)
 end
