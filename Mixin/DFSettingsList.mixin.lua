@@ -768,7 +768,10 @@ function DFSettingsListColorPickerMixin:Init(node)
                 local newA = _G['DragonflightUIColorPicker']:GetColorAlpha()
                 local newC = CreateColor(newR, newG, newB, newA)
                 -- print('~', newC:GenerateHexColorNoAlpha())
-                elementData.set({elementData.key}, newC:GenerateHexColorNoAlpha())
+                if newC:GenerateHexColorNoAlpha() ~= elementData.get({elementData.key}) then
+                    --
+                    elementData.set({elementData.key}, newC:GenerateHexColorNoAlpha())
+                end
 
                 self.Color:SetColorHex(elementData.get({elementData.key}))
             end,
