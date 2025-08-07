@@ -21,7 +21,7 @@ local defaults = {
             anchorParent = 'BOTTOMRIGHT',
             x = -210,
             y = -118,
-            padding = 0,
+            padding = 8,
             breakUpLargeNumbers = true,
             hideNameBackground = false,
             fadeOut = true,
@@ -430,11 +430,84 @@ function Module:HideDefault()
 end
 
 function Module:CreateBossFrame(id)
+    local unitframeModule = DF:GetModule('Unitframe')
+
     local name = 'DragonflightUIBoss' .. id .. 'Frame'
-    local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate')
+    local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate', id)
+    f:SetFrameLevel(5)
     local unit = 'boss' .. id
-    unit = 'target'
+    -- unit = 'player'
     f:Setup(unit, id)
+    unitframeModule.SubTarget:ChangeTargetFrameGeneral(f, f)
+
+    -- tot
+    do
+        local totName = 'DragonflightUIBoss' .. id .. 'ToTFrame'
+        local tot = CreateFrame('Button', totName, UIParent, 'DragonflightUIBossframeTemplate', id)
+        tot:SetFrameLevel(10)
+        local totUnt = 'boss' .. id .. 'target'
+        -- totUnt = 'pettarget'
+        tot:Setup(totUnt, id)
+        tot:ClearAllPoints()
+        tot:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15)
+        -- tot:SetPoint('RIGHT', f, 'LEFT', -10, 0)
+
+        unitframeModule.SubTargetOfTarget:ChangeToTFrame(tot, tot)
+
+        tot.PortraitExtra:Hide()
+        tot.UpdatePortraitExtra = function(frameRef, u)
+            -- print(u)
+        end
+
+        tot.NameBackground:SetTexture('')
+        tot.LevelText:SetAlpha(0)
+        tot.HighLevelTexture:SetAlpha(0)
+
+        local function smallerFont(ff, newSize)
+            local fontFile, fontHeight, flags = ff:GetFont()
+            ff:SetFont(fontFile, newSize, flags)
+        end
+
+        local raidTargetIconSize = 26 - 6;
+        tot.RaidTargetIcon:SetSize(raidTargetIconSize, raidTargetIconSize)
+
+        tot.HealthBar.breakUpLargeNumbers = true
+        tot.HealthBar.capNumericDisplay = true
+        tot.HealthBar.showPercentage = true
+        smallerFont(tot.HealthBar.HealthBarText, 14 - 3)
+        TextStatusBar_UpdateTextString(tot.HealthBar)
+
+        local deltaSize = 70 - 74
+        tot.ManaBar.ManaBarText:ClearAllPoints()
+        tot.ManaBar.ManaBarText:SetPoint('CENTER', tot.ManaBar, 'CENTER', -deltaSize / 2, 0)
+        smallerFont(tot.ManaBar.ManaBarText, 14 - 3)
+
+        tot.ManaBar.breakUpLargeNumbers = true
+        tot.ManaBar.capNumericDisplay = true
+        tot.ManaBar.showPercentage = true
+        TextStatusBar_UpdateTextString(tot.ManaBar)
+
+        tot.UpdatePowerType = function(totself, powerTypeString)
+            local mana = totself.ManaBar
+
+            if powerTypeString == 'MANA' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+            end
+        end
+    end
 
     return f
 end

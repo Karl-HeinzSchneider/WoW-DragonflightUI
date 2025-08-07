@@ -11,6 +11,12 @@ function DragonflightUIBossframeMixin:OnLoad()
     -- print('DragonflightUIBossframeMixin:OnLoad()')
 end
 
+local function UnitFrameTargetIcon_OpenMenu(self)
+    print('UnitFrameTargetIcon_OpenMenu', self:GetName())
+    local contextData = {fromTargetFrame = false, unit = self.unit};
+    UnitPopup_OpenMenu("RAID_TARGET_ICON", contextData);
+end
+
 function DragonflightUIBossframeMixin:Setup(unit, id)
     -- print('DragonflightUIBossframeMixin:Setup()', unit)
 
@@ -21,6 +27,9 @@ function DragonflightUIBossframeMixin:Setup(unit, id)
 
     self:SetAttribute("type1", "macro")
     self:SetAttribute('macrotext', '/targetexact ' .. unit)
+
+    self:SetAttribute("*type2", "menu");
+    self.menu = UnitFrameTargetIcon_OpenMenu;
 
     self:SetSize(232, 100)
     self:SetPoint('CENTER', UIParent, 'CENTER', 0, 80)
@@ -37,6 +46,8 @@ function DragonflightUIBossframeMixin:Setup(unit, id)
     self:RegisterEvent("CVAR_UPDATE")
     self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
     self:RegisterEvent("RAID_TARGET_UPDATE")
+
+    self:RegisterEvent('UNIT_TARGET')
 
     self:RegisterUnitEvent("UNIT_HEALTH", unit)
     -- self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
@@ -79,7 +90,11 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
         self:UpdatePower(unit)
     elseif (event == "UNIT_MAXPOWER") then
         self:UpdatePower(unit)
-
+    elseif (event == 'UNIT_TARGET') then
+        if UnitIsUnit(unit, eventUnit .. 'target') then
+            -- print(event, eventUnit, arg1, arg2)
+            self:OnShow()
+        end
     elseif (event == 'CVAR_UPDATE') and (eventUnit == 'statusTextDisplay') then
         -- self:UpdateStatusStyle()
         self:UpdateHealth(unit)
@@ -155,8 +170,10 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
 
         local mask = self:CreateMaskTexture()
         mask:SetPoint('CENTER', portrait, 'CENTER', 1, -1)
+        mask:SetAllPoints(portrait)
         mask:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
         portrait:AddMaskTexture(mask)
+        -- self.PortraitMask = mask;
     end
 
     do
@@ -190,14 +207,14 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         mana:SetPoint('RIGHT', self.Portrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
 
         mana:SetStatusBarTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
         mana:SetStatusBarColor(1, 1, 1, 1)
         mana.breakUpLargeNumbers = true
 
         self.ManaBar = mana
 
         -- local powerType, powerTypeString = UnitPowerType('target')   
-        self:UpdatePowerType('MANA')
+        -- self:UpdatePowerType('MANA')
     end
 
     do
@@ -293,8 +310,6 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         self.ManaBar.RightText:SetPoint('RIGHT', self.ManaBar, 'RIGHT', -deltaSize - dx, 0)
     end
 
-    local unitframeModule = DF:GetModule('Unitframe')
-
     -- FocusFrame.Portrait = FocusFramePortrait;
     -- FocusFrame.Name = FocusFrameTextureFrameName;
     -- FocusFrame.NameBackground = FocusFrameNameBackground;
@@ -302,8 +317,6 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     -- FocusFrame.LevelText = FocusFrameTextureFrameLevelText;
     -- FocusFrame.DeadText = FocusFrameTextureFrameDeadText;
     -- FocusFrame.UnconsciousText = FocusFrameTextureFrameUnconsciousText;
-
-    unitframeModule.SubTarget:ChangeTargetFrameGeneral(self, self)
 end
 
 function DragonflightUIBossframeMixin:UpdatePortraitExtra(unit)
