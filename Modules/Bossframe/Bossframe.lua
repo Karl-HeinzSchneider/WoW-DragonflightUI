@@ -1,5 +1,5 @@
 local addonName, addonTable = ...;
-local Helper = addonTable.Helper; ---@class DragonflightUI
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
@@ -318,11 +318,13 @@ function Module:AddEditMode()
         showFunction = function()
             --         
             -- fakeWidget.FakePreview:Show()
+            self.PreviewParent:Show()
         end,
         hideFunction = function()
             --
             fakeWidget:Show()
             -- fakeWidget.FakePreview:Hide()
+            self.PreviewParent:Hide()
         end
     });
 end
@@ -376,15 +378,21 @@ function Module:ApplySettingsInternal(sub, key)
 
     for id = 1, 4 do
         local boss = Module['BossFrame' .. id]
+        local fake = Module['FakeBoss' .. id]
 
         boss:ClearAllPoints()
+        fake:ClearAllPoints()
+
         if id == 1 then
             boss:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
+            fake:SetPoint('TOPLEFT', self.PreviewParent, 'TOPLEFT', 0, 0)
         else
             if state.orientation == 'vertical' then
                 boss:SetPoint('TOPLEFT', self['BossFrame' .. (id - 1)], 'BOTTOMLEFT', 0, -state.padding)
+                fake:SetPoint('TOPLEFT', self['FakeBoss' .. (id - 1)], 'BOTTOMLEFT', 0, -state.padding)
             else
                 boss:SetPoint('TOPLEFT', self['BossFrame' .. (id - 1)], 'TOPRIGHT', state.padding, 0)
+                fake:SetPoint('TOPLEFT', self['FakeBoss' .. (id - 1)], 'TOPRIGHT', state.padding, 0)
             end
         end
 
@@ -402,6 +410,31 @@ function Module:CreateBossFrames()
         local f = Module:CreateBossFrame(id)
 
         Module['BossFrame' .. id] = f
+    end
+
+    local previewParent = CreateFrame("Frame", 'DragonflightUIBossFramesPreviewParent', self.PreviewFrame)
+    previewParent:SetPoint('TOPLEFT', self.PreviewFrame, 'TOPLEFT', 0, 0)
+    previewParent:SetPoint('BOTTOMRIGHT', self.PreviewFrame, 'BOTTOMRIGHT', 0, 0)
+    self.PreviewParent = previewParent;
+    self.PreviewParent:Hide()
+
+    for id = 1, 4 do
+        --
+        local f = CreateFrame('Frame', self['BossFrame' .. id]:GetName() .. 'Preview', previewParent,
+                              'DFEditModePreviewTargetTemplate')
+        f:OnLoad()
+        Module['FakeBoss' .. id] = f
+        f:Show()
+        local unit = DF:GetRandomBoss();
+        f:SetUnit(unit)
+        f.NameBackground:SetColor('red')
+
+        local fakeTargetOfTarget = CreateFrame('Frame', self['BossFrame' .. id]:GetName() .. 'ToTPreview', f,
+                                               'DFEditModePreviewTargetOfTargetTemplate')
+        fakeTargetOfTarget.IsToT = true;
+        fakeTargetOfTarget:OnLoad()
+        fakeTargetOfTarget:Show()
+        fakeTargetOfTarget:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15)
     end
 
     -- frame = CreateFrame(frameType [, name, parent, template, id])
