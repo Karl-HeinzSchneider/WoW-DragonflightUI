@@ -473,6 +473,7 @@ function Module:CreateBossFrame(id)
     f:Setup(unit, id)
     unitframeModule.SubTarget:ChangeTargetFrameGeneral(f, f)
     f:AddThreatIndicator()
+    -- f:AddCastbar()
 
     -- tot
     do

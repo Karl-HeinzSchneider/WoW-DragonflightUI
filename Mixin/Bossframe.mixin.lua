@@ -327,6 +327,38 @@ function DragonflightUIBossframeMixin:AddThreatIndicator()
     indi:SetUnit(self.unit, true)
 end
 
+function DragonflightUIBossframeMixin:AddCastbar()
+    local bar = CreateFrame('StatusBar', self:GetName() .. 'Castbar', self, 'DragonflightUIBossCastbarTemplate',
+                            self:GetID())
+
+    local barstate = {
+        activate = true,
+        scale = 1,
+        anchorFrame = self:GetName(),
+        customAnchorFrame = '',
+        anchor = 'RIGHT',
+        anchorParent = 'LEFT',
+        x = -5,
+        y = 0,
+        sizeX = 128,
+        sizeY = 16,
+        preci = 1,
+        preciMax = 2,
+        castTimeEnabled = true,
+        castTimeMaxEnabled = true,
+        compactLayout = true,
+        holdTime = 1.0,
+        holdTimeInterrupt = 1.0,
+        showIcon = true,
+        sizeIcon = 30,
+        showTicks = false,
+        showRank = true,
+        showChannelName = true,
+        autoAdjust = false
+    }
+    bar:UpdateState(barstate);
+end
+
 function DragonflightUIBossframeMixin:UpdatePortraitExtra(unit)
     local class = UnitClassification(unit)
     if class == 'worldboss' then
