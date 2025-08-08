@@ -604,7 +604,7 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
     manaBar:SetPoint('TOPLEFT', healthBar, 'BOTTOMLEFT', 0, -1)
     manaBar:SetSize(134, 10)
     manaBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
     manaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
 
     if not manaBar.DFMask then
