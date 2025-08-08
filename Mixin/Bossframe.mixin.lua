@@ -347,7 +347,7 @@ end
 function DragonflightUIBossframeMixin:AddThreatIndicator()
     local indi = CreateFrame('Frame', 'DragonflightUIThreatIndicator', self, 'DragonflightUIThreatIndicatorTemplate')
     indi:ClearAllPoints()
-    indi:SetPoint('BOTTOM', self.NameBackground, 'TOP', 0, 0.5)
+    indi:SetPoint('BOTTOM', self.NameBackground, 'TOP', 0, 0)
 
     indi:SetUnit(self.unit, true)
 end
