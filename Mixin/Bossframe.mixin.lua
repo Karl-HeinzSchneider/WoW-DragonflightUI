@@ -108,6 +108,10 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
     end
 end
 
+function DragonflightUIBossframeMixin:OnUpdate(elapsed)
+    self:UpdateRange()
+end
+
 function DragonflightUIBossframeMixin:UpdateState(state)
     self.state = state;
     self:Update();
@@ -123,10 +127,31 @@ function DragonflightUIBossframeMixin:Update()
 
     TextStatusBar_UpdateTextString(self.HealthBar)
     self.NameBackground:SetShown(not state.hideNameBackground)
+
+    self:UpdateRange()
 end
 
 function DragonflightUIBossframeMixin:UpdatePortrait(unit)
     SetPortraitTexture(self.Portrait, unit)
+end
+
+function DragonflightUIBossframeMixin:UpdateRange()
+    if not RangeCheck then return end
+    local state = self.state;
+    if not state then return end
+    if not state.fadeOut then
+        --
+        self:SetAlpha(1.0);
+        return;
+    end
+
+    local minRange, maxRange = RangeCheck:GetRange(self.unit)
+
+    if minRange and minRange >= state.fadeOutDistance then
+        self:SetAlpha(0.55);
+    else
+        self:SetAlpha(1.0);
+    end
 end
 
 function DragonflightUIBossframeMixin:SetupTargetFrameStyle()

@@ -542,6 +542,8 @@ function Module:CreateBossFrame(id)
                     'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
             end
         end
+
+        tot:SetScript('OnUpdate', nil)
     end
 
     return f

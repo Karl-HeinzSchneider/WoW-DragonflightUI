@@ -6,6 +6,7 @@
 			<OnLoad method="OnLoad" />
 			<OnShow method="OnShow" />
 			<OnHide method="OnHide" />
+			<OnUpdate method="OnUpdate" />
 		</Scripts>
 	</Frame>
 	<Frame name="DragonflightUIThreatIndicatorTemplate" mixin="DragonflightUIThreatIndicatorMixin" virtual="true" hidden="true">
