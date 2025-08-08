@@ -455,13 +455,6 @@ function Module:CreateBossFrames()
 
 end
 
-function Module:HideDefault()
-    for id = 1, 4 do
-        local f = _G['Boss' .. id .. 'TargetFrame']
-        f:SetAlpha(0)
-    end
-end
-
 function Module:CreateBossFrame(id)
     local unitframeModule = DF:GetModule('Unitframe')
 
@@ -549,6 +542,21 @@ function Module:CreateBossFrame(id)
     return f
 end
 
+function Module:HideDefault()
+    for id = 1, 4 do
+        local f = _G['Boss' .. id .. 'TargetFrame']
+        f:SetAlpha(0.5)
+        f:UnregisterEvent('INSTANCE_ENCOUNTER_ENGAGE_UNIT')
+        f:UnregisterAllEvents()
+        -- INSTANCE_ENCOUNTER_ENGAGE_UNIT
+        f:ClearAllPoints()
+        f:Hide()
+        f:SetPoint('LEFT', UIParent, 'RIGHT', 666, 0);
+        -- Boss1TargetFrame:SetPoint("TOPRIGHT", "MinimapCluster", "BOTTOMRIGHT")
+    end
+end
+
+-- unused
 function Module:HookBossframe()
     local b = _G.Boss1TargetFrame
     b:SetMovable(true)
