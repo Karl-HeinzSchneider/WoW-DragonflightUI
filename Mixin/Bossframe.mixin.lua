@@ -319,6 +319,14 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     -- FocusFrame.UnconsciousText = FocusFrameTextureFrameUnconsciousText;
 end
 
+function DragonflightUIBossframeMixin:AddThreatIndicator()
+    local indi = CreateFrame('Frame', 'DragonflightUIThreatIndicator', self, 'DragonflightUIThreatIndicatorTemplate')
+    indi:ClearAllPoints()
+    indi:SetPoint('BOTTOM', self.NameBackground, 'TOP', 0, 2)
+
+    indi:SetUnit(self.unit, true)
+end
+
 function DragonflightUIBossframeMixin:UpdatePortraitExtra(unit)
     local class = UnitClassification(unit)
     if class == 'worldboss' then

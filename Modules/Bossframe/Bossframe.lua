@@ -472,6 +472,7 @@ function Module:CreateBossFrame(id)
     -- unit = 'player'
     f:Setup(unit, id)
     unitframeModule.SubTarget:ChangeTargetFrameGeneral(f, f)
+    f:AddThreatIndicator()
 
     -- tot
     do
