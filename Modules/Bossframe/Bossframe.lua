@@ -21,7 +21,7 @@ local defaults = {
             anchorParent = 'BOTTOMRIGHT',
             x = -210,
             y = -118,
-            padding = 8,
+            padding = 10,
             breakUpLargeNumbers = true,
             hideNameBackground = false,
             fadeOut = true,
@@ -434,7 +434,7 @@ function Module:CreateBossFrames()
         fakeTargetOfTarget.IsToT = true;
         fakeTargetOfTarget:OnLoad()
         fakeTargetOfTarget:Show()
-        fakeTargetOfTarget:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15)
+        fakeTargetOfTarget:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15 - 2)
     end
 
     -- frame = CreateFrame(frameType [, name, parent, template, id])
@@ -484,7 +484,7 @@ function Module:CreateBossFrame(id)
         -- totUnt = 'pettarget'
         tot:Setup(totUnt, id)
         tot:ClearAllPoints()
-        tot:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15)
+        tot:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15 - 2)
         -- tot:SetPoint('RIGHT', f, 'LEFT', -10, 0)
 
         unitframeModule.SubTargetOfTarget:ChangeToTFrame(tot, tot)
