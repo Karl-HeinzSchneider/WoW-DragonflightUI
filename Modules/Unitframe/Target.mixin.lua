@@ -620,8 +620,8 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
     local nameBackground = frame.NameBackground;
     local flash = frame.Flash;
     local levelText = frame.LevelText or _G[self:GetName() '..TextureFrameLevelText']
-    local deadText = TargetFrame.DeadText;
-    local unconsciousText = TargetFrame.UnconsciousText;
+    local deadText = frame.DeadText;
+    local unconsciousText = frame.UnconsciousText;
 
     local portDelta = 0; -- not 100% centered without it
     port:SetSize(56, 56)
