@@ -701,7 +701,7 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
             levelText:ClearAllPoints()
             levelText:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', 5, 1)
             levelText:SetHeight(12)
-            levelText:SetWidth(15)
+            -- levelText:SetWidth(20)
         end
         frame:DFFixLevelText()
 
