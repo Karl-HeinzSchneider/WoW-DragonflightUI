@@ -944,6 +944,7 @@ end
 
 function DragonFlightUICastbarMixin:AdjustPosition()
     local state = self.state
+    if not state then return end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -952,25 +953,46 @@ function DragonFlightUICastbarMixin:AdjustPosition()
         parent = _G[state.anchorFrame]
     end
 
+    if state.autoAdjust and parent == self.DefaultParent then
+        self:AutoPosition()
+        return;
+    end
+
+    self:ClearAllPoints()
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+end
+
+-- local default = {
+--     anchorFrame = 'TargetFrame',
+--     customAnchorFrame = '',
+--     anchor = 'TOP',
+--     anchorParent = 'BOTTOM',
+--     x = -20,
+--     y = -20,
+--     sizeX = 150,
+--     sizeY = 10
+-- }
+
+function DragonFlightUICastbarMixin:AutoPosition()
+    -- local state = self.state
+    -- if not state then return end
+
+    local parent = self.DefaultParent;
     self:ClearAllPoints()
 
-    if state.autoAdjust then
-        --   
-        local rows = self:GetParent().auraRows or 0
-        local auraSize = 22
-
-        local delta = (rows - 2) * (auraSize + 2)
-
-        if ((not parent.buffsOnTop) and rows > 2) then
-            --
-            self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y - delta)
-        else
-            --
-            self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-        end
+    if parent.buffsOntop then
+        self:SetPoint('TOP', parent, 'BOTTOM', -20, -20)
     else
-        --
-        self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+        if parent.spellbarAnchor then
+            -- print(parent:GetName(), parent.spellbarAnchor:GetName())
+
+            self:SetPoint('TOP', parent, 'BOTTOM', -20, -20)
+            self:SetPoint('TOPLEFT', parent.spellbarAnchor, 'BOTTOMLEFT', 0, -10)
+        else
+            -- print(parent:GetName(), nil)
+
+            self:SetPoint('TOP', parent, 'BOTTOM', -20, -20)
+        end
     end
 end
 

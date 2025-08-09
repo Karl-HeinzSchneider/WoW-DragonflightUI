@@ -134,6 +134,15 @@ function AddCastbarTable(optionTable, sub)
             new = false,
             editmode = true
         },
+        autoAdjust = {
+            type = 'toggle',
+            name = L["CastbarTableAutoAdjust"],
+            desc = L["CastbarTableAutoAdjustDesc"] .. getDefaultStr('autoAdjust', sub),
+            group = 'headerPosition',
+            order = 10,
+            new = true,
+            editmode = true
+        },
         headerStyling = {
             type = 'header',
             name = L["CastbarTableStyle"],
@@ -260,14 +269,6 @@ function AddCastbarTable(optionTable, sub)
             desc = L["CastbarTableShowTicksDesc"] .. getDefaultStr('showTicks', sub),
             group = 'headerStyling',
             order = 18,
-            editmode = true
-        },
-        autoAdjust = {
-            type = 'toggle',
-            name = L["CastbarTableAutoAdjust"],
-            desc = L["CastbarTableAutoAdjustDesc"] .. getDefaultStr('autoAdjust', sub),
-            group = 'headerStyling',
-            order = 22,
             editmode = true
         }
     }
@@ -827,12 +828,14 @@ function Module.AddNewCastbar()
 
     local target = CreateFrame('StatusBar', 'DragonflightUITargetCastbar', UIParent,
                                'DragonflightUITargetCastbarTemplate')
+    target.DefaultParent = TargetFrame;
     TargetFrameSpellBar.DFCastbar = target
     Module.TargetCastbar = target
 
     if DF.Wrath then
         local focus = CreateFrame('StatusBar', 'DragonflightUIFocusCastbar', UIParent,
                                   'DragonflightUIFocusCastbarTemplate')
+        focus.DefaultParent = FocusFrame;
         FocusFrameSpellBar.DFCastbar = focus
         Module.FocusCastbar = focus
     end
