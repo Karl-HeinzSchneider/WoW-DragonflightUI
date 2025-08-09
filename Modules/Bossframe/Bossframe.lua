@@ -459,7 +459,7 @@ function Module:CreateBossFrame(id)
     local unitframeModule = DF:GetModule('Unitframe')
 
     local name = 'DragonflightUIBoss' .. id .. 'Frame'
-    local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate', id)
+    local f = CreateFrame('Button', name, self.PreviewFrame, 'DragonflightUIBossframeTemplate', id)
     f:SetFrameLevel(5)
     local unit = 'boss' .. id
     -- unit = 'player'
@@ -471,7 +471,7 @@ function Module:CreateBossFrame(id)
     -- tot
     do
         local totName = 'DragonflightUIBoss' .. id .. 'ToTFrame'
-        local tot = CreateFrame('Button', totName, UIParent, 'DragonflightUIBossframeTemplate', id)
+        local tot = CreateFrame('Button', totName, f, 'DragonflightUIBossframeTemplate', id)
         tot:SetFrameLevel(10)
         local totUnt = 'boss' .. id .. 'target'
         -- totUnt = 'pettarget'
