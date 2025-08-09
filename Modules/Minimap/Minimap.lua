@@ -1464,6 +1464,7 @@ function Module:ChangeLFG()
 
         addEditmode()
     elseif DF.Era then
+        local loaded, value = C_AddOns.LoadAddOn('Blizzard_GroupFinder_VanillaStyle')
         DF.Compatibility:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
             --
             -- print('~~~~Blizzard_GroupFinder_VanillaStyle')
