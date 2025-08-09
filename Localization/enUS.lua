@@ -547,7 +547,8 @@ do
     L["CastbarTableShowTicksDesc"] = ""
     L["CastbarTableAutoAdjust"] = "Auto Adjust"
     L["CastbarTableAutoAdjustDesc"] =
-        "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the Target/FocusFrame"
+        "Fixes the cast bar position depending on the amount of buffs/debuffs - useful when anchoring the cast bar beneath the Target/FocusFrame." ..
+            "\n\nOnly works if the option is checked *and* also the parent is the default parent, e.g. TargetFrame for target cast bar."
     L["CastbarTableShowRank"] = "Show Rank"
     L["CastbarTableShowRankDesc"] = ""
     L["CastbarTableShowChannelName"] = "Show Channel Name"
