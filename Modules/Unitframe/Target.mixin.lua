@@ -303,6 +303,7 @@ function SubModuleMixin:SetupOptions()
                 editmode = true
             }
             moreOptions['buffsOnTop'].group = 'headerBuffs'
+            moreOptions['buffsOnTop'].order = 0.5
 
             moreOptions['auraSizeSmall'] = {
                 type = 'range',
@@ -343,6 +344,63 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameDynamicBuffSizeDesc"] .. getDefaultStr('dynamicBuffSize', 'target'),
                 group = 'headerBuffs',
                 order = 3,
+                new = true,
+                editmode = true
+            }
+            -- advanced
+            moreOptions['headerBuffsAdvanced'] = {
+                type = 'header',
+                name = L["TargetFrameHeaderBuffsAdvanced"],
+                desc = '',
+                order = 19.5,
+                isExpanded = false,
+                editmode = true
+            }
+            moreOptions['auraOffsetY'] = {
+                type = 'range',
+                name = L["TargetFrameAuraOffsetY"],
+                desc = L["TargetFrameAuraOffsetYDesc"] .. getDefaultStr('auraOffsetY', 'target'),
+                min = 0,
+                max = 16,
+                bigStep = 0.25,
+                group = 'headerBuffsAdvanced',
+                order = 10,
+                new = true,
+                editmode = true
+            }
+            moreOptions['auraRowWidth'] = {
+                type = 'range',
+                name = L["TargetFrameAuraRowWidth"],
+                desc = L["TargetFrameAuraRowWidthDesc"] .. getDefaultStr('auraRowWidth', 'target'),
+                min = 1,
+                max = 256,
+                bigStep = 1,
+                group = 'headerBuffsAdvanced',
+                order = 11,
+                new = true,
+                editmode = true
+            }
+            moreOptions['totAuraRowWidth'] = {
+                type = 'range',
+                name = L["TargetFrameAuraRowWidthToT"],
+                desc = L["TargetFrameAuraRowWidthToTDesc"] .. getDefaultStr('totAuraRowWidth', 'target'),
+                min = 1,
+                max = 256,
+                bigStep = 1,
+                group = 'headerBuffsAdvanced',
+                order = 12,
+                new = true,
+                editmode = true
+            }
+            moreOptions['numTotAuraRows'] = {
+                type = 'range',
+                name = L["TargetFrameToTAuraRows"],
+                desc = L["TargetFrameToTAuraRowsDesc"] .. getDefaultStr('numTotAuraRows', 'target'),
+                min = 0,
+                max = 8,
+                bigStep = 1,
+                group = 'headerBuffsAdvanced',
+                order = 13,
                 new = true,
                 editmode = true
             }

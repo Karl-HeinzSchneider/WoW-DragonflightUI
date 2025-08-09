@@ -793,6 +793,19 @@ do
     L["TargetFrameDynamicBuffSize"] = "Dynamic Buff Size"
     L["TargetFrameDynamicBuffSizeDesc"] = "Increases the size of the player buffs and debuffs on the target."
 
+    L["TargetFrameHeaderBuffsAdvanced"] = "Buffs/Debuffs (advanced)"
+    L["TargetFrameAuraOffsetY"] = "Aura Offset Y"
+    L["TargetFrameAuraOffsetYDesc"] = "Y offset between rows and buffs/debuffs."
+    L["TargetFrameAuraRowWidth"] = "Aura Row Width"
+    L["TargetFrameAuraRowWidthDesc"] = "Max row width for buffs/debuffs."
+    L["TargetFrameAuraRowWidthToT"] = "Aura Row Width (ToT)"
+    L["TargetFrameAuraRowWidthToTDesc"] = "Same as 'Aura Row Width' but only for the first X (=NumToTAuraRows) rows." ..
+                                              "\n\nThis is intended to leave room for the TargetOfTarget frame."
+    L["TargetFrameToTAuraRows"] = "Number of ToT Aura Rows"
+    L["TargetFrameToTAuraRowsDesc"] =
+        "Number of aura rows that use 'Aura Row Width (ToT)' instead of the normal width." ..
+            "\n\nSet this to 0 if you want to have same width aura rows, e.g. when you moved the ToT frame out of the way."
+
     -- ToT
     L["TargetOfTargetFrameName"] = "Target Of Target"
     L["TargetOfTargetFrameDesc"] = ""
