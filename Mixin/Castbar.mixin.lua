@@ -980,21 +980,24 @@ function DragonFlightUICastbarMixin:AutoPosition()
     local parent = self.DefaultParent;
     self:ClearAllPoints()
 
+    local dx = state.autoAdjustX or 5;
+    local dy = state.autoAdjustY or -20;
+
     -- (buffsOnTop) or (no spellbarAnchor=no buffs/debuffs)
     if parent.buffsOntop or not parent.spellbarAnchor or tonumber(parent.auraRows) < 1 then
         -- print('default')
-        self:SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', 5, -20) -- default
+        self:SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, dy) -- default
         return;
     end
 
     local spellbarAnchor = parent.spellbarAnchor;
 
-    local dy = spellbarAnchor:GetBottom() - parent:GetBottom();
+    local autoDy = spellbarAnchor:GetBottom() - parent:GetBottom();
     -- print(spellbarAnchor:GetBottom(), parent:GetBottom(), dy)
-    if dy >= 0 then dy = 0; end
+    if autoDy >= 0 then autoDy = 0; end
     -- print('~>', dy)
 
-    self:SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', 5, dy - 20)
+    self:SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)
 end
 
 function DragonFlightUICastbarMixin:AddTradeSkill()
