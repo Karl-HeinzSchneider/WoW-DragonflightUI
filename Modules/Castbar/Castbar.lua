@@ -39,9 +39,9 @@ local defaults = {
             scale = 1,
             anchorFrame = 'TargetFrame',
             customAnchorFrame = '',
-            anchor = 'TOP',
-            anchorParent = 'BOTTOM',
-            x = -20,
+            anchor = 'TOPLEFT',
+            anchorParent = 'BOTTOMLEFT',
+            x = 5,
             y = -20,
             sizeX = 150,
             sizeY = 10,
@@ -56,16 +56,18 @@ local defaults = {
             sizeIcon = 20,
             showTicks = false,
             showRank = false,
-            autoAdjust = true
+            autoAdjust = true,
+            autoAdjustX = 5,
+            autoAdjustY = -20
         },
         focus = {
             activate = true,
             scale = 1,
             anchorFrame = 'FocusFrame',
             customAnchorFrame = '',
-            anchor = 'TOP',
-            anchorParent = 'BOTTOM',
-            x = -20,
+            anchor = 'TOPLEFT',
+            anchorParent = 'BOTTOMLEFT',
+            x = 5,
             y = -20,
             sizeX = 150,
             sizeY = 10,
@@ -80,7 +82,9 @@ local defaults = {
             sizeIcon = 20,
             showTicks = false,
             showRank = false,
-            autoAdjust = true
+            autoAdjust = true,
+            autoAdjustX = 5,
+            autoAdjustY = -20
         }
     }
 }
@@ -279,6 +283,57 @@ function AddCastbarTable(optionTable, sub)
     end
 end
 
+function AddAutoAdjustTable(optionTable, sub)
+    local autoAdjustTable = {
+        headerAutoAdjust = {
+            type = 'header',
+            name = L["CastbarTableAutoAdjustHeader"],
+            desc = L["CastbarTableAutoAdjustHeaderDesc"],
+            order = 15,
+            isExpanded = true,
+            editmode = true
+        },
+        autoAdjust = {
+            type = 'toggle',
+            name = L["CastbarTableAutoAdjust"],
+            desc = L["CastbarTableAutoAdjustDesc"] .. getDefaultStr('autoAdjust', sub),
+            group = 'headerAutoAdjust',
+            order = 1,
+            new = true,
+            editmode = true
+        },
+        autoAdjustX = {
+            type = 'range',
+            name = L["CastbarTableAutoAdjustX"],
+            desc = L["CastbarTableAutoAdjustXDesc"] .. getDefaultStr('autoAdjustX', sub),
+            min = -256,
+            max = 256,
+            bigStep = 0.25,
+            group = 'headerAutoAdjust',
+            order = 2,
+            new = true,
+            editmode = true
+        },
+        autoAdjustY = {
+            type = 'range',
+            name = L["CastbarTableAutoAdjustY"],
+            desc = L["CastbarTableAutoAdjustYDesc"] .. getDefaultStr('autoAdjustY', sub),
+            min = -256,
+            max = 256,
+            bigStep = 0.25,
+            group = 'headerAutoAdjust',
+            order = 3,
+            new = true,
+            editmode = true
+        }
+    }
+
+    for k, v in pairs(autoAdjustTable) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
 local optionsPlayer = {
     type = 'group',
     name = L["CastbarNamePlayer"],
@@ -317,7 +372,7 @@ do
 end
 
 AddCastbarTable(optionsPlayer, 'player')
-optionsPlayer.args.autoAdjust = nil;
+-- optionsPlayer.args.autoAdjust = nil;
 DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr, frameTable)
 
 local optionsPlayerEditmode = {
@@ -392,6 +447,7 @@ local optionsTarget = {
     args = {}
 }
 AddCastbarTable(optionsTarget, 'target')
+AddAutoAdjustTable(optionsTarget, 'target')
 DF.Settings:AddPositionTable(Module, optionsTarget, 'target', 'Target', getDefaultStr, frameTable)
 
 if DF.Era then
@@ -483,6 +539,7 @@ local optionsFocus = {
     args = {}
 }
 AddCastbarTable(optionsFocus, 'focus')
+AddAutoAdjustTable(optionsFocus, 'focus')
 DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTable)
 
 local optionsFocusEditmode = {

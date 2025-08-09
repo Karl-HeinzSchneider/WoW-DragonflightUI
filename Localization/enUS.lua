@@ -545,10 +545,6 @@ do
     L["CastbarTableIconSizeDesc"] = ""
     L["CastbarTableShowTicks"] = "Show Ticks"
     L["CastbarTableShowTicksDesc"] = ""
-    L["CastbarTableAutoAdjust"] = "Auto Adjust"
-    L["CastbarTableAutoAdjustDesc"] =
-        "Fixes the cast bar position depending on the amount of buffs/debuffs - useful when anchoring the cast bar beneath the Target/FocusFrame." ..
-            "\n\nOnly works if the option is checked *and* also the parent is the default parent, e.g. TargetFrame for target cast bar."
     L["CastbarTableShowRank"] = "Show Rank"
     L["CastbarTableShowRankDesc"] = ""
     L["CastbarTableShowChannelName"] = "Show Channel Name"
@@ -557,6 +553,22 @@ do
     L["ExtraOptionsResetToDefaultStyle"] = "Reset to Default Style"
     L["ExtraOptionsPresetStyleDesc"] =
         "Sets all settings that change the style of the castbar, but does not change any other setting."
+
+    L["CastbarTableAutoAdjustHeader"] = "Auto Adjust"
+    L["CastbarTableAutoAdjustHeaderDesc"] = ""
+    L["CastbarTableAutoAdjust"] = "Auto Adjust"
+    L["CastbarTableAutoAdjustDesc"] =
+        "Fixes the cast bar position depending on the amount of buffs/debuffs - useful when anchoring the cast bar beneath the Target/FocusFrame." ..
+            "\n\nOnly works if the option is checked *and* also the parent is the default parent, e.g. TargetFrame for target cast bar."
+
+    -- local info = "\n\n" .. [[(Auto Adjust uses "SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)")]]
+    local info =
+        string.format("\n\nAuto Adjust uses:\n%s", "SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)")
+    L["CastbarTableAutoAdjustX"] = "Auto Delta X"
+    L["CastbarTableAutoAdjustXDesc"] = "Delta X applied to the X value calculated from auto adjust." .. info
+    L["CastbarTableAutoAdjustY"] = "Auto Delta Y"
+    L["CastbarTableAutoAdjustYDesc"] = "Delta Y applied to the Y value calculated from auto adjust." .. info
+
 end
 
 -- Minimap
