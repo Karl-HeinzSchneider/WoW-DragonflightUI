@@ -965,35 +965,36 @@ end
 -- local default = {
 --     anchorFrame = 'TargetFrame',
 --     customAnchorFrame = '',
---     anchor = 'TOP',
---     anchorParent = 'BOTTOM',
---     x = -20,
+--     anchor = 'TOPLEFT',
+--     anchorParent = 'BOTTOMLEFT',
+--     x = 5,
 --     y = -20,
 --     sizeX = 150,
 --     sizeY = 10
 -- }
 
 function DragonFlightUICastbarMixin:AutoPosition()
-    -- local state = self.state
-    -- if not state then return end
+    local state = self.state
+    if not state then return end
 
     local parent = self.DefaultParent;
     self:ClearAllPoints()
 
-    if parent.buffsOntop then
-        self:SetPoint('TOP', parent, 'BOTTOM', -20, -20)
-    else
-        if parent.spellbarAnchor then
-            -- print(parent:GetName(), parent.spellbarAnchor:GetName())
-
-            self:SetPoint('TOP', parent, 'BOTTOM', -20, -20)
-            self:SetPoint('TOPLEFT', parent.spellbarAnchor, 'BOTTOMLEFT', 0, -10)
-        else
-            -- print(parent:GetName(), nil)
-
-            self:SetPoint('TOP', parent, 'BOTTOM', -20, -20)
-        end
+    -- (buffsOnTop) or (no spellbarAnchor=no buffs/debuffs)
+    if parent.buffsOntop or not parent.spellbarAnchor or tonumber(parent.auraRows) < 1 then
+        -- print('default')
+        self:SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', 5, -20) -- default
+        return;
     end
+
+    local spellbarAnchor = parent.spellbarAnchor;
+
+    local dy = spellbarAnchor:GetBottom() - parent:GetBottom();
+    -- print(spellbarAnchor:GetBottom(), parent:GetBottom(), dy)
+    if dy >= 0 then dy = 0; end
+    -- print('~>', dy)
+
+    self:SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', 5, dy - 20)
 end
 
 function DragonFlightUICastbarMixin:AddTradeSkill()
