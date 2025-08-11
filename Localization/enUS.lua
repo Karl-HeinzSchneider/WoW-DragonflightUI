@@ -755,6 +755,14 @@ do
     L["PlayerFrameHideRestingIcon"] = "Hide Resting Icon"
     L["PlayerFrameHideRestingIconDesc"] = "Hides the resting icon on the player frame."
 
+    local note =
+        "\n\nNOTE: Custom textures use the default statusbar color from blizzard.\nIf you want something different you have to mod that through code.\n"
+    L["PlayerFrameCustomHealthbarTexture"] = "Health Bar Texture"
+    L["PlayerFrameCustomHealthbarTextureDesc"] =
+        "Changes the health bar texture to a custom one from LibSharedMedia." .. note
+    L["PlayerFrameCustomPowerbarTexture"] = "Power Bar Texture"
+    L["PlayerFrameCustomPowerbarTextureDesc"] = "Changes the power bar texture to a custom one from LibSharedMedia." ..
+                                                    note
     -- Player Secondary< Res
     L["PlayerSecondaryResName"] = "Player Secondary Ressource"
     L["PlayerSecondaryResNameDesc"] = ""

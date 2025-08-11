@@ -37,3 +37,32 @@ for i, n in ipairs(energyTypes) do
     --
     RegisterStatusbar('Target Bar ' .. n, [[Unitframe\UI-HUD-UnitFrame-Target-PortraitOn-Bar-]] .. n)
 end
+
+-- generator functions
+
+function Helper:CreateSharedMediaStatusBarGenerator(IsSelected, SetSelected)
+    local generator = function(dropdown, rootDescription)
+        -- print('generator')
+        local statusbarTable = LSM:List('statusbar') or {};
+
+        rootDescription:SetTag('TAG?')
+        -- rootDescription:CreateTitle('TITLETEST')     
+
+        local radioDefault = rootDescription:CreateRadio('Default', IsSelected, SetSelected, 'Default');
+        local divOne = rootDescription:CreateDivider();
+
+        for k, v in pairs(statusbarTable) do
+            --
+            local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, v);
+        end
+
+        -- https://www.townlong-yak.com/framexml/latest/Blizzard_Menu/11_0_0_MenuImplementationGuide.lua
+        local extent = 20;
+        local maxCharacters = 10;
+        local maxScrollExtent = extent * maxCharacters;
+        rootDescription:SetScrollMode(maxScrollExtent);
+    end
+
+    return generator;
+end
+

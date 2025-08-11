@@ -379,8 +379,8 @@ function Module:AddPortraitMasks()
 end
 
 function Module:HookEnergyBar()
-    hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
-        if manaBar.DFUpdateFunc and type(manaBar.DFUpdateFunc) == 'function' then
+    hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar, dontcall)
+        if manaBar.DFUpdateFunc and type(manaBar.DFUpdateFunc) == 'function' and not dontcall then
             --
             -- print('~UnitFrameManaBar_UpdateType:', manaBar:GetName())
             manaBar.DFUpdateFunc()
