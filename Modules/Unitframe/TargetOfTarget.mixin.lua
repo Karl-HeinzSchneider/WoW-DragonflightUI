@@ -125,7 +125,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameClassColor"],
                 desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'tot'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true,
                 new = true
             },
@@ -134,7 +134,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameReactionColor"],
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'tot'),
                 group = 'headerStyling',
-                order = 7.05,
+                order = 3,
                 new = true,
                 editmode = true
             },
@@ -143,7 +143,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameClassIcon"],
                 desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'tot'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = true,
                 editmode = true
@@ -179,7 +179,7 @@ function SubModuleMixin:SetupOptions()
                     setOption({'tot', 'customHealthBarTexture'}, name)
                 end),
                 group = 'headerStyling',
-                order = 41,
+                order = 4,
                 new = true
             },
             customPowerBarTexture = {
@@ -192,7 +192,7 @@ function SubModuleMixin:SetupOptions()
                     setOption({'tot', 'customPowerBarTexture'}, name)
                 end),
                 group = 'headerStyling',
-                order = 41,
+                order = 5,
                 new = true
             }
         }
@@ -485,7 +485,9 @@ function SubModuleMixin:UpdateToTHealthBarTexture(bar, state, unit)
         local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
         bar:GetStatusBarTexture():SetTexture(customTex)
 
-        if state.classcolor then
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
             local _, englishClass, _ = UnitClass(unit)
             bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
         elseif state.reactioncolor then
