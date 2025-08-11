@@ -42,6 +42,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = 250,
         y = -4,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         -- buff - from AuraDurations
         auraSizeSmall = 17, -- SMALL_AURA_SIZE,
         auraSizeLarge = 21, -- LARGE_AURA_SIZE,

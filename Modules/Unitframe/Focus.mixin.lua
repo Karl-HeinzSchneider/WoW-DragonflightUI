@@ -30,6 +30,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = 250,
         y = -170,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         -- Visibility
         alphaNormal = 1.0,
         alphaCombat = 1.0,

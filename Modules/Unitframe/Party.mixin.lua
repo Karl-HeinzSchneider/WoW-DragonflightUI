@@ -26,6 +26,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPRIGHT',
         x = 0,
         y = 0,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         padding = 10,
         orientation = 'vertical',
         disableBuffTooltip = 'INCOMBAT',
