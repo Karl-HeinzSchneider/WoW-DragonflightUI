@@ -776,13 +776,16 @@ function Module:UpdateMinimapZonePanelPosition(pos)
             MiniMapMailFrame:SetPoint('RIGHT', _G['DragonflightUIMinimapTop'], 'LEFT', 0, 0)
         end
 
-        Minimap.DFShower:ClearAllPoints()
-        Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32 + 32)
-        Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
-
-        Minimap.DFMouseHandler:ClearAllPoints()
-        Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
-        Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+        if Minimap.DFShower then
+            Minimap.DFShower:ClearAllPoints()
+            Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32 + 32)
+            Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+        end
+        if Minimap.DFMouseHandler then
+            Minimap.DFMouseHandler:ClearAllPoints()
+            Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+            Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+        end
     else
         f:SetPoint('CENTER', Minimap, 'BOTTOM', 0, -20)
 
@@ -792,13 +795,16 @@ function Module:UpdateMinimapZonePanelPosition(pos)
             MiniMapMailFrame:SetPoint('RIGHT', _G['DragonflightUIMinimapTop'], 'LEFT', 0, 0)
         end
 
-        Minimap.DFShower:ClearAllPoints()
-        Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
-        Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16 - 32)
-
-        Minimap.DFMouseHandler:ClearAllPoints()
-        Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
-        Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+        if Minimap.DFShower then
+            Minimap.DFShower:ClearAllPoints()
+            Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+            Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16 - 32)
+        end
+        if Minimap.DFMouseHandler then
+            Minimap.DFMouseHandler:ClearAllPoints()
+            Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
+            Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
+        end
     end
 end
 
