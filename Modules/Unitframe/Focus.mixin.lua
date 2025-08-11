@@ -133,7 +133,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["FocusFrameClassColor"],
                 desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focus'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             reactioncolor = {
@@ -141,7 +141,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameReactionColor"],
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'focus'),
                 group = 'headerStyling',
-                order = 7.05,
+                order = 3,
                 new = true,
                 editmode = true
             },
@@ -155,7 +155,7 @@ function SubModuleMixin:SetupOptions()
                     setOption({'focus', 'customHealthBarTexture'}, name)
                 end),
                 group = 'headerStyling',
-                order = 41,
+                order = 4,
                 new = true
             },
             customPowerBarTexture = {
@@ -168,7 +168,7 @@ function SubModuleMixin:SetupOptions()
                     setOption({'focus', 'customPowerBarTexture'}, name)
                 end),
                 group = 'headerStyling',
-                order = 41,
+                order = 5,
                 new = true
             },
             classicon = {
@@ -176,7 +176,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["FocusFrameClassIcon"],
                 desc = L["FocusFrameClassIconDesc"] .. getDefaultStr('classicon', 'focus'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -186,7 +186,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["FocusFrameBreakUpLargeNumbers"],
                 desc = L["FocusFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'focus'),
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             hideNameBackground = {

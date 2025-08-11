@@ -151,7 +151,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameClassColor"],
                 desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             classicon = {
@@ -159,7 +159,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameClassIcon"],
                 desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -169,7 +169,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameBreakUpLargeNumbers"],
                 desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             biggerHealthbar = {
@@ -336,7 +336,7 @@ function SubModuleMixin:SetupOptions()
                 setOption({optionsPlayer.sub, 'customHealthBarTexture'}, name)
             end),
             group = 'headerStyling',
-            order = 41,
+            order = 4,
             new = true
         }
         optionsPlayer.args['customPowerBarTexture'] = {
@@ -349,7 +349,7 @@ function SubModuleMixin:SetupOptions()
                 setOption({optionsPlayer.sub, 'customPowerBarTexture'}, name)
             end),
             group = 'headerStyling',
-            order = 42,
+            order = 5,
             new = true
         }
     end

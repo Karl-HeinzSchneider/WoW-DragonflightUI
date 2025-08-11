@@ -119,7 +119,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["FocusFrameClassColor"],
                 desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focusTarget'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             reactioncolor = {
@@ -127,7 +127,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameReactionColor"],
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'focusTarget'),
                 group = 'headerStyling',
-                order = 7.05,
+                order = 3,
                 new = true,
                 editmode = true
             },
@@ -136,7 +136,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameClassIcon"],
                 desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'focusTarget'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -173,7 +173,7 @@ function SubModuleMixin:SetupOptions()
                     setOption({'focusTarget', 'customHealthBarTexture'}, name)
                 end),
                 group = 'headerStyling',
-                order = 41,
+                order = 4,
                 new = true
             },
             customPowerBarTexture = {
@@ -187,7 +187,7 @@ function SubModuleMixin:SetupOptions()
                     setOption({'focusTarget', 'customPowerBarTexture'}, name)
                 end),
                 group = 'headerStyling',
-                order = 41,
+                order = 5,
                 new = true
             }
         }
