@@ -3,6 +3,8 @@ local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
 
+local RangeCheck = LibStub("LibRangeCheck-3.0")
+
 local subModuleName = 'Focus';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
@@ -22,6 +24,8 @@ function SubModuleMixin:SetDefaults()
         classicon = false,
         breakUpLargeNumbers = true,
         hideNameBackground = false,
+        fadeOut = false,
+        fadeOutDistance = 40,
         scale = 1.0,
         override = false,
         anchorFrame = 'UIParent',
@@ -178,6 +182,27 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 1,
                 disabled = true,
+                new = false,
+                editmode = true
+            },
+            fadeOut = {
+                type = 'toggle',
+                name = L["TargetFrameFadeOut"],
+                desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'focus'),
+                group = 'headerStyling',
+                order = 9.5,
+                new = false,
+                editmode = true
+            },
+            fadeOutDistance = {
+                type = 'range',
+                name = L["TargetFrameFadeOutDistance"],
+                desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'focus'),
+                min = 0,
+                max = 50,
+                bigStep = 1,
+                order = 9.6,
+                group = 'headerStyling',
                 new = false,
                 editmode = true
             },
@@ -476,7 +501,35 @@ function SubModuleMixin:ChangeFocusFrame()
         end)
     end
 
-    FocusFrameToTDebuff1:SetPoint('TOPLEFT', FocusFrameToT, 'TOPRIGHT', 25, -20)
+    -- FocusFrameToTDebuff1:SetPoint('TOPLEFT', FocusFrameToT, 'TOPRIGHT', 25, -20) -- ?? TODO
+
+    if not FocusFrame.DFRangeHooked then
+        FocusFrame.DFRangeHooked = true;
+
+        local state = self.ModuleRef.db.profile.focus
+
+        if not RangeCheck then return end
+        local function updateRange()
+            local minRange, maxRange = RangeCheck:GetRange('focus')
+            -- print(minRange, maxRange)
+
+            if not state.fadeOut then
+                FocusFrame:SetAlpha(1);
+                return;
+            end
+
+            if minRange and minRange >= state.fadeOutDistance then
+                FocusFrame:SetAlpha(0.55);
+                -- elseif maxRange and maxRange >= 40 then
+                --     TargetFrame:SetAlpha(0.55);
+            else
+                FocusFrame:SetAlpha(1);
+            end
+        end
+
+        FocusFrame:HookScript('OnUpdate', updateRange)
+        FocusFrame:HookScript('OnEvent', updateRange)
+    end
 end
 
 function SubModuleMixin:ReApplyFocusFrame()
