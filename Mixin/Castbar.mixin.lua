@@ -147,9 +147,10 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             -- unitTarget, castGUID, spellID
             local _, _, spellID = ...;
             self.TSSpellID = spellID;
+            -- print('ts', startTime, endTime, GetTime() * 1000)
 
             if not self.TSStartTime then
-                -- print('new TSStartTime')
+                -- print('new TSStartTime', startTime, endTime, GetTime())
                 self.TSStartTime = startTime;
                 local duration = endTime - startTime
                 self.TSDuration = duration;
@@ -159,7 +160,8 @@ function DragonFlightUICastbarMixin:OnEvent(event, ...)
             end
 
             startTime = self.TSStartTime;
-            endTime = self.TSEndTime;
+            -- endTime = self.TSEndTime;
+            endTime = GetTime() * 1000 + (self.TSRepeatCount - self.TSCompleted) * self.TSDuration;
 
             -- print('~', startTime, endTime)
 
