@@ -128,7 +128,13 @@ function SubModuleMixin:Setup()
     })
 
     self:ChangeGroupLootContainer()
+
     self:SetScript('OnEvent', self.OnEvent);
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:RegisterEvent('START_LOOT_ROLL')
+    self:RegisterEvent('LOOT_HISTORY_ROLL_CHANGED')
+    self:RegisterEvent('LOOT_HISTORY_ROLL_COMPLETE')
+    self:RegisterEvent('LOOT_ROLLS_COMPLETE')
 
     -- editmode 
     local EditModeModule = DF:GetModule('Editmode');
@@ -160,6 +166,11 @@ function SubModuleMixin:Setup()
 end
 
 function SubModuleMixin:OnEvent(event, ...)
+    -- print(event, ...)
+    for i = 1, 4 do
+        local f = _G['GroupLootFrame' .. i];
+        self:UpdateAllButtons(f);
+    end
 end
 
 function SubModuleMixin:UpdateState(state)
@@ -201,10 +212,178 @@ function SubModuleMixin:ChangeGroupLootContainer()
 
     fakeRoll.FakePreview = fakePreview
 
-    for i = 1, 1 do self:HookGroupLootFrame(_G['GroupLootFrame' .. i]); end
+    for i = 1, 4 do self:HookGroupLootFrame(_G['GroupLootFrame' .. i]); end
 end
 
 function SubModuleMixin:HookGroupLootFrame(f)
-    print('HookGroupLootFrame', f:GetName())
+    if not f then return end
+    -- print('HookGroupLootFrame', f:GetName())
+
+    local fontFile, height, flags = GameFontRedLarge:GetFont()
+    local newFontSize = 18;
+
+    local need = f.NeedButton
+    do
+        need:SetMotionScriptsWhileDisabled(true)
+        need:SetScript('OnEnter', function()
+            GameTooltip:SetOwner(need, "ANCHOR_RIGHT");
+            GameTooltip:SetText(need.tooltipText);
+            if (not need:IsEnabled()) then
+                GameTooltip:AddLine(need.reason, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true);
+                GameTooltip:Show();
+            end
+            self:AddTooltipLines(need, 1, false)
+        end)
+
+        local text = need:CreateFontString(nil, 'OVERLAY', "GameFontRedLarge")
+        text:SetPoint('CENTER', need, 'CENTER', 0, 0)
+        text:SetFont(fontFile, newFontSize, flags)
+        need.DFText = text;
+    end
+
+    local greed = f.GreedButton
+    do
+        greed:SetMotionScriptsWhileDisabled(true)
+        greed:SetScript('OnEnter', function()
+            GameTooltip:SetOwner(greed, "ANCHOR_RIGHT");
+            GameTooltip:SetText(greed.tooltipText);
+            if (not greed:IsEnabled()) then
+                GameTooltip:AddLine(greed.reason, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true);
+                GameTooltip:Show();
+            end
+            self:AddTooltipLines(greed, 2, false)
+        end)
+
+        local text = greed:CreateFontString(nil, 'OVERLAY', "GameFontRedLarge")
+        text:SetPoint('CENTER', greed, 'CENTER', 0, 2)
+        text:SetFont(fontFile, newFontSize, flags)
+        greed.DFText = text;
+    end
+end
+
+function SubModuleMixin:UpdateAllButtons(f)
+    if not f then return end
+    local rollID = f.rollID
+    if not rollID then return end
+
+    local tableNeed, tableGreed, tablePass, tableDiss, tableNone = self:CreateTableForRollID(rollID)
+
+    local needText = f.NeedButton.DFText
+    if needText then
+        if tableNeed then
+            needText:SetText(tostring(#tableNeed))
+        else
+            needText:SetText('*')
+        end
+    end
+
+    local greedText = f.GreedButton.DFText
+    if greedText then
+        if tableGreed then
+            greedText:SetText(tostring(#tableGreed))
+        else
+            greedText:SetText('*')
+        end
+    end
+end
+
+-- rollType    number - (0:pass, 1:need, 2:greed, 3:disenchant)
+
+function SubModuleMixin:CreateTableForRollID(rollID)
+    local numPlayers;
+    local itemIDx = 1;
+    while true do
+        -- rollID, itemLink, numPlayers, isDone, winnerIdx, isMasterLoot = C_LootHistory.GetItem(itemIdx)
+        local rID, _, num, _, _, _ = C_LootHistory.GetItem(itemIDx)
+        if not rID then
+            return nil;
+        elseif rID == rollID then
+            numPlayers = num;
+            break
+        end
+        itemIDx = itemIDx + 1;
+    end
+
+    local tableNeed = {}
+    local tableGreed = {}
+    local tablePass = {}
+    local tableDiss = {}
+    local tableNone = {}
+
+    for i = 1, numPlayers do
+        --
+        local name, class, rollType, roll, isWinner, isMe = C_LootHistory.GetPlayerInfo(itemIDx, i)
+        local data = {name = name, class = class, id = i};
+        -- print(name, class, rollType)
+
+        if rollType ~= nil then
+            if rollType == 0 then
+                table.insert(tablePass, data)
+            elseif rollType == 1 then
+                table.insert(tableNeed, data)
+            elseif rollType == 2 then
+                table.insert(tableGreed, data)
+            elseif rollType == 3 then
+                table.insert(tableDiss, data)
+            end
+        else
+            table.insert(tableNone, data)
+        end
+    end
+
+    -- TODO: SORT
+
+    return tableNeed, tableGreed, tablePass, tableDiss, tableNone;
+end
+
+local function AddRollLines(t)
+    if #t < 1 then return end
+    for k, v in ipairs(t) do
+        --
+        local str = DF:GetClassColoredText(v.name, v.class) or '???'
+        GameTooltip:AddLine(string.format(' %s', str))
+    end
+end
+
+function SubModuleMixin:AddTooltipLines(f, btnType, showAll)
+    local rollID = f:GetParent().rollID
+    if not rollID then return end
+
+    local tableNeed, tableGreed, tablePass, tableDiss, tableNone = self:CreateTableForRollID(rollID)
+    if not tableNeed then return end
+
+    GameTooltip:AddLine('    ')
+
+    if #tableNeed ~= 0 and (showAll or btnType == 1) then
+        --
+        GameTooltip:AddLine(NEED)
+        AddRollLines(tableNeed)
+    end
+
+    if #tableGreed ~= 0 and (showAll or btnType == 2) then
+        --
+        GameTooltip:AddLine(GREED)
+        AddRollLines(tableGreed)
+    end
+
+    if #tableDiss ~= 0 and (showAll or btnType == 3) then
+        --
+        GameTooltip:AddLine(ROLL_DISENCHANT)
+        AddRollLines(tableDiss)
+    end
+
+    if #tablePass ~= 0 and (showAll or btnType == 0) then
+        --
+        GameTooltip:AddLine(PASS)
+        AddRollLines(tablePass)
+    end
+
+    if showAll or true then
+        --
+        GameTooltip:AddLine('Undecided')
+        AddRollLines(tableNone)
+    end
+
+    GameTooltip:Show()
 end
 
