@@ -313,6 +313,8 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     f:SetScale(state.scale)
 
+    f:SetIgnoreParentAlpha(state.fadeOut and true or false)
+
     self:ReApplyToT()
     UnitFramePortrait_Update(TargetFrameToT)
 

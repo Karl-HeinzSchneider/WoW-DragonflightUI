@@ -306,6 +306,8 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     f:SetUserPlaced(true)
 
+    f:SetIgnoreParentAlpha(state.fadeOut and true or false)
+
     self:ReApplyFocusToT()
     UnitFramePortrait_Update(FocusFrameToT)
 
@@ -340,7 +342,7 @@ function SubModuleMixin:ChangeFocusToT()
         if not RangeCheck then return end
         local function updateRange()
             local minRange, maxRange = RangeCheck:GetRange('focusTarget')
-            -- print(minRange, maxRange)
+            -- print(minRange, maxRange, '--', state.fadeOutDistance)
 
             if not state.fadeOut then
                 FocusFrameToT:SetAlpha(1);
@@ -349,10 +351,12 @@ function SubModuleMixin:ChangeFocusToT()
 
             if minRange and minRange >= state.fadeOutDistance then
                 FocusFrameToT:SetAlpha(0.55);
+                -- print('>>0.55')
                 -- elseif maxRange and maxRange >= 40 then
                 --     TargetFrame:SetAlpha(0.55);
             else
                 FocusFrameToT:SetAlpha(1);
+                -- print('>>1.0')
             end
         end
 
