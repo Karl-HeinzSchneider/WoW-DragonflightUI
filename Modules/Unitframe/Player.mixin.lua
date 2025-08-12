@@ -874,10 +874,10 @@ function SubModuleMixin:UpdatePlayerFrameManaBar()
                                                                     'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
         elseif powerTypeString == 'ENERGY' then
             PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
-                                                                    'Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
+                                                                    'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
         elseif powerTypeString == 'RUNIC_POWER' then
             PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
-                                                                    'Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
+                                                                    'UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
         else
             -- fallback - should not happen
             PlayerFrameManaBar:GetStatusBarTexture()
