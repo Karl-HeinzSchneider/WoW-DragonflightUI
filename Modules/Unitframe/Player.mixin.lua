@@ -177,7 +177,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameBiggerHealthbar"],
                 desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
                 group = 'headerStyling',
-                order = 9,
+                order = 3.6,
                 new = false,
                 editmode = true
             },
