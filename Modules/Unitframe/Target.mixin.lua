@@ -2,7 +2,7 @@ local addonName, addonTable = ...;
 local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
-
+local LSM = LibStub('LibSharedMedia-3.0')
 local RangeCheck = LibStub("LibRangeCheck-3.0")
 local AuraDurations = LibStub:GetLibrary('AuraDurations-1.0')
 
@@ -42,6 +42,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = 250,
         y = -4,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         -- buff - from AuraDurations
         auraSizeSmall = 17, -- SMALL_AURA_SIZE,
         auraSizeLarge = 21, -- LARGE_AURA_SIZE,
@@ -158,7 +160,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameClassColor"],
                 desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'target'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             reactioncolor = {
@@ -166,16 +168,42 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameReactionColor"],
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'target'),
                 group = 'headerStyling',
-                order = 7.05,
+                order = 3,
                 new = true,
                 editmode = true
+            },
+            customHealthBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomHealthbarTexture"],
+                desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'target'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'target', 'customHealthBarTexture'}) == name;
+                end, function(name)
+                    setOption({'target', 'customHealthBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 4,
+                new = true
+            },
+            customPowerBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomPowerbarTexture"],
+                desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'target'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'target', 'customPowerBarTexture'}) == name;
+                end, function(name)
+                    setOption({'target', 'customPowerBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 5,
+                new = true
             },
             classicon = {
                 type = 'toggle',
                 name = L["TargetFrameClassIcon"],
                 desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'target'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -185,7 +213,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameBreakUpLargeNumbers"],
                 desc = L["TargetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'target'),
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             enableThreatGlow = {
@@ -916,49 +944,71 @@ function SubModuleMixin:ChangeTargetFrame()
     end
 end
 
-function SubModuleMixin:ReApplyTargetFrame()
-    if (not UnitPlayerControlled('target') and UnitIsTapDenied('target')) then
-        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-        TargetFrameHealthBar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
-    elseif self.ModuleRef.db.profile.target.classcolor and UnitIsPlayer('target') then
-        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-        local localizedClass, englishClass, classIndex = UnitClass('target')
-        TargetFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-    elseif self.ModuleRef.db.profile.target.reactioncolor then
-        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-        TargetFrameHealthBar:SetStatusBarColor(DF:GetUnitSelectionColor('target'));
+local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'
+local texBaseToT = texBase .. 'UI-HUD-UnitFrame-Target-PortraitOn-Bar-'
+
+local powerTable = {
+    MANA = 'Mana',
+    FOCUS = 'Focus',
+    RAGE = 'Rage',
+    ENERGY = 'Energy',
+    RUNIC_POWER = 'RunicPower',
+    POWER_TYPE_FEL_ENERGY = 'Energy' -- TODO
+}
+
+function SubModuleMixin:UpdateTargetHealthBarTexture(bar, state, unit)
+    if state.customHealthBarTexture == 'Default' or not LSM then
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health')
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            local _, englishClass, _ = UnitClass(unit)
+            bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.reactioncolor then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))
+        else
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health')
+            bar:SetStatusBarColor(1, 1, 1, 1)
+        end
     else
-        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-        TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
+        bar:GetStatusBarTexture():SetTexture(customTex)
+
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
+            local _, englishClass, _ = UnitClass(unit)
+            bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.reactioncolor then
+            bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))
+        else
+            bar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
+        end
     end
+end
 
-    local powerType, powerTypeString = UnitPowerType('target')
-    -- print('~target', powerType, powerTypeString)
+function SubModuleMixin:UpdateTargetPowerBarTexture(bar, state, unit)
+    if state.customPowerBarTexture == 'Default' or not LSM then
+        local _, powerTypeString = UnitPowerType(unit)
 
-    if powerTypeString == 'MANA' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
+        local powerTexStr = powerTable[powerTypeString] or powerTable['MANA']
+        bar:GetStatusBarTexture():SetTexture(texBaseToT .. powerTexStr)
+
+        bar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+    else
+        UnitFrameManaBar_UpdateType(bar, true)
+        local customTex = LSM:Fetch("statusbar", state.customPowerBarTexture)
+        bar:GetStatusBarTexture():SetTexture(customTex)
     end
+end
 
-    TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+function SubModuleMixin:ReApplyTargetFrame()
+    self:UpdateTargetHealthBarTexture(TargetFrameHealthBar, self.ModuleRef.db.profile.target, 'target')
+    self:UpdateTargetPowerBarTexture(TargetFrameManaBar, self.ModuleRef.db.profile.target, 'target')
+
     if DF.Wrath then TargetFrameFlash:SetTexture('') end
-
     if self.PortraitExtra then self.PortraitExtra:UpdateStyle() end
 end
 

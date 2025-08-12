@@ -2,6 +2,7 @@ local addonName, addonTable = ...;
 local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
+local LSM = LibStub('LibSharedMedia-3.0')
 
 local subModuleName = 'PlayerFrame';
 local SubModuleMixin = {};
@@ -27,6 +28,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = -19,
         y = -4,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         biggerHealthbar = false,
         portraitExtra = 'none',
         hideRedStatus = false,
@@ -148,7 +151,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameClassColor"],
                 desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             classicon = {
@@ -156,7 +159,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameClassIcon"],
                 desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -166,7 +169,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameBreakUpLargeNumbers"],
                 desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             biggerHealthbar = {
@@ -322,6 +325,35 @@ function SubModuleMixin:SetupOptions()
             end
         end
     end
+    if true then
+        optionsPlayer.args['customHealthBarTexture'] = {
+            type = 'select',
+            name = L["PlayerFrameCustomHealthbarTexture"],
+            desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'player'),
+            dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                return getOption({optionsPlayer.sub, 'customHealthBarTexture'}) == name;
+            end, function(name)
+                setOption({optionsPlayer.sub, 'customHealthBarTexture'}, name)
+            end),
+            group = 'headerStyling',
+            order = 4,
+            new = true
+        }
+        optionsPlayer.args['customPowerBarTexture'] = {
+            type = 'select',
+            name = L["PlayerFrameCustomPowerbarTexture"],
+            desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'player'),
+            dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                return getOption({optionsPlayer.sub, 'customPowerBarTexture'}) == name;
+            end, function(name)
+                setOption({optionsPlayer.sub, 'customPowerBarTexture'}, name)
+            end),
+            group = 'headerStyling',
+            order = 5,
+            new = true
+        }
+    end
+
     DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr,
                                  frameTableWithout('PlayerFrame'))
 
@@ -497,6 +529,8 @@ function SubModuleMixin:Update()
     self:SetPlayerBiggerHealthbar(state.biggerHealthbar)
     self.PlayerPortraitExtra:UpdateStyle(state.portraitExtra)
     self:UpdatePlayerStatus()
+    self:UpdatePlayerFrameHealthBar()
+    self:UpdatePlayerFrameManaBar()
     PlayerFrameHealthBar.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     UnitFramePortrait_Update(PlayerFrame)
@@ -795,41 +829,68 @@ function SubModuleMixin:ChangeStatusIcons()
     -- TargetFrameTextureFrameLeaderIcon:SetPoint('BOTTOMLEFT', TargetFramePortrait, 'TOPRIGHT', -10 - 3, -10)
 end
 
+local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'
 function SubModuleMixin:UpdatePlayerFrameHealthBar()
-    if self.ModuleRef.db.profile.player.classcolor then
-        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
+    local state = self.ModuleRef.db.profile.player;
 
-        local localizedClass, englishClass, classIndex = UnitClass('player')
-        PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    if state.customHealthBarTexture == 'Default' or not LSM then
+        if state.classcolor then
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                      'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
+            local _, englishClass, _ = UnitClass('player')
+            PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        else
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                      'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
+            PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        end
     else
-        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
-        PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
+        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(customTex)
+
+        if state.classcolor then
+            local _, englishClass, _ = UnitClass('player')
+            PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        else
+            PlayerFrameHealthBar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
+        end
     end
 end
 
 function SubModuleMixin:UpdatePlayerFrameManaBar()
-    local powerType, powerTypeString = UnitPowerType('player')
+    local state = self.ModuleRef.db.profile.player;
 
-    if powerTypeString == 'MANA' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'RAGE' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'FOCUS' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'ENERGY' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
+    if state.customPowerBarTexture == 'Default' or not LSM then
+        local _, powerTypeString = UnitPowerType('player')
+
+        if powerTypeString == 'MANA' then
+            PlayerFrameManaBar:GetStatusBarTexture()
+                :SetTexture(texBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
+        elseif powerTypeString == 'RAGE' then
+            PlayerFrameManaBar:GetStatusBarTexture()
+                :SetTexture(texBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
+        elseif powerTypeString == 'FOCUS' then
+            PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                    'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
+        elseif powerTypeString == 'ENERGY' then
+            PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                    'Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
+        elseif powerTypeString == 'RUNIC_POWER' then
+            PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                    'Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
+        else
+            -- fallback - should not happen
+            PlayerFrameManaBar:GetStatusBarTexture()
+                :SetTexture(texBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
+        end
+
+        PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+    else
+        UnitFrameManaBar_UpdateType(PlayerFrameManaBar, true)
+        local customTex = LSM:Fetch("statusbar", state.customPowerBarTexture)
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(customTex)
+        -- PlayerFrameManaBar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
     end
-
-    PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 end
 
 function SubModuleMixin:SetPlayerBiggerHealthbar(bigger)

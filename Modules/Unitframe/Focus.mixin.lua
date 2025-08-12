@@ -30,6 +30,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = 250,
         y = -170,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         -- Visibility
         alphaNormal = 1.0,
         alphaCombat = 1.0,
@@ -131,7 +133,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["FocusFrameClassColor"],
                 desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focus'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             reactioncolor = {
@@ -139,16 +141,42 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameReactionColor"],
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'focus'),
                 group = 'headerStyling',
-                order = 7.05,
+                order = 3,
                 new = true,
                 editmode = true
+            },
+            customHealthBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomHealthbarTexture"],
+                desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'focus'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'focus', 'customHealthBarTexture'}) == name;
+                end, function(name)
+                    setOption({'focus', 'customHealthBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 4,
+                new = true
+            },
+            customPowerBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomPowerbarTexture"],
+                desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'focus'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'focus', 'customPowerBarTexture'}) == name;
+                end, function(name)
+                    setOption({'focus', 'customPowerBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 5,
+                new = true
             },
             classicon = {
                 type = 'toggle',
                 name = L["FocusFrameClassIcon"],
                 desc = L["FocusFrameClassIconDesc"] .. getDefaultStr('classicon', 'focus'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -158,7 +186,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["FocusFrameBreakUpLargeNumbers"],
                 desc = L["FocusFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'focus'),
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             hideNameBackground = {
@@ -452,48 +480,10 @@ function SubModuleMixin:ChangeFocusFrame()
 end
 
 function SubModuleMixin:ReApplyFocusFrame()
-    if (not UnitPlayerControlled('focus') and UnitIsTapDenied('focus')) then
-        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-        FocusFrameHealthBar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
-    elseif self.ModuleRef.db.profile.focus.classcolor and UnitIsPlayer('focus') then
-        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-        local localizedClass, englishClass, classIndex = UnitClass('focus')
-        FocusFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
-    elseif self.ModuleRef.db.profile.focus.reactioncolor then
-        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-        FocusFrameHealthBar:SetStatusBarColor(DF:GetUnitSelectionColor('focus'));
-    else
-        FocusFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-        FocusFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
-    end
-
-    local powerType, powerTypeString = UnitPowerType('focus')
-
-    if powerTypeString == 'MANA' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        FocusFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
-    end
-
-    FocusFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+    self.ModuleRef.SubTarget:UpdateTargetHealthBarTexture(FocusFrameHealthBar, self.ModuleRef.db.profile.focus, 'focus')
+    self.ModuleRef.SubTarget:UpdateTargetPowerBarTexture(FocusFrameManaBar, self.ModuleRef.db.profile.focus, 'focus')
 
     FocusFrameFlash:SetTexture('')
-
     if self.PortraitExtra then self.PortraitExtra:UpdateStyle() end
 end
 

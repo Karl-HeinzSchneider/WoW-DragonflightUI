@@ -35,6 +35,7 @@ Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\lib.xml
 Libs\LibQuestXP\LibQuestXP-Classic.xml
 Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
+Libs\LibSharedMedia-3.0\lib.xml
 Libs\TaintLess\TaintLess.xml
 Libs\LibTradeSkillRecipes\lib.xml
 
@@ -44,6 +45,7 @@ Mixin\DFColor.mixin.lua
 
 Core.lua
 Helper.lua
+SharedMedia.lua
 API.xml
 Config.lua
 Version.lua

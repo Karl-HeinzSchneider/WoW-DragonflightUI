@@ -2,6 +2,7 @@ local addonName, addonTable = ...;
 local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
+local LSM = LibStub('LibSharedMedia-3.0')
 
 local subModuleName = 'PetFrame';
 local SubModuleMixin = {};
@@ -26,6 +27,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'BOTTOMRIGHT',
         x = 4,
         y = 28,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         hideStatusbarText = false,
         offset = false,
         hideIndicator = false,
@@ -163,6 +166,32 @@ function SubModuleMixin:SetupOptions()
                 order = 11,
                 new = false,
                 editmode = true
+            },
+            customHealthBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomHealthbarTexture"],
+                desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'pet'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'pet', 'customHealthBarTexture'}) == name;
+                end, function(name)
+                    setOption({'pet', 'customHealthBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 41,
+                new = true
+            },
+            customPowerBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomPowerbarTexture"],
+                desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'pet'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'pet', 'customPowerBarTexture'}) == name;
+                end, function(name)
+                    setOption({'pet', 'customPowerBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 41,
+                new = true
             }
         }
     }
@@ -294,6 +323,9 @@ function SubModuleMixin:Update()
     PetFrame.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PetFrameHealthBar)
 
+    self:UpdatePetManaBarTexture()
+    self:UpdatePetHealthBarTexture()
+
     local alpha = 1
     if state.hideStatusbarText then alpha = 0 end
     PetFrameHealthBarText:SetAlpha(alpha)
@@ -389,6 +421,7 @@ function SubModuleMixin:ChangePetFrame()
         self:UpdatePetManaBarTexture()
     end)
     self:UpdatePetManaBarTexture()
+    self:UpdatePetHealthBarTexture()
 
     local dx = 2
     -- health vs mana bar
@@ -437,25 +470,10 @@ function SubModuleMixin:GetPetOffset(offset)
     return 0
 end
 
+function SubModuleMixin:UpdatePetHealthBarTexture()
+    self.ModuleRef.SubTargetOfTarget:UpdateToTHealthBarTexture(PetFrameHealthBar, self.ModuleRef.db.profile.pet, 'pet')
+end
+
 function SubModuleMixin:UpdatePetManaBarTexture()
-    local powerType, powerTypeString = UnitPowerType('pet')
-
-    if powerTypeString == 'MANA' then
-        PetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        PetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        PetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
-        PetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        PetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
-    end
-
-    PetFrameManaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+    self.ModuleRef.SubTargetOfTarget:UpdateToTPowerBarTexture(PetFrameManaBar, self.ModuleRef.db.profile.pet, 'pet')
 end
