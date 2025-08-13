@@ -64,7 +64,10 @@ function DF.Compatibility:Clique()
     if _G['FocusFrameHealthBarDummy'] and _G['FocusFrameManaBarDummy'] then
         fixFocus();
     else
-        DF.API.Modules:HookModuleFunction('Unitframe', 'ChangeFocusFrame', function()
+        -- DF.API.Modules:HookModuleFunction('Unitframe', 'ChangeFocusFrame', function()
+        --     fixFocus();
+        -- end)
+        hooksecurefunc(module.SubFocus, 'ChangeFocusFrame', function()
             fixFocus();
         end)
     end
