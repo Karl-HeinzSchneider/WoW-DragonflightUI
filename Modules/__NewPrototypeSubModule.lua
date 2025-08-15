@@ -8,7 +8,9 @@ local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
 function SubModuleMixin:Init()
+    self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
+    self:SetupOptions()
     -- self:SetScript('OnEvent', self.OnEvent);
 end
 
