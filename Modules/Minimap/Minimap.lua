@@ -852,11 +852,8 @@ Module.Frame = frame
 
 function Module:Era()
     Module.MoveDefaultStuff()
-    Module.ChangeZoom()
-    -- Module.DrawMinimapBorder()
     Module.MoveTracker()
     Module:ChangeLFG()
-    Module.ChangeEra()
 
     -- frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('MINIMAP_PING')

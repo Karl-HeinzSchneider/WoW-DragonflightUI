@@ -893,6 +893,7 @@ function SubModuleMixin:ChangeMail()
 end
 
 function SubModuleMixin:ChangeDifficulty()
+    if not MiniMapInstanceDifficulty then return end
     MiniMapInstanceDifficulty:ClearAllPoints()
     MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
     MiniMapInstanceDifficulty:SetParent(self.InfoPanel)
