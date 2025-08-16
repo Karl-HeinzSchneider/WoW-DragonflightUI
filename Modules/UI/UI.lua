@@ -35,12 +35,12 @@ local defaults = {
         roll = Module.SubGroupLootContainer.Defaults,
         widgetBelow = {
             scale = 1,
-            anchorFrame = 'Minimap',
+            anchorFrame = 'DragonflightUIMinimapBase',
             customAnchorFrame = '',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
-            y = -10
+            y = 0
         }
     }
 }
@@ -90,7 +90,8 @@ end
 
 local frameTable = {
     {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
-    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIMinimapBase', text = 'DF_MinimapFrame', tooltip = 'descr', label = 'label'}
 }
 
 local UIOptions = {
