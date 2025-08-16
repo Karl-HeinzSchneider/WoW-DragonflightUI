@@ -26,6 +26,8 @@ function SubModuleMixin:SetDefaults()
         locked = true,
         showPing = false,
         showPingChat = false,
+        hideZoneText = false,
+        hideClock = false,
         hideCalendar = false,
         hideZoom = false,
         hideHeader = false,
@@ -122,8 +124,35 @@ function SubModuleMixin:SetupOptions()
                 name = L["MinimapHideHeader"],
                 desc = L["MinimapHideHeaderDesc"] .. getDefaultStr('hideHeader', 'minimap'),
                 group = 'headerStyling',
-                order = 10.5,
+                order = 10.1,
                 new = true,
+                editmode = true
+            },
+            hideZoneText = {
+                type = 'toggle',
+                name = L["MinimapHideZoneText"],
+                desc = L["MinimapHideZoneTextDesc"] .. getDefaultStr('hideZoneText', 'minimap'),
+                group = 'headerStyling',
+                order = 10.2,
+                new = true,
+                editmode = true
+            },
+            hideClock = {
+                type = 'toggle',
+                name = L["MinimapHideClock"],
+                desc = L["MinimapHideClockDesc"] .. getDefaultStr('hideClock', 'minimap'),
+                group = 'headerStyling',
+                order = 10.3,
+                new = true,
+                editmode = true
+            },
+            hideCalendar = {
+                type = 'toggle',
+                name = L["MinimapHideCalendar"],
+                desc = L["MinimapHideCalendarDesc"] .. getDefaultStr('hideCalendar', 'minimap'),
+                group = 'headerStyling',
+                order = 10.4,
+                new = false,
                 editmode = true
             },
             showPing = {
@@ -142,16 +171,6 @@ function SubModuleMixin:SetupOptions()
                 order = 12,
                 editmode = true
             },
-            hideCalendar = {
-                type = 'toggle',
-                name = L["MinimapHideCalendar"],
-                desc = L["MinimapHideCalendarDesc"] .. getDefaultStr('hideCalendar', 'minimap'),
-                group = 'headerStyling',
-                order = 13,
-                new = false,
-                editmode = true
-            },
-
             hideZoom = {
                 type = 'toggle',
                 name = L["MinimapHideZoomButtons"],
@@ -339,9 +358,9 @@ function SubModuleMixin:Update()
     -- Module:UpdateMinimapZonePanelPosition(state.zonePanelPosition)
 
     if state.hideCalendar then
-        self.CalendarButton:Hide()
+        self.CalendarButtonFrame:Hide()
     else
-        self.CalendarButton:Show()
+        self.CalendarButtonFrame:Show()
     end
 
     if state.hideZoom then
@@ -389,6 +408,42 @@ function SubModuleMixin:Update()
                     MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
                 end
             end
+
+            -- 140
+            local clockSpace;
+            if state.hideClock then
+                -- _G['TimeManagerClockButton']:Hide();
+                C_CVar.SetCVar('showMinimapClock', 0)
+                clockSpace = 0;
+            else
+                -- _G['TimeManagerClockButton']:Show();
+                C_CVar.SetCVar('showMinimapClock', 1)
+                clockSpace = 40;
+            end
+            -- _G['MinimapZoneTextButton']:SetWidth(140 - 4 - clockSpace - 4)
+
+            local zoneTextSpace;
+            if state.hideZoneText then
+                _G['MinimapZoneTextButton']:Hide();
+                zoneTextSpace = 0;
+            else
+                _G['MinimapZoneTextButton']:Show();
+                zoneTextSpace = 100;
+            end
+
+            local w = clockSpace + zoneTextSpace;
+            if w > 0 then
+                self.InfoPanelBackground:Show()
+                self.InfoPanel:SetWidth(w)
+            else
+                self.InfoPanelBackground:Hide()
+                self.InfoPanel:SetWidth(0.0000001)
+            end
+
+            if w < 140 - 4 - 20 then
+                --
+            end
+
         end
     end
 
@@ -452,6 +507,7 @@ function SubModuleMixin:CreateInfoPanel()
     background:SetTextureSliceMode(1)
     background:SetTextureSliceMargins(20, 20, 25, 25)
 
+    self.InfoPanelBackground = background;
 end
 
 function SubModuleMixin:ChangeZoneText()
@@ -460,7 +516,9 @@ function SubModuleMixin:ChangeZoneText()
     btn:SetHeight(16)
     btn:SetParent(self.InfoPanel)
     btn:SetPoint('LEFT', self.InfoPanel, 'LEFT', 4, 0)
-    btn:SetPoint('RIGHT', self.InfoPanel, 'RIGHT', -4 - 40, 0)
+    -- btn:SetPoint('RIGHT', self.InfoPanel, 'RIGHT', -4 - 40, 0)
+    -- btn:SetWidth(self.InfoPanel:GetWidth() - 4 - 40)
+    btn:SetWidth(140 - 4 - 40 - 4) -- 92
 
     local text = _G['MinimapZoneText']
     text:ClearAllPoints()
@@ -714,7 +772,7 @@ function SubModuleMixin:ChangeCalendar()
     local path, size, flags = text:GetFont()
     text:SetFont(path, 10 - 4, flags)
 
-    self.CalendarButton = button
+    self.CalendarButtonFrame = f
     self.CalendarButtonText = text
 
     local function UpdateCalendar()
