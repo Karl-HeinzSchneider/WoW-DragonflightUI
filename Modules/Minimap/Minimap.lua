@@ -25,12 +25,12 @@ local defaults = {
         },
         durability = {
             scale = 1,
-            anchorFrame = 'Minimap',
+            anchorFrame = 'DragonflightUIMinimapBase',
             customAnchorFrame = '',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
-            y = -15
+            y = 0
         },
         lfg = {
             scale = 1,
@@ -88,7 +88,8 @@ local frameTable = {
 local frameTableTracker = {
     {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
     {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'},
-    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIMinimapBase', text = 'DF_MinimapFrame', tooltip = 'descr', label = 'label'}
 }
 
 local trackerOptions = {
