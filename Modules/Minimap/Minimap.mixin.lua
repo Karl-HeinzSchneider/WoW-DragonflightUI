@@ -17,12 +17,12 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         scale = 1,
-        anchorFrame = 'MinimapCluster',
+        anchorFrame = 'UIParent',
         customAnchorFrame = '',
-        anchor = 'CENTER',
-        anchorParent = 'TOP',
-        x = -10,
-        y = -105,
+        anchor = 'TOPRIGHT',
+        anchorParent = 'TOPRIGHT',
+        x = -4,
+        y = -4,
         locked = true,
         showPing = false,
         showPingChat = false,
