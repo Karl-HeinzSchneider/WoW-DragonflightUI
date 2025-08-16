@@ -580,6 +580,8 @@ do
     L["MinimapShowPingInChat"] = "Show Ping in Chat"
     L["MinimapHideCalendar"] = "Hide Calendar"
     L["MinimapHideCalendarDesc"] = "Hides the calendar button"
+    L["MinimapHideHeader"] = "Hide Header"
+    L["MinimapHideHeaderDesc"] = "Hides the minimap header"
     L["MinimapHideZoomButtons"] = "Hide Zoom Buttons"
     L["MinimapHideZoomDesc"] = "Hides the zoom buttons (+) (-)"
     L["MinimapSkinMinimapButtons"] = "Skin Minimap Buttons"

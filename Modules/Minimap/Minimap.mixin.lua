@@ -28,6 +28,7 @@ function SubModuleMixin:SetDefaults()
         showPingChat = false,
         hideCalendar = false,
         hideZoom = false,
+        hideHeader = false,
         skinButtons = true,
         zonePanelPosition = 'TOP',
         -- Visibility
@@ -116,6 +117,15 @@ function SubModuleMixin:SetupOptions()
                 new = true,
                 editmode = true
             },
+            hideHeader = {
+                type = 'toggle',
+                name = L["MinimapHideHeader"],
+                desc = L["MinimapHideHeaderDesc"] .. getDefaultStr('hideHeader', 'minimap'),
+                group = 'headerStyling',
+                order = 10.5,
+                new = true,
+                editmode = true
+            },
             showPing = {
                 type = 'toggle',
                 name = L["MinimapShowPing"],
@@ -141,6 +151,7 @@ function SubModuleMixin:SetupOptions()
                 new = false,
                 editmode = true
             },
+
             hideZoom = {
                 type = 'toggle',
                 name = L["MinimapHideZoomButtons"],
@@ -341,35 +352,44 @@ function SubModuleMixin:Update()
         MinimapZoomOut:Show()
     end
 
-    -- info panel
+    -- header
     do
-        local pos = state.zonePanelPosition;
-        if pos ~= 'TOP' and pos ~= 'BOTTOM' then pos = 'TOP' end
-
-        if pos == 'TOP' then
-            self.InfoPanel:SetPoint('CENTER', self.TopFrame, 'CENTER', 0, 0);
-            self.TopFrame:SetHeight(18)
-            self.BottomFrame:SetHeight(0.0000001)
-
-            MiniMapMailFrame:ClearAllPoints()
-            if DF.Wrath or DF.Cata then
-                MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
-            else
-                MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
-            end
-        else
-            self.InfoPanel:SetPoint('CENTER', self.BottomFrame, 'CENTER', 0, 0);
-            self.BottomFrame:SetHeight(18)
+        if state.hideHeader then
+            self.InfoPanel:Hide()
             self.TopFrame:SetHeight(0.0000001)
+            self.BottomFrame:SetHeight(0.0000001)
+            self.BaseFrame:SetHeight(self.MinimalHeight)
+        else
+            self.InfoPanel:Show()
+            self.BaseFrame:SetHeight(self.DefaultHeight)
 
-            MiniMapMailFrame:ClearAllPoints()
-            if DF.Wrath or DF.Cata then
-                MiniMapMailFrame:SetPoint('BOTTOMRIGHT', MiniMapTracking, 'TOPRIGHT', 2, 1)
+            local pos = state.zonePanelPosition;
+            if pos ~= 'TOP' and pos ~= 'BOTTOM' then pos = 'TOP' end
+
+            if pos == 'TOP' then
+                self.InfoPanel:SetPoint('CENTER', self.TopFrame, 'CENTER', 0, 0);
+                self.TopFrame:SetHeight(18)
+                self.BottomFrame:SetHeight(0.0000001)
+
+                MiniMapMailFrame:ClearAllPoints()
+                if DF.Wrath or DF.Cata then
+                    MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
+                else
+                    MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
+                end
             else
-                MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
+                self.InfoPanel:SetPoint('CENTER', self.BottomFrame, 'CENTER', 0, 0);
+                self.BottomFrame:SetHeight(18)
+                self.TopFrame:SetHeight(0.0000001)
+
+                MiniMapMailFrame:ClearAllPoints()
+                if DF.Wrath or DF.Cata then
+                    MiniMapMailFrame:SetPoint('BOTTOMRIGHT', MiniMapTracking, 'TOPRIGHT', 2, 1)
+                else
+                    MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
+                end
             end
         end
-
     end
 
     f:UpdateStateHandler(state)
@@ -407,7 +427,10 @@ function SubModuleMixin:CreateBaseFrame()
     midFrame:SetSize(140, 160)
     self.MidFrame = midFrame;
 
-    baseFrame:SetHeight(18 + padding + 160)
+    self.DefaultHeight = 18 + padding + 160 + padding;
+    self.MinimalHeight = padding + 160 + padding;
+
+    baseFrame:SetHeight(self.DefaultHeight)
 end
 
 function SubModuleMixin:CreateInfoPanel()
@@ -494,7 +517,7 @@ function SubModuleMixin:ChangeTracking()
     tracking:SetPoint('RIGHT', self.InfoPanel, 'LEFT', -1, 0)
     tracking:SetSize(18, 18)
     tracking:SetFrameStrata('MEDIUM')
-    tracking:SetParent(self.BaseFrame)
+    tracking:SetParent(self.InfoPanel)
     trackingIcon:Hide()
 
     trackingBG:ClearAllPoints()
@@ -508,7 +531,7 @@ function SubModuleMixin:ChangeTracking()
     btn:SetSize(14, 15)
     btn:ClearAllPoints()
     btn:SetPoint('CENTER', tracking, 'CENTER')
-    btn:SetParent(self.BaseFrame)
+    btn:SetParent(self.InfoPanel)
 
     -- ["UI-HUD-Minimap-Tracking-Down"]={16, 15, 0.162109, 0.224609, 0.507812, 0.537109, false, false, "2x"},
     -- ["UI-HUD-Minimap-Tracking-Mouseover"]={15, 14, 0.228516, 0.287109, 0.507812, 0.535156, false, false, "2x"},
@@ -643,7 +666,7 @@ function SubModuleMixin:ChangeCalendar()
     GameTimeFrame:SetPoint('LEFT', self.InfoPanel, 'RIGHT', 0, -2)
     GameTimeFrame:Hide()
 
-    local f = CreateFrame('Frame', 'DragonflightUICalendarButtonFrame', self.BaseFrame)
+    local f = CreateFrame('Frame', 'DragonflightUICalendarButtonFrame', self.InfoPanel)
     f:SetSize(18, 18)
     f:SetPoint('LEFT', self.InfoPanel, 'RIGHT', 1, 0)
 
@@ -796,6 +819,8 @@ function SubModuleMixin:ChangeMail()
         MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
     end
 
+    MiniMapMailFrame:SetParent(self.InfoPanel)
+
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
 
     local mail = MiniMapMailFrame:CreateTexture('DragonflightUIMinimapMailFrame', 'ARTWORK')
@@ -810,5 +835,6 @@ end
 function SubModuleMixin:ChangeDifficulty()
     MiniMapInstanceDifficulty:ClearAllPoints()
     MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
+    MiniMapInstanceDifficulty:SetParent(self.InfoPanel)
 end
 
