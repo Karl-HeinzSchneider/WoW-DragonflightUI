@@ -36,11 +36,11 @@ local defaults = {
         widgetBelow = {
             scale = 1,
             anchorFrame = 'Minimap',
-            customAnchorFrame = '',
+            customAnchorFrame = 'DragonflightUIMinimapBase',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
-            y = -20
+            y = -10
         }
     }
 }
