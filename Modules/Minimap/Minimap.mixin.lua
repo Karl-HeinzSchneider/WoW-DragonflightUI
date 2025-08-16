@@ -485,21 +485,7 @@ end
 function SubModuleMixin:UpdateMinimapShape()
     local state = self.state;
 
-    if C_CVar.GetCVarBool("rotateMinimap") then
-        Minimap:SetMaskTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
-        self.MinimapBorder:Hide()
-        self.MinimapBorderSquare:Hide()
-
-        function GetMinimapShape()
-            return 'ROUND';
-        end
-        refreshAllMinimapButtons()
-        return;
-    end
-
-    if not state then return end
-
-    if state.shape == 'SQUARE' then
+    if state and state.shape == 'SQUARE' and not C_CVar.GetCVarBool("rotateMinimap") then
         Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
         -- Minimap:SetSize(130, 130)
         self.MinimapBorder:Hide()
@@ -511,7 +497,11 @@ function SubModuleMixin:UpdateMinimapShape()
     else
         Minimap:SetMaskTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
         -- Minimap:SetSize(140, 140)
-        self.MinimapBorder:Show()
+        if not C_CVar.GetCVarBool("rotateMinimap") then
+            self.MinimapBorder:Show()
+        else
+            self.MinimapBorder:Hide()
+        end
         self.MinimapBorderSquare:Hide()
         function GetMinimapShape()
             return 'ROUND';
