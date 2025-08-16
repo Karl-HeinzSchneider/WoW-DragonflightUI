@@ -3,6 +3,8 @@ local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
 
+local libIcon = LibStub("LibDBIcon-1.0")
+
 local subModuleName = 'Minimap';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
@@ -23,6 +25,7 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPRIGHT',
         x = -4,
         y = -4,
+        shape = 'ROUND',
         locked = true,
         showPing = false,
         showPingChat = false,
@@ -48,8 +51,8 @@ function SubModuleMixin:SetDefaults()
         hideNoStealth = false,
         hideBattlePet = false,
         hideCustom = false,
-        hideCustomCond = '',
-        useStateHandler = true
+        hideCustomCond = ''
+        -- useStateHandler = true
     };
     self.Defaults = defaults;
 end
@@ -93,6 +96,11 @@ function SubModuleMixin:SetupOptions()
         {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'}
     }
 
+    local shapeTable = {
+        {value = 'ROUND', text = 'Round', tooltip = 'descr', label = 'label'},
+        {value = 'SQUARE', text = 'Square', tooltip = 'descr', label = 'label'}
+    }
+
     local minimapOptions = {
         type = 'group',
         name = L["MinimapName"],
@@ -107,6 +115,16 @@ function SubModuleMixin:SetupOptions()
                 desc = '',
                 order = 20,
                 isExpanded = true,
+                editmode = true
+            },
+            shape = {
+                type = 'select',
+                name = L["MinimapShape"],
+                desc = L["MinimapShapeDesc"] .. getDefaultStr('shape', 'minimap'),
+                dropdownValues = shapeTable,
+                order = 1,
+                group = 'headerStyling',
+                new = true,
                 editmode = true
             },
             zonePanelPosition = {
@@ -188,14 +206,6 @@ function SubModuleMixin:SetupOptions()
                 order = 15,
                 new = false,
                 editmode = true
-            },
-            useStateHandler = {
-                type = 'toggle',
-                name = L["MinimapUseStateHandler"],
-                desc = L["MinimapUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'minimap'),
-                group = 'headerVis',
-                order = 115,
-                editmode = true
             }
         }
     }
@@ -204,7 +214,7 @@ function SubModuleMixin:SetupOptions()
             rotate = {
                 type = 'toggle',
                 name = ROTATE_MINIMAP,
-                desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+                desc = OPTION_TOOLTIP_ROTATE_MINIMAP .. L["MinimapRotateDescAdditional"],
                 group = 'headerStyling',
                 order = 13.1,
                 blizzard = true,
@@ -235,6 +245,7 @@ function SubModuleMixin:SetupOptions()
                 else
                     C_CVar.SetCVar("rotateMinimap", 0)
                 end
+                self:UpdateMinimapShape()
             else
                 setOption(info, value)
             end
@@ -359,6 +370,8 @@ function SubModuleMixin:Update()
 
     -- Module:UpdateMinimapZonePanelPosition(state.zonePanelPosition)
 
+    self:UpdateMinimapShape()
+
     if state.hideCalendar then
         self.CalendarButtonFrame:Hide()
     else
@@ -456,6 +469,57 @@ function SubModuleMixin:Update()
     -- end)
 end
 
+local function refreshAllMinimapButtons()
+    if not libIcon then return end
+    libIcon:SetButtonRadius(5)
+    -- local buttons = libIcon:GetButtonList()
+    -- -- DevTools_Dump(buttons)
+
+    -- for k, v in ipairs(buttons) do
+    --     local btn = libIcon:GetMinimapButton(v)
+
+    --     libIcon:Refresh(btn, nil);
+    -- end
+end
+
+function SubModuleMixin:UpdateMinimapShape()
+    local state = self.state;
+
+    if C_CVar.GetCVarBool("rotateMinimap") then
+        Minimap:SetMaskTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
+        self.MinimapBorder:Hide()
+        self.MinimapBorderSquare:Hide()
+
+        function GetMinimapShape()
+            return 'ROUND';
+        end
+        refreshAllMinimapButtons()
+        return;
+    end
+
+    if not state then return end
+
+    if state.shape == 'SQUARE' then
+        Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+        -- Minimap:SetSize(130, 130)
+        self.MinimapBorder:Hide()
+        self.MinimapBorderSquare:Show()
+        function GetMinimapShape()
+            return 'SQUARE';
+        end
+        refreshAllMinimapButtons()
+    else
+        Minimap:SetMaskTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
+        -- Minimap:SetSize(140, 140)
+        self.MinimapBorder:Show()
+        self.MinimapBorderSquare:Hide()
+        function GetMinimapShape()
+            return 'ROUND';
+        end
+        refreshAllMinimapButtons()
+    end
+end
+
 function SubModuleMixin:CreateBaseFrame()
     local baseFrame = CreateFrame('Frame', 'DragonflightUIMinimapBase', UIParent);
     baseFrame:SetSize(178, 200);
@@ -476,7 +540,7 @@ function SubModuleMixin:CreateBaseFrame()
     bottomFrame:SetHeight(0.0000001);
     self.BottomFrame = bottomFrame;
 
-    local padding = 2;
+    local padding = 4;
     local midFrame = CreateFrame('Frame', 'DragonflightUIMinimapMid', baseFrame);
     midFrame:SetPoint('TOP', topFrame, 'BOTTOM', 0, -padding);
     -- midFrame:SetPoint('BOTTOM', bottomFrame, 'TOP', 0, padding);
@@ -848,6 +912,16 @@ function SubModuleMixin:SetupMinimap()
     texture:SetSize(140 + delta - dx, 140 + delta)
     -- texture:SetScale(0.88)
 
+    local textureSquare = Minimap:CreateTexture('DragonflightUIMinimapBorderSquare', 'ARTWORK')
+    textureSquare:SetDrawLayer('ARTWORK', 7)
+    textureSquare:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\MinimapSquareJag')
+    -- textureSquare:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
+    local dSquare = 13;
+    textureSquare:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -dSquare, dSquare + 1)
+    textureSquare:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', dSquare, -dSquare + 1)
+
+    self.MinimapBorderSquare = textureSquare
+
     -- MinimapCompassTexture:SetDrawLayer('ARTWORK', 7)
     MinimapCompassTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
     MinimapCompassTexture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
@@ -857,11 +931,18 @@ function SubModuleMixin:SetupMinimap()
     MinimapCompassTexture:SetPoint('CENTER', Minimap, 'CENTER', 1, 0)
 
     hooksecurefunc(MinimapCompassTexture, 'Show', function()
-        texture:Hide()
+        self.MinimapBorder:Hide()
+        self.MinimapBorderSquare:Hide()
     end)
 
     hooksecurefunc(MinimapCompassTexture, 'Hide', function()
-        texture:Show()
+        if self.state and self.state.shape == 'SQUARE' then
+            self.MinimapBorder:Hide()
+            self.MinimapBorderSquare:Show()
+        else
+            self.MinimapBorder:Show()
+            self.MinimapBorderSquare:Hide()
+        end
     end)
 end
 
@@ -955,7 +1036,6 @@ end
 
 function SubModuleMixin:ChangeMinimapButtons()
     -- print('Module.ChangeMinimapButtons()')
-    local libIcon = LibStub("LibDBIcon-1.0")
     if not libIcon then return end
 
     hooksecurefunc(libIcon, 'Register', function(_, name, object, db, customCompartmentIcon)

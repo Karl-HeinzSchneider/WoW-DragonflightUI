@@ -353,7 +353,7 @@ function Module:UpdateMinimap(state)
     end
 
     -- local minimapBorderTex = minimapModule.Frame.minimap
-    local minimapBorderTex = _G['DragonflightUIMinimapBorder']
+    local minimapBorderTex = minimapModule.SubMinimap.MinimapBorder
     if not minimapBorderTex then return end -- TODO: HACK
 
     local c = CreateColorFromRGBHexString(state.minimapColor)
@@ -363,6 +363,9 @@ function Module:UpdateMinimap(state)
 
     minimapBorderTex:SetDesaturated(state.minimapDesaturate)
     minimapBorderTex:SetVertexColor(c:GetRGB())
+
+    minimapModule.SubMinimap.MinimapBorderSquare:SetDesaturated(state.minimapDesaturate)
+    minimapModule.SubMinimap.MinimapBorderSquare:SetVertexColor(c:GetRGB())
 
     MinimapCompassTexture:SetDesaturated(state.minimapDesaturate)
     MinimapCompassTexture:SetVertexColor(c:GetRGB())
