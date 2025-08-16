@@ -35,12 +35,12 @@ local defaults = {
         roll = Module.SubGroupLootContainer.Defaults,
         widgetBelow = {
             scale = 1,
-            anchorFrame = 'DragonflightUIMinimapBase',
+            anchorFrame = 'Minimap',
             customAnchorFrame = '',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
-            y = 0
+            y = -20
         }
     }
 }
