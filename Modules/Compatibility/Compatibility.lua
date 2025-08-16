@@ -101,12 +101,12 @@ local compatOptions = {
             desc = L["CompatLeatrixPlusDesc"] .. getDefaultStr('leatrixPlus', 'general'),
             order = 21
         },
-        lfgbulletinboard = {
-            type = 'toggle',
-            name = L["CompatLFGBulletinBoard"],
-            desc = L["CompatLFGBulletinBoardDesc"] .. getDefaultStr('lfgbulletinboard', 'general'),
-            order = 21
-        },
+        -- lfgbulletinboard = {
+        --     type = 'toggle',
+        --     name = L["CompatLFGBulletinBoard"],
+        --     desc = L["CompatLFGBulletinBoardDesc"] .. getDefaultStr('lfgbulletinboard', 'general'),
+        --     order = 21
+        -- },
         merinspect = {
             type = 'toggle',
             name = L["CompatMerInspect"],
@@ -313,24 +313,11 @@ function Module:ApplySettingsInternal(sub, key)
         end)
     end)
 
-    self:ConditionalOption('lfgbulletinboard', 'general', L['CompatLFGBulletinBoard'], function()
-        if MinimapModule['skinButtons' .. 'Hooked'] then
-            Module:FuncOrWaitframe('LFGBulletinBoard', function()
-                --
-                DF.Compatibility:LFGBulletinBoard(MinimapModule.UpdateButton)
-            end)
-        else
-            DF.API.Modules:HookModuleFunction('Minimap', 'ChangeMinimapButtons', function()
-                if MinimapModule['skinButtons' .. 'Hooked'] and not Module['lfgbulletinboard' .. 'Func'] then
-                    Module['lfgbulletinboard' .. 'Func'] = true
-                    Module:FuncOrWaitframe('LFGBulletinBoard', function()
-                        --
-                        DF.Compatibility:LFGBulletinBoard(MinimapModule.UpdateButton)
-                    end)
-                end
-            end)
-        end
-    end)
+    -- self:ConditionalOption('lfgbulletinboard', 'general', L['CompatLFGBulletinBoard'], function()
+    --     DF.API.Modules:HookEnableModule('Unitframe', function(m)
+    --         Module:FuncOrWaitframe('LFGBulletinBoard', DF.Compatibility.LFGBulletinBoard)
+    --     end)
+    -- end)
 
     self:ConditionalOption('merinspect', 'general', L['CompatMerInspect'], function()
         if UIModule['changeCharacterframe' .. 'Hooked'] then

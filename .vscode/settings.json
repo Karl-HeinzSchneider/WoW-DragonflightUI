@@ -468,7 +468,8 @@
         "undefined-field",
         "inject-field",
         "undefined-global",
-        "param-type-mismatch"
+        "param-type-mismatch",
+        "assign-type-mismatch"
     ],
     "markdown.occurrencesHighlight.enabled": true
 }

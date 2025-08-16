@@ -353,7 +353,7 @@ function Module:UpdateMinimap(state)
     end
 
     -- local minimapBorderTex = minimapModule.Frame.minimap
-    local minimapBorderTex = _G['DragonflightUIMinimapBorder']
+    local minimapBorderTex = minimapModule.SubMinimap.MinimapBorder
     if not minimapBorderTex then return end -- TODO: HACK
 
     local c = CreateColorFromRGBHexString(state.minimapColor)
@@ -363,6 +363,9 @@ function Module:UpdateMinimap(state)
 
     minimapBorderTex:SetDesaturated(state.minimapDesaturate)
     minimapBorderTex:SetVertexColor(c:GetRGB())
+
+    minimapModule.SubMinimap.MinimapBorderSquare:SetDesaturated(state.minimapDesaturate)
+    minimapModule.SubMinimap.MinimapBorderSquare:SetVertexColor(c:GetRGB())
 
     MinimapCompassTexture:SetDesaturated(state.minimapDesaturate)
     MinimapCompassTexture:SetVertexColor(c:GetRGB())
@@ -391,11 +394,11 @@ function Module:UpdateMinimap(state)
 
     if not libIcon then return end
 
-    local f = minimapModule.Frame;
+    local f = minimapModule.SubMinimap;
     if not f.DarkmodeButtonHooked then
         f.DarkmodeButtonHooked = true
 
-        hooksecurefunc(minimapModule, 'UpdateButton', function(btn)
+        hooksecurefunc(f, 'UpdateButton', function(btn)
             Module:UpdateMinimapButton(btn)
         end)
     end
@@ -403,7 +406,6 @@ function Module:UpdateMinimap(state)
     local buttons = libIcon:GetButtonList()
 
     for k, v in ipairs(buttons) do
-        ---@diagnostic disable-next-line: param-type-mismatch
         local btn = libIcon:GetMinimapButton(v)
 
         if btn then

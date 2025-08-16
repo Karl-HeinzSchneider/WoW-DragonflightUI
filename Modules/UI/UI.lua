@@ -36,7 +36,7 @@ local defaults = {
         widgetBelow = {
             scale = 1,
             anchorFrame = 'Minimap',
-            customAnchorFrame = '',
+            customAnchorFrame = 'DragonflightUIMinimapBase',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
@@ -90,7 +90,8 @@ end
 
 local frameTable = {
     {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
-    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIMinimapBase', text = 'DF_MinimapFrame', tooltip = 'descr', label = 'label'}
 }
 
 local UIOptions = {

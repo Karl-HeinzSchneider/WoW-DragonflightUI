@@ -8,42 +8,12 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
+Module.SubMinimap = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Minimap'])
+
 local defaults = {
     profile = {
         scale = 1,
-        minimap = {
-            scale = 1,
-            anchorFrame = 'MinimapCluster',
-            customAnchorFrame = '',
-            anchor = 'CENTER',
-            anchorParent = 'TOP',
-            x = -10,
-            y = -105,
-            locked = true,
-            showPing = false,
-            showPingChat = false,
-            hideCalendar = false,
-            hideZoom = false,
-            skinButtons = true,
-            zonePanelPosition = 'TOP',
-            -- Visibility
-            alphaNormal = 1.0,
-            alphaCombat = 1.0,
-            showMouseover = false,
-            hideAlways = false,
-            hideCombat = false,
-            hideOutOfCombat = false,
-            hidePet = false,
-            hideVehicle = false,
-            hideNoPet = false,
-            hideStance = false,
-            hideStealth = false,
-            hideNoStealth = false,
-            hideBattlePet = false,
-            hideCustom = false,
-            hideCustomCond = '',
-            useStateHandler = true
-        },
+        minimap = Module.SubMinimap.Defaults,
         tracker = {
             scale = 1,
             anchorFrame = 'UIParent',
@@ -55,12 +25,12 @@ local defaults = {
         },
         durability = {
             scale = 1,
-            anchorFrame = 'Minimap',
+            anchorFrame = 'DragonflightUIMinimapBase',
             customAnchorFrame = '',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
-            y = -15
+            y = 0
         },
         lfg = {
             scale = 1,
@@ -118,163 +88,8 @@ local frameTable = {
 local frameTableTracker = {
     {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
     {value = 'MinimapCluster', text = 'MinimapCluster', tooltip = 'descr', label = 'label'},
-    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
-}
-
-local minimapOptions = {
-    type = 'group',
-    name = L["MinimapName"],
-    advancedName = 'Minimap',
-    sub = 'minimap',
-    get = getOption,
-    set = setOption,
-    args = {
-        headerStyling = {
-            type = 'header',
-            name = L["MinimapStyle"],
-            desc = '',
-            order = 20,
-            isExpanded = true,
-            editmode = true
-        },
-        zonePanelPosition = {
-            type = 'select',
-            name = L["MinimapZonePanelPosition"],
-            desc = L["MinimapZonePanelPositionDesc"] .. getDefaultStr('zonePanelPosition', 'minimap'),
-            dropdownValues = DF.Settings.DropdownTopBottomAnchorTable,
-            order = 10,
-            group = 'headerStyling',
-            new = true,
-            editmode = true
-        },
-        showPing = {
-            type = 'toggle',
-            name = L["MinimapShowPing"],
-            desc = L["MinimapNotYetImplemented"] .. getDefaultStr('showPing', 'minimap'),
-            group = 'headerStyling',
-            order = 11,
-            editmode = true
-        },
-        showPingChat = {
-            type = 'toggle',
-            name = L["MinimapShowPingInChat"],
-            desc = getDefaultStr('showPingChat', 'minimap'),
-            group = 'headerStyling',
-            order = 12,
-            editmode = true
-        },
-        hideCalendar = {
-            type = 'toggle',
-            name = L["MinimapHideCalendar"],
-            desc = L["MinimapHideCalendarDesc"] .. getDefaultStr('hideCalendar', 'minimap'),
-            group = 'headerStyling',
-            order = 13,
-            new = false,
-            editmode = true
-        },
-        hideZoom = {
-            type = 'toggle',
-            name = L["MinimapHideZoomButtons"],
-            desc = L["MinimapHideZoomDesc"] .. getDefaultStr('hideZoom', 'minimap'),
-            group = 'headerStyling',
-            order = 14,
-            new = false,
-            editmode = true
-        },
-        skinButtons = {
-            type = 'toggle',
-            name = L["MinimapSkinMinimapButtons"],
-            desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
-            group = 'headerStyling',
-            order = 15,
-            new = false,
-            editmode = true
-        },
-        useStateHandler = {
-            type = 'toggle',
-            name = L["MinimapUseStateHandler"],
-            desc = L["MinimapUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'minimap'),
-            group = 'headerVis',
-            order = 115,
-            editmode = true
-        }
-    }
-}
-
-do
-    local moreOptions = {
-        rotate = {
-            type = 'toggle',
-            name = ROTATE_MINIMAP,
-            desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
-            group = 'headerStyling',
-            order = 13.1,
-            blizzard = true,
-            editmode = true
-        }
-    }
-
-    for k, v in pairs(moreOptions) do minimapOptions.args[k] = v end
-
-    minimapOptions.get = function(info)
-        local key = info[1]
-        local sub = info[2]
-
-        if sub == 'rotate' then
-            return C_CVar.GetCVarBool("rotateMinimap")
-        else
-            return getOption(info)
-        end
-    end
-
-    minimapOptions.set = function(info, value)
-        local key = info[1]
-        local sub = info[2]
-
-        if sub == 'rotate' then
-            if value then
-                C_CVar.SetCVar("rotateMinimap", 1)
-            else
-                C_CVar.SetCVar("rotateMinimap", 0)
-            end
-        else
-            setOption(info, value)
-        end
-    end
-end
-DF.Settings:AddPositionTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr, frameTable)
--- DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
-DragonflightUIStateHandlerMixin:AddStateTable(Module, minimapOptions, 'minimap', 'Minimap', getDefaultStr)
-local optionsMinimapEditmode = {
-    name = 'Minimap',
-    desc = 'Minimapdesc',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {
-        resetPosition = {
-            type = 'execute',
-            name = L["ExtraOptionsPreset"],
-            btnName = L["ExtraOptionsResetToDefaultPosition"],
-            desc = L["ExtraOptionsPresetDesc"],
-            func = function()
-                local dbTable = Module.db.profile.minimap
-                local defaultsTable = defaults.profile.minimap
-                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
-                setPreset(dbTable, {
-                    scale = defaultsTable.scale,
-                    anchor = defaultsTable.anchor,
-                    anchorParent = defaultsTable.anchorParent,
-                    anchorFrame = defaultsTable.anchorFrame,
-                    x = defaultsTable.x,
-                    y = defaultsTable.y
-                }, 'minimap')
-            end,
-            order = 16,
-            editmode = true,
-            new = false
-        }
-    }
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIMinimapBase', text = 'DF_MinimapFrame', tooltip = 'descr', label = 'label'}
 }
 
 local trackerOptions = {
@@ -448,20 +263,13 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('minimap', {order = 1, name = minimapOptions.name, descr = 'Minimapss', isNew = false})
+    register('minimap', {order = 1, name = self.SubMinimap.Options.name, descr = 'Minimapss', isNew = false})
     register('questtracker', {order = 1, name = trackerOptions.name, descr = 'Trackers', isNew = false})
     register('durability', {order = 1, name = optionsDurability.name, descr = 'Durablityss', isNew = false})
     register('lfg', {order = 1, name = optionsLFG.name, descr = 'LFGss', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
-    DF.ConfigModule:RegisterSettingsData('minimap', 'misc', {
-        options = minimapOptions,
-        default = function()
-            setDefaultSubValues(minimapOptions.sub)
-        end
-    })
-
     DF.ConfigModule:RegisterSettingsData('questtracker', 'misc', {
         options = trackerOptions,
         default = function()
@@ -494,11 +302,11 @@ function Module:RefreshOptionScreens()
     configFrame:RefreshCatSub(cat, 'Durability')
     configFrame:RefreshCatSub(cat, 'LFG')
 
-    -- Minimap.DFEditModeSelection.SelectionOptions:CallRefresh()
-    Minimap.DFEditModeSelection:RefreshOptionScreen();
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
     Module.DurabilityContainer.DFEditModeSelection:RefreshOptionScreen()
     if Module.LFG then Module.LFG.DFEditModeSelection:RefreshOptionScreen() end
+
+    self.SubMinimap.BaseFrame.DFEditModeSelection:RefreshOptionScreen()
 end
 
 function Module:ApplySettings(sub, key)
@@ -510,15 +318,11 @@ end
 function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
 
-    if db.minimap.useStateHandler and not Module.StateHandlerAdded then
-        Module.StateHandlerAdded = true;
-        Module.AddStateUpdater()
-    end
-
-    Module.UpdateMinimapState(db.minimap)
     Module.UpdateTrackerState(db.tracker)
     Module.UpdateDurabilityState(db.durability)
     Module:UpdateLFGState(db.lfg)
+
+    self.SubMinimap:UpdateState(db.minimap)
 end
 
 local frame = CreateFrame('FRAME')
@@ -625,40 +429,8 @@ function Module.GetCoords(key)
     return data[3], data[4], data[5], data[6]
 end
 
-function Module.AddStateUpdater()
-    Mixin(Minimap, DragonflightUIStateHandlerMixin)
-    Minimap:InitStateHandler()
-    -- Minimap:SetHideFrame(frame.CalendarButton, 2)
-
-    Minimap.DFShower:ClearAllPoints()
-    Minimap.DFShower:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32 + 32)
-    Minimap.DFShower:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
-
-    Minimap.DFMouseHandler:ClearAllPoints()
-    Minimap.DFMouseHandler:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
-    Minimap.DFMouseHandler:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
-end
-
 function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
-    EditModeModule:AddEditModeToFrame(Minimap)
-
-    Minimap.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return minimapOptions.name
-    end)
-
-    Minimap.DFEditModeSelection:RegisterOptions({
-        options = minimapOptions,
-        extra = optionsMinimapEditmode,
-        default = function()
-            setDefaultSubValues(minimapOptions.sub)
-        end,
-        moduleRef = self
-    });
-
-    Minimap.DFEditModeSelection:ClearAllPoints()
-    Minimap.DFEditModeSelection:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -16, 32)
-    Minimap.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 16, -16)
 
     -- QuestTracker
     local trackerFrame = (DF.Era and QuestWatchFrame) or (DF.Wrath and WatchFrame) or (DF.Cata and WatchFrame);
@@ -716,47 +488,6 @@ function Module:AddEditMode()
     -- TODO: add fake preview
     function Module.DurabilityContainer:SetEditMode()
     end
-end
-
-function Module.UpdateMinimapState(state)
-    -- print('state', state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
-    local parent;
-    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-        parent = _G[state.customAnchorFrame]
-    else
-        parent = _G[state.anchorFrame]
-    end
-
-    Minimap:ClearAllPoints()
-    Minimap:SetClampedToScreen(true)
-    Minimap:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-
-    -- Module.LFG:SetScale(state.scale)
-    local dfScale = 1.25
-    Minimap:SetScale(state.scale * dfScale)
-    -- Module.LockMinimap(state.locked)
-
-    Module:UpdateMinimapZonePanelPosition(state.zonePanelPosition)
-
-    if state.hideCalendar then
-        frame.CalendarButton:Hide()
-    else
-        frame.CalendarButton:Show()
-    end
-
-    if state.hideZoom then
-        MinimapZoomIn:Hide()
-        MinimapZoomOut:Hide()
-    else
-        MinimapZoomIn:Show()
-        MinimapZoomOut:Show()
-    end
-
-    if Module.StateHandlerAdded then Minimap:UpdateStateHandler(state) end
-
-    Module:ConditionalOption('skinButtons', 'minimap', 'Skin Minimap Buttons', function()
-        Module.ChangeMinimapButtons()
-    end)
 end
 
 function Module:UpdateMinimapZonePanelPosition(pos)
@@ -850,28 +581,7 @@ function Module.UpdateTrackerState(state)
     end
 end
 
-function Module.HideDefaultStuff()
-    _G['MinimapBorder']:Hide()
-    _G['MinimapBorderTop']:Hide()
-
-    -- Hide WorldMapButton
-    if MiniMapWorldMapButton then
-        MiniMapWorldMapButton:Hide()
-        hooksecurefunc(MiniMapWorldMapButton, 'Show', function()
-            MiniMapWorldMapButton:Hide()
-        end)
-    end
-    -- Hide North Tag
-    hooksecurefunc(MinimapNorthTag, 'Show', function()
-        MinimapNorthTag:Hide()
-    end)
-end
-
 function Module.MoveDefaultStuff()
-    -- CENTER table: 000001F816E0E7B0 TOP 9 -92
-    Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', -10, -105)
-    -- Minimap:SetScale(1.25)
-
     local container = CreateFrame('Frame', 'DragonflightUIDurabilityContainer', UIParent)
     container:SetPoint('CENTER', Minimap, 'CENTER', 0, -142)
     container:SetSize(92, 75)
@@ -912,15 +622,6 @@ function Module.UpdateDurabilityState(state)
     container:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 end
 
-function Module.MoveMinimap(x, y)
-    Minimap:ClearAllPoints()
-    Minimap:SetClampedToScreen(true)
-    Minimap:SetPoint('CENTER', MinimapCluster, 'TOP', x, y)
-    -- MinimapCluster:ClearAllPoints()
-    -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
-    -- MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', x, y)
-end
-
 function Module:UpdateLFGState(state)
     local container = Module.LFG
     if not container then return end
@@ -938,387 +639,6 @@ function Module:UpdateLFGState(state)
     container:SetScale(state.scale)
     container:ClearAllPoints()
     container:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-end
-
-function Module.ChangeZoom()
-    local dx, dy = 5, 90
-    MinimapZoomIn:SetScale(0.55)
-    MinimapZoomIn:SetPoint('CENTER', Minimap, 'RIGHT', -dx, -dy)
-    MinimapZoomIn:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomIn:GetNormalTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
-    -- MinimapZoomIn:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap')
-    -- MinimapZoomIn:GetPushedTexture():SetTexCoord(0.001953125, 0.068359375, 0.57421875, 0.607421875)
-    MinimapZoomIn:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomIn:GetPushedTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
-    MinimapZoomIn:SetDisabledTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomIn:GetDisabledTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
-    MinimapZoomIn:GetDisabledTexture():SetDesaturated(1)
-    MinimapZoomIn:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomIn:GetHighlightTexture():SetTexCoord(0.001953125, 0.068359375, 0.5390625, 0.572265625)
-
-    MinimapZoomOut:SetScale(0.55)
-    MinimapZoomOut:SetPoint('CENTER', Minimap, 'BOTTOM', dy, dx)
-    MinimapZoomOut:SetNormalTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomOut:GetNormalTexture():SetTexCoord(0.353515625, 0.419921875, 0.5, 0.533203125)
-    MinimapZoomOut:SetPushedTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomOut:GetPushedTexture():SetTexCoord(0.353515625, 0.419921875, 0.5, 0.533203125)
-    MinimapZoomOut:SetDisabledTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomOut:GetDisabledTexture():SetTexCoord(0.353515625, 0.419921875, 0.5, 0.533203125)
-    MinimapZoomOut:GetDisabledTexture():SetDesaturated(1)
-    MinimapZoomOut:SetHighlightTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapZoomOut:GetHighlightTexture():SetTexCoord(0.353515625, 0.419921875, 0.5, 0.533203125)
-end
-
-function Module.HookMouseWheel()
-    Minimap:SetScript('OnMouseWheel', function(self, delta)
-        if (delta == -1) then
-            MinimapZoomIn:Enable()
-            -- PlaySound(SOUNDKIT.IG_MINIMAP_ZOOM_OUT);
-            Minimap:SetZoom(math.max(Minimap:GetZoom() - 1, 0))
-            if (Minimap:GetZoom() == 0) then MinimapZoomOut:Disable() end
-        elseif (delta == 1) then
-            MinimapZoomOut:Enable()
-            -- PlaySound(SOUNDKIT.IG_MINIMAP_ZOOM_IN);
-            Minimap:SetZoom(math.min(Minimap:GetZoom() + 1, Minimap:GetZoomLevels() - 1))
-            if (Minimap:GetZoom() == (Minimap:GetZoomLevels() - 1)) then MinimapZoomIn:Disable() end
-        end
-    end)
-end
-
-function Module:CreateMinimapInfoFrame()
-    local f = CreateFrame('Frame', 'DragonflightUIMinimapTop', Minimap)
-    f:SetSize(136, 18)
-    f:SetPoint('CENTER', Minimap, 'TOP', 0, 16)
-
-    local background = f:CreateTexture('DragonflightUIMinimapTopBackground', 'ARTWORK')
-
-    -- ["UI-HUD-Minimap-Button"]={19.5, 19, 0.861328, 0.9375, 0.392578, 0.429688, false, false, "2x"},
-    local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
-    background:SetTexture(texture)
-    background:SetSize(39, 38)
-    background:SetTexCoord(0.861328, 0.9375, 0.392578, 0.429688)
-
-    background:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
-    background:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', 0, 0)
-    background:SetTextureSliceMode(1)
-    background:SetTextureSliceMargins(20, 20, 25, 25)
-
-    -- background:SetPoint('LEFT', f, 'LEFT', 0, -8)
-
-    f.Background = background
-
-    frame.MinimapInfo = f
-end
-
-function Module:ChangeCalendar()
-    GameTimeFrame:ClearAllPoints()
-    -- GameTimeFrame:SetPoint('CENTER', MinimapCluster, 'TOPRIGHT', -16, -20)
-    GameTimeFrame:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 0, -2)
-
-    -- GameTimeFrame:SetParent(MinimapBackdrop)
-    GameTimeFrame:SetScale(0.75)
-
-    local texture = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar32'
-    GameTimeFrame:SetSize(35, 35)
-    GameTimeFrame:GetNormalTexture():SetTexture(texture)
-    GameTimeFrame:GetNormalTexture():SetTexCoord(0.18359375, 0.265625, 0.00390625, 0.078125)
-    GameTimeFrame:GetPushedTexture():SetTexture(texture)
-    GameTimeFrame:GetPushedTexture():SetTexCoord(0.00390625, 0.0859375, 0.00390625, 0.078125)
-    GameTimeFrame:GetHighlightTexture():SetTexture(texture)
-    GameTimeFrame:GetHighlightTexture():SetTexCoord(0.09375, 0.17578125, 0.00390625, 0.078125)
-
-    GameTimeFrame:Hide()
-    -- @TODO: change Font/size/center etc
-    -- local fontstring = GameTimeFrame:GetFontString()
-    -- print(fontstring[1])
-    -- GameTimeFrame:SetNormalFontObject(GameFontHighlightLarge)
-
-    -- local obj = GameTimeFrame:GetNormalFontObject()
-    -- obj:SetJustifyH('LEFT')
-end
-
-function Module.UpdateCalendar()
-    local button = frame.CalendarButton
-
-    if button then
-        local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar'
-
-        local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime()
-        local day = currentCalendarTime.monthDay
-        frame.CalendarButtonText:SetText(tostring(day))
-    else
-        -- print('no Calendarbutton => RIP')
-    end
-end
-
-function Module.HookCalendar()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uicalendar'
-
-    local f = CreateFrame('Frame', 'DragonflightUICalendarButtonFrame', Minimap)
-    f:SetSize(18, 18)
-    f:SetPoint('LEFT', frame.MinimapInfo, 'RIGHT', 1, 0)
-
-    local bg = f:CreateTexture('DragonflightUICalendarButtonFrameBackground', "BACKGROUND")
-    bg:SetPoint('TOPLEFT')
-    bg:SetPoint('BOTTOMRIGHT')
-    bg:SetSize(18, 18)
-    bg:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    bg:SetTexCoord(0.861328125, 0.9375, 0.392578125, 0.4296875)
-
-    local button = CreateFrame('Button', 'DragonflightUICalendarButton', f, 'SecureActionButtonTemplate')
-    button:SetSize(18, 18)
-    button:SetPoint('CENTER')
-
-    if DF.Wrath then
-        button:SetAttribute('type', 'macro')
-        button:SetAttribute('macrotext', '/click GameTimeFrame')
-
-    elseif DF.Era then
-        button:SetScript('OnClick', function()
-            Module:Print(
-                "Era doesn't have an ingame Calendar, sorry. Consider using 'Classic Calendar' by 'Toxiix', and this button will magically work...")
-        end)
-    end
-
-    local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
-    button:SetNormalTexture(microTexture)
-    button:SetPushedTexture(microTexture)
-    button:SetHighlightTexture(microTexture)
-    -- button:GetNormalTexture():SetTexCoord(0.258789, 0.321289, 0.822266, 0.982422)
-    -- button:GetHighlightTexture():SetTexCoord(0.258789, 0.321289, 0.658203, 0.818359)
-    -- -- button:GetPushedTexture():SetTexCoord(0.194336, 0.256836, 0.822266, 0.982422)
-    -- button:GetPushedTexture():SetTexCoord(0.258789, 0.321289, 0.822266, 0.982422)
-
-    button:GetNormalTexture():SetTexCoord(0.258789, 0.321289, 0.494141, 0.654297)
-    button:GetHighlightTexture():SetTexCoord(0.258789, 0.321289, 0.330078, 0.490234)
-    button:GetHighlightTexture():SetVertexColor(1, 1, 0, 0.5)
-    button:GetPushedTexture():SetTexCoord(0.258789, 0.321289, 0.494141, 0.654297)
-
-    local text = button:CreateFontString('DragonflightUICalendarButtonText', 'ARTWORK', 'GameFontBlackSmall')
-    text:SetText('12')
-    text:SetPoint('CENTER', 0, 0.5)
-    text:SetJustifyH("CENTER")
-    text:SetJustifyV("MIDDLE")
-
-    local path, size, flags = text:GetFont()
-    text:SetFont(path, 10 - 4, flags)
-
-    frame.CalendarButton = button
-    frame.CalendarButtonText = text
-
-    hooksecurefunc(TimeManagerClockTicker, 'SetText', function()
-        Module.UpdateCalendar()
-    end)
-
-    if DF.Cata then
-        -- GameTimeCalendarInvitesTexture + Glow
-        GameTimeCalendarInvitesTexture:ClearAllPoints()
-        GameTimeCalendarInvitesTexture:SetParent(button)
-        GameTimeCalendarInvitesTexture:SetPoint('CENTER', text, 'CENTER', 0, 0)
-        GameTimeCalendarInvitesTexture:SetSize(18, 18)
-        GameTimeCalendarInvitesTexture:SetScale(1)
-        GameTimeCalendarInvitesTexture:SetDrawLayer('OVERLAY', 2)
-
-        local glowSize = 18 + 10
-        GameTimeCalendarInvitesGlow:ClearAllPoints()
-        GameTimeCalendarInvitesGlow:SetParent(button)
-        GameTimeCalendarInvitesGlow:SetPoint('CENTER', text, 'CENTER', 0, 0)
-        GameTimeCalendarInvitesGlow:SetSize(glowSize, glowSize)
-        GameTimeCalendarInvitesGlow:SetScale(1)
-        GameTimeCalendarInvitesGlow:SetDrawLayer('OVERLAY', 1)
-
-        local PI = PI;
-        local TWOPI = PI * 2.0;
-        local cos = math.cos;
-        local INVITE_PULSE_SEC = 1.0 / (2.0 * 1.0); -- mul by 2 so the pulse constant counts for half a flash
-
-        Module.minimapFlashTimer = 0.0
-
-        Minimap:HookScript('OnUpdate', function(self, elapsed)
-            -- Flashing stuff, from GameTime.lua line 112++
-            if (elapsed and GameTimeFrame.flashInvite) then
-                local flashIndex = TWOPI * Module.minimapFlashTimer * INVITE_PULSE_SEC;
-                local flashValue = max(0.0, 0.5 + 0.5 * cos(flashIndex));
-                if (flashIndex >= TWOPI) then
-                    Module.minimapFlashTimer = 0.0;
-                else
-                    Module.minimapFlashTimer = Module.minimapFlashTimer + elapsed;
-                end
-
-                GameTimeCalendarInvitesTexture:SetAlpha(flashValue);
-                GameTimeCalendarInvitesGlow:SetAlpha(flashValue);
-            end
-        end)
-    end
-end
-
-function Module:ChangeClock()
-    if DF:IsAddOnLoaded('Blizzard_TimeManager') then
-        local regions = {TimeManagerClockButton:GetRegions()}
-        regions[1]:Hide()
-        TimeManagerClockButton:ClearAllPoints()
-        TimeManagerClockButton:SetSize(40, 16)
-        TimeManagerClockButton:SetPoint('RIGHT', frame.MinimapInfo, 'RIGHT', 0, 0)
-        TimeManagerClockButton:SetParent(frame.MinimapInfo)
-
-        TimeManagerClockButton:HookScript('OnEnter', function()
-            TimeManagerClockButton_UpdateTooltip()
-        end)
-
-        local path, size, flags = TimeManagerClockTicker:GetFont()
-        TimeManagerClockTicker:SetFont(path, 10 - 1, flags)
-
-        TimeManagerAlarmFiredTexture:SetPoint("TOPLEFT", TimeManagerClockButton, "TOPLEFT", 0, 5)
-        TimeManagerAlarmFiredTexture:SetPoint("BOTTOMRIGHT", TimeManagerClockButton, "BOTTOMRIGHT", -2, -11)
-
-        TimeManagerFrame:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -10, -190 - 30)
-    end
-end
-
-function Module:ChangeZoneText()
-    MinimapZoneTextButton:ClearAllPoints()
-    MinimapZoneTextButton:SetSize(130, 16)
-    MinimapZoneTextButton:SetParent(frame.MinimapInfo)
-    MinimapZoneTextButton:SetPoint('LEFT', frame.MinimapInfo, 'LEFT', 4, 0)
-    MinimapZoneTextButton:SetPoint('RIGHT', TimeManagerClockTicker, 'LEFT', -2, 0)
-
-    MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetSize(130, 10)
-    MinimapZoneText:SetPoint('LEFT', MinimapZoneTextButton, 'LEFT', 1, 0)
-    MinimapZoneText:SetPoint('RIGHT', MinimapZoneTextButton, 'RIGHT', -1, 0)
-    -- MinimapZoneText:SetFontObject(GameFontSmall)
-    -- MinimapZoneText:SetJustifyH('CENTER')
-    -- MinimapZoneText:SetJustifyV('MIDDLE')
-    local path, size, flags = MinimapZoneText:GetFont()
-    MinimapZoneText:SetFont(path, 12 - 2, flags)
-end
-
-function Module:ChangeTracking()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
-
-    MiniMapTracking:ClearAllPoints()
-    -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
-    MiniMapTracking:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', -1, 0)
-    -- MiniMapTracking:SetScale(0.75)
-    MiniMapTracking:SetSize(18, 18)
-    MiniMapTracking:SetFrameStrata('MEDIUM')
-    MiniMapTrackingIcon:Hide()
-
-    -- MiniMapTrackingBackground:Hide()
-    MiniMapTrackingBackground:ClearAllPoints()
-    MiniMapTrackingBackground:SetPoint('CENTER', MiniMapTracking, 'CENTER')
-    MiniMapTrackingBackground:SetSize(18, 18)
-    MiniMapTrackingBackground:SetTexture(base)
-    MiniMapTrackingBackground:SetTexCoord(0.861328125, 0.9375, 0.392578125, 0.4296875)
-
-    MiniMapTrackingButtonBorder:Hide()
-
-    MiniMapTrackingButton:SetSize(14, 15)
-    MiniMapTrackingButton:ClearAllPoints()
-    MiniMapTrackingButton:SetPoint('CENTER', MiniMapTracking, 'CENTER')
-
-    -- ["UI-HUD-Minimap-Tracking-Down"]={16, 15, 0.162109, 0.224609, 0.507812, 0.537109, false, false, "2x"},
-    -- ["UI-HUD-Minimap-Tracking-Mouseover"]={15, 14, 0.228516, 0.287109, 0.507812, 0.535156, false, false, "2x"},
-    -- ["UI-HUD-Minimap-Tracking-Up"]={15, 14, 0.291016, 0.349609, 0.507812, 0.535156, false, false, "2x"},
-
-    MiniMapTrackingButton:SetNormalTexture(base)
-    MiniMapTrackingButton:GetNormalTexture():SetTexCoord(0.291016, 0.349609, 0.507812, 0.535156)
-    MiniMapTrackingButton:SetHighlightTexture(base)
-    MiniMapTrackingButton:GetHighlightTexture():SetTexCoord(0.228516, 0.287109, 0.507812, 0.535156)
-    MiniMapTrackingButton:SetPushedTexture(base)
-    -- MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.162109, 0.224609, 0.507812, 0.537109)
-    MiniMapTrackingButton:GetPushedTexture():SetTexCoord(0.228516, 0.287109, 0.507812, 0.535156)
-
-end
-
-local MiniMapTrackingFrame = MiniMapTrackingFrame or MiniMapTracking
-
-function Module:ChangeTrackingEra()
-    --  MiniMapTrackingFrame:ClearAllPoints()
-    -- MiniMapTracking:SetPoint('TOPRIGHT', MinimapCluster, 'TOPRIGHT', -200 - 5, 0)
-    -- MiniMapTrackingFrame:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, 0)
-    -- MiniMapTrackingFrame:SetScale(0.75)
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-
-    local updatePos = function()
-        MiniMapTrackingFrame:ClearAllPoints()
-        -- MiniMapTrackingFrame:SetPoint('RIGHT', frame.MinimapInfo, 'LEFT', 0, -2)
-        -- MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'LEFT', 15, 56)
-        MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'CENTER', -52.56, 53.51)
-
-        MiniMapTrackingFrame:SetParent(Minimap)
-    end
-
-    updatePos()
-    MiniMapTrackingFrame:SetSize(31, 31)
-    MiniMapTrackingFrame:SetFrameStrata('MEDIUM')
-    -- MiniMapTrackingFrame:SetScale(0.75)
-    -- MiniMapTrackingFrame:SetScale(1.15)
-
-    local bg = MiniMapTrackingFrame:CreateTexture('DragonflightUITrackingFrameBackground', 'BACKGROUND')
-    bg:SetSize(24, 24)
-    bg:SetTexture(base .. 'ui-minimap-background')
-    bg:ClearAllPoints()
-    bg:SetPoint("CENTER", MiniMapTrackingFrame, "CENTER")
-
-    MiniMapTrackingBorder:SetSize(50, 50)
-    MiniMapTrackingBorder:SetTexture(base .. 'minimap-trackingborder')
-    MiniMapTrackingBorder:ClearAllPoints()
-    MiniMapTrackingBorder:SetPoint("TOPLEFT", MiniMapTrackingFrame, "TOPLEFT")
-
-    MiniMapTrackingIcon:SetSize(20, 20)
-    MiniMapTrackingIcon:ClearAllPoints()
-    MiniMapTrackingIcon:SetPoint("CENTER", MiniMapTrackingFrame, "CENTER", 0, 0)
-
-    hooksecurefunc('SetLookingForGroupUIAvailable', function()
-        --
-        -- print('SetLookingForGroupUIAvailable')
-        updatePos()
-    end)
-end
-
-function Module.UpdateTrackingEra()
-    local icon = GetTrackingTexture();
-    if (icon) then
-        -- MiniMapTrackingIcon:SetTexture(icon);
-        SetPortraitToTexture(MiniMapTrackingIcon, icon)
-        MiniMapTrackingFrame:Show();
-    else
-        MiniMapTrackingFrame:Hide();
-    end
-end
-
-function Module.DrawMinimapBorder()
-    local texture = Minimap:CreateTexture('DragonflightUIMinimapBorder', 'ARTWORK')
-    texture:SetDrawLayer('ARTWORK', 7)
-    texture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    texture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
-    texture:SetPoint('CENTER', Minimap, 'CENTER', 1, 0)
-    local delta = 22
-    local dx = 6
-    texture:SetSize(140 + delta - dx, 140 + delta)
-    -- texture:SetScale(0.88)
-
-    -- MinimapCompassTexture:SetDrawLayer('ARTWORK', 7)
-    MinimapCompassTexture:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x')
-    MinimapCompassTexture:SetTexCoord(0.001953125, 0.857421875, 0.056640625, 0.505859375)
-    MinimapCompassTexture:SetSize(140 + delta - dx, 140 + delta)
-    MinimapCompassTexture:SetScale(1)
-    MinimapCompassTexture:ClearAllPoints()
-    MinimapCompassTexture:SetPoint('CENTER', Minimap, 'CENTER', 1, 0)
-
-    hooksecurefunc(MinimapCompassTexture, 'Show', function()
-        texture:Hide()
-    end)
-
-    hooksecurefunc(MinimapCompassTexture, 'Hide', function()
-        texture:Show()
-    end)
-
-    frame.minimap = texture
-end
-
-function Module.ReplaceTextures()
 end
 
 function Module.LockMinimap(locked)
@@ -1490,139 +810,12 @@ function Module:ChangeLFG()
     end
 end
 
-function Module.ChangeDifficulty()
-    MiniMapInstanceDifficulty:ClearAllPoints()
-    MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMRIGHT', 0, 0)
-end
-
-function Module.ChangeMail()
-    MiniMapMailBorder:Hide()
-    MiniMapMailIcon:Hide()
-    -- MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 24 - 5, -52 + 25)
-    MiniMapMailFrame:SetSize(19.5, 15)
-
-    if DF.Wrath or DF.Cata then
-        MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
-    else
-        -- MiniMapMailFrame:SetPoint('TOPRIGHT', _G['DragonflightUIMinimapTop'], 'BOTTOMLEFT', 2, -1)
-        MiniMapMailFrame:ClearAllPoints()
-        MiniMapMailFrame:SetPoint('RIGHT', _G['DragonflightUIMinimapTop'], 'LEFT', 0, 0)
-    end
-
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiminimap2x'
-
-    local mail = MiniMapMailFrame:CreateTexture('DragonflightUIMinimapMailFrame', 'ARTWORK')
-    mail:ClearAllPoints()
-    mail:SetTexture(base)
-    mail:SetTexCoord(0.08203125, 0.158203125, 0.5078125, 0.537109375)
-    mail:SetSize(19.5, 15)
-    mail:SetPoint('CENTER', MiniMapMailFrame, 'CENTER', -3, 0)
-    mail:SetScale(1)
-end
-
 function Module:QueueStatusReposition(_, anchorFrame)
     if anchorFrame ~= Module.QueueStatus then
         --
         self:ClearAllPoints()
         self:SetPoint('CENTER', Module.QueueStatus, 'CENTER', 0, 0)
     end
-end
-
-function Module.ChangeEra()
-    GameTimeFrame:Hide()
-    MinimapToggleButton:Hide()
-end
-
-function Module:UpdateButton(btn)
-    if not btn then return end
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
-    local children = {btn:GetRegions()}
-
-    for i, child in ipairs(children) do
-        --            
-        if child:GetObjectType() == 'Texture' then
-            --
-            local tex = child:GetTexture()
-            -- print('child=texture', tex)
-
-            if tex == 136477 then
-                -- highlight
-                child:SetTexture(base .. 'ui-minimap-zoombutton-highlight')
-            elseif tex == 136430 then
-                -- overlay
-                ----"Interface\\Minimap\\MiniMap-TrackingBorder"                  
-                child:SetSize(50, 50)
-                child:SetTexture(base .. 'minimap-trackingborder')
-                child:ClearAllPoints()
-                child:SetPoint("TOPLEFT", btn, "TOPLEFT")
-
-                btn.DFTrackingBorder = child
-            elseif tex == 136467 then
-                -- background
-                ----"Interface\\Minimap\\UI-Minimap-Background"
-                child:SetSize(24, 24)
-                child:SetTexture(base .. 'ui-minimap-background')
-                child:ClearAllPoints()
-                child:SetPoint("CENTER", btn, "CENTER")
-            else
-                --
-            end
-        end
-    end
-    -- icon
-    if btn.icon then
-        btn.icon:SetSize(20, 20)
-        btn.icon:ClearAllPoints()
-        btn.icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
-
-        local tex = btn.icon:GetTexture()
-
-        local updateTex = function()
-            SetPortraitToTexture(btn.icon, btn.icon:GetTexture())
-        end
-
-        local err = function(s)
-            -- print('error!', s)
-            btn.icon:SetTexture(tex)
-        end
-
-        local status = xpcall(updateTex, err)
-        -- SetPortraitToTexture(btn.icon, btn.icon:GetTexture())
-    end
-end
-
-function Module.ChangeMinimapButtons()
-    -- print('Module.ChangeMinimapButtons()')
-    local libIcon = LibStub("LibDBIcon-1.0")
-
-    if not libIcon then return end
-
-    hooksecurefunc(libIcon, 'Register', function(self, name, object, db, customCompartmentIcon)
-        --
-        -- print('register', name, object, db, customCompartmentIcon)
-        local btn = libIcon:GetMinimapButton(name)
-        if btn then
-            --
-            Module:UpdateButton(btn)
-        end
-    end)
-
-    local buttons = libIcon:GetButtonList()
-    -- DevTools_Dump(buttons)
-
-    for k, v in ipairs(buttons) do
-        -- DevTools_Dump(v) 
-        ---@diagnostic disable-next-line: param-type-mismatch
-        local btn = libIcon:GetMinimapButton(v)
-        -- DevTools_Dump(btn)
-
-        if btn then
-            --
-            Module:UpdateButton(btn)
-        end
-    end
-
-    Module:UpdateButton(MiniMapBattlefieldFrame)
 end
 
 function Module.HandlePing(unit, y, x)
@@ -1658,55 +851,29 @@ frame:SetScript('OnEvent', frame.OnEvent)
 Module.Frame = frame
 
 function Module:Era()
-    Module.HideDefaultStuff()
     Module.MoveDefaultStuff()
-    Module.ChangeZoom()
-    Module:CreateMinimapInfoFrame()
-    Module:ChangeClock()
-    Module:ChangeZoneText()
-    Module:ChangeTrackingEra()
-    Module.UpdateTrackingEra()
-    Module.DrawMinimapBorder()
     Module.MoveTracker()
     Module:ChangeLFG()
-    Module.HookMouseWheel()
-    Module.ChangeMail()
-    -- Module.ChangeMinimapButtons()
-    Module.ChangeEra()
-
-    Module.HookCalendar()
-    Module.UpdateCalendar()
 
     -- frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('MINIMAP_PING')
     frame:RegisterEvent('MINIMAP_UPDATE_TRACKING')
+
+    self.SubMinimap:Setup()
 end
 
 function Module:TBC()
 end
 
 function Module:Wrath()
-    Module.HideDefaultStuff()
     Module.MoveDefaultStuff()
-    Module.ChangeZoom()
-    Module:CreateMinimapInfoFrame()
-    Module:ChangeCalendar()
-    Module:ChangeClock()
-    Module:ChangeZoneText()
-    Module:ChangeTracking()
-    Module.DrawMinimapBorder()
     Module.MoveTracker()
     Module:ChangeLFG()
-    Module.ChangeDifficulty()
-    Module.HookMouseWheel()
-    Module.ChangeMail()
-    -- Module.ChangeMinimapButtons()
-
-    Module.HookCalendar()
-    Module.UpdateCalendar()
 
     -- frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('MINIMAP_PING')
+
+    self.SubMinimap:Setup()
 end
 
 function Module:Cata()
