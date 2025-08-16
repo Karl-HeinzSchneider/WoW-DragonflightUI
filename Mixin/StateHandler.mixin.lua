@@ -190,7 +190,10 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverr
 
     local driver = table.concat(driverTable, ';')
 
-    if driver == self.DriverCache then return; end
+    if driver == self.DriverCache then
+        self:UpdateAlphaHandler(state)
+        return;
+    end
     self.DriverCache = driver;
     UnregisterStateDriver(handler, 'vis')
 
@@ -221,10 +224,7 @@ function DragonflightUIStateHandlerMixin:UpdateAlphaHandler(state)
     local handler = self.DFAlphaHandler
     self:SetAttribute('alphaNormal', state.alphaNormal)
     self:SetAttribute('alphaCombat', state.alphaCombat)
-
-    -- print(self:GetName(), state.normalAlpha, state.combatAlpha)
-
-    UnregisterStateDriver(handler, 'alpha')
+    -- print(self:GetName(), state.alphaNormal, state.alphaCombat)
 
     local driverTable = {}
 
@@ -238,6 +238,14 @@ function DragonflightUIStateHandlerMixin:UpdateAlphaHandler(state)
     local driver = table.concat(driverTable, ';')
     local result, target = SecureCmdOptionParse(driver)
 
+    if driver == self.AlphaDriverCache then
+        handler:SetAttribute('state-alpha', 'update')
+        handler:SetAttribute('state-alpha', result)
+        return;
+    end
+    self.AlphaDriverCache = driver;
+
+    UnregisterStateDriver(handler, 'alpha')
     RegisterStateDriver(handler, 'alpha', driver)
     handler:SetAttribute('state-alpha', 'fullAlpha')
     handler:SetAttribute('state-alpha', result)
