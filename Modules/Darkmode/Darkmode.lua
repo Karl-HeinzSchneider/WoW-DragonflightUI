@@ -391,11 +391,11 @@ function Module:UpdateMinimap(state)
 
     if not libIcon then return end
 
-    local f = minimapModule.Frame;
+    local f = minimapModule.SubMinimap;
     if not f.DarkmodeButtonHooked then
         f.DarkmodeButtonHooked = true
 
-        hooksecurefunc(minimapModule, 'UpdateButton', function(btn)
+        hooksecurefunc(f, 'UpdateButton', function(btn)
             Module:UpdateMinimapButton(btn)
         end)
     end
@@ -403,7 +403,6 @@ function Module:UpdateMinimap(state)
     local buttons = libIcon:GetButtonList()
 
     for k, v in ipairs(buttons) do
-        ---@diagnostic disable-next-line: param-type-mismatch
         local btn = libIcon:GetMinimapButton(v)
 
         if btn then
