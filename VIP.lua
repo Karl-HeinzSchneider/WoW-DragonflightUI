@@ -142,5 +142,31 @@ table.insert(DF.VIPTable, {
     displayTexture = 'baldvin'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Marnik',
+    level = '60',
+    class = 'PALADIN',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'HEALER',
+    extra = '',
+    displayTexture = 'marnik'
+})
+
+table.insert(DF.VIPTable, {
+    name = 'Theunder ',
+    level = '60',
+    class = 'WARRIOR',
+    powerType = 'RAGE',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'TANK',
+    extra = '',
+    displayTexture = 'marnik2'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;
