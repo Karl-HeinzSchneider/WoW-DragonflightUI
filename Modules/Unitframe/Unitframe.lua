@@ -377,6 +377,8 @@ function Module:AddPortraitMasks()
     -- fix portraits
     addMask(CharacterFrame, CharacterFramePortrait)
     addMask(PlayerTalentFrame, PlayerTalentFramePortrait)
+    addMask(TradeFrame, TradeFramePlayerPortrait)
+    addMask(TradeFrame, TradeFrameRecipientPortrait)
 end
 
 function Module:HookEnergyBar()
