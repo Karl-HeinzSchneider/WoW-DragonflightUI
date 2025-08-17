@@ -494,6 +494,21 @@ function Module:UpdateUnitframe(state)
         end
         self:UpdateFocusFrame(state)
     end
+
+    -- boss
+    if DF.Wrath then
+        local bossModule = DF:GetModule('Bossframe')
+        if not bossModule then return end
+
+        if not bossModule.DarkmodeBossHooked then
+            bossModule.DarkmodeBossHooked = true;
+            hooksecurefunc(bossModule, 'CreateBossFrames', function()
+                --  
+                self:UpdateBossFrame(state)
+            end)
+        end
+        self:UpdateBossFrame(state)
+    end
 end
 
 function Module:UpdatePlayerFrame(state)
@@ -558,6 +573,7 @@ function Module:UpdateTargetFrame(state)
     local e = f.PreviewTarget
     e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
     e.TargetFrameBackground:SetVertexColor(c:GetRGB())
+    e.PortraitExtra:SetVertexColor(0.6, 0.6, 0.6)
 end
 
 function Module:UpdatePartyFrame(state)
@@ -613,6 +629,51 @@ function Module:UpdateFocusFrame(state)
     local e = f.PreviewFocus
     e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
     e.TargetFrameBackground:SetVertexColor(c:GetRGB())
+end
+
+function Module:UpdateBossFrame(state)
+    local bossModule = DF:GetModule('Bossframe')
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
+
+    -- Module['BossFrame' .. id]
+    for i = 1, 4 do
+        local f = bossModule['BossFrame' .. i];
+        if f then
+            --
+            local TargetFrameBackground = f.TargetFrameBackground
+            local targetPortExtra = f.PortraitExtra
+
+            TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameBackground:SetVertexColor(c:GetRGB())
+            -- TODO
+            targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+
+            local tot = f.ToTFrame
+            local TargetFrameToTBackground = tot.TargetFrameBackground
+            TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameToTBackground:SetVertexColor(c:GetRGB())
+        end
+    end
+
+    for i = 1, 4 do
+        local f = bossModule['FakeBoss' .. i];
+        if f then
+            --
+            local TargetFrameBackground = f.TargetFrameBackground
+            local targetPortExtra = f.PortraitExtra
+
+            TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameBackground:SetVertexColor(c:GetRGB())
+            -- TODO
+            targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+
+            local tot = f.ToTFrame
+            local TargetFrameToTBackground = tot.TargetFrameBackground
+            TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameToTBackground:SetVertexColor(c:GetRGB())
+        end
+    end
+
 end
 
 function Module:UpdateActionbar(state)

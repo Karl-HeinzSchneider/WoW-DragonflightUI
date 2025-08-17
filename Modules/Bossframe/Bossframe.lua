@@ -431,6 +431,7 @@ function Module:CreateBossFrames()
 
         local fakeTargetOfTarget = CreateFrame('Frame', self['BossFrame' .. id]:GetName() .. 'ToTPreview', f,
                                                'DFEditModePreviewTargetOfTargetTemplate')
+        f.ToTFrame = fakeTargetOfTarget;
         fakeTargetOfTarget.IsToT = true;
         fakeTargetOfTarget:OnLoad()
         fakeTargetOfTarget:Show()
@@ -472,6 +473,7 @@ function Module:CreateBossFrame(id)
     do
         local totName = 'DragonflightUIBoss' .. id .. 'ToTFrame'
         local tot = CreateFrame('Button', totName, f, 'DragonflightUIBossframeTemplate', id)
+        f.ToTFrame = tot;
         tot:SetFrameLevel(10)
         local totUnt = 'boss' .. id .. 'target'
         -- totUnt = 'pettarget'
