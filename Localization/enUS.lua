@@ -755,8 +755,8 @@ do
     L["PlayerFrameHideRedStatusDesc"] = "Hide the red status glow in combat"
     L["PlayerFrameHideHitIndicator"] = "Hide Hit Indicator"
     L["PlayerFrameHideHitIndicatorDesc"] = "Hide the hit indicator on the player frame"
-    L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Ressource"
-    L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul shards."
+    L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Resource"
+    L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary resource, e.g. soul shards."
     L["PlayerFrameHideAlternatePowerBar"] = "Hide Druid Alternate Power Bar"
     L["PlayerFrameHideAlternatePowerBarDesc"] = "Hide the Druid Alternate Power Bar (Mana Bar while Bear/Cat form)."
     L["PlayerFrameHideRestingGlow"] = "Hide Resting Glow"
@@ -773,7 +773,7 @@ do
     L["PlayerFrameCustomPowerbarTextureDesc"] = "Changes the power bar texture to a custom one from LibSharedMedia." ..
                                                     note
     -- Player Secondary< Res
-    L["PlayerSecondaryResName"] = "Player Secondary Ressource"
+    L["PlayerSecondaryResName"] = "Player Secondary Resource"
     L["PlayerSecondaryResNameDesc"] = ""
 
     -- PowerBar_Alt
