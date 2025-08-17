@@ -848,7 +848,7 @@ function AddButtonTable(optionTable, sub)
             dropdownValues = DF.Settings.GrowthDirectionTable,
             order = 7.1,
             group = 'headerButtons',
-            new = true,
+            new = false,
             editmode = true
         },
         flyoutDirection = {
@@ -858,7 +858,7 @@ function AddButtonTable(optionTable, sub)
             dropdownValues = DF.Settings.FlyoutDirectionTable,
             order = 7.2,
             group = 'headerButtons',
-            new = true,
+            new = false,
             editmode = true
         },
         reverse = {
@@ -1064,7 +1064,7 @@ local function GetBarOption(n)
                 group = 'headerButtons',
                 order = 52.0,
                 editmode = true,
-                new = true
+                new = false
             }
         }
 
@@ -2108,7 +2108,7 @@ function Module:RegisterSettings()
     register('micromenu', {order = 16, name = microOptions.name, descr = 'desc', isNew = false})
     register('fps', {order = 17, name = fpsOptions.name, descr = 'desc', isNew = false})
 
-    register('vehicleLeave', {order = 18, name = self.SubVehicleLeave.Options.name, descr = 'desc', isNew = true})
+    register('vehicleLeave', {order = 18, name = self.SubVehicleLeave.Options.name, descr = 'desc', isNew = false})
     register('actionbarRange', {order = 8.5, name = self.SubActionbarRange.Options.name, descr = 'desc', isNew = true})
 
     if DF.Cata then

@@ -96,14 +96,15 @@ function Module:RegisterSettings()
     register('pet', {order = 0, name = self.SubPet.Options.name, descr = 'Petss', isNew = false})
     register('player', {order = 0, name = self.SubPlayer.Options.name, descr = 'players', isNew = false})
     register('playerSecondaryRes',
-             {order = 0, name = self.SubPlayerSecondaryRes.Options.name, descr = 'players', isNew = true})
+             {order = 0, name = self.SubPlayerSecondaryRes.Options.name, descr = 'players', isNew = false})
     register('raid', {order = 0, name = self.SubRaid.Options.name, descr = 'Raidss', isNew = false})
     register('target', {order = 0, name = self.SubTarget.Options.name, descr = 'Targetss', isNew = false})
-    register('targetoftarget', {order = 0, name = self.SubTargetOfTarget.Options.name, descr = 'Targetss', isNew = true})
+    register('targetoftarget',
+             {order = 0, name = self.SubTargetOfTarget.Options.name, descr = 'Targetss', isNew = false})
 
     if DF.Wrath then
         register('focus', {order = 0, name = self.SubFocus.Options.name, descr = 'Focusss', isNew = false})
-        register('focusTarget', {order = 0, name = self.SubFocusTarget.Options.name, descr = 'Focusss', isNew = true})
+        register('focusTarget', {order = 0, name = self.SubFocusTarget.Options.name, descr = 'Focusss', isNew = false})
     end
     if DF.Cata then
         register('altpower', {order = 0, name = self.SubAltPower.Options.name, descr = 'Focusss', isNew = false})

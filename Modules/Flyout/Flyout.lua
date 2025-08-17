@@ -858,7 +858,7 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerStyling',
             order = 56.05,
             editmode = true,
-            new = true
+            new = false
         },
         keybindFontSize = {
             type = 'range',
@@ -1035,7 +1035,7 @@ for i = 1, numCustomButtons do
                     group = 'headerClassPresets',
                     order = flyout,
                     editmode = true,
-                    new = true
+                    new = false
                 }
             end
 

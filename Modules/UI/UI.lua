@@ -307,7 +307,7 @@ function Module:RegisterSettings()
 
     register('ui', {order = 0, name = UIOptions.name, descr = 'UIsss', isNew = false})
     register('roll', {order = 18, name = self.SubGroupLootContainer.Options.name, descr = 'desc', isNew = true})
-    register('widgetBelow', {order = 19, name = widgetBelowOptions.name, descr = 'desc', isNew = true})
+    register('widgetBelow', {order = 19, name = widgetBelowOptions.name, descr = 'desc', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

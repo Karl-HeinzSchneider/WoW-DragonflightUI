@@ -127,7 +127,7 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 2,
                 editmode = true,
-                new = true
+                new = false
             },
             reactioncolor = {
                 type = 'toggle',
@@ -135,7 +135,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'tot'),
                 group = 'headerStyling',
                 order = 3,
-                new = true,
+                new = false,
                 editmode = true
             },
             classicon = {
@@ -145,7 +145,7 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 1,
                 disabled = true,
-                new = true,
+                new = false,
                 editmode = true
             },
             fadeOut = {
@@ -154,7 +154,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'tot'),
                 group = 'headerStyling',
                 order = 9.5,
-                new = true,
+                new = false,
                 editmode = true
             },
             fadeOutDistance = {
@@ -166,7 +166,7 @@ function SubModuleMixin:SetupOptions()
                 bigStep = 1,
                 order = 9.6,
                 group = 'headerStyling',
-                new = true,
+                new = false,
                 editmode = true
             },
             customHealthBarTexture = {

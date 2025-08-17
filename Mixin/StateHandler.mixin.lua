@@ -385,7 +385,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[vehicleui]hide; show') .. getDefaultStr('hideVehicle', sub),
             order = 103.5,
             group = 'headerVis',
-            new = true,
+            new = false,
             editmode = true
         },
         hidePet = {
@@ -439,7 +439,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[petbattle]hide; show') .. getDefaultStr('hideBattlePet', sub),
             order = 108.5,
             group = 'headerVis',
-            new = true,
+            new = false,
             editmode = true
         },
         hideCustom = {

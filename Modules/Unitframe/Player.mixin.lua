@@ -188,7 +188,7 @@ function SubModuleMixin:SetupOptions()
                 dropdownValues = portraitExtraTable,
                 order = 9.5,
                 group = 'headerStyling',
-                new = true,
+                new = false,
                 editmode = true
             },
             hideRedStatus = {
@@ -215,7 +215,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["PlayerFrameHideRestingGlowDesc"] .. getDefaultStr('hideRestingGlow', 'player'),
                 group = 'headerStyling',
                 order = 12,
-                new = true,
+                new = false,
                 editmode = true
             },
             hideRestingIcon = {
@@ -224,7 +224,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["PlayerFrameHideRestingIconDesc"] .. getDefaultStr('hideRestingIcon', 'player'),
                 group = 'headerStyling',
                 order = 13,
-                new = true,
+                new = false,
                 editmode = true
             }
         }

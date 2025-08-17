@@ -193,7 +193,7 @@ function SubModuleMixin:SetupOptions()
                 order = 3,
                 group = 'headerStyling',
                 editmode = true,
-                new = true
+                new = false
             },
             padding = {
                 type = 'range',

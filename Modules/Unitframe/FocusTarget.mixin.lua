@@ -128,7 +128,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'focusTarget'),
                 group = 'headerStyling',
                 order = 3,
-                new = true,
+                new = false,
                 editmode = true
             },
             classicon = {

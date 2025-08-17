@@ -146,7 +146,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'focus'),
                 group = 'headerStyling',
                 order = 3,
-                new = true,
+                new = false,
                 editmode = true
             },
             customHealthBarTexture = {

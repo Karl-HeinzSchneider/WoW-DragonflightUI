@@ -93,7 +93,7 @@ local compatOptions = {
             name = L["CompatClique"],
             desc = L["CompatCliqueDesc"] .. getDefaultStr('clique', 'general'),
             order = 21,
-            new = true
+            new = false
         },
         leatrixPlus = {
             type = 'toggle',
@@ -118,7 +118,7 @@ local compatOptions = {
             name = L["CompatPawn"],
             desc = L["CompatPawnDesc"] .. getDefaultStr('pawn', 'general'),
             order = 21,
-            new = true
+            new = false
         },
         ranker = {
             type = 'toggle',
@@ -197,7 +197,7 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('compatibility', {order = 0, name = 'Compatibility', descr = '...', isNew = true})
+    register('compatibility', {order = 0, name = 'Compatibility', descr = '...', isNew = false})
 end
 
 function Module:RegisterOptionScreens()

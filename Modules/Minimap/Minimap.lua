@@ -263,7 +263,7 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('minimap', {order = 1, name = self.SubMinimap.Options.name, descr = 'Minimapss', isNew = false})
+    register('minimap', {order = 1, name = self.SubMinimap.Options.name, descr = 'Minimapss', isNew = true})
     register('questtracker', {order = 1, name = trackerOptions.name, descr = 'Trackers', isNew = false})
     register('durability', {order = 1, name = optionsDurability.name, descr = 'Durablityss', isNew = false})
     register('lfg', {order = 1, name = optionsLFG.name, descr = 'LFGss', isNew = false})
