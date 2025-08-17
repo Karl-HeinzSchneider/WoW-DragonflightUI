@@ -2119,7 +2119,13 @@ end
 
 function Module:SetupActionbarFrames()
     local createStuff = function(n, base)
-        local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
+        local nameN = n;
+        if n == 4 then
+            nameN = 5;
+        elseif n == 5 then
+            nameN = 4;
+        end
+        local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. nameN, UIParent,
                                 'DragonflightUIActionbarFrameTemplate')
         if base == 'MultiBarLeftButton' or base == 'MultiBarRightButton' then
             bar:RegisterEvent('UI_SCALE_CHANGED');
