@@ -310,6 +310,7 @@ function SubModuleMixin:Setup()
     self:ChangeTracking()
     self:ChangeCalendar()
     self:ChangeDifficulty()
+    self:ChangeMail()
 
     self:HideDefaultStuff()
     self:HookMouseWheel()
@@ -457,6 +458,8 @@ function SubModuleMixin:Update()
 
             if w < 140 - 4 - 20 then
                 --
+                MiniMapMailFrame:ClearAllPoints()
+                MiniMapMailFrame:SetPoint('RIGHT', MiniMapTracking, 'LEFT', 0, 0)
             end
 
         end
