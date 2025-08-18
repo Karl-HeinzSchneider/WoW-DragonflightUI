@@ -1905,7 +1905,8 @@ local fpsOptions = {
             name = L["FPSOptionsStyle"],
             desc = L["FPSOptionsStyleDesc"],
             order = 20,
-            isExpanded = true
+            isExpanded = true,
+            editmode = true
         },
         hideDefaultFPS = {
             type = 'toggle',
