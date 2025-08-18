@@ -32,6 +32,7 @@ function SubModuleMixin:SetDefaults()
         hideStatusbarText = false,
         offset = false,
         hideIndicator = false,
+        hideDebuffs = false,
         -- Visibility
         alphaNormal = 1.0,
         alphaCombat = 1.0,
@@ -165,6 +166,15 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 11,
                 new = false,
+                editmode = true
+            },
+            hideDebuffs = {
+                type = 'toggle',
+                name = L["PetFrameHideDebuffs"],
+                desc = L["PetFrameHideDebuffsDesc"] .. getDefaultStr('hideDebuffs', 'pet'),
+                group = 'headerStyling',
+                order = 12,
+                new = true,
                 editmode = true
             },
             customHealthBarTexture = {
@@ -340,6 +350,16 @@ function SubModuleMixin:Update()
         PetHitIndicator:SetScale(0.01)
     else
         PetHitIndicator:SetScale(1)
+    end
+
+    local debuff1 = _G['PetFrameDebuff1']
+    if debuff1 then
+        debuff1:ClearAllPoints();
+        if state.hideDebuffs then
+            debuff1:SetPoint('BOTTOM', UIParent, 'TOP', 0, 666)
+        else
+            debuff1:SetPoint('TOPLEFT', PetFrame, 'TOPRIGHT', 5, -20)
+        end
     end
 
     PetFrame:UpdateStateHandler(state)

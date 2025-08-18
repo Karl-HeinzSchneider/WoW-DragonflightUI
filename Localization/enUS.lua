@@ -850,6 +850,8 @@ do
     L["PetFrameHideStatusbarTextDesc"] = "Hide the statusbar text"
     L["PetFrameHideIndicator"] = "Hide Hit Indicator"
     L["PetFrameHideIndicatorDesc"] = "Hide the hit indicator"
+    L["PetFrameHideDebuffs"] = "Hide Debuffs"
+    L["PetFrameHideDebuffsDesc"] = "Hides the pet debuffs."
 
     -- Focus
     L["FocusFrameName"] = "FocusFrame"
