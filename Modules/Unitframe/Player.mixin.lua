@@ -409,7 +409,7 @@ function SubModuleMixin:Setup()
     self:SetScript('OnEvent', self.OnEvent);
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    self:RegisterEvent('PLAYER_TARGET_CHANGED')
+    -- self:RegisterEvent('PLAYER_TARGET_CHANGED')
     -- self:RegisterEvent('UNIT_ENTERED_VEHICLE')
     -- self:RegisterEvent('UNIT_EXITED_VEHICLE')
 
@@ -495,7 +495,7 @@ function SubModuleMixin:OnEvent(event, ...)
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
-    elseif event == 'PLAYER_TARGET_CHANGED' then
+        -- elseif event == 'PLAYER_TARGET_CHANGED' then
         -- fallback
         -- self:ChangePlayerframe()
         -- self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
