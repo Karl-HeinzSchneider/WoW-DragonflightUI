@@ -548,7 +548,7 @@ function DFSettingsListSliderContainerMixin:Init(node)
 
     self.Editbox:SetScript('OnEnterPressed', function()
         self.Editbox:ClearFocus()
-        local newValue = tonumber(self.Editbox:GetText()) or self.Slider:GetValue();
+        local newValue = tonumber(self.Editbox:GetText()) or self.Slider.Slider:GetValue();
         self.Slider:SetValue(newValue)
         self.Editbox:SetText(self.Slider.RightText:GetText())
         self.Slider.RightText:Hide()
