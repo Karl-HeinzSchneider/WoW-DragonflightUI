@@ -42,6 +42,10 @@ do
     L["ModuleUtility"] = "Utility"
     L["ModuleCompatibility"] = "Compatibility"
     L["ModuleBossframe"] = "Bossframe"
+
+    L["ModuleAlreadyLoadedWasDeactivated"] = "Already loaded module was deactivated, please '/reload'!"
+    L["ModuleAlreadyLoadedWasDeactivatedMultiple"] =
+        "Multiple already loaded modules were deactivated, please '/reload'!"
 end
 
 -- config 
