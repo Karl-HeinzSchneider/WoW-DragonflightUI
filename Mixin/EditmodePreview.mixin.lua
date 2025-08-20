@@ -1595,8 +1595,10 @@ function DragonflightUIEditModeGroupLootContainerPreviewMixin:SetNewItem(id)
         self.Name:SetText(name)
         local color = ITEM_QUALITY_COLORS[quality or 0];
         self.Name:SetVertexColor(color.r, color.g, color.b);
+        -- self.Name:SetVertexColor(GameFontHighlight:GetTextColor());
         self.IconFrame.Icon:SetTexture(icon)
         self.IconFrame.Count:Hide();
+        DragonflightUIItemColorMixin:UpdateOverlayQuality(self.IconFrame, quality)
 
         local bindOnPickUp = true;
         if (bindOnPickUp) then
