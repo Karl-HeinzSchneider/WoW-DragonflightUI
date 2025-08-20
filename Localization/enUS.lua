@@ -556,7 +556,7 @@ do
 
     L["ExtraOptionsResetToDefaultStyle"] = "Reset to Default Style"
     L["ExtraOptionsPresetStyleDesc"] =
-        "Sets all settings that change the style of the castbar, but does not change any other setting."
+        "Reset all settings that change the style of the castbar, but does not change any other setting."
 
     L["CastbarTableAutoAdjustHeader"] = "Auto Adjust"
     L["CastbarTableAutoAdjustHeaderDesc"] = ""

@@ -43,6 +43,10 @@ do
     L["ModuleUtility"] = "实用工具"
     L["ModuleCompatibility"] = "插件兼容"
     L["ModuleBossframe"] = "首领框体"
+
+    L["ModuleAlreadyLoadedWasDeactivated"] = "已加载的模块已停用，请重载界面(/reload)！"
+    L["ModuleAlreadyLoadedWasDeactivatedMultiple"] =
+        "多个已经加载的模块被停用，请重载界面(/reload)！"
 end
 
 -- config 
@@ -333,6 +337,27 @@ do
     L["ExtraOptionsClassicLayout"] = "经典布局(侧边栏)"
     L["ExtraOptionsClassicLayoutDesc"] = ""
 
+    -- Range
+    L["ActionbarRangeName"] = "动作条范围"
+    L["ActionbarRangeNameDesc"] = ""
+
+    L["ActionbarRangeHeader"] = "范围设置"
+    L["ActionbarRangeHeaderDesc"] = ""
+
+    L["ActionbarRangeHeaderHotkey"] = "按键绑定" -- HotKey
+    L["ActionbarRangeHeaderHotkeyDesc"] = ""
+    L["ActionbarRangeHotkeyColor"] = "正常"
+    L["ActionbarRangeHotkeyColorDesc"] = "正常按键绑定字体颜色。"
+    L["ActionbarRangeHotkeyOutOfRangeColor"] = "超出范围"
+    L["ActionbarRangeHotkeyOutOfRangeColorDesc"] = "超出范围时，按键绑定字体颜色。"
+
+    L["ActionbarRangeHeaderNotUsable"] = "Not Usable"
+    L["ActionbarRangeHeaderNotUsableDesc"] = ""
+    L["ActionbarRangeHeaderOutOfRange"] = "Out Of Range"
+    L["ActionbarRangeHeaderOutOfRangeDesc"] = ""
+    L["ActionbarRangeHeaderOutOfMana"] = "Out Of Mana"
+    L["ActionbarRangeHeaderOutOfManaDesc"] = ""
+
     -- XP
     L["XPOptionsName"] = "经验条"
     L["XPOptionsDesc"] = "经验条"
@@ -513,16 +538,30 @@ do
     L["CastbarTableIconSizeDesc"] = ""
     L["CastbarTableShowTicks"] = "显示周期标记"
     L["CastbarTableShowTicksDesc"] = ""
-    L["CastbarTableAutoAdjust"] = "自动调整"
-    L["CastbarTableAutoAdjustDesc"] =
-        "根据增益/减益数量自动调整Y轴偏移 - 当施法条锚定在目标/焦点框体下方时很有用"
     L["CastbarTableShowRank"] = "显示等级"
     L["CastbarTableShowRankDesc"] = ""
     L["CastbarTableShowChannelName"] = "显示引导名称"
     L["CastbarTableShowChannelNameDesc"] = "显示法术名称而非默认文本(如'引导中')"
 
     L["ExtraOptionsResetToDefaultStyle"] = "重置为默认样式"
-    L["ExtraOptionsPresetStyleDesc"] = "重置所有影响施法条样式的设置，但不影响其他设置。"
+    L["ExtraOptionsPresetStyleDesc"] =
+        "重置所有影响施法条样式的设置，但不影响其他设置。"
+
+    L["CastbarTableAutoAdjustHeader"] = "自动调整"
+    L["CastbarTableAutoAdjustHeaderDesc"] = ""
+    L["CastbarTableAutoAdjust"] = "自动调整"
+    L["CastbarTableAutoAdjustDesc"] =
+        "根据增益/减益数量自动调整Y轴偏移 - 当施法条锚定在目标/焦点框体下方时很有用" ..
+            "\n\n仅当选项被选中*并且*父元素是默认父元素时才有效，例如目标施法条的目标框体。"
+
+    -- local info = "\n\n" .. [[(Auto Adjust uses "SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)")]]
+    local info =
+        string.format("\n\n自动调整:\n%s", "SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)")
+    L["CastbarTableAutoAdjustX"] = "自动 Delta X"
+    L["CastbarTableAutoAdjustXDesc"] = "Delta X 应用于自动调整计算出的 X 值。" .. info
+    L["CastbarTableAutoAdjustY"] = "自动 Delta Y"
+    L["CastbarTableAutoAdjustYDesc"] = "Delta Y 应用于自动调整计算的 Y 值。" .. info
+
 end
 
 -- Minimap
@@ -532,8 +571,17 @@ do
     L["MinimapShowPing"] = "显示点击信号"
     L["MinimapNotYetImplemented"] = "(尚未实现)"
     L["MinimapShowPingInChat"] = "在聊天框显示点击信号"
+    L["MinimapShape"] = "小地图形状"
+    L["MinimapShapeDesc"] = ""
+    L["MinimapRotateDescAdditional"] = "\n\n注意：只适用于圆形小地图。"
     L["MinimapHideCalendar"] = "隐藏日历按钮"
     L["MinimapHideCalendarDesc"] = "隐藏日历按钮"
+    L["MinimapHideHeader"] = "隐藏标题"
+    L["MinimapHideHeaderDesc"] = "隐藏小地图标题"
+    L["MinimapHideClock"] = "隐藏时钟"
+    L["MinimapHideClockDesc"] = ""
+    L["MinimapHideZoneText"] = "隐藏区域文本"
+    L["MinimapHideZoneTextDesc"] = ""
     L["MinimapHideZoomButtons"] = "隐藏缩放按钮"
     L["MinimapHideZoomDesc"] = "隐藏缩放按钮(+)(-)"
     L["MinimapSkinMinimapButtons"] = "美化小地图按钮"
@@ -706,6 +754,14 @@ do
     L["PlayerFrameHideRestingIcon"] = "隐藏休息图标"
     L["PlayerFrameHideRestingIconDesc"] = "隐藏玩家框体上的休息图标。"
 
+    local note =
+        "\n\n注意: 自定义材质使用暴雪的默认状态栏颜色。\n如果你想要一些不同的东西，你必须通过代码修改它。\n"
+    L["PlayerFrameCustomHealthbarTexture"] = "血条材质"
+    L["PlayerFrameCustomHealthbarTextureDesc"] =
+        "将血条材质更改为 LibSharedMedia 的自定义材质。" .. note
+    L["PlayerFrameCustomPowerbarTexture"] = "能量条材质"
+    L["PlayerFrameCustomPowerbarTextureDesc"] = "将能量条材质更改为 LibSharedMedia 的自定义材质。" ..
+                                                    note
     -- Player Secondary< Res
     L["PlayerSecondaryResName"] = "玩家次要资源"
     L["PlayerSecondaryResNameDesc"] = ""
@@ -719,7 +775,7 @@ do
     L["TargetFrameDesc"] = "目标框体设置"
     L["TargetFrameStyle"] = L["ButtonTableStyle"]
     L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
-    L["TargetFrameClassColorDesc"] = "生命条使用职业颜色"
+    L["TargetFrameClassColorDesc"] = L["PlayerFrameClassColorDesc"]
     L["TargetFrameReactionColor"] = "生命条使用阵营颜色"
     L["TargetFrameReactionColorDesc"] = "为生命条启用阵营颜色。"
     L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
@@ -756,6 +812,19 @@ do
     L["TargetFrameDynamicBuffSize"] = "动态增益图标大小"
     L["TargetFrameDynamicBuffSizeDesc"] = "在目标框体上增大玩家的增益/减益效果图标大小。"
 
+    L["TargetFrameHeaderBuffsAdvanced"] = "增益/减益 (高级)"
+    L["TargetFrameAuraOffsetY"] = "光环 Y 偏移"
+    L["TargetFrameAuraOffsetYDesc"] = "行与增益/减增益之间的 Y 偏移量。"
+    L["TargetFrameAuraRowWidth"] = "光环行宽"
+    L["TargetFrameAuraRowWidthDesc"] = "增益/减增益的最大行宽。"
+    L["TargetFrameAuraRowWidthToT"] = "光环行宽 (ToT)"
+    L["TargetFrameAuraRowWidthToTDesc"] = "与“光环行宽度”相同，但仅适用于第一个 X (=NumToTAuraRows) 行。" ..
+                                              "\n\n这是为了给 ToT 框体留出空间。"
+    L["TargetFrameToTAuraRows"] = "ToT 光环行数"
+    L["TargetFrameToTAuraRowsDesc"] =
+        "使用“光环行宽 (ToT)”替代正常宽度的光环行数。" ..
+            "\n\n如果你想要相同宽度的光环行，将此设置为 0，例如当你将 ToT 框体移开时。"
+
     -- ToT
     L["TargetOfTargetFrameName"] = "目标的目标"
     L["TargetOfTargetFrameDesc"] = ""
@@ -771,6 +840,8 @@ do
     L["PetFrameHideStatusbarTextDesc"] = "隐藏状态条文本"
     L["PetFrameHideIndicator"] = "隐藏命中指示器"
     L["PetFrameHideIndicatorDesc"] = "隐藏命中指示器"
+    L["PetFrameHideDebuffs"] = "隐藏减益效果"
+    L["PetFrameHideDebuffsDesc"] = "隐藏宠物的减益效果。"
 
     -- Focus
     L["FocusFrameName"] = "焦点框体"
@@ -799,6 +870,10 @@ do
 
     -- raid
     L["RaidFrameName"] = "团队框体"
+
+    -- Bosss
+    L["BossFrameName"] = "首领框体"
+    L["BossFrameNameDesc"] = "首领框体设置"
 end
 
 -- keybindings
