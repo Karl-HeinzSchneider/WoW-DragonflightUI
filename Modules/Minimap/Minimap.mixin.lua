@@ -319,6 +319,10 @@ function SubModuleMixin:Setup()
 
     self:ChangeMinimapButtons()
 
+    self:SetScript('OnEvent', self.OnEvent);
+    self:RegisterEvent('MINIMAP_UPDATE_TRACKING')
+    self:RegisterEvent('MINIMAP_PING')
+
     local f = self.BaseFrame
     -- state
     Mixin(f, DragonflightUIStateHandlerMixin)
@@ -343,6 +347,15 @@ function SubModuleMixin:Setup()
 end
 
 function SubModuleMixin:OnEvent(event, ...)
+    -- print('event', event)
+    if event == 'MINIMAP_PING' then
+        --
+        local arg1, arg2, arg3 = ...;
+        self:HandlePing(arg1, arg2, arg3)
+    elseif event == 'MINIMAP_UPDATE_TRACKING' then
+        -- print('MINIMAP_UPDATE_TRACKING', GetTrackingTexture())
+        self:UpdateTrackingEra()
+    end
 end
 
 function SubModuleMixin:UpdateState(state)
@@ -619,6 +632,7 @@ end
 function SubModuleMixin:ChangeTracking()
     if DF.Era then
         self:ChangeTrackingEra()
+        self:UpdateTrackingEra()
         return;
     end
 
@@ -668,6 +682,7 @@ function SubModuleMixin:ChangeTrackingEra()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 
     local updatePos = function()
+        -- print('updatePos')
         MiniMapTrackingFrame:ClearAllPoints()
         MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'CENTER', -52.56, 53.51)
         MiniMapTrackingFrame:SetParent(Minimap)
@@ -1054,5 +1069,24 @@ function SubModuleMixin:ChangeMinimapButtons()
     end
 
     if MiniMapBattlefieldFrame then self:UpdateButton(MiniMapBattlefieldFrame) end
+end
+
+function SubModuleMixin:HandlePing(unit, y, x)
+    -- print('HandlePing', unit, y, x, UnitIsVisible(unit))
+
+    if not UnitIsVisible(unit) then return end
+
+    local unitName = UnitName(unit);
+
+    local state = self.ModuleRef.db.profile.minimap;
+
+    if state.showPing then
+        --
+    end
+
+    if state.showPingChat then
+        --
+        DF:Print('<Ping>', unitName or '<unknown>');
+    end
 end
 

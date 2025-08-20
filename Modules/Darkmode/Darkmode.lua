@@ -963,14 +963,6 @@ end
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
-    -- print('event', event) 
-    if event == 'MINIMAP_PING' then
-        --
-        Module.HandlePing(arg1, arg2, arg3)
-    elseif event == 'MINIMAP_UPDATE_TRACKING' then
-        -- print('MINIMAP_UPDATE_TRACKING', GetTrackingTexture())
-        Module.UpdateTrackingEra()
-    end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
