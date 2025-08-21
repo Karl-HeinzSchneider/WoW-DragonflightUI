@@ -1600,6 +1600,19 @@ function DragonflightUIEditModeGroupLootContainerPreviewMixin:SetNewItem(id)
         self.IconFrame.Count:Hide();
         DragonflightUIItemColorMixin:UpdateOverlayQuality(self.IconFrame, quality)
 
+        if self.NeedButton.DFText then
+            local numMax = 40;
+            local numNeed = fastrandom(0, numMax - 10)
+            numMax = numMax - numNeed;
+            local numGreed = fastrandom(0, numMax - 8)
+            numMax = numMax - numGreed;
+            local numPass = fastrandom(0, numMax)
+            numMax = numMax - numPass;
+            self.NeedButton.DFText:SetText(tostring(numNeed))
+            self.GreedButton.DFText:SetText(tostring(numGreed))
+            self.PassButton.DFText:SetText(tostring(numPass))
+        end
+
         local bindOnPickUp = true;
         if (bindOnPickUp) then
             self:SetBackdrop({
