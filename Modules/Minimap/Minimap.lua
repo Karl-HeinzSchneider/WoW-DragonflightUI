@@ -540,6 +540,7 @@ function Module:UpdateMinimapZonePanelPosition(pos)
 end
 
 function Module.UpdateTrackerState(state)
+    if not state then return end
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
         parent = _G[state.customAnchorFrame]
