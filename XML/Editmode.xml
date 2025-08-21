@@ -188,7 +188,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString parentKey="Name" name="$parentName" inherits="GameFontNormalSmall" text="Item Name" justifyH="LEFT">
+				<FontString parentKey="Name" name="$parentName" inherits="GameFontHighlight" text="Item Name" justifyH="LEFT">
 					<Size>
 						<AbsDimension x="90" y="30" />
 					</Size>

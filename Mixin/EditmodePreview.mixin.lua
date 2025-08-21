@@ -1595,8 +1595,23 @@ function DragonflightUIEditModeGroupLootContainerPreviewMixin:SetNewItem(id)
         self.Name:SetText(name)
         local color = ITEM_QUALITY_COLORS[quality or 0];
         self.Name:SetVertexColor(color.r, color.g, color.b);
+        -- self.Name:SetVertexColor(GameFontHighlight:GetTextColor());
         self.IconFrame.Icon:SetTexture(icon)
         self.IconFrame.Count:Hide();
+        DragonflightUIItemColorMixin:UpdateOverlayQuality(self.IconFrame, quality)
+
+        if self.NeedButton.DFText then
+            local numMax = 40;
+            local numNeed = fastrandom(0, numMax - 10)
+            numMax = numMax - numNeed;
+            local numGreed = fastrandom(0, numMax - 8)
+            numMax = numMax - numGreed;
+            local numPass = fastrandom(0, numMax)
+            numMax = numMax - numPass;
+            self.NeedButton.DFText:SetText(tostring(numNeed))
+            self.GreedButton.DFText:SetText(tostring(numGreed))
+            self.PassButton.DFText:SetText(tostring(numPass))
+        end
 
         local bindOnPickUp = true;
         if (bindOnPickUp) then
