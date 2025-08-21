@@ -215,14 +215,14 @@ function SubModuleMixin:ChangeGroupLootContainer()
 
     for i = 1, 4 do self:UpdateGroupLootFrameStyleSimple(_G['GroupLootFrame' .. i]); end
 
-    local tester = CreateFrame('Frame', 'tester', UIParent, 'DFEditModePreviewGroupLootTemplate')
-    tester:SetPoint('CENTER', 400, 0)
-    tester:Show()
-    self:UpdateGroupLootFrameStyleSimple(tester)
+    -- local tester = CreateFrame('Frame', 'tester', UIParent, 'DFEditModePreviewGroupLootTemplate')
+    -- tester:SetPoint('CENTER', 400, 0)
+    -- tester:Show()
+    -- self:UpdateGroupLootFrameStyleSimple(tester)
 
-    local norm = CreateFrame('Frame', 'normal', UIParent, 'DFEditModePreviewGroupLootTemplate')
-    norm:SetPoint('BOTTOMLEFT', tester, 'TOPLEFT', 0, 10)
-    norm:Show()
+    -- local norm = CreateFrame('Frame', 'normal', UIParent, 'DFEditModePreviewGroupLootTemplate')
+    -- norm:SetPoint('BOTTOMLEFT', tester, 'TOPLEFT', 0, 10)
+    -- norm:Show()
 end
 
 -- function SubModuleMixin:HookGroupLootFrame(f)
