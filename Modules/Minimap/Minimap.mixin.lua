@@ -35,6 +35,7 @@ function SubModuleMixin:SetDefaults()
         hideZoom = false,
         hideHeader = false,
         skinButtons = true,
+        hideButtons = false,
         zonePanelPosition = 'TOP',
         -- Visibility
         alphaNormal = 1.0,
@@ -198,15 +199,24 @@ function SubModuleMixin:SetupOptions()
                 new = false,
                 editmode = true
             },
-            skinButtons = {
+            hideButtons = {
                 type = 'toggle',
-                name = L["MinimapSkinMinimapButtons"],
-                desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
+                name = L["MinimapSkinMinimapHideButtons"],
+                desc = L["MinimapSkinMinimapHideButtonsDesc"] .. getDefaultStr('hideButtons', 'minimap'),
                 group = 'headerStyling',
-                order = 15,
-                new = false,
+                order = 15.1,
+                new = true,
                 editmode = true
             }
+            -- skinButtons = {
+            --     type = 'toggle',
+            --     name = L["MinimapSkinMinimapButtons"],
+            --     desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
+            --     group = 'headerStyling',
+            --     order = 15,
+            --     new = false,
+            --     editmode = true
+            -- }
         }
     }
     do
@@ -398,6 +408,14 @@ function SubModuleMixin:Update()
     else
         MinimapZoomIn:Show()
         MinimapZoomOut:Show()
+    end
+
+    -- buttons
+    if libIcon then
+        local buttons = libIcon:GetButtonList()
+        -- DevTools_Dump(buttons)
+
+        for k, v in ipairs(buttons) do libIcon:ShowOnEnter(v, self.ModuleRef.db.profile.minimap.hideButtons) end
     end
 
     -- header
@@ -1053,6 +1071,7 @@ function SubModuleMixin:ChangeMinimapButtons()
         if btn then
             --
             self:UpdateButton(btn)
+            libIcon:ShowOnEnter(v, self.ModuleRef.db.profile.minimap.hideButtons)
         end
     end)
 
@@ -1065,6 +1084,7 @@ function SubModuleMixin:ChangeMinimapButtons()
         if btn then
             --
             self:UpdateButton(btn)
+            libIcon:ShowOnEnter(v, self.ModuleRef.db.profile.minimap.hideButtons)
         end
     end
 

@@ -597,6 +597,9 @@ do
     L["MinimapHideZoomDesc"] = "Hides the zoom buttons (+) (-)"
     L["MinimapSkinMinimapButtons"] = "Skin Minimap Buttons"
     L["MinimapSkinMinimapButtonsDesc"] = "Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)"
+    L["MinimapSkinMinimapHideButtons"] = "Hide Minimap Buttons"
+    L["MinimapSkinMinimapHideButtonsDesc"] = "Hides the minimap buttons when the cursor is not over the minimap." ..
+                                                 "\n\nNote: only works for buttons using LibDBIcon"
     L["MinimapZonePanelPosition"] = "Header Position"
     L["MinimapZonePanelPositionDesc"] = "Sets the header position."
     L["MinimapUseStateHandler"] = "Use State Handler"
