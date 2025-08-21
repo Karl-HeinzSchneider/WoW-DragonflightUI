@@ -35,6 +35,7 @@ function SubModuleMixin:SetDefaults()
         hideZoom = false,
         hideHeader = false,
         skinButtons = true,
+        hideButtons = false,
         zonePanelPosition = 'TOP',
         -- Visibility
         alphaNormal = 1.0,
@@ -198,15 +199,24 @@ function SubModuleMixin:SetupOptions()
                 new = false,
                 editmode = true
             },
-            skinButtons = {
+            hideButtons = {
                 type = 'toggle',
-                name = L["MinimapSkinMinimapButtons"],
-                desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
+                name = L["MinimapSkinMinimapHideButtons"],
+                desc = L["MinimapSkinMinimapHideButtonsDesc"] .. getDefaultStr('hideButtons', 'minimap'),
                 group = 'headerStyling',
-                order = 15,
-                new = false,
+                order = 15.1,
+                new = true,
                 editmode = true
             }
+            -- skinButtons = {
+            --     type = 'toggle',
+            --     name = L["MinimapSkinMinimapButtons"],
+            --     desc = L["MinimapSkinMinimapButtonsDesc"] .. getDefaultStr('skinButtons', 'minimap'),
+            --     group = 'headerStyling',
+            --     order = 15,
+            --     new = false,
+            --     editmode = true
+            -- }
         }
     }
     do
@@ -319,6 +329,10 @@ function SubModuleMixin:Setup()
 
     self:ChangeMinimapButtons()
 
+    self:SetScript('OnEvent', self.OnEvent);
+    self:RegisterEvent('MINIMAP_UPDATE_TRACKING')
+    self:RegisterEvent('MINIMAP_PING')
+
     local f = self.BaseFrame
     -- state
     Mixin(f, DragonflightUIStateHandlerMixin)
@@ -343,6 +357,15 @@ function SubModuleMixin:Setup()
 end
 
 function SubModuleMixin:OnEvent(event, ...)
+    -- print('event', event)
+    if event == 'MINIMAP_PING' then
+        --
+        local arg1, arg2, arg3 = ...;
+        self:HandlePing(arg1, arg2, arg3)
+    elseif event == 'MINIMAP_UPDATE_TRACKING' then
+        -- print('MINIMAP_UPDATE_TRACKING', GetTrackingTexture())
+        self:UpdateTrackingEra()
+    end
 end
 
 function SubModuleMixin:UpdateState(state)
@@ -385,6 +408,14 @@ function SubModuleMixin:Update()
     else
         MinimapZoomIn:Show()
         MinimapZoomOut:Show()
+    end
+
+    -- buttons
+    if libIcon then
+        local buttons = libIcon:GetButtonList()
+        -- DevTools_Dump(buttons)
+
+        for k, v in ipairs(buttons) do libIcon:ShowOnEnter(v, self.ModuleRef.db.profile.minimap.hideButtons) end
     end
 
     -- header
@@ -619,6 +650,7 @@ end
 function SubModuleMixin:ChangeTracking()
     if DF.Era then
         self:ChangeTrackingEra()
+        self:UpdateTrackingEra()
         return;
     end
 
@@ -668,6 +700,7 @@ function SubModuleMixin:ChangeTrackingEra()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 
     local updatePos = function()
+        -- print('updatePos')
         MiniMapTrackingFrame:ClearAllPoints()
         MiniMapTrackingFrame:SetPoint('CENTER', Minimap, 'CENTER', -52.56, 53.51)
         MiniMapTrackingFrame:SetParent(Minimap)
@@ -1038,6 +1071,7 @@ function SubModuleMixin:ChangeMinimapButtons()
         if btn then
             --
             self:UpdateButton(btn)
+            libIcon:ShowOnEnter(v, self.ModuleRef.db.profile.minimap.hideButtons)
         end
     end)
 
@@ -1050,9 +1084,29 @@ function SubModuleMixin:ChangeMinimapButtons()
         if btn then
             --
             self:UpdateButton(btn)
+            libIcon:ShowOnEnter(v, self.ModuleRef.db.profile.minimap.hideButtons)
         end
     end
 
     if MiniMapBattlefieldFrame then self:UpdateButton(MiniMapBattlefieldFrame) end
+end
+
+function SubModuleMixin:HandlePing(unit, y, x)
+    -- print('HandlePing', unit, y, x, UnitIsVisible(unit))
+
+    if not UnitIsVisible(unit) then return end
+
+    local unitName = UnitName(unit);
+
+    local state = self.ModuleRef.db.profile.minimap;
+
+    if state.showPing then
+        --
+    end
+
+    if state.showPingChat then
+        --
+        DF:Print('<Ping>', unitName or '<unknown>');
+    end
 end
 

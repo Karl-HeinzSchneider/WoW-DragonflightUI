@@ -818,34 +818,8 @@ function Module:QueueStatusReposition(_, anchorFrame)
     end
 end
 
-function Module.HandlePing(unit, y, x)
-    -- print('HandlePing', unit, y, x, UnitIsVisible(unit))
-
-    if not UnitIsVisible(unit) then return end
-
-    local unitName = UnitName(unit)
-
-    local state = Module.db.profile.minimap
-
-    if state.showPing then
-        --
-    end
-
-    if state.showPingChat then
-        --
-        DF:Print('<Ping>', unitName)
-    end
-end
-
 function frame:OnEvent(event, arg1, arg2, arg3)
-    -- print('event', event) 
-    if event == 'MINIMAP_PING' then
-        --
-        Module.HandlePing(arg1, arg2, arg3)
-    elseif event == 'MINIMAP_UPDATE_TRACKING' then
-        -- print('MINIMAP_UPDATE_TRACKING', GetTrackingTexture())
-        Module.UpdateTrackingEra()
-    end
+    -- print('event', event)  
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 Module.Frame = frame
@@ -854,10 +828,6 @@ function Module:Era()
     Module.MoveDefaultStuff()
     Module.MoveTracker()
     Module:ChangeLFG()
-
-    -- frame:RegisterEvent('ADDON_LOADED')
-    frame:RegisterEvent('MINIMAP_PING')
-    frame:RegisterEvent('MINIMAP_UPDATE_TRACKING')
 
     self.SubMinimap:Setup()
 end
@@ -869,9 +839,6 @@ function Module:Wrath()
     Module.MoveDefaultStuff()
     Module.MoveTracker()
     Module:ChangeLFG()
-
-    -- frame:RegisterEvent('ADDON_LOADED')
-    frame:RegisterEvent('MINIMAP_PING')
 
     self.SubMinimap:Setup()
 end

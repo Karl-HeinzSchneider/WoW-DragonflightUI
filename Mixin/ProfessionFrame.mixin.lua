@@ -1628,7 +1628,7 @@ function DFProfessionMixin:UpdateProfessionData()
         end
 
         -- beast training rip
-        if IsSpellKnown(5149) or IsSpellKnown(5300) then
+        if IsSpellKnown(5149, false) or IsSpellKnown(5300, false) then
             -- beast training
 
             local nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
@@ -1707,7 +1707,7 @@ function DFProfessionMixin:UpdateProfessionData()
         end
 
         -- beast training rip
-        if IsSpellKnown(5149) or IsSpellKnown(5300) then
+        if IsSpellKnown(5149, false) or IsSpellKnown(5300, false) then
             -- beast training
 
             local nameLoc = DragonflightUILocalizationData.DF_PROFESSIONS_BEAST
