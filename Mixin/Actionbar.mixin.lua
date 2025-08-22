@@ -1150,6 +1150,24 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', 0, 0)
     MainMenuBarPageNumber:SetParent(f)
     MainMenuBarPageNumber:SetScale(1.25)
+    MainMenuBarPageNumber:SetJustifyV('MIDDLE')
+
+    local deltaTable = {[1] = -1.75, [2] = -0.5, [3] = -0.5, [4] = -0.5, [5] = -0.5, [6] = -0.5, [7] = -0.5, [8] = -0.5}
+
+    -- local tester = 8;
+    -- MainMenuBarPageNumber:SetText(tostring(tester))
+    -- MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', deltaTable[tester], 0)
+
+    local function fixAnchor(text)
+        local delta = deltaTable[tonumber(text)] or 0;
+        if self.state then delta = delta * (0.8 / (self.state.buttonScale or 0.8)) end
+        MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', delta, 0)
+    end
+
+    hooksecurefunc(MainMenuBarPageNumber, 'SetText', function(frame, text)
+        fixAnchor(text)
+    end)
+    fixAnchor(GetActionBarPage())
 
     -- f:SetScale((1 / 1.5) * 0.9)
     -- f:SetScale(0.9)
