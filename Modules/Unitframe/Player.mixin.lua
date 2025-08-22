@@ -34,6 +34,7 @@ function SubModuleMixin:SetDefaults()
         portraitExtra = 'none',
         hideRedStatus = false,
         hideIndicator = false,
+        hidePVP = false,
         hideAlternatePowerBar = false,
         hideRestingGlow = false,
         hideRestingIcon = false,
@@ -225,6 +226,15 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 13,
                 new = false,
+                editmode = true
+            },
+            hidePVP = {
+                type = 'toggle',
+                name = L["PlayerFrameHidePVP"],
+                desc = L["PlayerFrameHidePVPDesc"] .. getDefaultStr('hidePVP', 'player'),
+                group = 'headerStyling',
+                order = 14,
+                new = true,
                 editmode = true
             }
         }
@@ -457,6 +467,11 @@ function SubModuleMixin:Setup()
         -- Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
     end)
 
+    hooksecurefunc('PlayerFrame_UpdatePvPStatus', function()
+        --
+        if self.ModuleRef.db.profile.player.hidePVP then PlayerPVPIcon:Hide() end
+    end)
+
     -- state handler
     Mixin(PlayerFrame, DragonflightUIStateHandlerMixin)
     PlayerFrame:InitStateHandler()
@@ -534,6 +549,8 @@ function SubModuleMixin:Update()
     PlayerFrameHealthBar.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     UnitFramePortrait_Update(PlayerFrame)
+
+    PlayerFrame_UpdatePvPStatus()
 
     if state.hideIndicator then
         PlayerHitIndicator:SetScale(0.01)

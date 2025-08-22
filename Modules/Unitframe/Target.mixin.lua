@@ -32,6 +32,7 @@ function SubModuleMixin:SetDefaults()
         comboPointsOnPlayerFrame = false,
         hideComboPoints = false,
         hideNameBackground = false,
+        hidePVP = false,
         fadeOut = false,
         fadeOutDistance = 40,
         scale = 1.0,
@@ -232,6 +233,15 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 11,
                 new = false,
+                editmode = true
+            },
+            hidePVP = {
+                type = 'toggle',
+                name = L["PlayerFrameHidePVP"],
+                desc = L["PlayerFrameHidePVPDesc"] .. getDefaultStr('hidePVP', 'target'),
+                group = 'headerStyling',
+                order = 11.5,
+                new = true,
                 editmode = true
             },
             comboPointsOnPlayerFrame = {
@@ -556,6 +566,12 @@ function SubModuleMixin:Setup()
         self:ReApplyTargetFrame()
     end
 
+    hooksecurefunc('TargetFrame_CheckFaction', function(f)
+        --
+        if f ~= TargetFrame then return end
+        if self.ModuleRef.db.profile.target.hidePVP then f.pvpIcon:Hide() end
+    end)
+
     -- state
     Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
     TargetFrame:InitStateHandler()
@@ -633,6 +649,7 @@ function SubModuleMixin:Update()
     TargetFrameNameBackground:SetShown(not state.hideNameBackground)
     AuraDurations.frame:SetState(state)
     UnitFramePortrait_Update(TargetFrame)
+    TargetFrame_CheckFaction(TargetFrame)
     TargetFrame:UpdateStateHandler(state)
 
     self.PreviewTarget:UpdateState(state);

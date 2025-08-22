@@ -770,6 +770,8 @@ do
     L["PlayerFrameHideRestingGlowDesc"] = "Hides the resting status glow on the player frame."
     L["PlayerFrameHideRestingIcon"] = "Hide Resting Icon"
     L["PlayerFrameHideRestingIconDesc"] = "Hides the resting icon on the player frame."
+    L["PlayerFrameHidePVP"] = "Hide PVP Icon"
+    L["PlayerFrameHidePVPDesc"] = "Hide the PVP icon."
 
     local note =
         "\n\nNOTE: Custom textures use the default statusbar color from blizzard.\nIf you want something different you have to mod that through code.\n"
