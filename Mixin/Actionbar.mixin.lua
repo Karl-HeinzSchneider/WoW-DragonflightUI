@@ -40,7 +40,8 @@ function DragonflightUIActionbarMixin:Init()
     self:SetScript('OnEvent', function(_, event, arg1)
         -- print(self:GetName(), event, arg1)
         if InCombatLockdown() then return end
-        self:Update()
+        -- self:Update()
+        self:UpdateGridState()
     end)
 end
 
@@ -397,6 +398,27 @@ function DragonflightUIActionbarMixin:Update()
     -- end
 
     if self.StylePetButton then PetActionBar_Update() end
+end
+
+function DragonflightUIActionbarMixin:UpdateGridState()
+    local state = self.state;
+    if not state then return end
+
+    local buttonTable = self.buttonTable
+    local btnCount = #buttonTable
+    if btnCount < 1 then return end
+
+    for i = 1, btnCount do
+        local btn = buttonTable[i]
+
+        -- print(btn:GetName(), state.alwaysShow)
+        if state.alwaysShow then
+            btn:SetAttribute("showgrid", 1)
+        else
+            btn:SetAttribute("showgrid", 0)
+        end
+        ActionButton_ShowGrid(btn)
+    end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -1801,13 +1823,18 @@ function DragonflightUIActionbarMixin:HookGrid()
 end
 
 function DragonflightUIActionbarMixin:FixGlow(btn)
-    -- print('~~~FixGlow', btn:GetName())
     if not btn.overlay then return end
+    print('~~~FixGlow', btn:GetName())
 
-    -- local isGlowing = btn.overlay.animIn:IsPlaying()
-    -- print('~~>> isGlowing?', isGlowing)
+    local isGlowing = btn.overlay.animIn:IsPlaying()
+    local isOut = btn.overlay.animOut:IsPlaying()
+
+    print('~~>> isGlowing, isOut?', isGlowing, isOut)
     -- if not isGlowing then return end
     -- print('GLOWING')
+
+    -- btn.overlay.animIn:Stop();
+    -- btn.overlay.animOut:Stop();
 
     -- self.overlay = ActionButton_GetOverlayGlow();
     local frameWidth, frameHeight = btn:GetSize();
@@ -1819,8 +1846,20 @@ function DragonflightUIActionbarMixin:FixGlow(btn)
     btn.overlay:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", frameWidth * 0.2, -frameHeight * 0.2);
     -- self.overlay.animIn:Play();
 
-    btn.overlay.animOut:Stop();
-    btn.overlay.animIn:Play();
+    if isGlowing then
+        -- local elapsedSec = btn.overlay.animIn:GetElapsed()
+        -- btn.overlay.animIn:Stop();
+
+        -- local func = btn.overlay.animIn:GetScript('OnPlay')
+        -- func(btn.overlay.animIn)
+        -- btn.overlay.animIn:Play(false, elapsedSec);
+    elseif isOut then
+        -- btn.overlay.animIn:Stop();
+        -- local elapsedSec = btn.overlay.animOut:GetElapsed()
+        -- local func = btn.overlay.animIn:GetScript('OnFinished')
+        -- func(btn.overlay.animIn)
+        -- btn.overlay.animOut:Play(false, elapsedSec);
+    end
 end
 
 function DragonflightUIActionbarMixin:HookGlow()
