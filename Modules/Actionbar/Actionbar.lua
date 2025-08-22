@@ -617,7 +617,6 @@ local defaults = {
             y = 26,
             expanded = true,
             hideArrow = false,
-            hidden = false,
             overrideBagAnchor = false,
             offsetX = 5,
             offsetY = 95,
@@ -1721,14 +1720,6 @@ local bagsOptions = {
             desc = L["BagsOptionsHideArrowDesc"] .. getDefaultStr('hideArrow', 'bags'),
             group = 'headerStyling',
             order = 8,
-            editmode = true
-        },
-        hidden = {
-            type = 'toggle',
-            name = L["BagsOptionsHidden"],
-            desc = L["BagsOptionsHiddenDesc"] .. getDefaultStr('hidden', 'bags'),
-            group = 'headerStyling',
-            order = 9,
             editmode = true
         },
         overrideBagAnchor = {
@@ -3481,14 +3472,6 @@ function Module.UpdateBagState(state)
     for i = 0, 3 do
         local slot = _G['CharacterBag' .. i .. 'Slot']
         slot:SetScale(state.scale)
-    end
-
-    if state.hidden then
-        MainMenuBarBackpackButton:Hide()
-        Module.BagBarExpandToggled(state.expanded, true)
-    else
-        MainMenuBarBackpackButton:Show()
-        Module.BagBarExpandToggled(state.expanded, false)
     end
 
     local toggle = Module.FrameBagToggle
