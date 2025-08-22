@@ -3483,6 +3483,8 @@ function Module.UpdateBagState(state)
         CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
     end
 
+    Module.BagBarExpandToggled(state.expanded)
+
     if state.overrideBagAnchor and ContainerFrame1:IsVisible() then UpdateContainerFrameAnchors() end
 
     MainMenuBarBackpackButton:UpdateStateHandler(state)
@@ -3557,7 +3559,7 @@ function frameBagToggle:OnEvent(event, arg1)
 end
 frameBagToggle:SetScript('OnEvent', frameBagToggle.OnEvent)
 
-function Module.BagBarExpandToggled(expanded, hidden)
+function Module.BagBarExpandToggled(expanded)
     local rotation
 
     if (expanded) then
@@ -3573,7 +3575,7 @@ function Module.BagBarExpandToggled(expanded, hidden)
     f:GetHighlightTexture():SetRotation(rotation)
 
     for i = 0, 3 do
-        if (expanded and not hidden) then
+        if (expanded) then
             _G['CharacterBag' .. i .. 'Slot']:Show()
             if not DF.Cata then KeyRingButton:Show() end
         else
@@ -3584,7 +3586,7 @@ function Module.BagBarExpandToggled(expanded, hidden)
 end
 
 function Module.RefreshBagBarToggle()
-    Module.BagBarExpandToggled(Module.db.profile.bags.expanded, Module.db.profile.bags.hidden)
+    Module.BagBarExpandToggled(Module.db.profile.bags.expanded)
 end
 
 function Module.ChangeFramerate()
