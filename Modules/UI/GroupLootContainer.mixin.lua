@@ -213,7 +213,12 @@ function SubModuleMixin:ChangeGroupLootContainer()
 
     fakeRoll.FakePreview = fakePreview
 
-    for i = 1, 4 do self:UpdateGroupLootFrameStyleSimple(_G['GroupLootFrame' .. i]); end
+    for i = 1, 4 do
+        local f = _G['GroupLootFrame' .. i]
+        self:UpdateGroupLootFrameStyleSimple(f);
+        f:SetScript('OnEnter', function()
+        end)
+    end
 
     -- local tester = CreateFrame('Frame', 'tester', UIParent, 'DFEditModePreviewGroupLootTemplate')
     -- tester:SetPoint('CENTER', 400, 0)
