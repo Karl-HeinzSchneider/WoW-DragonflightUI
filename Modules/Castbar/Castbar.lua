@@ -7,6 +7,8 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
+Module.SubMirrorTimer = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['MirrorTimer'])
+
 local defaults = {
     profile = {
         player = {
@@ -85,7 +87,8 @@ local defaults = {
             autoAdjust = true,
             autoAdjustX = 5,
             autoAdjustY = -20
-        }
+        },
+        mirrorTimer = Module.SubMirrorTimer.Defaults
     }
 }
 Module:SetDefaults(defaults)
@@ -648,6 +651,7 @@ function Module:RegisterSettings()
     end
 
     register('player', {order = 1, name = optionsPlayer.name, descr = 'Player Cast Bar', isNew = false})
+    register('mirrorTimer', {order = 1.5, name = self.SubMirrorTimer.Options.name, descr = 'Focusss', isNew = true})
     register('target', {order = 2, name = optionsTarget.name, descr = 'Target Cast Bar', isNew = false})
 
     if DF.Wrath then
@@ -775,6 +779,7 @@ function Module:ApplySettingsInternal(sub, key)
 
     if not sub or sub == 'ALL' then
         Module.PlayerCastbar:UpdateState(db.player)
+        self.SubMirrorTimer:UpdateState(db.mirrorTimer)
         Module.TargetCastbar:UpdateState(db.target)
 
         if DF.Wrath then Module.FocusCastbar:UpdateState(db.focus) end
@@ -784,6 +789,8 @@ function Module:ApplySettingsInternal(sub, key)
         Module.TargetCastbar:UpdateState(db.target)
     elseif sub == 'focus' then
         Module.FocusCastbar:UpdateState(db.focus)
+    elseif sub == 'mirrorTimer' then
+        self.SubMirrorTimer:UpdateState(db.mirrorTimer)
     end
 end
 
@@ -926,6 +933,8 @@ end
 function Module:Wrath()
     Module.ChangeDefaultCastbar()
     Module.AddNewCastbar()
+
+    self.SubMirrorTimer:Setup()
 end
 
 function Module:Cata()

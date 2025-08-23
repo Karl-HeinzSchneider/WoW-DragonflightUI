@@ -573,6 +573,11 @@ do
     L["CastbarTableAutoAdjustY"] = "Auto Delta Y"
     L["CastbarTableAutoAdjustYDesc"] = "Delta Y applied to the Y value calculated from auto adjust." .. info
 
+    -- mirror timer
+    L["CastbarMirrorTimerName"] = "Player Mirror Timer"
+    L["CastbarMirrorTimerNameDesc"] = ""
+    L["CastbarMirrorHideBlizzard"] = "Hide Blizzard"
+    L["CastbarMirrorHideBlizzardDesc"] = "Hide the default blizzard mirror timer."
 end
 
 -- Minimap

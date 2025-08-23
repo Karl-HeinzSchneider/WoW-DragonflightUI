@@ -35,6 +35,7 @@ local defaults = {
             Debuffs = true,
             -- castbar
             Castbars = true,
+            MirrorTimer = true,
             -- minimap
             Minimap = true,
             Tracker = true,
@@ -186,6 +187,7 @@ if true then
     displayTable['Buffs'] = L['BuffsOptionsName']
     displayTable['Debuffs'] = L['DebuffsOptionsName']
     displayTable['Castbars'] = L['CastbarName']
+    displayTable['MirrorTimer'] = L['CastbarMirrorTimerName']
 
     -- frames
     displayTable['PlayerFrame'] = L['PlayerFrameName']
@@ -234,7 +236,7 @@ if true then
     AddTableToCategory(actionbarFrames, 'headerActionbar');
 
     -- combat
-    local combatFrames = {'Buffs', 'Debuffs', 'Castbars'};
+    local combatFrames = {'Buffs', 'Debuffs', 'Castbars', 'MirrorTimer'};
     AddTableToCategory(combatFrames, 'headerCombat');
 
     -- frames
