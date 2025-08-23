@@ -122,7 +122,7 @@ UI_shared.xsd">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<OnEvent method="OnEvent" />
-			<OnUpdate method="OnUpdate" />
+			<!-- <OnUpdate method="OnUpdate" /> -->
 			<OnShow method="OnShow" />
 		</Scripts>
 	</StatusBar>

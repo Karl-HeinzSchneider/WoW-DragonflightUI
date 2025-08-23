@@ -576,7 +576,8 @@ do
     -- mirror timer
     L["CastbarMirrorTimerName"] = "Player Mirror Timer"
     L["CastbarMirrorTimerNameDesc"] = ""
-
+    L["CastbarMirrorHideBlizzard"] = "Hide Blizzard"
+    L["CastbarMirrorHideBlizzardDesc"] = "Hide the default blizzard mirror timer."
 end
 
 -- Minimap
