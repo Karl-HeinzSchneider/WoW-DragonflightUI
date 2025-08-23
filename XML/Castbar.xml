@@ -118,6 +118,14 @@ UI_shared.xsd">
 			<OnShow method="OnShow" />
 		</Scripts>
 	</StatusBar>
+	<StatusBar name="DragonflightUIMirrorCastbarTemplate" inherits="DragonflightUICastbarNoCodeTemplate" mixin="DragonFlightUICastbarMirrorMixin" virtual="true" toplevel="true" hidden="true" drawLayer="BORDER">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnUpdate method="OnUpdate" />
+			<OnShow method="OnShow" />
+		</Scripts>
+	</StatusBar>
 	<StatusBar name="DragonflightUITargetCastbarTemplate" inherits="DragonflightUIPlayerCastbarTemplate" virtual="true">
 		<Scripts>
 			<OnLoad>
