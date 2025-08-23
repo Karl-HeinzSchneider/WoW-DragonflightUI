@@ -2,7 +2,7 @@
 UI_shared.xsd">
 	<Script file="Mixin/Castbar.mixin.lua" />
 	<Script file="Mixin/Castbar.Mirror.mixin.lua" />
-	<StatusBar name="DragonflightUIPlayerCastbarTemplate" mixin="DragonFlightUICastbarMixin" virtual="true" toplevel="true" hidden="true" drawLayer="BORDER">
+	<StatusBar name="DragonflightUICastbarNoCodeTemplate" virtual="true" toplevel="true" hidden="true" drawLayer="BORDER">
 		<Size x="320" y="22" />
 		<Anchors>
 			<Anchor point="CENTER" x="0" y="0" />
@@ -107,6 +107,8 @@ UI_shared.xsd">
 				</Texture>
 			</Layer>
 		</Layers>
+	</StatusBar>
+	<StatusBar name="DragonflightUIPlayerCastbarTemplate" inherits="DragonflightUICastbarNoCodeTemplate" mixin="DragonFlightUICastbarMixin" virtual="true" toplevel="true" hidden="true" drawLayer="BORDER">
 		<Scripts>
 			<OnLoad>
 				self:OnLoad('player');
