@@ -379,6 +379,7 @@ function Module:AddPortraitMasks()
     addMask(PlayerTalentFrame, PlayerTalentFramePortrait)
     addMask(TradeFrame, TradeFramePlayerPortrait)
     addMask(TradeFrame, TradeFrameRecipientPortrait)
+    addMask(DressUpFrame, DressUpFramePortrait)
 end
 
 function Module:HookEnergyBar()
