@@ -612,11 +612,6 @@ function SubModuleMixin:ChangePlayerframe()
     PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, dy)
 
     self:UpdatePlayerFrameManaBar()
-
-    if _G['TotemFrame'] then
-        _G['TotemFrame']:ClearAllPoints()
-        _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3)
-    end
 end
 
 function SubModuleMixin:CreateCustomPortrait()

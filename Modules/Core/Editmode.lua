@@ -49,6 +49,7 @@ local defaults = {
             PlayerFrame = true,
             Player_PowerBarAlt = true,
             PlayerSecondaryRes = true,
+            PlayerTotemFrame = true,
             PetFrame = true,
             TargetFrame = true,
             TargetOfTargetFrame = true,
@@ -192,6 +193,7 @@ if true then
     -- frames
     displayTable['PlayerFrame'] = L['PlayerFrameName']
     displayTable['PlayerSecondaryRes'] = L['PlayerSecondaryResName']
+    displayTable['PlayerTotemFrame'] = L['PlayerTotemFrameName']
     displayTable['PetFrame'] = L['PetFrameName']
     displayTable['TargetFrame'] = L['TargetFrameName']
     displayTable['TargetOfTargetFrame'] = L['TargetOfTargetFrameName']
@@ -241,7 +243,8 @@ if true then
 
     -- frames
     local framesFrames = {
-        'PlayerFrame', 'PlayerSecondaryRes', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame', 'PartyFrame', 'RaidFrame'
+        'PlayerFrame', 'PlayerSecondaryRes', 'PlayerTotemFrame', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame',
+        'PartyFrame', 'RaidFrame'
     }
     if DF.Wrath then
         table.insert(framesFrames, 'FocusFrame')

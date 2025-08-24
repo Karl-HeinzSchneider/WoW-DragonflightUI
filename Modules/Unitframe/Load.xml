@@ -6,6 +6,7 @@
 	<Include file="Pet.mixin.lua" />
 	<Include file="Player.mixin.lua" />
 	<Include file="PlayerSecondaryRes.mixin.lua" />
+	<Include file="Player.TotemFrame.mixin.lua" />
 	<Include file="Raid.mixin.lua" />
 	<Include file="Target.mixin.lua" />
 	<Include file="TargetOfTarget.mixin.lua" />

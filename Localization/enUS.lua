@@ -790,6 +790,10 @@ do
     L["PlayerSecondaryResName"] = "Player Secondary Resource"
     L["PlayerSecondaryResNameDesc"] = ""
 
+    -- TotemFrame
+    L["PlayerTotemFrameName"] = "Player Totem Frame"
+    L["PlayerTotemFrameNameDesc"] = ""
+
     -- PowerBar_Alt
     L["PowerBarAltName"] = "Player_PowerBarAlt"
     L["PowerBarAltNameDesc"] = ""
