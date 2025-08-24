@@ -717,19 +717,278 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end
     })
 
+    local ignore_index = { -- Indexes after 19 cannot give stats
+        [4] = true, -- Shirt
+        [19] = true, -- Tabard
+    }
+
+    local function GetTalentModifier(talent_name, modifier_strength)
+        local numTabs = GetNumTalentTabs();
+        local talent_mod = 1
+        for i=1, numTabs do
+            local numTalents = GetNumTalents(i)
+            for j=1, numTalents do
+                local name_talent, _, _, _, rank, maxrank = GetTalentInfo(i, j)
+                if name_talent == talent_name and rank > 0 then
+                    talent_mod = 1 + (rank * modifier_strength)
+                end
+            end
+        end
+        return talent_mod
+    end
+    local spellid_manaspring_to_rank = {
+        [5677] = 1,
+        [10491] = 2,
+        [10493] = 3,
+        [10494] = 4
+    }
+    local spellid_manatide_to_rank = {
+        [16191] = 1,
+        [17355] = 2,
+        [17360] = 3
+    }
+    local spellid_wisdom_to_rank = {
+        [19742] = 1,
+        [19850] = 2,
+        [19852] = 3,
+        [19853] = 4,
+        [19854] = 5,
+        [25290] = 6
+    }
+    local spellid_greaterwis_to_rank = {
+        [25894] = 1,
+        [25918] = 2
+    }
+    local earthshatter_count = 0
+    local wellfed_filter = {
+        [25941] = 6, -- Sagefish Delight
+        [25694] = 3 -- Smoked Sagefish
+    }
+    local mana_regeneration_ids = {
+        [24363] = 12, --Mageblood Potion
+        [18194] = 8 -- Nightfin Soup
+    }
+    local filtered_names = {
+        ["Mana Spring"] = function(id)
+            local rank = spellid_manaspring_to_rank[id] or 1
+            local talent_mod = GetTalentModifier("Restorative Totems", 0.05)
+            local earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+            local base = id == 24853 and 27 or 2 + (2 * rank) * talent_mod * earthshatter_bonus--check for ancient mana spring totem
+
+            return (base * 5)/2
+        end,
+
+        ["Mana Tide"] = function(id)
+            local rank = spellid_manatide_to_rank[id] or 1
+            return (((110 + (60 * rank))/3) * 10) / 2
+        end,
+
+        ["Blessing of Wisdom"] = function(id)
+            local talent_mod = GetTalentModifier("Improved Blessing of Wisdom", 0.1)
+            local rank = spellid_wisdom_to_rank[id] or 1
+            return (rank == 6 and 33 or 5 + (5 * rank)) * talent_mod
+        end,
+
+        ["Greater Blessing of Wisdom"] = function(id)
+            local talent_mod = GetTalentModifier("Improved Blessing of Wisdom", 0.1)
+            local rank = spellid_greaterwis_to_rank[id] or 1
+            return (rank == 2 and 33 or 30) * talent_mod
+        end,
+
+        ["Mana Regeneration"] = function(id) -- Mageblood Potion
+            return mana_regeneration_ids[id] or 0
+        end,
+
+        ["Well Fed"] = function(id)
+            return wellfed_filter[id] or 0
+        end,
+
+        ["Warchief's Blessing"] = function(id)
+            local wcb = 16609
+            if wcb ~= id then return 0 end
+            return 10
+        end,
+
+        ["Epiphany"] = function(id) -- Vestaments of faith 8 piece
+            local priest_t3 = 28802
+            if priest_t3 ~= id then return 0 end
+            return 60 --(24 * 5) / 2
+        end,
+
+        ["Lightning Shield"] = function(id) -- Earthshatter 8 piece
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+
+        ["Mark of the Dragon Lord"] = function(id)
+            return 22
+        end,
+
+        ["Second Wind"] = function(id)
+            local is_trinket_type = 15604
+            if id ~= is_trinket_type then return 0 end --Future xpacs have second wind buff for warriors, make sure this is the real deal
+
+            return 150 --30 * 5
+        end,
+        ["Mar'li's Brain Boost"] = function(id)
+            return 60
+        end
+    }
+
+    local mana_oil_ids = {
+        [2629] = 12,
+        [2625] = 8,
+        [2624] = 4
+    }
+    -- Cache item links once found
+    local set_link_cache_e = {}
+    local set_link_cache_zg = {}
+    local set_link_cache_b = {}
+    local set_link_cache_d = {}
+
+
+    -- Optimization to skip running string.find so much
+    local item_slots_check_earthshatter = {
+        [1] = true,
+        [3] = true,
+        [5] = true,
+        [6] = true,
+        [7] = true,
+        [8] = true,
+        [9] = true,
+        [10] = true,
+        [11] = true,
+        [12] = true
+    }
+    local item_slots_check_zg_set = {
+        [2] = true,
+        [5] = true,
+        [6] = true,
+        [9] = true,
+        [13] = true,
+        [14] = true
+    }
+    local item_slots_check_bloodsoul = {
+        [3] = true,
+        [5] = true,
+        [10] = true
+    }
+    local item_slots_check_greendragon = {
+        [10] = true,
+        [5] = true,
+        [7] = true
+    }
+
+    local function GetRealManaRegen() --Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
+        local base, casting = GetManaRegen()
+        local casting_mp5 = 0
+        earthshatter_count = 0
+        local zg_set_c = 0
+        local bloodsoul_c = 0
+        local dragonscale_c = 0
+
+        for i=0, 19 do -- Technically more slots but none give stats, setting ignore index for shirt/tabard but can be removed later
+            if not ignore_index[i] then
+                local link = GetInventoryItemLink("player", i)
+                if link then
+                    -- Earthshatter set
+                    if item_slots_check_earthshatter[i] and (set_link_cache_e[link] or string.find(link, "Earthshatter")) then
+                        earthshatter_count = earthshatter_count + 1
+                        set_link_cache_e[link] = true
+                    end
+
+                    -- Shaman/Druid ZG Set
+                    if item_slots_check_zg_set[i] and (set_link_cache_zg[link] or 
+                    string.find(link, "Zandalar Augur's") or 
+                    string.find(link, "Wushoolay's Charm of Spirits") or 
+                    string.find(link, "Unmarred Vision of Voodress") or
+                    string.find(link, "Zandalar Haruspex's") or
+                    string.find(link, "Wushoolay's Charm of Nature") or
+                    string.find(link, "Pristine Enchanted South Seas Kelp")) then
+                        zg_set_c = zg_set_c + 1
+                        set_link_cache_zg[link] = true
+                        if zg_set_c >= 2 then
+                            casting_mp5 = casting_mp5 + 4
+                        end
+                    end
+
+                    --Bloodsoul 3 piece
+                    if item_slots_check_bloodsoul[i] and (set_link_cache_b[link] or string.find(link, "Bloodsoul")) then
+                        bloodsoul_c = bloodsoul_c + 1
+                        set_link_cache_b[link] = true
+                        if bloodsoul_c == 3 then
+                            casting_mp5 = casting_mp5 + 12
+                        end
+                    end
+
+                    --Green Dragonscale
+                    if item_slots_check_greendragon[i] and (set_link_cache_d[link] or string.find(link, "Green Dragonscale")) then
+                        dragonscale_c = dragonscale_c + 1
+                        set_link_cache_d[link] = true 
+                        if dragonscale_c >= 2 then
+                            casting_mp5 = casting_mp5 + 3
+                        end
+                    end
+
+                    if i == 9 then -- Check bracer
+                        local mp5_enchant = 2565
+                        local _, enchantId = link:match("item:%d+:(%d+)")
+                        if enchantId == mp5_enchant then -- Bracer MP5 enchant
+                            casting_mp5 = casting_mp5 + 4
+                        end
+                    end
+
+                    local stats = GetItemStats(link)
+                    if stats then
+                        --[[
+                            for name, data in pairs(stats) do
+                                print(name..": "..data)
+                            end
+                        ]]
+                        if stats.ITEM_MOD_POWER_REGEN0_SHORT then --For some reason mp5 internally is 1 lower, need to increase for displays sake
+                            casting_mp5 = casting_mp5 + 1
+                        end
+                        casting_mp5 = casting_mp5 + (stats.ITEM_MOD_POWER_REGEN0_SHORT or 0)
+                    end
+                end
+            end
+        end
+
+        local failures = 0
+        for i=1, 100 do
+            local name, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
+            if not name then
+                failures = failures + 1
+                if failures > 2 then break end
+            elseif filtered_names[name] then
+                casting_mp5 = casting_mp5 + filtered_names[name](spellId)
+            end
+        end
+
+        main_hand_enchant, _, _, enchant_id, off_hand_enchant, _, _, offhand_enchant_id = GetWeaponEnchantInfo()
+        if main_hand_enchant and mana_oil_ids[enchant_id] then
+            casting_mp5 = casting_mp5 + mana_oil_ids[enchant_id]
+        end
+        if off_hand_enchant and mana_oil_ids[offhand_enchant_id] then
+            casting_mp5 = casting_mp5 + mana_oil_ids[offhand_enchant_id]
+        end
+        casting_mp5 = casting_mp5 / 5
+        return base + casting_mp5, casting + casting_mp5
+    end
+
     self:RegisterElement('mana', 'spell', {
         order = 8,
         name = MANA_REGEN,
         descr = '..',
         func = function()
-            local base, casting = GetManaRegen()
+            local base, casting = GetRealManaRegen()
 
             local newTable = {}
             newTable[1] = {left = MANA_REGEN}
             -- newTable[2] = {left = 'Mana every 5s', right = string.format(' %.2f', base * 5)}
             -- newTable[3] = {left = 'Mana every 5s while casting', right = string.format(' %.2f', casting * 5)}
-            newTable[2] = {left = 'Mana every 5s while casting', right = BreakUpLargeNumbers(casting * 5)}
-            newTable[3] = {left = 'Mana every 5s while not casting', right = BreakUpLargeNumbers(base * 5)}
+            newTable[2] = {left = 'Mana every 2/5s while casting', right = BreakUpLargeNumbers(casting * 2).."/"..BreakUpLargeNumbers(casting * 5)}
+            newTable[3] = {left = 'Mana every 2/5s while not casting', right = BreakUpLargeNumbers(base * 2).."/"..BreakUpLargeNumbers(base * 5)}
 
             return newTable[3].right, nil, nil, newTable;
         end
