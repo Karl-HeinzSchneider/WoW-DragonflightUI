@@ -317,6 +317,7 @@ function Module:ApplySettings(sub, key)
 end
 
 function Module:ApplySettingsInternal(sub, key)
+    -- print('ApplySettingsInternal', sub, key)
     local db = Module.db.profile
     local state = db.general
 
@@ -741,37 +742,37 @@ function Module:UpdateActionbar(state)
     if not Module.DFActionbarGridHooked then
         Module.DFActionbarGridHooked = true
 
-        hooksecurefunc('ActionButton_ShowGrid', function(btn)
-            for k, bar in ipairs(barTable) do
-                --
-                bar.DFDarkmodeUpdateBarButtons()
-            end
-        end)
+        -- hooksecurefunc('ActionButton_ShowGrid', function(btn)
+        --     for k, bar in ipairs(barTable) do
+        --         --
+        --         bar.DFDarkmodeUpdateBarButtons()
+        --     end
+        -- end)
 
-        hooksecurefunc('ActionButton_HideGrid', function(btn)
-            for k, bar in ipairs(barTable) do
-                --
-                bar.DFDarkmodeUpdateBarButtons()
-            end
-        end)
+        -- hooksecurefunc('ActionButton_HideGrid', function(btn)
+        --     for k, bar in ipairs(barTable) do
+        --         --
+        --         bar.DFDarkmodeUpdateBarButtons()
+        --     end
+        -- end)
 
-        hooksecurefunc('ActionButton_UpdateUsable', function(btn)
-            --
-            -- print('ActionButton_UpdateUsable', btn:GetName())
-            if not state.actionbarColor then return end
-            local c = CreateColorFromRGBHexString(state.actionbarColor)
-            if btn.DFNormalTexture then
-                btn.DFNormalTexture:SetVertexColor(c:GetRGB())
-            else
-                -- btn:GetNormalTexture():SetVertexColor(c:GetRGB())
-                local normal = btn:GetNormalTexture();
-                if normal then
-                    normal:SetVertexColor(c:GetRGB())
-                else
-                    -- print('else', btn:GetName(), c)
-                end
-            end
-        end)
+        -- hooksecurefunc('ActionButton_UpdateUsable', function(btn)
+        --     --
+        --     -- print('ActionButton_UpdateUsable', btn:GetName())
+        --     if not state.actionbarColor then return end
+        --     local c = CreateColorFromRGBHexString(state.actionbarColor)
+        --     if btn.DFNormalTexture then
+        --         btn.DFNormalTexture:SetVertexColor(c:GetRGB())
+        --     else
+        --         -- btn:GetNormalTexture():SetVertexColor(c:GetRGB())
+        --         local normal = btn:GetNormalTexture();
+        --         if normal then
+        --             normal:SetVertexColor(c:GetRGB())
+        --         else
+        --             -- print('else', btn:GetName(), c)
+        --         end
+        --     end
+        -- end)
     end
 
     if true then
@@ -951,7 +952,7 @@ function Module:HookOnEnable()
             if m then
                 hooksecurefunc(m, 'OnEnable', function()
                     --
-                    -- print('enabless!')
+                    -- print('enabless!', m)
                     Module:ApplySettings()
                 end)
             end

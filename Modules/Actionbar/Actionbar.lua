@@ -2150,6 +2150,7 @@ function Module:SetupActionbarFrames()
         if bar then
             bar:StyleButtons()
             bar:HookQuickbindMode()
+            bar:ReplaceNormalTexture2()
         end
     end
 
@@ -2269,6 +2270,7 @@ function Module:SetupActionbarFrames()
 
         bar:StyleButtons()
         bar:HookQuickbindMode()
+        bar:ReplaceNormalTexture2()
     end
 
     createExtra(6)
@@ -2303,6 +2305,7 @@ function Module:SetupActionbarFrames()
         bar:SetButtons(buttons, 69)
         bar:StyleButtons()
         bar:StylePetButton()
+        bar:ReplaceNormalTexture2()
         Module['petbar'] = bar
     end
 
