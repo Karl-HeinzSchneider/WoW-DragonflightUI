@@ -399,7 +399,7 @@ function Module:UpdateMinimap(state)
     if not f.DarkmodeButtonHooked then
         f.DarkmodeButtonHooked = true
 
-        hooksecurefunc(f, 'UpdateButton', function(btn)
+        hooksecurefunc(f, 'UpdateButton', function(_, btn)
             Module:UpdateMinimapButton(btn)
         end)
     end
