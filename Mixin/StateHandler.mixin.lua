@@ -189,15 +189,23 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverr
     end
 
     local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
 
-    if driver == self.DriverCache then
+    -- print(self:GetName(), result)
+    local same = false;
+    if result == 'show' and self:IsVisible() then
+        same = true;
+    elseif result == 'hide' and not self:IsVisible() then
+        same = true;
+    end
+
+    if driver == self.DriverCache and same then
         self:UpdateAlphaHandler(state)
         return;
     end
     self.DriverCache = driver;
     UnregisterStateDriver(handler, 'vis')
 
-    local result, target = SecureCmdOptionParse(driver)
     -- DevTools_Dump(driver)
     if #driverTable > 1 or state.hideCustom then
         --
