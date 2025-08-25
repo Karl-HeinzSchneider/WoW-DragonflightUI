@@ -1954,6 +1954,143 @@ end
 
 DragonflightUIStancebarMixinCode = {}
 
+function DragonflightUIStancebarMixinCode:CreateCustomStanceBarButtons()
+    local extraParent = CreateFrame('FRAME', 'DragonflightUIStanceBarVisParent', UIParent)
+    extraParent:SetFrameLevel(0)
+
+    local function customOnEnter(f)
+        if (GetCVarBool("UberTooltips")) then
+            GameTooltip_SetDefaultAnchor(GameTooltip, f);
+        else
+            GameTooltip:SetOwner(f, "ANCHOR_RIGHT");
+        end
+
+        GameTooltip:SetShapeshift(f:GetID());
+        f.UpdateTooltip = customOnEnter;
+    end
+
+    local btns = {}
+    for i = 1, 10 do
+        --
+        local btn =
+            CreateFrame("CheckButton", "DragonflightUIStanceButton" .. i, extraParent, "StanceButtonTemplate", i)
+        btn:SetSize(64, 64)
+        btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
+        -- btn:SetAttribute("type", "action")
+        -- btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+        btn:SetFrameLevel(3)
+
+        btn.command = "SHAPESHIFTBUTTON" .. i
+        btn.commandHuman = "Stance Bar Button " .. i
+
+        btn:SetScript('OnEnter', customOnEnter)
+
+        btns[i] = btn;
+
+        local orig = _G['StanceButton' .. i]
+        orig:ClearAllPoints()
+        orig:Hide()
+        orig:SetPoint('TOP', UIParent, 'BOTTOM', 0, -666)
+    end
+
+    self:SetButtons(btns, 42)
+    self:StyleButtons()
+    self:ReplaceNormalTexture2()
+
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+    self:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+    self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+    self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+    self:RegisterEvent("UPDATE_POSSESS_BAR")
+
+    self:RegisterEvent("UPDATE_BINDINGS", "ReassignBindings")
+    self:SetScript('OnEvent', function(_, event, arg1)
+        -- print(self:GetName(), event, arg1)
+        self:UpdateButtonState(not InCombatLockdown())
+
+        -- if event == 'UPDATE_SHAPESHIFT_COOLDOWN' then
+        --     self:UpdateButtonState(false)
+        -- elseif event == 'PLAYER_REGEN_ENABLED' then
+        --     if InCombatLockdown() then return end
+        --     self:UpdateButtonState(true)
+        -- else
+        --     if InCombatLockdown() then
+        --         self:UpdateButtonState(false)
+        --     else
+        --         self:UpdateButtonState(true)
+        --     end
+        -- end
+        -- self:Update()
+        -- self:UpdateGridState()
+    end)
+
+    self:UpdateButtonState(true)
+
+    -- hooksecurefunc('StanceBar_Select', function(id)
+    --     print('StanceBar_Select')
+    --     self:UpdateButtonState(false)
+    -- end)
+
+    -- hooksecurefunc('CastShapeshiftForm', function()
+    --     print('CastShapeshiftForm')
+    --     self:UpdateButtonState(false)
+    -- end)
+
+end
+
+function DragonflightUIStancebarMixinCode:UpdateButtonState(showHide)
+    local numForms = GetNumShapeshiftForms();
+    local texture, isActive, isCastable;
+    local button, icon, cooldown;
+    local start, duration, enable;
+    for i = 1, NUM_STANCE_SLOTS do
+        button = self.buttonTable[i];
+        icon = button.icon;
+        if (i <= numForms) then
+            texture, isActive, isCastable = GetShapeshiftFormInfo(i);
+            icon:SetTexture(texture);
+
+            -- Cooldown stuffs
+            cooldown = button.cooldown;
+            if (texture) then
+                cooldown:Show();
+            else
+                cooldown:Hide();
+            end
+            start, duration, enable = GetShapeshiftFormCooldown(i);
+            CooldownFrame_Set(cooldown, start, duration, enable);
+
+            if (isActive) then
+                self.lastSelected = button:GetID();
+                button:SetChecked(true);
+            else
+                button:SetChecked(false);
+            end
+
+            if (isCastable) then
+                icon:SetVertexColor(1.0, 1.0, 1.0);
+            else
+                icon:SetVertexColor(0.4, 0.4, 0.4);
+            end
+
+            if self.state then
+                button.buttonType = 'SHAPESHIFTBUTTON'
+                button:UpdateHotkeyDisplayText(self.state.shortenKeybind)
+            end
+            if showHide then button:Show(); end
+        else
+            if showHide then button:Hide(); end
+        end
+    end
+end
+
 function DragonflightUIStancebarMixinCode:Update()
     local state = self.state
     -- print("DragonflightUIStancebarMixin:Update()", state)
@@ -2177,7 +2314,8 @@ function DragonflightUIStancebarMixinCode:Update()
 
     self:UpdateStateHandler(state)
 
-    StanceBar_UpdateState()
+    -- StanceBar_UpdateState()
+    self:UpdateButtonState(true)
 end
 
 DragonflightUIStancebarMixin = CreateFromMixins(DragonflightUIActionbarMixin, DragonflightUIStancebarMixinCode)

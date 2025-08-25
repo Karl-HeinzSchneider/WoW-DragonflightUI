@@ -599,6 +599,8 @@ end
 
 function Module:GameTooltipSetDefaultAnchor(self, parent)
     -- DF:Debug(Module, 'GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
+    -- print('GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
+
     local state = Module.db.profile.general;
 
     -- spells
@@ -617,6 +619,10 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
             return;
         end
         if string.match(parentName, "^StanceButton") then
+            self:SetOwner(parent, 'ANCHOR_RIGHT');
+            return;
+        end
+        if string.match(parentName, "^DragonflightUIStanceButton") then
             self:SetOwner(parent, 'ANCHOR_RIGHT');
             return;
         end
