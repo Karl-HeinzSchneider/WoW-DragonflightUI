@@ -246,6 +246,22 @@ function DragonFlightUIQuickKeybindMixin:HookButtons()
     end
 end
 
+function DragonFlightUIQuickKeybindMixin:HookCustomStance()
+    -- print('DragonFlightUIQuickKeybindMixin:HookExtraButtons()')
+    -- "DragonflightUIMultiactionBar" .. n .. "Button" .. i
+
+    for i = 1, 10 do
+        local btn = _G['DragonflightUIStanceButton' .. i]
+
+        btn:HookScript('OnEnter', function(selfButton)
+            if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
+                DragonflightUIQuickKeybindButtonOverlay:SetButton(selfButton)
+            end
+        end)
+    end
+
+end
+
 function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     -- print('DragonFlightUIQuickKeybindMixin:HookExtraButtons()')
     -- "DragonflightUIMultiactionBar" .. n .. "Button" .. i

@@ -2319,22 +2319,30 @@ function Module:SetupActionbarFrames()
         end
 
         bar:Init()
-        bar:SetButtons(buttons, 42)
-        bar:StyleButtons()
-        bar:ReplaceNormalTexture2()
+        -- bar:SetButtons(buttons, 42)
+        bar:CreateCustomStanceBarButtons()
+        DragonFlightUIQuickKeybindMixin:HookCustomStance()
+        -- bar:StyleButtons()
+        -- bar:ReplaceNormalTexture2()
         bar.stanceBar = true
         Module['stancebar'] = bar
     end
 
     -- @TODO
     do
-        -- MultiBarBottomLeft.ignoreFramePositionManager = true
-        -- MultiBarBottomLeft:ClearAllPoints()
+        MultiBarBottomLeft.ignoreFramePositionManager = true
+        MultiBarBottomLeft:ClearAllPoints()
+        MultiBarBottomLeft:Hide()
         -- MultiBarBottomLeft:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame2'], 'BOTTOM')
+        MultiBarBottomLeft:SetPoint('TOP', UIParent, 'BOTTOM', 0, 0)
 
-        -- MultiBarBottomRight.ignoreFramePositionManager = true
-        -- MultiBarBottomRight:ClearAllPoints()
+        MultiBarBottomRight.ignoreFramePositionManager = true
+        MultiBarBottomRight:ClearAllPoints()
+        MultiBarBottomRight:Hide()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
+        MultiBarBottomRight:SetPoint('TOP', UIParent, 'BOTTOM', 0, 0)
+
+        UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil;
     end
 end
 
