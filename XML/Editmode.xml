@@ -364,4 +364,165 @@
 			<OnShow method="OnShow" />
 		</Scripts>
 	</Frame>
+	<Frame name="DFEditModePreviewDurability" virtual="true">
+		<Size>
+			<AbsDimension x="60" y="75" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="DurabilityHead" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="18" y="22" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="0.140625" top="0" bottom="0.171875" />
+				</Texture>
+				<Texture parentKey="DurabilityShoulders" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="48" y="22" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityHead" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="16" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.140625" right="0.515625" top="0" bottom="0.171875" />
+				</Texture>
+				<Texture parentKey="DurabilityChest" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="20" y="22" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityShoulders" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-7" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.515625" right="0.6640625" top="0" bottom="0.171875" />
+				</Texture>
+				<Texture parentKey="DurabilityWrists" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="44" y="22" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityShoulders" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="7" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.6640625" right="1.0" top="0" bottom="0.171875" />
+				</Texture>
+				<Texture parentKey="DurabilityHands" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="42" y="18" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityWrists" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="15" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.328125" top="0.171875" bottom="0.3046875" />
+				</Texture>
+				<Texture parentKey="DurabilityWaist" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="16" y="5" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityChest" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="6" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.328125" right="0.46875" top="0.171875" bottom="0.203125" />
+				</Texture>
+				<Texture parentKey="DurabilityLegs" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="29" y="20" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityWaist" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="2" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.46875" right="0.6875" top="0.171875" bottom="0.3203125" />
+				</Texture>
+				<Texture parentKey="DurabilityFeet" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="41" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityLegs" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="8" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.6875" right="1.0" top="0.171875" bottom="0.4140625" />
+				</Texture>
+				<Texture parentKey="DurabilityWeapon" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="20" y="45" />
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativeKey="$parent.DurabilityWrists" relativePoint="LEFT">
+							<Offset>
+								<AbsDimension x="0" y="-6" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.140625" top="0.3203125" bottom="0.6640625" />
+				</Texture>
+				<Texture parentKey="DurabilityShield" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="25" y="31" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.DurabilityWrists" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="0" y="10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.1875" right="0.375" top="0.3203125" bottom="0.5546875" />
+				</Texture>
+				<Texture parentKey="DurabilityOffWeapon" file="Interface\Durability\UI-Durability-Icons" hidden="true">
+					<Size>
+						<AbsDimension x="20" y="45" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.DurabilityWrists" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="0" y="-6" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.140625" top="0.3203125" bottom="0.6640625" />
+				</Texture>
+				<Texture parentKey="DurabilityRanged" file="Interface\Durability\UI-Durability-Icons">
+					<Size>
+						<AbsDimension x="28" y="38" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeKey="$parent.DurabilityShield" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="5" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.1875" right="0.3984375" top="0.5546875" bottom="0.84375" />
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
 </Ui>

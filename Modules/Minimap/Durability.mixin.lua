@@ -182,7 +182,7 @@ function SubModuleMixin:Update()
 
     local f = self.BaseFrame
 
-    -- f:SetScale(state.scale)
+    f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 end
@@ -194,6 +194,26 @@ function SubModuleMixin:CreateBase()
     baseFrame:SetClampedToScreen(true)
     -- baseFrame:Hide()
     self.BaseFrame = baseFrame;
+
+    local fake = CreateFrame('Frame', 'sss', baseFrame, 'DFEditModePreviewDurability')
+    -- fake:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    fake:SetWidth(58 + 20 + 14)
+    fake.DurabilityHead:SetPoint('TOPRIGHT', -40, 0)
+    fake:SetPoint('TOPRIGHT', baseFrame, 'TOPRIGHT', 0, 0)
+
+    fake:Hide()
+
+    self.FakeFrame = fake;
+
+    -- 
+    function self.BaseFrame:SetEditMode(editmode)
+        -- print('SetEditMode', editmode)
+        if editmode and not DurabilityFrame:IsVisible() then
+            fake:Show()
+        else
+            fake:Hide()
+        end
+    end
 
     local moveDur = function()
         local widthMax = 92
@@ -214,8 +234,4 @@ function SubModuleMixin:CreateBase()
             moveDur()
         end
     end)
-
-    -- TODO: add fake preview
-    function self.BaseFrame:SetEditMode()
-    end
 end
