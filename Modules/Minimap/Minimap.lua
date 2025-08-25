@@ -8,6 +8,7 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
+Module.SubDurability = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Durability'])
 Module.SubMinimap = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Minimap'])
 
 local defaults = {
@@ -23,15 +24,7 @@ local defaults = {
             x = 0,
             y = -310
         },
-        durability = {
-            scale = 1,
-            anchorFrame = 'DragonflightUIMinimapBase',
-            customAnchorFrame = '',
-            anchor = 'TOP',
-            anchorParent = 'BOTTOM',
-            x = 0,
-            y = 0
-        },
+        durability = Module.SubDurability.Defaults,
         lfg = {
             scale = 1,
             anchorFrame = 'Minimap',
@@ -135,49 +128,6 @@ local optionsTrackerEditmode = {
     }
 }
 
-local optionsDurability = {
-    type = 'group',
-    name = L["MinimapDurabilityName"],
-    advancedName = 'Durability',
-    sub = 'durability',
-    get = getOption,
-    set = setOption,
-    args = {}
-}
-DF.Settings:AddPositionTable(Module, optionsDurability, 'durability', 'Durability', getDefaultStr, frameTableTracker)
-
-local optionsDurabilityEditmode = {
-    name = 'Durability',
-    desc = 'Durability',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {
-        resetPosition = {
-            type = 'execute',
-            name = L["ExtraOptionsPreset"],
-            btnName = L["ExtraOptionsResetToDefaultPosition"],
-            desc = L["ExtraOptionsPresetDesc"],
-            func = function()
-                local dbTable = Module.db.profile.durability
-                local defaultsTable = defaults.profile.durability
-                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
-                setPreset(dbTable, {
-                    scale = defaultsTable.scale,
-                    anchor = defaultsTable.anchor,
-                    anchorParent = defaultsTable.anchorParent,
-                    anchorFrame = defaultsTable.anchorFrame,
-                    x = defaultsTable.x,
-                    y = defaultsTable.y
-                }, 'durability')
-            end,
-            order = 16,
-            editmode = true,
-            new = false
-        }
-    }
-}
-
 local optionsLFG = {
     type = 'group',
     name = L["MinimapLFGName"],
@@ -265,7 +215,7 @@ function Module:RegisterSettings()
 
     register('minimap', {order = 1, name = self.SubMinimap.Options.name, descr = 'Minimapss', isNew = true})
     register('questtracker', {order = 1, name = trackerOptions.name, descr = 'Trackers', isNew = false})
-    register('durability', {order = 1, name = optionsDurability.name, descr = 'Durablityss', isNew = false})
+    register('durability', {order = 1, name = self.SubDurability.Options.name, descr = 'Durablityss', isNew = false})
     register('lfg', {order = 1, name = optionsLFG.name, descr = 'LFGss', isNew = false})
 end
 
@@ -274,13 +224,6 @@ function Module:RegisterOptionScreens()
         options = trackerOptions,
         default = function()
             setDefaultSubValues(trackerOptions.sub)
-        end
-    })
-
-    DF.ConfigModule:RegisterSettingsData('durability', 'misc', {
-        options = optionsDurability,
-        default = function()
-            setDefaultSubValues(optionsDurability.sub)
         end
     })
 
@@ -303,9 +246,9 @@ function Module:RefreshOptionScreens()
     configFrame:RefreshCatSub(cat, 'LFG')
 
     Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
-    Module.DurabilityContainer.DFEditModeSelection:RefreshOptionScreen()
     if Module.LFG then Module.LFG.DFEditModeSelection:RefreshOptionScreen() end
 
+    self.SubDurability.BaseFrame.DFEditModeSelection:RefreshOptionScreen()
     self.SubMinimap.BaseFrame.DFEditModeSelection:RefreshOptionScreen()
 end
 
@@ -319,9 +262,9 @@ function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
 
     Module.UpdateTrackerState(db.tracker)
-    Module.UpdateDurabilityState(db.durability)
     Module:UpdateLFGState(db.lfg)
 
+    self.SubDurability:UpdateState(db.durability)
     self.SubMinimap:UpdateState(db.minimap)
 end
 
@@ -462,32 +405,6 @@ function Module:AddEditMode()
         function Module.TrackerFrameRef:SetEditMode()
         end
     end
-
-    -- durablity
-    EditModeModule:AddEditModeToFrame(Module.DurabilityContainer)
-
-    Module.DurabilityContainer.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return optionsDurability.name
-    end)
-
-    Module.DurabilityContainer.DFEditModeSelection:RegisterOptions({
-        options = optionsDurability,
-        extra = optionsDurabilityEditmode,
-        showFunction = function()
-            -- 
-        end,
-        hideFunction = function()
-            -- DurabilityFrame_SetAlerts()
-        end,
-        default = function()
-            setDefaultSubValues(optionsDurability.sub)
-        end,
-        moduleRef = self
-    });
-
-    -- TODO: add fake preview
-    function Module.DurabilityContainer:SetEditMode()
-    end
 end
 
 function Module:UpdateMinimapZonePanelPosition(pos)
@@ -580,47 +497,6 @@ function Module.UpdateTrackerState(state)
         WatchFrame:SetHeight(800)
         WatchFrame:SetWidth(204)
     end
-end
-
-function Module.MoveDefaultStuff()
-    local container = CreateFrame('Frame', 'DragonflightUIDurabilityContainer', UIParent)
-    container:SetPoint('CENTER', Minimap, 'CENTER', 0, -142)
-    container:SetSize(92, 75)
-    Module.DurabilityContainer = container
-
-    local moveDur = function()
-        local widthMax = 92
-        local width = DurabilityFrame:GetWidth()
-        local delta = (widthMax - width) / 2
-
-        DurabilityFrame:SetPoint('TOPRIGHT', container, 'TOPRIGHT', -delta, 0)
-        DurabilityFrame:SetParent(container)
-    end
-    DurabilityFrame:ClearAllPoints()
-    moveDur()
-
-    hooksecurefunc(DurabilityFrame, 'SetPoint', function(self, void, rel)
-        -- print('DurabilityFrame', 'SetPoint')
-        if rel and (rel ~= container) then
-            -- print('DurabilityFrame', 'inside')
-            moveDur()
-        end
-    end)
-end
-
-function Module.UpdateDurabilityState(state)
-    local container = Module.DurabilityContainer
-
-    local parent;
-    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-        parent = _G[state.customAnchorFrame]
-    else
-        parent = _G[state.anchorFrame]
-    end
-
-    container:SetScale(state.scale)
-    container:ClearAllPoints()
-    container:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 end
 
 function Module:UpdateLFGState(state)
@@ -826,10 +702,10 @@ frame:SetScript('OnEvent', frame.OnEvent)
 Module.Frame = frame
 
 function Module:Era()
-    Module.MoveDefaultStuff()
     Module.MoveTracker()
     Module:ChangeLFG()
 
+    self.SubDurability:Setup()
     self.SubMinimap:Setup()
 end
 
@@ -837,10 +713,10 @@ function Module:TBC()
 end
 
 function Module:Wrath()
-    Module.MoveDefaultStuff()
     Module.MoveTracker()
     Module:ChangeLFG()
 
+    self.SubDurability:Setup()
     self.SubMinimap:Setup()
 end
 
