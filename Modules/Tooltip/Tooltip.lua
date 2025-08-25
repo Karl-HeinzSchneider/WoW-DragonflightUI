@@ -550,6 +550,8 @@ function Module:ApplySettingsInternal(sub, key)
     Module.GametooltipPreview:ClearAllPoints()
     Module.GametooltipPreview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     Module.GametooltipPreview:SetScale(state.scale)
+
+    self:UpdatePreviewFrame(state)
 end
 
 function Module:AddEditMode()
@@ -1490,6 +1492,168 @@ function Module:HideLines(self, number, numberEnd)
     end
 end
 
+function Module:CreatePreviewFrame()
+    local tt = CreateFrame('GameTooltip', 'DragonflightUITooltipPreviewFrame', UIParent, 'GameTooltipTemplate')
+    -- tt:Show()
+    -- tt:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    -- tt:SetOwner(PetActionButton1, "ANCHOR_RIGHT");
+    -- tt:SetText('test');
+    -- tt:Show()
+    self.PreviewTooltip = tt;
+end
+
+local localizedClassTable = {}
+local localizedClassTableFemale = {}
+
+FillLocalizedClassList(localizedClassTable, false)
+FillLocalizedClassList(localizedClassTableFemale, true)
+
+function Module:UpdatePreviewFrame(state)
+    local tt = self.PreviewTooltip;
+    tt:SetOwner(self.GametooltipPreview, 'ANCHOR_NONE');
+    tt:ClearAllPoints();
+    tt:SetPoint('BOTTOMRIGHT', self.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
+    tt:SetFrameStrata('MEDIUM')
+    tt:SetFrameLevel(69)
+
+    if not self.PreviewUnit then self.PreviewUnit = DF:GetRandomVIP() end
+    local unit = self.PreviewUnit;
+
+    -- TODO config
+    local backdrop = {
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 14,
+        insets = {left = 2, right = 2, top = 2, bottom = 2}
+    }
+
+    if not tt.SetBackdrop then
+        -- 
+        -- print(v:GetName(), 'no Setbackdrop')
+        Mixin(tt, BackdropTemplateMixin)
+    end
+    tt:SetBackdrop(backdrop)
+    Module:SetDefaultBackdrop(tt)
+
+    -- unit
+    do
+        tt:SetText('tt');
+
+        local r, g, b = GameTooltip_UnitColor('player')
+        local cr, cg, cb, ca, chex = DF:GetClassColor(unit.class);
+
+        if state.unitClassBorder then
+            tt:SetBackdropBorderColor(cr, cg, cb);
+        elseif state.unitReactionBorder then
+            tt:SetBackdropBorderColor(r, g, b);
+        end
+
+        if state.unitClassBackdrop then
+            tt:SetBackdropColor(cr, cg, cb, state.backdropAlpha);
+        elseif state.unitReactionBackdrop then
+            tt:SetBackdropColor(r, g, b, state.backdropAlpha);
+        end
+
+        local name = unit.name
+        if state.unitTitle then
+            --
+            local pre = unit.titlePre or ''
+            local after = unit.titleAfter or ''
+
+            if pre == '' and after == '' then pre = '*TITLE*' end
+
+            name = string.format('%s%s%s', pre, name, after)
+        end
+
+        local realm = unit.realm or '*REALM*'
+        local line = _G[tt:GetName() .. 'TextLeft1']
+        if realm and realm ~= '' and state.unitRealm then
+            --  
+            name = name .. ' (' .. realm .. ')';
+        end
+
+        if state.unitClassName then
+            line:SetText(DF:GetClassColoredText(name, unit.class));
+        else
+            line:SetText(name);
+        end
+
+        local pGuild, pRank, pIndex = GetGuildInfo('player')
+        local guild = unit.guild or '*GUILD*'
+        local rank = unit.guildRank or '*RANK*'
+        local index = unit.guildIndex or 69
+
+        if state.unitGuild then
+            tt:AddLine('**')
+            local guildLine = Module:GetLine(tt, 2);
+
+            if guild == pGuild then
+                guildLine:SetTextColor(1.0, 0.3, 1.0)
+            else
+                guildLine:SetTextColor(r, g, b)
+            end
+
+            if state.unitGuildRank then
+                local rankColor = "|cff909090"
+
+                if state.unitGuildRankIndex then
+                    guildLine:SetFormattedText("<%s> %s%s (%d)", guild, rankColor, rank, index)
+                else
+                    guildLine:SetFormattedText("<%s> %s%s", guild, rankColor, rank)
+                end
+            else
+                guildLine:SetFormattedText("<%s>", guild)
+            end
+        end
+
+        -- unit
+        tt:AddLine('**')
+        tt:AddLine('**')
+        local unitLine;
+        local locationLine;
+        if state.unitGuild then
+            unitLine = Module:GetLine(tt, 3);
+            locationLine = Module:GetLine(tt, 4);
+        else
+            unitLine = Module:GetLine(tt, 2);
+            locationLine = Module:GetLine(tt, 3);
+        end
+
+        unitLine:SetTextColor(1.0, 1.0, 1.0)
+
+        local level = tonumber(unit.level) or 69
+        local questColor = GetQuestDifficultyColor(level)
+        local levelColor = CreateColor(questColor.r, questColor.g, questColor.b)
+        local levelHex = levelColor:GenerateHexColor()
+        local levelString = '|c' .. levelHex .. level .. '|r'
+
+        if level == -1 or unit.level == '??' then
+            --
+            levelString = '|r|cffff0000??|r';
+        end
+
+        local race = unit.race or '*RACE*'
+        local modClass
+        if unit.female then
+            modClass = localizedClassTableFemale[unit.class]
+        else
+            modClass = localizedClassTable[unit.class]
+        end
+
+        -- print(levelString, UnitRace(unit), DF:GetClassColoredText(localizedClass, englishClass))
+
+        unitLine:SetFormattedText("%s %s %s", levelString, race, DF:GetClassColoredText(modClass, unit.class))
+
+        -- zone
+        local zone = GetRealZoneText()
+        if state.unitZone ~= 'never' then
+            locationLine:SetText(zone)
+            locationLine:SetTextColor(1.0, 1.0, 1.0);
+        end
+    end
+    tt:Show()
+end
+
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
@@ -1507,6 +1671,8 @@ function Module:Era()
     Module:HookFunctions()
     Module:HookSpellTooltip()
     Module:HookStatusBar()
+
+    self:CreatePreviewFrame()
 end
 
 function Module:TBC()

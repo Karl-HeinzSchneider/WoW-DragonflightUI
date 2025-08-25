@@ -33,6 +33,12 @@ end
 
 table.insert(DF.VIPTable, {
     name = 'Zimtschnecke',
+    titleAfter = ", Death's Demise",
+    realm = 'Everlook',
+    guild = 'Zimtschneckendepot',
+    guildRank = 'Oberschnecke',
+    race = 'Human',
+    female = true,
     level = '85',
     class = 'PALADIN',
     powerType = 'MANA',
@@ -47,6 +53,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Zimtgirly',
+    titleAfter = ", Death's Demise",
+    realm = 'Everlook',
+    guild = 'Zimtschneckendepot',
+    -- guildRank = 'Oberschnecke',
+    race = 'Gnome',
+    female = true,
     level = '85',
     class = 'DEATHKNIGHT',
     powerType = 'RUNIC_POWER',
@@ -61,6 +73,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Dratini',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    race = 'Gnome',
+    female = true,
     level = '??',
     class = 'MAGE',
     powerType = 'RUNIC_POWER',
@@ -75,6 +93,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Norbert',
+    titleAfter = " The Great",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    race = 'Wolf',
+    female = false,
     level = '??',
     class = 'WARRIOR',
     powerType = 'FOCUS',
@@ -89,6 +113,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Matada',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    race = 'Human',
+    female = true,
     level = '60',
     class = 'PRIEST',
     powerType = 'MANA',
@@ -102,6 +132,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Schokobon',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    race = 'Gnome',
+    female = false,
     level = '85',
     class = 'MAGE',
     powerType = 'MANA',
@@ -116,6 +152,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Jagrune',
+    -- titleAfter = ", Death's Demise",
+    realm = 'Razorfen',
+    guild = 'Horizon',
+    -- guildRank = 'Oberschnecke',
+    race = 'Nightelf',
+    female = true,
     level = '60',
     class = 'HUNTER',
     powerType = 'MANA',
@@ -130,6 +172,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Baldvin',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- race = 'Human',
+    -- female = true,
     level = '60',
     class = 'PALADIN',
     powerType = 'MANA',
@@ -144,6 +192,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Marnik',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- race = 'Human',
+    -- female = true, 
     level = '60',
     class = 'PALADIN',
     powerType = 'MANA',
@@ -157,6 +211,12 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Theunder ',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- race = 'Human',
+    -- female = true,
     level = '60',
     class = 'WARRIOR',
     powerType = 'RAGE',
