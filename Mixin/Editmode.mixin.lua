@@ -619,6 +619,10 @@ function DFEditModeSystemSelectionBaseMixin:CalcSnapParentToGrid()
     local screenW = GetScreenWidth() * (screenScale / effectiveScale)
     local screenH = GetScreenHeight() * (screenScale / effectiveScale)
 
+    local point, relativeTo, relativePoint, xOfs, yOfs = self.parent:GetPoint(1)
+    local selfname = self:GetName()
+    local parentname = self.parent:GetName()
+
     local x, y = self.parent:GetCenter()
     local centerX = x - screenW / 2
     local centerY = y - screenH / 2
