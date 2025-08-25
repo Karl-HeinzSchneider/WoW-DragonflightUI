@@ -2305,7 +2305,7 @@ function Module:SetupActionbarFrames()
         bar:SetButtons(buttons, 69)
         bar:StyleButtons()
         bar:StylePetButton()
-        bar:ReplaceNormalTexture2()
+        -- bar:ReplaceNormalTexture2()
         Module['petbar'] = bar
     end
 
