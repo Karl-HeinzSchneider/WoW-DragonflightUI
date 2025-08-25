@@ -668,7 +668,7 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
     -- default
     self:SetOwner(parent, 'ANCHOR_NONE');
     self:ClearAllPoints();
-    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
+    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0 + 11);
 end
 
 function Module:AddBackdrops()
