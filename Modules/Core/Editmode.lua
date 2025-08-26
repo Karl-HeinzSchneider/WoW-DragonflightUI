@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Editmode'
@@ -25,6 +27,7 @@ local defaults = {
             ExtraActionButton = true,
             FlyoutBar = true,
             GroupLootContainer = true,
+            VehicleLeave = true,
             -- Bossframe
             BossFrames = true,
             -- buffs,
@@ -32,6 +35,7 @@ local defaults = {
             Debuffs = true,
             -- castbar
             Castbars = true,
+            MirrorTimer = true,
             -- minimap
             Minimap = true,
             Tracker = true,
@@ -44,6 +48,8 @@ local defaults = {
             -- unitframes
             PlayerFrame = true,
             Player_PowerBarAlt = true,
+            PlayerSecondaryRes = true,
+            PlayerTotemFrame = true,
             PetFrame = true,
             TargetFrame = true,
             TargetOfTargetFrame = true,
@@ -176,14 +182,18 @@ if true then
     displayTable['StanceBar'] = L['StanceBar']
     displayTable['TotemBar'] = L['TotemBar']
     displayTable['ExtraActionButton'] = L['ExtraActionButtonOptionsName']
+    displayTable['VehicleLeave'] = L['VehicleLeaveButton']
 
     -- combat
     displayTable['Buffs'] = L['BuffsOptionsName']
     displayTable['Debuffs'] = L['DebuffsOptionsName']
     displayTable['Castbars'] = L['CastbarName']
+    displayTable['MirrorTimer'] = L['CastbarMirrorTimerName']
 
     -- frames
     displayTable['PlayerFrame'] = L['PlayerFrameName']
+    displayTable['PlayerSecondaryRes'] = L['PlayerSecondaryResName']
+    displayTable['PlayerTotemFrame'] = L['PlayerTotemFrameName']
     displayTable['PetFrame'] = L['PetFrameName']
     displayTable['TargetFrame'] = L['TargetFrameName']
     displayTable['TargetOfTargetFrame'] = L['TargetOfTargetFrameName']
@@ -191,6 +201,7 @@ if true then
     displayTable['FocusTargetFrame'] = L['FocusFrameToTName']
     displayTable['PartyFrame'] = L['PartyFrameName']
     displayTable['RaidFrame'] = L['RaidFrameName']
+    displayTable['BossFrames'] = L['BossFrameName']
 
     -- misc
     displayTable['Bags'] = L['BagsOptionsName']
@@ -220,19 +231,26 @@ if true then
     end
 
     -- actionbar
-    local actionbarFrames = {'ActionBars', 'FlyoutBar', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar'};
+    local actionbarFrames = {
+        'ActionBars', 'FlyoutBar', 'MicroMenu', 'PetBar', 'PossessBar', 'StanceBar', 'TotemBar', 'VehicleLeave'
+    };
     if DF.Cata then table.insert(actionbarFrames, 'ExtraActionButton') end
     AddTableToCategory(actionbarFrames, 'headerActionbar');
 
     -- combat
-    local combatFrames = {'Buffs', 'Debuffs', 'Castbars'};
+    local combatFrames = {'Buffs', 'Debuffs', 'Castbars', 'MirrorTimer'};
     AddTableToCategory(combatFrames, 'headerCombat');
 
     -- frames
-    local framesFrames = {'PlayerFrame', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame', 'PartyFrame', 'RaidFrame'}
+    local framesFrames = {
+        'PlayerFrame', 'PlayerSecondaryRes', 'PlayerTotemFrame', 'PetFrame', 'TargetFrame', 'TargetOfTargetFrame',
+        'PartyFrame', 'RaidFrame'
+    }
     if DF.Wrath then
         table.insert(framesFrames, 'FocusFrame')
         table.insert(framesFrames, 'FocusTargetFrame')
+        table.insert(framesFrames, 'BossFrames')
+
     end
     AddTableToCategory(framesFrames, 'headerFrames')
 
@@ -310,7 +328,8 @@ function Module:RegisterOptionScreens()
         options = generalOptions,
         default = function()
             setDefaultSubValues('general')
-        end
+        end,
+        shouldDisplayAsap = true
     }, true)
 
     Module.EditModeFrame:SetupAdvancedOptions({
@@ -319,7 +338,8 @@ function Module:RegisterOptionScreens()
         options = advancedOptions,
         default = function()
             setDefaultSubValues('advanced')
-        end
+        end,
+        shouldDisplayAsap = true
     })
 end
 
@@ -331,7 +351,13 @@ function Module:RefreshOptionScreens()
     -- configFrame:RefreshCatSub(cat, 'Darkmode')
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
     local state = db.general
 

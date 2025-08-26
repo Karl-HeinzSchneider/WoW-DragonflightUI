@@ -25,10 +25,13 @@ function SubModuleMixin:SetDefaults()
         y = -13,
         expanded = true,
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,
         hideOutOfCombat = false,
+        hideVehicle = false,
         hidePet = false,
         hideNoPet = false,
         hideStance = false,
@@ -178,8 +181,8 @@ function SubModuleMixin:SetupOptions()
                 btnName = L["ExtraOptionsResetToDefaultPosition"],
                 desc = L["ExtraOptionsPresetDesc"],
                 func = function()
-                    local dbTable = Module.db.profile.buffs
-                    local defaultsTable = defaults.profile.buffs
+                    local dbTable = self.ModuleRef.db.profile.buffs
+                    local defaultsTable = self.Defaults
                     setPreset(dbTable, {
                         scale = defaultsTable.scale,
                         anchor = defaultsTable.anchor,
@@ -203,7 +206,7 @@ end
 function SubModuleMixin:Setup()
     -- 
     local function setDefaultSubValues(sub)
-        Module:SetDefaultSubValues(sub)
+        self.ModuleRef:SetDefaultSubValues(sub)
     end
 
     DF.ConfigModule:RegisterSettingsData('buffs', 'misc', {
@@ -387,11 +390,11 @@ function SubModuleMixin:AddBuffBorders()
         end
     end)
 
-    hooksecurefunc('TargetFrame_UpdateAuras', function(self)
+    hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
         -- also styles focusFrame
         -- print('TargetFrame_UpdateAuras', self:GetName())
         local frame, frameName, frameStealable;
-        local selfName = self:GetName();
+        local selfName = frameRef:GetName();
         for i = 1, MAX_TARGET_BUFFS do
             frameName = selfName .. "Buff" .. (i);
             frame = _G[frameName];
@@ -401,9 +404,9 @@ function SubModuleMixin:AddBuffBorders()
                 if not frame.DFIconBorder then
                     --
                     DragonflightUIMixin:AddIconBorder(frame, true)
-                    -- frame.DFIconBorder:SetDesaturated(self.BuffDesaturate)
-                    -- frame.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG,
-                    --                                   self.BuffVertexColorB)
+                    frame.DFIconBorder:SetDesaturated(self.BuffDesaturate)
+                    frame.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG,
+                                                      self.BuffVertexColorB)
                 end
 
                 -- TODO: style etc
@@ -412,7 +415,7 @@ function SubModuleMixin:AddBuffBorders()
             end
         end
 
-        local maxDebuffs = self.maxDebuffs or MAX_TARGET_DEBUFFS; -- max = 16
+        local maxDebuffs = frameRef.maxDebuffs or MAX_TARGET_DEBUFFS; -- max = 16
 
         for i = 1, maxDebuffs do
             frameName = selfName .. "Debuff" .. (i);

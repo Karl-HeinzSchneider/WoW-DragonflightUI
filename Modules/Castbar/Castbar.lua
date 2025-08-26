@@ -1,9 +1,13 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Castbar'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
+
+Module.SubMirrorTimer = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['MirrorTimer'])
 
 local defaults = {
     profile = {
@@ -37,9 +41,9 @@ local defaults = {
             scale = 1,
             anchorFrame = 'TargetFrame',
             customAnchorFrame = '',
-            anchor = 'TOP',
-            anchorParent = 'BOTTOM',
-            x = -20,
+            anchor = 'TOPLEFT',
+            anchorParent = 'BOTTOMLEFT',
+            x = 5,
             y = -20,
             sizeX = 150,
             sizeY = 10,
@@ -54,16 +58,18 @@ local defaults = {
             sizeIcon = 20,
             showTicks = false,
             showRank = false,
-            autoAdjust = true
+            autoAdjust = true,
+            autoAdjustX = 5,
+            autoAdjustY = -20
         },
         focus = {
             activate = true,
             scale = 1,
             anchorFrame = 'FocusFrame',
             customAnchorFrame = '',
-            anchor = 'TOP',
-            anchorParent = 'BOTTOM',
-            x = -20,
+            anchor = 'TOPLEFT',
+            anchorParent = 'BOTTOMLEFT',
+            x = 5,
             y = -20,
             sizeX = 150,
             sizeY = 10,
@@ -78,8 +84,11 @@ local defaults = {
             sizeIcon = 20,
             showTicks = false,
             showRank = false,
-            autoAdjust = true
-        }
+            autoAdjust = true,
+            autoAdjustX = 5,
+            autoAdjustY = -20
+        },
+        mirrorTimer = Module.SubMirrorTimer.Defaults
     }
 }
 Module:SetDefaults(defaults)
@@ -130,6 +139,15 @@ function AddCastbarTable(optionTable, sub)
             desc = L["CastbarTableActivateDesc"] .. getDefaultStr('activate', sub),
             order = -1,
             new = false,
+            editmode = true
+        },
+        autoAdjust = {
+            type = 'toggle',
+            name = L["CastbarTableAutoAdjust"],
+            desc = L["CastbarTableAutoAdjustDesc"] .. getDefaultStr('autoAdjust', sub),
+            group = 'headerPosition',
+            order = 10,
+            new = true,
             editmode = true
         },
         headerStyling = {
@@ -259,18 +277,61 @@ function AddCastbarTable(optionTable, sub)
             group = 'headerStyling',
             order = 18,
             editmode = true
+        }
+    }
+
+    for k, v in pairs(CastbarTable) do
+        --
+        optionTable.args[k] = v
+    end
+end
+
+function AddAutoAdjustTable(optionTable, sub)
+    local autoAdjustTable = {
+        headerAutoAdjust = {
+            type = 'header',
+            name = L["CastbarTableAutoAdjustHeader"],
+            desc = L["CastbarTableAutoAdjustHeaderDesc"],
+            order = 15,
+            isExpanded = true,
+            editmode = true
         },
         autoAdjust = {
             type = 'toggle',
             name = L["CastbarTableAutoAdjust"],
             desc = L["CastbarTableAutoAdjustDesc"] .. getDefaultStr('autoAdjust', sub),
-            group = 'headerStyling',
-            order = 22,
+            group = 'headerAutoAdjust',
+            order = 1,
+            new = true,
+            editmode = true
+        },
+        autoAdjustX = {
+            type = 'range',
+            name = L["CastbarTableAutoAdjustX"],
+            desc = L["CastbarTableAutoAdjustXDesc"] .. getDefaultStr('autoAdjustX', sub),
+            min = -256,
+            max = 256,
+            bigStep = 0.25,
+            group = 'headerAutoAdjust',
+            order = 2,
+            new = true,
+            editmode = true
+        },
+        autoAdjustY = {
+            type = 'range',
+            name = L["CastbarTableAutoAdjustY"],
+            desc = L["CastbarTableAutoAdjustYDesc"] .. getDefaultStr('autoAdjustY', sub),
+            min = -256,
+            max = 256,
+            bigStep = 0.25,
+            group = 'headerAutoAdjust',
+            order = 3,
+            new = true,
             editmode = true
         }
     }
 
-    for k, v in pairs(CastbarTable) do
+    for k, v in pairs(autoAdjustTable) do
         --
         optionTable.args[k] = v
     end
@@ -314,7 +375,7 @@ do
 end
 
 AddCastbarTable(optionsPlayer, 'player')
-optionsPlayer.args.autoAdjust = nil;
+-- optionsPlayer.args.autoAdjust = nil;
 DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr, frameTable)
 
 local optionsPlayerEditmode = {
@@ -389,6 +450,7 @@ local optionsTarget = {
     args = {}
 }
 AddCastbarTable(optionsTarget, 'target')
+AddAutoAdjustTable(optionsTarget, 'target')
 DF.Settings:AddPositionTable(Module, optionsTarget, 'target', 'Target', getDefaultStr, frameTable)
 
 if DF.Era then
@@ -480,6 +542,7 @@ local optionsFocus = {
     args = {}
 }
 AddCastbarTable(optionsFocus, 'focus')
+AddAutoAdjustTable(optionsFocus, 'focus')
 DF.Settings:AddPositionTable(Module, optionsFocus, 'focus', 'Focus', getDefaultStr, frameTable)
 
 local optionsFocusEditmode = {
@@ -588,6 +651,7 @@ function Module:RegisterSettings()
     end
 
     register('player', {order = 1, name = optionsPlayer.name, descr = 'Player Cast Bar', isNew = false})
+    register('mirrorTimer', {order = 1.5, name = self.SubMirrorTimer.Options.name, descr = 'Focusss', isNew = true})
     register('target', {order = 2, name = optionsTarget.name, descr = 'Target Cast Bar', isNew = false})
 
     if DF.Wrath then
@@ -704,11 +768,18 @@ function Module:AddEditMode()
     end
 end
 
-function Module:ApplySettings(sub)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
 
     if not sub or sub == 'ALL' then
         Module.PlayerCastbar:UpdateState(db.player)
+        self.SubMirrorTimer:UpdateState(db.mirrorTimer)
         Module.TargetCastbar:UpdateState(db.target)
 
         if DF.Wrath then Module.FocusCastbar:UpdateState(db.focus) end
@@ -718,6 +789,8 @@ function Module:ApplySettings(sub)
         Module.TargetCastbar:UpdateState(db.target)
     elseif sub == 'focus' then
         Module.FocusCastbar:UpdateState(db.focus)
+    elseif sub == 'mirrorTimer' then
+        self.SubMirrorTimer:UpdateState(db.mirrorTimer)
     end
 end
 
@@ -819,12 +892,14 @@ function Module.AddNewCastbar()
 
     local target = CreateFrame('StatusBar', 'DragonflightUITargetCastbar', UIParent,
                                'DragonflightUITargetCastbarTemplate')
+    target.DefaultParent = TargetFrame;
     TargetFrameSpellBar.DFCastbar = target
     Module.TargetCastbar = target
 
     if DF.Wrath then
         local focus = CreateFrame('StatusBar', 'DragonflightUIFocusCastbar', UIParent,
                                   'DragonflightUIFocusCastbarTemplate')
+        focus.DefaultParent = FocusFrame;
         FocusFrameSpellBar.DFCastbar = focus
         Module.FocusCastbar = focus
     end
@@ -858,6 +933,8 @@ end
 function Module:Wrath()
     Module.ChangeDefaultCastbar()
     Module.AddNewCastbar()
+
+    self.SubMirrorTimer:Setup()
 end
 
 function Module:Cata()

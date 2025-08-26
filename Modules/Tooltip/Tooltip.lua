@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Tooltip'
@@ -18,6 +20,7 @@ local defaults = {
             y = 120,
             -- mouseanchor
             anchorToMouse = false,
+            defaultAnchorWhileCombat = false,
             mouseAnchor = 'ANCHOR_CURSOR_RIGHT',
             mouseX = 16,
             mouseY = 8,
@@ -152,6 +155,14 @@ local generalOptions = {
             name = L["TooltipAnchorToMouse"],
             desc = L["TooltipAnchorToMouseDesc"] .. getDefaultStr('anchorToMouse', 'general'),
             order = 1,
+            editmode = true,
+            group = 'headerMouseAnchor'
+        },
+        defaultAnchorWhileCombat = {
+            type = 'toggle',
+            name = L["TooltipDefaultAnchorWhileCombat"],
+            desc = L["TooltipDefaultAnchorWhileCombatDesc"] .. getDefaultStr('defaultAnchorWhileCombat', 'general'),
+            order = 1.5,
             editmode = true,
             group = 'headerMouseAnchor'
         },
@@ -519,7 +530,13 @@ function Module:RefreshOptionScreens()
     Module.GametooltipPreview.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings(sub)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
     local state = db.general
 
@@ -582,6 +599,8 @@ end
 
 function Module:GameTooltipSetDefaultAnchor(self, parent)
     -- DF:Debug(Module, 'GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
+    -- print('GameTooltipSetDefaultAnchor', self:GetName(), parent:GetName())
+
     local state = Module.db.profile.general;
 
     -- spells
@@ -603,11 +622,15 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
             self:SetOwner(parent, 'ANCHOR_RIGHT');
             return;
         end
+        if string.match(parentName, "^DragonflightUIStanceButton") then
+            self:SetOwner(parent, 'ANCHOR_RIGHT');
+            return;
+        end
         -- print('ss', parent:GetName())
     end
 
     --
-    if state.anchorToMouse then
+    if state.anchorToMouse and not (state.defaultAnchorWhileCombat and InCombatLockdown()) then
         --
         local focused;
         if GetMouseFoci then
@@ -645,7 +668,7 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
     -- default
     self:SetOwner(parent, 'ANCHOR_NONE');
     self:ClearAllPoints();
-    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
+    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0 + 11);
 end
 
 function Module:AddBackdrops()

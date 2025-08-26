@@ -1,7 +1,7 @@
-## Interface: 50500, 40402, 30404, 11507
+## Interface: 50500, 40402, 30405, 30404, 11507
 ## Interface-Mists: 50500
 ## Interface-Cata: 40402
-## Interface-Wrath: 30404
+## Interface-Wrath: 30405, 30404
 ## Interface-Classic: 11507
 ## Title: DragonflightUI |cff8080ff@project-version@|r
 ## Notes: Brings the modern retail UI to classic.|n|cffbbbbbbBy Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
@@ -35,6 +35,7 @@ Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\lib.xml
 Libs\LibQuestXP\LibQuestXP-Classic.xml
 Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
+Libs\LibSharedMedia-3.0\lib.xml
 Libs\TaintLess\TaintLess.xml
 Libs\LibTradeSkillRecipes\lib.xml
 
@@ -44,6 +45,7 @@ Mixin\DFColor.mixin.lua
 
 Core.lua
 Helper.lua
+SharedMedia.lua
 API.xml
 Config.lua
 Version.lua

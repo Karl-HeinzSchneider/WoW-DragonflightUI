@@ -2,6 +2,8 @@ local addonName, addonTable = ...;
 local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
+local LSM = LibStub('LibSharedMedia-3.0')
+local RangeCheck = LibStub("LibRangeCheck-3.0")
 
 local subModuleName = 'TargetOfTarget';
 local SubModuleMixin = {};
@@ -17,7 +19,10 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
-        -- classicon = false,
+        reactioncolor = false,
+        classicon = false,
+        fadeOut = false,
+        fadeOutDistance = 40,
         -- breakUpLargeNumbers = true,   
         -- hideNameBackground = false,
         scale = 1.0,
@@ -27,7 +32,9 @@ function SubModuleMixin:SetDefaults()
         anchor = 'BOTTOMRIGHT',
         anchorParent = 'BOTTOMRIGHT',
         x = -35 + 27,
-        y = -15
+        y = -15,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default'
     };
     self.Defaults = defaults;
 end
@@ -104,7 +111,91 @@ function SubModuleMixin:SetupOptions()
         get = getOption,
         set = setOption,
         type = 'group',
-        args = {}
+        args = {
+            headerStyling = {
+                type = 'header',
+                name = L["TargetFrameStyle"],
+                desc = '',
+                order = 20,
+                isExpanded = true,
+                editmode = true
+            },
+            classcolor = {
+                type = 'toggle',
+                name = L["TargetFrameClassColor"],
+                desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'tot'),
+                group = 'headerStyling',
+                order = 2,
+                editmode = true,
+                new = false
+            },
+            reactioncolor = {
+                type = 'toggle',
+                name = L["TargetFrameReactionColor"],
+                desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'tot'),
+                group = 'headerStyling',
+                order = 3,
+                new = false,
+                editmode = true
+            },
+            classicon = {
+                type = 'toggle',
+                name = L["TargetFrameClassIcon"],
+                desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'tot'),
+                group = 'headerStyling',
+                order = 1,
+                disabled = true,
+                new = false,
+                editmode = true
+            },
+            fadeOut = {
+                type = 'toggle',
+                name = L["TargetFrameFadeOut"],
+                desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'tot'),
+                group = 'headerStyling',
+                order = 9.5,
+                new = false,
+                editmode = true
+            },
+            fadeOutDistance = {
+                type = 'range',
+                name = L["TargetFrameFadeOutDistance"],
+                desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'tot'),
+                min = 0,
+                max = 50,
+                bigStep = 1,
+                order = 9.6,
+                group = 'headerStyling',
+                new = false,
+                editmode = true
+            },
+            customHealthBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomHealthbarTexture"],
+                desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'tot'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'tot', 'customHealthBarTexture'}) == name;
+                end, function(name)
+                    setOption({'tot', 'customHealthBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 4,
+                new = true
+            },
+            customPowerBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomPowerbarTexture"],
+                desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'tot'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'tot', 'customPowerBarTexture'}) == name;
+                end, function(name)
+                    setOption({'tot', 'customPowerBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 5,
+                new = true
+            }
+        }
     }
     DF.Settings:AddPositionTable(Module, optionsTargetOfTarget, 'tot', 'TargetOfTarget', getDefaultStr, frameTable)
     local optionsTargetOfTargetEditmode = {
@@ -222,50 +313,107 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     f:SetScale(state.scale)
 
+    f:SetIgnoreParentAlpha(state.fadeOut and true or false)
+
+    self:ReApplyToT()
+    UnitFramePortrait_Update(TargetFrameToT)
+
     self.PreviewTargetOfTarget:UpdateState(state);
 end
 
+function SubModuleMixin:ChangeToTFrame(self, frame)
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
+    local port = frame.Portrait or _G[frame:GetName() .. 'Portrait']
+    local healthBar = self.HealthBar or _G[frame:GetName() .. 'HealthBar']
+    local manaBar = self.ManaBar or _G[frame:GetName() .. 'ManaBar']
+    local name = frame.Name;
+
+    frame:SetSize(120, 49)
+
+    local portDelta = 0.5; -- not 100% centered without it
+    port:SetSize(37, 37)
+    port:ClearAllPoints()
+    port:SetPoint('TOPLEFT', frame, 'TOPLEFT', 5 + portDelta, -5 + portDelta)
+    port:SetDrawLayer('BACKGROUND', 0)
+
+    if not self[frame:GetName() .. 'Background'] then
+        local background = frame:CreateTexture('DragonflightUI' .. frame:GetName() .. 'Background')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-targetoftarget-portraiton-2x')
+        background:SetTexCoord(0, 240 / 256, 0, 98 / 128)
+        background:SetSize(120, 49)
+        background:SetPoint('CENTER', frame, 'CENTER', 0, 0)
+
+        self[frame:GetName() .. 'Background'] = background
+        self.TargetFrameBackground = background;
+    end
+
+    healthBar:ClearAllPoints()
+    healthBar:SetPoint('BOTTOMLEFT', port, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    healthBar:SetSize(70, 10 + 0.5)
+    healthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
+
+    if not healthBar.DFMask then
+        local hpMask = healthBar:CreateMaskTexture()
+        healthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        healthBar.DFMask = hpMask
+        hpMask:ClearAllPoints()
+        hpMask:SetPoint('TOPLEFT', healthBar, 'TOPLEFT', -29, 3)
+        hpMask:SetTexture(tex2xBase .. 'uipartyframeportraitonhealthmask', 'CLAMPTOBLACKADDITIVE',
+                          'CLAMPTOBLACKADDITIVE')
+        hpMask:SetTexCoord(0, 1, 0, 1)
+        hpMask:SetSize(128, 16 + 0.5)
+    end
+
+    manaBar:ClearAllPoints()
+    manaBar:SetPoint('TOPLEFT', healthBar, 'BOTTOMLEFT', -4, -1 + 0.5)
+    manaBar:SetSize(74, 7 + 0.5)
+    manaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+    manaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+
+    if not manaBar.DFMask then
+        local manaMask = manaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -27, 4)
+        manaMask:SetTexture(tex2xBase .. 'uipartyframeportraitonmanamask', 'CLAMPTOBLACKADDITIVE',
+                            'CLAMPTOBLACKADDITIVE')
+        -- hpMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(128, 16 + 0.5)
+        manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        manaBar.DFMask = manaMask
+    end
+
+    name:ClearAllPoints()
+    -- name:SetPoint('LEFT', port, 'RIGHT', 1 + 1, 2 + 12 - 1)
+    name:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', 0, 1)
+    name:SetJustifyH('LEFT')
+    name:SetJustifyV('BOTTOM')
+    name:SetFontObject(GameFontNormalSmall)
+    name:SetSize(68, 10)
+
+    local debuff1 = _G[frame:GetName() .. 'Debuff1']
+    if debuff1 then debuff1:SetPoint('TOPLEFT', frame, 'TOPRIGHT', 5, -20) end
+end
+
 function SubModuleMixin:ChangeToT()
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
     -- TargetFrameToTTextureFrame:Hide()
     TargetFrameToT:ClearAllPoints()
     TargetFrameToT:SetPoint('BOTTOMRIGHT', TargetFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
-    TargetFrameToT:SetSize(93 + 27, 45)
+
+    TargetFrameToT.Name = TargetFrameToTTextureFrameName
+    self:ChangeToTFrame(self, TargetFrameToT)
 
     TargetFrameToTTextureFrameTexture:SetTexture('')
+
     -- TargetFrameToTTextureFrameTexture:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-TargetofTarget-PortraitOn'))
     local totDelta = 1
 
-    if not self.TargetFrameToTBackground then
-        local background = TargetFrameToTTextureFrame:CreateTexture('DragonflightUITargetFrameToTBackground')
-        background:SetDrawLayer('BACKGROUND', 1)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10 + totDelta)
-        self.TargetFrameToTBackground = background
-    end
     TargetFrameToTBackground:Hide()
-
-    if not self.TargetFrameToTBorder then
-        local border = TargetFrameToTHealthBar:CreateTexture('DragonflightUITargetFrameToTBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-BORDER')
-        border:SetPoint('LEFT', TargetFrameToTPortrait, 'CENTER', -25 + 1, -10 + totDelta)
-        self.TargetFrameToTBorder = border
-    end
-
-    TargetFrameToTHealthBar:ClearAllPoints()
-    TargetFrameToTHealthBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 0 + totDelta)
-    TargetFrameToTHealthBar:SetFrameLevel(10)
-    TargetFrameToTHealthBar:SetSize(70.5, 10)
-
-    TargetFrameToTManaBar:ClearAllPoints()
-    TargetFrameToTManaBar:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 - 2 - 1.5 + 1, 2 - 10 - 1 + totDelta)
-    TargetFrameToTManaBar:SetFrameLevel(10)
-    TargetFrameToTManaBar:SetSize(74, 7.5)
-
-    TargetFrameToTTextureFrameName:ClearAllPoints()
-    TargetFrameToTTextureFrameName:SetPoint('LEFT', TargetFrameToTPortrait, 'RIGHT', 1 + 1, 2 + 12 - 1 + totDelta)
 
     TargetFrameToTTextureFrameDeadText:ClearAllPoints()
     TargetFrameToTTextureFrameDeadText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
@@ -273,39 +421,96 @@ function SubModuleMixin:ChangeToT()
     TargetFrameToTTextureFrameUnconsciousText:ClearAllPoints()
     TargetFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameToTHealthBar, 'CENTER', 0, 0)
 
-    TargetFrameToTDebuff1:SetPoint('TOPLEFT', TargetFrameToT, 'TOPRIGHT', 5, -20)
+    if not TargetFrameToT.DFRangeHooked then
+        TargetFrameToT.DFRangeHooked = true;
+
+        local state = self.ModuleRef.db.profile.tot
+
+        if not RangeCheck then return end
+        local function updateRange()
+            local minRange, maxRange = RangeCheck:GetRange('targettarget')
+            -- print(minRange, maxRange)
+
+            if not state.fadeOut then
+                TargetFrameToT:SetAlpha(1);
+                return;
+            end
+
+            if minRange and minRange >= state.fadeOutDistance then
+                TargetFrameToT:SetAlpha(0.55);
+                -- elseif maxRange and maxRange >= 40 then
+                --     TargetFrame:SetAlpha(0.55);
+            else
+                TargetFrameToT:SetAlpha(1);
+            end
+        end
+
+        TargetFrameToT:HookScript('OnUpdate', updateRange)
+        TargetFrameToT:HookScript('OnEvent', updateRange)
+    end
 end
 
 function SubModuleMixin:ReApplyToT()
-    if self.ModuleRef.db.profile.target.classcolor and UnitIsPlayer('targettarget') then
-        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health-Status')
-        local localizedClass, englishClass, classIndex = UnitClass('targettarget')
-        TargetFrameToTHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    self:UpdateToTHealthBarTexture(TargetFrameToTHealthBar, self.ModuleRef.db.profile.tot, 'targettarget')
+    self:UpdateToTPowerBarTexture(TargetFrameToTManaBar, self.ModuleRef.db.profile.tot, 'targettarget')
+end
+
+local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'
+local texBaseToT = texBase .. 'UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-'
+
+local powerTable = {
+    MANA = 'Mana',
+    FOCUS = 'Focus',
+    RAGE = 'Rage',
+    ENERGY = 'Energy',
+    RUNIC_POWER = 'RunicPower',
+    POWER_TYPE_FEL_ENERGY = 'Energy' -- TODO
+}
+
+function SubModuleMixin:UpdateToTHealthBarTexture(bar, state, unit)
+    if state.customHealthBarTexture == 'Default' or not LSM then
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health')
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            local _, englishClass, _ = UnitClass(unit)
+            bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.reactioncolor then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))
+        else
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health')
+            bar:SetStatusBarColor(1, 1, 1, 1)
+        end
     else
-        TargetFrameToTHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
-        TargetFrameToTHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
+        bar:GetStatusBarTexture():SetTexture(customTex)
+
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
+            local _, englishClass, _ = UnitClass(unit)
+            bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.reactioncolor then
+            bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))
+        else
+            bar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
+        end
     end
+end
 
-    local powerType, powerTypeString = UnitPowerType('targettarget')
+function SubModuleMixin:UpdateToTPowerBarTexture(bar, state, unit)
+    if state.customPowerBarTexture == 'Default' or not LSM then
+        local _, powerTypeString = UnitPowerType(unit)
 
-    if powerTypeString == 'MANA' then
-        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
-        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        TargetFrameToTManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+        local powerTexStr = powerTable[powerTypeString] or powerTable['MANA']
+        bar:GetStatusBarTexture():SetTexture(texBaseToT .. powerTexStr)
+
+        bar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+    else
+        UnitFrameManaBar_UpdateType(bar, true)
+        local customTex = LSM:Fetch("statusbar", state.customPowerBarTexture)
+        bar:GetStatusBarTexture():SetTexture(customTex)
     end
-
-    TargetFrameToTManaBar:SetStatusBarColor(1, 1, 1, 1)
 end

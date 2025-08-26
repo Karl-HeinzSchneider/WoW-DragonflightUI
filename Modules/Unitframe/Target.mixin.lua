@@ -2,7 +2,7 @@ local addonName, addonTable = ...;
 local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
-
+local LSM = LibStub('LibSharedMedia-3.0')
 local RangeCheck = LibStub("LibRangeCheck-3.0")
 local AuraDurations = LibStub:GetLibrary('AuraDurations-1.0')
 
@@ -23,6 +23,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        reactioncolor = false,
         classicon = false,
         breakUpLargeNumbers = true,
         enableNumericThreat = true,
@@ -31,6 +32,7 @@ function SubModuleMixin:SetDefaults()
         comboPointsOnPlayerFrame = false,
         hideComboPoints = false,
         hideNameBackground = false,
+        hidePVP = false,
         fadeOut = false,
         fadeOutDistance = 40,
         scale = 1.0,
@@ -41,6 +43,8 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = 250,
         y = -4,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         -- buff - from AuraDurations
         auraSizeSmall = 17, -- SMALL_AURA_SIZE,
         auraSizeLarge = 21, -- LARGE_AURA_SIZE,
@@ -51,10 +55,13 @@ function SubModuleMixin:SetDefaults()
         totAuraRowWidth = 101, -- TOT_AURA_ROW_WIDTH
         numTotAuraRows = 2, -- NUM_TOT_AURA_ROWS
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,
         hideOutOfCombat = false,
+        hideVehicle = false,
         hidePet = false,
         hideNoPet = false,
         hideStance = false,
@@ -154,15 +161,50 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameClassColor"],
                 desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'target'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
+            },
+            reactioncolor = {
+                type = 'toggle',
+                name = L["TargetFrameReactionColor"],
+                desc = L["TargetFrameReactionColorDesc"] .. getDefaultStr('reactioncolor', 'target'),
+                group = 'headerStyling',
+                order = 3,
+                new = false,
+                editmode = true
+            },
+            customHealthBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomHealthbarTexture"],
+                desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'target'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'target', 'customHealthBarTexture'}) == name;
+                end, function(name)
+                    setOption({'target', 'customHealthBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 4,
+                new = true
+            },
+            customPowerBarTexture = {
+                type = 'select',
+                name = L["PlayerFrameCustomPowerbarTexture"],
+                desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'target'),
+                dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                    return getOption({'target', 'customPowerBarTexture'}) == name;
+                end, function(name)
+                    setOption({'target', 'customPowerBarTexture'}, name)
+                end),
+                group = 'headerStyling',
+                order = 5,
+                new = true
             },
             classicon = {
                 type = 'toggle',
                 name = L["TargetFrameClassIcon"],
                 desc = L["TargetFrameClassIconDesc"] .. getDefaultStr('classicon', 'target'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -172,7 +214,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["TargetFrameBreakUpLargeNumbers"],
                 desc = L["TargetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'target'),
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             enableThreatGlow = {
@@ -191,6 +233,15 @@ function SubModuleMixin:SetupOptions()
                 group = 'headerStyling',
                 order = 11,
                 new = false,
+                editmode = true
+            },
+            hidePVP = {
+                type = 'toggle',
+                name = L["PlayerFrameHidePVP"],
+                desc = L["PlayerFrameHidePVPDesc"] .. getDefaultStr('hidePVP', 'target'),
+                group = 'headerStyling',
+                order = 11.5,
+                new = true,
                 editmode = true
             },
             comboPointsOnPlayerFrame = {
@@ -290,6 +341,7 @@ function SubModuleMixin:SetupOptions()
                 editmode = true
             }
             moreOptions['buffsOnTop'].group = 'headerBuffs'
+            moreOptions['buffsOnTop'].order = 0.5
 
             moreOptions['auraSizeSmall'] = {
                 type = 'range',
@@ -330,6 +382,63 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameDynamicBuffSizeDesc"] .. getDefaultStr('dynamicBuffSize', 'target'),
                 group = 'headerBuffs',
                 order = 3,
+                new = true,
+                editmode = true
+            }
+            -- advanced
+            moreOptions['headerBuffsAdvanced'] = {
+                type = 'header',
+                name = L["TargetFrameHeaderBuffsAdvanced"],
+                desc = '',
+                order = 19.5,
+                isExpanded = false,
+                editmode = true
+            }
+            moreOptions['auraOffsetY'] = {
+                type = 'range',
+                name = L["TargetFrameAuraOffsetY"],
+                desc = L["TargetFrameAuraOffsetYDesc"] .. getDefaultStr('auraOffsetY', 'target'),
+                min = 0,
+                max = 16,
+                bigStep = 0.25,
+                group = 'headerBuffsAdvanced',
+                order = 10,
+                new = true,
+                editmode = true
+            }
+            moreOptions['auraRowWidth'] = {
+                type = 'range',
+                name = L["TargetFrameAuraRowWidth"],
+                desc = L["TargetFrameAuraRowWidthDesc"] .. getDefaultStr('auraRowWidth', 'target'),
+                min = 1,
+                max = 256,
+                bigStep = 1,
+                group = 'headerBuffsAdvanced',
+                order = 11,
+                new = true,
+                editmode = true
+            }
+            moreOptions['totAuraRowWidth'] = {
+                type = 'range',
+                name = L["TargetFrameAuraRowWidthToT"],
+                desc = L["TargetFrameAuraRowWidthToTDesc"] .. getDefaultStr('totAuraRowWidth', 'target'),
+                min = 1,
+                max = 256,
+                bigStep = 1,
+                group = 'headerBuffsAdvanced',
+                order = 12,
+                new = true,
+                editmode = true
+            }
+            moreOptions['numTotAuraRows'] = {
+                type = 'range',
+                name = L["TargetFrameToTAuraRows"],
+                desc = L["TargetFrameToTAuraRowsDesc"] .. getDefaultStr('numTotAuraRows', 'target'),
+                min = 0,
+                max = 8,
+                bigStep = 1,
+                group = 'headerBuffsAdvanced',
+                order = 13,
                 new = true,
                 editmode = true
             }
@@ -457,6 +566,12 @@ function SubModuleMixin:Setup()
         self:ReApplyTargetFrame()
     end
 
+    hooksecurefunc('TargetFrame_CheckFaction', function(f)
+        --
+        if f ~= TargetFrame then return end
+        if self.ModuleRef.db.profile.target.hidePVP then f.pvpIcon:Hide() end
+    end)
+
     -- state
     Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
     TargetFrame:InitStateHandler()
@@ -534,9 +649,206 @@ function SubModuleMixin:Update()
     TargetFrameNameBackground:SetShown(not state.hideNameBackground)
     AuraDurations.frame:SetState(state)
     UnitFramePortrait_Update(TargetFrame)
+    TargetFrame_CheckFaction(TargetFrame)
     TargetFrame:UpdateStateHandler(state)
 
     self.PreviewTarget:UpdateState(state);
+end
+
+function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
+    local port = frame.Portrait or _G[frame:GetName() .. 'Portrait']
+    local healthBar = frame.HealthBar or _G[frame:GetName() .. 'HealthBar']
+    local manaBar = frame.ManaBar or _G[frame:GetName() .. 'ManaBar']
+    local name = frame.Name;
+    local nameBackground = frame.NameBackground;
+    local flash = frame.Flash;
+    local levelText = frame.LevelText or _G[self:GetName() '..TextureFrameLevelText']
+    local deadText = frame.DeadText;
+    local unconsciousText = frame.UnconsciousText;
+
+    local portDelta = 0; -- not 100% centered without it
+    port:SetSize(56, 56)
+    port:ClearAllPoints()
+    port:SetPoint('CENTER', frame, 'CENTER', 41, 8)
+    port:SetDrawLayer('BACKGROUND', 0)
+
+    if not self[frame:GetName() .. 'Background'] then
+        local background = frame:CreateTexture('DragonflightUI' .. frame:GetName() .. 'Background')
+        background:SetDrawLayer('BACKGROUND', 1)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-target-portraiton-2x')
+        background:SetTexCoord(0, 384 / 512, 0, 134 / 256)
+        background:SetSize(192, 67)
+        background:SetPoint('CENTER', frame, 'CENTER', -20, 6)
+
+        self[frame:GetName() .. 'Background'] = background
+        self.TargetFrameBackground = background;
+    end
+
+    healthBar:ClearAllPoints()
+    healthBar:SetPoint('CENTER', frame, 'CENTER', -50.5, 6)
+    healthBar:SetSize(126, 20)
+    healthBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+
+    if not healthBar.DFMask then
+        local hpMask = healthBar:CreateMaskTexture()
+        healthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        healthBar.DFMask = hpMask
+        hpMask:ClearAllPoints()
+        hpMask:SetPoint('TOPLEFT', healthBar, 'TOPLEFT', -1, 6)
+        hpMask:SetTexture(tex2xBase .. 'uiunitframetargethealthmask2x', 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        hpMask:SetTexCoord(0, 1, 0, 1)
+        hpMask:SetSize(128 + 1, 32)
+    end
+
+    manaBar:ClearAllPoints()
+    manaBar:SetPoint('TOPLEFT', healthBar, 'BOTTOMLEFT', 0, -1)
+    manaBar:SetSize(134, 10)
+    manaBar:GetStatusBarTexture():SetTexture(
+        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
+    manaBar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+
+    if not manaBar.DFMask then
+        local manaMask = manaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', manaBar, 'TOPLEFT', -62, 3)
+        manaMask:SetTexture(tex2xBase .. 'uiunitframetargetmanamask2x', 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        manaMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(256 + 3, 16)
+        manaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        manaBar.DFMask = manaMask
+    end
+
+    if nameBackground then
+        nameBackground:SetTexture(tex2xBase .. 'ui-hud-unitframe-target-portraiton-type-2x')
+        nameBackground:SetTexCoord(0, 270 / 512, 0, 35 / 64)
+        nameBackground:SetSize(135, 17.5)
+        nameBackground:ClearAllPoints()
+        nameBackground:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', -1 + 0.5, -3)
+    end
+
+    name:ClearAllPoints()
+    -- name:SetPoint('LEFT', port, 'RIGHT', 1 + 1, 2 + 12 - 1)
+    name:SetPoint('BOTTOMRIGHT', healthBar, 'TOPRIGHT', -2, 1)
+    name:SetJustifyH('CENTER')
+    name:SetJustifyV('MIDDLE')
+    name:SetFontObject(GameFontNormalSmall)
+    name:SetSize(100, 12)
+
+    if levelText then
+        levelText:SetJustifyH('LEFT')
+        levelText:SetJustifyV('MIDDLE')
+        levelText:SetFontObject(GameFontNormalSmall)
+
+        function frame:DFFixLevelText()
+            levelText:ClearAllPoints()
+            levelText:SetPoint('BOTTOMLEFT', healthBar, 'TOPLEFT', 5, 1)
+            levelText:SetHeight(12)
+            -- levelText:SetWidth(20)
+        end
+        frame:DFFixLevelText()
+
+        local module = DF:GetModule('Unitframe');
+        if module and not module.TargetFrameNameHooked then
+            module.TargetFrameNameHooked = true;
+            hooksecurefunc('TargetFrame_UpdateLevelTextAnchor', function(f, targetLevel)
+                if f.DFFixLevelText and type(f.DFFixLevelText) == 'function' then
+                    -- print('DFFixLevelText hook', f:GetName())
+                    f:DFFixLevelText();
+                end
+            end)
+        end
+    end
+
+    if deadText then
+        deadText:ClearAllPoints()
+        deadText:SetPoint('CENTER', healthBar, 'CENTER', 0, 0)
+    end
+
+    if unconsciousText then
+        unconsciousText:ClearAllPoints()
+        unconsciousText:SetPoint('CENTER', healthBar, 'CENTER', 0, 0)
+    end
+
+    if flash and DF.Wrath then
+        flash:SetTexture('')
+
+        if not self.TargetFrameFlash then
+            local newFlash = frame:CreateTexture('DragonflightUITargetFrameFlash')
+            newFlash:SetDrawLayer('ARTWORK', 2)
+            newFlash:SetTexture(tex2xBase .. 'ui-hud-unitframe-target-portraiton-incombat-2x')
+            newFlash:SetTexCoord(0, 376 / 512, 0, 134 / 256)
+            newFlash:SetSize(188, 67)
+            newFlash:SetPoint('CENTER', frame, 'CENTER', -21 + 0.5, 7 + 0.5)
+
+            newFlash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
+            newFlash:SetBlendMode('ADD')
+            self.TargetFrameFlash = newFlash
+        end
+
+        hooksecurefunc(flash, 'Show', function()
+            -- print('show')
+            flash:SetTexture('')
+            self.TargetFrameFlash:Show()
+            if (UIFrameIsFlashing(self.TargetFrameFlash)) then
+            else
+                -- print('go flash')
+                local dt = 0.5
+                UIFrameFlash(self.TargetFrameFlash, dt, dt, -1)
+            end
+        end)
+
+        hooksecurefunc(flash, 'Hide', function()
+            -- print('hide')
+            flash:SetTexture('')
+            if (UIFrameIsFlashing(self.TargetFrameFlash)) then UIFrameFlashStop(self.TargetFrameFlash) end
+            self.TargetFrameFlash:Hide()
+        end)
+    end
+
+    if not self.PortraitExtra then
+        local extra = frame:CreateTexture('DragonflightUI' .. frame:GetName() .. 'PortraitExtra')
+        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
+        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+        extra:SetSize(80, 79)
+        extra:SetDrawLayer('ARTWORK', 3)
+        extra:SetPoint('CENTER', port, 'CENTER', 4, 1)
+
+        extra.UpdateStyle = function()
+            local class = UnitClassification(frame.unit)
+            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
+            if class == 'worldboss' then
+                self.PortraitExtra:Show()
+                self.PortraitExtra:SetSize(99, 81)
+                self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 13, 1)
+            elseif class == 'rareelite' or class == 'rare' then
+                self.PortraitExtra:Show()
+                self.PortraitExtra:SetSize(80, 79)
+                self.PortraitExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
+                self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 4, 1)
+            elseif class == 'elite' then
+                self.PortraitExtra:Show()
+                self.PortraitExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
+                self.PortraitExtra:SetSize(80, 79)
+                self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 4, 1)
+            else
+                local targetName, realm = UnitName('target')
+                if self.ModuleRef.famous[targetName] then
+                    self.PortraitExtra:Show()
+                    self.PortraitExtra:SetSize(99, 81)
+                    self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
+                    self.PortraitExtra:SetPoint('CENTER', port, 'CENTER', 13, 1)
+                else
+                    self.PortraitExtra:Hide()
+                end
+            end
+        end
+
+        self.PortraitExtra = extra
+    end
 end
 
 function SubModuleMixin:ChangeTargetFrame()
@@ -545,82 +857,21 @@ function SubModuleMixin:ChangeTargetFrame()
     TargetFrameTextureFrameTexture:Hide()
     TargetFrameBackground:Hide()
 
-    if not self.TargetFrameBackground then
-        local background = TargetFrame:CreateTexture('DragonflightUITargetFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
-        self.TargetFrameBackground = background
-    end
+    TargetFrame.Portrait = TargetFramePortrait;
+    TargetFrame.Name = TargetFrameTextureFrameName;
+    TargetFrame.NameBackground = TargetFrameNameBackground;
+    TargetFrame.Flash = TargetFrameFlash;
+    TargetFrame.LevelText = TargetFrameTextureFrameLevelText;
+    TargetFrame.DeadText = TargetFrameTextureFrameDeadText;
+    TargetFrame.UnconsciousText = TargetFrameTextureFrameUnconsciousText;
 
-    if not self.TargetFrameBorder then
-        local border = TargetFrame:CreateTexture('DragonflightUITargetFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-        border:SetPoint('LEFT', TargetFrame, 'LEFT', 0, -32.5 + 10)
-        self.TargetFrameBorder = border
-    end
-
-    TargetFramePortrait:SetDrawLayer('BACKGROUND', -1)
-    TargetFramePortrait:SetSize(56, 56)
-    local CorrectionY = -3
-    local CorrectionX = -5
-    TargetFramePortrait:SetPoint('TOPRIGHT', TargetFrame, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
+    self:ChangeTargetFrameGeneral(self, TargetFrame)
 
     -- TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER',TargetFrameTextureFrame,'TOPRIGHT',-73,-14)
     -- TargetFrameTextureFrameRaidTargetIcon:GetHeight()
     TargetFrameTextureFrameRaidTargetIcon:SetPoint('CENTER', TargetFramePortrait, 'TOP', 0, 2)
 
-    -- TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)
-
-    -- @TODO: change text spacing
-    TargetFrameTextureFrameName:ClearAllPoints()
-    TargetFrameTextureFrameName:SetPoint('BOTTOM', TargetFrameHealthBar, 'TOP', 10, 3 - 2)
-    TargetFrameTextureFrameName:SetSize(100, 12)
-
-    TargetFrameTextureFrameLevelText:ClearAllPoints()
-    TargetFrameTextureFrameLevelText:SetPoint('BOTTOMRIGHT', TargetFrameHealthBar, 'TOPLEFT', 16, 3 - 2)
-    TargetFrameTextureFrameLevelText:SetHeight(12)
-
-    TargetFrameTextureFrameDeadText:ClearAllPoints()
-    TargetFrameTextureFrameDeadText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
-
-    TargetFrameTextureFrameUnconsciousText:ClearAllPoints()
-    TargetFrameTextureFrameUnconsciousText:SetPoint('CENTER', TargetFrameHealthBar, 'CENTER', 0, 0)
-
-    -- Health 119,12
-    TargetFrameHealthBar:ClearAllPoints()
-    TargetFrameHealthBar:SetSize(125, 20)
-    TargetFrameHealthBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1, 0)
-    --[[     TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-        'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health'
-    )
-    TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1) ]]
-    -- Mana 119,12
-    TargetFrameManaBar:ClearAllPoints()
-    -- TargetFrameManaBar:SetPoint('RIGHT', TargetFramePortrait, 'LEFT', -1 + 8 - 0.5 + 1, -18 + 1 + 0.5)
-    TargetFrameManaBar:SetPoint('TOPLEFT', TargetFrameHealthBar, 'BOTTOMLEFT', 0, -1)
-    TargetFrameManaBar:SetSize(134, 10)
-    TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
-
-    if not TargetFrameManaBar.DFMask then
-        local manaMask = TargetFrameManaBar:CreateMaskTexture()
-        manaMask:SetPoint('TOPLEFT', TargetFrameManaBar, 'TOPLEFT', -61, 3)
-        manaMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\ui-hud-unitframe-target-portraiton-bar-mana-mask-2x',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        manaMask:SetTexCoord(0, 1, 0, 1)
-        manaMask:SetSize(256, 16)
-        TargetFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
-        TargetFrameManaBar.DFMask = manaMask
-    end
-
-    TargetFrameNameBackground:SetTexture(base)
-    TargetFrameNameBackground:SetTexCoord(0.7939453125, 0.92578125, 0.3125, 0.34765625)
-    TargetFrameNameBackground:SetSize(135, 18)
-    TargetFrameNameBackground:ClearAllPoints()
-    TargetFrameNameBackground:SetPoint('BOTTOMLEFT', TargetFrameHealthBar, 'TOPLEFT', -2, -4 - 1)
+    -- TargetFrameBuff1:SetPoint('TOPLEFT', TargetFrame, 'BOTTOMLEFT', 5, 0)  
 
     if not TargetFrameNameBackground.DFHooked then
         TargetFrameNameBackground.DFHooked = true
@@ -681,84 +932,6 @@ function SubModuleMixin:ChangeTargetFrame()
         TargetFrameTextureFrame.ManaBarTextRight:SetPoint('RIGHT', TargetFrameManaBar, 'RIGHT', -deltaSize - dx, 0)
     end
 
-    if DF.Wrath then
-        TargetFrameFlash:SetTexture('')
-
-        if not self.TargetFrameFlash then
-            local flash = TargetFrame:CreateTexture('DragonflightUITargetFrameFlash')
-            flash:SetDrawLayer('BACKGROUND', 2)
-            flash:SetTexture(
-                'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-InCombat')
-            flash:SetPoint('CENTER', TargetFrame, 'CENTER', 20 + CorrectionX, -20 + CorrectionY)
-            flash:SetSize(256, 128)
-            flash:SetScale(1)
-            flash:SetVertexColor(1.0, 0.0, 0.0, 1.0)
-            flash:SetBlendMode('ADD')
-            self.TargetFrameFlash = flash
-        end
-
-        hooksecurefunc(TargetFrameFlash, 'Show', function()
-            -- print('show')
-            TargetFrameFlash:SetTexture('')
-            self.TargetFrameFlash:Show()
-            if (UIFrameIsFlashing(self.TargetFrameFlash)) then
-            else
-                -- print('go flash')
-                local dt = 0.5
-                UIFrameFlash(self.TargetFrameFlash, dt, dt, -1)
-            end
-        end)
-
-        hooksecurefunc(TargetFrameFlash, 'Hide', function()
-            -- print('hide')
-            TargetFrameFlash:SetTexture('')
-            if (UIFrameIsFlashing(self.TargetFrameFlash)) then UIFrameFlashStop(self.TargetFrameFlash) end
-            self.TargetFrameFlash:Hide()
-        end)
-    end
-
-    if not self.PortraitExtra then
-        local extra = TargetFrame:CreateTexture('DragonflightUITargetFramePortraitExtra')
-        extra:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeboss2x')
-        extra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-        extra:SetSize(80, 79)
-        extra:SetDrawLayer('ARTWORK', 3)
-        extra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
-
-        extra.UpdateStyle = function()
-            local class = UnitClassification('target')
-            --[[ "worldboss", "rareelite", "elite", "rare", "normal", "trivial" or "minus" ]]
-            if class == 'worldboss' then
-                self.PortraitExtra:Show()
-                self.PortraitExtra:SetSize(99, 81)
-                self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 13, 1)
-            elseif class == 'rareelite' or class == 'rare' then
-                self.PortraitExtra:Show()
-                self.PortraitExtra:SetSize(80, 79)
-                self.PortraitExtra:SetTexCoord(0.00390625, 0.31640625, 0.64453125, 0.953125)
-                self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
-            elseif class == 'elite' then
-                self.PortraitExtra:Show()
-                self.PortraitExtra:SetTexCoord(0.001953125, 0.314453125, 0.322265625, 0.630859375)
-                self.PortraitExtra:SetSize(80, 79)
-                self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 4, 1)
-            else
-                local name, realm = UnitName('target')
-                if self.ModuleRef.famous[name] then
-                    self.PortraitExtra:Show()
-                    self.PortraitExtra:SetSize(99, 81)
-                    self.PortraitExtra:SetTexCoord(0.001953125, 0.388671875, 0.001953125, 0.31835937)
-                    self.PortraitExtra:SetPoint('CENTER', TargetFramePortrait, 'CENTER', 13, 1)
-                else
-                    self.PortraitExtra:Hide()
-                end
-            end
-        end
-
-        self.PortraitExtra = extra
-    end
-
     if not TargetFrame.DFRangeHooked then
         TargetFrame.DFRangeHooked = true;
 
@@ -788,41 +961,71 @@ function SubModuleMixin:ChangeTargetFrame()
     end
 end
 
-function SubModuleMixin:ReApplyTargetFrame()
-    if self.ModuleRef.db.profile.target.classcolor and UnitIsPlayer('target') then
-        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Status')
-        local localizedClass, englishClass, classIndex = UnitClass('target')
-        TargetFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'
+local texBaseToT = texBase .. 'UI-HUD-UnitFrame-Target-PortraitOn-Bar-'
+
+local powerTable = {
+    MANA = 'Mana',
+    FOCUS = 'Focus',
+    RAGE = 'Rage',
+    ENERGY = 'Energy',
+    RUNIC_POWER = 'RunicPower',
+    POWER_TYPE_FEL_ENERGY = 'Energy' -- TODO
+}
+
+function SubModuleMixin:UpdateTargetHealthBarTexture(bar, state, unit)
+    if state.customHealthBarTexture == 'Default' or not LSM then
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health')
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            local _, englishClass, _ = UnitClass(unit)
+            bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.reactioncolor then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))
+        else
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health')
+            bar:SetStatusBarColor(1, 1, 1, 1)
+        end
     else
-        TargetFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
-        TargetFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
+        bar:GetStatusBarTexture():SetTexture(customTex)
+
+        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+            bar:SetStatusBarColor(0.5, 0.5, 0.5, 1)
+        elseif state.classcolor and UnitIsPlayer(unit) then
+            local _, englishClass, _ = UnitClass(unit)
+            bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.reactioncolor then
+            bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))
+        else
+            bar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
+        end
     end
+end
 
-    local powerType, powerTypeString = UnitPowerType('target')
-    -- print('~target', powerType, powerTypeString)
+function SubModuleMixin:UpdateTargetPowerBarTexture(bar, state, unit)
+    if state.customPowerBarTexture == 'Default' or not LSM then
+        local _, powerTypeString = UnitPowerType(unit)
 
-    if powerTypeString == 'MANA' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'FOCUS' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'RAGE' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        TargetFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-RunicPower')
+        local powerTexStr = powerTable[powerTypeString] or powerTable['MANA']
+        bar:GetStatusBarTexture():SetTexture(texBaseToT .. powerTexStr)
+
+        bar:GetStatusBarTexture():SetVertexColor(1, 1, 1, 1)
+    else
+        UnitFrameManaBar_UpdateType(bar, true)
+        local customTex = LSM:Fetch("statusbar", state.customPowerBarTexture)
+        bar:GetStatusBarTexture():SetTexture(customTex)
     end
+end
 
-    TargetFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+function SubModuleMixin:ReApplyTargetFrame()
+    self:UpdateTargetHealthBarTexture(TargetFrameHealthBar, self.ModuleRef.db.profile.target, 'target')
+    self:UpdateTargetPowerBarTexture(TargetFrameManaBar, self.ModuleRef.db.profile.target, 'target')
+
     if DF.Wrath then TargetFrameFlash:SetTexture('') end
-
     if self.PortraitExtra then self.PortraitExtra:UpdateStyle() end
 end
 

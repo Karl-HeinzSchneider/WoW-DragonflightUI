@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Flyout'
@@ -41,10 +43,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -87,10 +92,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -133,10 +141,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -179,10 +190,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -225,10 +239,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -271,10 +288,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -317,10 +337,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -363,10 +386,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -409,10 +435,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -455,10 +484,13 @@ local defaults = {
             shortenKeybind = false,
             keybindFontSize = 16,
             -- Visibility
+            alphaNormal = 1.0,
+            alphaCombat = 1.0,
             showMouseover = false,
             hideAlways = false,
             hideCombat = false,
             hideOutOfCombat = false,
+            hideVehicle = false,
             hidePet = false,
             hideNoPet = false,
             hideStance = false,
@@ -826,7 +858,7 @@ function AddFlyoutTable(optionTable, sub)
             group = 'headerStyling',
             order = 56.05,
             editmode = true,
-            new = true
+            new = false
         },
         keybindFontSize = {
             type = 'range',
@@ -1003,7 +1035,7 @@ for i = 1, numCustomButtons do
                     group = 'headerClassPresets',
                     order = flyout,
                     editmode = true,
-                    new = true
+                    new = false
                 }
             end
 
@@ -1058,7 +1090,7 @@ function Module:RegisterSettings()
 
     for i = 1, numCustomButtons do
         --
-        register('custom' .. i, {order = i, name = customOptionsTable[i].name, descr = '...', isNew = true})
+        register('custom' .. i, {order = i, name = customOptionsTable[i].name, descr = '...', isNew = false})
     end
 end
 
@@ -1113,7 +1145,13 @@ function Module:RefreshOptionScreens()
     end
 end
 
-function Module:ApplySettings(sub)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     -- print('Module:ApplySettings(sub)', sub)
     local db = Module.db.profile
     local char = Module.db.char

@@ -113,7 +113,7 @@ end
 
 function DragonflightUIEditModeFrameMixin:SetupOptions(data, main)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsList', self, 'DFSettingsList')
-    displayFrame:Display(data, true)
+    if data.shouldDisplayAsap then displayFrame:Display(data, true) end
     self.DisplayFrame = displayFrame
     self.DataOptions = data;
 
@@ -153,7 +153,7 @@ end
 
 function DragonflightUIEditModeFrameMixin:SetupExtraOptions(data)
     local displayFrame = CreateFrame('Frame', 'DragonflightUIEditModeSettingsListExtra', self, 'DFSettingsList')
-    displayFrame:Display(data, true)
+    if data.shouldDisplayAsap then displayFrame:Display(data, true) end
     self.DisplayFrameExtra = displayFrame
     self.DataExtraOptions = data;
 
@@ -612,11 +612,16 @@ function DFEditModeSystemSelectionBaseMixin:CalcSnapParentToGrid()
     local gridSize = state.gridSize;
 
     if not state.snapGrid then gridSize = 1 end
+    self.parent = self:GetParent();
 
     local scale = self.parent:GetScale()
     local effectiveScale, screenScale = self.parent:GetEffectiveScale(), UIParent:GetEffectiveScale()
     local screenW = GetScreenWidth() * (screenScale / effectiveScale)
     local screenH = GetScreenHeight() * (screenScale / effectiveScale)
+
+    local point, relativeTo, relativePoint, xOfs, yOfs = self.parent:GetPoint(1)
+    local selfname = self:GetName()
+    local parentname = self.parent:GetName()
 
     local x, y = self.parent:GetCenter()
     local centerX = x - screenW / 2
@@ -645,6 +650,7 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStart()
     self.StartY = y;
 
     -- self:StartMoving()
+    self.parent = self:GetParent();
     local parent = self.parent;
     self.StartMovable = parent:IsMovable()
 
@@ -671,6 +677,7 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStop()
     if not self.isSelected or not self.isDragging then return end
     self.isDragging = false;
     -- self.parent:OnDragStop();
+    self.parent = self:GetParent();
     local parent = self.parent;
     local EditModeModule = DF:GetModule('Editmode')
     local state = EditModeModule.db.profile.general;
@@ -869,7 +876,13 @@ end
 function DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()
     -- print('---DFEditModeSystemSelectionBaseMixin:RefreshOptionScreen()---')
     -- self.SelectionOptions
-    self.SelectionOptions.DisplayFrame:CallRefresh()
+    -- self.SelectionOptions.DisplayFrame:CallRefresh()
+    if self.SelectionOptions.DisplayFrame and self.SelectionOptions.DataOptions then
+        self.SelectionOptions.DisplayFrame:Display(self.SelectionOptions.DataOptions, true)
+    end
+    if self.SelectionOptions.DisplayFrameExtra and self.SelectionOptions.DataExtraOptions then
+        self.SelectionOptions.DisplayFrameExtra:Display(self.SelectionOptions.DataExtraOptions, true)
+    end
 end
 
 ----------

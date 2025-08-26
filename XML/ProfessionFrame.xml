@@ -417,7 +417,7 @@ UI_shared.xsd">
 								<Anchor point="RIGHT" x="0" y="-1" />
 							</Anchors>
 						</Texture>
-						<FontString parentKey="Text" inherits="GameFontHighlightSmall">
+						<FontString parentKey="Text" inherits="GameFontHighlight">
 							<Size x="0" y="13" />
 							<Anchors>
 								<Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="0" y="1" />

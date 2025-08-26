@@ -107,7 +107,7 @@ local modulesOptions = {
             name = L["ModuleFlyout"],
             desc = L["ModuleTooltipFlyout"] .. getDefaultStr('Flyout', 'modules'),
             order = 4.5,
-            new = true,
+            new = false,
             group = 'headerModules'
         },
         Minimap = {
@@ -153,7 +153,7 @@ local modulesOptions = {
             name = L["ModuleCompatibility"],
             desc = L["ModuleTooltipCompatibility"] .. getDefaultStr('Compatibility', 'modules'),
             order = 25,
-            new = true,
+            new = false,
             group = 'headerModules'
         }
     }
@@ -233,34 +233,48 @@ function Module:RegisterSettings()
     })
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
     local modules = db.modules
 
     local strFormat = 'EnableModule(%s)'
 
-    Helper:Benchmark(string.format(strFormat, 'Profiles'), function()
-        DF:EnableModule('Profiles')
-    end)
+    local alwaysLoadModules = {'Profiles', 'Editmode'}
+    for k, v in ipairs(alwaysLoadModules) do
+        Helper:Benchmark(string.format(strFormat, v), function()
+            DF:EnableModule(v)
+        end)
+    end
 
-    Helper:Benchmark(string.format(strFormat, 'Editmode'), function()
-        DF:EnableModule('Editmode')
-    end)
-
+    local ignoreLoadModules = {Darkmode = true}
+    local alreadyLoadedButDeactivated = 0;
     for k, v in pairs(modules) do
         -- print(k, v)   
-        local dfmod = DF:GetModule(k, true)
-        if dfmod then
-            if v and not dfmod:GetWasEnabled() then
-                if k ~= 'Darkmode' then
+        if not ignoreLoadModules[k] then
+            local dfmod = DF:GetModule(k, true)
+            if dfmod then
+                if v and not dfmod:GetWasEnabled() then
                     Helper:Benchmark(string.format(strFormat, k), function()
                         DF:EnableModule(k)
                     end)
-
+                elseif not v and dfmod:GetWasEnabled() then
+                    alreadyLoadedButDeactivated = alreadyLoadedButDeactivated + 1;
                 end
-            elseif not v and dfmod:GetWasEnabled() then
-                DF:Print("Already loaded module was deactivated, please '/reload' !")
             end
+        end
+    end
+
+    if alreadyLoadedButDeactivated ~= 0 then
+        if alreadyLoadedButDeactivated == 1 then
+            DF:Print(L["ModuleAlreadyLoadedWasDeactivated"])
+        else
+            DF:Print(L["ModuleAlreadyLoadedWasDeactivatedMultiple"])
         end
     end
 
@@ -271,7 +285,7 @@ function Module:ApplySettings()
     end
 
     Module.DontRefresh = true;
-    DF:RefreshConfig()
+    -- DF:RefreshConfig()
     Module.DontRefresh = false;
 end
 

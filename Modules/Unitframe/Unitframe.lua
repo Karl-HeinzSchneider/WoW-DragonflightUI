@@ -1,4 +1,5 @@
 local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 ---@diagnostic disable: undefined-global
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
@@ -14,6 +15,8 @@ Module.SubFocusTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixin
 Module.SubParty = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Party'])
 Module.SubPet = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['PetFrame'])
 Module.SubPlayer = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['PlayerFrame'])
+Module.SubPlayerSecondaryRes = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['PlayerFrameSecondaryRes'])
+Module.SubPlayerTotemFrame = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['TotemFrame'])
 Module.SubRaid = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['RaidFrame'])
 Module.SubTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Target'])
 Module.SubTargetOfTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['TargetOfTarget'])
@@ -30,6 +33,8 @@ local defaults = {
         party = Module.SubParty.Defaults,
         pet = Module.SubPet.Defaults,
         player = Module.SubPlayer.Defaults,
+        playerSecondaryRes = Module.SubPlayerSecondaryRes.Defaults,
+        playerTotemFrame = Module.SubPlayerTotemFrame.Defaults,
         raid = Module.SubRaid.Defaults,
         target = Module.SubTarget.Defaults,
         tot = Module.SubTargetOfTarget.Defaults
@@ -92,8 +97,12 @@ function Module:RegisterSettings()
     register('party', {order = 0, name = self.SubParty.Options.name, descr = 'Partyss', isNew = false})
     register('pet', {order = 0, name = self.SubPet.Options.name, descr = 'Petss', isNew = false})
     register('player', {order = 0, name = self.SubPlayer.Options.name, descr = 'players', isNew = false})
+    register('playerSecondaryRes',
+             {order = 0, name = self.SubPlayerSecondaryRes.Options.name, descr = 'players', isNew = false})
+    register('playerTotemFrame',
+             {order = 0, name = self.SubPlayerTotemFrame.Options.name, descr = 'players', isNew = true})
     register('raid', {order = 0, name = self.SubRaid.Options.name, descr = 'Raidss', isNew = false})
-    register('target', {order = 0, name = self.SubTarget.Options.name, descr = 'Targetss', isNew = true})
+    register('target', {order = 0, name = self.SubTarget.Options.name, descr = 'Targetss', isNew = false})
     register('targetoftarget',
              {order = 0, name = self.SubTargetOfTarget.Options.name, descr = 'Targetss', isNew = false})
 
@@ -118,6 +127,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Party')
     refreshCat('Pet')
     refreshCat('Player')
+    refreshCat('playerSecondaryRes')
     refreshCat('Raid')
     refreshCat('Target')
     refreshCat('TargetOfTarget')
@@ -197,11 +207,19 @@ function Module:SaveLocalSettings()
     -- DevTools_Dump({localSettings})
 end
 
-function Module:ApplySettings(sub)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
 
     self.SubParty:UpdateState(db.party)
     self.SubPlayer:UpdateState(db.player)
+    self.SubPlayerSecondaryRes:UpdateState(db.playerSecondaryRes)
+    self.SubPlayerTotemFrame:UpdateState(db.playerTotemFrame)
     self.SubPet:UpdateState(db.pet)
     self.SubTarget:UpdateState(db.target)
     self.SubTargetOfTarget:UpdateState(db.tot)
@@ -256,6 +274,8 @@ function Module:HookDrag()
 end
 
 function Module:HookClassIcon()
+    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
+
     self:Unhook('UnitFramePortrait_Update')
     self:SecureHook('UnitFramePortrait_Update', function(portraitFrame)
         -- print('UnitFramePortrait_Update', portraitFrame:GetName(), portraitFrame.unit)
@@ -274,21 +294,46 @@ function Module:HookClassIcon()
         elseif unit == "focus" then
             icon = self.db.profile.focus.classicon
             disableMasking = true
+        elseif unit == "targettarget" then
+            icon = self.db.profile.tot.classicon
+            disableMasking = true
+        elseif unit == "focustarget" then
+            icon = self.db.profile.focusTarget.classicon
+            disableMasking = true
         end
 
         if (not icon) or unit == "pet" or (not UnitIsPlayer(unit)) then
             portraitFrame.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
             SetPortraitTexture(portraitFrame.portrait, unit, disableMasking)
-            if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(false) end
+            -- if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(false) end
             return
         end
 
-        local texCoords = CLASS_ICON_TCOORDS[select(2, UnitClass(unit))]
-        if texCoords then
-            portraitFrame.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
-            portraitFrame.portrait:SetTexCoord(unpack(texCoords))
-            if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(true) end
+        -- improved icons
+        local class = select(2, UnitClass(unit));
+        if class then
+            if class == 'MONK' then
+                local tex = base .. 'classicon-monk';
+                portraitFrame.portrait:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1);
+                portraitFrame.portrait:SetTexture(tex);
+                return;
+            else
+                local classIconAtlas = GetClassAtlas(class);
+                if (classIconAtlas) then
+                    portraitFrame.portrait:SetAtlas(classIconAtlas);
+                    return;
+                end
+            end
         end
+
+        -- local texCoords = CLASS_ICON_TCOORDS[select(2, UnitClass(unit))]
+        -- texCoords = CLASS_ICON_TCOORDS['WARRIOR']
+
+        -- if texCoords then
+        --     portraitFrame.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
+        --     portraitFrame.portrait:SetTexCoord(unpack(texCoords))
+        --     if portraitFrame.portrait.fixClassSize then portraitFrame.portrait:fixClassSize(true) end
+        -- end
     end)
 end
 
@@ -296,63 +341,55 @@ function Module:AddPortraitMasks()
     local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
     local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
 
-    local mask = PlayerFrame:CreateMaskTexture()
-    mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, 0)
-    mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerPortrait:AddMaskTexture(mask)
+    do
+        local mask = PlayerFrame:CreateMaskTexture()
+        mask:SetPoint('CENTER', PlayerPortrait, 'CENTER', 1, -1)
+        mask:SetTexture(playerMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        PlayerPortrait:AddMaskTexture(mask)
+    end
 
-    local maskTarget = TargetFrame:CreateMaskTexture()
-    maskTarget:SetAllPoints(TargetFramePortrait)
-    maskTarget:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFramePortrait:AddMaskTexture(maskTarget)
+    local function addMask(f, port, maskTexture)
+        if not f or not port then return end
+        if not maskTexture then maskTexture = circularMaskTexture end
+        local mask = f:CreateMaskTexture()
+        mask:SetAllPoints(port)
+        mask:SetTexture(maskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        port:AddMaskTexture(mask)
+    end
 
-    local maskToT = TargetFrameToT:CreateMaskTexture()
-    maskToT:SetAllPoints(TargetFrameToTPortrait)
-    maskToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    TargetFrameToTPortrait:AddMaskTexture(maskToT)
+    addMask(TargetFrame, TargetFramePortrait)
+    addMask(self.SubTarget.PreviewTarget, self.SubTarget.PreviewTarget.TargetFramePortrait)
+    addMask(TargetFrameToT, TargetFrameToTPortrait)
+    addMask(self.SubTargetOfTarget.PreviewTargetOfTarget,
+            self.SubTargetOfTarget.PreviewTargetOfTarget.TargetFramePortrait)
 
-    local maskPet = PetFrame:CreateMaskTexture()
-    maskPet:SetAllPoints(PetPortrait)
-    maskPet:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PetPortrait:AddMaskTexture(maskPet)
+    addMask(PetFrame, PetPortrait)
 
     if DF.Wrath then
-        local maskFocus = FocusFrame:CreateMaskTexture()
-        maskFocus:SetAllPoints(FocusFramePortrait)
-        maskFocus:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        FocusFramePortrait:AddMaskTexture(maskFocus)
-
-        local maskFocusToT = FocusFrameToT:CreateMaskTexture()
-        maskFocusToT:SetAllPoints(FocusFrameToTPortrait)
-        maskFocusToT:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        FocusFrameToTPortrait:AddMaskTexture(maskFocusToT)
+        addMask(FocusFrame, FocusFramePortrait)
+        addMask(self.SubFocus.PreviewFocus, self.SubFocus.PreviewFocus.TargetFramePortrait)
+        addMask(FocusFrameToT, FocusFrameToTPortrait)
+        addMask(self.SubFocusTarget.PreviewFocusTarget, self.SubFocusTarget.PreviewFocusTarget.TargetFramePortrait)
     end
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
         local port = _G['PartyMemberFrame' .. i .. 'Portrait']
 
-        local m = pf:CreateMaskTexture()
-        m:SetAllPoints(port)
-        m:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        port:AddMaskTexture(m)
+        addMask(pf, port)
     end
 
     -- fix portraits
-    local maskCharacterFrame = CharacterFrame:CreateMaskTexture()
-    maskCharacterFrame:SetAllPoints(CharacterFramePortrait)
-    maskCharacterFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    CharacterFramePortrait:AddMaskTexture(maskCharacterFrame)
-
-    local maskTalentFrame = PlayerTalentFrame:CreateMaskTexture()
-    maskTalentFrame:SetAllPoints(PlayerTalentFramePortrait)
-    maskTalentFrame:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-    PlayerTalentFramePortrait:AddMaskTexture(maskTalentFrame)
+    addMask(CharacterFrame, CharacterFramePortrait)
+    addMask(PlayerTalentFrame, PlayerTalentFramePortrait)
+    addMask(TradeFrame, TradeFramePlayerPortrait)
+    addMask(TradeFrame, TradeFrameRecipientPortrait)
+    addMask(DressUpFrame, DressUpFramePortrait)
 end
 
 function Module:HookEnergyBar()
-    hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
-        if manaBar.DFUpdateFunc and type(manaBar.DFUpdateFunc) == 'function' then
+    hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar, dontcall)
+        if manaBar.DFUpdateFunc and type(manaBar.DFUpdateFunc) == 'function' and not dontcall then
             --
             -- print('~UnitFrameManaBar_UpdateType:', manaBar:GetName())
             manaBar.DFUpdateFunc()
@@ -447,6 +484,12 @@ function Module:TakePicture()
         port:SetPoint('BOTTOMRIGHT', tex, 'BOTTOMRIGHT', -border, border)
         pt.Portrait = port;
 
+        local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+        local mask = pt:CreateMaskTexture()
+        mask:SetAllPoints(port)
+        mask:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        port:AddMaskTexture(mask)
+
         pt:Hide()
         Module.PictureTakerFrame = pt;
 
@@ -473,6 +516,7 @@ function Module:Era()
 
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
@@ -496,6 +540,8 @@ function Module:Wrath()
     -- self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
+    self.SubPlayerTotemFrame:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
@@ -516,6 +562,8 @@ function Module:Cata()
     self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
+    self.SubPlayerTotemFrame:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()
@@ -536,6 +584,8 @@ function Module:Mists()
     self.SubAltPower:Setup()
     self.SubParty:Setup()
     self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
+    self.SubPlayerTotemFrame:Setup()
 
     self.SubPet:Setup()
     self.SubTarget:Setup()

@@ -76,10 +76,10 @@ function DragonflightUIModulesMixin:SetOption(info, value)
     if sub then
         local t = self.db.profile[key]
         t[sub] = value
-        self:ApplySettings(key)
+        self:ApplySettings(key, sub)
     else
         self.db.profile[key] = value
-        self:ApplySettings()
+        self:ApplySettings(nil, key)
     end
 end
 

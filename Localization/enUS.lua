@@ -42,6 +42,10 @@ do
     L["ModuleUtility"] = "Utility"
     L["ModuleCompatibility"] = "Compatibility"
     L["ModuleBossframe"] = "Bossframe"
+
+    L["ModuleAlreadyLoadedWasDeactivated"] = "Already loaded module was deactivated, please '/reload'!"
+    L["ModuleAlreadyLoadedWasDeactivatedMultiple"] =
+        "Multiple already loaded modules were deactivated, please '/reload'!"
 end
 
 -- config 
@@ -134,6 +138,9 @@ do
     L['CompatBaganatorDesc'] = "Changes the default 'Blizzard' skin to a DragonflightUI styled one."
     L['CompatBaganatorEquipment'] = "Baganator_EquipmentSets"
     L['CompatBaganatorEquipmentDesc'] = "Adds support for equipment sets as item source."
+    L['CompatBisTracker'] = "BISTracker"
+    L['CompatBisTrackerDesc'] =
+        "Adds compatibility for BISTracker when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatCharacterStatsClassic'] = "CharacterStatsClassic"
     L['CompatCharacterStatsClassicDesc'] =
         "Adds compatibility for CharacterStatsClassic when using the UI Module with 'Change CharacterFrame' enabled."
@@ -149,6 +156,8 @@ do
     L['CompatMerInspect'] = "MerInspect"
     L['CompatMerInspectDesc'] =
         "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
+    L['CompatPawn'] = "Pawn"
+    L['CompatPawnDesc'] = "Adds compatibility for Pawn when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatRanker'] = "Ranker"
     L['CompatRankerDesc'] =
         "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
@@ -316,12 +325,18 @@ do
     L["MoreOptionsHideBarArtDesc"] = ""
     L["MoreOptionsHideBarScrolling"] = "Hide Bar Scrolling"
     L["MoreOptionsHideBarScrollingDesc"] = ""
+    L["MoreOptionsHideBorder"] = "Hide Border Art"
+    L["MoreOptionsHideBorderDesc"] = "*Work in Progress*"
+    L["MoreOptionsHideDivider"] = "Hide Bar Divider"
+    L["MoreOptionsHideDividerDesc"] = ""
+
     L["MoreOptionsGryphons"] = "Gryphons"
     L["MoreOptionsGryphonsDesc"] = "Gryphons"
     L["MoreOptionsUseKeyDown"] = ACTION_BUTTON_USE_KEY_DOWN or "Use Key Down"
     L["MoreOptionsUseKeyDownDesc"] = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN or "Activates abilities on key down."
     L["MoreOptionsIconRangeColor"] = "Icon Range Color"
-    L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange"
+    L["MoreOptionsIconRangeColorDesc"] = "Changes the Icon color when Out Of Range, similar to RedRange/tullaRange." ..
+                                             "\nFor settings, see settings category 'Action Bar Range'."
 
     L["ExtraOptionsPreset"] = "Preset"
     L["ExtraOptionsResetToDefaultPosition"] = "Reset to Default Position"
@@ -331,6 +346,27 @@ do
     L["ExtraOptionsModernLayoutDesc"] = ""
     L["ExtraOptionsClassicLayout"] = "Classic Layout (sidebar)"
     L["ExtraOptionsClassicLayoutDesc"] = ""
+
+    -- Range
+    L["ActionbarRangeName"] = "Action Bar Range"
+    L["ActionbarRangeNameDesc"] = ""
+
+    L["ActionbarRangeHeader"] = "Range Settings"
+    L["ActionbarRangeHeaderDesc"] = ""
+
+    L["ActionbarRangeHeaderHotkey"] = "Keybind" -- HotKey
+    L["ActionbarRangeHeaderHotkeyDesc"] = ""
+    L["ActionbarRangeHotkeyColor"] = "Normal"
+    L["ActionbarRangeHotkeyColorDesc"] = "Normal keybind font color."
+    L["ActionbarRangeHotkeyOutOfRangeColor"] = "Out Of Range"
+    L["ActionbarRangeHotkeyOutOfRangeColorDesc"] = "Keybind font color when out of range."
+
+    L["ActionbarRangeHeaderNotUsable"] = "Not Usable"
+    L["ActionbarRangeHeaderNotUsableDesc"] = ""
+    L["ActionbarRangeHeaderOutOfRange"] = "Out Of Range"
+    L["ActionbarRangeHeaderOutOfRangeDesc"] = ""
+    L["ActionbarRangeHeaderOutOfMana"] = "Out Of Mana"
+    L["ActionbarRangeHeaderOutOfManaDesc"] = ""
 
     -- XP
     L["XPOptionsName"] = "XP Bar"
@@ -405,6 +441,10 @@ do
     -- widget below
     L["WidgetBelowName"] = "Widget Below Minimap"
     L["WidgetBelowNameDesc"] = ""
+
+    -- widget below
+    L["VehicleLeaveButton"] = "Vehicle Leave Button"
+    L["VehicleLeaveButtonDesc"] = ""
 end
 
 -- Buffs
@@ -509,9 +549,6 @@ do
     L["CastbarTableIconSizeDesc"] = ""
     L["CastbarTableShowTicks"] = "Show Ticks"
     L["CastbarTableShowTicksDesc"] = ""
-    L["CastbarTableAutoAdjust"] = "Auto Adjust"
-    L["CastbarTableAutoAdjustDesc"] =
-        "This applies an Y-offset depending on the amount of buffs/debuffs - useful when anchoring the castbar beneath the Target/FocusFrame"
     L["CastbarTableShowRank"] = "Show Rank"
     L["CastbarTableShowRankDesc"] = ""
     L["CastbarTableShowChannelName"] = "Show Channel Name"
@@ -519,7 +556,28 @@ do
 
     L["ExtraOptionsResetToDefaultStyle"] = "Reset to Default Style"
     L["ExtraOptionsPresetStyleDesc"] =
-        "Sets all settings that change the style of the castbar, but does not change any other setting."
+        "Reset all settings that change the style of the castbar, but does not change any other setting."
+
+    L["CastbarTableAutoAdjustHeader"] = "Auto Adjust"
+    L["CastbarTableAutoAdjustHeaderDesc"] = ""
+    L["CastbarTableAutoAdjust"] = "Auto Adjust"
+    L["CastbarTableAutoAdjustDesc"] =
+        "Fixes the cast bar position depending on the amount of buffs/debuffs - useful when anchoring the cast bar beneath the Target/FocusFrame." ..
+            "\n\nOnly works if the option is checked *and* also the parent is the default parent, e.g. TargetFrame for target cast bar."
+
+    -- local info = "\n\n" .. [[(Auto Adjust uses "SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)")]]
+    local info =
+        string.format("\n\nAuto Adjust uses:\n%s", "SetPoint('TOPLEFT', parent, 'BOTTOMLEFT', dx, autoDy + dy)")
+    L["CastbarTableAutoAdjustX"] = "Auto Delta X"
+    L["CastbarTableAutoAdjustXDesc"] = "Delta X applied to the X value calculated from auto adjust." .. info
+    L["CastbarTableAutoAdjustY"] = "Auto Delta Y"
+    L["CastbarTableAutoAdjustYDesc"] = "Delta Y applied to the Y value calculated from auto adjust." .. info
+
+    -- mirror timer
+    L["CastbarMirrorTimerName"] = "Player Mirror Timer"
+    L["CastbarMirrorTimerNameDesc"] = ""
+    L["CastbarMirrorHideBlizzard"] = "Hide Blizzard"
+    L["CastbarMirrorHideBlizzardDesc"] = "Hide the default blizzard mirror timer."
 end
 
 -- Minimap
@@ -529,12 +587,24 @@ do
     L["MinimapShowPing"] = "Show Ping"
     L["MinimapNotYetImplemented"] = "(NOT YET IMPLEMENTED)"
     L["MinimapShowPingInChat"] = "Show Ping in Chat"
+    L["MinimapShape"] = "Minimap Shape"
+    L["MinimapShapeDesc"] = ""
+    L["MinimapRotateDescAdditional"] = "\n\nNote: Only works with round minimap shape."
     L["MinimapHideCalendar"] = "Hide Calendar"
     L["MinimapHideCalendarDesc"] = "Hides the calendar button"
+    L["MinimapHideHeader"] = "Hide Header"
+    L["MinimapHideHeaderDesc"] = "Hides the minimap header"
+    L["MinimapHideClock"] = "Hide Clock"
+    L["MinimapHideClockDesc"] = ""
+    L["MinimapHideZoneText"] = "Hide Zone Text"
+    L["MinimapHideZoneTextDesc"] = ""
     L["MinimapHideZoomButtons"] = "Hide Zoom Buttons"
     L["MinimapHideZoomDesc"] = "Hides the zoom buttons (+) (-)"
     L["MinimapSkinMinimapButtons"] = "Skin Minimap Buttons"
     L["MinimapSkinMinimapButtonsDesc"] = "Changes the Style of Minimap Buttons using LibDBIcon (most addons use this)"
+    L["MinimapSkinMinimapHideButtons"] = "Hide Minimap Buttons"
+    L["MinimapSkinMinimapHideButtonsDesc"] = "Hides the minimap buttons when the cursor is not over the minimap." ..
+                                                 "\n\nNote: only works for buttons using LibDBIcon"
     L["MinimapZonePanelPosition"] = "Header Position"
     L["MinimapZonePanelPositionDesc"] = "Sets the header position."
     L["MinimapUseStateHandler"] = "Use State Handler"
@@ -603,6 +673,9 @@ do
     L["TooltipCursorAnchorHeaderDesc"] = ""
     L["TooltipAnchorToMouse"] = "Anchor on Cursor"
     L["TooltipAnchorToMouseDesc"] = "Anchors some tooltips (e.g. UnitTooltip on WorldFrame) to the mouse cursor."
+    L["TooltipDefaultAnchorWhileCombat"] = "Default Anchor In Combat"
+    L["TooltipDefaultAnchorWhileCombatDesc"] =
+        "Use default tooltip anchor while in combat instead of the mouse cursor anchor."
     L["TooltipMouseAnchor"] = "Cursor Anchor"
     L["TooltipMouseAnchorDesc"] = ""
     L["TooltipMouseX"] = "X"
@@ -680,7 +753,7 @@ do
     L["PlayerFrameDesc"] = "PlayerFrame settings"
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "Class Color"
-    L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar"
+    L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar."
     L["PlayerFrameClassIcon"] = "Class Icon Portrait"
     L["PlayerFrameClassIconDesc"] = "Enable class icon as portrait (currently disabled)"
     L["PlayerFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
@@ -694,14 +767,32 @@ do
     L["PlayerFrameHideRedStatusDesc"] = "Hide the red status glow in combat"
     L["PlayerFrameHideHitIndicator"] = "Hide Hit Indicator"
     L["PlayerFrameHideHitIndicatorDesc"] = "Hide the hit indicator on the player frame"
-    L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Ressource"
-    L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary ressource, e.g. soul shards."
+    L["PlayerFrameHideSecondaryRes"] = "Hide Secondary Resource"
+    L["PlayerFrameHideSecondaryResDesc"] = "Hide the secondary resource, e.g. soul shards."
     L["PlayerFrameHideAlternatePowerBar"] = "Hide Druid Alternate Power Bar"
     L["PlayerFrameHideAlternatePowerBarDesc"] = "Hide the Druid Alternate Power Bar (Mana Bar while Bear/Cat form)."
     L["PlayerFrameHideRestingGlow"] = "Hide Resting Glow"
     L["PlayerFrameHideRestingGlowDesc"] = "Hides the resting status glow on the player frame."
     L["PlayerFrameHideRestingIcon"] = "Hide Resting Icon"
     L["PlayerFrameHideRestingIconDesc"] = "Hides the resting icon on the player frame."
+    L["PlayerFrameHidePVP"] = "Hide PVP Icon"
+    L["PlayerFrameHidePVPDesc"] = "Hide the PVP icon."
+
+    local note =
+        "\n\nNOTE: Custom textures use the default statusbar color from blizzard.\nIf you want something different you have to mod that through code.\n"
+    L["PlayerFrameCustomHealthbarTexture"] = "Health Bar Texture"
+    L["PlayerFrameCustomHealthbarTextureDesc"] =
+        "Changes the health bar texture to a custom one from LibSharedMedia." .. note
+    L["PlayerFrameCustomPowerbarTexture"] = "Power Bar Texture"
+    L["PlayerFrameCustomPowerbarTextureDesc"] = "Changes the power bar texture to a custom one from LibSharedMedia." ..
+                                                    note
+    -- Player Secondary< Res
+    L["PlayerSecondaryResName"] = "Player Secondary Resource"
+    L["PlayerSecondaryResNameDesc"] = ""
+
+    -- TotemFrame
+    L["PlayerTotemFrameName"] = "Player Totem Frame"
+    L["PlayerTotemFrameNameDesc"] = ""
 
     -- PowerBar_Alt
     L["PowerBarAltName"] = "Player_PowerBarAlt"
@@ -712,7 +803,9 @@ do
     L["TargetFrameDesc"] = "Target frame settings"
     L["TargetFrameStyle"] = L["ButtonTableStyle"]
     L["TargetFrameClassColor"] = L["PlayerFrameClassColor"]
-    L["TargetFrameClassColorDesc"] = "Enable class colors for the health bar"
+    L["TargetFrameClassColorDesc"] = L["PlayerFrameClassColorDesc"]
+    L["TargetFrameReactionColor"] = "Reaction Color"
+    L["TargetFrameReactionColorDesc"] = "Enable reaction colors for the health bar."
     L["TargetFrameClassIcon"] = L["PlayerFrameClassIcon"]
     L["TargetFrameClassIconDesc"] = L["PlayerFrameClassIconDesc"]
     L["TargetFrameBreakUpLargeNumbers"] = L["PlayerFrameBreakUpLargeNumbers"]
@@ -747,6 +840,19 @@ do
     L["TargetFrameDynamicBuffSize"] = "Dynamic Buff Size"
     L["TargetFrameDynamicBuffSizeDesc"] = "Increases the size of the player buffs and debuffs on the target."
 
+    L["TargetFrameHeaderBuffsAdvanced"] = "Buffs/Debuffs (advanced)"
+    L["TargetFrameAuraOffsetY"] = "Aura Offset Y"
+    L["TargetFrameAuraOffsetYDesc"] = "Y offset between rows and buffs/debuffs."
+    L["TargetFrameAuraRowWidth"] = "Aura Row Width"
+    L["TargetFrameAuraRowWidthDesc"] = "Max row width for buffs/debuffs."
+    L["TargetFrameAuraRowWidthToT"] = "Aura Row Width (ToT)"
+    L["TargetFrameAuraRowWidthToTDesc"] = "Same as 'Aura Row Width' but only for the first X (=NumToTAuraRows) rows." ..
+                                              "\n\nThis is intended to leave room for the TargetOfTarget frame."
+    L["TargetFrameToTAuraRows"] = "Number of ToT Aura Rows"
+    L["TargetFrameToTAuraRowsDesc"] =
+        "Number of aura rows that use 'Aura Row Width (ToT)' instead of the normal width." ..
+            "\n\nSet this to 0 if you want to have same width aura rows, e.g. when you moved the ToT frame out of the way."
+
     -- ToT
     L["TargetOfTargetFrameName"] = "Target Of Target"
     L["TargetOfTargetFrameDesc"] = ""
@@ -762,6 +868,8 @@ do
     L["PetFrameHideStatusbarTextDesc"] = "Hide the statusbar text"
     L["PetFrameHideIndicator"] = "Hide Hit Indicator"
     L["PetFrameHideIndicatorDesc"] = "Hide the hit indicator"
+    L["PetFrameHideDebuffs"] = "Hide Debuffs"
+    L["PetFrameHideDebuffsDesc"] = "Hides the pet debuffs."
 
     -- Focus
     L["FocusFrameName"] = "FocusFrame"
@@ -790,6 +898,10 @@ do
 
     -- raid
     L["RaidFrameName"] = "Raid Frame"
+
+    -- Bosss
+    L["BossFrameName"] = "BossFrame"
+    L["BossFrameNameDesc"] = "Boss frame settings"
 end
 
 -- keybindings

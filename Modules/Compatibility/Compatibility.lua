@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Compatibility'
@@ -12,12 +14,14 @@ local defaults = {
             auctionator = true,
             baganator = true,
             baganatorEquipment = true,
+            bisTracker = true,
             characterstatsclassic = true,
             classicalendar = true,
             clique = true,
             leatrixPlus = true,
             lfgbulletinboard = true,
             merinspect = true,
+            pawn = true,
             ranker = true,
             tacotip = true,
             tdinspect = true,
@@ -66,6 +70,12 @@ local compatOptions = {
             desc = L["CompatBaganatorDesc"] .. getDefaultStr('baganator', 'general'),
             order = 21
         },
+        bisTracker = {
+            type = 'toggle',
+            name = L["CompatBisTracker"],
+            desc = L["CompatBisTrackerDesc"] .. getDefaultStr('bisTracker', 'general'),
+            order = 21
+        },
         characterstatsclassic = {
             type = 'toggle',
             name = L["CompatCharacterStatsClassic"],
@@ -83,7 +93,7 @@ local compatOptions = {
             name = L["CompatClique"],
             desc = L["CompatCliqueDesc"] .. getDefaultStr('clique', 'general'),
             order = 21,
-            new = true
+            new = false
         },
         leatrixPlus = {
             type = 'toggle',
@@ -91,17 +101,24 @@ local compatOptions = {
             desc = L["CompatLeatrixPlusDesc"] .. getDefaultStr('leatrixPlus', 'general'),
             order = 21
         },
-        lfgbulletinboard = {
-            type = 'toggle',
-            name = L["CompatLFGBulletinBoard"],
-            desc = L["CompatLFGBulletinBoardDesc"] .. getDefaultStr('lfgbulletinboard', 'general'),
-            order = 21
-        },
+        -- lfgbulletinboard = {
+        --     type = 'toggle',
+        --     name = L["CompatLFGBulletinBoard"],
+        --     desc = L["CompatLFGBulletinBoardDesc"] .. getDefaultStr('lfgbulletinboard', 'general'),
+        --     order = 21
+        -- },
         merinspect = {
             type = 'toggle',
             name = L["CompatMerInspect"],
             desc = L["CompatMerInspectDesc"] .. getDefaultStr('merinspect', 'general'),
             order = 21
+        },
+        pawn = {
+            type = 'toggle',
+            name = L["CompatPawn"],
+            desc = L["CompatPawnDesc"] .. getDefaultStr('pawn', 'general'),
+            order = 21,
+            new = false
         },
         ranker = {
             type = 'toggle',
@@ -180,7 +197,7 @@ function Module:RegisterSettings()
         DF.ConfigModule:RegisterSettingsElement(name, cat, data, true)
     end
 
-    register('compatibility', {order = 0, name = 'Compatibility', descr = '...', isNew = true})
+    register('compatibility', {order = 0, name = 'Compatibility', descr = '...', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
@@ -205,7 +222,13 @@ function Module:RefreshOptionScreens()
     -- Module.GametooltipPreview.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings(sub)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
     local state = db.general
 
@@ -228,6 +251,19 @@ function Module:ApplySettings(sub)
 
     self:ConditionalOption('baganatorEquipment', 'general', L['CompatBaganatorEquipment'], function()
         DF.Compatibility:FuncOrWaitframe('Baganator', DF.Compatibility.BaganatorEquipment)
+    end)
+
+    self:ConditionalOption('bisTracker', 'general', L['CompatBisTracker'], function()
+        if UIModule['changeCharacterframe' .. 'Hooked'] then
+            Module:FuncOrWaitframe('BiSTracker', DF.Compatibility.BiSTracker)
+        else
+            DF.API.Modules:HookModuleFunction('UI', 'ApplySettings', function()
+                if UIModule['changeCharacterframe' .. 'Hooked'] and not Module['BiSTracker' .. 'Func'] then
+                    Module['BiSTracker' .. 'Func'] = true
+                    Module:FuncOrWaitframe('BiSTracker', DF.Compatibility.BiSTracker)
+                end
+            end)
+        end
     end)
 
     -- self:ConditionalOption('characterstatsclassic', 'general', L['CompatCharacterStatsClassic'], function()
@@ -277,24 +313,11 @@ function Module:ApplySettings(sub)
         end)
     end)
 
-    self:ConditionalOption('lfgbulletinboard', 'general', L['CompatLFGBulletinBoard'], function()
-        if MinimapModule['skinButtons' .. 'Hooked'] then
-            Module:FuncOrWaitframe('LFGBulletinBoard', function()
-                --
-                DF.Compatibility:LFGBulletinBoard(MinimapModule.UpdateButton)
-            end)
-        else
-            DF.API.Modules:HookModuleFunction('Minimap', 'ChangeMinimapButtons', function()
-                if MinimapModule['skinButtons' .. 'Hooked'] and not Module['lfgbulletinboard' .. 'Func'] then
-                    Module['lfgbulletinboard' .. 'Func'] = true
-                    Module:FuncOrWaitframe('LFGBulletinBoard', function()
-                        --
-                        DF.Compatibility:LFGBulletinBoard(MinimapModule.UpdateButton)
-                    end)
-                end
-            end)
-        end
-    end)
+    -- self:ConditionalOption('lfgbulletinboard', 'general', L['CompatLFGBulletinBoard'], function()
+    --     DF.API.Modules:HookEnableModule('Unitframe', function(m)
+    --         Module:FuncOrWaitframe('LFGBulletinBoard', DF.Compatibility.LFGBulletinBoard)
+    --     end)
+    -- end)
 
     self:ConditionalOption('merinspect', 'general', L['CompatMerInspect'], function()
         if UIModule['changeCharacterframe' .. 'Hooked'] then
@@ -307,6 +330,19 @@ function Module:ApplySettings(sub)
                     Module['merinspect' .. 'Func'] = true
                     Module:FuncOrWaitframe('MerInspect', DF.Compatibility.MerInspect)
                     Module:FuncOrWaitframe('MerInspect-classic-era', DF.Compatibility.MerInspectClassicEra)
+                end
+            end)
+        end
+    end)
+
+    self:ConditionalOption('pawn', 'general', L['CompatPawn'], function()
+        if UIModule['changeCharacterframe' .. 'Hooked'] then
+            Module:FuncOrWaitframe('Pawn', DF.Compatibility.Pawn)
+        else
+            DF.API.Modules:HookModuleFunction('UI', 'ApplySettings', function()
+                if UIModule['changeCharacterframe' .. 'Hooked'] and not Module['Pawn' .. 'Func'] then
+                    Module['Pawn' .. 'Func'] = true
+                    Module:FuncOrWaitframe('Pawn', DF.Compatibility.Pawn)
                 end
             end)
         end

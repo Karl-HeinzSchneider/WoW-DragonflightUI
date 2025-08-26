@@ -2,6 +2,7 @@ local addonName, addonTable = ...;
 local DF = addonTable.DF;
 local L = addonTable.L;
 local Helper = addonTable.Helper;
+local LSM = LibStub('LibSharedMedia-3.0')
 
 local subModuleName = 'PlayerFrame';
 local SubModuleMixin = {};
@@ -27,19 +28,24 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPLEFT',
         x = -19,
         y = -4,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         biggerHealthbar = false,
         portraitExtra = 'none',
         hideRedStatus = false,
         hideIndicator = false,
-        hideSecondaryRes = false,
+        hidePVP = false,
         hideAlternatePowerBar = false,
         hideRestingGlow = false,
         hideRestingIcon = false,
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,
         hideOutOfCombat = false,
+        hideVehicle = false,
         hidePet = false,
         hideNoPet = false,
         hideStance = false,
@@ -146,7 +152,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameClassColor"],
                 desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
                 group = 'headerStyling',
-                order = 7,
+                order = 2,
                 editmode = true
             },
             classicon = {
@@ -154,7 +160,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameClassIcon"],
                 desc = L["PlayerFrameClassIconDesc"] .. getDefaultStr('classicon', 'player'),
                 group = 'headerStyling',
-                order = 7.1,
+                order = 1,
                 disabled = true,
                 new = false,
                 editmode = true
@@ -164,7 +170,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameBreakUpLargeNumbers"],
                 desc = L["PlayerFrameBreakUpLargeNumbersDesc"],
                 group = 'headerStyling',
-                order = 8,
+                order = 3.5,
                 editmode = true
             },
             biggerHealthbar = {
@@ -172,7 +178,7 @@ function SubModuleMixin:SetupOptions()
                 name = L["PlayerFrameBiggerHealthbar"],
                 desc = L["PlayerFrameBiggerHealthbarDesc"] .. getDefaultStr('biggerHealthbar', 'player'),
                 group = 'headerStyling',
-                order = 9,
+                order = 3.6,
                 new = false,
                 editmode = true
             },
@@ -183,7 +189,7 @@ function SubModuleMixin:SetupOptions()
                 dropdownValues = portraitExtraTable,
                 order = 9.5,
                 group = 'headerStyling',
-                new = true,
+                new = false,
                 editmode = true
             },
             hideRedStatus = {
@@ -210,7 +216,7 @@ function SubModuleMixin:SetupOptions()
                 desc = L["PlayerFrameHideRestingGlowDesc"] .. getDefaultStr('hideRestingGlow', 'player'),
                 group = 'headerStyling',
                 order = 12,
-                new = true,
+                new = false,
                 editmode = true
             },
             hideRestingIcon = {
@@ -219,23 +225,21 @@ function SubModuleMixin:SetupOptions()
                 desc = L["PlayerFrameHideRestingIconDesc"] .. getDefaultStr('hideRestingIcon', 'player'),
                 group = 'headerStyling',
                 order = 13,
+                new = false,
+                editmode = true
+            },
+            hidePVP = {
+                type = 'toggle',
+                name = L["PlayerFrameHidePVP"],
+                desc = L["PlayerFrameHidePVPDesc"] .. getDefaultStr('hidePVP', 'player'),
+                group = 'headerStyling',
+                order = 14,
                 new = true,
                 editmode = true
             }
         }
     }
 
-    if DF.Cata then
-        optionsPlayer.args['hideSecondaryRes'] = {
-            type = 'toggle',
-            name = L["PlayerFrameHideSecondaryRes"],
-            desc = L["PlayerFrameHideSecondaryResDesc"] .. getDefaultStr('hideSecondaryRes', 'player'),
-            group = 'headerStyling',
-            order = 12,
-            new = false,
-            editmode = true
-        }
-    end
     if DF.Era then
         local localizedClass, englishClass, classIndex = UnitClass('player');
         if englishClass == 'DRUID' then
@@ -331,6 +335,35 @@ function SubModuleMixin:SetupOptions()
             end
         end
     end
+    if true then
+        optionsPlayer.args['customHealthBarTexture'] = {
+            type = 'select',
+            name = L["PlayerFrameCustomHealthbarTexture"],
+            desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'player'),
+            dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                return getOption({optionsPlayer.sub, 'customHealthBarTexture'}) == name;
+            end, function(name)
+                setOption({optionsPlayer.sub, 'customHealthBarTexture'}, name)
+            end),
+            group = 'headerStyling',
+            order = 4,
+            new = true
+        }
+        optionsPlayer.args['customPowerBarTexture'] = {
+            type = 'select',
+            name = L["PlayerFrameCustomPowerbarTexture"],
+            desc = L["PlayerFrameCustomPowerbarTextureDesc"] .. getDefaultStr('customPowerBarTexture', 'player'),
+            dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+                return getOption({optionsPlayer.sub, 'customPowerBarTexture'}) == name;
+            end, function(name)
+                setOption({optionsPlayer.sub, 'customPowerBarTexture'}, name)
+            end),
+            group = 'headerStyling',
+            order = 5,
+            new = true
+        }
+    end
+
     DF.Settings:AddPositionTable(Module, optionsPlayer, 'player', 'Player', getDefaultStr,
                                  frameTableWithout('PlayerFrame'))
 
@@ -386,7 +419,7 @@ function SubModuleMixin:Setup()
     self:SetScript('OnEvent', self.OnEvent);
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    self:RegisterEvent('PLAYER_TARGET_CHANGED')
+    -- self:RegisterEvent('PLAYER_TARGET_CHANGED')
     -- self:RegisterEvent('UNIT_ENTERED_VEHICLE')
     -- self:RegisterEvent('UNIT_EXITED_VEHICLE')
 
@@ -404,7 +437,6 @@ function SubModuleMixin:Setup()
     -- self:ChangeStatusIcons() -- PLAYER_ENTERING_WORLD
     self:CreateRestFlipbook()
     self:HookRestFunctions()
-    self:HookSecondaryRes()
 
     if DF.Era then self:AddAlternatePowerBar() end
 
@@ -433,6 +465,11 @@ function SubModuleMixin:Setup()
         -- print('PlayerFrame_ToPlayerArt')
         self:ChangePlayerframe()
         -- Module.SetPlayerBiggerHealthbar(Module.db.profile.player.biggerHealthbar)
+    end)
+
+    hooksecurefunc('PlayerFrame_UpdatePvPStatus', function()
+        --
+        if self.ModuleRef.db.profile.player.hidePVP then PlayerPVPIcon:Hide() end
     end)
 
     -- state handler
@@ -473,9 +510,7 @@ function SubModuleMixin:OnEvent(event, ...)
     elseif event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA' then
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
-    elseif event == 'PLAYER_SPECIALIZATION_CHANGED' then
-        self:HideSecondaryRes(self.ModuleRef.db.profile.player.hideSecondaryRes)
-    elseif event == 'PLAYER_TARGET_CHANGED' then
+        -- elseif event == 'PLAYER_TARGET_CHANGED' then
         -- fallback
         -- self:ChangePlayerframe()
         -- self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
@@ -509,16 +544,19 @@ function SubModuleMixin:Update()
     self:SetPlayerBiggerHealthbar(state.biggerHealthbar)
     self.PlayerPortraitExtra:UpdateStyle(state.portraitExtra)
     self:UpdatePlayerStatus()
+    self:UpdatePlayerFrameHealthBar()
+    self:UpdatePlayerFrameManaBar()
     PlayerFrameHealthBar.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     UnitFramePortrait_Update(PlayerFrame)
+
+    PlayerFrame_UpdatePvPStatus()
 
     if state.hideIndicator then
         PlayerHitIndicator:SetScale(0.01)
     else
         PlayerHitIndicator:SetScale(1)
     end
-    self:HideSecondaryRes(state.hideSecondaryRes)
     self:HideAlternatePowerBar(state.hideAlternatePowerBar)
 
     f:UpdateStateHandler(state)
@@ -526,47 +564,28 @@ end
 
 function SubModuleMixin:CreatePlayerFrameTextures()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
 
     if not self.PlayerFrameBackground then
         local background = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
-
-        background:SetTexture(base)
-        background:SetTexCoord(0.7890625, 0.982421875, 0.001953125, 0.140625)
-        background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
+        background:SetTexelSnappingBias(0.0)
+        background:SetSnapToPixelGrid(false)
         self.PlayerFrameBackground = background
-    end
-
-    if not self.PlayerFrameBorder then
-        local border = PlayerFrameHealthBar:CreateTexture('DragonflightUIPlayerFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
-        self.PlayerFrameBorder = border
     end
 
     if not self.PlayerFrameDeco then
         local textureSmall = PlayerFrame:CreateTexture('DragonflightUIPlayerFrameDeco')
         textureSmall:SetDrawLayer('OVERLAY', 5)
-        textureSmall:SetTexture(base)
-        textureSmall:SetTexCoord(0.953125, 0.9755859375, 0.259765625, 0.3046875)
-        local delta = 15
-        textureSmall:SetPoint('CENTER', PlayerPortrait, 'CENTER', delta, -delta - 2)
-        textureSmall:SetSize(23, 23)
-        textureSmall:SetScale(1)
+        textureSmall:SetTexture(tex2xBase .. 'ui-hud-unitframe-player-portraiton-cornerembellishment-2x')
+        textureSmall:SetTexCoord(0, 44 / 64, 0, 44 / 64)
+        textureSmall:SetSize(22, 22)
+        textureSmall:SetPoint('CENTER', PlayerFrame, 'CENTER', -32 + 1.5, -9.5)
+
         self.PlayerFrameDeco = textureSmall
     end
 end
 
 function SubModuleMixin:ChangePlayerframe()
-    local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
-
-    -- Module.RefreshPortrait()
-
     PlayerFrameTexture:Hide()
     PlayerFrameBackground:Hide()
     PlayerFrameVehicleTexture:Hide()
@@ -579,11 +598,6 @@ function SubModuleMixin:ChangePlayerframe()
     PlayerLevelText:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', -5, 1)
     PlayerLevelText:SetHeight(12)
 
-    -- Health 119,12
-    PlayerFrameHealthBar:SetSize(125, 20)
-    PlayerFrameHealthBar:ClearAllPoints()
-    PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
-
     self:UpdatePlayerFrameHealthBar()
 
     PlayerFrameHealthBarText:SetPoint('CENTER', PlayerFrameHealthBar, 'CENTER', 0, 0)
@@ -592,64 +606,38 @@ function SubModuleMixin:ChangePlayerframe()
     PlayerFrameHealthBarTextLeft:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', dx, 0)
     PlayerFrameHealthBarTextRight:SetPoint('RIGHT', PlayerFrameHealthBar, 'RIGHT', -dx, 0)
 
-    -- Mana 119,12
-    PlayerFrameManaBar:ClearAllPoints()
-    PlayerFrameManaBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, -17 + 0.5)
-    PlayerFrameManaBar:SetSize(125, 8)
-
-    PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, 0)
-    PlayerFrameManaBarTextLeft:SetPoint('LEFT', PlayerFrameManaBar, 'LEFT', dx, 0)
-    PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, 0)
+    local dy = -0.75;
+    PlayerFrameManaBarText:SetPoint('CENTER', PlayerFrameManaBar, 'CENTER', 0, dy)
+    PlayerFrameManaBarTextLeft:SetPoint('LEFT', PlayerFrameManaBar, 'LEFT', dx, dy)
+    PlayerFrameManaBarTextRight:SetPoint('RIGHT', PlayerFrameManaBar, 'RIGHT', -dx, dy)
 
     self:UpdatePlayerFrameManaBar()
-
-    -- UI-HUD-UnitFrame-Player-PortraitOn-Status
-    PlayerStatusTexture:SetTexture(base)
-    PlayerStatusTexture:SetSize(192, 71)
-    PlayerStatusTexture:SetTexCoord(0.1943359375, 0.3818359375, 0.169921875, 0.30859375)
-
-    PlayerStatusTexture:ClearAllPoints()
-    PlayerStatusTexture:SetPoint('TOPLEFT', self.PlayerFrameBorder, 'TOPLEFT', 1, 1)
-
-    if DF.Wrath then RuneFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 54 - 3, 34 - 3) end
-
-    if DF.Cata then PaladinPowerBar:SetPoint('TOP', PlayerFrame, 'BOTTOM', 43, 39 - 2) end
-
-    if DF.API.Version.IsCata then ShardBarFrame:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 1) end
-    if DF.API.Version.IsMoP then
-        _G['MonkHarmonyBar']:SetPoint('TOP', 49 - 5, -46);
-        _G['WarlockPowerFrame']:SetPoint('TOP', PlayerFrame, 'BOTTOM', 50, 34 - 3);
-        _G['ShardBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', 0, 0 + 2)
-        _G['BurningEmbersBarFrame']:SetPoint('TOPLEFT', _G['WarlockPowerFrame'], 'TOPLEFT', -21, 1 + 2)
-    end
-
-    if _G['TotemFrame'] then _G['TotemFrame']:SetPoint('TOPLEFT', PlayerFrame, 'BOTTOMLEFT', 99 + 3, 38 - 3) end
 end
 
 function SubModuleMixin:CreateCustomPortrait()
     PlayerPortrait:ClearAllPoints()
     PlayerPortrait:SetPoint('TOPLEFT', PlayerFrame, 'TOPLEFT', 42, -15)
     PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
-    PlayerPortrait:SetSize(56, 56)
+    PlayerPortrait:SetSize(57, 57)
 
-    function PlayerPortrait:fixClassSize(class)
-        --
-        -- print('fixClassSize', class)
-        if class then
-            local delta = 4.5;
-            PlayerPortrait:SetVertexOffset(1, -delta, delta)
-            PlayerPortrait:SetVertexOffset(2, -delta, -delta)
-            PlayerPortrait:SetVertexOffset(3, delta, delta)
-            PlayerPortrait:SetVertexOffset(4, delta, -delta)
-        else
-            PlayerPortrait:SetVertexOffset(1, 0, 0)
-            PlayerPortrait:SetVertexOffset(2, 0, 0)
-            PlayerPortrait:SetVertexOffset(3, 0, 0)
-            PlayerPortrait:SetVertexOffset(4, 0, 0)
-        end
+    -- function PlayerPortrait:fixClassSize(class)
+    --     --
+    --     -- print('fixClassSize', class)
+    --     if class then
+    --         local delta = 4.5;
+    --         PlayerPortrait:SetVertexOffset(1, -delta, delta)
+    --         PlayerPortrait:SetVertexOffset(2, -delta, -delta)
+    --         PlayerPortrait:SetVertexOffset(3, delta, delta)
+    --         PlayerPortrait:SetVertexOffset(4, delta, -delta)
+    --     else
+    --         PlayerPortrait:SetVertexOffset(1, 0, 0)
+    --         PlayerPortrait:SetVertexOffset(2, 0, 0)
+    --         PlayerPortrait:SetVertexOffset(3, 0, 0)
+    --         PlayerPortrait:SetVertexOffset(4, 0, 0)
+    --     end
 
-    end
-    PlayerPortrait:fixClassSize(false)
+    -- end
+    -- PlayerPortrait:fixClassSize(false)
 end
 
 function SubModuleMixin:CreateRestFlipbook()
@@ -723,7 +711,6 @@ function SubModuleMixin:UpdatePlayerStatus()
         -- frame.PlayerFrameDeco:Show()
     elseif IsResting() then
         self.PlayerFrameDeco:Show()
-        self.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
 
         self.RestIcon:Show()
         self.RestIconAnimation:Play()
@@ -739,7 +726,6 @@ function SubModuleMixin:UpdatePlayerStatus()
         self.RestIcon:Hide()
         self.RestIconAnimation:Stop()
 
-        self.PlayerFrameBorder:SetVertexColor(1.0, 0, 0, 1.0)
         self.PlayerFrameBackground:SetVertexColor(1.0, 0, 0, 1.0)
     elseif PlayerFrame.inCombat then
         self.PlayerFrameDeco:Hide()
@@ -758,14 +744,12 @@ function SubModuleMixin:UpdatePlayerStatus()
         self.RestIcon:Hide()
         self.RestIconAnimation:Stop()
 
-        self.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         self.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
     end
 
     local db = self.ModuleRef.db.profile.player
     if db.hideRedStatus and (PlayerFrame.onHateList or PlayerFrame.inCombat) then
         --
-        self.PlayerFrameBorder:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         self.PlayerFrameBackground:SetVertexColor(1.0, 1.0, 1.0, 1.0)
         PlayerStatusTexture:SetAlpha(0)
         PlayerStatusTexture:Hide()
@@ -825,91 +809,6 @@ function SubModuleMixin:CreatePlayerFrameExtra()
     extra:UpdateStyle('none')
 end
 
-function SubModuleMixin:HideSecondaryRes(hide)
-    if not self.SecondaryResToHide then return end
-
-    local _, class = UnitClass('player');
-
-    if class == 'WARLOCK' then
-        if DF.API.Version.IsCata then
-            _G['ShardBarFrame']:SetShown(not hide);
-        else
-            -- MoP onwards; 
-            local spec = C_SpecializationInfo.GetSpecialization()
-
-            if spec == SPEC_WARLOCK_AFFLICTION then
-                _G['ShardBarFrame']:SetShown(not hide);
-                _G['BurningEmbersBarFrame']:SetShown(false);
-                _G['DemonicFuryBarFrame']:SetShown(false);
-            elseif spec == SPEC_WARLOCK_DESTRUCTION then
-                _G['ShardBarFrame']:SetShown(false);
-                _G['BurningEmbersBarFrame']:SetShown(not hide);
-                _G['DemonicFuryBarFrame']:SetShown(false);
-            else
-                _G['ShardBarFrame']:SetShown(false);
-                _G['BurningEmbersBarFrame']:SetShown(false);
-                _G['DemonicFuryBarFrame']:SetShown(not hide);
-            end
-        end
-    elseif class == 'DRUID' then
-        if hide then
-            _G['EclipseBarFrame']:Hide()
-        else
-            if DF.API.Version.IsMoP then
-                _G['EclipseBarFrame']:UpdateShown()
-            else
-                EclipseBar_UpdateShown(_G['EclipseBarFrame'])
-            end
-        end
-    elseif class == 'PALADIN' then
-        _G['PaladinPowerBar']:SetShown(not hide);
-    elseif class == 'DEATHKNIGHT' then
-        _G['RuneFrame']:SetShown(not hide);
-    elseif class == 'MONK' then
-        _G['MonkHarmonyBar']:SetShown(not hide)
-        _G['MonkStaggerBar']:SetShown(not hide)
-    end
-end
-
-function SubModuleMixin:HookSecondaryRes()
-    local _, class = UnitClass('player');
-
-    if class == 'WARLOCK' then
-        self.SecondaryResToHide = _G['ShardBarFrame'];
-    elseif class == 'DRUID' then
-        self.SecondaryResToHide = _G['EclipseBarFrame'];
-    elseif class == 'PALADIN' then
-        self.SecondaryResToHide = _G['PaladinPowerBar'];
-    elseif class == 'DEATHKNIGHT' then
-        self.SecondaryResToHide = _G['RuneFrame'];
-    elseif class == 'MONK' then
-        self.SecondaryResToHide = _G['MonkHarmonyBar'];
-    end
-
-    if not self.SecondaryResToHide then return end
-
-    if self.SecondaryResToHide == _G['ShardBarFrame'] and not DF.API.Version.IsCata then
-        -- warlock MoP onwards
-        self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
-
-        local t = {_G['ShardBarFrame'], _G['BurningEmbersBarFrame'], _G['DemonicFuryBarFrame']}
-
-        for k, v in ipairs(t) do
-            v:HookScript('OnShow', function()
-                --
-                -- print('onshow')
-                if self.ModuleRef.db.profile.player.hideSecondaryRes then v:Hide() end
-            end)
-        end
-    else
-        self.SecondaryResToHide:HookScript('OnShow', function()
-            --
-            -- print('onshow')
-            if self.ModuleRef.db.profile.player.hideSecondaryRes then self.SecondaryResToHide:Hide() end
-        end)
-    end
-end
-
 function SubModuleMixin:ChangeStatusIcons()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
@@ -942,93 +841,156 @@ function SubModuleMixin:ChangeStatusIcons()
     -- TargetFrameTextureFrameLeaderIcon:SetPoint('BOTTOMLEFT', TargetFramePortrait, 'TOPRIGHT', -10 - 3, -10)
 end
 
+local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'
 function SubModuleMixin:UpdatePlayerFrameHealthBar()
-    if self.ModuleRef.db.profile.player.classcolor then
-        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
+    local state = self.ModuleRef.db.profile.player;
 
-        local localizedClass, englishClass, classIndex = UnitClass('player')
-        PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+    if state.customHealthBarTexture == 'Default' or not LSM then
+        if state.classcolor then
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                      'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
+            local _, englishClass, _ = UnitClass('player')
+            PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        else
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                      'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
+            PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        end
     else
-        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')
-        PlayerFrameHealthBar:SetStatusBarColor(1, 1, 1, 1)
+        local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
+        PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(customTex)
+
+        if state.classcolor then
+            local _, englishClass, _ = UnitClass('player')
+            PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        else
+            PlayerFrameHealthBar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
+        end
     end
 end
 
 function SubModuleMixin:UpdatePlayerFrameManaBar()
-    local powerType, powerTypeString = UnitPowerType('player')
+    local state = self.ModuleRef.db.profile.player;
 
-    if powerTypeString == 'MANA' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
-    elseif powerTypeString == 'RAGE' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'FOCUS' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
-    elseif powerTypeString == 'ENERGY' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
-    elseif powerTypeString == 'RUNIC_POWER' then
-        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
+    if state.customPowerBarTexture == 'Default' or not LSM then
+        local _, powerTypeString = UnitPowerType('player')
+
+        if powerTypeString == 'MANA' then
+            PlayerFrameManaBar:GetStatusBarTexture()
+                :SetTexture(texBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
+        elseif powerTypeString == 'RAGE' then
+            PlayerFrameManaBar:GetStatusBarTexture()
+                :SetTexture(texBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage')
+        elseif powerTypeString == 'FOCUS' then
+            PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                    'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus')
+        elseif powerTypeString == 'ENERGY' then
+            PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                    'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy')
+        elseif powerTypeString == 'RUNIC_POWER' then
+            PlayerFrameManaBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                    'UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower')
+        else
+            -- fallback - should not happen
+            PlayerFrameManaBar:GetStatusBarTexture()
+                :SetTexture(texBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana')
+        end
+
+        PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
+    else
+        UnitFrameManaBar_UpdateType(PlayerFrameManaBar, true)
+        local customTex = LSM:Fetch("statusbar", state.customPowerBarTexture)
+        PlayerFrameManaBar:GetStatusBarTexture():SetTexture(customTex)
+        -- PlayerFrameManaBar:SetStatusBarColor(0.0, 1.0, 0.0, 1)
     end
-
-    PlayerFrameManaBar:SetStatusBarColor(1, 1, 1, 1)
 end
 
 function SubModuleMixin:SetPlayerBiggerHealthbar(bigger)
-    local border = self.PlayerFrameBorder
     local background = self.PlayerFrameBackground
 
-    if not border or not background then return end
+    if not background then return end
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
+    local base2 = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe2x'
+    local tex2xBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe2x\\'
+
+    if not PlayerFrameHealthBar.DFMask then
+        local hpMask = PlayerFrameHealthBar:CreateMaskTexture()
+
+        PlayerFrameHealthBar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        PlayerFrameHealthBar.DFMask = hpMask
+
+        function PlayerFrameHealthBar.DFMask:SetBigger(big)
+            if big then
+                hpMask:ClearAllPoints()
+                hpMask:SetPoint('TOPLEFT', PlayerFrameHealthBar, 'TOPLEFT', -2, -0.5)
+                hpMask:SetTexture(tex2xBase .. 'plunderstormplayerhealthbarmask2x', 'CLAMPTOBLACKADDITIVE',
+                                  'CLAMPTOBLACKADDITIVE')
+                hpMask:SetSize(128, 32)
+            else
+                hpMask:ClearAllPoints()
+                hpMask:SetPoint('TOPLEFT', PlayerFrameHealthBar, 'TOPLEFT', -2, 6)
+                hpMask:SetTexture(tex2xBase .. 'uiunitframeplayerhealthmask2x', 'CLAMPTOBLACKADDITIVE',
+                                  'CLAMPTOBLACKADDITIVE')
+                hpMask:SetSize(128, 32)
+            end
+        end
+    end
+
+    if not PlayerFrameManaBar.DFMask then
+        local manaMask = PlayerFrameManaBar:CreateMaskTexture()
+        manaMask:ClearAllPoints()
+        manaMask:SetPoint('TOPLEFT', PlayerFrameManaBar, 'TOPLEFT', -2, 2)
+        manaMask:SetTexture(tex2xBase .. 'uiunitframeplayermanamask2x', 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        -- hpMask:SetTexCoord(0, 1, 0, 1)
+        manaMask:SetSize(128, 16)
+        PlayerFrameManaBar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        PlayerFrameManaBar.DFMask = manaMask
+    end
 
     if bigger then
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn')
-        background:SetTexCoord(0, 198 / 256, 0, 71 / 128)
+        background:SetTexture(tex2xBase .. 'plunderstorm-ui-hud-unitframe-player-portraiton-2x')
+        background:SetTexCoord(0, 396 / 512, 0, 142 / 256)
         background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0 + 6)
-
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER-Plunder')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5 + 6)
+        background:SetPoint('CENTER', PlayerFrame, 'CENTER', 16, 6.05)
 
         PlayerStatusTexture:SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn-InCombat')
         PlayerStatusTexture:SetSize(192, 71)
         PlayerStatusTexture:SetTexCoord(0, 192 / 256, 0, 71 / 128)
 
-        PlayerFrameHealthBar:SetSize(125, 32)
+        PlayerFrameHealthBar:SetSize(124, 32)
         PlayerFrameHealthBar:ClearAllPoints()
-        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0 - 6)
+        PlayerFrameHealthBar:SetPoint('CENTER', PlayerFrame, 'CENTER', 46.95, 0)
+        PlayerFrameHealthBar.DFMask:SetBigger(true)
 
         PlayerFrameManaBar:SetAlpha(0)
         PlayerFrameManaBarText:SetAlpha(0)
         PlayerFrameManaBarTextLeft:SetAlpha(0)
         PlayerFrameManaBarTextRight:SetAlpha(0)
     else
-        background:SetTexture(base)
-        background:SetTexCoord(0.7890625, 0.982421875, 0.001953125, 0.140625)
+        background:SetTexture(tex2xBase .. 'ui-hud-unitframe-player-portraiton-2x')
+        background:SetTexCoord(0, 396 / 512, 0, 142 / 256)
+
         background:SetSize(198, 71)
-        background:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, 0)
+        background:ClearAllPoints()
+        background:SetPoint('CENTER', PlayerFrame, 'CENTER', 16, 6.05)
 
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOn-BORDER')
-        border:SetPoint('LEFT', PlayerFrameHealthBar, 'LEFT', -67, -28.5)
+        -- ["UI-HUD-UnitFrame-Player-PortraitOn-Status"]={196, 71, 0.194824, 0.38623, 0.166992, 0.305664, false, false, "2x"},
+        PlayerStatusTexture:SetTexture(tex2xBase .. 'UI-HUD-UnitFrame-Player-PortraitOn-Status')
+        PlayerStatusTexture:SetSize(196, 71)
+        PlayerStatusTexture:SetTexCoord(0, 392 / 512, 0, 142 / 256)
+        PlayerStatusTexture:ClearAllPoints()
+        PlayerStatusTexture:SetPoint('CENTER', PlayerFrame, 'CENTER', 16 - 1, 6.05 + 1)
 
-        PlayerStatusTexture:SetTexture(base)
-        PlayerStatusTexture:SetSize(192, 71)
-        PlayerStatusTexture:SetTexCoord(0.1943359375, 0.3818359375, 0.169921875, 0.30859375)
-
-        PlayerFrameHealthBar:SetSize(125, 20)
+        PlayerFrameHealthBar:SetSize(124, 20)
         PlayerFrameHealthBar:ClearAllPoints()
-        PlayerFrameHealthBar:SetPoint('LEFT', PlayerPortrait, 'RIGHT', 1, 0)
+        PlayerFrameHealthBar:SetPoint('CENTER', PlayerFrame, 'CENTER', 46.95, 5.5)
+        PlayerFrameHealthBar.DFMask:SetBigger(false)
+
+        PlayerFrameManaBar:SetSize(124, 10.5)
+        PlayerFrameManaBar:ClearAllPoints()
+        PlayerFrameManaBar:SetPoint('CENTER', PlayerFrame, 'CENTER', 46.95, -10)
 
         PlayerFrameManaBar:SetAlpha(1)
         PlayerFrameManaBarText:SetAlpha(1)

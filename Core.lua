@@ -33,6 +33,21 @@ function DF:OnDisable()
     -- Called when the addon is disabled
 end
 
+function DF:EnableModule(name, force)
+    force = force and true or false;
+    -- DF:GetModule(k, true)
+    -- EnableModuleIfNotAlreadyEnabled
+    local module = self:GetModule(name)
+    local wasAlready = module:GetWasEnabled()
+    DF:Debug(module, string.format('DF:EnableModule(%s,%s,%s)', name, tostring(force), tostring(wasAlready)))
+
+    if wasAlready then
+        if force then return module:Enable() end
+    else
+        return module:Enable()
+    end
+end
+
 local name, realm = UnitName('player')
 local showDebug = name == 'Zimtdev'
 DF.ShowDebug = showDebug;
@@ -67,6 +82,12 @@ function DF:GetClassColor(class, alpha)
     else
         return r, g, b, 1, hex
     end
+end
+
+-- TODO
+function DF:GetUnitSelectionColor(unit)
+    local red, green, blue, alpha = UnitSelectionColor(unit)
+    return red, green, blue, alpha;
 end
 
 function DF:GetClassColoredText(str, class)

@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Darkmode'
@@ -308,7 +310,14 @@ function Module:RefreshOptionScreens()
     configFrame:RefreshCatSub(cat, 'Darkmode')
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
+    -- print('ApplySettingsInternal', sub, key)
     local db = Module.db.profile
     local state = db.general
 
@@ -345,7 +354,7 @@ function Module:UpdateMinimap(state)
     end
 
     -- local minimapBorderTex = minimapModule.Frame.minimap
-    local minimapBorderTex = _G['DragonflightUIMinimapBorder']
+    local minimapBorderTex = minimapModule.SubMinimap.MinimapBorder
     if not minimapBorderTex then return end -- TODO: HACK
 
     local c = CreateColorFromRGBHexString(state.minimapColor)
@@ -355,6 +364,9 @@ function Module:UpdateMinimap(state)
 
     minimapBorderTex:SetDesaturated(state.minimapDesaturate)
     minimapBorderTex:SetVertexColor(c:GetRGB())
+
+    minimapModule.SubMinimap.MinimapBorderSquare:SetDesaturated(state.minimapDesaturate)
+    minimapModule.SubMinimap.MinimapBorderSquare:SetVertexColor(c:GetRGB())
 
     MinimapCompassTexture:SetDesaturated(state.minimapDesaturate)
     MinimapCompassTexture:SetVertexColor(c:GetRGB())
@@ -383,11 +395,11 @@ function Module:UpdateMinimap(state)
 
     if not libIcon then return end
 
-    local f = minimapModule.Frame;
+    local f = minimapModule.SubMinimap;
     if not f.DarkmodeButtonHooked then
         f.DarkmodeButtonHooked = true
 
-        hooksecurefunc(minimapModule, 'UpdateButton', function(btn)
+        hooksecurefunc(f, 'UpdateButton', function(_, btn)
             Module:UpdateMinimapButton(btn)
         end)
     end
@@ -395,7 +407,6 @@ function Module:UpdateMinimap(state)
     local buttons = libIcon:GetButtonList()
 
     for k, v in ipairs(buttons) do
-        ---@diagnostic disable-next-line: param-type-mismatch
         local btn = libIcon:GetMinimapButton(v)
 
         if btn then
@@ -484,6 +495,21 @@ function Module:UpdateUnitframe(state)
         end
         self:UpdateFocusFrame(state)
     end
+
+    -- boss
+    if DF.Wrath then
+        local bossModule = DF:GetModule('Bossframe')
+        if not bossModule then return end
+
+        if not bossModule.DarkmodeBossHooked then
+            bossModule.DarkmodeBossHooked = true;
+            hooksecurefunc(bossModule, 'CreateBossFrames', function()
+                --  
+                self:UpdateBossFrame(state)
+            end)
+        end
+        self:UpdateBossFrame(state)
+    end
 end
 
 function Module:UpdatePlayerFrame(state)
@@ -493,12 +519,12 @@ function Module:UpdatePlayerFrame(state)
 
     if not f.PlayerFrameDeco then return end
 
-    local playerFrameBorder = f.PlayerFrameBorder
+    local playerFrameBackground = f.PlayerFrameBackground
     local playerFrameDeco = f.PlayerFrameDeco
     local playerFramePortaitExtra = f.PlayerPortraitExtra
 
-    playerFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    playerFrameBorder:SetVertexColor(c:GetRGB())
+    playerFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    playerFrameBackground:SetVertexColor(c:GetRGB())
 
     playerFrameDeco:SetDesaturated(state.unitframeDesaturate)
     playerFrameDeco:SetVertexColor(c:GetRGB())
@@ -518,13 +544,9 @@ function Module:UpdatePetFrame(state)
     if not f.PetFrameBackground then return end
 
     local petBackground = f.PetFrameBackground
-    local petBorder = f.PetFrameBorder
 
     petBackground:SetDesaturated(state.unitframeDesaturate)
     petBackground:SetVertexColor(c:GetRGB())
-
-    petBorder:SetDesaturated(state.unitframeDesaturate)
-    petBorder:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdateTargetFrame(state)
@@ -532,26 +554,27 @@ function Module:UpdateTargetFrame(state)
     local f = unitModule.SubTarget
     local c = CreateColorFromRGBHexString(state.unitframeColor)
 
-    if not f.TargetFrameBorder then return end
+    if not f.TargetFrameBackground then return end
 
-    local targetFrameBorder = f.TargetFrameBorder
+    local TargetFrameBackground = f.TargetFrameBackground
     local targetPortExtra = f.PortraitExtra
 
-    targetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    targetFrameBorder:SetVertexColor(c:GetRGB())
+    TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    TargetFrameBackground:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubTargetOfTarget
-    local targetOfTargetBorder = tot.TargetFrameToTBorder
-    targetOfTargetBorder:SetDesaturated(state.unitframeDesaturate)
-    targetOfTargetBorder:SetVertexColor(c:GetRGB())
+    local TargetFrameToTBackground = tot.TargetFrameToTBackground
+    TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+    TargetFrameToTBackground:SetVertexColor(c:GetRGB())
 
     -- TODO
     targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 
     -- editmode
     local e = f.PreviewTarget
-    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
+    e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBackground:SetVertexColor(c:GetRGB())
+    e.PortraitExtra:SetVertexColor(0.6, 0.6, 0.6)
 end
 
 function Module:UpdatePartyFrame(state)
@@ -584,33 +607,74 @@ function Module:UpdateFocusFrame(state)
     local unitModule = DF:GetModule('Unitframe')
     local f = unitModule.SubFocus
 
-    if not f.FocusFrameBorder then return end
+    if not f.TargetFrameBackground then return end
 
-    local focusBorder = f.FocusFrameBorder
-    local focusBackground = f.FocusFrameBackground
-    local focusPortExtra = f.FocusExtra
+    local focusBackground = f.TargetFrameBackground
+    local focusPortExtra = f.PortraitExtra
 
     local c = CreateColorFromRGBHexString(state.unitframeColor)
-
-    focusBorder:SetDesaturated(state.unitframeDesaturate)
-    focusBorder:SetVertexColor(c:GetRGB())
 
     focusBackground:SetDesaturated(state.unitframeDesaturate)
     focusBackground:SetVertexColor(c:GetRGB())
 
     local tot = unitModule.SubFocusTarget
-    local focusToTBorder = tot.FocusFrameToTBorder
+    local FocusFrameToTBackground = tot.FocusFrameToTBackground
 
-    focusToTBorder:SetDesaturated(state.unitframeDesaturate)
-    focusToTBorder:SetVertexColor(c:GetRGB())
+    FocusFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+    FocusFrameToTBackground:SetVertexColor(c:GetRGB())
 
     -- TODO
     focusPortExtra:SetVertexColor(0.6, 0.6, 0.6)
 
     -- editmode
     local e = f.PreviewFocus
-    e.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-    e.TargetFrameBorder:SetVertexColor(c:GetRGB())
+    e.TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+    e.TargetFrameBackground:SetVertexColor(c:GetRGB())
+end
+
+function Module:UpdateBossFrame(state)
+    local bossModule = DF:GetModule('Bossframe')
+    local c = CreateColorFromRGBHexString(state.unitframeColor)
+
+    -- Module['BossFrame' .. id]
+    for i = 1, 4 do
+        local f = bossModule['BossFrame' .. i];
+        if f then
+            --
+            local TargetFrameBackground = f.TargetFrameBackground
+            local targetPortExtra = f.PortraitExtra
+
+            TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameBackground:SetVertexColor(c:GetRGB())
+            -- TODO
+            targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+
+            local tot = f.ToTFrame
+            local TargetFrameToTBackground = tot.TargetFrameBackground
+            TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameToTBackground:SetVertexColor(c:GetRGB())
+        end
+    end
+
+    for i = 1, 4 do
+        local f = bossModule['FakeBoss' .. i];
+        if f then
+            --
+            local TargetFrameBackground = f.TargetFrameBackground
+            local targetPortExtra = f.PortraitExtra
+
+            TargetFrameBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameBackground:SetVertexColor(c:GetRGB())
+            -- TODO
+            targetPortExtra:SetVertexColor(0.6, 0.6, 0.6)
+
+            local tot = f.ToTFrame
+            local TargetFrameToTBackground = tot.TargetFrameBackground
+            TargetFrameToTBackground:SetDesaturated(state.unitframeDesaturate)
+            TargetFrameToTBackground:SetVertexColor(c:GetRGB())
+        end
+    end
+
 end
 
 function Module:UpdateActionbar(state)
@@ -621,17 +685,21 @@ function Module:UpdateActionbar(state)
     local f = unitModule.Frame
     local c = CreateColorFromRGBHexString(state.actionbarColor)
 
-    local mainbar = unitModule.bar1
-    if not mainbar then return end
+    do
+        local mainbar = unitModule.bar1
+        if not mainbar then return end
 
-    local gryphonLeft = mainbar.gryphonLeft.texture
-    local gryphonRight = mainbar.gryphonRight.texture
+        local gryphonLeft = mainbar.gryphonLeft.texture
+        local gryphonRight = mainbar.gryphonRight.texture
+        local borderArt = mainbar.BorderArt
 
-    gryphonLeft:SetDesaturated(state.actionbarDesaturate)
-    gryphonLeft:SetVertexColor(c:GetRGB())
+        local t = {gryphonLeft, gryphonRight, borderArt}
 
-    gryphonRight:SetDesaturated(state.actionbarDesaturate)
-    gryphonRight:SetVertexColor(c:GetRGB())
+        for k, v in ipairs(t) do
+            v:SetDesaturated(state.actionbarDesaturate)
+            v:SetVertexColor(c:GetRGB())
+        end
+    end
 
     local barTable = {}
     for i = 1, 8 do
@@ -674,37 +742,37 @@ function Module:UpdateActionbar(state)
     if not Module.DFActionbarGridHooked then
         Module.DFActionbarGridHooked = true
 
-        hooksecurefunc('ActionButton_ShowGrid', function(btn)
-            for k, bar in ipairs(barTable) do
-                --
-                bar.DFDarkmodeUpdateBarButtons()
-            end
-        end)
+        -- hooksecurefunc('ActionButton_ShowGrid', function(btn)
+        --     for k, bar in ipairs(barTable) do
+        --         --
+        --         bar.DFDarkmodeUpdateBarButtons()
+        --     end
+        -- end)
 
-        hooksecurefunc('ActionButton_HideGrid', function(btn)
-            for k, bar in ipairs(barTable) do
-                --
-                bar.DFDarkmodeUpdateBarButtons()
-            end
-        end)
+        -- hooksecurefunc('ActionButton_HideGrid', function(btn)
+        --     for k, bar in ipairs(barTable) do
+        --         --
+        --         bar.DFDarkmodeUpdateBarButtons()
+        --     end
+        -- end)
 
-        hooksecurefunc('ActionButton_UpdateUsable', function(btn)
-            --
-            -- print('ActionButton_UpdateUsable', btn:GetName())
-            if not state.actionbarColor then return end
-            local c = CreateColorFromRGBHexString(state.actionbarColor)
-            if btn.DFNormalTexture then
-                btn.DFNormalTexture:SetVertexColor(c:GetRGB())
-            else
-                -- btn:GetNormalTexture():SetVertexColor(c:GetRGB())
-                local normal = btn:GetNormalTexture();
-                if normal then
-                    normal:SetVertexColor(c:GetRGB())
-                else
-                    -- print('else', btn:GetName(), c)
-                end
-            end
-        end)
+        -- hooksecurefunc('ActionButton_UpdateUsable', function(btn)
+        --     --
+        --     -- print('ActionButton_UpdateUsable', btn:GetName())
+        --     if not state.actionbarColor then return end
+        --     local c = CreateColorFromRGBHexString(state.actionbarColor)
+        --     if btn.DFNormalTexture then
+        --         btn.DFNormalTexture:SetVertexColor(c:GetRGB())
+        --     else
+        --         -- btn:GetNormalTexture():SetVertexColor(c:GetRGB())
+        --         local normal = btn:GetNormalTexture();
+        --         if normal then
+        --             normal:SetVertexColor(c:GetRGB())
+        --         else
+        --             -- print('else', btn:GetName(), c)
+        --         end
+        --     end
+        -- end)
     end
 
     if true then
@@ -798,15 +866,15 @@ end
 
 function Module:UpdateBuff(state)
     local unitModule = DF:GetModule('Buffs')
-    local f = unitModule.Frame
+    local f = unitModule.SubBuff
 
     if not unitModule:IsEnabled() then return end
     local c = CreateColorFromRGBHexString(state.buffColor)
 
     -- update defaults
-    unitModule.BuffVertexColorR = c.r;
-    unitModule.BuffVertexColorG = c.g;
-    unitModule.BuffVertexColorB = c.b;
+    f.BuffVertexColorR = c.r;
+    f.BuffVertexColorG = c.g;
+    f.BuffVertexColorB = c.b;
 
     local buff;
     -- player
@@ -884,7 +952,7 @@ function Module:HookOnEnable()
             if m then
                 hooksecurefunc(m, 'OnEnable', function()
                     --
-                    -- print('enabless!')
+                    -- print('enabless!', m)
                     Module:ApplySettings()
                 end)
             end
@@ -896,14 +964,6 @@ end
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, arg2, arg3)
-    -- print('event', event) 
-    if event == 'MINIMAP_PING' then
-        --
-        Module.HandlePing(arg1, arg2, arg3)
-    elseif event == 'MINIMAP_UPDATE_TRACKING' then
-        -- print('MINIMAP_UPDATE_TRACKING', GetTrackingTexture())
-        Module.UpdateTrackingEra()
-    end
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 

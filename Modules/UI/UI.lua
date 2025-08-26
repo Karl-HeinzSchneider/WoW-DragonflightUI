@@ -1,4 +1,5 @@
----@class DragonflightUI
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper; ---@class DragonflightUI
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
@@ -13,6 +14,8 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
+
+Module.SubGroupLootContainer = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['GroupLootContainer'])
 
 local defaults = {
     profile = {
@@ -29,19 +32,11 @@ local defaults = {
             changeTalents = true,
             questLevel = true
         },
-        roll = {
-            scale = 1,
-            anchorFrame = 'UIParent',
-            customAnchorFrame = '',
-            anchor = 'BOTTOM',
-            anchorParent = 'BOTTOM',
-            x = 300, -- 0
-            y = 200 -- 152 = default blizz
-        },
+        roll = Module.SubGroupLootContainer.Defaults,
         widgetBelow = {
             scale = 1,
             anchorFrame = 'Minimap',
-            customAnchorFrame = '',
+            customAnchorFrame = 'DragonflightUIMinimapBase',
             anchor = 'TOP',
             anchorParent = 'BOTTOM',
             x = 0,
@@ -95,7 +90,8 @@ end
 
 local frameTable = {
     {value = 'UIParent', text = 'UIParent', tooltip = 'descr', label = 'label'},
-    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'}
+    {value = 'Minimap', text = 'Minimap', tooltip = 'descr', label = 'label'},
+    {value = 'DragonflightUIMinimapBase', text = 'DF_MinimapFrame', tooltip = 'descr', label = 'label'}
 }
 
 local UIOptions = {
@@ -226,51 +222,6 @@ local widgetBelowEditmode = {
     }
 }
 
-local rollOptions = {
-    name = L["GroupLootContainerName"],
-    desc = L["GroupLootContainerDesc"],
-    advancedName = 'GroupLootContainer',
-    sub = 'roll',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {}
-}
-DF.Settings:AddPositionTable(Module, rollOptions, 'roll', 'GroupLootContainer', getDefaultStr, frameTable)
--- DragonflightUIStateHandlerMixin:AddStateTable(Module, rollOptions, 'possess', 'PossessBar', getDefaultStr)
-rollOptions.args.scale = nil;
-local rollOptionsEditmode = {
-    name = 'possess',
-    desc = 'possess',
-    get = getOption,
-    set = setOption,
-    type = 'group',
-    args = {
-        resetPosition = {
-            type = 'execute',
-            name = L["ExtraOptionsPreset"],
-            btnName = L["ExtraOptionsResetToDefaultPosition"],
-            desc = L["ExtraOptionsPresetDesc"],
-            func = function()
-                local dbTable = Module.db.profile.roll
-                local defaultsTable = defaults.profile.roll
-                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
-                setPreset(dbTable, {
-                    scale = defaultsTable.scale,
-                    anchor = defaultsTable.anchor,
-                    anchorParent = defaultsTable.anchorParent,
-                    anchorFrame = defaultsTable.anchorFrame,
-                    x = defaultsTable.x,
-                    y = defaultsTable.y
-                }, 'roll')
-            end,
-            order = 16,
-            editmode = true,
-            new = false
-        }
-    }
-}
-
 local frame = CreateFrame('FRAME')
 
 function frame:OnEvent(event, arg1, ...)
@@ -355,8 +306,8 @@ function Module:RegisterSettings()
     end
 
     register('ui', {order = 0, name = UIOptions.name, descr = 'UIsss', isNew = false})
-    register('roll', {order = 18, name = rollOptions.name, descr = 'desc', isNew = true})
-    register('widgetBelow', {order = 19, name = widgetBelowOptions.name, descr = 'desc', isNew = true})
+    register('roll', {order = 18, name = self.SubGroupLootContainer.Options.name, descr = 'desc', isNew = true})
+    register('widgetBelow', {order = 19, name = widgetBelowOptions.name, descr = 'desc', isNew = false})
 end
 
 function Module:RegisterOptionScreens()
@@ -364,13 +315,6 @@ function Module:RegisterOptionScreens()
         options = UIOptions,
         default = function()
             setDefaultSubValues(UIOptions.sub)
-        end
-    })
-
-    DF.ConfigModule:RegisterSettingsData('roll', 'misc', {
-        options = rollOptions,
-        default = function()
-            setDefaultSubValues('roll')
         end
     })
 
@@ -384,32 +328,6 @@ end
 
 function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
-
-    -- GroupLootContainer 
-    local fakeRoll = Module.PreviewRoll
-
-    EditModeModule:AddEditModeToFrame(fakeRoll)
-
-    fakeRoll.DFEditModeSelection:SetGetLabelTextFunction(function()
-        return rollOptions.name
-    end)
-
-    fakeRoll.DFEditModeSelection:RegisterOptions({
-        options = rollOptions,
-        extra = rollOptionsEditmode,
-        default = function()
-            setDefaultSubValues('roll')
-        end,
-        moduleRef = self,
-        showFunction = function()
-            --         
-            fakeRoll.FakePreview:Show()
-        end,
-        hideFunction = function()
-            --
-            fakeRoll.FakePreview:Hide()
-        end
-    });
 
     -- widget below 
     local fakeWidget = Module.PreviewWidgetBelow
@@ -451,11 +369,17 @@ function Module:RefreshOptionScreens()
     refreshCat('roll')
     refreshCat('widgetBelow')
 
-    Module.PreviewRoll.DFEditModeSelection:RefreshOptionScreen();
+    self.SubGroupLootContainer.PreviewRoll.DFEditModeSelection:RefreshOptionScreen();
     Module.PreviewWidgetBelow.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings(sub)
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local db = Module.db.profile
 
     self:ConditionalOption('changeBag', 'first', 'Change Bags', function()
@@ -523,8 +447,9 @@ function Module:ApplySettings(sub)
         DragonflightUIMixin:AddQuestLevel()
     end)
 
-    Module:UpdateGroupLootContainerState(db.roll)
     Module:UpdateWidgetBelowState(db.widgetBelow)
+
+    self.SubGroupLootContainer:UpdateState(db.roll)
 end
 
 function Module:ChangeFrames()
@@ -601,7 +526,6 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
-        Module:ChangeGroupLootContainer()
         Module:ChangeWidgetBelow()
     elseif Version.IsTBC then
     elseif Version.IsWotlk then
@@ -646,7 +570,6 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
-        Module:ChangeGroupLootContainer()
         Module:ChangeWidgetBelow()
     elseif Version.IsCata then
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
@@ -697,7 +620,6 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
-        Module:ChangeGroupLootContainer()
         Module:ChangeWidgetBelow()
     elseif Version.IsMoP then
         DragonflightUIMixin:PortraitFrameTemplate(_G['SpellBookFrame'])
@@ -741,7 +663,6 @@ function Module:ChangeFrames()
             DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
             _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
         end)
-        Module:ChangeGroupLootContainer()
         Module:ChangeWidgetBelow()
     end
 end
@@ -965,40 +886,6 @@ function Module:HookColorInspect()
     DragonflightUIItemColorMixin:HookInspectFrame()
 end
 
-function Module:ChangeGroupLootContainer()
-    local fakeRoll = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerPreview', UIParent)
-    fakeRoll:SetSize(256, 100)
-    Module.PreviewRoll = fakeRoll
-
-    local fakePreview = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerFakeLootPreview', fakeRoll,
-                                    'DFEditModePreviewGroupLootTemplate')
-    fakePreview:SetPoint('CENTER')
-
-    fakeRoll.FakePreview = fakePreview
-end
-
-function Module:UpdateGroupLootContainerState(state)
-    -- print('UpdateGroupLootContainerState')
-
-    local parent;
-    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-        parent = _G[state.customAnchorFrame]
-    else
-        parent = _G[state.anchorFrame]
-    end
-
-    local preview = Module.PreviewRoll;
-    preview:ClearAllPoints()
-    preview:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    -- preview:SetScale(state.scale)
-    preview:SetScale(1)
-
-    local f = _G['GroupLootContainer']
-    f.ignoreFramePositionManager = true;
-    f:ClearAllPoints()
-    f:SetPoint('BOTTOM', preview, 'BOTTOM', 0, 0)
-end
-
 function Module:ChangeWidgetBelow()
     local fakeWidget = CreateFrame('Frame', 'DragonflightUIEditModeWidgetBelowPreview', UIParent)
     fakeWidget:SetSize(173, 26)
@@ -1045,6 +932,7 @@ end
 
 function Module:Era()
     Module:ChangeFrames()
+    self.SubGroupLootContainer:Setup()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -1059,11 +947,13 @@ end
 
 function Module:Wrath()
     Module:ChangeFrames()
+    self.SubGroupLootContainer:Setup()
 end
 
 function Module:Cata()
     Module:ChangeFrames()
     Module:HookCharacterFrame()
+    self.SubGroupLootContainer:Setup()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -1073,6 +963,8 @@ end
 function Module:Mists()
     Module:ChangeFrames()
     Module:HookCharacterFrame()
+
+    self.SubGroupLootContainer:Setup()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')

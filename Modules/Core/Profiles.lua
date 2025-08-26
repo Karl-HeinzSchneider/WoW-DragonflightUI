@@ -536,7 +536,17 @@ function Module:OverrideProfileWithTable(t)
     -- print('Module:OverrideProfileWithTable()')
     -- CopyToClipboard(':3')
 
-    for name, d in pairs(t.namespaces) do copyTable(d, DF.db.children[name].profile) end
+    for name, d in pairs(t.namespaces) do
+        local child = DF.db.children[name]
+        if child and child.profile then
+            copyTable(d, child.profile)
+        else
+            -- namespace missing, e.g. Era => MoP where 'CharacterStatsPanel' is missing
+            -- TODO: add character specific, e.g. flyout
+            DF.db.children[name] = {profile = {}}
+            copyTable(d, DF.db.children[name].profile)
+        end
+    end
 
     DF:RefreshConfig()
 end

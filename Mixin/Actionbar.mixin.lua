@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
@@ -34,20 +36,61 @@ function DragonflightUIActionbarMixin:Init()
 
     self.stanceBar = false
 
-    -- self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    self:SetScript('OnEvent', function(self, event, arg1)
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    self:SetScript('OnEvent', function(_, event, arg1)
+        -- print(self:GetName(), event, arg1)
         if InCombatLockdown() then return end
-        self:Update()
+        -- self:Update()
+        self:UpdateGridState()
     end)
 end
 
-function DragonflightUIActionbarMixin:SetButtons(buttons)
+function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
     self.buttonTable = buttons
+
+    local multibarFix = (barNumber and barNumber >= 2 and barNumber <= 5)
+    local extraBars = (barNumber and barNumber >= 6 and barNumber <= 8)
+    local multi;
+    local shouldSetParent = false;
+
+    if not barNumber then
+        --
+    elseif barNumber == 1 then
+        -- shouldSetParent = true;
+    elseif multibarFix then
+        -- print('~~multibarFix', barNumber)
+        if barNumber == 2 then
+            multi = 6;
+        elseif barNumber == 3 then
+            multi = 5;
+        elseif barNumber == 4 then
+            multi = 4;
+        elseif barNumber == 5 then
+            multi = 3;
+        end
+
+        if multi then self:SetAttribute('actionpage', multi) end
+        shouldSetParent = true;
+    elseif extraBars then
+        shouldSetParent = true;
+    elseif barNumber == 42 then
+        -- stance
+        shouldSetParent = true
+    elseif barNumber == 69 then
+        -- pet
+        shouldSetParent = true
+    end
 
     for i = 1, #buttons do
         --
         local btn = buttons[i]
-        self:SetHideFrame(btn, i + 1)
+        if shouldSetParent then
+            --
+            -- btn:SetAttribute('action', multi * 12 + i)
+            btn:SetParent(self)
+        else
+            self:SetHideFrame(btn, i + 1)
+        end
     end
 end
 
@@ -65,10 +108,22 @@ end
     padding = 3,
     alwaysShow = true
 } ]]
-function DragonflightUIActionbarMixin:SetState(state)
+function DragonflightUIActionbarMixin:SetState(state, key)
     self.state = state
     self.savedAlwaysShow = state.alwaysShow
-    self:Update()
+
+    if key and key == 'alphaNormal' then
+        -- print('alphaNormal')
+        self:SetAttribute('alphaNormal', state.alphaNormal)
+        self.DFAlphaHandler:SetAttribute('state-alpha', 'update')
+        self.DFAlphaHandler:SetAttribute('state-alpha', 'normal')
+    elseif key and key == 'alphaCombat' then
+        -- print('alphaCombat')
+        self:SetAttribute('alphaCombat', state.alphaCombat)
+    else
+        self:Update()
+    end
+    -- print('SetState', key)
 end
 
 function DragonflightUIActionbarMixin:IsAnchorframeLegal()
@@ -271,10 +326,13 @@ function DragonflightUIActionbarMixin:Update()
 
     -- mainbar only
     if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
+    if self.BorderArt then self.BorderArt:SetShown(not state.hideBorder) end
 
     if self.numberFrame then self:UpdateNumberFrame() end
 
     -- if self.decoFrame then self.decoFrame.update(state) end
+
+    self:SetIgnoreRange(not state.range)
 
     local isLegal, loopStr = self:IsAnchorframeLegal();
     local loopStrFixed, _ = gsub(loopStr, 'DragonflightUI', 'DF')
@@ -302,9 +360,65 @@ function DragonflightUIActionbarMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    self:UpdateStateHandler(state)
-    self:UpdatePagingStateDriver(state)
-    self:UpdateTargetStateDriver(state)
+    -- optimization as state update is slow (~7ms), noticable when changing sliders etc
+    self.ShouldUpdateStateHandler = true;
+
+    Helper:Benchmark('StateUpdater' .. self:GetName(), function()
+        local newestState = self.state
+        self:UpdateStateHandler(newestState)
+        self:UpdatePagingStateDriver(newestState)
+        self:UpdateTargetStateDriver(newestState)
+    end)
+
+    -- if not self.LastStateHandlerUpdate or ((GetTime() - self.LastStateHandlerUpdate) > 1.0) then
+    --     print('instant update')
+    --     Helper:Benchmark('StateUpdater' .. self:GetName(), function()
+    --         local newestState = self.state
+    --         self:UpdateStateHandler(newestState)
+    --         self:UpdatePagingStateDriver(newestState)
+    --         self:UpdateTargetStateDriver(newestState)
+    --     end)
+    --     self.ShouldUpdateStateHandler = false;
+    --     self.LastStateHandlerUpdate = GetTime()
+    -- else
+    --     print('delayed')
+    --     C_Timer.After(2, function()
+    --         if self.ShouldUpdateStateHandler and not InCombatLockdown() then
+    --             print('UpdateStateHandler')
+    --             Helper:Benchmark('StateUpdater' .. self:GetName(), function()
+    --                 local newestState = self.state
+    --                 self:UpdateStateHandler(newestState)
+    --                 self:UpdatePagingStateDriver(newestState)
+    --                 self:UpdateTargetStateDriver(newestState)
+    --             end)
+    --             self.ShouldUpdateStateHandler = false;
+    --             self.LastStateHandlerUpdate = GetTime()
+    --         end
+    --     end)
+    -- end
+
+    if self.StylePetButton then PetActionBar_Update() end
+end
+
+function DragonflightUIActionbarMixin:UpdateGridState()
+    local state = self.state;
+    if not state then return end
+
+    local buttonTable = self.buttonTable
+    local btnCount = #buttonTable
+    if btnCount < 1 then return end
+
+    for i = 1, btnCount do
+        local btn = buttonTable[i]
+
+        -- print(btn:GetName(), state.alwaysShow)
+        if state.alwaysShow then
+            btn:SetAttribute("showgrid", 1)
+        else
+            btn:SetAttribute("showgrid", 0)
+        end
+        ActionButton_ShowGrid(btn)
+    end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -353,22 +467,37 @@ function DragonflightUIActionbarMixin:AddPagingStateDriver()
         UpdateMainActionBar = [=[
             local page = ...
             -- print('UpdateMainActionBar',page)
-            if page == "tempshapeshift" then
-                if HasTempShapeshiftActionBar() then
-                    page = GetTempShapeshiftBarIndex()
+            -- if page == "tempshapeshift" then
+            --     if HasTempShapeshiftActionBar() then
+            --         page = GetTempShapeshiftBarIndex()
+            --     else
+            --         page = 1
+            --     end
+            if page == "possess" then
+                -- page = handler:GetFrameRef("MainMenuBarArtFrame"):GetAttribute("actionpage")
+                -- if handler:GetFrameRef("OverrideActionBar") and page <= 10 then
+                --     page = handler:GetFrameRef("OverrideActionBar"):GetAttribute("actionpage")
+                -- end
+                -- if page <= 10 then
+                --     page = 12
+                -- end
+                if HasVehicleActionBar() then
+                    page = GetVehicleBarIndex();
+                elseif HasOverrideActionBar() then
+                    page = GetOverrideBarIndex();               
+                elseif HasTempShapeshiftActionBar() then
+                    page = GetTempShapeshiftBarIndex();    
+                elseif HasBonusActionBar() then
+                    page = GetBonusBarIndex();
                 else
-                    page = 1
+                    page = nil;
                 end
-            elseif page == "possess" then
-                page = handler:GetFrameRef("MainMenuBarArtFrame"):GetAttribute("actionpage")
-                if handler:GetFrameRef("OverrideActionBar") and page <= 10 then
-                    page = handler:GetFrameRef("OverrideActionBar"):GetAttribute("actionpage")
-                end
-                if page <= 10 then
-                    page = 12
+                if not page then
+                    print('DragonflightUI: Actionbar1 cant determine vehicle/possess action bar page, please report this!')
+                    page = 12;
                 end
             end         
-            -- print('..',page)
+            -- print('~>UpdateMainActionBar',page)
             handler:SetAttribute("actionpage", page)
     
             for btn in pairs(buttonsTable) do
@@ -388,6 +517,29 @@ function DragonflightUIActionbarMixin:AddPagingStateDriver()
     end
 end
 
+-- local function OnEvent(self, event)
+--     print(event)
+--     local vehicleui = SecureCmdOptionParse("[vehicleui] 1; 0")
+--     local possessbar = SecureCmdOptionParse("[possessbar] 1; 0")
+--     local overridebar = SecureCmdOptionParse("[overridebar] 1; 0")
+--     local shapeshift = SecureCmdOptionParse("[shapeshift] 1; 0")
+--     local bonusbar = SecureCmdOptionParse("[bonusbar] 1; 0")
+--     if vehicleui == "1" then print("vehicleui") end
+--     if possessbar == "1" then print("possessbar") end
+--     if overridebar == "1" then print("overridebar") end
+--     if shapeshift == "1" then print("shapeshift") end
+--     if bonusbar == "1" then print("bonusbar") end
+--     print("barpage: " .. GetActionBarPage())
+--     print("type: " .. type(vehicleui))
+-- end
+
+-- local barCheck = CreateFrame("Frame")
+-- barCheck:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+-- barCheck:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+-- barCheck:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+-- barCheck:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
+-- barCheck:SetScript("OnEvent", OnEvent)
+
 function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     if not self.PagingStateDriver then return end
 
@@ -395,20 +547,21 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     local mode = state.stateDriver;
     -- print('DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)', mode)
 
-    -- unregister old driver
-    UnregisterStateDriver(handler, "page")
-    -- handler:SetAttribute("state-page", "nil")
-    handler:SetAttribute("_onstate-page", nil)
-
     local localizedClass, englishClass, classIndex = UnitClass("player");
     if mode == 'SMART' then
         local shouldChange = (englishClass == 'DRUID')
-        if not shouldChange then mode = 'DEFAULT' end
+        -- if not shouldChange then mode = 'DEFAULT' end
     end
 
     -- print('~>', mode)
 
     if mode == 'DEFAULT' then
+        if self.DriverCache then
+            UnregisterStateDriver(handler, "page");
+            handler:SetAttribute("_onstate-page", nil);
+            self.DriverCache = nil;
+        end
+
         for i, btn in ipairs(self.buttonTable) do
             --
             btn:SetAttribute("useparent-actionpage", true);
@@ -417,7 +570,7 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
     elseif mode == 'SMART' then
         local driverTable = {}
         -- 
-        tinsert(driverTable, "[overridebar][possessbar]possess")
+        tinsert(driverTable, "[overridebar][possessbar][shapeshift]possess")
         -- 
         for i = 2, 6 do
             --
@@ -436,11 +589,17 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         end
 
         -- Fix for temp shape shift bar
-        tinsert(driverTable, "[stance:1]tempshapeshift")
+        -- tinsert(driverTable, "[stance:1]possess")
 
         tinsert(driverTable, "1")
 
         local driver = table.concat(driverTable, ';')
+
+        if driver == self.DriverCache then return; end
+        self.DriverCache = driver;
+        UnregisterStateDriver(handler, "page")
+        handler:SetAttribute("_onstate-page", nil)
+
         local result, target = SecureCmdOptionParse(driver)
 
         -- print('~~>> NOW:', result)
@@ -468,6 +627,12 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
         tinsert(driverTable, "1")
 
         local driver = table.concat(driverTable, ';')
+
+        if driver == self.DriverCache then return; end
+        self.DriverCache = driver;
+        UnregisterStateDriver(handler, "page")
+        handler:SetAttribute("_onstate-page", nil)
+
         local result, target = SecureCmdOptionParse(driver)
 
         for i, btn in ipairs(self.buttonTable) do
@@ -485,6 +650,49 @@ function DragonflightUIActionbarMixin:UpdatePagingStateDriver(state)
             handler:Run(UpdateMainActionBar, newstate)
         ]=])
     end
+end
+
+function DragonflightUIActionbarMixin:AddAlphaStateDriver()
+    print('DragonflightUIActionbarMixin:AddAlphaStateDriver()')
+    local handler = CreateFrame("Frame", "DragonflightUIActionBarAlphaHandler", self, "SecureHandlerStateTemplate")
+    self.AlphaStateDriver = handler;
+
+    handler:SetFrameRef('frameRef', self)
+    handler:SetAttribute('_onstate-alpha', [[
+        -- if not newstate then return end     
+        local frameRef = self:GetFrameRef("frameRef")
+        if not frameRef then return end     
+
+        local newAlpha = 1.0;
+        if newstate == 'combat' then
+            newAlpha = frameRef:GetAttribute('combatAlpha') or 0.5;
+        elseif newstate == 'normal' then
+            newAlpha = frameRef:GetAttribute('normalAlpha') or 0.8;
+        else
+            --
+        end
+        frameRef:SetAlpha(newAlpha);
+    ]])
+end
+
+function DragonflightUIActionbarMixin:UpdateAlphaStateDriver(state)
+    if not self.AlphaStateDriver then return end
+    local handler = self.AlphaStateDriver
+    UnregisterStateDriver(handler, 'vis')
+
+    local driverTable = {}
+
+    table.insert(driverTable, '[combat]combat')
+    table.insert(driverTable, 'normal')
+    -- table.insert(driverTable, 'show')
+
+    local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
+
+    RegisterStateDriver(handler, 'alpha', driver)
+    handler:SetAttribute('state-alpha', 'hide')
+    handler:SetAttribute('state-alpha', 'show')
+    handler:SetAttribute('state-vis', result)
 end
 
 function DragonflightUIActionbarMixin:AddTargetStateDriver()
@@ -593,22 +801,6 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
     local handler = self.TargetStateDriver;
 
-    UnregisterStateDriver(handler, 'target-help');
-    UnregisterStateDriver(handler, 'target-harm');
-    UnregisterStateDriver(handler, 'target-all');
-
-    handler:SetAttribute('state-target-help', 'nil')
-    handler:SetAttribute('state-target-harm', 'nil')
-    handler:SetAttribute('state-target-all', 'nil')
-
-    for i, btn in ipairs(self.buttonTable) do
-        --
-        btn:SetAttribute('smarttarget', state.useMouseover or state.useAutoAssist);
-
-        btn:SetAttribute('checkselfcast', state.selfCast and true or nil);
-        btn:SetAttribute('checkfocuscast', state.focusCast and true or nil);
-    end
-
     local preSelf = '';
     if state.selfCast then preSelf = '[mod:SELFCAST]player;' end
 
@@ -634,27 +826,62 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
         harmDriver = harmDriver .. '[harm]nil; [@targettarget, harm]targettarget';
     end
 
-    if helpDriver ~= '' then
+    local changed = false;
+    if helpDriver ~= self.HelpDriverCache then
         --
-        helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
-        RegisterStateDriver(handler, 'target-help', helpDriver)
+        changed = true;
+        self.HelpDriverCache = helpDriver;
+        UnregisterStateDriver(handler, 'target-help');
+        handler:SetAttribute('state-target-help', 'nil')
+
+        if helpDriver ~= '' then
+            --
+            helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
+            RegisterStateDriver(handler, 'target-help', helpDriver)
+        end
     end
 
-    if harmDriver ~= '' then
+    if harmDriver ~= self.HarmDriverCache then
         --
-        harmDriver = string.format('%s%s nil', preFocus, harmDriver)
-        RegisterStateDriver(handler, 'target-harm', harmDriver)
+        changed = true;
+        self.HarmDriverCache = harmDriver;
+        UnregisterStateDriver(handler, 'target-harm');
+        handler:SetAttribute('state-target-harm', 'nil')
+
+        if harmDriver ~= '' then
+            --
+            harmDriver = string.format('%s%s nil', preFocus, harmDriver)
+            RegisterStateDriver(handler, 'target-harm', harmDriver)
+        end
     end
 
-    if allDriver ~= '' then
+    if allDriver ~= self.AllDriverCache then
         --
-        allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
-        RegisterStateDriver(handler, 'target-all', allDriver)
+        changed = true;
+        self.AllDriverCache = allDriver;
+        UnregisterStateDriver(handler, 'target-all');
+        handler:SetAttribute('state-target-all', 'nil')
+
+        if allDriver ~= '' then
+            --
+            allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
+            RegisterStateDriver(handler, 'target-all', allDriver)
+        end
     end
 
-    SecureHandlerExecute(handler, [[
+    if changed then
+        for i, btn in ipairs(self.buttonTable) do
+            --
+            btn:SetAttribute('smarttarget', state.useMouseover or state.useAutoAssist);
+
+            btn:SetAttribute('checkselfcast', state.selfCast and true or nil);
+            btn:SetAttribute('checkfocuscast', state.focusCast and true or nil);
+        end
+
+        SecureHandlerExecute(handler, [[
       --UpdateAllButtonStates()
     ]])
+    end
 end
 
 function DragonflightUIActionbarMixin:AddTargetStateTable(Module, opt, getDefaultStr)
@@ -923,6 +1150,24 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', 0, 0)
     MainMenuBarPageNumber:SetParent(f)
     MainMenuBarPageNumber:SetScale(1.25)
+    MainMenuBarPageNumber:SetJustifyV('MIDDLE')
+
+    local deltaTable = {[1] = -1.75, [2] = -0.5, [3] = -0.5, [4] = -0.5, [5] = -0.5, [6] = -0.5, [7] = -0.5, [8] = -0.5}
+
+    -- local tester = 8;
+    -- MainMenuBarPageNumber:SetText(tostring(tester))
+    -- MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', deltaTable[tester], 0)
+
+    local function fixAnchor(text)
+        local delta = deltaTable[tonumber(text)] or 0;
+        if self.state then delta = delta * (0.8 / (self.state.buttonScale or 0.8)) end
+        MainMenuBarPageNumber:SetPoint('CENTER', f, 'CENTER', delta, 0)
+    end
+
+    hooksecurefunc(MainMenuBarPageNumber, 'SetText', function(frame, text)
+        fixAnchor(text)
+    end)
+    fixAnchor(GetActionBarPage())
 
     -- f:SetScale((1 / 1.5) * 0.9)
     -- f:SetScale(0.9)
@@ -1001,6 +1246,25 @@ function DragonflightUIActionbarMixin:AddDecoNew()
         tex:SetTexCoord(0.701171875, 0.951171875, 0.10205078125, 0.16259765625)
         self.decoFrame.decoTable[i] = tex
     end ]]
+
+    do
+        --     ["Interface/HUD/UIActionBarFrame2x"]={
+        -- 	["UI-HUD-ActionBar-Frame"]={55, 55, 0.0078125, 0.867188, 0.0078125, 0.867188, false, false, "2x", slice={20, 20, 25, 25, tile=true}},
+        -- }, -- Interface/HUD/UIActionBarFrame2x
+        -- local texTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x'
+        -- local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt')
+        -- borderArt:SetTexture(texTwo)
+        -- borderArt:SetSize(110, 110)
+        -- borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
+        -- -- borderArt:SetTexCoord(0, 1, 0, 1)
+
+        -- borderArt:SetPoint('TOPLEFT', self, 'TOPLEFT', -4, 4)
+        -- borderArt:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 8, -7)
+        -- borderArt:SetTextureSliceMode(1)
+        -- borderArt:SetTextureSliceMargins(20, 20, 25, 25)
+
+        -- self.BorderArt = borderArt;
+    end
 end
 
 function DragonflightUIActionbarMixin:AddDeco()
@@ -1385,55 +1649,19 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
     end
 end
 
-function DragonflightUIActionbarMixin:UpdateRange(btn, checksRange, inRange)
-    if btn.ignoreRange then return end
-    local mask = btn.Icon
-    if not mask then return end
-
-    -- local normal = btn:GetNormalTexture()
-    -- normal:SetVertexColor(0.5, 0.5, 1.0, 1.0)
-
-    local isUsable, notEnoughMana = IsUsableAction(btn.action);
-
-    -- mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-    -- mask:SetDesaturated(true)
-    if true then return end
-    if not isUsable then
-        -- mask:SetVertexColor(0.4, 0.4, 0.4, 1.0)
-        mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-        mask:SetDesaturated(true)
-    elseif (checksRange) then
-        if (inRange) then
-            if notEnoughMana then
-                mask:SetVertexColor(0.5, 0.5, 1.0, 1.0)
-                mask:SetDesaturated(true)
-            else
-                mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-                mask:SetDesaturated(false)
-            end
-        else
-            -- mask:SetVertexColor(1, 0.3, 0.1, 1)
-            -- mask:SetVertexColor(0.9, 0.1, 0.1, 1)
-            mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            mask:SetDesaturated(true)
-        end
-    else
-        if notEnoughMana then
-            mask:SetVertexColor(0.5, 0.5, 1.0, 1.0)
-            mask:SetDesaturated(true)
-        else
-            mask:SetVertexColor(1.0, 1.0, 1.0, 1.0)
-            mask:SetDesaturated(false)
-        end
-    end
-end
-
 function DragonflightUIActionbarMixin:SetIgnoreRange(ignore)
     local count = #(self.buttonTable)
 
     for i = 1, count do
         local btn = self.buttonTable[i]
         btn.ignoreRange = ignore
+
+        local icon = btn.Icon
+        icon:SetVertexColor(1.0, 1.0, 1.0, 1.0) -- default
+        icon:SetDesaturated(false) -- default
+
+        btn.checksRange = nil;
+        btn.inRange = nil;
     end
 end
 
@@ -1613,13 +1841,18 @@ function DragonflightUIActionbarMixin:HookGrid()
 end
 
 function DragonflightUIActionbarMixin:FixGlow(btn)
-    -- print('~~~FixGlow', btn:GetName())
     if not btn.overlay then return end
+    print('~~~FixGlow', btn:GetName())
 
-    -- local isGlowing = btn.overlay.animIn:IsPlaying()
-    -- print('~~>> isGlowing?', isGlowing)
+    local isGlowing = btn.overlay.animIn:IsPlaying()
+    local isOut = btn.overlay.animOut:IsPlaying()
+
+    print('~~>> isGlowing, isOut?', isGlowing, isOut)
     -- if not isGlowing then return end
     -- print('GLOWING')
+
+    -- btn.overlay.animIn:Stop();
+    -- btn.overlay.animOut:Stop();
 
     -- self.overlay = ActionButton_GetOverlayGlow();
     local frameWidth, frameHeight = btn:GetSize();
@@ -1631,16 +1864,29 @@ function DragonflightUIActionbarMixin:FixGlow(btn)
     btn.overlay:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", frameWidth * 0.2, -frameHeight * 0.2);
     -- self.overlay.animIn:Play();
 
-    btn.overlay.animOut:Stop();
-    btn.overlay.animIn:Play();
+    if isGlowing then
+        -- local elapsedSec = btn.overlay.animIn:GetElapsed()
+        -- btn.overlay.animIn:Stop();
+
+        -- local func = btn.overlay.animIn:GetScript('OnPlay')
+        -- func(btn.overlay.animIn)
+        -- btn.overlay.animIn:Play(false, elapsedSec);
+    elseif isOut then
+        -- btn.overlay.animIn:Stop();
+        -- local elapsedSec = btn.overlay.animOut:GetElapsed()
+        -- local func = btn.overlay.animIn:GetScript('OnFinished')
+        -- func(btn.overlay.animIn)
+        -- btn.overlay.animOut:Play(false, elapsedSec);
+    end
 end
 
 function DragonflightUIActionbarMixin:HookGlow()
     -- print('DragonflightUIActionbarMixin:HookGlow()')
 
-    hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
-        self:FixGlow(btn)
-    end)
+    -- hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
+    --     print('ActionButton_ShowOverlayGlow', btn:GetName())
+    --     -- self:FixGlow(btn)
+    -- end)
 
     -- hooksecurefunc('ActionButton_ShowOverlayGlow', function(btn)
     --     -- print('~ActionButton_ShowOverlayGlow', btn:GetName(), btn.overlay:GetSize())
@@ -1707,6 +1953,143 @@ function DragonflightUIPetbarMixin:StylePetButton()
 end
 
 DragonflightUIStancebarMixinCode = {}
+
+function DragonflightUIStancebarMixinCode:CreateCustomStanceBarButtons()
+    local extraParent = CreateFrame('FRAME', 'DragonflightUIStanceBarVisParent', UIParent)
+    extraParent:SetFrameLevel(0)
+
+    local function customOnEnter(f)
+        if (GetCVarBool("UberTooltips")) then
+            GameTooltip_SetDefaultAnchor(GameTooltip, f);
+        else
+            GameTooltip:SetOwner(f, "ANCHOR_RIGHT");
+        end
+
+        GameTooltip:SetShapeshift(f:GetID());
+        f.UpdateTooltip = customOnEnter;
+    end
+
+    local btns = {}
+    for i = 1, 10 do
+        --
+        local btn =
+            CreateFrame("CheckButton", "DragonflightUIStanceButton" .. i, extraParent, "StanceButtonTemplate", i)
+        btn:SetSize(64, 64)
+        btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
+        -- btn:SetAttribute("type", "action")
+        -- btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+        btn:SetFrameLevel(3)
+
+        btn.command = "SHAPESHIFTBUTTON" .. i
+        btn.commandHuman = "Stance Bar Button " .. i
+
+        btn:SetScript('OnEnter', customOnEnter)
+
+        btns[i] = btn;
+
+        local orig = _G['StanceButton' .. i]
+        orig:ClearAllPoints()
+        orig:Hide()
+        orig:SetPoint('TOP', UIParent, 'BOTTOM', 0, -666)
+    end
+
+    self:SetButtons(btns, 42)
+    self:StyleButtons()
+    self:ReplaceNormalTexture2()
+
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+    self:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+    self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+    self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+    self:RegisterEvent("UPDATE_POSSESS_BAR")
+
+    self:RegisterEvent("UPDATE_BINDINGS", "ReassignBindings")
+    self:SetScript('OnEvent', function(_, event, arg1)
+        -- print(self:GetName(), event, arg1)
+        self:UpdateButtonState(not InCombatLockdown())
+
+        -- if event == 'UPDATE_SHAPESHIFT_COOLDOWN' then
+        --     self:UpdateButtonState(false)
+        -- elseif event == 'PLAYER_REGEN_ENABLED' then
+        --     if InCombatLockdown() then return end
+        --     self:UpdateButtonState(true)
+        -- else
+        --     if InCombatLockdown() then
+        --         self:UpdateButtonState(false)
+        --     else
+        --         self:UpdateButtonState(true)
+        --     end
+        -- end
+        -- self:Update()
+        -- self:UpdateGridState()
+    end)
+
+    self:UpdateButtonState(true)
+
+    -- hooksecurefunc('StanceBar_Select', function(id)
+    --     print('StanceBar_Select')
+    --     self:UpdateButtonState(false)
+    -- end)
+
+    -- hooksecurefunc('CastShapeshiftForm', function()
+    --     print('CastShapeshiftForm')
+    --     self:UpdateButtonState(false)
+    -- end)
+
+end
+
+function DragonflightUIStancebarMixinCode:UpdateButtonState(showHide)
+    local numForms = GetNumShapeshiftForms();
+    local texture, isActive, isCastable;
+    local button, icon, cooldown;
+    local start, duration, enable;
+    for i = 1, NUM_STANCE_SLOTS do
+        button = self.buttonTable[i];
+        icon = button.icon;
+        if (i <= numForms) then
+            texture, isActive, isCastable = GetShapeshiftFormInfo(i);
+            icon:SetTexture(texture);
+
+            -- Cooldown stuffs
+            cooldown = button.cooldown;
+            if (texture) then
+                cooldown:Show();
+            else
+                cooldown:Hide();
+            end
+            start, duration, enable = GetShapeshiftFormCooldown(i);
+            CooldownFrame_Set(cooldown, start, duration, enable);
+
+            if (isActive) then
+                self.lastSelected = button:GetID();
+                button:SetChecked(true);
+            else
+                button:SetChecked(false);
+            end
+
+            if (isCastable) then
+                icon:SetVertexColor(1.0, 1.0, 1.0);
+            else
+                icon:SetVertexColor(0.4, 0.4, 0.4);
+            end
+
+            if self.state then
+                button.buttonType = 'SHAPESHIFTBUTTON'
+                button:UpdateHotkeyDisplayText(self.state.shortenKeybind)
+            end
+            if showHide then button:Show(); end
+        else
+            if showHide then button:Hide(); end
+        end
+    end
+end
 
 function DragonflightUIStancebarMixinCode:Update()
     local state = self.state
@@ -1829,6 +2212,7 @@ function DragonflightUIStancebarMixinCode:Update()
             -- else
             --     btn:SetAttribute("showgrid", 0)
             -- end
+            btn:SetAttribute("showgrid", 0)
 
             if state.hideArt then
                 if btn.DFDeco then btn.DFDeco:Hide() end
@@ -1868,39 +2252,39 @@ function DragonflightUIStancebarMixinCode:Update()
     -- self:UpdateGrid(state.alwaysShow)
 
     -- mainbar only
-    if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
+    -- if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
 
-    if self.numberFrame then self:UpdateNumberFrame() end
+    -- if self.numberFrame then self:UpdateNumberFrame() end
 
     -- if self.decoFrame then self.decoFrame.update(state) end
 
-    if state.activate ~= nil and false then
-        --
-        -- print('state.activate ~= nil', state.activate, self:GetName())
-        -- self:SetShown(state.activate)
-        if state.activate == false then
-            if self.stanceBar then self:Hide() end
-            for i = 1, btnCount do
-                local btn = buttonTable[i]
-                btn:ClearAllPoints()
-                btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
-                btn:Hide()
-                if btn.decoDF then btn.decoDF:Hide() end
-            end
-        else
-            if self.stanceBar then
-                self:Show()
-                for i = 1, btnCount do
-                    local btn = buttonTable[i]
+    -- if state.activate ~= nil and false then
+    --     --
+    --     -- print('state.activate ~= nil', state.activate, self:GetName())
+    --     -- self:SetShown(state.activate)
+    --     if state.activate == false then
+    --         if self.stanceBar then self:Hide() end
+    --         for i = 1, btnCount do
+    --             local btn = buttonTable[i]
+    --             btn:ClearAllPoints()
+    --             btn:SetPoint('CENTER', UIParent, 'BOTTOM', 0, -666)
+    --             btn:Hide()
+    --             if btn.decoDF then btn.decoDF:Hide() end
+    --         end
+    --     else
+    --         if self.stanceBar then
+    --             self:Show()
+    --             for i = 1, btnCount do
+    --                 local btn = buttonTable[i]
 
-                    if btn.action then
-                        --
-                        if HasAction(btn.action) then btn:Show() end
-                    end
-                end
-            end
-        end
-    end
+    --                 if btn.action then
+    --                     --
+    --                     if HasAction(btn.action) then btn:Show() end
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end
 
     local isLegal, loopStr = self:IsAnchorframeLegal();
     local loopStrFixed, _ = gsub(loopStr, 'DragonflightUI', 'DF')
@@ -1929,6 +2313,9 @@ function DragonflightUIStancebarMixinCode:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
     self:UpdateStateHandler(state)
+
+    -- StanceBar_UpdateState()
+    self:UpdateButtonState(true)
 end
 
 DragonflightUIStancebarMixin = CreateFromMixins(DragonflightUIActionbarMixin, DragonflightUIStancebarMixinCode)

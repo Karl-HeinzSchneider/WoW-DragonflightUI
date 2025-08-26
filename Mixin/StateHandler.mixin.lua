@@ -105,6 +105,38 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
         frameRef:SetAttribute('state-vis', oldState)      
     ]])
     handlerTwo:SetAttribute('_onleave', [[]])
+
+    --
+    local handlerAlpha = CreateFrame('FRAME', self:GetName() .. 'HandlerAlpha', nil, 'SecureHandlerStateTemplate')
+    self.DFAlphaHandler = handlerAlpha;
+    handlerAlpha:SetFrameRef('frameRef', self)
+    handlerAlpha:SetFrameRef('MainHandler', handler)
+    handlerAlpha:SetAttribute('_onstate-alpha', [[
+        -- if not newstate then return end     
+        local frameRef = self:GetFrameRef("frameRef")
+        if not frameRef then return end     
+
+        -- print('newState:',newstate,' ~~~ ', frameRef:GetName())
+        -- print('--',frameRef:GetAttribute('alphaNormal'),frameRef:GetAttribute('alphaCombat'))
+        local newAlpha = 1.0;
+        if newstate == 'combat' then
+            newAlpha = frameRef:GetAttribute('alphaCombat') or 0.5;
+        elseif newstate == 'normal' then
+            newAlpha = frameRef:GetAttribute('alphaNormal') or 0.8;
+        elseif newstate == 'fullAlpha' then
+            newAlpha = 1.0;
+        else
+            --
+        end
+        frameRef:SetAlpha(newAlpha);
+      
+        local MainHandler = self:GetFrameRef("MainHandler")
+
+        for i=1,13 do
+            local f = MainHandler:GetFrameRef('HideFrame'..i)
+            if f then f:SetAlpha(newAlpha) end
+        end   
+    ]])
 end
 
 function DragonflightUIStateHandlerMixin:SetHideFrame(frame, index)
@@ -121,6 +153,7 @@ do
     visConditionalTable['hideCombat'] = '[combat]hide'
     visConditionalTable['hideOutOfCombat'] = '[nocombat]hide'
     visConditionalTable['hidePet'] = '[pet]hide'
+    visConditionalTable['hideVehicle'] = '[vehicleui]hide'
     visConditionalTable['hideNoPet'] = '[nopet]hide'
     visConditionalTable['hideStance'] = ''
     visConditionalTable['hideStealth'] = '[stealth]hide'
@@ -130,7 +163,6 @@ end
 
 function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverride)
     local handler = self.DFStateHandler
-    UnregisterStateDriver(handler, 'vis')
 
     local driverTable = {}
 
@@ -158,6 +190,22 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverr
 
     local driver = table.concat(driverTable, ';')
     local result, target = SecureCmdOptionParse(driver)
+
+    -- print(self:GetName(), result)
+    local same = false;
+    if result == 'show' and self:IsVisible() then
+        same = true;
+    elseif result == 'hide' and not self:IsVisible() then
+        same = true;
+    end
+
+    if driver == self.DriverCache and same then
+        self:UpdateAlphaHandler(state)
+        return;
+    end
+    self.DriverCache = driver;
+    UnregisterStateDriver(handler, 'vis')
+
     -- DevTools_Dump(driver)
     if #driverTable > 1 or state.hideCustom then
         --
@@ -175,6 +223,40 @@ function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverr
     else
         mouseHandler:Hide()
     end
+
+    self:UpdateAlphaHandler(state)
+end
+
+function DragonflightUIStateHandlerMixin:UpdateAlphaHandler(state)
+    -- 
+    local handler = self.DFAlphaHandler
+    self:SetAttribute('alphaNormal', state.alphaNormal)
+    self:SetAttribute('alphaCombat', state.alphaCombat)
+    -- print(self:GetName(), state.alphaNormal, state.alphaCombat)
+
+    local driverTable = {}
+
+    if state.EditModeActive then table.insert(driverTable, 'fullAlpha') end
+
+    table.insert(driverTable, '[combat]combat')
+    table.insert(driverTable, '[nocombat]normal')
+
+    table.insert(driverTable, 'fullAlpha') -- fallback
+
+    local driver = table.concat(driverTable, ';')
+    local result, target = SecureCmdOptionParse(driver)
+
+    if driver == self.AlphaDriverCache then
+        handler:SetAttribute('state-alpha', 'update')
+        handler:SetAttribute('state-alpha', result)
+        return;
+    end
+    self.AlphaDriverCache = driver;
+
+    UnregisterStateDriver(handler, 'alpha')
+    RegisterStateDriver(handler, 'alpha', driver)
+    handler:SetAttribute('state-alpha', 'fullAlpha')
+    handler:SetAttribute('state-alpha', result)
 end
 
 function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub, displayName, getDefaultStr)
@@ -244,6 +326,30 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
 
     local extraOptions = {
         headerVis = {type = 'header', name = 'Visibility', desc = '', order = 100, isExpanded = true, editmode = true},
+        alphaNormal = {
+            type = 'range',
+            name = 'Alpha',
+            desc = 'Frame alpha while non-combat.' .. getDefaultStr('alphaNormal', sub),
+            min = 0.1,
+            max = 1,
+            bigStep = 0.01,
+            order = 70,
+            group = 'headerVis',
+            new = true,
+            editmode = true
+        },
+        alphaCombat = {
+            type = 'range',
+            name = 'Alpha (In Combat)',
+            desc = 'Frame alpha while in combat.' .. getDefaultStr('alphaCombat', sub),
+            min = 0.1,
+            max = 1,
+            bigStep = 0.01,
+            order = 70.5,
+            group = 'headerVis',
+            new = true,
+            editmode = true
+        },
         showMouseover = {
             type = 'toggle',
             name = 'Show On Mouseover',
@@ -277,6 +383,15 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             name = 'Hide Out Of Combat',
             desc = '' .. cond('[nocombat]hide; show') .. getDefaultStr('hideOutOfCombat', sub),
             order = 103,
+            group = 'headerVis',
+            new = false,
+            editmode = true
+        },
+        hideVehicle = {
+            type = 'toggle',
+            name = 'Hide With VehicleUI',
+            desc = '' .. cond('[vehicleui]hide; show') .. getDefaultStr('hideVehicle', sub),
+            order = 103.5,
             group = 'headerVis',
             new = false,
             editmode = true
@@ -332,7 +447,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
             desc = '' .. cond('[petbattle]hide; show') .. getDefaultStr('hideBattlePet', sub),
             order = 108.5,
             group = 'headerVis',
-            new = true,
+            new = false,
             editmode = true
         },
         hideCustom = {

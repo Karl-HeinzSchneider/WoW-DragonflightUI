@@ -26,14 +26,19 @@ function SubModuleMixin:SetDefaults()
         anchorParent = 'TOPRIGHT',
         x = 0,
         y = 0,
+        customHealthBarTexture = 'Default',
+        customPowerBarTexture = 'Default',
         padding = 10,
         orientation = 'vertical',
         disableBuffTooltip = 'INCOMBAT',
         -- Visibility
+        alphaNormal = 1.0,
+        alphaCombat = 1.0,
         showMouseover = false,
         hideAlways = false,
         hideCombat = false,
         hideOutOfCombat = false,
+        hideVehicle = false,
         hidePet = false,
         hideNoPet = false,
         hideStance = false,
@@ -188,7 +193,7 @@ function SubModuleMixin:SetupOptions()
                 order = 3,
                 group = 'headerStyling',
                 editmode = true,
-                new = true
+                new = false
             },
             padding = {
                 type = 'range',

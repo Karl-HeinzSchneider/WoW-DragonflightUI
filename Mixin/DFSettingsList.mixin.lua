@@ -140,7 +140,7 @@ function DFSettingsListMixin:Display(data, small)
     -- self.DataProvider:Flush()
     -- self.DataProvider = CreateTreeDataProvider()
     -- self.ScrollView:SetDataProvider(self.DataProvider)
-    -- print('display:', data.name)
+    -- print('display:', data.name, small)
 
     self.Args_Data = data;
     self.Args_Small = small;
@@ -548,7 +548,7 @@ function DFSettingsListSliderContainerMixin:Init(node)
 
     self.Editbox:SetScript('OnEnterPressed', function()
         self.Editbox:ClearFocus()
-        local newValue = tonumber(self.Editbox:GetText()) or self.Slider:GetValue();
+        local newValue = tonumber(self.Editbox:GetText()) or self.Slider.Slider:GetValue();
         self.Slider:SetValue(newValue)
         self.Editbox:SetText(self.Slider.RightText:GetText())
         self.Slider.RightText:Hide()
@@ -768,7 +768,10 @@ function DFSettingsListColorPickerMixin:Init(node)
                 local newA = _G['DragonflightUIColorPicker']:GetColorAlpha()
                 local newC = CreateColor(newR, newG, newB, newA)
                 -- print('~', newC:GenerateHexColorNoAlpha())
-                elementData.set({elementData.key}, newC:GenerateHexColorNoAlpha())
+                if newC:GenerateHexColorNoAlpha() ~= elementData.get({elementData.key}) then
+                    --
+                    elementData.set({elementData.key}, newC:GenerateHexColorNoAlpha())
+                end
 
                 self.Color:SetColorHex(elementData.get({elementData.key}))
             end,

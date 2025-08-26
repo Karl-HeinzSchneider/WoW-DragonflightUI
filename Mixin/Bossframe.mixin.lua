@@ -1,7 +1,20 @@
+local addonName, addonTable = ...;
+local DF = addonTable.DF;
+local L = addonTable.L;
+local Helper = addonTable.Helper;
+
+local RangeCheck = LibStub("LibRangeCheck-3.0")
+
 DragonflightUIBossframeMixin = {}
 
 function DragonflightUIBossframeMixin:OnLoad()
     -- print('DragonflightUIBossframeMixin:OnLoad()')
+end
+
+local function UnitFrameTargetIcon_OpenMenu(self)
+    print('UnitFrameTargetIcon_OpenMenu', self:GetName())
+    local contextData = {fromTargetFrame = false, unit = self.unit};
+    UnitPopup_OpenMenu("RAID_TARGET_ICON", contextData);
 end
 
 function DragonflightUIBossframeMixin:Setup(unit, id)
@@ -14,6 +27,9 @@ function DragonflightUIBossframeMixin:Setup(unit, id)
 
     self:SetAttribute("type1", "macro")
     self:SetAttribute('macrotext', '/targetexact ' .. unit)
+
+    self:SetAttribute("*type2", "menu");
+    self.menu = UnitFrameTargetIcon_OpenMenu;
 
     self:SetSize(232, 100)
     self:SetPoint('CENTER', UIParent, 'CENTER', 0, 80)
@@ -30,6 +46,8 @@ function DragonflightUIBossframeMixin:Setup(unit, id)
     self:RegisterEvent("CVAR_UPDATE")
     self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
     self:RegisterEvent("RAID_TARGET_UPDATE")
+
+    self:RegisterEvent('UNIT_TARGET')
 
     self:RegisterUnitEvent("UNIT_HEALTH", unit)
     -- self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
@@ -72,7 +90,11 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
         self:UpdatePower(unit)
     elseif (event == "UNIT_MAXPOWER") then
         self:UpdatePower(unit)
-
+    elseif (event == 'UNIT_TARGET') then
+        if UnitIsUnit(unit, eventUnit .. 'target') then
+            -- print(event, eventUnit, arg1, arg2)
+            self:OnShow()
+        end
     elseif (event == 'CVAR_UPDATE') and (eventUnit == 'statusTextDisplay') then
         -- self:UpdateStatusStyle()
         self:UpdateHealth(unit)
@@ -86,57 +108,97 @@ function DragonflightUIBossframeMixin:OnEvent(event, eventUnit, arg1, arg2)
     end
 end
 
+function DragonflightUIBossframeMixin:OnUpdate(elapsed)
+    self:UpdateRange()
+end
+
 function DragonflightUIBossframeMixin:UpdateState(state)
+    self.state = state;
+    self:Update();
+end
+
+function DragonflightUIBossframeMixin:Update()
+    local state = self.state;
+    if not state then return end
+
     self:UpdatePortrait(self.unit)
+    self.HealthBar.breakUpLargeNumbers = state.breakUpLargeNumbers
+    self.HealthBar.capNumericDisplay = state.breakUpLargeNumbers
 
-    local deltaY = (1 - self.id) * 85
+    TextStatusBar_UpdateTextString(self.HealthBar)
+    self.NameBackground:SetShown(not state.hideNameBackground)
 
-    local parent = _G[state.anchorFrame]
-    self:ClearAllPoints()
-    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y + deltaY)
-
-    self:SetScale(state.scale)
+    self:UpdateRange()
 end
 
 function DragonflightUIBossframeMixin:UpdatePortrait(unit)
     SetPortraitTexture(self.Portrait, unit)
 end
 
+function DragonflightUIBossframeMixin:UpdateRange()
+    if not RangeCheck then return end
+    local state = self.state;
+    if not state then return end
+    if not state.fadeOut then
+        --
+        self:SetAlpha(1.0);
+        return;
+    end
+
+    local minRange, maxRange = RangeCheck:GetRange(self.unit)
+
+    if minRange and minRange >= state.fadeOutDistance then
+        self:SetAlpha(0.55);
+    else
+        self:SetAlpha(1.0);
+    end
+end
+
 function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
     do
-        local textureFrame = CreateFrame('Frame', 'DragonflightUIBossFrameTextureFrame', self)
-        textureFrame:SetPoint('CENTER')
-        textureFrame:SetFrameLevel(3)
-        self.TextureFrame = textureFrame
+        -- local textureFrame = CreateFrame('Frame', 'DragonflightUIBossFrameTextureFrame', self)
+        -- textureFrame:SetPoint('CENTER')
+        -- textureFrame:SetFrameLevel(3)
+        -- textureFrame:SetSize(self:GetSize())
+        -- self.TextureFrame = textureFrame
     end
 
     do
-        local background = self:CreateTexture('DragonflightUIBossFrameBackground')
-        background:SetDrawLayer('BACKGROUND', 2)
-        background:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
-        background:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
-        self.FrameBackground = background
+        -- local background = self:CreateTexture('DragonflightUIBossFrameBackground')
+        -- background:SetDrawLayer('BACKGROUND', 2)
+        -- background:SetTexture(
+        --     'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BACKGROUND')
+        -- background:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
+        -- self.FrameBackground = background
     end
 
     do
-        local border = self.TextureFrame:CreateTexture('DragonflightUIBossFrameBorder')
-        border:SetDrawLayer('ARTWORK', 2)
-        border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
-        border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
-        self.FrameBorder = border
+        -- local border = self.TextureFrame:CreateTexture('DragonflightUIBossFrameBorder')
+        -- border:SetDrawLayer('ARTWORK', 2)
+        -- border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Target-PortraitOn-BORDER')
+        -- border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
+        -- self.FrameBorder = border
     end
 
     do
-        local portrait = self.TextureFrame:CreateTexture('DragonflightUIBossFramePortrait')
+        local portrait = self:CreateTexture('DragonflightUIBossFramePortrait')
         portrait:SetDrawLayer('ARTWORK', 1)
         portrait:SetSize(56, 56)
         local CorrectionY = -3
         local CorrectionX = -5
         portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -42 + CorrectionX, -12 + CorrectionY)
         self.Portrait = portrait
+
+        local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+
+        local mask = self:CreateMaskTexture()
+        mask:SetPoint('CENTER', portrait, 'CENTER', 1, -1)
+        mask:SetAllPoints(portrait)
+        mask:SetTexture(circularMaskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+        portrait:AddMaskTexture(mask)
+        -- self.PortraitMask = mask;
     end
 
     do
@@ -170,14 +232,14 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         mana:SetPoint('RIGHT', self.Portrait, 'LEFT', -1 + 8 - 0.5, -18 + 1 + 0.5)
 
         mana:SetStatusBarTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health')
+            'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
         mana:SetStatusBarColor(1, 1, 1, 1)
         mana.breakUpLargeNumbers = true
 
         self.ManaBar = mana
 
         -- local powerType, powerTypeString = UnitPowerType('target')   
-        self:UpdatePowerType('MANA')
+        -- self:UpdatePowerType('MANA')
     end
 
     do
@@ -211,11 +273,22 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         level:SetPoint('BOTTOMRIGHT', self.HealthBar, 'TOPLEFT', 16, 3 - 2)
 
         -- level:SetText('69')
-        self.Level = level
+        self.LevelText = level;
     end
 
     do
-        local targetIcon = self.TextureFrame:CreateTexture('DragonflightUIBossFrameRaidTargetIcon')
+        local highlevel = self:CreateTexture('DragonflightUIBossFrameHighLevelTexture')
+        highlevel:SetTexture('Interface\\TargetingFrame\\UI-TargetingFrame-Skull')
+        highlevel:SetDrawLayer('ARTWORK', 5)
+        highlevel:SetSize(16, 16)
+        highlevel:SetPoint('CENTER', self.LevelText, 'CENTER', 0, 0)
+
+        -- level:SetText('69')
+        self.HighLevelTexture = highlevel;
+    end
+
+    do
+        local targetIcon = self:CreateTexture('DragonflightUIBossFrameRaidTargetIcon')
 
         targetIcon:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcons')
         targetIcon:SetDrawLayer('ARTWORK', 5)
@@ -261,6 +334,54 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         self.ManaBar.RightText:SetText('6942')
         self.ManaBar.RightText:SetPoint('RIGHT', self.ManaBar, 'RIGHT', -deltaSize - dx, 0)
     end
+
+    -- FocusFrame.Portrait = FocusFramePortrait;
+    -- FocusFrame.Name = FocusFrameTextureFrameName;
+    -- FocusFrame.NameBackground = FocusFrameNameBackground;
+    -- FocusFrame.Flash = FocusFrameFlash;
+    -- FocusFrame.LevelText = FocusFrameTextureFrameLevelText;
+    -- FocusFrame.DeadText = FocusFrameTextureFrameDeadText;
+    -- FocusFrame.UnconsciousText = FocusFrameTextureFrameUnconsciousText;
+end
+
+function DragonflightUIBossframeMixin:AddThreatIndicator()
+    local indi = CreateFrame('Frame', 'DragonflightUIThreatIndicator', self, 'DragonflightUIThreatIndicatorTemplate')
+    indi:ClearAllPoints()
+    indi:SetPoint('BOTTOM', self.NameBackground, 'TOP', 0, 0)
+
+    indi:SetUnit(self.unit, true)
+end
+
+function DragonflightUIBossframeMixin:AddCastbar()
+    local bar = CreateFrame('StatusBar', self:GetName() .. 'Castbar', self, 'DragonflightUIBossCastbarTemplate',
+                            self:GetID())
+
+    local barstate = {
+        activate = true,
+        scale = 1,
+        anchorFrame = self:GetName(),
+        customAnchorFrame = '',
+        anchor = 'RIGHT',
+        anchorParent = 'LEFT',
+        x = -5,
+        y = 0,
+        sizeX = 128,
+        sizeY = 16,
+        preci = 1,
+        preciMax = 2,
+        castTimeEnabled = true,
+        castTimeMaxEnabled = true,
+        compactLayout = true,
+        holdTime = 1.0,
+        holdTimeInterrupt = 1.0,
+        showIcon = true,
+        sizeIcon = 30,
+        showTicks = false,
+        showRank = true,
+        showChannelName = true,
+        autoAdjust = false
+    }
+    bar:UpdateState(barstate);
 end
 
 function DragonflightUIBossframeMixin:UpdatePortraitExtra(unit)
@@ -297,7 +418,7 @@ function DragonflightUIBossframeMixin:UpdatePowerType(powerTypeString)
     elseif powerTypeString == 'RAGE' then
         mana:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Rage')
-    elseif powerTypeString == 'ENERGY' then
+    elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
         mana:GetStatusBarTexture():SetTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Energy')
     elseif powerTypeString == 'RUNIC_POWER' then
@@ -316,9 +437,12 @@ function DragonflightUIBossframeMixin:UpdateLevel(unit)
 
     if targetEffectiveLevel > 0 then
         -- self.Level:Show()
-        self.Level:SetText(targetEffectiveLevel)
+        self.LevelText:SetText(targetEffectiveLevel)
+        self.HighLevelTexture:Hide()
     else
-        self.Level:SetText('??')
+        -- self.LevelText:SetText('??')
+        self.LevelText:SetText('')
+        self.HighLevelTexture:Show()
     end
 end
 

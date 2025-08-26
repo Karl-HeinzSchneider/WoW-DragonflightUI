@@ -1,8 +1,10 @@
----@class DragonflightUI
----@diagnostic disable-next-line: assign-type-mismatch
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+
 local mName = 'Bossframe'
----@diagnostic disable-next-line: undefined-field
+
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Module.Tmp = {}
 
@@ -17,10 +19,14 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'TOPRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = -200,
-            y = -140,
-            locked = true,
-            durability = 'BOTTOM'
+            x = -210,
+            y = -118,
+            padding = 10,
+            breakUpLargeNumbers = true,
+            hideNameBackground = false,
+            fadeOut = true,
+            fadeOutDistance = 40,
+            orientation = 'vertical'
         }
     }
 }
@@ -44,6 +50,17 @@ end
 
 local function setOption(info, value)
     Module:SetOption(info, value)
+end
+
+local function setPreset(T, preset, sub)
+    print('setPreset')
+    for k, v in pairs(preset) do
+        --
+        print(k, v)
+        T[k] = v;
+    end
+    Module:ApplySettings(sub)
+    Module:RefreshOptionScreens()
 end
 
 local options = {
@@ -127,19 +144,102 @@ local frameTable = {
 
 local bossOptions = {
     type = 'group',
-    name = 'Minimap',
+    name = L["BossFrameName"],
+    desc = L["BossFrameNameDesc"],
+    advancedName = 'BossFrames',
+    sub = "boss",
     get = getOption,
     set = setOption,
     args = {
-        locked = {
+        headerStyling = {
+            type = 'header',
+            name = L["TargetFrameStyle"],
+            desc = '',
+            order = 20,
+            isExpanded = true,
+            editmode = true
+        },
+        breakUpLargeNumbers = {
             type = 'toggle',
-            name = 'Locked',
-            desc = 'Lock the Preview Frame. Use this to position the frames.' .. getDefaultStr('locked', 'boss'),
-            order = 10
+            name = L["TargetFrameBreakUpLargeNumbers"],
+            desc = L["TargetFrameBreakUpLargeNumbersDesc"] .. getDefaultStr('breakUpLargeNumbers', 'boss'),
+            group = 'headerStyling',
+            order = 3,
+            editmode = true
+        },
+        hideNameBackground = {
+            type = 'toggle',
+            name = L["TargetFrameHideNameBackground"],
+            desc = L["TargetFrameHideNameBackgroundDesc"] .. getDefaultStr('hideNameBackground', 'boss'),
+            group = 'headerStyling',
+            order = 5,
+            new = false,
+            editmode = true
+        },
+        fadeOut = {
+            type = 'toggle',
+            name = L["TargetFrameFadeOut"],
+            desc = L["TargetFrameFadeOutDesc"] .. getDefaultStr('fadeOut', 'boss'),
+            group = 'headerStyling',
+            order = 15,
+            new = false,
+            editmode = true
+        },
+        fadeOutDistance = {
+            type = 'range',
+            name = L["TargetFrameFadeOutDistance"],
+            desc = L["TargetFrameFadeOutDistanceDesc"] .. getDefaultStr('fadeOutDistance', 'boss'),
+            min = 0,
+            max = 50,
+            bigStep = 1,
+            order = 16,
+            group = 'headerStyling',
+            new = false,
+            editmode = true
+        },
+        orientation = {
+            type = 'select',
+            name = L["ButtonTableOrientation"],
+            desc = L["ButtonTableOrientationDesc"] .. getDefaultStr('orientation', 'boss'),
+            dropdownValues = DF.Settings.OrientationTable,
+            order = 2,
+            group = 'headerStyling',
+            editmode = true
         }
     }
 }
 DF.Settings:AddPositionTable(Module, bossOptions, 'boss', 'Boss', getDefaultStr, frameTable)
+local bossOptionsEditmode = {
+    name = 'Target',
+    desc = 'Targetframedesc',
+    get = getOption,
+    set = setOption,
+    type = 'group',
+    args = {
+        resetPosition = {
+            type = 'execute',
+            name = L["ExtraOptionsPreset"],
+            btnName = L["ExtraOptionsResetToDefaultPosition"],
+            desc = L["ExtraOptionsPresetDesc"],
+            func = function()
+                local dbTable = Module.db.profile.boss
+                local defaultsTable = defaults.profile.boss
+                -- {scale = 1.0, anchor = 'TOPLEFT', anchorParent = 'TOPLEFT', x = -19, y = -4}
+                setPreset(dbTable, {
+                    scale = defaultsTable.scale,
+                    anchor = defaultsTable.anchor,
+                    anchorParent = defaultsTable.anchorParent,
+                    anchorFrame = defaultsTable.anchorFrame,
+                    x = defaultsTable.x,
+                    y = defaultsTable.y
+                }, 'boss')
+            end,
+            order = 16,
+            editmode = true,
+            new = false
+        }
+    }
+}
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -161,8 +261,10 @@ function Module:OnEnable()
 
     self:EnableAddonSpecific()
 
-    Module:ApplySettings()
-    Module:RegisterOptionScreens()
+    self:AddEditMode()
+    self:RegisterOptionScreens()
+
+    self:ApplySettings()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)
@@ -183,19 +285,48 @@ function Module:RegisterSettings()
     end
 
     if not DF.Cata then return end
-    register('boss', {order = 0, name = 'Boss', descr = 'Bossss', isNew = false})
+    register('boss', {order = 0, name = bossOptions.name, descr = bossOptions.desc, isNew = false})
 end
 
 function Module:RegisterOptionScreens()
     if not DF.Cata then return end
     DF.ConfigModule:RegisterSettingsData('boss', 'unitframes', {
-        name = 'Boss',
-        sub = 'boss',
         options = bossOptions,
         default = function()
             setDefaultSubValues('boss')
         end
     })
+end
+
+function Module:AddEditMode()
+    local EditModeModule = DF:GetModule('Editmode');
+    local fakeWidget = self.PreviewFrame
+
+    EditModeModule:AddEditModeToFrame(fakeWidget)
+
+    fakeWidget.DFEditModeSelection:SetGetLabelTextFunction(function()
+        return bossOptions.name
+    end)
+
+    fakeWidget.DFEditModeSelection:RegisterOptions({
+        options = bossOptions,
+        extra = bossOptionsEditmode,
+        default = function()
+            setDefaultSubValues(bossOptions.sub)
+        end,
+        moduleRef = self,
+        showFunction = function()
+            --         
+            -- fakeWidget.FakePreview:Show()
+            self.PreviewParent:Show()
+        end,
+        hideFunction = function()
+            --
+            fakeWidget:Show()
+            -- fakeWidget.FakePreview:Hide()
+            self.PreviewParent:Hide()
+        end
+    });
 end
 
 function Module:RefreshOptionScreens()
@@ -208,48 +339,103 @@ function Module:RefreshOptionScreens()
     end
 
     refreshCat('Boss')
+
+    self.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
 end
 
-function Module:ApplySettings()
+function Module:ApplySettings(sub, key)
+    Helper:Benchmark(string.format('ApplySettings(%s,%s)', tostring(sub), tostring(key)), function()
+        Module:ApplySettingsInternal(sub, key)
+    end, 0, self)
+end
+
+function Module:ApplySettingsInternal(sub, key)
     local state = Module.db.profile.boss
     if not DF.Cata then return end
-    do
-        local tex = Module.TmpTex
 
-        if state.locked then
-            tex:Hide()
-        else
-            tex:Show()
-            tex:SetScale(state.scale)
+    local f = self.PreviewFrame
 
-            local parent = _G[state.anchorFrame]
-            tex:ClearAllPoints()
-            tex:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-        end
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
+    -- f:SetParent(parent)
+    f:SetScale(state.scale)
+
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    local sizeX, sizeY = self['BossFrame1']:GetSize()
+
+    if state.orientation == 'vertical' then
+        self.PreviewFrame:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
+    else
+        self.PreviewFrame:SetSize(sizeX * 4 + 3 * state.padding, sizeY)
     end
 
     for id = 1, 4 do
-        local f = Module['BossFrame' .. id]
+        local boss = Module['BossFrame' .. id]
+        local fake = Module['FakeBoss' .. id]
 
-        f:UpdateState(state)
+        boss:ClearAllPoints()
+        fake:ClearAllPoints()
+
+        if id == 1 then
+            boss:SetPoint('TOPLEFT', f, 'TOPLEFT', 0, 0)
+            fake:SetPoint('TOPLEFT', self.PreviewParent, 'TOPLEFT', 0, 0)
+        else
+            if state.orientation == 'vertical' then
+                boss:SetPoint('TOPLEFT', self['BossFrame' .. (id - 1)], 'BOTTOMLEFT', 0, -state.padding)
+                fake:SetPoint('TOPLEFT', self['FakeBoss' .. (id - 1)], 'BOTTOMLEFT', 0, -state.padding)
+            else
+                boss:SetPoint('TOPLEFT', self['BossFrame' .. (id - 1)], 'TOPRIGHT', state.padding, 0)
+                fake:SetPoint('TOPLEFT', self['FakeBoss' .. (id - 1)], 'TOPRIGHT', state.padding, 0)
+            end
+        end
+
+        boss:UpdateState(state)
     end
 end
 
 function Module:CreateBossFrames()
-    do
-        local tex = UIParent:CreateTexture()
-        tex:SetPoint('CENTER')
-        tex:SetSize(232, 100 + 3 * 70)
-        tex:SetColorTexture(1, 1, 0, 0.5)
-
-        Module.TmpTex = tex
-    end
+    local fakeWidget = CreateFrame('Frame', 'DragonflightUIBossFramesFrame', UIParent)
+    fakeWidget:SetSize(232, 100 + 3 * 70)
+    self.PreviewFrame = fakeWidget
 
     for id = 1, 4 do
         -- print('createBossFrames', id)
         local f = Module:CreateBossFrame(id)
 
         Module['BossFrame' .. id] = f
+    end
+
+    local previewParent = CreateFrame("Frame", 'DragonflightUIBossFramesPreviewParent', self.PreviewFrame)
+    previewParent:SetPoint('TOPLEFT', self.PreviewFrame, 'TOPLEFT', 0, 0)
+    previewParent:SetPoint('BOTTOMRIGHT', self.PreviewFrame, 'BOTTOMRIGHT', 0, 0)
+    self.PreviewParent = previewParent;
+    self.PreviewParent:Hide()
+
+    for id = 1, 4 do
+        --
+        local f = CreateFrame('Frame', self['BossFrame' .. id]:GetName() .. 'Preview', previewParent,
+                              'DFEditModePreviewTargetTemplate')
+        f:OnLoad()
+        Module['FakeBoss' .. id] = f
+        f:Show()
+        local unit = DF:GetRandomBoss();
+        f:SetUnit(unit)
+        f.NameBackground:SetColor('red')
+
+        local fakeTargetOfTarget = CreateFrame('Frame', self['BossFrame' .. id]:GetName() .. 'ToTPreview', f,
+                                               'DFEditModePreviewTargetOfTargetTemplate')
+        f.ToTFrame = fakeTargetOfTarget;
+        fakeTargetOfTarget.IsToT = true;
+        fakeTargetOfTarget:OnLoad()
+        fakeTargetOfTarget:Show()
+        fakeTargetOfTarget:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15 - 2)
     end
 
     -- frame = CreateFrame(frameType [, name, parent, template, id])
@@ -270,23 +456,109 @@ function Module:CreateBossFrames()
 
 end
 
-function Module:HideDefault()
-    for id = 1, 4 do
-        local f = _G['Boss' .. id .. 'TargetFrame']
-        f:SetAlpha(0)
-    end
-end
-
 function Module:CreateBossFrame(id)
+    local unitframeModule = DF:GetModule('Unitframe')
+
     local name = 'DragonflightUIBoss' .. id .. 'Frame'
-    local f = CreateFrame('Button', name, UIParent, 'DragonflightUIBossframeTemplate')
+    local f = CreateFrame('Button', name, self.PreviewFrame, 'DragonflightUIBossframeTemplate', id)
+    f:SetFrameLevel(5)
     local unit = 'boss' .. id
     -- unit = 'player'
     f:Setup(unit, id)
+    unitframeModule.SubTarget:ChangeTargetFrameGeneral(f, f)
+    f:AddThreatIndicator()
+    -- f:AddCastbar()
+
+    -- tot
+    do
+        local totName = 'DragonflightUIBoss' .. id .. 'ToTFrame'
+        local tot = CreateFrame('Button', totName, f, 'DragonflightUIBossframeTemplate', id)
+        f.ToTFrame = tot;
+        tot:SetFrameLevel(10)
+        local totUnt = 'boss' .. id .. 'target'
+        -- totUnt = 'pettarget'
+        tot:Setup(totUnt, id)
+        tot:ClearAllPoints()
+        tot:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -35 + 27, -15 - 2)
+        -- tot:SetPoint('RIGHT', f, 'LEFT', -10, 0)
+
+        unitframeModule.SubTargetOfTarget:ChangeToTFrame(tot, tot)
+
+        tot.PortraitExtra:Hide()
+        tot.UpdatePortraitExtra = function(frameRef, u)
+            -- print(u)
+        end
+
+        tot.NameBackground:SetTexture('')
+        tot.LevelText:SetAlpha(0)
+        tot.HighLevelTexture:SetAlpha(0)
+
+        local function smallerFont(ff, newSize)
+            local fontFile, fontHeight, flags = ff:GetFont()
+            ff:SetFont(fontFile, newSize, flags)
+        end
+
+        local raidTargetIconSize = 26 - 6;
+        tot.RaidTargetIcon:SetSize(raidTargetIconSize, raidTargetIconSize)
+
+        tot.HealthBar.breakUpLargeNumbers = true
+        tot.HealthBar.capNumericDisplay = true
+        tot.HealthBar.showPercentage = true
+        smallerFont(tot.HealthBar.HealthBarText, 14 - 3)
+        TextStatusBar_UpdateTextString(tot.HealthBar)
+
+        local deltaSize = 70 - 74
+        tot.ManaBar.ManaBarText:ClearAllPoints()
+        tot.ManaBar.ManaBarText:SetPoint('CENTER', tot.ManaBar, 'CENTER', -deltaSize / 2, 0)
+        smallerFont(tot.ManaBar.ManaBarText, 14 - 3)
+
+        tot.ManaBar.breakUpLargeNumbers = true
+        tot.ManaBar.capNumericDisplay = true
+        tot.ManaBar.showPercentage = true
+        TextStatusBar_UpdateTextString(tot.ManaBar)
+
+        tot.UpdatePowerType = function(totself, powerTypeString)
+            local mana = totself.ManaBar
+
+            if powerTypeString == 'MANA' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Mana')
+            elseif powerTypeString == 'FOCUS' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Focus')
+            elseif powerTypeString == 'RAGE' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Rage')
+            elseif powerTypeString == 'ENERGY' or powerTypeString == 'POWER_TYPE_FEL_ENERGY' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Energy')
+            elseif powerTypeString == 'RUNIC_POWER' then
+                mana:GetStatusBarTexture():SetTexture(
+                    'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-RunicPower')
+            end
+        end
+
+        tot:SetScript('OnUpdate', nil)
+    end
 
     return f
 end
 
+function Module:HideDefault()
+    for id = 1, 4 do
+        local f = _G['Boss' .. id .. 'TargetFrame']
+        f:SetAlpha(0.5)
+        f:UnregisterEvent('INSTANCE_ENCOUNTER_ENGAGE_UNIT')
+        f:UnregisterAllEvents()
+        -- INSTANCE_ENCOUNTER_ENGAGE_UNIT
+        f:ClearAllPoints()
+        f:Hide()
+        f:SetPoint('LEFT', UIParent, 'RIGHT', 666, 0);
+        -- Boss1TargetFrame:SetPoint("TOPRIGHT", "MinimapCluster", "BOTTOMRIGHT")
+    end
+end
+
+-- unused
 function Module:HookBossframe()
     local b = _G.Boss1TargetFrame
     b:SetMovable(true)

@@ -36,7 +36,7 @@ function DF.Compatibility:Clique()
         _G['TargetFrameTextureFrameUnconsciousText']:SetPropagateMouseMotion(true);
 
         _G['DragonflightUITargetFrameBackground']:SetPropagateMouseMotion(true);
-        _G['DragonflightUITargetFrameBorder']:SetPropagateMouseMotion(true);
+        -- _G['DragonflightUITargetFrameBorder']:SetPropagateMouseMotion(true);
 
         _G['TargetFrameHealthBar']:SetPropagateMouseMotion(true);
         _G['TargetFrameTextureFrame'].HealthBarTextLeft:SetPropagateMouseMotion(true);
@@ -64,7 +64,10 @@ function DF.Compatibility:Clique()
     if _G['FocusFrameHealthBarDummy'] and _G['FocusFrameManaBarDummy'] then
         fixFocus();
     else
-        DF.API.Modules:HookModuleFunction('Unitframe', 'ChangeFocusFrame', function()
+        -- DF.API.Modules:HookModuleFunction('Unitframe', 'ChangeFocusFrame', function()
+        --     fixFocus();
+        -- end)
+        hooksecurefunc(module.SubFocus, 'ChangeFocusFrame', function()
             fixFocus();
         end)
     end

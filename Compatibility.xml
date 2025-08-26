@@ -2,12 +2,14 @@
 	<Include file="Compatibility/_Compatibility.lua" />
 	<Include file="Compatibility/Auctionator.lua" />
 	<Include file="Compatibility/Baganator.lua" />
+	<Include file="Compatibility/BiSTracker.lua" />
 	<Include file="Compatibility/CharacterStatsClassic.lua" />
 	<Include file="Compatibility/ClassicCalendar.lua" />
 	<Include file="Compatibility/Clique.lua" />
 	<Include file="Compatibility/LeatrixPlus.lua" />
 	<Include file="Compatibility/LFGBulletinBoard.lua" />
 	<Include file="Compatibility/MerInspect.lua" />
+	<Include file="Compatibility/Pawn.lua" />
 	<Include file="Compatibility/Ranker.lua" />
 	<Include file="Compatibility/TacoTip.lua" />
 	<Include file="Compatibility/TDInspect.lua" />
