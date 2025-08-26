@@ -5,6 +5,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local mName = 'Tooltip'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
+local LSM = LibStub('LibSharedMedia-3.0')
+
 Mixin(Module, DragonflightUIModulesMixin)
 
 local defaults = {
@@ -29,7 +31,11 @@ local defaults = {
             -- gametooltip
 
             -- statusbar
+            unitHealthbar = true,
+            unitHealthbarText = true,
+            unitHealthbarClassColor = false,
             statusbarHeight = 9,
+            customHealthBarTexture = 'Default',
             -- spell
             anchorSpells = true,
             showSpellID = true,
@@ -46,8 +52,6 @@ local defaults = {
             -- unit
             unitClassBorder = true,
             unitClassBackdrop = false,
-            unitHealthbar = true,
-            unitHealthbarText = true,
             unitReactionBorder = true,
             unitReactionBackdrop = false,
             unitClassName = true,
@@ -298,11 +302,49 @@ local generalOptions = {
             group = 'headerItemTooltip'
         },
         -- UnitTooltip
+        headerStatusBar = {
+            type = 'header',
+            name = L["TooltipUnitHealthbarName"],
+            desc = L["TooltipUnitHealthbarNameDesc"],
+            order = 4,
+            isExpanded = true,
+            editmode = true
+            -- sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        unitHealthbar = {
+            type = 'toggle',
+            name = L["TooltipUnitHealthbar"],
+            desc = L["TooltipUnitHealthbarDesc"] .. getDefaultStr('unitHealthbar', 'general'),
+            order = 1,
+            editmode = true,
+            group = 'headerStatusBar'
+        },
+        statusbarHeight = {
+            type = 'range',
+            name = L["TooltipUnitHealthbarHeight"],
+            desc = L["TooltipUnitHealthbarHeightDesc"] .. getDefaultStr('statusbarHeight', 'general'),
+            min = 1,
+            max = 32,
+            bigStep = 1,
+            order = 2,
+            group = 'headerStatusBar',
+            new = true,
+            editmode = true
+        },
+        unitHealthbarText = {
+            type = 'toggle',
+            name = L["TooltipUnitHealthbarText"],
+            desc = L["TooltipUnitHealthbarTextDesc"] .. getDefaultStr('unitHealthbarText', 'general'),
+            order = 3,
+            editmode = true,
+            group = 'headerStatusBar'
+        },
+        -- UnitTooltip
         headerUnitTooltip = {
             type = 'header',
             name = L["TooltipUnitTooltip"],
             desc = L["TooltipUnitTooltipDesc"],
-            order = 4,
+            order = 5,
             isExpanded = true,
             editmode = true,
             sortComparator = DFSettingsListMixin.AlphaSortComparator
@@ -404,22 +446,6 @@ local generalOptions = {
             group = 'headerUnitTooltip',
             editmode = true
         },
-        unitHealthbar = {
-            type = 'toggle',
-            name = L["TooltipUnitHealthbar"],
-            desc = L["TooltipUnitHealthbarDesc"] .. getDefaultStr('unitHealthbar', 'general'),
-            order = 1,
-            editmode = true,
-            group = 'headerUnitTooltip'
-        },
-        unitHealthbarText = {
-            type = 'toggle',
-            name = L["TooltipUnitHealthbarText"],
-            desc = L["TooltipUnitHealthbarTextDesc"] .. getDefaultStr('unitHealthbarText', 'general'),
-            order = 1,
-            editmode = true,
-            group = 'headerUnitTooltip'
-        },
         unitTarget = {
             type = 'toggle',
             name = L["TooltipUnitTarget"],
@@ -429,6 +455,21 @@ local generalOptions = {
             group = 'headerUnitTooltip'
         }
     }
+}
+
+generalOptions.args['customHealthBarTexture'] = {
+    type = 'select',
+    name = L["PlayerFrameCustomHealthbarTexture"],
+    desc = L["PlayerFrameCustomHealthbarTextureDesc"] .. getDefaultStr('customHealthBarTexture', 'general'),
+    dropdownValuesFunc = Helper:CreateSharedMediaStatusBarGenerator(function(name)
+        return getOption({generalOptions.sub, 'customHealthBarTexture'}) == name;
+    end, function(name)
+        setOption({generalOptions.sub, 'customHealthBarTexture'}, name)
+    end),
+    group = 'headerStatusBar',
+    order = 4,
+    new = true,
+    editmode = true
 }
 DF.Settings:AddPositionTable(Module, generalOptions, 'general', 'GameTooltip', getDefaultStr, frameTable)
 
@@ -575,20 +616,16 @@ function Module:AddEditMode()
         default = function()
             setDefaultSubValues(generalOptions.sub)
         end,
-        moduleRef = self
-        -- showFunction = function()
-        --     --
-        --     -- TargetFrame.unit = 'player';
-        --     -- TargetFrame_Update(TargetFrame);
-        --     -- TargetFrame:Show()
-        --     TargetFrame:SetAlpha(0)
-        -- end,
-        -- hideFunction = function()
-        --     --        
-        --     -- TargetFrame.unit = 'target';
-        --     -- TargetFrame_Update(TargetFrame);
-        --     TargetFrame:SetAlpha(1)
-        -- end
+        moduleRef = self,
+        showFunction = function()
+            --         
+            self.PreviewTooltipParent:Show()
+            self:UpdatePreviewFrame(self.db.profile.general)
+        end,
+        hideFunction = function()
+            --                
+            self.PreviewTooltipParent:Hide()
+        end
     });
 end
 
@@ -682,7 +719,10 @@ end
 function Module:UpdateDefaultAnchor(self)
     local state = Module.db.profile.general;
     local dy = 0;
-    if GameTooltipStatusBar:IsShown() and state.unitHealthbar then
+    local cond = GameTooltipStatusBar:IsShown();
+    if self == Module.PreviewTooltip then cond = self.StatusBar:IsShown(); end
+
+    if cond and state.unitHealthbar then
         local padding = 2;
         dy = state.statusbarHeight + padding;
     end
@@ -693,7 +733,9 @@ end
 function Module:UpdateFrameSize(self)
     local state = Module.db.profile.general;
 
-    if not GameTooltipStatusBar:IsShown() or not state.unitHealthbar then
+    local bar = self.StatusBar or GameTooltipStatusBar;
+
+    if not bar:IsShown() or not state.unitHealthbar then
         self.NineSlice:ClearAllPoints()
         self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
         self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0);
@@ -704,6 +746,7 @@ function Module:UpdateFrameSize(self)
         self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
     else
         local padding = 2;
+        local dx = 8;
         local dy = state.statusbarHeight;
         local dyyy = dy + padding;
 
@@ -715,6 +758,21 @@ function Module:UpdateFrameSize(self)
         self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
 
         self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
+
+        bar:ClearAllPoints()
+        -- bar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", dx, dy / 1 - padding)
+        -- bar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -dx, dy / 1 - padding)
+        bar:SetPoint("BOTTOMLEFT", self.BottomLeftCorner, "BOTTOMLEFT", dx, 6 + padding)
+        bar:SetPoint("BOTTOMRIGHT", self.BottomRightCorner, "BOTTOMRIGHT", -dx, 6 + padding)
+
+        bar:SetHeight(state.statusbarHeight)
+
+        if state.customHealthBarTexture == 'Default' or not LSM then
+            bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+        else
+            local customTex = LSM:Fetch("statusbar", state.customHealthBarTexture)
+            bar:GetStatusBarTexture():SetTexture(customTex)
+        end
     end
 end
 
@@ -801,6 +859,9 @@ function Module:HookStatusBar()
     GameTooltipStatusBar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
     -- print('h', GameTooltipStatusBar:GetHeight())
     GameTooltipStatusBar:SetHeight(state.statusbarHeight)
+
+    GameTooltipStatusBar.breakUpLargeNumbers = true
+    GameTooltipStatusBar.capNumericDisplay = true
 
     local padding = 2;
     local dx = 8;
@@ -1518,12 +1579,35 @@ function Module:HideLines(self, number, numberEnd)
 end
 
 function Module:CreatePreviewFrame()
-    local tt = CreateFrame('GameTooltip', 'DragonflightUITooltipPreviewFrame', UIParent, 'GameTooltipTemplate')
+    local ttVisibilityParent = CreateFrame('Frame', nil, UIParent)
+    ttVisibilityParent:Hide()
+    self.PreviewTooltipParent = ttVisibilityParent;
+    local tt =
+        CreateFrame('GameTooltip', 'DragonflightUITooltipPreviewFrame', ttVisibilityParent, 'GameTooltipTemplate')
     -- tt:Show()
     -- tt:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
     -- tt:SetOwner(PetActionButton1, "ANCHOR_RIGHT");
     -- tt:SetText('test');
-    -- tt:Show()
+    -- tt:Hide()
+    do
+        local bar = _G[tt:GetName() .. 'StatusBar']
+        tt.StatusBar = bar;
+        -- tt.StatusBar:Show()    
+        local text = bar:CreateFontString('DragonflightUIStatusBarText', 'OVERLAY', 'TextStatusBarText');
+        text:SetPoint('CENTER', 0, 0);
+        bar.TextString = text
+
+        local textLeft = bar:CreateFontString('DragonflightUIStatusBarTextLeft', 'OVERLAY', 'TextStatusBarText');
+        textLeft:SetPoint('LEFT', 1, 0);
+        bar.LeftText = textLeft
+
+        local textRight = bar:CreateFontString('DragonflightUIStatusBarTextRight', 'OVERLAY', 'TextStatusBarText');
+        textRight:SetPoint('RIGHT', -1, 0);
+        bar.RightText = textRight
+
+        bar.capNumericDisplay = true;
+        bar.lockShow = 1;
+    end
     self.PreviewTooltip = tt;
 end
 
@@ -1535,7 +1619,7 @@ FillLocalizedClassList(localizedClassTableFemale, true)
 
 function Module:UpdatePreviewFrame(state)
     local tt = self.PreviewTooltip;
-    tt:SetOwner(self.GametooltipPreview, 'ANCHOR_NONE');
+    tt:SetOwner(self.PreviewTooltipParent, 'ANCHOR_NONE');
     tt:ClearAllPoints();
     tt:SetPoint('BOTTOMRIGHT', self.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
     tt:SetFrameStrata('MEDIUM')
@@ -1670,11 +1754,37 @@ function Module:UpdatePreviewFrame(state)
         unitLine:SetFormattedText("%s %s %s", levelString, race, DF:GetClassColoredText(modClass, unit.class))
 
         -- zone
-        local zone = GetRealZoneText()
+        local zone = unit.zone or GetRealZoneText()
         if state.unitZone ~= 'never' then
             locationLine:SetText(zone)
             locationLine:SetTextColor(1.0, 1.0, 1.0);
         end
+
+        local bar = tt.StatusBar;
+        if state.unitHealthbar then
+            bar:Show()
+            bar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar') -- TODO CONFIG
+            bar:GetStatusBarTexture():SetVertexColor(0, 1, 0, 1)
+            -- tt.StatusBar:SetHeight(state.statusbarHeight)
+
+            bar:SetMinMaxValues(0, 100)
+            bar:SetValue(unit.hpAmount or 100)
+
+            bar.breakUpLargeNumbers = true
+            bar.capNumericDisplay = true
+            TextStatusBar_UpdateTextString(bar)
+
+            if not state.unitHealthbarText then
+                bar.LeftText:Hide()
+                bar.RightText:Hide()
+                bar.TextString:Hide()
+            end
+        else
+            bar:Hide()
+        end
+
+        self:UpdateFrameSize(tt)
+        self:UpdateDefaultAnchor(tt)
     end
     tt:Show()
 end

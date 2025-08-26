@@ -709,6 +709,16 @@ do
     L["TooltipShowItemID"] = "Show Item ID"
     L["TooltipShowItemIDDesc"] = ""
 
+    -- statusbar
+    L["TooltipUnitHealthbarName"] = "Status Bar"
+    L["TooltipUnitHealthbarNameDesc"] = ""
+    L["TooltipUnitHealthbar"] = "Show Health Bar"
+    L["TooltipUnitHealthbarDesc"] = ""
+    L["TooltipUnitHealthbarHeight"] = "Health Bar Height"
+    L["TooltipUnitHealthbarHeightDesc"] = "."
+    L["TooltipUnitHealthbarText"] = "Show Health Bar Text"
+    L["TooltipUnitHealthbarTextDesc"] = ""
+
     -- unittooltip
     L["TooltipUnitTooltip"] = "UnitTooltip"
     L["TooltipUnitTooltipDesc"] = ""
@@ -736,10 +746,6 @@ do
     L["TooltipUnitGrayOutOnDeathDesc"] = ""
     L["TooltipUnitZone"] = "Show Zone Text"
     L["TooltipUnitZoneDesc"] = ""
-    L["TooltipUnitHealthbar"] = "Show Health Bar"
-    L["TooltipUnitHealthbarDesc"] = ""
-    L["TooltipUnitHealthbarText"] = "Show Health Bar Text"
-    L["TooltipUnitHealthbarTextDesc"] = ""
     L["TooltipUnitTarget"] = "Show Target"
     L["TooltipUnitTargetDesc"] = "Show unit target"
 end
