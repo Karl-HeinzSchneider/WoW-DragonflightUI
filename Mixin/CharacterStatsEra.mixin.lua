@@ -188,13 +188,32 @@ function DragonflightUICharacterStatsEraMixin:AddStatsAttributes()
             return stats(4)
         end
     })
+    
+    local mana_regen_formulas = {
+        ["MAGE"] = "Health Regen: 10% of Spirit\nMana Regen: 13 + 25% of Spirit",
+        ["WARRIOR"] = "Health Regen: 6 + 80% of Spirit",
+        ["PRIEST"] = "Health Regen:  10% of Spirit\nMana Regen: 13 + 25% of Spirit",
+        ["WARLOCK"] = "Health Regen: 6 + 7% of Spirit\nMana Regen: 8 + 25% of Spirit",
+        ["DRUID"] = "Health Regen: 6.5 + 9% of Spirit\nMana Regen: 15 + 20% of Spirit",
+        ["ROGUE"] = "Health Regen: 2 + 50% of Spirit",
+        ["HUNTER"] = "Health Regen: 6 + 25% of Spirit\nMana Regen: 15 + 20% of Spirit",
+        ["PALADIN"] = "Health Regen: 6 + 25% of Spirit\nMana Regen: 15 + 20% of Spirit",
+        ["SHAMAN"] = "Health Regen: 7 + 11% of Spirit\nMana Regen: 15 + 20% of Spirit",
+    }
 
     self:RegisterElement('spirit', 'attributes', {
         order = 3,
         name = SPELL_STAT5_NAME,
         descr = '..',
         func = function()
-            return stats(5)
+            local frameText, tooltip, tooltip2 = stats(5)
+            local localizedClass, classname = UnitClass("player")
+            local _, racename = UnitRace("player")
+
+            tooltip2 = tooltip2.."\n\nRegen occurs in single ticks every 2 seconds on a fixed timer which factors in Spirit, MP5, HP5 and some regen effects such as Food & Water.\nCasting Spells can disrupt mana regen from Spirit unless otherwise allowed by certain class abilities."
+            tooltip2 = tooltip2.."\n\n"..localizedClass.." Regen Formulae: \n"..(mana_regen_formulas[classname] or "NO FORMULA")
+            tooltip2 = tooltip2.."\n\n"..(racename == "Troll" and "As a Troll you retain 10% of Spirit health regen in combat, as well as a 10% higher health regen." or "Spirit health regen does not occur in combat.")
+            return frameText, tooltip, tooltip2
         end
     })
 end
@@ -722,117 +741,304 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [19] = true, -- Tabard
     }
 
-    local function GetTalentModifier(talent_name, modifier_strength)
+    local function GetTalentModifier(talent_id, modifier_strength)
         local numTabs = GetNumTalentTabs();
         local talent_mod = 1
         for i=1, numTabs do
             local numTalents = GetNumTalents(i)
             for j=1, numTalents do
-                local name_talent, _, _, _, rank, maxrank = GetTalentInfo(i, j)
-                if name_talent == talent_name and rank > 0 then
+                local _, id, _, _, rank, maxrank = GetTalentInfo(i, j)
+                if id == talent_id and rank > 0 then
                     talent_mod = 1 + (rank * modifier_strength)
                 end
             end
         end
         return talent_mod
     end
-    local spellid_manaspring_to_rank = {
-        [5677] = 1,
-        [10491] = 2,
-        [10493] = 3,
-        [10494] = 4
-    }
-    local spellid_manatide_to_rank = {
-        [16191] = 1,
-        [17355] = 2,
-        [17360] = 3
-    }
-    local spellid_wisdom_to_rank = {
-        [19742] = 1,
-        [19850] = 2,
-        [19852] = 3,
-        [19853] = 4,
-        [19854] = 5,
-        [25290] = 6
-    }
-    local spellid_greaterwis_to_rank = {
-        [25894] = 1,
-        [25918] = 2
-    }
+
     local earthshatter_count = 0
-    local wellfed_filter = {
-        [25941] = 6, -- Sagefish Delight
-        [25694] = 3 -- Smoked Sagefish
+
+    local restorative_ids = { -- Restorative Totems IDs
+        16187,
+        16205,
+        16206,
+        16207,
+        16208
     }
-    local mana_regeneration_ids = {
-        [24363] = 12, --Mageblood Potion
-        [18194] = 8 -- Nightfin Soup
+    local imp_wis_ids = { -- Improved Wisdom IDs
+        20244,
+        20245
     }
-    local filtered_names = {
-        ["Mana Spring"] = function(id)
-            local rank = spellid_manaspring_to_rank[id] or 1
-            local talent_mod = GetTalentModifier("Restorative Totems", 0.05)
-            local earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
-            local base = id == 24853 and 27 or 2 + (2 * rank) * talent_mod * earthshatter_bonus--check for ancient mana spring totem
+    local filtered_names = { -- Any non MP5 effects are converted to MP5
+        [5677] = function() -- Mana Spring R1
+            local talent_mod = 1
+            local earthshatter_bonus = 1
+            local _, class = UnitClass("player")
+            if class == "SHAMAN" then
+                for i=1, #restorative_ids do
+                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
+                    if talent_mod ~= 1 then break end
+                end
 
-            return (base * 5)/2
+                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+            end
+
+            return ((4 * talent_mod * earthshatter_bonus) * 5) / 2
+        end,
+        [10491] = function() -- Mana Spring R2
+            local talent_mod = 1
+            local earthshatter_bonus = 1
+            local _, class = UnitClass("player")
+            if class == "SHAMAN" then
+                for i=1, #restorative_ids do
+                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
+                    if talent_mod ~= 1 then break end
+                end
+
+                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+            end
+            return ((6 * talent_mod * earthshatter_bonus) * 5) / 2
+        end,
+        [10493] = function() -- Mana Spring R3
+            local talent_mod = 1
+            local earthshatter_bonus = 1
+            local _, class = UnitClass("player")
+            if class == "SHAMAN" then
+                for i=1, #restorative_ids do
+                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
+                    if talent_mod ~= 1 then break end
+                end
+
+                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+            end
+            return ((8 * talent_mod * earthshatter_bonus) * 5) / 2
+        end,
+        [10494] = function() -- Mana Spring R4
+            local talent_mod = 1
+            local earthshatter_bonus = 1
+            local _, class = UnitClass("player")
+            if class == "SHAMAN" then
+                for i=1, #restorative_ids do
+                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
+                    if talent_mod ~= 1 then break end
+                end
+
+                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+            end
+            return ((10 * talent_mod * earthshatter_bonus) * 5) / 2
+        end,
+        [24853] = function() -- Ancient Mana Spring/Enamored Water Spirit
+            local talent_mod = 1
+            local earthshatter_bonus = 1
+            local _, class = UnitClass("player")
+            if class == "SHAMAN" then
+                for i=1, #restorative_ids do
+                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
+                    if talent_mod ~= 1 then break end
+                end
+
+                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+            end
+            return ((27 * talent_mod * earthshatter_bonus) * 5) / 2
+        end,
+        [16191] = function() -- Mana Tide R1
+            return 283.33333 --((170 / 3) * 10) / 2
+        end,
+        [17355] = function() -- Mana Tide R2
+            return 383.33333 --((230 / 3) * 10) / 2
+        end,
+        [17360] = function() -- Mana Tide R3
+            return 483.33333 --((290 / 3) * 10) / 2
+        end,
+        [19742] = function() -- BOW R1
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 10 * talent_mod
+        end,
+        [19850] = function() -- BOW R2
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 15 * talent_mod
+        end,
+        [19852] = function() -- BOW R3
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 20 * talent_mod
+        end,
+        [19853] = function() -- BOW R4
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 25 * talent_mod
+        end,
+        [19854] = function() -- BOW R5
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 30 * talent_mod
+        end,
+        [25290] = function() -- BOW R6
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 33 * talent_mod
+        end,
+        [25894] = function() -- GBOW R1
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 30 * talent_mod
+        end,
+        [25918] = function() -- GBOW R2
+            local talent_mod = 1
+            local _, class = UnitClass("player")
+            if class == "PALADIN" then
+                for i=1, #imp_wis_ids do
+                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
+                    if talent_mod ~= 1 then break end
+                end
+            end
+            return 33 * talent_mod
+        end,
+        [24363] = function() -- Mageblood
+            return 12
         end,
 
-        ["Mana Tide"] = function(id)
-            local rank = spellid_manatide_to_rank[id] or 1
-            return (((110 + (60 * rank))/3) * 10) / 2
+        [18194] = function() -- Nightfin Soup
+            return 8
         end,
 
-        ["Blessing of Wisdom"] = function(id)
-            local talent_mod = GetTalentModifier("Improved Blessing of Wisdom", 0.1)
-            local rank = spellid_wisdom_to_rank[id] or 1
-            return (rank == 6 and 33 or 5 + (5 * rank)) * talent_mod
+        [25941] = function() -- Sagefish Delight
+            return 6
         end,
 
-        ["Greater Blessing of Wisdom"] = function(id)
-            local talent_mod = GetTalentModifier("Improved Blessing of Wisdom", 0.1)
-            local rank = spellid_greaterwis_to_rank[id] or 1
-            return (rank == 2 and 33 or 30) * talent_mod
+        [25694] = function() -- Smoked Sagefish
+            return 3
         end,
 
-        ["Mana Regeneration"] = function(id) -- Mageblood Potion
-            return mana_regeneration_ids[id] or 0
-        end,
-
-        ["Well Fed"] = function(id)
-            return wellfed_filter[id] or 0
-        end,
-
-        ["Warchief's Blessing"] = function(id)
-            local wcb = 16609
-            if wcb ~= id then return 0 end
+        [16609] = function() -- Warchief's Blessing
             return 10
         end,
 
-        ["Epiphany"] = function(id) -- Vestaments of faith 8 piece
-            local priest_t3 = 28802
-            if priest_t3 ~= id then return 0 end
+        [28802] = function() -- Priest T3
             return 60 --(24 * 5) / 2
         end,
 
-        ["Lightning Shield"] = function(id) -- Earthshatter 8 piece
+        -- Lightning Shields
+        [324] = function()
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+        [325] = function()
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+        [905] = function()
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+        [945] = function()
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+        [8134] = function()
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+        [10431] = function()
+            if earthshatter_count < 8 then return 0 end
+            return 15
+        end,
+        [10432] = function()
             if earthshatter_count < 8 then return 0 end
             return 15
         end,
 
-        ["Mark of the Dragon Lord"] = function(id)
+        [17252] = function() -- Mark Of The Dragon Lord
             return 22
         end,
-
-        ["Second Wind"] = function(id)
-            local is_trinket_type = 15604
-            if id ~= is_trinket_type then return 0 end --Future xpacs have second wind buff for warriors, make sure this is the real deal
-
-            return 150 --30 * 5
+        [15604] = function() -- Second Wind Trinket
+            return 150 -- 30 * 5
         end,
-        ["Mar'li's Brain Boost"] = function(id)
+        [24268] = function() -- Mar'li's Brain Boost
             return 60
-        end
+        end,
+        [23513] = function() -- Essence Of The Red (Vael)
+            return 2500 -- 500 * 5
+        end,
+
+        -- As it turns out mana drains are negative MP5!!! Not including Drain Mana as its more of an active ability.
+        [22661] = function() -- Enervate (Alazzin From DME)
+            return -1000 -- -200 * 5
+        end,
+        [16599] = function() -- Blackblade Of Shahram
+            return 50
+        end,
+        [3034] = function() -- Viper Sting R1
+            return -385 -- -154 * 5 / 2    
+        end,
+        [14279] = function() -- Viper Sting R2
+            return -530 -- -212 * 5 / 2
+        end,
+        [14280] = function() -- Viper Sting R3
+            return -692.5 -- -277 * 5 / 2
+        end,
+        [23108] = function() -- Eris Havenfire (Blessing Of Nordrassil)
+            return 625 -- 250 * 5 / 2
+        end,
+        [19634] = function() -- Veildust Medicine Bag (druid item from Curing The Sick quest)
+            return 83.3333 --((50 / 3) * 10) / 2
+        end,
+        [15822] = function() -- Dreamless Sleep Potion
+            return 500 -- ((300 / 3) * 10) / 2
+        end,
+        [24360] = function() -- Greater Dreamless Sleep Potion
+            return 875 -- ((525/3) * 10) / 2
+        end,
+        [21955] = function() -- Razorlash Root
+            return 300 -- 60 * 5
+        end,
+        [17447] = function() -- Circle of Flame
+            return 375 -- 75 * 5
+        end,
     }
 
     local mana_oil_ids = {
@@ -840,12 +1046,6 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [2625] = 8,
         [2624] = 4
     }
-    -- Cache item links once found
-    local set_link_cache_e = {}
-    local set_link_cache_zg = {}
-    local set_link_cache_b = {}
-    local set_link_cache_d = {}
-
 
     -- Optimization to skip running string.find so much
     local item_slots_check_earthshatter = {
@@ -879,6 +1079,43 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [7] = true
     }
 
+    local ids_zg = {
+        [19828] = true, -- Augur Chest
+        [19830] = true, -- Augur Bracer
+        [19829] = true, -- Augur Belt
+        [19609] = true, -- Augur Neck
+        [19956] = true, -- Augur Trinket
+        [19838] = true, -- Haruspex Chest
+        [19839] = true, -- Haruspex Belt
+        [19840] = true, -- Haruspex Bracers
+        [19955] = true, -- Haruspex Trinket
+        [19613] = true, -- Haruspex Neck
+    }
+
+    local ids_earthshatter = {
+        [22464] = true, -- Chest
+        [23065] = true, -- Ring
+        [22471] = true, -- Wrist
+        [22467] = true, -- Shoulders
+        [22465] = true, -- Legs
+        [22466] = true, -- Head
+        [22469] = true, -- Hands
+        [22470] = true, -- Belt
+        [22468] = true -- Boots
+    }
+
+    local ids_bloodsoul = {
+        [19690] = true,
+        [19691] = true,
+        [19692] = true
+    }
+
+    local ids_greendragon = {
+        [20296] = true, -- Hands
+        [15046] = true, -- Legs
+        [15045] = true -- Chest
+    }
+    local cached_link_data = {}
     local function GetRealManaRegen() --Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
         local base, casting = GetManaRegen()
         local casting_mp5 = 0
@@ -886,45 +1123,43 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         local zg_set_c = 0
         local bloodsoul_c = 0
         local dragonscale_c = 0
-
+        local Id
         for i=0, 19 do -- Technically more slots but none give stats, setting ignore index for shirt/tabard but can be removed later
             if not ignore_index[i] then
                 local link = GetInventoryItemLink("player", i)
                 if link then
+                    if not cached_link_data[link] then
+                        local _, _, _, _, itemId = string.find(link, 
+                            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?"
+                        )
+                        cached_link_data[link] = tonumber(itemId)
+                    end
+                    Id = cached_link_data[link]
+
                     -- Earthshatter set
-                    if item_slots_check_earthshatter[i] and (set_link_cache_e[link] or string.find(link, "Earthshatter")) then
+                    if item_slots_check_earthshatter[i] and ids_earthshatter[Id] then
                         earthshatter_count = earthshatter_count + 1
-                        set_link_cache_e[link] = true
                     end
 
                     -- Shaman/Druid ZG Set
-                    if item_slots_check_zg_set[i] and (set_link_cache_zg[link] or 
-                    string.find(link, "Zandalar Augur's") or 
-                    string.find(link, "Wushoolay's Charm of Spirits") or 
-                    string.find(link, "Unmarred Vision of Voodress") or
-                    string.find(link, "Zandalar Haruspex's") or
-                    string.find(link, "Wushoolay's Charm of Nature") or
-                    string.find(link, "Pristine Enchanted South Seas Kelp")) then
+                    if item_slots_check_zg_set[i] and ids_zg[Id] then
                         zg_set_c = zg_set_c + 1
-                        set_link_cache_zg[link] = true
                         if zg_set_c >= 2 then
                             casting_mp5 = casting_mp5 + 4
                         end
                     end
 
                     --Bloodsoul 3 piece
-                    if item_slots_check_bloodsoul[i] and (set_link_cache_b[link] or string.find(link, "Bloodsoul")) then
+                    if item_slots_check_bloodsoul[i] and ids_bloodsoul[Id] then
                         bloodsoul_c = bloodsoul_c + 1
-                        set_link_cache_b[link] = true
                         if bloodsoul_c == 3 then
                             casting_mp5 = casting_mp5 + 12
                         end
                     end
 
                     --Green Dragonscale
-                    if item_slots_check_greendragon[i] and (set_link_cache_d[link] or string.find(link, "Green Dragonscale")) then
+                    if item_slots_check_greendragon[i] and ids_greendragon[Id] then
                         dragonscale_c = dragonscale_c + 1
-                        set_link_cache_d[link] = true 
                         if dragonscale_c >= 2 then
                             casting_mp5 = casting_mp5 + 3
                         end
@@ -956,12 +1191,12 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
 
         local failures = 0
         for i=1, 100 do
-            local name, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
-            if not name then
+            local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
+            if not spellId then
                 failures = failures + 1
                 if failures > 2 then break end
-            elseif filtered_names[name] then
-                casting_mp5 = casting_mp5 + filtered_names[name](spellId)
+            elseif filtered_names[spellId] then
+                casting_mp5 = casting_mp5 + filtered_names[spellId]()
             end
         end
 
@@ -973,24 +1208,48 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             casting_mp5 = casting_mp5 + mana_oil_ids[offhand_enchant_id]
         end
         casting_mp5 = casting_mp5 / 5
-        return base + casting_mp5, casting + casting_mp5
+        return base + casting_mp5, casting + casting_mp5, casting_mp5
     end
 
-    self:RegisterElement('mana', 'spell', {
+    self:RegisterElement('mp5', 'spell', {
         order = 8,
+        name = "Mana Per 5 Seconds",
+        descr = "..",
+        func = function()
+            local _, _, mp5 = GetRealManaRegen()
+            local value = BreakUpLargeNumbers(mp5 * 5)
+            local tooltip_name = "MP5"
+            return value, tooltip_name, "Regenerates Mana at a constant rate both in and out of combat.\nWhile represented as mana per 5 seconds it is regenerated alongside standard mana regen."
+        end
+    })
+
+    self:RegisterElement('mana', 'spell', {
+        order = 9,
         name = MANA_REGEN,
+        descr = '..',
+        func = function()
+            local base = GetRealManaRegen()
+
+            local newTable = {}
+            newTable[1] = {left = MANA_REGEN}
+            newTable[2] = {left = 'Mana every 2/5s while not casting', right = BreakUpLargeNumbers(base * 2).."/"..BreakUpLargeNumbers(base * 5)}
+
+            return newTable[2].right, nil, nil, newTable;
+        end
+    })
+
+    self:RegisterElement('combat_mana', 'spell', {
+        order = 10,
+        name = "Combat Regen",
         descr = '..',
         func = function()
             local base, casting = GetRealManaRegen()
 
             local newTable = {}
-            newTable[1] = {left = MANA_REGEN}
-            -- newTable[2] = {left = 'Mana every 5s', right = string.format(' %.2f', base * 5)}
-            -- newTable[3] = {left = 'Mana every 5s while casting', right = string.format(' %.2f', casting * 5)}
+            newTable[1] = {left = "Combat Regen"}
             newTable[2] = {left = 'Mana every 2/5s while casting', right = BreakUpLargeNumbers(casting * 2).."/"..BreakUpLargeNumbers(casting * 5)}
-            newTable[3] = {left = 'Mana every 2/5s while not casting', right = BreakUpLargeNumbers(base * 2).."/"..BreakUpLargeNumbers(base * 5)}
-
-            return newTable[3].right, nil, nil, newTable;
+            newTable[3] = {left = "Percentage Of Mana Regened in Combat", right = string.format(' %.2F', (casting ~= 0 and casting / base or 0) * 100).."%"}
+            return newTable[2].right, nil, nil, newTable;
         end
     })
 end
