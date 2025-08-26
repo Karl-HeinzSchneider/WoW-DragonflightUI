@@ -605,6 +605,9 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
 
     local state = Module.db.profile.general;
 
+    self.DFDefaultAnchor = false;
+    Module:UpdateFrameSize(self)
+
     -- spells
     if state.anchorSpells then
         local parentparent = parent and parent:GetParent();
@@ -668,9 +671,51 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
     end
 
     -- default
+    self.DFDefaultAnchor = true;
     self:SetOwner(parent, 'ANCHOR_NONE');
+    -- self:ClearAllPoints();
+    -- self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
+
+    Module:UpdateDefaultAnchor(self)
+end
+
+function Module:UpdateDefaultAnchor(self)
+    local state = Module.db.profile.general;
+    local dy = 0;
+    if GameTooltipStatusBar:IsShown() and state.unitHealthbar then
+        local padding = 2;
+        dy = state.statusbarHeight + padding;
+    end
     self:ClearAllPoints();
-    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0 + 11);
+    self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0 + dy);
+end
+
+function Module:UpdateFrameSize(self)
+    local state = Module.db.profile.general;
+
+    if not GameTooltipStatusBar:IsShown() or not state.unitHealthbar then
+        self.NineSlice:ClearAllPoints()
+        self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+        self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0);
+
+        self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0)
+        self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+
+        self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+    else
+        local padding = 2;
+        local dy = state.statusbarHeight;
+        local dyyy = dy + padding;
+
+        self.NineSlice:ClearAllPoints()
+        self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+        self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy);
+
+        self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, -dyyy)
+        self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
+
+        self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
+    end
 end
 
 function Module:AddBackdrops()
@@ -820,31 +865,8 @@ function Module:HookStatusBar()
     GameTooltip:HookScript('OnShow', function(self)
         --
         -- print('GameTooltip OnShow')
-        local state = Module.db.profile.general;
-
-        if not GameTooltipStatusBar:IsShown() or not state.unitHealthbar then
-            self.NineSlice:ClearAllPoints()
-            self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
-            self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0);
-
-            self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0)
-            self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-
-            self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-            return
-        end
-        -- print('statusbar')
-
-        local dyyy = dy + padding;
-
-        self.NineSlice:ClearAllPoints()
-        self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
-        self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy);
-
-        self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, -dyyy)
-        self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
-
-        self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
+        Module:UpdateFrameSize(self)
+        if self.DFDefaultAnchor then Module:UpdateDefaultAnchor(self) end
     end)
 
     -- if (SharedTooltip_SetBackdropStyle) then
@@ -1022,6 +1044,9 @@ function Module:OnTooltipSetUnit(self)
     end
 
     if state.unitTarget then Module:AddTargetLine(self, unit, nil) end
+
+    Module:UpdateFrameSize(self)
+    if self.DFDefaultAnchor then Module:UpdateDefaultAnchor(self) end
 end
 
 function Module:UnitPlayerTooltip(self)
