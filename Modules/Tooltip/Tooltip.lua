@@ -786,7 +786,7 @@ function Module:AddEditMode()
         end,
         hideFunction = function()
             --                
-            -- self.PreviewTooltipParent:Hide()
+            self.PreviewTooltipParent:Hide()
         end
     });
 end
@@ -1769,7 +1769,7 @@ end
 
 function Module:CreatePreviewFrame()
     local ttVisibilityParent = CreateFrame('Frame', nil, UIParent)
-    -- ttVisibilityParent:Hide()
+    ttVisibilityParent:Hide()
     self.PreviewTooltipParent = ttVisibilityParent;
     local tt =
         CreateFrame('GameTooltip', 'DragonflightUITooltipPreviewFrame', ttVisibilityParent, 'GameTooltipTemplate')
