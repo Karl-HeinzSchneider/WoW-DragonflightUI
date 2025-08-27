@@ -319,7 +319,7 @@ local generalOptions = {
             name = L["TooltipBackdropHeader"],
             desc = L["TooltipBackdropHeaderDesc"],
             order = 1.5,
-            isExpanded = true,
+            isExpanded = false,
             editmode = true
             -- sortComparator = DFSettingsListMixin.AlphaSortComparator
         },
@@ -398,7 +398,7 @@ local generalOptions = {
             name = L["TooltipBorderName"],
             desc = L["TooltipBorderNameDesc"],
             order = 1.6,
-            isExpanded = true,
+            isExpanded = false,
             editmode = true
             -- sortComparator = DFSettingsListMixin.AlphaSortComparator
         },
