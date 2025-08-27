@@ -709,6 +709,35 @@ do
     L["TooltipShowItemID"] = "Show Item ID"
     L["TooltipShowItemIDDesc"] = ""
 
+    -- backdrop
+    L["TooltipBackdropHeader"] = "Backdrop"
+    L["TooltipBackdropHeaderDesc"] = ""
+    L["TooltipBackdropColor"] = "Backdrop Color"
+    L["TooltipBackdropColorDesc"] = ""
+    L["TooltipBackdropAlpha"] = "Backdrop Alpha"
+    L["TooltipBackdropAlphaDesc"] = ""
+    L["TooltipBackdropCustomTexture"] = "Backdrop Texture"
+    L["TooltipBackdropCustomTextureDesc"] = ""
+
+    -- border
+    L["TooltipBorderName"] = "Border"
+    L["TooltipBorderNameDesc"] = ""
+    L["TooltipBorderCustomTexture"] = "Border Texture"
+    L["TooltipBorderCustomTextureDesc"] = ""
+    L["TooltipBorderColor"] = "Border Color"
+    L["TooltipBorderColorDesc"] = ""
+    L["TooltipBorderAlpha"] = "Border Alpha"
+    L["TooltipBorderAlphaDesc"] = ""
+
+    L["TooltipBorderInsetLeft"] = "Inset Left"
+    L["TooltipBorderInsetRight"] = "Inset Right"
+    L["TooltipBorderInsetTop"] = "Inset Top"
+    L["TooltipBorderInsetBottom"] = "Inset Bottom"
+    L["TooltipBorderInsetDesc"] = ""
+
+    L["TooltipBorderInsetEdgeSize"] = "Edge Size"
+    L["TooltipBorderInsetEdgeSizeDesc"] = ""
+
     -- statusbar
     L["TooltipUnitHealthbarName"] = "Status Bar"
     L["TooltipUnitHealthbarNameDesc"] = ""

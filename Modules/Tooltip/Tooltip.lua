@@ -6,6 +6,7 @@ local mName = 'Tooltip'
 local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 local LSM = LibStub('LibSharedMedia-3.0')
+local CreateColor = DFCreateColor
 
 Mixin(Module, DragonflightUIModulesMixin)
 
@@ -27,7 +28,18 @@ local defaults = {
             mouseX = 16,
             mouseY = 8,
             -- backdrop
-            backdropAlpha = 0.2,
+            backdropColor = CreateColor(0 / 255, 0 / 255, 0 / 255):GenerateHexColorNoAlpha(),
+            backdropAlpha = 1.0,
+            customBackdropTexture = 'Default',
+            insetLeft = 4,
+            insetRight = 4,
+            insetTop = 4,
+            insetBottom = 4,
+            -- border
+            backdropBorderColor = CreateColor(178 / 255, 178 / 255, 178 / 255):GenerateHexColorNoAlpha(),
+            backdropBorderAlpha = 1.0,
+            customBackdropBorderTexture = 'Default',
+            borderEdgeSize = 14,
             -- gametooltip
 
             -- statusbar
@@ -149,7 +161,7 @@ local generalOptions = {
             type = 'header',
             name = L["TooltipCursorAnchorHeader"],
             desc = L["TooltipCursorAnchorHeaderDesc"],
-            order = 1,
+            order = 1.8,
             isExpanded = true,
             editmode = true,
             sortComparator = DFSettingsListMixin.OrderSortComparator
@@ -301,7 +313,129 @@ local generalOptions = {
             editmode = true,
             group = 'headerItemTooltip'
         },
-        -- UnitTooltip
+        -- Backdrop
+        headerBackdrop = {
+            type = 'header',
+            name = L["TooltipBackdropHeader"],
+            desc = L["TooltipBackdropHeaderDesc"],
+            order = 1.5,
+            isExpanded = true,
+            editmode = true
+            -- sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        backdropColor = {
+            type = 'color',
+            name = L["TooltipBackdropColor"],
+            desc = L["TooltipBackdropColorDesc"] .. getDefaultStr('backdropColor', 'general', '#'),
+            group = 'headerBackdrop',
+            order = 1,
+            new = true,
+            editmode = true
+        },
+        backdropAlpha = {
+            type = 'range',
+            name = L["TooltipBackdropAlpha"],
+            desc = L["TooltipBackdropAlphaDesc"] .. getDefaultStr('backdropAlpha', 'general'),
+            min = 0,
+            max = 1,
+            bigStep = 0.01,
+            order = 2,
+            group = 'headerBackdrop',
+            new = true,
+            editmode = true
+        },
+        insetLeft = {
+            type = 'range',
+            name = L["TooltipBorderInsetLeft"],
+            desc = L["TooltipBorderInsetDesc"] .. getDefaultStr('insetLeft', 'general'),
+            min = -32,
+            max = 32,
+            bigStep = 1,
+            order = 5,
+            group = 'headerBackdrop',
+            new = true,
+            editmode = true
+        },
+        insetRight = {
+            type = 'range',
+            name = L["TooltipBorderInsetRight"],
+            desc = L["TooltipBorderInsetDesc"] .. getDefaultStr('insetRight', 'general'),
+            min = -32,
+            max = 32,
+            bigStep = 1,
+            order = 5.1,
+            group = 'headerBackdrop',
+            new = true,
+            editmode = true
+        },
+        insetTop = {
+            type = 'range',
+            name = L["TooltipBorderInsetTop"],
+            desc = L["TooltipBorderInsetDesc"] .. getDefaultStr('insetTop', 'general'),
+            min = -32,
+            max = 32,
+            bigStep = 1,
+            order = 5.2,
+            group = 'headerBackdrop',
+            new = true,
+            editmode = true
+        },
+        insetBottom = {
+            type = 'range',
+            name = L["TooltipBorderInsetBottom"],
+            desc = L["TooltipBorderInsetDesc"] .. getDefaultStr('insetBottom', 'general'),
+            min = -32,
+            max = 32,
+            bigStep = 1,
+            order = 5.3,
+            group = 'headerBackdrop',
+            new = true,
+            editmode = true
+        },
+        -- Border
+        headerBorder = {
+            type = 'header',
+            name = L["TooltipBorderName"],
+            desc = L["TooltipBorderNameDesc"],
+            order = 1.6,
+            isExpanded = true,
+            editmode = true
+            -- sortComparator = DFSettingsListMixin.AlphaSortComparator
+        },
+        backdropBorderColor = {
+            type = 'color',
+            name = L["TooltipBorderColor"],
+            desc = L["TooltipBorderColorDesc"] .. getDefaultStr('backdropBorderColor', 'general', '#'),
+            group = 'headerBorder',
+            order = 1,
+            editmode = true,
+            new = true
+        },
+        backdropBorderAlpha = {
+            type = 'range',
+            name = L["TooltipBorderAlpha"],
+            desc = L["TooltipBorderAlphaDesc"] .. getDefaultStr('backdropBorderAlpha', 'general'),
+            min = 0,
+            max = 1,
+            bigStep = 0.01,
+            order = 2,
+            group = 'headerBorder',
+            new = true,
+            editmode = true
+        },
+        borderEdgeSize = {
+            type = 'range',
+            name = L["TooltipBorderInsetEdgeSize"],
+            desc = L["TooltipBorderInsetEdgeSizeDesc"] .. getDefaultStr('borderEdgeSize', 'general'),
+            min = 0,
+            max = 32,
+            bigStep = 1,
+            order = 5,
+            group = 'headerBorder',
+            new = true,
+            editmode = true
+        },
+        -- Statusbar
         headerStatusBar = {
             type = 'header',
             name = L["TooltipUnitHealthbarName"],
@@ -471,6 +605,34 @@ generalOptions.args['customHealthBarTexture'] = {
     new = true,
     editmode = true
 }
+generalOptions.args['customBackdropTexture'] = {
+    type = 'select',
+    name = L["TooltipBackdropCustomTexture"],
+    desc = L["TooltipBackdropCustomTextureDesc"] .. getDefaultStr('customBackdropTexture', 'general'),
+    dropdownValuesFunc = Helper:CreateSharedMediaGeneralGenerator(function(name)
+        return getOption({generalOptions.sub, 'customBackdropTexture'}) == name;
+    end, function(name)
+        setOption({generalOptions.sub, 'customBackdropTexture'}, name)
+    end, LSM.MediaType.BACKGROUND),
+    group = 'headerBackdrop',
+    order = 4,
+    new = true,
+    editmode = true
+}
+generalOptions.args['customBackdropBorderTexture'] = {
+    type = 'select',
+    name = L["TooltipBorderCustomTexture"],
+    desc = L["TooltipBorderCustomTextureDesc"] .. getDefaultStr('customBackdropBorderTexture', 'general'),
+    dropdownValuesFunc = Helper:CreateSharedMediaGeneralGenerator(function(name)
+        return getOption({generalOptions.sub, 'customBackdropBorderTexture'}) == name;
+    end, function(name)
+        setOption({generalOptions.sub, 'customBackdropBorderTexture'}, name)
+    end, LSM.MediaType.BORDER),
+    group = 'headerBorder',
+    order = 4,
+    new = true,
+    editmode = true
+}
 DF.Settings:AddPositionTable(Module, generalOptions, 'general', 'GameTooltip', getDefaultStr, frameTable)
 
 local optionsGeneralEditmode = {
@@ -624,7 +786,7 @@ function Module:AddEditMode()
         end,
         hideFunction = function()
             --                
-            self.PreviewTooltipParent:Hide()
+            -- self.PreviewTooltipParent:Hide()
         end
     });
 end
@@ -733,35 +895,24 @@ end
 function Module:UpdateFrameSize(self)
     local state = Module.db.profile.general;
 
+    self.NineSlice:ClearAllPoints()
+    self.NineSlice:Hide()
+
     local bar = self.StatusBar or GameTooltipStatusBar;
 
     if not bar:IsShown() or not state.unitHealthbar then
-        self.NineSlice:ClearAllPoints()
-        self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
-        self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0);
-
         self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0)
         self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
-
-        self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
     else
         local padding = 2;
         local dx = 8;
         local dy = state.statusbarHeight;
         local dyyy = dy + padding;
 
-        self.NineSlice:ClearAllPoints()
-        self.NineSlice:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
-        self.NineSlice:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy);
-
         self.BottomLeftCorner:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, -dyyy)
         self.BottomRightCorner:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
 
-        self.Center:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -dyyy)
-
         bar:ClearAllPoints()
-        -- bar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", dx, dy / 1 - padding)
-        -- bar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -dx, dy / 1 - padding)
         bar:SetPoint("BOTTOMLEFT", self.BottomLeftCorner, "BOTTOMLEFT", dx, 6 + padding)
         bar:SetPoint("BOTTOMRIGHT", self.BottomRightCorner, "BOTTOMRIGHT", -dx, 6 + padding)
 
@@ -781,29 +932,74 @@ function Module:AddBackdrops()
 
     local tooltips = {
         GameTooltip, WorldMapTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefTooltip, ItemRefShoppingTooltip1,
-        ItemRefShoppingTooltip2, FriendsTooltip
+        ItemRefShoppingTooltip2, FriendsTooltip, self.PreviewTooltip
     }
     Module.Tooltips = tooltips
-
-    -- TODO config
-    local backdrop = {
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        edgeSize = 14,
-        insets = {left = 2, right = 2, top = 2, bottom = 2}
-    }
 
     for k, v in ipairs(tooltips) do
         v:SetScale(state.scale)
 
         if not v.SetBackdrop then
             -- 
-            -- print(v:GetName(), 'no Setbackdrop')
+            print(v:GetName(), 'no Setbackdrop')
             Mixin(v, BackdropTemplateMixin)
         end
-        v:SetBackdrop(backdrop)
+        if v.NineSlice then
+            v.NineSlice:ClearAllPoints()
+            v.NineSlice:Hide()
+            -- v.NineSlice = nil
+        else
+            --
+            print(v:GetName(), 'no nineslice!')
+        end
         Module:SetDefaultBackdrop(v)
     end
+end
+
+function Module:SetDefaultBackdrop(self)
+    -- print('Module:SetDefaultBackdrop(self)', self:GetName())
+    local state = Module.db.profile.general;
+
+    local backdrop = {
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 14,
+        insets = {left = 4, right = 4, top = 4, bottom = 4}
+    }
+
+    if LSM and state.customBackdropTexture ~= 'Default' then
+        local customTex = LSM:Fetch(LSM.MediaType.BACKGROUND, state.customBackdropTexture)
+        backdrop.bgFile = customTex
+    end
+
+    if LSM and state.customBackdropBorderTexture ~= 'Default' then
+        local customTex = LSM:Fetch(LSM.MediaType.BORDER, state.customBackdropBorderTexture)
+        backdrop.edgeFile = customTex
+    end
+
+    backdrop.edgeSize = state.borderEdgeSize;
+
+    backdrop.insets.left = state.insetLeft;
+    backdrop.insets.right = state.insetRight;
+    backdrop.insets.top = state.insetTop;
+    backdrop.insets.bottom = state.insetBottom;
+
+    self:SetBackdrop(backdrop)
+
+    do
+        local backdropColor = CreateColorFromRGBHexString(state.backdropColor)
+        local r, g, b = backdropColor:GetRGB()
+
+        self:SetBackdropColor(r, g, b, state.backdropAlpha) -- TODO config
+    end
+
+    do
+        local backdropBorderColor = CreateColorFromRGBHexString(state.backdropBorderColor)
+        local r, g, b = backdropBorderColor:GetRGB()
+
+        self:SetBackdropBorderColor(r, g, b, state.backdropBorderAlpha)
+    end
+
 end
 
 function Module:HookFunctions()
@@ -844,13 +1040,6 @@ function Module:HookFunctions()
             end)
         end
     end
-end
-
-function Module:SetDefaultBackdrop(self)
-    -- print('Module:SetDefaultBackdrop(self)')
-    local state = Module.db.profile.general;
-    self:SetBackdropColor(0, 0, 0, state.backdropAlpha) -- TODO config
-    self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config    
 end
 
 function Module:HookStatusBar()
@@ -1125,9 +1314,9 @@ function Module:UnitPlayerTooltip(self)
     -- self:SetBackdropBorderColor(0.7, 0.7, 0.7) -- TODO config   
 
     if state.unitClassBorder then
-        self:SetBackdropBorderColor(cr, cg, cb);
+        self:SetBackdropBorderColor(cr, cg, cb, state.backdropBorderAlpha);
     elseif state.unitReactionBorder then
-        self:SetBackdropBorderColor(r, g, b);
+        self:SetBackdropBorderColor(r, g, b, state.backdropBorderAlpha);
     end
 
     if state.unitClassBackdrop then
@@ -1277,7 +1466,7 @@ function Module:UnitNPCTooltip(self)
 
     if state.unitReactionBorder then
         --
-        self:SetBackdropBorderColor(r, g, b)
+        self:SetBackdropBorderColor(r, g, b, state.backdropBorderAlpha)
     end
 
     if state.unitReactionBackdrop then
@@ -1580,7 +1769,7 @@ end
 
 function Module:CreatePreviewFrame()
     local ttVisibilityParent = CreateFrame('Frame', nil, UIParent)
-    ttVisibilityParent:Hide()
+    -- ttVisibilityParent:Hide()
     self.PreviewTooltipParent = ttVisibilityParent;
     local tt =
         CreateFrame('GameTooltip', 'DragonflightUITooltipPreviewFrame', ttVisibilityParent, 'GameTooltipTemplate')
@@ -1625,23 +1814,11 @@ function Module:UpdatePreviewFrame(state)
     tt:SetFrameStrata('MEDIUM')
     tt:SetFrameLevel(69)
 
+    tt:SetScale(self.GametooltipPreview:GetScale())
+
     if not self.PreviewUnit then self.PreviewUnit = DF:GetRandomVIP() end
     local unit = self.PreviewUnit;
 
-    -- TODO config
-    local backdrop = {
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        edgeSize = 14,
-        insets = {left = 2, right = 2, top = 2, bottom = 2}
-    }
-
-    if not tt.SetBackdrop then
-        -- 
-        -- print(v:GetName(), 'no Setbackdrop')
-        Mixin(tt, BackdropTemplateMixin)
-    end
-    tt:SetBackdrop(backdrop)
     Module:SetDefaultBackdrop(tt)
 
     -- unit
@@ -1652,9 +1829,9 @@ function Module:UpdatePreviewFrame(state)
         local cr, cg, cb, ca, chex = DF:GetClassColor(unit.class);
 
         if state.unitClassBorder then
-            tt:SetBackdropBorderColor(cr, cg, cb);
+            tt:SetBackdropBorderColor(cr, cg, cb, state.backdropBorderAlpha);
         elseif state.unitReactionBorder then
-            tt:SetBackdropBorderColor(r, g, b);
+            tt:SetBackdropBorderColor(r, g, b, state.backdropBorderAlpha);
         end
 
         if state.unitClassBackdrop then
@@ -1800,6 +1977,8 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:Era()
+    self:CreatePreviewFrame()
+
     Module:HookDefaultAnchor()
     Module:AddBackdrops()
 
@@ -1807,7 +1986,6 @@ function Module:Era()
     Module:HookSpellTooltip()
     Module:HookStatusBar()
 
-    self:CreatePreviewFrame()
 end
 
 function Module:TBC()
