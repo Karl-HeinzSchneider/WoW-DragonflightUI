@@ -177,6 +177,28 @@ table.insert(DF.VIPTable, {
     displayTexture = 'jag'
 })
 
+-- jag2
+table.insert(DF.VIPTable, {
+    name = 'Turqoise',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Horizon',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    race = 'Nightelf',
+    female = true,
+    level = '60',
+    class = 'HUNTER',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = '',
+    -- displayID = XXX, -- cat !?
+    displayTexture = 'jag'
+})
+
 table.insert(DF.VIPTable, {
     name = 'Baldvin',
     -- titleAfter = ", Death's Demise",
