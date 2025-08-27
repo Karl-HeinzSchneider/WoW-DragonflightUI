@@ -2449,6 +2449,11 @@ function DragonflightUIMixin:ChangeTradeFrame()
         bottom:SetSize(32, 32)
         bottom:SetPoint('BOTTOMLEFT', TradeFrame, 'BOTTOMRIGHT', -178 - 5, -3)
     end
+
+    do
+        local recipBG = _G['TradeRecipientBG']
+        recipBG:SetPoint('BOTTOMRIGHT', TradeFrame, 'BOTTOMRIGHT', -2, 2)
+    end
 end
 
 function DragonflightUIMixin:ChangeQuestLogFrameEra()
