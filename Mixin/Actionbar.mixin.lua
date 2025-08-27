@@ -1638,7 +1638,7 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
         normal:Hide()
         normal:SetTexture('')
 
-        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'BORDER')
         newNormal:ClearAllPoints()
         newNormal:SetSize(46, 45)
         newNormal:SetPoint('TOPLEFT')
