@@ -66,6 +66,7 @@ XML\Includes.xml
 # XML
 XML\Actionbar.xml
 XML\Bossframe.xml
+XML\Buff.xml
 XML\Castbar.xml
 XML\CharacterStatsPanel.xml
 XML\ConfigCategoryList.xml
