@@ -941,7 +941,7 @@ function Module:AddBackdrops()
 
         if not v.SetBackdrop then
             -- 
-            print(v:GetName(), 'no Setbackdrop')
+            -- print(v:GetName(), 'no Setbackdrop')
             Mixin(v, BackdropTemplateMixin)
         end
         if v.NineSlice then
@@ -950,7 +950,7 @@ function Module:AddBackdrops()
             -- v.NineSlice = nil
         else
             --
-            print(v:GetName(), 'no nineslice!')
+            -- print(v:GetName(), 'no nineslice!')
         end
         Module:SetDefaultBackdrop(v)
     end
