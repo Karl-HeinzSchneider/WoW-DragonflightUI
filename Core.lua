@@ -91,6 +91,7 @@ function DF:GetUnitSelectionColor(unit)
 end
 
 function DF:GetClassColoredText(str, class)
+    if not str then return '' end
     local r, g, b, a, hex = DF:GetClassColor(class)
     return "|r|c" .. hex .. str .. "|r"
 end
