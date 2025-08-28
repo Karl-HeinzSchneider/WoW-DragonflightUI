@@ -29,12 +29,12 @@ local defaults = {
             mouseY = 8,
             -- backdrop
             backdropColor = CreateColor(0 / 255, 0 / 255, 0 / 255):GenerateHexColorNoAlpha(),
-            backdropAlpha = 1.0,
+            backdropAlpha = 0.9,
             customBackdropTexture = 'Default',
-            insetLeft = 4,
-            insetRight = 4,
-            insetTop = 4,
-            insetBottom = 4,
+            insetLeft = 3,
+            insetRight = 3,
+            insetTop = 3,
+            insetBottom = 3,
             -- border
             backdropBorderColor = CreateColor(178 / 255, 178 / 255, 178 / 255):GenerateHexColorNoAlpha(),
             backdropBorderAlpha = 1.0,
@@ -962,7 +962,8 @@ function Module:SetDefaultBackdrop(self)
     local state = Module.db.profile.general;
 
     local backdrop = {
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        -- bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        bgFile = "Interface\\Collections\\CollectionsBackgroundTile",
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
         edgeSize = 14,
         insets = {left = 4, right = 4, top = 4, bottom = 4}
