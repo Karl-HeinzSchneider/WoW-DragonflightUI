@@ -925,6 +925,8 @@ function Module:UpdateFrameSize(self)
             bar:GetStatusBarTexture():SetTexture(customTex)
         end
     end
+
+    self:SetScale(state.scale)
 end
 
 function Module:AddBackdrops()
