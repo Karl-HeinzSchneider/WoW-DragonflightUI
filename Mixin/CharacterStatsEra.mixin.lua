@@ -744,42 +744,31 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
     local function GetTalentModifier(talent_id, modifier_strength)
         local numTabs = GetNumTalentTabs();
         local talent_mod = 1
+        local escape_tree = false
+        local id, rank, numTalents
         for i=1, numTabs do
-            local numTalents = GetNumTalents(i)
+            numTalents = GetNumTalents(i)
             for j=1, numTalents do
-                local _, id, _, _, rank, maxrank = GetTalentInfo(i, j)
-                if id == talent_id and rank > 0 then
+                _, id, _, _, rank = GetTalentInfo(i, j)
+                escape_tree = id == talent_id and rank > 0 
+                if escape_tree then
                     talent_mod = 1 + (rank * modifier_strength)
+                    break
                 end
             end
+            if escape_tree then break end
         end
         return talent_mod
     end
 
     local earthshatter_count = 0
-
-    local restorative_ids = { -- Restorative Totems IDs
-        16187,
-        16205,
-        16206,
-        16207,
-        16208
-    }
-    local imp_wis_ids = { -- Improved Wisdom IDs
-        20244,
-        20245
-    }
     local filtered_names = { -- Any non MP5 effects are converted to MP5
         [5677] = function() -- Mana Spring R1
             local talent_mod = 1
             local earthshatter_bonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                for i=1, #restorative_ids do
-                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
-                    if talent_mod ~= 1 then break end
-                end
-
+                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
                 earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
             end
 
@@ -790,11 +779,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local earthshatter_bonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                for i=1, #restorative_ids do
-                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
-                    if talent_mod ~= 1 then break end
-                end
-
+                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
                 earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
             end
             return ((6 * talent_mod * earthshatter_bonus) * 5) / 2
@@ -804,11 +789,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local earthshatter_bonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                for i=1, #restorative_ids do
-                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
-                    if talent_mod ~= 1 then break end
-                end
-
+                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
                 earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
             end
             return ((8 * talent_mod * earthshatter_bonus) * 5) / 2
@@ -818,11 +799,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local earthshatter_bonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                for i=1, #restorative_ids do
-                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
-                    if talent_mod ~= 1 then break end
-                end
-
+                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
                 earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
             end
             return ((10 * talent_mod * earthshatter_bonus) * 5) / 2
@@ -832,11 +809,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local earthshatter_bonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                for i=1, #restorative_ids do
-                    talent_mod = GetTalentModifier(restorative_ids[i], 0.05)
-                    if talent_mod ~= 1 then break end
-                end
-
+                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
                 earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
             end
             return ((27 * talent_mod * earthshatter_bonus) * 5) / 2
@@ -854,21 +827,15 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local talent_mod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 10 * talent_mod
         end,
         [19850] = function() -- BOW R2
             local talent_mod = 1
             local _, class = UnitClass("player")
-            if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+             if class == "PALADIN" then
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 15 * talent_mod
         end,
@@ -876,10 +843,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local talent_mod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 20 * talent_mod
         end,
@@ -887,10 +851,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local talent_mod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 25 * talent_mod
         end,
@@ -898,21 +859,15 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local talent_mod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 30 * talent_mod
         end,
         [25290] = function() -- BOW R6
             local talent_mod = 1
             local _, class = UnitClass("player")
-            if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+             if class == "PALADIN" then
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 33 * talent_mod
         end,
@@ -920,10 +875,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local talent_mod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 30 * talent_mod
         end,
@@ -931,10 +883,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local talent_mod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                for i=1, #imp_wis_ids do
-                    talent_mod = GetTalentModifier(imp_wis_ids[i], 0.1)
-                    if talent_mod ~= 1 then break end
-                end
+                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 33 * talent_mod
         end,
