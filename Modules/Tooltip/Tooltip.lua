@@ -805,7 +805,7 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
     local state = Module.db.profile.general;
 
     self.DFDefaultAnchor = false;
-    Module:UpdateFrameSize(self)
+    if Module.TooltipsRefTable[self] then Module:UpdateFrameSize(self) end
 
     -- spells
     if state.anchorSpells then
@@ -935,10 +935,11 @@ function Module:AddBackdrops()
         ItemRefShoppingTooltip2, FriendsTooltip, self.PreviewTooltip
     }
     Module.Tooltips = tooltips
+    Module.TooltipsRefTable = {}
 
     for k, v in ipairs(tooltips) do
         v:SetScale(state.scale)
-
+        Module.TooltipsRefTable[v] = true;
         if not v.SetBackdrop then
             -- 
             -- print(v:GetName(), 'no Setbackdrop')
