@@ -1119,6 +1119,9 @@ function Module:HookStatusBar()
     GameTooltip:HookScript('OnShow', function(self)
         --
         -- print('GameTooltip OnShow')
+        local item = self:GetItem()
+        if item then return end
+        -- print('noitem')
         Module:UpdateFrameSize(self)
         if self.DFDefaultAnchor then Module:UpdateDefaultAnchor(self) end
     end)
@@ -1232,7 +1235,7 @@ function Module:CheckForRecipe(self, classID)
 end
 
 function Module:OnTooltipSetItem(self)
-    -- print('Module:OnTooltipSetItem(self)')
+    -- print('Module:OnTooltipSetItem(self)', self:GetName(), self:GetItem())
     -- print('SetItemQuality', tip:GetName())
     local state = Module.db.profile.general;
 
