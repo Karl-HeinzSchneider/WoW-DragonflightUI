@@ -33,6 +33,13 @@ end
 
 table.insert(DF.VIPTable, {
     name = 'Zimtschnecke',
+    titleAfter = ", Death's Demise",
+    realm = 'Everlook',
+    guild = 'Zimtschneckendepot',
+    guildRank = 'Oberschnecke',
+    zone = 'Stormwind City',
+    race = 'Human',
+    female = true,
     level = '85',
     class = 'PALADIN',
     powerType = 'MANA',
@@ -47,6 +54,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Zimtgirly',
+    titleAfter = ", Death's Demise",
+    realm = 'Everlook',
+    guild = 'Zimtschneckendepot',
+    guildRank = 'Schnecke',
+    -- zone = 'Stormwind City',
+    race = 'Gnome',
+    female = true,
     level = '85',
     class = 'DEATHKNIGHT',
     powerType = 'RUNIC_POWER',
@@ -61,6 +75,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Dratini',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    race = 'Gnome',
+    female = true,
     level = '??',
     class = 'MAGE',
     powerType = 'RUNIC_POWER',
@@ -75,6 +96,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Norbert',
+    titleAfter = " The Great",
+    realm = 'Razorfen',
+    guild = 'Affenbande Reloaded',
+    guildRank = 'WOLF',
+    -- zone = 'Stormwind City',
+    race = 'Wolf',
+    female = false,
     level = '??',
     class = 'WARRIOR',
     powerType = 'FOCUS',
@@ -89,6 +117,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Matada',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    race = 'Human',
+    female = true,
     level = '60',
     class = 'PRIEST',
     powerType = 'MANA',
@@ -102,6 +137,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Schokobon',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    race = 'Gnome',
+    female = false,
     level = '85',
     class = 'MAGE',
     powerType = 'MANA',
@@ -116,6 +158,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Jagrune',
+    -- titleAfter = ", Death's Demise",
+    realm = 'Razorfen',
+    guild = 'Horizon',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    race = 'Nightelf',
+    female = true,
     level = '60',
     class = 'HUNTER',
     powerType = 'MANA',
@@ -128,8 +177,37 @@ table.insert(DF.VIPTable, {
     displayTexture = 'jag'
 })
 
+-- jag2
+table.insert(DF.VIPTable, {
+    name = 'Turqoise',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Horizon',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    race = 'Nightelf',
+    female = true,
+    level = '60',
+    class = 'HUNTER',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = '',
+    -- displayID = XXX, -- cat !?
+    displayTexture = 'jag'
+})
+
 table.insert(DF.VIPTable, {
     name = 'Baldvin',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    -- race = 'Human',
+    -- female = true,
     level = '60',
     class = 'PALADIN',
     powerType = 'MANA',
@@ -144,6 +222,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Marnik',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    -- race = 'Human',
+    -- female = true, 
     level = '60',
     class = 'PALADIN',
     powerType = 'MANA',
@@ -157,6 +242,13 @@ table.insert(DF.VIPTable, {
 
 table.insert(DF.VIPTable, {
     name = 'Theunder ',
+    -- titleAfter = ", Death's Demise",
+    -- realm = 'Razorfen',
+    -- guild = 'Zimtschnecken Depot',
+    -- guildRank = 'Oberschnecke',
+    -- zone = 'Stormwind City',
+    -- race = 'Human',
+    -- female = true,
     level = '60',
     class = 'WARRIOR',
     powerType = 'RAGE',

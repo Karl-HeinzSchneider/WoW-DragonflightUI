@@ -67,3 +67,29 @@ function Helper:CreateSharedMediaStatusBarGenerator(IsSelected, SetSelected)
     return generator;
 end
 
+function Helper:CreateSharedMediaGeneralGenerator(IsSelected, SetSelected, lsmType)
+    local generator = function(dropdown, rootDescription)
+        -- print('generator')
+        local statusbarTable = LSM:List(lsmType) or {};
+
+        rootDescription:SetTag('TAG?')
+        -- rootDescription:CreateTitle('TITLETEST')     
+
+        local radioDefault = rootDescription:CreateRadio('Default', IsSelected, SetSelected, 'Default');
+        local divOne = rootDescription:CreateDivider();
+
+        for k, v in pairs(statusbarTable) do
+            --
+            local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, v);
+        end
+
+        -- https://www.townlong-yak.com/framexml/latest/Blizzard_Menu/11_0_0_MenuImplementationGuide.lua
+        local extent = 20;
+        local maxCharacters = 10;
+        local maxScrollExtent = extent * maxCharacters;
+        rootDescription:SetScrollMode(maxScrollExtent);
+    end
+
+    return generator;
+end
+

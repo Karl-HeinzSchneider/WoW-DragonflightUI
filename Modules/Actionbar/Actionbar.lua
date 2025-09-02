@@ -3563,9 +3563,9 @@ function frameBagToggle:OnEvent(event, arg1)
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module.UpdateBagSlotIcons()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
-        frameBagToggle:Hide()
+        -- frameBagToggle:Hide()
     elseif event == 'UNIT_EXITED_VEHICLE' then
-        frameBagToggle:Show()
+        -- frameBagToggle:Show()
     end
 end
 frameBagToggle:SetScript('OnEvent', frameBagToggle.OnEvent)

@@ -25,6 +25,8 @@ end
 
 function SubModuleMixin:SetDefaults()
     local defaults = {
+        activate = true,
+        -- anchor
         scale = 1.0,
         anchorFrame = 'UIParent',
         customAnchorFrame = '',
@@ -101,6 +103,14 @@ function SubModuleMixin:SetupOptions()
                 desc = L["CastbarMirrorHideBlizzardDesc"] .. getDefaultStr('hideBlizzard', 'mirrorTimer'),
                 group = 'headerStyling',
                 order = 9,
+                editmode = true
+            },
+            activate = {
+                type = 'toggle',
+                name = L["ButtonTableActive"],
+                desc = L["ButtonTableActiveDesc"] .. getDefaultStr('activate', 'mirrorTimer'),
+                order = -1,
+                new = false,
                 editmode = true
             }
         }
@@ -251,6 +261,12 @@ function SubModuleMixin:Update()
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
+    if state.activate or self.DFEditMode then
+        self.VisFrame:Show()
+    else
+        self.VisFrame:Hide()
+    end
+
     if state.hideBlizzard then
         for i = 1, 3 do
             _G['MirrorTimer' .. i]:UnregisterEvent('MIRROR_TIMER_PAUSE')
@@ -277,6 +293,9 @@ function SubModuleMixin:CreateBase()
     baseFrame:Hide()
     self.BaseFrame = baseFrame;
 
+    local visFrame = CreateFrame('Frame', nil, UIParent)
+    self.VisFrame = visFrame;
+
     local function SetEditMode(editmode)
         -- print('~> SetEditMode', editmode)
         self.DFEditMode = editmode
@@ -291,8 +310,16 @@ function SubModuleMixin:CreateBase()
         end
 
         if editmode then
+            self.VisFrame:Show()
         else
             self:OnEvent('PLAYER_ENTERING_WORLD')
+
+            local state = self.ModuleRef.db.profile.mirrorTimer
+            if state.activate then
+                self.VisFrame:Show()
+            else
+                self.VisFrame:Hide()
+            end
         end
         self:UpdateLayout()
         baseFrame:SetShown(editmode)
@@ -306,7 +333,7 @@ end
 function SubModuleMixin:CreateMirrorTimers(howMany)
     for i = 1, howMany do
         --
-        local bar = CreateFrame('StatusBar', 'DragonflightUIMirrorTimer' .. i, UIParent,
+        local bar = CreateFrame('StatusBar', 'DragonflightUIMirrorTimer' .. i, self.VisFrame,
                                 'DragonflightUIMirrorCastbarTemplate')
         self.Timers[i] = bar;
         -- if i == 1 then

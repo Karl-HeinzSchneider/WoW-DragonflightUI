@@ -256,7 +256,11 @@ function DragonflightUIXPBarMixin:UpdateText()
     self.Bar:SetMinMaxValues(0, playerMaxXP)
     self.Bar:SetValue(playerCurrXP)
 
-    self.Text:SetText('XP: ' .. playerCurrXP .. '/' .. playerMaxXP)
+    -- AbbreviateLargeNumbers BreakUpLargeNumbers
+    local shortPlayerCurrXP = FormatLargeNumber(playerCurrXP)
+    local shortPlayerMax = FormatLargeNumber(playerMaxXP)
+
+    self.Text:SetText('XP: ' .. shortPlayerCurrXP .. '/' .. shortPlayerMax)
 
     local textPercentText = ' = ' .. string.format('%.1f', playerPercent) .. '%'
 
@@ -420,7 +424,11 @@ function DragonflightUIRepBarMixin:UpdateBar()
     if name then
         -- frame.RepBar.Bar:SetStatusBarColor(color.r, color.g, color.b)
         self.valid = true
-        self.Text:SetText(name .. ' ' .. (value - min) .. ' / ' .. (max - min))
+
+        local shortLower = FormatLargeNumber(value - min)
+        local shortUper = FormatLargeNumber(max - min)
+
+        self.Text:SetText(name .. ' ' .. (shortLower) .. ' / ' .. (shortUper))
         self.Bar:SetMinMaxValues(0, max - min)
         self.Bar:SetValue(value - min)
 

@@ -826,6 +826,10 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
         harmDriver = harmDriver .. '[harm]nil; [@targettarget, harm]targettarget';
     end
 
+    helpDriver = string.format('%s%s%s', preSelf, preFocus, helpDriver)
+    harmDriver = string.format('%s%s', preFocus, harmDriver)
+    allDriver = string.format('%s%s%s', preSelf, preFocus, allDriver)
+
     local changed = false;
     if helpDriver ~= self.HelpDriverCache then
         --
@@ -836,7 +840,7 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
         if helpDriver ~= '' then
             --
-            helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
+            helpDriver = string.format('%s nil', helpDriver)
             RegisterStateDriver(handler, 'target-help', helpDriver)
         end
     end
@@ -850,7 +854,7 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
         if harmDriver ~= '' then
             --
-            harmDriver = string.format('%s%s nil', preFocus, harmDriver)
+            harmDriver = string.format('%s nil', harmDriver)
             RegisterStateDriver(handler, 'target-harm', harmDriver)
         end
     end
@@ -864,7 +868,7 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
         if allDriver ~= '' then
             --
-            allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
+            allDriver = string.format('%s nil', allDriver)
             RegisterStateDriver(handler, 'target-all', allDriver)
         end
     end
@@ -1638,7 +1642,7 @@ function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
         normal:Hide()
         normal:SetTexture('')
 
-        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
+        local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'BORDER')
         newNormal:ClearAllPoints()
         newNormal:SetSize(46, 45)
         newNormal:SetPoint('TOPLEFT')
