@@ -188,7 +188,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsAttributes()
             return stats(4)
         end
     })
-    
+
     local mana_regen_formulas = {
         ["MAGE"] = "Health Regen: 10% of Spirit\nMana Regen: 13 + 25% of Spirit",
         ["WARRIOR"] = "Health Regen: 6 + 80% of Spirit",
@@ -198,7 +198,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsAttributes()
         ["ROGUE"] = "Health Regen: 2 + 50% of Spirit",
         ["HUNTER"] = "Health Regen: 6 + 25% of Spirit\nMana Regen: 15 + 20% of Spirit",
         ["PALADIN"] = "Health Regen: 6 + 25% of Spirit\nMana Regen: 15 + 20% of Spirit",
-        ["SHAMAN"] = "Health Regen: 7 + 11% of Spirit\nMana Regen: 15 + 20% of Spirit",
+        ["SHAMAN"] = "Health Regen: 7 + 11% of Spirit\nMana Regen: 15 + 20% of Spirit"
     }
 
     self:RegisterElement('spirit', 'attributes', {
@@ -210,9 +210,13 @@ function DragonflightUICharacterStatsEraMixin:AddStatsAttributes()
             local localizedClass, classname = UnitClass("player")
             local _, racename = UnitRace("player")
 
-            tooltip2 = tooltip2.."\n\nRegen occurs in single ticks every 2 seconds on a fixed timer which factors in Spirit, MP5, HP5 and some regen effects such as Food & Water.\nCasting Spells can disrupt mana regen from Spirit unless otherwise allowed by certain class abilities."
-            tooltip2 = tooltip2.."\n\n"..localizedClass.." Regen Formulae: \n"..(mana_regen_formulas[classname] or "NO FORMULA")
-            tooltip2 = tooltip2.."\n\n"..(racename == "Troll" and "As a Troll you retain 10% of Spirit health regen in combat, as well as a 10% higher health regen." or "Spirit health regen does not occur in combat.")
+            tooltip2 = tooltip2 ..
+                           "\n\nRegen occurs in single ticks every 2 seconds on a fixed timer which factors in Spirit, MP5, HP5 and some regen effects such as Food & Water.\nCasting Spells can disrupt mana regen from Spirit unless otherwise allowed by certain class abilities."
+            tooltip2 = tooltip2 .. "\n\n" .. localizedClass .. " Regen Formulae: \n" ..
+                           (mana_regen_formulas[classname] or "NO FORMULA")
+            tooltip2 = tooltip2 .. "\n\n" .. (racename == "Troll" and
+                           "As a Troll you retain 10% of Spirit health regen in combat, as well as a 10% higher health regen." or
+                           "Spirit health regen does not occur in combat.")
             return frameText, tooltip, tooltip2
         end
     })
@@ -738,7 +742,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
 
     local ignore_index = { -- Indexes after 19 cannot give stats
         [4] = true, -- Shirt
-        [19] = true, -- Tabard
+        [19] = true -- Tabard
     }
 
     local function GetTalentModifier(talent_id, modifier_strength)
@@ -746,11 +750,11 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         local talent_mod = 1
         local escape_tree = false
         local id, rank, numTalents
-        for i=1, numTabs do
+        for i = 1, numTabs do
             numTalents = GetNumTalents(i)
-            for j=1, numTalents do
-                _, id, _, _, rank = GetTalentInfo(i, j)
-                escape_tree = id == talent_id and rank > 0 
+            for j = 1, numTalents do
+                _, id, _, _, rank = GetTalentInfo(i, j, false)
+                escape_tree = id == talent_id and rank > 0
                 if escape_tree then
                     talent_mod = 1 + (rank * modifier_strength)
                     break
@@ -815,13 +819,13 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             return ((27 * talent_mod * earthshatter_bonus) * 5) / 2
         end,
         [16191] = function() -- Mana Tide R1
-            return 283.33333 --((170 / 3) * 10) / 2
+            return 283.33333 -- ((170 / 3) * 10) / 2
         end,
         [17355] = function() -- Mana Tide R2
-            return 383.33333 --((230 / 3) * 10) / 2
+            return 383.33333 -- ((230 / 3) * 10) / 2
         end,
         [17360] = function() -- Mana Tide R3
-            return 483.33333 --((290 / 3) * 10) / 2
+            return 483.33333 -- ((290 / 3) * 10) / 2
         end,
         [19742] = function() -- BOW R1
             local talent_mod = 1
@@ -834,7 +838,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [19850] = function() -- BOW R2
             local talent_mod = 1
             local _, class = UnitClass("player")
-             if class == "PALADIN" then
+            if class == "PALADIN" then
                 talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 15 * talent_mod
@@ -866,7 +870,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [25290] = function() -- BOW R6
             local talent_mod = 1
             local _, class = UnitClass("player")
-             if class == "PALADIN" then
+            if class == "PALADIN" then
                 talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
             end
             return 33 * talent_mod
@@ -908,7 +912,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end,
 
         [28802] = function() -- Priest T3
-            return 60 --(24 * 5) / 2
+            return 60 -- (24 * 5) / 2
         end,
 
         -- Lightning Shields
@@ -974,7 +978,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             return 625 -- 250 * 5 / 2
         end,
         [19634] = function() -- Veildust Medicine Bag (druid item from Curing The Sick quest)
-            return 83.3333 --((50 / 3) * 10) / 2
+            return 83.3333 -- ((50 / 3) * 10) / 2
         end,
         [15822] = function() -- Dreamless Sleep Potion
             return 500 -- ((300 / 3) * 10) / 2
@@ -987,14 +991,10 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end,
         [17447] = function() -- Circle of Flame
             return 375 -- 75 * 5
-        end,
+        end
     }
 
-    local mana_oil_ids = {
-        [2629] = 12,
-        [2625] = 8,
-        [2624] = 4
-    }
+    local mana_oil_ids = {[2629] = 12, [2625] = 8, [2624] = 4}
 
     -- Optimization to skip running string.find so much
     local item_slots_check_earthshatter = {
@@ -1009,24 +1009,9 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [11] = true,
         [12] = true
     }
-    local item_slots_check_zg_set = {
-        [2] = true,
-        [5] = true,
-        [6] = true,
-        [9] = true,
-        [13] = true,
-        [14] = true
-    }
-    local item_slots_check_bloodsoul = {
-        [3] = true,
-        [5] = true,
-        [10] = true
-    }
-    local item_slots_check_greendragon = {
-        [10] = true,
-        [5] = true,
-        [7] = true
-    }
+    local item_slots_check_zg_set = {[2] = true, [5] = true, [6] = true, [9] = true, [13] = true, [14] = true}
+    local item_slots_check_bloodsoul = {[3] = true, [5] = true, [10] = true}
+    local item_slots_check_greendragon = {[10] = true, [5] = true, [7] = true}
 
     local ids_zg = {
         [19828] = true, -- Augur Chest
@@ -1038,7 +1023,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [19839] = true, -- Haruspex Belt
         [19840] = true, -- Haruspex Bracers
         [19955] = true, -- Haruspex Trinket
-        [19613] = true, -- Haruspex Neck
+        [19613] = true -- Haruspex Neck
     }
 
     local ids_earthshatter = {
@@ -1053,11 +1038,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [22468] = true -- Boots
     }
 
-    local ids_bloodsoul = {
-        [19690] = true,
-        [19691] = true,
-        [19692] = true
-    }
+    local ids_bloodsoul = {[19690] = true, [19691] = true, [19692] = true}
 
     local ids_greendragon = {
         [20296] = true, -- Hands
@@ -1065,7 +1046,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [15045] = true -- Chest
     }
     local cached_link_data = {}
-    local function GetRealManaRegen() --Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
+    local function GetRealManaRegen() -- Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
         local base, casting = GetManaRegen()
         local casting_mp5 = 0
         earthshatter_count = 0
@@ -1073,14 +1054,13 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         local bloodsoul_c = 0
         local dragonscale_c = 0
         local Id
-        for i=0, 19 do -- Technically more slots but none give stats, setting ignore index for shirt/tabard but can be removed later
+        for i = 0, 19 do -- Technically more slots but none give stats, setting ignore index for shirt/tabard but can be removed later
             if not ignore_index[i] then
                 local link = GetInventoryItemLink("player", i)
                 if link then
                     if not cached_link_data[link] then
-                        local _, _, _, _, itemId = string.find(link, 
-                            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?"
-                        )
+                        local _, _, _, _, itemId = string.find(link,
+                                                               "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
                         cached_link_data[link] = tonumber(itemId)
                     end
                     Id = cached_link_data[link]
@@ -1093,25 +1073,19 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
                     -- Shaman/Druid ZG Set
                     if item_slots_check_zg_set[i] and ids_zg[Id] then
                         zg_set_c = zg_set_c + 1
-                        if zg_set_c >= 2 then
-                            casting_mp5 = casting_mp5 + 4
-                        end
+                        if zg_set_c >= 2 then casting_mp5 = casting_mp5 + 4 end
                     end
 
-                    --Bloodsoul 3 piece
+                    -- Bloodsoul 3 piece
                     if item_slots_check_bloodsoul[i] and ids_bloodsoul[Id] then
                         bloodsoul_c = bloodsoul_c + 1
-                        if bloodsoul_c == 3 then
-                            casting_mp5 = casting_mp5 + 12
-                        end
+                        if bloodsoul_c == 3 then casting_mp5 = casting_mp5 + 12 end
                     end
 
-                    --Green Dragonscale
+                    -- Green Dragonscale
                     if item_slots_check_greendragon[i] and ids_greendragon[Id] then
                         dragonscale_c = dragonscale_c + 1
-                        if dragonscale_c >= 2 then
-                            casting_mp5 = casting_mp5 + 3
-                        end
+                        if dragonscale_c >= 2 then casting_mp5 = casting_mp5 + 3 end
                     end
 
                     if i == 9 then -- Check bracer
@@ -1129,7 +1103,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
                                 print(name..": "..data)
                             end
                         ]]
-                        if stats.ITEM_MOD_POWER_REGEN0_SHORT then --For some reason mp5 internally is 1 lower, need to increase for displays sake
+                        if stats.ITEM_MOD_POWER_REGEN0_SHORT then -- For some reason mp5 internally is 1 lower, need to increase for displays sake
                             casting_mp5 = casting_mp5 + 1
                         end
                         casting_mp5 = casting_mp5 + (stats.ITEM_MOD_POWER_REGEN0_SHORT or 0)
@@ -1139,7 +1113,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end
 
         local failures = 0
-        for i=1, 100 do
+        for i = 1, 100 do
             local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
             if not spellId then
                 failures = failures + 1
@@ -1149,7 +1123,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             end
         end
 
-        main_hand_enchant, _, _, enchant_id, off_hand_enchant, _, _, offhand_enchant_id = GetWeaponEnchantInfo()
+        local main_hand_enchant, _, _, enchant_id, off_hand_enchant, _, _, offhand_enchant_id = GetWeaponEnchantInfo()
         if main_hand_enchant and mana_oil_ids[enchant_id] then
             casting_mp5 = casting_mp5 + mana_oil_ids[enchant_id]
         end
@@ -1168,7 +1142,8 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             local _, _, mp5 = GetRealManaRegen()
             local value = BreakUpLargeNumbers(mp5 * 5)
             local tooltip_name = "MP5"
-            return value, tooltip_name, "Regenerates Mana at a constant rate both in and out of combat.\nWhile represented as mana per 5 seconds it is regenerated alongside standard mana regen."
+            return value, tooltip_name,
+                   "Regenerates Mana at a constant rate both in and out of combat.\nWhile represented as mana per 5 seconds it is regenerated alongside standard mana regen."
         end
     })
 
@@ -1181,7 +1156,10 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
 
             local newTable = {}
             newTable[1] = {left = MANA_REGEN}
-            newTable[2] = {left = 'Mana every 2/5s while not casting', right = BreakUpLargeNumbers(base * 2).."/"..BreakUpLargeNumbers(base * 5)}
+            newTable[2] = {
+                left = 'Mana every 2/5s while not casting',
+                right = BreakUpLargeNumbers(base * 2) .. "/" .. BreakUpLargeNumbers(base * 5)
+            }
 
             return newTable[2].right, nil, nil, newTable;
         end
@@ -1196,8 +1174,14 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
 
             local newTable = {}
             newTable[1] = {left = "Combat Regen"}
-            newTable[2] = {left = 'Mana every 2/5s while casting', right = BreakUpLargeNumbers(casting * 2).."/"..BreakUpLargeNumbers(casting * 5)}
-            newTable[3] = {left = "Percentage Of Mana Regened in Combat", right = string.format(' %.2F', (casting ~= 0 and casting / base or 0) * 100).."%"}
+            newTable[2] = {
+                left = 'Mana every 2/5s while casting',
+                right = BreakUpLargeNumbers(casting * 2) .. "/" .. BreakUpLargeNumbers(casting * 5)
+            }
+            newTable[3] = {
+                left = "Percentage Of Mana Regened in Combat",
+                right = string.format(' %.2F', (casting ~= 0 and casting / base or 0) * 100) .. "%"
+            }
             return newTable[2].right, nil, nil, newTable;
         end
     })
