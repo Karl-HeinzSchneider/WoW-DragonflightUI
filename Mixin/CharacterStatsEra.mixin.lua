@@ -740,83 +740,83 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end
     })
 
-    local ignore_index = { -- Indexes after 19 cannot give stats
+    local ignoreIndex = { -- Indexes after 19 cannot give stats
         [4] = true, -- Shirt
         [19] = true -- Tabard
     }
 
-    local function GetTalentModifier(talent_id, modifier_strength)
+    local function getTalentModifier(talentId, modifierStrength)
         local numTabs = GetNumTalentTabs();
-        local talent_mod = 1
-        local escape_tree = false
+        local talentMod = 1
+        local escapeTree = false
         local id, rank, numTalents
         for i = 1, numTabs do
             numTalents = GetNumTalents(i)
             for j = 1, numTalents do
                 _, id, _, _, rank = GetTalentInfo(i, j, false)
-                escape_tree = id == talent_id and rank > 0
-                if escape_tree then
-                    talent_mod = 1 + (rank * modifier_strength)
+                escapeTree = id == talentId and rank > 0
+                if escapeTree then
+                    talentMod = 1 + (rank * modifierStrength)
                     break
                 end
             end
-            if escape_tree then break end
+            if escapeTree then break end
         end
-        return talent_mod
+        return talentMod
     end
 
-    local earthshatter_count = 0
-    local filtered_names = { -- Any non MP5 effects are converted to MP5
+    local earthshatterCount = 0
+    local filteredNames = { -- Any non MP5 effects are converted to MP5
         [5677] = function() -- Mana Spring R1
-            local talent_mod = 1
-            local earthshatter_bonus = 1
+            local talentMod = 1
+            local earthshatterBonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
-                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+                talentMod = getTalentModifier(136053, 0.05) -- Restorative Totems
+                earthshatterBonus = earthshatterCount >= 4 and 1.25 or 1
             end
 
-            return ((4 * talent_mod * earthshatter_bonus) * 5) / 2
+            return ((4 * talentMod * earthshatterBonus) * 5) / 2
         end,
         [10491] = function() -- Mana Spring R2
-            local talent_mod = 1
-            local earthshatter_bonus = 1
+            local talentMod = 1
+            local earthshatterBonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
-                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+                talentMod = getTalentModifier(136053, 0.05) -- Restorative Totems
+                earthshatterBonus = earthshatterCount >= 4 and 1.25 or 1
             end
-            return ((6 * talent_mod * earthshatter_bonus) * 5) / 2
+            return ((6 * talentMod * earthshatterBonus) * 5) / 2
         end,
         [10493] = function() -- Mana Spring R3
-            local talent_mod = 1
-            local earthshatter_bonus = 1
+            local talentMod = 1
+            local earthshatterBonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
-                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+                talentMod = getTalentModifier(136053, 0.05) -- Restorative Totems
+                earthshatterBonus = earthshatterCount >= 4 and 1.25 or 1
             end
-            return ((8 * talent_mod * earthshatter_bonus) * 5) / 2
+            return ((8 * talentMod * earthshatterBonus) * 5) / 2
         end,
         [10494] = function() -- Mana Spring R4
-            local talent_mod = 1
-            local earthshatter_bonus = 1
+            local talentMod = 1
+            local earthshatterBonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
-                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+                talentMod = getTalentModifier(136053, 0.05) -- Restorative Totems
+                earthshatterBonus = earthshatterCount >= 4 and 1.25 or 1
             end
-            return ((10 * talent_mod * earthshatter_bonus) * 5) / 2
+            return ((10 * talentMod * earthshatterBonus) * 5) / 2
         end,
         [24853] = function() -- Ancient Mana Spring/Enamored Water Spirit
-            local talent_mod = 1
-            local earthshatter_bonus = 1
+            local talentMod = 1
+            local earthshatterBonus = 1
             local _, class = UnitClass("player")
             if class == "SHAMAN" then
-                talent_mod = GetTalentModifier(136053, 0.05) -- Restorative Totems
-                earthshatter_bonus = earthshatter_count >= 4 and 1.25 or 1
+                talentMod = getTalentModifier(136053, 0.05) -- Restorative Totems
+                earthshatterBonus = earthshatterCount >= 4 and 1.25 or 1
             end
-            return ((27 * talent_mod * earthshatter_bonus) * 5) / 2
+            return ((27 * talentMod * earthshatterBonus) * 5) / 2
         end,
         [16191] = function() -- Mana Tide R1
             return 283.33333 -- ((170 / 3) * 10) / 2
@@ -828,68 +828,68 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             return 483.33333 -- ((290 / 3) * 10) / 2
         end,
         [19742] = function() -- BOW R1
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 10 * talent_mod
+            return 10 * talentMod
         end,
         [19850] = function() -- BOW R2
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 15 * talent_mod
+            return 15 * talentMod
         end,
         [19852] = function() -- BOW R3
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 20 * talent_mod
+            return 20 * talentMod
         end,
         [19853] = function() -- BOW R4
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 25 * talent_mod
+            return 25 * talentMod
         end,
         [19854] = function() -- BOW R5
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 30 * talent_mod
+            return 30 * talentMod
         end,
         [25290] = function() -- BOW R6
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 33 * talent_mod
+            return 33 * talentMod
         end,
         [25894] = function() -- GBOW R1
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 30 * talent_mod
+            return 30 * talentMod
         end,
         [25918] = function() -- GBOW R2
-            local talent_mod = 1
+            local talentMod = 1
             local _, class = UnitClass("player")
             if class == "PALADIN" then
-                talent_mod = GetTalentModifier(135970, 0.1) -- Improved BOW
+                talentMod = getTalentModifier(135970, 0.1) -- Improved BOW
             end
-            return 33 * talent_mod
+            return 33 * talentMod
         end,
         [24363] = function() -- Mageblood
             return 12
@@ -917,31 +917,31 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
 
         -- Lightning Shields
         [324] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
         [325] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
         [905] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
         [945] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
         [8134] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
         [10431] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
         [10432] = function()
-            if earthshatter_count < 8 then return 0 end
+            if earthshatterCount < 8 then return 0 end
             return 15
         end,
 
@@ -994,10 +994,10 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         end
     }
 
-    local mana_oil_ids = {[2629] = 12, [2625] = 8, [2624] = 4}
+    local manaOilIds = {[2629] = 12, [2625] = 8, [2624] = 4}
 
     -- Optimization to skip running string.find so much
-    local item_slots_check_earthshatter = {
+    local itemSlotsCheckEarthshatter = {
         [1] = true,
         [3] = true,
         [5] = true,
@@ -1009,11 +1009,11 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [11] = true,
         [12] = true
     }
-    local item_slots_check_zg_set = {[2] = true, [5] = true, [6] = true, [9] = true, [13] = true, [14] = true}
-    local item_slots_check_bloodsoul = {[3] = true, [5] = true, [10] = true}
-    local item_slots_check_greendragon = {[10] = true, [5] = true, [7] = true}
+    local itemSlotsCheckZgSet = {[2] = true, [5] = true, [6] = true, [9] = true, [13] = true, [14] = true}
+    local itemSlotsCheckBloodsoul = {[3] = true, [5] = true, [10] = true}
+    local itemSlotsCheckGreendragon = {[10] = true, [5] = true, [7] = true}
 
-    local ids_zg = {
+    local idsZg = {
         [19828] = true, -- Augur Chest
         [19830] = true, -- Augur Bracer
         [19829] = true, -- Augur Belt
@@ -1026,7 +1026,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [19613] = true -- Haruspex Neck
     }
 
-    local ids_earthshatter = {
+    local idsEarthshatter = {
         [22464] = true, -- Chest
         [23065] = true, -- Ring
         [22471] = true, -- Wrist
@@ -1038,61 +1038,61 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         [22468] = true -- Boots
     }
 
-    local ids_bloodsoul = {[19690] = true, [19691] = true, [19692] = true}
+    local idsBloodsoul = {[19690] = true, [19691] = true, [19692] = true}
 
-    local ids_greendragon = {
+    local idsGreendragon = {
         [20296] = true, -- Hands
         [15046] = true, -- Legs
         [15045] = true -- Chest
     }
-    local cached_link_data = {}
-    local function GetRealManaRegen() -- Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
+    local cachedLinkData = {}
+    local function getRealManaRegen() -- Only accounts for spirit and mana regen while in combat, does not factor in mp5 properly
         local base, casting = GetManaRegen()
-        local casting_mp5 = 0
-        earthshatter_count = 0
-        local zg_set_c = 0
-        local bloodsoul_c = 0
-        local dragonscale_c = 0
+        local castingMp5 = 0
+        earthshatterCount = 0
+        local zgSetC = 0
+        local bloodsoulC = 0
+        local dragonscaleC = 0
         local Id
         for i = 0, 19 do -- Technically more slots but none give stats, setting ignore index for shirt/tabard but can be removed later
-            if not ignore_index[i] then
+            if not ignoreIndex[i] then
                 local link = GetInventoryItemLink("player", i)
                 if link then
-                    if not cached_link_data[link] then
+                    if not cachedLinkData[link] then
                         local _, _, _, _, itemId = string.find(link,
                                                                "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-                        cached_link_data[link] = tonumber(itemId)
+                        cachedLinkData[link] = tonumber(itemId)
                     end
-                    Id = cached_link_data[link]
+                    Id = cachedLinkData[link]
 
                     -- Earthshatter set
-                    if item_slots_check_earthshatter[i] and ids_earthshatter[Id] then
-                        earthshatter_count = earthshatter_count + 1
+                    if itemSlotsCheckEarthshatter[i] and idsEarthshatter[Id] then
+                        earthshatterCount = earthshatterCount + 1
                     end
 
                     -- Shaman/Druid ZG Set
-                    if item_slots_check_zg_set[i] and ids_zg[Id] then
-                        zg_set_c = zg_set_c + 1
-                        if zg_set_c >= 2 then casting_mp5 = casting_mp5 + 4 end
+                    if itemSlotsCheckZgSet[i] and idsZg[Id] then
+                        zgSetC = zgSetC + 1
+                        if zgSetC >= 2 then castingMp5 = castingMp5 + 4 end
                     end
 
                     -- Bloodsoul 3 piece
-                    if item_slots_check_bloodsoul[i] and ids_bloodsoul[Id] then
-                        bloodsoul_c = bloodsoul_c + 1
-                        if bloodsoul_c == 3 then casting_mp5 = casting_mp5 + 12 end
+                    if itemSlotsCheckBloodsoul[i] and idsBloodsoul[Id] then
+                        bloodsoulC = bloodsoulC + 1
+                        if bloodsoulC == 3 then castingMp5 = castingMp5 + 12 end
                     end
 
                     -- Green Dragonscale
-                    if item_slots_check_greendragon[i] and ids_greendragon[Id] then
-                        dragonscale_c = dragonscale_c + 1
-                        if dragonscale_c >= 2 then casting_mp5 = casting_mp5 + 3 end
+                    if itemSlotsCheckGreendragon[i] and idsGreendragon[Id] then
+                        dragonscaleC = dragonscaleC + 1
+                        if dragonscaleC >= 2 then castingMp5 = castingMp5 + 3 end
                     end
 
                     if i == 9 then -- Check bracer
-                        local mp5_enchant = 2565
+                        local mp5Enchant = 2565
                         local _, enchantId = link:match("item:%d+:(%d+)")
-                        if enchantId == mp5_enchant then -- Bracer MP5 enchant
-                            casting_mp5 = casting_mp5 + 4
+                        if enchantId == mp5Enchant then -- Bracer MP5 enchant
+                            castingMp5 = castingMp5 + 4
                         end
                     end
 
@@ -1104,9 +1104,9 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
                             end
                         ]]
                         if stats.ITEM_MOD_POWER_REGEN0_SHORT then -- For some reason mp5 internally is 1 lower, need to increase for displays sake
-                            casting_mp5 = casting_mp5 + 1
+                            castingMp5 = castingMp5 + 1
                         end
-                        casting_mp5 = casting_mp5 + (stats.ITEM_MOD_POWER_REGEN0_SHORT or 0)
+                        castingMp5 = castingMp5 + (stats.ITEM_MOD_POWER_REGEN0_SHORT or 0)
                     end
                 end
             end
@@ -1118,20 +1118,18 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
             if not spellId then
                 failures = failures + 1
                 if failures > 2 then break end
-            elseif filtered_names[spellId] then
-                casting_mp5 = casting_mp5 + filtered_names[spellId]()
+            elseif filteredNames[spellId] then
+                castingMp5 = castingMp5 + filteredNames[spellId]()
             end
         end
 
-        local main_hand_enchant, _, _, enchant_id, off_hand_enchant, _, _, offhand_enchant_id = GetWeaponEnchantInfo()
-        if main_hand_enchant and mana_oil_ids[enchant_id] then
-            casting_mp5 = casting_mp5 + mana_oil_ids[enchant_id]
+        local mainHandEnchant, _, _, enchantId, offHandEnchant, _, _, offhandEnchantId = GetWeaponEnchantInfo()
+        if mainHandEnchant and manaOilIds[enchantId] then castingMp5 = castingMp5 + manaOilIds[enchantId] end
+        if offHandEnchant and manaOilIds[offhandEnchantId] then
+            castingMp5 = castingMp5 + manaOilIds[offhandEnchantId]
         end
-        if off_hand_enchant and mana_oil_ids[offhand_enchant_id] then
-            casting_mp5 = casting_mp5 + mana_oil_ids[offhand_enchant_id]
-        end
-        casting_mp5 = casting_mp5 / 5
-        return base + casting_mp5, casting + casting_mp5, casting_mp5
+        castingMp5 = castingMp5 / 5
+        return base + castingMp5, casting + castingMp5, castingMp5
     end
 
     self:RegisterElement('mp5', 'spell', {
@@ -1139,7 +1137,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         name = "Mana Per 5 Seconds",
         descr = "..",
         func = function()
-            local _, _, mp5 = GetRealManaRegen()
+            local _, _, mp5 = getRealManaRegen()
             local value = BreakUpLargeNumbers(mp5 * 5)
             local tooltip_name = "MP5"
             return value, tooltip_name,
@@ -1152,7 +1150,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         name = MANA_REGEN,
         descr = '..',
         func = function()
-            local base = GetRealManaRegen()
+            local base = getRealManaRegen()
 
             local newTable = {}
             newTable[1] = {left = MANA_REGEN}
@@ -1170,7 +1168,7 @@ function DragonflightUICharacterStatsEraMixin:AddStatsSpell()
         name = "Combat Regen",
         descr = '..',
         func = function()
-            local base, casting = GetRealManaRegen()
+            local base, casting = getRealManaRegen()
 
             local newTable = {}
             newTable[1] = {left = "Combat Regen"}
