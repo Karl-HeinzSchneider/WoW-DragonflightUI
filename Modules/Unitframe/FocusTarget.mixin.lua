@@ -304,7 +304,7 @@ function SubModuleMixin:Update()
     f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    f:SetUserPlaced(true)
+    -- f:SetUserPlaced(true)
 
     f:SetIgnoreParentAlpha(state.fadeOut and true or false)
 
