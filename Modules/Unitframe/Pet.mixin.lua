@@ -25,7 +25,7 @@ function SubModuleMixin:SetDefaults()
         customAnchorFrame = '',
         anchor = 'TOPRIGHT',
         anchorParent = 'BOTTOMRIGHT',
-        x = 4,
+        x = -3,
         y = 28,
         customHealthBarTexture = 'Default',
         customPowerBarTexture = 'Default',
@@ -274,6 +274,7 @@ function SubModuleMixin:Setup()
 
     --
     self:ChangePetFrame()
+    self:CreateFakePet()
 
     _G['PetFrameManaBar'].DFUpdateFunc = function()
         self:UpdatePetManaBarTexture();
@@ -287,19 +288,39 @@ function SubModuleMixin:Setup()
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    EditModeModule:AddEditModeToFrame(PetFrame)
+    local f = self.PreviewFrame
+    EditModeModule:AddEditModeToFrame(f)
 
-    PetFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    PetFrame.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
         default = function()
             setDefaultSubValues('pet')
         end,
-        moduleRef = self.ModuleRef
+        moduleRef = self.ModuleRef,
+        showFunction = function()
+            --       
+            PetFrame:Lower()
+            self.PreviewFrame:Raise()
+            PetFrame:Lower()
+            PetFrame:SetToplevel(false)
+            if UnitExists('pet') then
+                self.FakePreview:Hide()
+            else
+                self.FakePreview:Show()
+            end
+            -- PetFrame:SetParent(self.PreviewFrame)
+        end,
+        hideFunction = function()
+            --
+            self.FakePreview:Hide()
+            -- PetFrame:SetParent(UIParent)
+            PetFrame:SetToplevel(true)
+        end
     });
 end
 
@@ -315,9 +336,7 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    -- pet
-
-    local f = PetFrame
+    local f = self.PreviewFrame
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -329,6 +348,10 @@ function SubModuleMixin:Update()
     f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    PetFrame:SetScale(state.scale)
+    PetFrame:ClearAllPoints()
+    PetFrame:SetPoint('CENTER', f, 'CENTER', 0, 0)
 
     PetFrame.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PetFrameHealthBar)
@@ -496,4 +519,16 @@ end
 
 function SubModuleMixin:UpdatePetManaBarTexture()
     self.ModuleRef.SubTargetOfTarget:UpdateToTPowerBarTexture(PetFrameManaBar, self.ModuleRef.db.profile.pet, 'pet')
+end
+
+function SubModuleMixin:CreateFakePet()
+    local fakeWidget = CreateFrame('Frame', 'DragonflightUIPetFrame', UIParent)
+    fakeWidget:SetSize(120, 49)
+    self.PreviewFrame = fakeWidget
+
+    local fakePet = CreateFrame('Frame', 'DragonflightUIEditModePetFramePreview', fakeWidget,
+                                'DFEditModePreviewTargetOfTargetTemplate');
+    fakePet:OnLoad();
+    self.FakePreview = fakePet;
+    fakePet:SetPoint('CENTER')
 end

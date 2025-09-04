@@ -141,7 +141,7 @@ function Module:RefreshOptionScreens()
     end
     self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
-    PetFrame.DFEditModeSelection:RefreshOptionScreen();
+    self.SubPet.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
     -- self.SubRaid.PreviewRaid.DFEditModeSelection:RefreshOptionScreen();
     self.SubTarget.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
     self.SubTargetOfTarget.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
