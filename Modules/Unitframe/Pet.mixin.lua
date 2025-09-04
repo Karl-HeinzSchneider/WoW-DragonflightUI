@@ -25,7 +25,7 @@ function SubModuleMixin:SetDefaults()
         customAnchorFrame = '',
         anchor = 'TOPRIGHT',
         anchorParent = 'BOTTOMRIGHT',
-        x = 4,
+        x = -3,
         y = 28,
         customHealthBarTexture = 'Default',
         customPowerBarTexture = 'Default',
