@@ -260,5 +260,26 @@ table.insert(DF.VIPTable, {
     displayTexture = 'marnik2'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Shirin',
+    titleAfter = " the Kingslayer",
+    realm = 'Everlook',
+    guild = 'Horizon',
+    guildRank = 'Ghettobitch',
+    zone = 'Stormwind City',
+    race = 'Human',
+    female = true,
+    level = '90',
+    class = 'PRIEST',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'HEALER',
+    extra = 'worldboss',
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'shirin'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;
