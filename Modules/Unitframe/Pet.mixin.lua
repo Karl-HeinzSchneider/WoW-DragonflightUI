@@ -306,15 +306,20 @@ function SubModuleMixin:Setup()
             --       
             PetFrame:Lower()
             self.PreviewFrame:Raise()
+            PetFrame:Lower()
+            PetFrame:SetToplevel(false)
             if UnitExists('pet') then
                 self.FakePreview:Hide()
             else
                 self.FakePreview:Show()
             end
+            -- PetFrame:SetParent(self.PreviewFrame)
         end,
         hideFunction = function()
             --
             self.FakePreview:Hide()
+            -- PetFrame:SetParent(UIParent)
+            PetFrame:SetToplevel(true)
         end
     });
 end
@@ -341,9 +346,12 @@ function SubModuleMixin:Update()
     end
 
     f:SetScale(state.scale)
-    PetFrame:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    PetFrame:SetScale(state.scale)
+    PetFrame:ClearAllPoints()
+    PetFrame:SetPoint('CENTER', f, 'CENTER', 0, 0)
 
     PetFrame.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PetFrameHealthBar)
@@ -523,7 +531,4 @@ function SubModuleMixin:CreateFakePet()
     fakePet:OnLoad();
     self.FakePreview = fakePet;
     fakePet:SetPoint('CENTER')
-
-    PetFrame:ClearAllPoints()
-    PetFrame:SetPoint('CENTER', fakeWidget, 'CENTER', 0, 0)
 end
