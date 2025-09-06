@@ -2283,8 +2283,8 @@ function Module:SetupActionbarFrames()
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
-        -- print('ActionButton_UpdateHotkeys')        
-        if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
+        -- print('ActionButton_UpdateHotkeys')
+        if self.DragonflightFixHotkey then self:DragonflightFixHotkey() end
     end)
 
     for i = 1, 8 do

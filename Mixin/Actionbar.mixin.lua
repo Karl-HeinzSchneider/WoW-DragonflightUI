@@ -1513,20 +1513,18 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     end
     btn:UpdateFlyoutDirection(nil);
 
-    btn.DragonflightFixHotkeyPosition = function()
-        local hotkey = _G[btnName .. 'HotKey']
+    function btn:SetKeybindFontSize(newSize)
+        local hotkey = self.HotKey
+        local fontFile, fontHeight, flags = hotkey:GetFont()
+        hotkey:SetFont(fontFile, newSize, "OUTLINE")
+    end
+
+    function btn:FixHotkeyPosition()
+        local hotkey = self.HotKey
         hotkey:ClearAllPoints()
         hotkey:SetSize(46 - 10, 10)
         hotkey:SetPoint('TOPRIGHT', -5, -5)
-
-        function btn:SetKeybindFontSize(newSize)
-            local fontFile, fontHeight, flags = hotkey:GetFont()
-            hotkey:SetFont(fontFile, newSize, "OUTLINE")
-        end
-
-        btn:SetKeybindFontSize(14 + 2)
     end
-    btn.DragonflightFixHotkeyPosition()
 
     do
         function btn:UpdateHotkeyDisplayText(shorten)
@@ -1569,6 +1567,20 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
 
         btn:UpdateHotkeyDisplayText(false)
     end
+
+    btn.BarRef = self;
+    function btn:DragonflightFixHotkey()
+        self:FixHotkeyPosition()
+
+        local state = self.BarRef.state;
+        if not state then
+            self:SetKeybindFontSize(14 + 2)
+            return
+        end
+        self:UpdateHotkeyDisplayText(state.shortenKeybind)
+        self:SetKeybindFontSize(state.keybindFontSize)
+    end
+    btn:DragonflightFixHotkey()
 
     do
         local name = _G[btnName .. 'Name']
