@@ -1343,7 +1343,7 @@ end
 --     DragonflightUIActionbarMixin:StyleButton(btn)
 -- end)
 
-function DragonflightUIActionbarMixin:StyleButton(btn)
+function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
     local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
@@ -1422,7 +1422,7 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     highlight:SetTexture(textureRefTwo)
     highlight:SetTexCoord(0.701171875, 0.880859375 + 18 * 0.0001, 0.52001953125, 0.56396484375 + 6 * 0.0001)
 
-    if true then
+    if not keepNormalHighlight then
         local ontop = CreateFrame('Frame', btn:GetName() .. 'DFOnTopFrame', btn)
         ontop:SetFrameStrata('MEDIUM')
         ontop:SetFrameLevel(5)

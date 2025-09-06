@@ -103,7 +103,7 @@ function DragonflightUISpellFlyoutButtonMixin:UpdateArrow(dir)
 end
 
 function DragonflightUISpellFlyoutButtonMixin:InitButtons()
-    DragonflightUIActionbarMixin:StyleButton(self);
+    DragonflightUIActionbarMixin:StyleButton(self, true);
 
     local n = self:GetName()
 
