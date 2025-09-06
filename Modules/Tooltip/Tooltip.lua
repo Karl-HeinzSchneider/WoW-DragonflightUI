@@ -1126,6 +1126,11 @@ function Module:HookStatusBar()
         if self.DFDefaultAnchor then Module:UpdateDefaultAnchor(self) end
     end)
 
+    GameTooltip:HookScript('OnHide', function(self)
+        -- print('OnHide')
+        self.DFDefaultAnchor = false;
+    end)
+
     -- if (SharedTooltip_SetBackdropStyle) then
     --     hooksecurefunc("SharedTooltip_SetBackdropStyle", function(self, style, embedded)
     --         -- print('SharedTooltip_SetBackdropStyle', self:GetName())
