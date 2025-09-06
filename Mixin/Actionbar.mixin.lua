@@ -1331,6 +1331,18 @@ function DragonflightUIActionbarMixin:StyleButtons()
     end
 end
 
+-- C_Timer.After(0, function()
+--     print(':3')
+--     local btn = CreateFrame("CheckButton", "testbutton", UIParent, "ActionBarButtonTemplate")
+--     btn:SetSize(64, 64)
+--     btn:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+--     btn:SetScale(5.0)
+--     btn:SetAttribute("type", "action")
+--     btn:SetAttribute("action", 6) -- Action slot 1
+
+--     DragonflightUIActionbarMixin:StyleButton(btn)
+-- end)
+
 function DragonflightUIActionbarMixin:StyleButton(btn)
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
     local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -1355,35 +1367,6 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     mask:SetSize(45, 45)
 
     icon:AddMaskTexture(mask)
-    --[[  OLD: #hack
-        -- mask
-        do
-              local mask = btn:CreateTexture('DragonflightUIMaskTexture')
-            btn.DragonflightUIMaskTexture = mask
-            mask:SetSize(45, 45)
-            mask:SetPoint('CENTER', 0, 0)
-            -- mask:SetColorTexture(0, 1, 0, 1)       
-            mask:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
-            mask:SetDrawLayer('BACKGROUND')
-            -- mask:SetTexture(136197)
-
-            hooksecurefunc(icon, 'Show', function(self)
-                local tex = self:GetTexture()
-                if tex then
-                    mask:Show()
-                    mask:SetTexture(tex)
-                end
-            end) ]]
-    --[[ 
-            hooksecurefunc(icon, 'Hide', function(self)
-                mask:Hide()
-            end)
-            hooksecurefunc(icon, 'SetVertexColor', function(self)
-                local r, g, b = self:GetVertexColor()
-                mask:SetVertexColor(r, g, b)
-            end) 
-        end
-        ]]
 
     local cd = _G[btnName .. 'Cooldown']
     cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
@@ -1431,31 +1414,42 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
     -- pushed:SetAlpha(0)
 
-    if false then
-        --
-        local customFrame = CreateFrame('FRAME', 'DragonflightUIPushTextureFrame', btn)
-        customFrame:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0)
-        customFrame:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
-        customFrame:SetFrameStrata('MEDIUM')
-        customFrame:SetFrameLevel(6)
-        btn.DFCustomPushedTextureFrame = customFrame;
-        customFrame:Hide()
-
-        local customPush = customFrame:CreateTexture('DragonflightUIPushedTexture')
-        customPush:ClearAllPoints()
-        customPush:SetSize(46, 45)
-        customPush:SetPoint('TOPLEFT')
-        customPush:SetTexture(textureRefTwo)
-        customPush:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
-    end
-
     -- iconframe-mouseover
     local highlight = btn:GetHighlightTexture()
     highlight:ClearAllPoints()
     highlight:SetSize(46, 45)
     highlight:SetPoint('TOPLEFT')
     highlight:SetTexture(textureRefTwo)
-    highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+    highlight:SetTexCoord(0.701171875, 0.880859375 + 18 * 0.0001, 0.52001953125, 0.56396484375 + 6 * 0.0001)
+
+    if true then
+        local ontop = CreateFrame('Frame', btn:GetName() .. 'DFOnTopFrame', btn)
+        ontop:SetFrameStrata('MEDIUM')
+        ontop:SetFrameLevel(5)
+        ontop:SetPoint('TOPLEFT')
+        ontop:SetPoint('BOTTOMRIGHT')
+
+        local fakeHighlight = ontop:CreateTexture(btn:GetName() .. 'DFFakeHighlight', 'ARTWORK')
+        fakeHighlight:ClearAllPoints()
+        fakeHighlight:SetSize(46, 45)
+        fakeHighlight:SetPoint('TOPLEFT')
+        fakeHighlight:SetTexture(textureRefTwo)
+        -- fakeHighlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+        fakeHighlight:SetTexCoord(0.701171875, 0.880859375 + 18 * 0.0001, 0.52001953125, 0.56396484375 + 6 * 0.0001)
+
+        fakeHighlight:Hide()
+
+        highlight:SetTexture('')
+
+        btn:HookScript('OnEnter', function()
+            -- print('OnEnter')
+            fakeHighlight:Show()
+        end)
+        btn:HookScript('OnLeave', function()
+            -- print('OnLeave')
+            fakeHighlight:Hide()
+        end)
+    end
 
     -- iconframe-mouseover
     if btn.GetCheckedTexture then
