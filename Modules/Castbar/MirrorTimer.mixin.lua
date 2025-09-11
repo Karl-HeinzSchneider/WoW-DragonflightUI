@@ -266,6 +266,7 @@ function SubModuleMixin:Update()
     else
         self.VisFrame:Hide()
     end
+    self.VisFrame:SetScale(state.scale)
 
     if state.hideBlizzard then
         for i = 1, 3 do
