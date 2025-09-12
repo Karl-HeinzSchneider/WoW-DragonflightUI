@@ -5,6 +5,7 @@ local locale = GetLocale()
 -- globals
 BINDING_CATEGORY_DRAGONFLIGHTUI = "DragonflightUI"
 
+-- Actionbars
 BINDING_CATEGORY_DFACTIONBAR6 = "Action Bar 6"
 BINDING_HEADER_DFACTIONBAR6_BUTTON1 = "Action Bar 6 Button 1"
 for i = 1, 12 do
@@ -24,7 +25,6 @@ for i = 1, 12 do
 end
 
 -- flyout
-
 for f = 1, 10 do
     _G['BINDING_CATEGORY_DFCUSTOMFLYOUT' .. f] = 'Custom Flyout ' .. f
     _G['BINDING_HEADER_DFCUSTOMFLYOUT' .. f .. '_BUTTON1'] = 'Custom Flyout ' .. f
@@ -36,3 +36,9 @@ for f = 1, 10 do
             "Custom Flyout " .. f .. " Button " .. i
     end
 end
+
+-- frames
+_G['BINDING_HEADER_DFFRAMES'] = 'Frames'
+
+_G['BINDING_NAME_CLICK DragonflightUISpellbookProfessionFrameToggleButton:Keybind'] =
+    BINDING_NAME_TOGGLEPROFESSIONBOOK or 'Toggle Profession Book'

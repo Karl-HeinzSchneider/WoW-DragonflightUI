@@ -3529,6 +3529,9 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         local frame = self:GetFrameRef("ProfessionFrame");
         frame:Show();    
         
+        local handler = self:GetFrameRef("handler");
+        handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '')
+        
         -- local tabs = self:GetFrameRef("TabsFrame");
         -- tabs:Hide();   
     ]]);
@@ -3544,6 +3547,9 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     frame.buttonHide:SetAttribute("_onclick", [[      
         local frame = self:GetFrameRef("ProfessionFrame");
         frame:Hide();   
+
+        local handler = self:GetFrameRef("handler");
+        handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '')
         
         -- local tabs = self:GetFrameRef("TabsFrame");
         -- tabs:Show();    
@@ -3554,15 +3560,82 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     frame.buttonHide:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonHide);
 
-    -- local showButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameShowButton', SpellBookFrame,
-    --                                'SecureActionButtonTemplate')
-    -- showButton:SetAttribute('type', 'macro')
-    -- showButton:SetAttribute('macrotext', "")
-    -- showButton:SetScript('PostClick', function(self, button, down)
-    --     --
-    --     -- SpellBookFrame.DFSpellBookProfessionFrame:Show()
-    -- end)
-    -- SpellBookFrame.DFShowButton = showButton
+    do
+        local toggleButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameToggleButton', UIParent,
+                                         'SecureActionButtonTemplate')
+        toggleButton:SetAttribute('type', 'macro')
+        -- toggleButton:SetAttribute('macrotext', "/run print('test')")
+        local macroTextDefault = "/click SpellbookMicroButton" .. "\n" ..
+                                     "/click DragonflightUISpellbookProfessionFrameShowButton"
+        local macroTextDefaultClose = "/click SpellbookMicroButton" .. "\n" ..
+                                          "/click DragonflightUISpellbookProfessionFrameHideButton"
+        local macroTextOpen = "/click DragonflightUISpellbookProfessionFrameShowButton"
+        local macroTextClose = "/click DragonflightUISpellbookProfessionFrameHideButton"
+        toggleButton:SetAttribute('macrotext', macroTextDefault)
+        toggleButton:SetAttribute('macroTextDefault', macroTextDefault)
+        toggleButton:SetAttribute('macroTextDefaultClose', macroTextDefaultClose)
+        toggleButton:SetAttribute('macroTextOpen', macroTextOpen)
+        toggleButton:SetAttribute('macroTextClose', macroTextClose)
+
+        local tabFrame = SpellBookFrame.DFTabFrame
+        toggleButton:SetScript('PostClick', function(self, button, down)
+            --        
+            -- print('postclick', button, down, frame:IsVisible())
+            -- DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
+            -- local numTabs = PetHasSpellbook() and 3 or 2
+            if frame:IsVisible() then
+                DragonflightUICharacterTabMixin:Tab_OnClick(tabFrame.Tabs[2], tabFrame)
+            else
+                DragonflightUICharacterTabMixin:Tab_OnClick(tabFrame.Tabs[1], tabFrame)
+            end
+        end)
+
+        local handler = CreateFrame('Frame', 'DragonflightUISpellbookHandler', nil, 'SecureHandlerBaseTemplate');
+        handler:SetAttribute('UpdateToggleButtonMacro', [=[
+            local state = ...
+            -- print('UpdateToggleButtonMacro',state)
+            local Spellbook = self:GetFrameRef("Spellbook");
+            local ProfessionFrame = self:GetFrameRef("ProfessionFrame");
+            local ToggleButton = self:GetFrameRef("ToggleButton");
+
+            if Spellbook:IsVisible() then
+                 if ProfessionFrame:IsVisible() then
+                    ToggleButton:SetAttribute('macrotext', ToggleButton:GetAttribute('macroTextDefaultClose'))
+                else
+                    ToggleButton:SetAttribute('macrotext', ToggleButton:GetAttribute('macroTextOpen'))
+                end 
+            else
+                ProfessionFrame:Hide()
+                ToggleButton:SetAttribute('macrotext', ToggleButton:GetAttribute('macroTextDefault'))
+            end 
+        ]=])
+        handler:SetFrameRef("Spellbook", SpellBookFrame)
+        handler:SetFrameRef("ProfessionFrame", frame)
+        handler:SetFrameRef("ToggleButton", toggleButton)
+
+        local shower = CreateFrame('FRAME', 'DragonflightUISpellbookFrameShower', SpellBookFrame,
+                                   'SecureHandlerShowHideTemplate')
+        shower:SetPoint('TOPLEFT')
+        shower:SetPoint('BOTTOMRIGHT')
+        shower:SetAttribute('_onshow', [[   
+            -- print('_onshow') 
+            local handler = self:GetFrameRef("handler");
+            handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '_onshow')
+        ]])
+        shower:SetAttribute('_onhide', [[   
+            -- print('_onhide') 
+            local handler = self:GetFrameRef("handler");
+            handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '_onhide')
+        ]])
+        shower:SetFrameRef("handler", handler)
+
+        shower:HookScript('OnHide', function()
+            DragonflightUICharacterTabMixin:Tab_OnClick(tabFrame.Tabs[1], tabFrame)
+        end)
+
+        frame.buttonShow:SetFrameRef("handler", handler)
+        frame.buttonHide:SetFrameRef("handler", handler)
+    end
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
