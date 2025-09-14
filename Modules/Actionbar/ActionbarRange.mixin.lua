@@ -277,6 +277,7 @@ local function CustomIsUsableAction(action)
                 if costs then
                     for i = 1, #costs do
                         --
+                        local cost = costs[i]
                         if UnitPower('player', cost.type) < cost.minCost then
                             --
                             return false, true;
