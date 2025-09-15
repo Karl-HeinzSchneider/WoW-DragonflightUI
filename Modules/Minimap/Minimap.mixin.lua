@@ -836,7 +836,7 @@ function SubModuleMixin:ChangeCalendar()
         button:SetAttribute('macrotext', '/click GameTimeFrame')
     elseif DF.Era then
         button:SetScript('OnClick', function()
-            Module:Print(
+            self.ModuleRef:Print(
                 "Era doesn't have an ingame Calendar, sorry. Consider using 'Classic Calendar' by 'Toxiix', and this button will magically work...")
         end)
     end
