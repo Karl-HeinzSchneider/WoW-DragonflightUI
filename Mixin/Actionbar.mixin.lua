@@ -282,10 +282,12 @@ function DragonflightUIActionbarMixin:Update()
                 btn:SetAttribute("showgrid", 0)
             end
 
-            if state.hideArt then
-                if btn.DFDeco then btn.DFDeco:Hide() end
-            else
-                if btn.DFDeco then btn.DFDeco:Show() end
+            if btn.DFDeco then
+                if state.hideArt then
+                    btn.DFDeco:Hide()
+                else
+                    btn.DFDeco:Show()
+                end
             end
 
             local name = btn:GetName()
@@ -1217,7 +1219,7 @@ function DragonflightUIActionbarMixin:AddDecoNew()
     -- self.decoFrame:SetPoint('TOPLEFT')
     -- self.decoFrame:SetPoint('BOTTOMRIGHT')
 
-    do
+    if false then
         self.decoFrame = CreateFrame('Frame', 'DragonflightUIMainActionBarDecoFrame', self)
         self.decoFrame:SetFrameStrata('LOW')
         self.decoFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
