@@ -415,6 +415,8 @@ function Module:UpdateMinimap(state)
         end
     end
 
+    if _G['MiniMapBattlefieldFrame'] then Module:UpdateMinimapButton(_G['MiniMapBattlefieldFrame']) end
+
     if DF.Era then
         -- if _G['LFGMinimapFrameBorder'] then
         --     _G['LFGMinimapFrameBorder']:SetDesaturated(state.minimapDesaturate)
