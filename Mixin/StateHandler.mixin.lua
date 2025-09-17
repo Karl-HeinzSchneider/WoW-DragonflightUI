@@ -463,13 +463,15 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
         hideCustomCond = {
             type = 'editbox',
             name = 'Set Custom Condition',
+            desc = "Uses macro conditional syntax, but instead of the spell name the |cff8080ff'return'|r should be |cff8080ffshow|r to show the frame, or |cff8080ffhide|r to hide it." ..
+                '\n\nExample: \n|cff8080ff[combat]show;[@target,exists]show;hide|r ' ..
+                '\n(This shows the frame in combat, or if you have a target)',
             Validate = Validate,
             order = 109.5,
             group = 'headerVis',
             editmode = true
         }
     }
-
     for k, v in pairs(extraOptions) do
         --
         optionTable.args[k] = v
