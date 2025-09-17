@@ -1987,6 +1987,17 @@ function DragonflightUIPetbarMixin:StylePetButton()
                 fakeChecked:SetShown(isChecked)
             end)
         end
+
+        if true then
+            local cornerTex = 'Interface\\Addons\\DragonflightUI\\Textures\\UIActionbarPetCorner2x'
+
+            local petAutoCastableTexture = _G[btn:GetName() .. "AutoCastable"];
+            petAutoCastableTexture:SetTexture(cornerTex)
+            petAutoCastableTexture:SetTexCoord(0, 68 / 128, 0, 68 / 128)
+            petAutoCastableTexture:ClearAllPoints()
+            petAutoCastableTexture:SetPoint('TOPLEFT', -1, 1)
+            petAutoCastableTexture:SetPoint('BOTTOMRIGHT')
+        end
     end
 end
 
