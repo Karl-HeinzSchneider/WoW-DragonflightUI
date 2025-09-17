@@ -3446,7 +3446,9 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
             tab:SetScript('OnEnter', function(self)
                 --
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), ''), 1.0, 1.0, 1.0);
+                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(),
+                                                           'CLICK DragonflightUISpellbookProfessionFrameToggleButton:Keybind'),
+                                    1.0, 1.0, 1.0);
             end)
         elseif i == 3 then
             tab.DFChangePoint = true
