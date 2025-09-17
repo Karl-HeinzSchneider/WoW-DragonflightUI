@@ -1961,6 +1961,32 @@ function DragonflightUIPetbarMixin:StylePetButton()
         local autoSize = 80
         auto:SetSize(autoSize, autoSize)
         auto:SetDrawLayer('OVERLAY', 2)
+
+        --
+        local checked = btn:GetCheckedTexture()
+        checked:SetAlpha(1.0)
+        checked:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+
+        local color = DFCreateColorFromRGBHexString('FFE143')
+        checked:SetVertexColor(color.r, color.g, color.b, color.a)
+
+        if true then
+            local fakeChecked = btn:CreateTexture(btn:GetName() .. 'DFFakeChecked', 'OVERLAY')
+            btn.DFFakeChecked = fakeChecked
+            fakeChecked:ClearAllPoints()
+            fakeChecked:SetSize(46, 45)
+            fakeChecked:SetPoint('TOPLEFT')
+            fakeChecked:SetTexture(textureRefTwo)
+            -- fakeChecked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+            fakeChecked:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+            fakeChecked:Hide()
+            fakeChecked:SetVertexColor(color.r, color.g, color.b, color.a)
+
+            hooksecurefunc(btn, 'SetChecked', function(_, isChecked)
+                -- print('SetChecked', btn:GetName(), isChecked)
+                fakeChecked:SetShown(isChecked)
+            end)
+        end
     end
 end
 
