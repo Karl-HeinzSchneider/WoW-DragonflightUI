@@ -25,7 +25,7 @@ function Helper:Benchmark(label, func, level, moduleRef)
     --                           duration * 1000, duration)
     local str = string.format("|cffffd100%sBench: |r|cff8080ff%s|r took |cffffd100%.4f|r ms", levelStr, label,
                               duration * 1000)
-    print(str)
+    -- print(str)
     DF:Debug(moduleRef or DF, str)
     return results, duration, startTime, endTime;
 end
