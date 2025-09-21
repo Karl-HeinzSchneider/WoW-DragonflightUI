@@ -1213,7 +1213,8 @@ function DragonflightUIActionbarMixin:UpdateNumberFrame()
     end
 end
 
-function DragonflightUIActionbarMixin:AddDecoNew()
+function DragonflightUIActionbarMixin:AddDecoNew(index)
+    if index == 1 then return end
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
     -- self.decoFrame:SetPoint('TOPLEFT')

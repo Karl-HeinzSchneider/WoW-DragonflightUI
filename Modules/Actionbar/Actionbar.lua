@@ -2306,7 +2306,7 @@ function Module:SetupActionbarFrames()
     for i = 1, 8 do
         local bar = Module['bar' .. i]
         if bar then
-            bar:AddDecoNew()
+            bar:AddDecoNew(i)
             bar:AddTargetStateDriver()
         end
     end
