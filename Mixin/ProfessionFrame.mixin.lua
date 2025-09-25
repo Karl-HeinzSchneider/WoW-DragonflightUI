@@ -2781,7 +2781,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
         if skillType == 'header' then
             local data = {
                 id = i,
-                collapsedKey = nameLoc .. '-' .. skillName,
+                collapsedKey = nameLoc .. '-' .. (skillName or ''),
                 skillType = skillType,
                 categoryInfo = {name = skillName, isExpanded = isExpanded == 1}
             }
@@ -2791,7 +2791,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
         elseif skillType == 'subheader' then
             local data = {
                 id = i,
-                collapsedKey = nameLoc .. '-' .. skillName,
+                collapsedKey = nameLoc .. '-' .. (skillName or ''),
                 skillType = skillType,
                 categoryInfo = {
                     name = skillName,
