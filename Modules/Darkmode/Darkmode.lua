@@ -8,6 +8,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Mixin(Module, DragonflightUIModulesMixin)
 
 local CreateColor = DFCreateColor
+local CreateColorFromRGBHexString = DFCreateColorFromRGBHexString
 
 local defaults = {
     profile = {
