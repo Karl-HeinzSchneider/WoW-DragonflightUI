@@ -8,6 +8,22 @@ local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 local CreateColor = DFCreateColor;
 
+-- blizz bug, see https://eu.forums.blizzard.com/en/wow/t/profession-ui-bug-workaround/579043
+local GetTradeSkillInfoBlizz = GetTradeSkillInfo;
+local function GetTradeSkillInfo(skillIndex)
+    -- print('~~GetTradeSkillInfo', skillIndex)
+    -- DF:Debug(DF, '~~GetTradeSkillInfo', skillIndex)
+    local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+          currentRank, maxRank, startingRank = GetTradeSkillInfoBlizz(skillIndex)
+    if type(indentLevel) == "number" then
+        return skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+               currentRank, maxRank, startingRank
+    else
+        DF:Debug(DF, '~~FIX: GetTradeSkillInfo', skillIndex)
+        return "fix", "header", 0, 1, nil, 0, 0, false, 0, 0, 0
+    end
+end
+
 -- filter
 local DFFilter = {}
 
