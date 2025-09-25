@@ -281,5 +281,26 @@ table.insert(DF.VIPTable, {
     displayTexture = 'shirin'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Nalany',
+    titleAfter = " the Ringless",
+    realm = 'Thunderstrike',
+    guild = 'Dinos',
+    guildRank = 'Officer',
+    zone = 'Darnassus',
+    race = 'Nightelf',
+    female = true,
+    level = '60',
+    class = 'DRUID',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'HEALER',
+    extra = 'worldboss',
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'nalany'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;
