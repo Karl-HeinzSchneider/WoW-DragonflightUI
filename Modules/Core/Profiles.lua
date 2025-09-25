@@ -284,6 +284,8 @@ function Module:SetupDialogFrames()
         button1 = ACCEPT,
         button2 = CANCEL,
         OnShow = function(self, data)
+            self.editBox = self.editBox or self.EditBox
+            self.button1 = self.button1 or self.Button1 or self.ButtonContainer.Button1
             --
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             self.button1:Disable()
@@ -316,6 +318,7 @@ function Module:SetupDialogFrames()
         button1 = ACCEPT,
         button2 = CANCEL,
         OnShow = function(self, data)
+            self.text = self.text or self.Text
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             local toDelete = getOption({'toDelete'})
 
@@ -336,6 +339,9 @@ function Module:SetupDialogFrames()
         button1 = ACCEPT,
         button2 = CANCEL,
         OnShow = function(self, data)
+            self.editBox = self.editBox or self.EditBox
+            self.button1 = self.button1 or self.Button1 or self.ButtonContainer.Button1
+            self.text = self.text or self.Text
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             local toCopy = getOption({'toCopy'})
 
@@ -376,6 +382,9 @@ function Module:SetupDialogFrames()
             text = 'Copy profile ..',
             button1 = CLOSE,
             OnShow = function(self, data)
+                self.editBox = self.editBox or self.EditBox
+                self.button1 = self.button1 or self.Button1 or self.ButtonContainer.Button1
+                self.text = self.text or self.Text
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                 local active = Module:GetCurrentProfile()
 
@@ -427,6 +436,9 @@ function Module:SetupDialogFrames()
             button1 = L["EditModeImportLayout"],
             button2 = CANCEL,
             OnShow = function(self, data)
+                self.editBox = self.editBox or self.EditBox
+                self.button1 = self.button1 or self.Button1 or self.ButtonContainer.Button1
+                self.text = self.text or self.Text
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
                 local active = Module:GetCurrentProfile()
 

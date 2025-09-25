@@ -294,6 +294,7 @@ function DragonflightUIStateHandlerMixin:AddStateTable(Module, optionTable, sub,
         button1 = ACCEPT,
         button2 = CANCEL,
         OnShow = function(self, data)
+            self.editBox = self.editBox or self.EditBox
             local db = Module.db.profile
             local dbSub = sub and db[sub] or db
 

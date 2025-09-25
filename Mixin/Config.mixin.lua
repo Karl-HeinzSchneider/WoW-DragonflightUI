@@ -331,6 +331,7 @@ function DragonFlightUIConfigMixin:AddToolbar()
         editBoxWidth = 250,
         maxLetters = 0,
         OnShow = function(self, data)
+            self.editBox = self.editBox or self.EditBox
             self.editBox:SetText(data)
             self.editBox:HighlightText()
             self.editBox:SetFocus()
@@ -338,6 +339,7 @@ function DragonFlightUIConfigMixin:AddToolbar()
             -- dialogOpen = data;
         end,
         OnHide = function(self)
+            self.editBox = self.editBox or self.EditBox
             self.editBox:SetText("")
             dialogOpen = false
         end,
