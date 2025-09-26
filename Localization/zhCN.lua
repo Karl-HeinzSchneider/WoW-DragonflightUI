@@ -562,6 +562,11 @@ do
     L["CastbarTableAutoAdjustY"] = "自动 Delta Y"
     L["CastbarTableAutoAdjustYDesc"] = "Delta Y 应用于自动调整计算的 Y 值。" .. info
 
+    -- mirror timer
+    L["CastbarMirrorTimerName"] = "玩家镜像计时器"
+    L["CastbarMirrorTimerNameDesc"] = ""
+    L["CastbarMirrorHideBlizzard"] = "隐藏暴雪计时器"
+    L["CastbarMirrorHideBlizzardDesc"] = "隐藏默认暴雪镜像计时器。"
 end
 
 -- Minimap
@@ -586,6 +591,9 @@ do
     L["MinimapHideZoomDesc"] = "隐藏缩放按钮(+)(-)"
     L["MinimapSkinMinimapButtons"] = "美化小地图按钮"
     L["MinimapSkinMinimapButtonsDesc"] = "使用LibDBIcon美化小地图按钮(多数插件使用此库)"
+    L["MinimapSkinMinimapHideButtons"] = "隐藏小地图按钮"
+    L["MinimapSkinMinimapHideButtonsDesc"] = "当鼠标不在小地图上时隐藏小地图按钮。" ..
+                                                 "\n\n注意：只适用于使用 LibDBIcon 的按钮"
     L["MinimapZonePanelPosition"] = "区域面板位置"
     L["MinimapZonePanelPositionDesc"] = "设置区域文本面板的位置。"
     L["MinimapUseStateHandler"] = "使用状态处理器"
@@ -688,6 +696,45 @@ do
     L["TooltipShowItemID"] = "显示物品ID"
     L["TooltipShowItemIDDesc"] = ""
 
+    -- backdrop
+    L["TooltipBackdropHeader"] = "背景"
+    L["TooltipBackdropHeaderDesc"] = ""
+    L["TooltipBackdropColor"] = "背景色"
+    L["TooltipBackdropColorDesc"] = ""
+    L["TooltipBackdropAlpha"] = "背景透明度"
+    L["TooltipBackdropAlphaDesc"] = ""
+    L["TooltipBackdropCustomTexture"] = "背景材质"
+    L["TooltipBackdropCustomTextureDesc"] = ""
+
+    -- border
+    L["TooltipBorderName"] = "边框"
+    L["TooltipBorderNameDesc"] = ""
+    L["TooltipBorderCustomTexture"] = "边框材质"
+    L["TooltipBorderCustomTextureDesc"] = ""
+    L["TooltipBorderColor"] = "边框颜色"
+    L["TooltipBorderColorDesc"] = ""
+    L["TooltipBorderAlpha"] = "边框透明度"
+    L["TooltipBorderAlphaDesc"] = ""
+
+    L["TooltipBorderInsetLeft"] = "内嵌左侧"
+    L["TooltipBorderInsetRight"] = "内嵌右侧"
+    L["TooltipBorderInsetTop"] = "内嵌上侧"
+    L["TooltipBorderInsetBottom"] = "内嵌下侧"
+    L["TooltipBorderInsetDesc"] = ""
+
+    L["TooltipBorderInsetEdgeSize"] = "边缘大小"
+    L["TooltipBorderInsetEdgeSizeDesc"] = ""
+
+    -- statusbar
+    L["TooltipUnitHealthbarName"] = "状态条"
+    L["TooltipUnitHealthbarNameDesc"] = ""
+    L["TooltipUnitHealthbar"] = "显示生命条"
+    L["TooltipUnitHealthbarDesc"] = ""
+    L["TooltipUnitHealthbarHeight"] = "生命条高度"
+    L["TooltipUnitHealthbarHeightDesc"] = "."
+    L["TooltipUnitHealthbarText"] = "显示生命条文本"
+    L["TooltipUnitHealthbarTextDesc"] = ""
+
     -- unittooltip
     L["TooltipUnitTooltip"] = "单位提示框"
     L["TooltipUnitTooltipDesc"] = ""
@@ -715,10 +762,6 @@ do
     L["TooltipUnitGrayOutOnDeathDesc"] = ""
     L["TooltipUnitZone"] = "显示区域文本"
     L["TooltipUnitZoneDesc"] = ""
-    L["TooltipUnitHealthbar"] = "显示生命条"
-    L["TooltipUnitHealthbarDesc"] = ""
-    L["TooltipUnitHealthbarText"] = "显示生命条文本"
-    L["TooltipUnitHealthbarTextDesc"] = ""
     L["TooltipUnitTarget"] = "显示目标"
     L["TooltipUnitTargetDesc"] = "显示单位目标"
 end
@@ -753,6 +796,8 @@ do
     L["PlayerFrameHideRestingGlowDesc"] = "隐藏休息状态时玩家框体上的闪烁。"
     L["PlayerFrameHideRestingIcon"] = "隐藏休息图标"
     L["PlayerFrameHideRestingIconDesc"] = "隐藏玩家框体上的休息图标。"
+    L["PlayerFrameHidePVP"] = "隐藏 PVP 图标"
+    L["PlayerFrameHidePVPDesc"] = "隐藏 PVP 图标。"
 
     local note =
         "\n\n注意: 自定义材质使用暴雪的默认状态栏颜色。\n如果你想要一些不同的东西，你必须通过代码修改它。\n"
@@ -765,6 +810,10 @@ do
     -- Player Secondary< Res
     L["PlayerSecondaryResName"] = "玩家次要资源"
     L["PlayerSecondaryResNameDesc"] = ""
+
+    -- TotemFrame
+    L["PlayerTotemFrameName"] = "玩家图腾框体"
+    L["PlayerTotemFrameNameDesc"] = ""
 
     -- PowerBar_Alt
     L["PowerBarAltName"] = "玩家备用能量条"
