@@ -598,6 +598,44 @@
 			<OnEvent method="OnEvent" />
 		</Scripts>
 	</Button>
+	<Frame name="DFPlayerTalentFrameStatusFrame" hidden="true" virtual="true">
+		<Size x="224" y="20" />
+		<!--
+		<Anchors>
+		<Anchor point="TOPLEFT" relativeTo="PlayerTalentFrame" x="73" y="-46" />
+		</Anchors>
+		-->
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="DFPlayerTalentFramePointsLeft" file="Interface\Common\Common-Input-Border">
+					<Size x="8" y="20" />
+					<Anchors>
+						<Anchor point="LEFT" />
+					</Anchors>
+					<TexCoords left="0" right="0.0625" top="0" bottom="0.625" />
+				</Texture>
+				<Texture name="DFPlayerTalentFramePointsMiddle" file="Interface\Common\Common-Input-Border">
+					<Size x="208" y="20" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="DFPlayerTalentFramePointsLeft" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625" />
+				</Texture>
+				<Texture name="DFPlayerTalentFramePointsRight" file="Interface\Common\Common-Input-Border">
+					<Size x="8" y="20" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="DFPlayerTalentFramePointsMiddle" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625" />
+				</Texture>
+				<FontString name="DFPlayerTalentFrameStatusText" inherits="GameFontNormal" text="TALENT_ACTIVE_SPEC_STATUS">
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
 	<CheckButton name="DFPlayerSpecTabTemplate" mixin="DragonflightUIPlayerSpecMixin" virtual="true" hidden="false">
 		<Size x="32" y="32" />
 		<Layers>

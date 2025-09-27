@@ -1029,6 +1029,16 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         activate:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -10, -30)
     end
 
+    if _G['PlayerTalentFrameStatusFrame'] then
+        _G['PlayerTalentFrameStatusFrame']:ClearAllPoints();
+        _G['PlayerTalentFrameStatusFrame']:Hide();
+
+        -- local status = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameStatusFrame', PlayerTalentFrame,
+        --                            'DFPlayerTalentFrameStatusFrame')
+        -- status:SetPoint('TOPLEFT', PlayerTalentFrame, 'TOPLEFT', 73, -40)
+        -- status:Show()
+    end
+
     -- self:RegisterEvent("ADDON_LOADED");
     self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
     -- self:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED");
