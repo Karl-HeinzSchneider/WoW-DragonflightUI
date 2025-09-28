@@ -488,6 +488,11 @@ function SubModuleMixin:ChangePetFrame()
     PetFrameManaBarText:SetScale(newPetTextScale)
     PetFrameManaBarTextLeft:SetScale(newPetTextScale)
     PetFrameManaBarTextRight:SetScale(newPetTextScale)
+
+    if PetFrameHappiness then
+        PetFrameHappiness:ClearAllPoints()
+        PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -3, -1.5)
+    end
 end
 
 function SubModuleMixin:GetPetOffset(offset)
