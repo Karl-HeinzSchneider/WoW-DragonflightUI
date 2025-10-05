@@ -1383,6 +1383,7 @@ function Module:AddCustomButtons()
         --
         local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Custom" .. i .. "Button", UIParent,
                                 "DFSpellFlyoutButtonTemplate", 1000 + 5 + i)
+        btn:SetFrameLevel(42)
         Module['Custom' .. i .. 'Button'] = btn;
     end
 
