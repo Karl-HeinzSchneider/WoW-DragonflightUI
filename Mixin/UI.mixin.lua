@@ -891,7 +891,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
     end
 
     -- talent
-    if InspectTalentFrame then
+    if InspectTalentFrame and not DF.API.Version.IsMoP then
         local regions = {InspectTalentFrame:GetRegions()}
         for k, child in ipairs(regions) do
             --     
@@ -917,7 +917,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
         end
 
         local scroll = InspectTalentFrameScrollFrame
-        scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66)
+        if scroll then scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66) end
 
         for i = 1, 28 do
             --
@@ -1095,7 +1095,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
         firstTab:ClearAllPoints()
         firstTab:SetPoint('TOPLEFT', InspectFrame, 'BOTTOMLEFT', 12, 1)
 
-        for i = 1, 3 do
+        for i = 1, 4 do
             --
             local tab = _G['InspectFrameTab' .. i]
 
