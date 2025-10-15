@@ -29,3 +29,15 @@ function Helper:Benchmark(label, func, level, moduleRef)
     DF:Debug(moduleRef or DF, str)
     return results, duration, startTime, endTime;
 end
+
+-- local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
+local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
+
+function Helper:AddCircleMask(f, port, maskTexture)
+    if not f or not port then return end
+    if not maskTexture then maskTexture = circularMaskTexture end
+    local mask = f:CreateMaskTexture()
+    mask:SetAllPoints(port)
+    mask:SetTexture(maskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    port:AddMaskTexture(mask)
+end
