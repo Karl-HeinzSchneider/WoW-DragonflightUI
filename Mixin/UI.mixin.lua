@@ -1,3 +1,5 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 ---@diagnostic disable: undefined-global
 ---@class DragonflightUI
 ---@diagnostic disable-next-line: assign-type-mismatch
@@ -834,6 +836,7 @@ function DragonflightUIMixin:EnhanceDressupFrame()
 end
 
 function DragonflightUIMixin:ChangeInspectFrame()
+    -- print('ChangeInspectFrame')
     if not InspectFrame or InspectFrame.DFHooked then return end
     if DF.API.Version.IsMoP then return end -- TODO
 
@@ -946,6 +949,8 @@ function DragonflightUIMixin:ChangeInspectFrame()
         port:ClearAllPoints()
         port:SetPoint('TOPLEFT', -5, 7)
         port:SetDrawLayer('OVERLAY', 6)
+
+        Helper:AddCircleMask(InspectFrame, InspectFramePortrait)
 
         InspectFrame.PortraitFrame = InspectFrame:CreateTexture('PortraitFrame')
         local pp = InspectFrame.PortraitFrame
