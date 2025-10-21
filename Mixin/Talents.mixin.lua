@@ -260,18 +260,36 @@ function DragonflightUITalentsPanelMixin:Init(id)
         button.anchorFrame = anchorFrame
 
         -- events
+        local function setupTooltip()
+            -- print('setup', id, i)
+            GameTooltip:SetTalent(id, i)
+            -- GameTooltip:SetTalent(id, i, nil, nil)
+
+            --     local talentInfoQuery = {};
+            --     -- talentInfoQuery.specializationIndex = PanelTemplates_GetSelectedTab(InspectTalentFrame);
+            --    talentInfoQuery.specializationIndex = selectedSpec;
+            --     talentInfoQuery.talentIndex = i;
+            --     talentInfoQuery.isInspect = false;
+            --     talentInfoQuery.isPet = false;
+            --     talentInfoQuery.groupIndex = InspectTalentFrame.talentGroup;
+            --     local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery);
+            --     if talentInfo then
+            --         GameTooltip:SetTalent(talentInfo.talentID, InspectTalentFrame.inspect, InspectTalentFrame.pet,
+            --                               InspectTalentFrame.talentGroup);
+            --     end
+        end
 
         button:SetScript('OnEnter', function(self)
             --                    
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-            GameTooltip:SetTalent(id, i)
+            setupTooltip()
 
             C_Timer.After(0, function()
-                if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+                if (GameTooltip:IsOwned(self)) then setupTooltip() end
             end)
 
             C_Timer.After(1, function()
-                if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+                if (GameTooltip:IsOwned(self)) then setupTooltip() end
             end)
         end)
 
@@ -1250,7 +1268,11 @@ end
 function DragonflightUIPlayerSpecActivateMixin:OnClick()
     if selectedSpec then
         --
-        SetActiveTalentGroup(selectedSpec)
+        if SetActiveTalentGroup then
+            SetActiveTalentGroup(selectedSpec)
+        elseif C_SpecializationInfo and C_SpecializationInfo.SetActiveSpecGroup then
+            C_SpecializationInfo.SetActiveSpecGroup(selectedSpec)
+        end
     end
 end
 
