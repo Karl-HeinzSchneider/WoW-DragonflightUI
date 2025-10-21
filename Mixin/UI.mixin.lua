@@ -2282,7 +2282,10 @@ function DragonflightUIMixin:ChangeGossipFrame()
     frame:SetSize(338, 496)
     greeting:SetSize(338, 496)
 
-    if DF.API.Version.IsMoP then
+    local eraFix = true;
+    eraFix = DF.API.Version.IsClassic and (DF.API.Version.InterfaceVersion >= 11508)
+
+    if DF.API.Version.IsMoP or eraFix then
         local slice = frame.NineSlice
 
         slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
@@ -2325,7 +2328,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
     do
         local scroll = greeting.ScrollBox
         scroll:SetSize(300, 403)
-        if DF.API.Version.IsMoP then
+        if DF.API.Version.IsMoP or eraFix then
             scroll:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -65)
         else
             scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
