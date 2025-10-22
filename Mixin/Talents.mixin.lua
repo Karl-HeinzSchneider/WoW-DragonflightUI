@@ -238,16 +238,6 @@ end
 function DragonflightUITalentsPanelMixin:OnEvent()
 end
 
-hooksecurefunc(GameTooltip, 'SetTalent', function(self, ...)
-    -- print(self:GetName(), ...)
-end)
-
--- hooksecurefunc('PlayerTalentFrameTalent_OnEnter', function(self)
---     -- print(self:GetName(), event)
---     -- print('~> ', ...)
-
--- end)
-
 function DragonflightUITalentsPanelMixin:Init(id)
     self.ID = id
     local panel = self:GetName()
