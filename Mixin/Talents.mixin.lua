@@ -238,6 +238,16 @@ end
 function DragonflightUITalentsPanelMixin:OnEvent()
 end
 
+hooksecurefunc(GameTooltip, 'SetTalent', function(self, ...)
+    -- print(self:GetName(), ...)
+end)
+
+-- hooksecurefunc('PlayerTalentFrameTalent_OnEnter', function(self)
+--     -- print(self:GetName(), event)
+--     -- print('~> ', ...)
+
+-- end)
+
 function DragonflightUITalentsPanelMixin:Init(id)
     self.ID = id
     local panel = self:GetName()
@@ -261,22 +271,28 @@ function DragonflightUITalentsPanelMixin:Init(id)
 
         -- events
         local function setupTooltip()
-            -- print('setup', id, i)
-            GameTooltip:SetTalent(id, i)
-            -- GameTooltip:SetTalent(id, i, nil, nil)
+            -- print('setupTooltip', id, i)
 
-            --     local talentInfoQuery = {};
-            --     -- talentInfoQuery.specializationIndex = PanelTemplates_GetSelectedTab(InspectTalentFrame);
-            --    talentInfoQuery.specializationIndex = selectedSpec;
-            --     talentInfoQuery.talentIndex = i;
-            --     talentInfoQuery.isInspect = false;
-            --     talentInfoQuery.isPet = false;
-            --     talentInfoQuery.groupIndex = InspectTalentFrame.talentGroup;
-            --     local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery);
-            --     if talentInfo then
-            --         GameTooltip:SetTalent(talentInfo.talentID, InspectTalentFrame.inspect, InspectTalentFrame.pet,
-            --                               InspectTalentFrame.talentGroup);
-            --     end
+            local talentInfoQuery = {};
+            -- talentInfoQuery.specializationIndex = PanelTemplates_GetSelectedTab(PlayerTalentFrame); -- tab, 1-3
+            talentInfoQuery.specializationIndex = id; -- tab, 1-3
+            -- talentInfoQuery.talentIndex = self:GetID(); -- talent id
+            talentInfoQuery.talentIndex = i;
+            -- talentInfoQuery.isInspect = PlayerTalentFrame.inspect;
+            talentInfoQuery.isInspect = false;
+            -- talentInfoQuery.isPet = PlayerTalentFrame.pet;
+            talentInfoQuery.isPet = false;
+            -- talentInfoQuery.groupIndex = PlayerTalentFrame.talentGroup; -- primary/secondary 1-2
+            talentInfoQuery.groupIndex = selectedSpec; -- primary/secondary 1-2
+
+            local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery);
+            if talentInfo then
+                -- DevTools_Dump(talentInfo)
+                -- GameTooltip:SetTalent(talentInfo.talentID, PlayerTalentFrame.inspect, PlayerTalentFrame.pet,
+                --                       PlayerTalentFrame.talentGroup);
+                GameTooltip:SetTalent(talentInfo.talentID, talentInfoQuery.isInspect, talentInfoQuery.isPet,
+                                      talentInfoQuery.groupIndex);
+            end
         end
 
         button:SetScript('OnEnter', function(self)
