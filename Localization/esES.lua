@@ -444,6 +444,12 @@ do
     L["ExtraOptionsResetToDefaultStyle"] = "Restablecer al estilo predeterminado"
     L["ExtraOptionsPresetStyleDesc"] =
         "Restablece todas las configuraciones que cambian el estilo de la barra de lanzamiento, pero no modifica ninguna otra configuración."
+
+    -- mirror timer
+    L["CastbarMirrorTimerName"] = "Temporizador espejo del jugador"
+    L["CastbarMirrorTimerNameDesc"] = ""
+    L["CastbarMirrorHideBlizzard"] = "Ocultar Blizzard"
+    L["CastbarMirrorHideBlizzardDesc"] = "Oculta el temporizador espejo predeterminado de Blizzard."
 end
 
 -- Minimap
@@ -460,6 +466,9 @@ do
     L["MinimapSkinMinimapButtons"] = "Personalizar botones del minimapa"
     L["MinimapSkinMinimapButtonsDesc"] =
         "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
+    L["MinimapSkinMinimapHideButtons"] = "Ocultar botones del minimapa"
+    L["MinimapSkinMinimapHideButtonsDesc"] = "Oculta los botones del minimapa cuando el cursor no está sobre él." ..
+                                          "\n\nNota: solo funciona con botones que usan LibDBIcon"
     L["MinimapZonePanelPosition"] = "Posición del panel de zona"
     L["MinimapZonePanelPositionDesc"] =
         "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
@@ -548,6 +557,45 @@ do
     L["TooltipShowItemID"] = "Mostrar ID del objeto"
     L["TooltipShowItemIDDesc"] = ""
 
+    -- backdrop
+    L["TooltipBackdropHeader"] = "Fondo"
+    L["TooltipBackdropHeaderDesc"] = ""
+    L["TooltipBackdropColor"] = "Color de fondo"
+    L["TooltipBackdropColorDesc"] = ""
+    L["TooltipBackdropAlpha"] = "Opacidad del fondo"
+    L["TooltipBackdropAlphaDesc"] = ""
+    L["TooltipBackdropCustomTexture"] = "Textura del fondo"
+    L["TooltipBackdropCustomTextureDesc"] = ""
+
+    -- border
+    L["TooltipBorderName"] = "Borde"
+    L["TooltipBorderNameDesc"] = ""
+    L["TooltipBorderCustomTexture"] = "Textura del borde"
+    L["TooltipBorderCustomTextureDesc"] = ""
+    L["TooltipBorderColor"] = "Color del borde"
+    L["TooltipBorderColorDesc"] = ""
+    L["TooltipBorderAlpha"] = "Opacidad del borde"
+    L["TooltipBorderAlphaDesc"] = ""
+
+    L["TooltipBorderInsetLeft"] = "Margen izquierdo"
+    L["TooltipBorderInsetRight"] = "Margen derecho"
+    L["TooltipBorderInsetTop"] = "Margen superior"
+    L["TooltipBorderInsetBottom"] = "Margen inferior"
+    L["TooltipBorderInsetDesc"] = ""
+
+    L["TooltipBorderInsetEdgeSize"] = "Tamaño del borde"
+    L["TooltipBorderInsetEdgeSizeDesc"] = ""
+
+    -- statusbar
+    L["TooltipUnitHealthbarName"] = "Barra de estado"
+    L["TooltipUnitHealthbarNameDesc"] = ""
+    L["TooltipUnitHealthbar"] = "Mostrar barra de vida"
+    L["TooltipUnitHealthbarDesc"] = ""
+    L["TooltipUnitHealthbarHeight"] = "Altura de la barra de vida"
+    L["TooltipUnitHealthbarHeightDesc"] = "."
+    L["TooltipUnitHealthbarText"] = "Mostrar texto de la barra de vida"
+    L["TooltipUnitHealthbarTextDesc"] = ""
+
     -- unittooltip
     L["TooltipUnitTooltip"] = "Información de la unidad"
     L["TooltipUnitTooltipDesc"] = ""
@@ -609,8 +657,32 @@ do
     L["PlayerFrameHideSecondaryRes"] = "Ocultar recurso secundario"
     L["PlayerFrameHideSecondaryResDesc"] = "Oculta el recurso secundario, por ejemplo, fragmentos de alma."
     L["PlayerFrameHideAlternatePowerBar"] = "Ocultar barra de poder alternativo de druida"
-    L["PlayerFrameHideAlternatePowerBarDesc"] =
-        "Oculta la barra de poder alternativo de druida (barra de maná en forma de oso/gato)."
+    L["PlayerFrameHideAlternatePowerBarDesc"] = "Oculta la barra de poder alternativo de druida (barra de maná en forma de oso/gato)."
+    L["PlayerFrameHideRestingGlow"] = "Ocultar iluminación de descanso"
+    L["PlayerFrameHideRestingGlowDesc"] = "Oculta la iluminación de estado de descanso en el marco del jugador."
+    L["PlayerFrameHideRestingIcon"] = "Ocultar icono de descanso"
+    L["PlayerFrameHideRestingIconDesc"] = "Oculta el icono de descanso en el marco del jugador."
+    L["PlayerFrameHidePVP"] = "Ocultar icono JcJ"
+    L["PlayerFrameHidePVPDesc"] = "Oculta el icono de JcJ."
+
+    local note =
+    "\n\nNOTA: Las texturas personalizadas usan el color de barra predeterminado de Blizzard.\nSi deseas algo diferente, debes modificarlo mediante código.\n"
+    L["PlayerFrameCustomHealthbarTexture"] = "Textura de la barra de vida"
+    L["PlayerFrameCustomHealthbarTextureDesc"] = "Cambia la textura de la barra de vida por una personalizada de LibSharedMedia." .. note
+    L["PlayerFrameCustomPowerbarTexture"] = "Textura de la barra de poder"
+    L["PlayerFrameCustomPowerbarTextureDesc"] = "Cambia la textura de la barra de poder por una personalizada de LibSharedMedia." .. note
+
+    -- Player Secondary< Res
+    L["PlayerSecondaryResName"] = "Recurso secundario del jugador"
+    L["PlayerSecondaryResNameDesc"] = ""
+
+    -- TotemFrame
+    L["PlayerTotemFrameName"] = "Marco de tótems del jugador"
+    L["PlayerTotemFrameNameDesc"] = ""
+
+    -- PowerBar_Alt
+    L["PowerBarAltName"] = "Barra de poder alternativa del jugador"
+    L["PowerBarAltNameDesc"] = ""
 
     -- Target
     L["TargetFrameDesc"] = "Configuraciones del marco del objetivo"
