@@ -5,6 +5,9 @@ local Helper = addonTable.Helper;
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
+local eraFix = true;
+eraFix = DF.API.Version.IsClassic and (DF.API.Version.InterfaceVersion >= 11508)
+
 DragonflightUIMixin = {}
 
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
@@ -757,34 +760,87 @@ function DragonflightUIMixin:ChangeDressupFrame()
 
     frame:SetSize(354, 447 + 6)
 
+    if eraFix then
+        frame:SetSize(354 - 20 - 2, 447 + 6 - 28 - 1)
+
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+    end
+
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
 
     DragonflightUIMixin:UIPanelCloseButton(DressUpFrameCloseButton)
     DressUpFrameCloseButton:SetPoint('TOPRIGHT', DressUpFrame, 'TOPRIGHT', 1, 0)
 
-    DressUpFrameCancelButton:SetPoint('BOTTOMRIGHT', DressUpFrame, 'BOTTOMRIGHT', -7, 14)
+    DressUpFrameCancelButton:ClearAllPoints()
+    DressUpFrameCancelButton:SetPoint('BOTTOMRIGHT', DressUpFrame, 'BOTTOMRIGHT', -7, 5)
 
+    local container = DressUpFrame.TitleContainer;
     DressUpFrameTitleText:ClearAllPoints()
-    DressUpFrameTitleText:SetPoint('TOP', DressUpFrame, 'TOP', 0, -5)
-    DressUpFrameTitleText:SetPoint('LEFT', DressUpFrame, 'LEFT', 60, 0)
-    DressUpFrameTitleText:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -60, 0)
+    -- DressUpFrameTitleText:SetPoint('TOP', container, 'TOP', 0, 0)
+    -- DressUpFrameTitleText:SetPoint('LEFT', container, 'LEFT', 60, 0)
+    -- DressUpFrameTitleText:SetPoint('RIGHT', container, 'RIGHT',-30, 0)
+    -- DressUpFrameTitleText:SetParent(container)
+
+    local newTitle = container:CreateFontString('DFDressUpFrameTitleText', 'OVERLAY', 'GameFontHighlight')
+    newTitle:SetText(DRESSUP_FRAME)
+    newTitle:SetHeight(14)
+    newTitle:SetPoint('TOP', DressUpFrame, 'TOP', 0, -4)
+    newTitle:SetPoint('LEFT', DressUpFrame, 'LEFT', 60, 0)
+    newTitle:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -30, 0)
+
+    DressUpFrameDescriptionText:ClearAllPoints()
+    DressUpFrameDescriptionText:SetPoint('TOP', newTitle, 'BOTTOM', 6, -6)
 
     DressUpModelFrame:ClearAllPoints()
     DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
     DressUpModelFrame:SetHeight(351 - 18)
 
-    do
-        local inset = CreateFrame('Frame', 'DragonflightUIInset', DressUpModelFrame, 'InsetFrameTemplate')
-        inset:ClearAllPoints()
-        inset:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
-        inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 0)
-        -- inset:SetFrameLevel(1)
+    if eraFix then
+        --
+        DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19 - 10 - 2, -75 + 10 + 1)
+    end
 
-        _G[inset:GetName() .. 'Bg']:Hide()
+    do
+        -- local inset = CreateFrame('Frame', 'DragonflightUIInset', DressUpModelFrame, 'InsetFrameTemplate')
+        -- inset:ClearAllPoints()
+        -- inset:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
+        -- inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 0)
+        -- -- inset:SetFrameLevel(1)
+
+        -- _G[inset:GetName() .. 'Bg']:Hide()
     end
 
     DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
+    if eraFix then
+        --
+        DressUpFrameBackgroundTopLeft:ClearAllPoints()
+        -- DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19 - 10 - 1, -75 + 10)
+        DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
+    end
+
+    local rotateBtn = DressUpModelFrameRotateRightButton
+    if rotateBtn then
+        rotateBtn:ClearAllPoints()
+        rotateBtn:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, -4)
+    end
 
     do
         local port = DressUpFramePortrait
@@ -2281,9 +2337,6 @@ function DragonflightUIMixin:ChangeGossipFrame()
 
     frame:SetSize(338, 496)
     greeting:SetSize(338, 496)
-
-    local eraFix = true;
-    eraFix = DF.API.Version.IsClassic and (DF.API.Version.InterfaceVersion >= 11508)
 
     if DF.API.Version.IsMoP or eraFix then
         local slice = frame.NineSlice
