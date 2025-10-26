@@ -421,7 +421,11 @@ function Module:ApplySettingsInternal(sub, key)
     self:ConditionalOption('changeInspect', 'first', 'Change InspectFrame', function()
         local loaded, value = DF:LoadAddOn('Blizzard_InspectUI')
         Module:FuncOrWaitframe('Blizzard_InspectUI', function()
-            DragonflightUIMixin:ChangeInspectFrame()
+            if DF.Era then
+                DragonflightUIMixin:ChangeInspectFrameEra()
+            else
+                DragonflightUIMixin:ChangeInspectFrame()
+            end
 
             Module:FuncOrWaitframe('TacoTip', function()
                 DF.Compatibility:TacoTipInspect()
