@@ -2621,7 +2621,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
 
         local anchorFrame;
 
-        if DF.API.Version.IsMoP then
+        if DF.API.Version.IsMoP or DF.API.Version.IsClassic then
             anchorFrame = frame;
 
             local r = {frame:GetRegions()}
