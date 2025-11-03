@@ -1001,11 +1001,13 @@ end
 
 function SubModuleMixin:ChangeDifficulty()
     if MiniMapInstanceDifficulty then
+        MiniMapInstanceDifficulty:SetScale(0.8)
         MiniMapInstanceDifficulty:ClearAllPoints()
         MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
         MiniMapInstanceDifficulty:SetParent(self.InfoPanel)
     end
     if GuildInstanceDifficulty then
+        GuildInstanceDifficulty:SetScale(0.8)
         GuildInstanceDifficulty:ClearAllPoints()
         GuildInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
         GuildInstanceDifficulty:SetParent(self.InfoPanel)
