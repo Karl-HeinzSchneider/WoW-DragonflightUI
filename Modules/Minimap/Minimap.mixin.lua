@@ -1000,10 +1000,16 @@ function SubModuleMixin:ChangeMail()
 end
 
 function SubModuleMixin:ChangeDifficulty()
-    if not MiniMapInstanceDifficulty then return end
-    MiniMapInstanceDifficulty:ClearAllPoints()
-    MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
-    MiniMapInstanceDifficulty:SetParent(self.InfoPanel)
+    if MiniMapInstanceDifficulty then
+        MiniMapInstanceDifficulty:ClearAllPoints()
+        MiniMapInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
+        MiniMapInstanceDifficulty:SetParent(self.InfoPanel)
+    end
+    if GuildInstanceDifficulty then
+        GuildInstanceDifficulty:ClearAllPoints()
+        GuildInstanceDifficulty:SetPoint('TOPRIGHT', self.InfoPanel, 'BOTTOMRIGHT', 0, 0)
+        GuildInstanceDifficulty:SetParent(self.InfoPanel)
+    end
 end
 
 function SubModuleMixin:UpdateButton(btn)
