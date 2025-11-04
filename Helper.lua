@@ -5,6 +5,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local Helper = {};
 addonTable.Helper = Helper;
 
+-- make globally available
+_G['DragonflightUI_Helper'] = Helper;
+
 function Helper:Benchmark(label, func, level, moduleRef)
     if level == nil or type(level) ~= 'number' then level = 1; end
     -- level = level or 1;
