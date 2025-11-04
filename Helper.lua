@@ -41,3 +41,21 @@ function Helper:AddCircleMask(f, port, maskTexture)
     mask:SetTexture(maskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
     port:AddMaskTexture(mask)
 end
+
+function Helper:GetUnitHealthPercent(unit)
+    if not unit then return 0 end
+
+    local max_health = UnitHealthMax(unit)
+    local health = UnitHealth(unit)
+
+    return health / max_health
+end
+
+function Helper:ColorGradiant(percent)
+    local red = 1 - percent
+    local green = percent
+    local blue = 0
+
+    return red, green, blue
+end
+

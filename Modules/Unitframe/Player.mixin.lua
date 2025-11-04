@@ -18,6 +18,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        gradient = false,
         classicon = false,
         breakUpLargeNumbers = true,
         scale = 1.0,
@@ -153,6 +154,15 @@ function SubModuleMixin:SetupOptions()
                 desc = L["PlayerFrameClassColorDesc"] .. getDefaultStr('classcolor', 'player'),
                 group = 'headerStyling',
                 order = 2,
+                editmode = true
+            },
+            gradient = {
+                type = 'toggle',
+                name = L["PlayerFrameGradientColor"],
+                desc = L["PlayerFrameGradientColorDesc"] .. getDefaultStr('gradient', 'player'),
+                group = 'headerStyling',
+                order = 2.1,
+                new = true,
                 editmode = true
             },
             classicon = {
@@ -851,6 +861,11 @@ function SubModuleMixin:UpdatePlayerFrameHealthBar()
                                                                       'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
             local _, englishClass, _ = UnitClass('player')
             PlayerFrameHealthBar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.gradient then
+            PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(texBase ..
+                                                                      'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health-Status')
+            local r, g, b = Helper:ColorGradiant(Helper:GetUnitHealthPercent('player'))
+            PlayerFrameHealthBar:SetStatusBarColor(r, g, b, 1)
         else
             PlayerFrameHealthBar:GetStatusBarTexture():SetTexture(texBase ..
                                                                       'UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health')

@@ -789,6 +789,9 @@ do
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "Class Color"
     L["PlayerFrameClassColorDesc"] = "Enable class colors for the health bar."
+    L["PlayerFrameGradientColor"] = "Gradient Color"
+    L["PlayerFrameGradientColorDesc"] =
+        "Enable gradient colors for the health bar that depend on the health percent.\nNot compatible with class colors."
     L["PlayerFrameClassIcon"] = "Class Icon Portrait"
     L["PlayerFrameClassIconDesc"] = "Enable class icon as portrait (currently disabled)"
     L["PlayerFrameBreakUpLargeNumbers"] = "Break Up Large Numbers"
