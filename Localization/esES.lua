@@ -217,6 +217,31 @@ do
     L['ActionbarDriverName'] = "Paginación"
     L['ActionbarDriverNameDesc'] = "Cambia el comportamiento de paginación de la barra de acción principal, por ejemplo, al cambiar de actitud o al entrar en sigilo.\n'Predeterminado' - sin cambios\n'Inteligente' - añade una página personalizada para el sigilo en forma felina del druida\n'Sin paginación' - desactiva toda la paginación"
 
+    L['ActionbarTargetDriverHeader'] = "Selección de objetivo"
+    L['ActionbarTargetDriverUseMouseover'] = "Usar lanzamiento por pasar el cursor"
+    L['ActionbarTargetDriverUseMouseoverDesc'] = "Cuando está activado, los botones de acción intentan apuntar a la unidad bajo el cursor del ratón." .. condMultiple({
+        {type = 'help', str = '[@mouseover, exists, help, mod:XY]'},
+        {type = 'harm', str = '[@mouseover, nodead, exists, harm, mod:XY]'},
+        {type = 'both', str = '[@mouseover, nodead, exists, mod:XY]'}
+    })
+    L['ActionbarTargetDriverMouseOverModifier'] = "Tecla para lanzar al pasar el cursor"
+    L['ActionbarTargetDriverMouseOverModifierDesc'] = "Al mantener esta tecla, permitirá lanzar hechizos al objetivo bajo el cursor, incluso si hay una unidad ya seleccionada."
+    L['ActionbarTargetDriverUseAutoAssist'] = "Usar lanzamiento con asistencia automática"
+    L['ActionbarTargetDriverUseAutoAssistDesc'] = "Cuando está activado, los botones de acción intentan lanzar automáticamente sobre el objetivo de tu objetivo si tu objetivo actual no es válido para el hechizo seleccionado." ..
+        condMultiple({
+            {type = 'help', str = '[help]target; [@targettarget, help]targettarget'},
+            {type = 'harm', str = '[harm]target; [@targettarget, harm]targettarget'}
+        })
+    L['ActionbarTargetDriverFocusCast'] = "Lanzamiento sobre objetivo focal"
+    L['ActionbarTargetDriverFocusCastDesc'] = "Cuando está activado (y la 'Tecla de lanzamiento sobre objetivo focal' está configurada), los botones de acción intentan apuntar al objetivo focal." ..
+        cond('[mod:FOCUSCAST, @focus, exists, nodead]')
+    L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "Tecla de lanzamiento sobre objetivo focal"
+    L['ActionbarTargetDriverFocusCastModifierDesc'] = "Al mantener esta tecla, permitirá lanzar hechizos sobre el objetivo focal, incluso si hay una unidad ya seleccionada."
+    L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "Autolanzamiento")
+    L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "") .. cond('[mod: SELFCAST]')
+    L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "Tecla de autolanzamiento"
+    L['ActionbarTargetDriverSelfCastModifierDesc'] = OPTION_TOOLTIP_AUTO_SELF_CAST_KEY_TEXT or ""
+  
     -- buttonTable
     L["ButtonTableActive"] = "Activo"
     L["ButtonTableActiveDesc"] = ""
@@ -226,6 +251,10 @@ do
     L["ButtonTableButtonScaleDesc"] = ""
     L["ButtonTableOrientation"] = "Orientación"
     L["ButtonTableOrientationDesc"] = "Orientación"
+    L["ButtonTableGrowthDirection"] = "Dirección de crecimiento"
+    L["ButtonTableGrowthDirectionDesc"] = "Establece la dirección en la que la barra 'crece' al usar múltiples filas(/columnas)."
+    L["ButtonTableFlyoutDirection"] = "Dirección del desplegable"
+    L["ButtonTableFlyoutDirectionDesc"] = "Establece la dirección del desplegable de hechizos."
     L["ButtonTableReverseButtonOrder"] = "Invertir orden de botones"
     L["ButtonTableReverseButtonOrderDesc"] = ""
     L["ButtonTableNumRows"] = "Número de filas"
@@ -244,6 +273,8 @@ do
     L["ButtonTableMacroNameFontSizeDesc"] = ""
     L["ButtonTableHideKeybindText"] = "Ocultar texto de asignación de teclas"
     L["ButtonTableHideKeybindTextDesc"] = ""
+    L["ButtonTableShortenKeybindText"] = "Acortar texto de tecla"
+    L["ButtonTableShortenKeybindTextDesc"] = "Acorta el texto de la tecla, por ejemplo 'sF' en lugar de 's-F' y reemplazos similares."
     L["ButtonTableKeybindFontSize"] = "Tamaño de fuente de asignación de teclas"
     L["ButtonTableKeybindFontSizeDesc"] = ""
     L["MoreOptionsHideBarArt"] = "Ocultar arte de la barra"
@@ -253,12 +284,10 @@ do
     L["MoreOptionsGryphons"] = "Grifos"
     L["MoreOptionsGryphonsDesc"] = "Grifos"
     L["MoreOptionsIconRangeColor"] = "Color del icono por alcance"
-    L["MoreOptionsIconRangeColorDesc"] =
-        "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
+    L["MoreOptionsIconRangeColorDesc"] = "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
     L["ExtraOptionsPreset"] = "Preajuste"
     L["ExtraOptionsResetToDefaultPosition"] = "Restablecer a la posición predeterminada"
-    L["ExtraOptionsPresetDesc"] =
-        "Establece la escala, anclaje, anchorparent, anchorframe, X y Y al preajuste elegido, pero no cambia ninguna otra configuración."
+    L["ExtraOptionsPresetDesc"] = "Establece la escala, anclaje, anchorparent, anchorframe, X y Y al preajuste elegido, pero no cambia ninguna otra configuración."
     L["ExtraOptionsModernLayout"] = "Diseño moderno (predeterminado)"
     L["ExtraOptionsModernLayoutDesc"] = ""
     L["ExtraOptionsClassicLayout"] = "Diseño clásico (barra lateral)"
