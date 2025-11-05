@@ -45,6 +45,15 @@ function Helper:AddCircleMask(f, port, maskTexture)
     port:AddMaskTexture(mask)
 end
 
+function Helper:GetUnitHealthPercent(unit)
+    if not unit then return 0 end
+
+    local max_health = UnitHealthMax(unit)
+    local health = UnitHealth(unit)
+
+    return health / max_health
+end
+
 function Helper:ColorGradiant(percent)
     local red, green, blue
 
@@ -52,13 +61,13 @@ function Helper:ColorGradiant(percent)
         -- From red (1,0,0) to bright amber (1,0.6,0)
         local t = percent / 0.5
         red = 1
-        green = 0.6 * t      -- green goes 0 → 0.6
+        green = 0.6 * t -- green goes 0 → 0.6
         blue = 0
     else
         -- From bright amber (1,0.6,0) to bright green (0,1,0)
         local t = (percent - 0.5) / 0.5
-        red = 1 - t          -- red fades to 0
-        green = 0.6 + 0.4 * t  -- green goes 0.6 → 1
+        red = 1 - t -- red fades to 0
+        green = 0.6 + 0.4 * t -- green goes 0.6 → 1
         blue = 0
     end
 
