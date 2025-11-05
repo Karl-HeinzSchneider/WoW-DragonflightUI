@@ -54,21 +54,44 @@ function Helper:GetUnitHealthPercent(unit)
     return health / max_health
 end
 
+-- override with _G['DragonflightUI_Helper'].UnitFrameColorGradiantTable = [...]
+-- maybe I'll add some color picker on advanced options, but for now a simple macro/addon/weakaura should be enough, if not
+-- contact me on discord!
+local UnitFrameColorGradiantTable = {
+    DFCreateColor(1.0, 0, 0), -- red
+    DFCreateColor(1.0, 0.6, 0), -- amber
+    DFCreateColor(0.3, 1.0, 0.2) -- green
+}
+Helper.UnitFrameColorGradiantTable = UnitFrameColorGradiantTable;
+
+function Helper:LerpColor(percent, colorOne, colorTwo)
+    if percent < 0 then
+        percent = 0
+    elseif percent > 1.0 then
+        percent = 1.0;
+    end
+
+    local red = colorOne.r + (colorTwo.r - colorOne.r) * percent;
+    local green = colorOne.g + (colorTwo.g - colorOne.g) * percent;
+    local blue = colorOne.b + (colorTwo.b - colorOne.b) * percent;
+
+    return red, green, blue
+end
+
 function Helper:ColorGradiant(percent)
-    local red, green, blue
+    local red, green, blue;
+
+    if percent < 0 then
+        percent = 0
+    elseif percent > 1.0 then
+        percent = 1.0;
+    end
 
     if percent <= 0.5 then
-        -- From red (1,0,0) to bright amber (1,0.6,0)
-        local t = percent / 0.5
-        red = 1
-        green = 0.6 * t -- green goes 0 → 0.6
-        blue = 0
+        red, green, blue = Helper:LerpColor(percent * 2, UnitFrameColorGradiantTable[1], UnitFrameColorGradiantTable[2])
     else
-        -- From bright amber (1,0.6,0) to bright green (0,1,0)
-        local t = (percent - 0.5) / 0.5
-        red = 1 - t -- red fades to 0
-        green = 0.6 + 0.4 * t -- green goes 0.6 → 1
-        blue = 0
+        red, green, blue = Helper:LerpColor((percent - 0.5) * 2, UnitFrameColorGradiantTable[2],
+                                            UnitFrameColorGradiantTable[3])
     end
 
     return red, green, blue
