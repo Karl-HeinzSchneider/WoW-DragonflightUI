@@ -63,6 +63,7 @@ local UnitFrameColorGradiantTable = {
     DFCreateColor(0.3, 1.0, 0.2) -- green
 }
 Helper.UnitFrameColorGradiantTable = UnitFrameColorGradiantTable;
+Helper.UnitFrameColorGradiantCutoff = 0.60; -- 0.5
 
 function Helper:LerpColor(percent, colorOne, colorTwo)
     if percent < 0 then
@@ -87,10 +88,15 @@ function Helper:ColorGradiant(percent)
         percent = 1.0;
     end
 
-    if percent <= 0.5 then
-        red, green, blue = Helper:LerpColor(percent * 2, UnitFrameColorGradiantTable[1], UnitFrameColorGradiantTable[2])
+    local cutoff = Helper.UnitFrameColorGradiantCutoff;
+    if cutoff == 0 then cutoff = 0.5 end
+    local cutoffMult = 1 / cutoff;
+
+    if percent <= cutoff then
+        red, green, blue = Helper:LerpColor(percent * cutoffMult, UnitFrameColorGradiantTable[1],
+                                            UnitFrameColorGradiantTable[2])
     else
-        red, green, blue = Helper:LerpColor((percent - 0.5) * 2, UnitFrameColorGradiantTable[2],
+        red, green, blue = Helper:LerpColor((percent - (1 - cutoff)) * cutoffMult, UnitFrameColorGradiantTable[2],
                                             UnitFrameColorGradiantTable[3])
     end
 
