@@ -640,16 +640,16 @@ do
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "Color de clase"
     L["PlayerFrameClassColorDesc"] = "Activa los colores de clase para la barra de vida"
+    L["PlayerFrameGradientColor"] = "Color del degradado"
+    L["PlayerFrameGradientColorDesc"] = "Activa colores degradados para la barra de vida que dependen del porcentaje de vida.\nNo es compatible con los colores de clase."
     L["PlayerFrameClassIcon"] = "Retrato con icono de clase"
     L["PlayerFrameClassIconDesc"] = "Activa el icono de clase como retrato (actualmente desactivado)"
     L["PlayerFrameBreakUpLargeNumbers"] = "Separar números grandes"
-    L["PlayerFrameBreakUpLargeNumbersDesc"] =
-        "Activa la separación de números grandes en el texto de estado (por ejemplo, 7588 K en lugar de 7588000)"
+    L["PlayerFrameBreakUpLargeNumbersDesc"] = "Activa la separación de números grandes en el texto de estado (por ejemplo, 7588 K en lugar de 7588000)"
     L["PlayerFrameBiggerHealthbar"] = "Barra de vida más grande"
     L["PlayerFrameBiggerHealthbarDesc"] = "Activa una barra de vida más grande"
     L["PlayerFramePortraitExtra"] = "Retrato extra"
-    L["PlayerFramePortraitExtraDesc"] =
-        "Muestra un dragón de élite, raro o jefe de mundo alrededor del marco del jugador."
+    L["PlayerFramePortraitExtraDesc"] = "Muestra un dragón de élite, raro o jefe de mundo alrededor del marco del jugador."
     L["PlayerFrameHideRedStatus"] = "Ocultar resplandor rojo en combate"
     L["PlayerFrameHideRedStatusDesc"] = "Oculta el resplandor rojo de estado en combate"
     L["PlayerFrameHideHitIndicator"] = "Ocultar indicador de golpe"
