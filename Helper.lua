@@ -49,16 +49,16 @@ function Helper:ColorGradiant(percent)
     local red, green, blue
 
     if percent <= 0.5 then
-        -- From red (1,0,0) to bright amber (1,1,0)
+        -- From red (1,0,0) to bright amber (1,0.6,0)
         local t = percent / 0.5
         red = 1
-        green = t          -- green goes 0 → 1
+        green = 0.6 * t      -- green goes 0 → 0.6
         blue = 0
     else
-        -- From bright amber (1,1,0) to bright green (0,1,0)
+        -- From bright amber (1,0.6,0) to bright green (0,1,0)
         local t = (percent - 0.5) / 0.5
-        red = 1 - t        -- red fades to 0
-        green = 1          -- full green
+        red = 1 - t          -- red fades to 0
+        green = 0.6 + 0.4 * t  -- green goes 0.6 → 1
         blue = 0
     end
 
