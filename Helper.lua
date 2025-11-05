@@ -89,7 +89,11 @@ function Helper:ColorGradiant(percent)
     end
 
     local cutoff = Helper.UnitFrameColorGradiantCutoff;
-    if cutoff == 0 then cutoff = 0.5 end
+    if cutoff <= 0 then
+        cutoff = 0.5
+    elseif cutoff > 1.0 then
+        cutoff = 0.5;
+    end
     local cutoffMult = 1 / cutoff;
 
     if percent <= cutoff then
