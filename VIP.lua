@@ -302,5 +302,25 @@ table.insert(DF.VIPTable, {
     displayTexture = 'nalany'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Mayomay',
+    -- titleAfter = ", ?",
+    realm = 'Thunderstrike',
+    guild = 'Wolfrudel',
+    guildRank = 'Sergeant Major',
+    zone = 'Stormwind City',
+    race = 'Human',
+    female = true,
+    level = '60',
+    class = 'WARLOCK',
+    powerType = 'MANA',
+    hpAmount = 100, -- 5514
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = '',
+    displayTexture = 'mayomay'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;
