@@ -1,5 +1,5 @@
-## Interface: 50501, 40402, 30405, 30404, 11508
-## Interface-Mists: 50501
+## Interface: 50502, 40402, 30405, 30404, 11508
+## Interface-Mists: 50502
 ## Interface-Cata: 40402
 ## Interface-Wrath: 30405, 30404
 ## Interface-Classic: 11508
