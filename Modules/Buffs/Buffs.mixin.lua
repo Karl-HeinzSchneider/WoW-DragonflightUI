@@ -235,7 +235,7 @@ function SubModuleMixin:Setup()
 
     --
     self:CreateBuffFrame()
-    self:AddBuffBorders()
+    -- self:AddBuffBorders()
     -- self:MoveBuffs()
 
     self:CreateNewBuffs()
