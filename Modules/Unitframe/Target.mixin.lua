@@ -23,6 +23,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        gradient = false,
         reactioncolor = false,
         classicon = false,
         breakUpLargeNumbers = true,
@@ -162,6 +163,15 @@ function SubModuleMixin:SetupOptions()
                 desc = L["TargetFrameClassColorDesc"] .. getDefaultStr('classcolor', 'target'),
                 group = 'headerStyling',
                 order = 2,
+                editmode = true
+            },
+            gradient = {
+                type = 'toggle',
+                name = L["PlayerFrameGradientColor"],
+                desc = L["PlayerFrameGradientColorDesc"] .. getDefaultStr('gradient', 'target'),
+                group = 'headerStyling',
+                order = 2.1,
+                new = true,
                 editmode = true
             },
             reactioncolor = {
@@ -982,6 +992,10 @@ function SubModuleMixin:UpdateTargetHealthBarTexture(bar, state, unit)
             bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
             local _, englishClass, _ = UnitClass(unit)
             bar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif state.gradient then
+            bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
+            local r, g, b = Helper:ColorGradiant(Helper:GetUnitHealthPercent(unit))
+            bar:SetStatusBarColor(r, g, b, 1)
         elseif state.reactioncolor then
             bar:GetStatusBarTexture():SetTexture(texBaseToT .. 'Health-Status')
             bar:SetStatusBarColor(DF:GetUnitSelectionColor(unit))

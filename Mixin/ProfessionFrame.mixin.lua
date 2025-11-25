@@ -8,6 +8,22 @@ local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
 
 local CreateColor = DFCreateColor;
 
+-- -- blizz bug, see https://eu.forums.blizzard.com/en/wow/t/profession-ui-bug-workaround/579043
+-- local GetTradeSkillInfoBlizz = GetTradeSkillInfo;
+-- local function GetTradeSkillInfo(skillIndex)
+--     -- print('~~GetTradeSkillInfo', skillIndex)
+--     -- DF:Debug(DF, '~~GetTradeSkillInfo', skillIndex)
+--     local skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+--           currentRank, maxRank, startingRank = GetTradeSkillInfoBlizz(skillIndex)
+--     if type(indentLevel) == "number" then
+--         return skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps, indentLevel, showProgressBar,
+--                currentRank, maxRank, startingRank
+--     else
+--         DF:Debug(DF, '~~FIX: GetTradeSkillInfo', skillIndex)
+--         return "fix", "header", 0, 1, nil, 0, 0, false, 0, 0, 0
+--     end
+-- end
+
 -- filter
 local DFFilter = {}
 
@@ -2541,6 +2557,8 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
     -- print('DFProfessionFrameRecipeListTemplateMixin:OnLoad()')
     CallbackRegistryMixin.OnLoad(self);
 
+    self:SetupCollapsedDatabase()
+
     self.selectedSkill = 2
     self.selectedSkillTable = {}
     -- print('self.selectedSkill', self.selectedSkill)
@@ -2557,12 +2575,14 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
         local elementData = node:GetData();
         if elementData.categoryInfo then
             local function Initializer(button, node)
-                button:Init(node);
-                -- print('initCats', elementData.id, self.selectedSkill)
+                button:Init(node, self);
+                -- print('initCats', elementData.id, elementData.collapsedKey,
+                --   self:IsCategoryCollapsed(elementData.collapsedKey))
 
                 button:SetScript("OnClick", function(button, buttonName)
                     node:ToggleCollapsed();
                     button:SetCollapseState(node:IsCollapsed());
+                    self:SetCategoryCollapsed(elementData.collapsedKey, node:IsCollapsed())
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 
                     if elementData.categoryInfo.isExpanded then
@@ -2687,10 +2707,42 @@ function DFProfessionFrameRecipeListMixin:ClearList()
     self.ScrollBox:SetDataProvider(dataProvider);
 end
 
+function DFProfessionFrameRecipeListMixin:SetupCollapsedDatabase()
+    -- self.db = DF.db:RegisterNamespace('CharacterStatsPanel', {profile = {collapsed = {}}})
+    self.db = {profile = {collapsed = {}}};
+end
+
+function DFProfessionFrameRecipeListMixin:SetCategoryCollapsed(info, collapsed)
+    -- print('>> SetCategoryCollapsed', info, collapsed)
+    local db = self.db.profile
+
+    if collapsed then
+        db.collapsed[info] = true
+    else
+        db.collapsed[info] = nil
+    end
+end
+
+function DFProfessionFrameRecipeListMixin:IsCategoryCollapsed(info)
+    -- print('<< IsCategoryCollapsed', info)
+    local db = self.db.profile
+
+    if db.collapsed[info] then
+        -- print('~true')
+        return true
+    else
+        return false
+    end
+end
+
 function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
+    -- print('------ UpdateRecipeListTradeskill()')
     local dataProvider = CreateTreeDataProvider();
 
     local parent = self:GetParent();
+    local prof = parent.ProfessionTable[parent.SelectedProfession];
+    local nameLoc = prof.nameLoc;
+    -- print(nameLoc)
 
     local filterTable = DFFilter
     local numSkills = GetNumTradeSkills()
@@ -2708,7 +2760,11 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
 
     -- recipeExpansionSum = 0;
     do
-        local data = {id = 0, categoryInfo = {name = L["ProfessionFavorites"], isExpanded = true}}
+        local data = {
+            id = 0,
+            collapsedKey = nameLoc .. '-' .. 'fav',
+            categoryInfo = {name = L["ProfessionFavorites"], isExpanded = true}
+        }
         headerCache[0] = dataProvider:Insert(data)
     end
 
@@ -2725,6 +2781,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
         if skillType == 'header' then
             local data = {
                 id = i,
+                collapsedKey = nameLoc .. '-' .. (skillName or ''),
                 skillType = skillType,
                 categoryInfo = {name = skillName, isExpanded = isExpanded == 1}
             }
@@ -2734,6 +2791,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
         elseif skillType == 'subheader' then
             local data = {
                 id = i,
+                collapsedKey = nameLoc .. '-' .. (skillName or ''),
                 skillType = skillType,
                 categoryInfo = {
                     name = skillName,
@@ -2867,20 +2925,68 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListTradeskill()
 
     -- print('UpdateRecipeList()', numSkills, dataProvider:GetSize(false))
     -- Helper:Benchmark('self.ScrollBox:SetDataProvider(dataProvider)', function()
+
+    -- self.ScrollBox:SetDataProvider(CreateTreeDataProvider());
     self.ScrollBox:SetDataProvider(dataProvider);
+    -- end, 2)
+
+    -- Helper:Benchmark('fix headerCache', function()
+    -- for k, node in ipairs(subHeaderNodesTable) do
+    --     --      
+    --     print('fix SUBheaderCache', k, node)
+    --     local elementData = node:GetData();
+    --     local collapsed = self:IsCategoryCollapsed(elementData.collapsedKey)
+    --     if not collapsed then
+    --         node:SetCollapsed(false, true, false)
+    --     else
+    --         node:SetCollapsed(true, true, false)
+    --     end
+    -- end
+
+    for k, node in ipairs(headerCache) do
+        --
+        -- print('fix headerCache', k, node)
+        -- dataProvider:Remove(node)
+
+        local elementData = node:GetData();
+        local collapsed = self:IsCategoryCollapsed(elementData.collapsedKey)
+        if not collapsed then
+            node:SetCollapsed(false, false, false)
+        else
+            node:SetCollapsed(true, false, false)
+        end
+    end
     -- end, 2)
 end
 
 function DFProfessionFrameRecipeListMixin:UpdateRecipeListCraft()
     local dataProvider = CreateTreeDataProvider();
 
+    local parent = self:GetParent();
+    local prof = parent.ProfessionTable[parent.SelectedProfession];
+    local nameLoc = prof.nameLoc;
+
     local filterTable = DFFilter
     local numSkills = GetNumCrafts()
     local headerID = 0
 
     do
-        local data = {id = 0, categoryInfo = {name = 'Favorites', isExpanded = true}}
+        local data = {
+            id = 0,
+            collapsedKey = nameLoc .. '-' .. 'fav',
+            categoryInfo = {name = 'Favorites', isExpanded = true}
+        }
         dataProvider:Insert(data)
+    end
+
+    do
+        local data = {
+            id = 0.5,
+            collapsedKey = nameLoc .. '-' .. 'recipes',
+            categoryInfo = {name = 'Recipes', isExpanded = true}
+        }
+        dataProvider:Insert(data)
+        headerID = 0.5
     end
 
     for i = 1, numSkills do
@@ -2899,7 +3005,7 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListCraft()
             -- headerID = i
         else
             -- print('--', skillName)
-            local isFavorite = self:GetParent():IsRecipeFavorite(skillName)
+            local isFavorite = parent:IsRecipeFavorite(skillName)
 
             local data = {
                 id = i,
@@ -2984,7 +3090,7 @@ function DFProfessionFrameRecipeCategoryMixin:OnLeave()
     self.Label:SetFontObject(GameFontNormal_NoShadow);
 end
 
-function DFProfessionFrameRecipeCategoryMixin:Init(node)
+function DFProfessionFrameRecipeCategoryMixin:Init(node, ref)
     local elementData = node:GetData();
 
     local categoryInfo = elementData.categoryInfo;
@@ -3001,10 +3107,16 @@ function DFProfessionFrameRecipeCategoryMixin:Init(node)
         self.LabelRight:SetText('');
     end
 
-    if categoryInfo.isExpanded then
-        node:SetCollapsed(false, true, false)
+    -- if categoryInfo.isExpanded then
+    --     node:SetCollapsed(false, true, false)
+    -- else
+    --     node:SetCollapsed(true, true, false)
+    -- end
+    local collapsed = ref:IsCategoryCollapsed(elementData.collapsedKey)
+    if not collapsed then
+        node:SetCollapsed(false, false, false)
     else
-        node:SetCollapsed(true, true, false)
+        node:SetCollapsed(true, false, false)
     end
 
     self:SetCollapseState(node:IsCollapsed());

@@ -260,18 +260,42 @@ function DragonflightUITalentsPanelMixin:Init(id)
         button.anchorFrame = anchorFrame
 
         -- events
+        local function setupTooltip()
+            -- print('setupTooltip', id, i)
+
+            local talentInfoQuery = {};
+            -- talentInfoQuery.specializationIndex = PanelTemplates_GetSelectedTab(PlayerTalentFrame); -- tab, 1-3
+            talentInfoQuery.specializationIndex = id; -- tab, 1-3
+            -- talentInfoQuery.talentIndex = self:GetID(); -- talent id
+            talentInfoQuery.talentIndex = i;
+            -- talentInfoQuery.isInspect = PlayerTalentFrame.inspect;
+            talentInfoQuery.isInspect = false;
+            -- talentInfoQuery.isPet = PlayerTalentFrame.pet;
+            talentInfoQuery.isPet = false;
+            -- talentInfoQuery.groupIndex = PlayerTalentFrame.talentGroup; -- primary/secondary 1-2
+            talentInfoQuery.groupIndex = selectedSpec; -- primary/secondary 1-2
+
+            local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery);
+            if talentInfo then
+                -- DevTools_Dump(talentInfo)
+                -- GameTooltip:SetTalent(talentInfo.talentID, PlayerTalentFrame.inspect, PlayerTalentFrame.pet,
+                --                       PlayerTalentFrame.talentGroup);
+                GameTooltip:SetTalent(talentInfo.talentID, talentInfoQuery.isInspect, talentInfoQuery.isPet,
+                                      talentInfoQuery.groupIndex);
+            end
+        end
 
         button:SetScript('OnEnter', function(self)
             --                    
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-            GameTooltip:SetTalent(id, i)
+            setupTooltip()
 
             C_Timer.After(0, function()
-                if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+                if (GameTooltip:IsOwned(self)) then setupTooltip() end
             end)
 
             C_Timer.After(1, function()
-                if (GameTooltip:IsOwned(self)) then GameTooltip:SetTalent(id, i) end
+                if (GameTooltip:IsOwned(self)) then setupTooltip() end
             end)
         end)
 
@@ -1029,6 +1053,16 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         activate:SetPoint('TOPRIGHT', PlayerTalentFrame, 'TOPRIGHT', -10, -30)
     end
 
+    if _G['PlayerTalentFrameStatusFrame'] then
+        _G['PlayerTalentFrameStatusFrame']:ClearAllPoints();
+        _G['PlayerTalentFrameStatusFrame']:Hide();
+
+        -- local status = CreateFrame('BUTTON', 'DragonflightUIPlayerTalentFrameStatusFrame', PlayerTalentFrame,
+        --                            'DFPlayerTalentFrameStatusFrame')
+        -- status:SetPoint('TOPLEFT', PlayerTalentFrame, 'TOPLEFT', 73, -40)
+        -- status:Show()
+    end
+
     -- self:RegisterEvent("ADDON_LOADED");
     self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
     -- self:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED");
@@ -1240,7 +1274,11 @@ end
 function DragonflightUIPlayerSpecActivateMixin:OnClick()
     if selectedSpec then
         --
-        SetActiveTalentGroup(selectedSpec)
+        if SetActiveTalentGroup then
+            SetActiveTalentGroup(selectedSpec)
+        elseif C_SpecializationInfo and C_SpecializationInfo.SetActiveSpecGroup then
+            C_SpecializationInfo.SetActiveSpecGroup(selectedSpec)
+        end
     end
 end
 

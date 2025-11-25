@@ -215,7 +215,59 @@ do
 
     -- stateDriver
     L['ActionbarDriverName'] = "Paginación"
-    L['ActionbarDriverNameDesc'] = "Cambia el comportamiento de paginación de la barra de acción principal, por ejemplo, al cambiar de actitud o al entrar en sigilo.\n'Predeterminado' - sin cambios\n'Inteligente' - añade una página personalizada para el sigilo en forma felina del druida\n'Sin paginación' - desactiva toda la paginación"
+    L['ActionbarDriverNameDesc'] =
+        "Cambia el comportamiento de paginación de la barra de acción principal, por ejemplo, al cambiar de actitud o al entrar en sigilo.\n'Predeterminado' - sin cambios\n'Inteligente' - añade una página personalizada para el sigilo en forma felina del druida\n'Sin paginación' - desactiva toda la paginación"
+
+    -- targetStateDriver
+    L["ActionbarTargetDriverConditionalFormat"] = "\n\n(This is equivalent to the macro conditional: |cff8080ff%s|r)\n"
+    L["ActionbarTargetDriverMultipleConditionalFormat"] =
+        "\n\n(This is equivalent to the following macro conditional (depending on the |cfffffffftype|r of spell): %s)\n"
+
+    local function cond(str)
+        return string.format(L["ActionbarTargetDriverConditionalFormat"], str)
+    end
+
+    local function condMultiple(t)
+        local str = '';
+
+        for k, v in ipairs(t) do
+            --
+            str = string.format('%s%s', str, string.format('\n(|cffffffff%s|r) |cff8080ff%s|r', v.type, v.str))
+        end
+
+        return string.format(L["ActionbarTargetDriverMultipleConditionalFormat"], str)
+    end
+
+    L['ActionbarTargetDriverHeader'] = "Selección de objetivo"
+    L['ActionbarTargetDriverUseMouseover'] = "Usar lanzamiento por pasar el cursor"
+    L['ActionbarTargetDriverUseMouseoverDesc'] =
+        "Cuando está activado, los botones de acción intentan apuntar a la unidad bajo el cursor del ratón." ..
+            condMultiple({
+                {type = 'help', str = '[@mouseover, exists, help, mod:XY]'},
+                {type = 'harm', str = '[@mouseover, nodead, exists, harm, mod:XY]'},
+                {type = 'both', str = '[@mouseover, nodead, exists, mod:XY]'}
+            })
+    L['ActionbarTargetDriverMouseOverModifier'] = "Tecla para lanzar al pasar el cursor"
+    L['ActionbarTargetDriverMouseOverModifierDesc'] =
+        "Al mantener esta tecla, permitirá lanzar hechizos al objetivo bajo el cursor, incluso si hay una unidad ya seleccionada."
+    L['ActionbarTargetDriverUseAutoAssist'] = "Usar lanzamiento con asistencia automática"
+    L['ActionbarTargetDriverUseAutoAssistDesc'] =
+        "Cuando está activado, los botones de acción intentan lanzar automáticamente sobre el objetivo de tu objetivo si tu objetivo actual no es válido para el hechizo seleccionado." ..
+            condMultiple({
+                {type = 'help', str = '[help]target; [@targettarget, help]targettarget'},
+                {type = 'harm', str = '[harm]target; [@targettarget, harm]targettarget'}
+            })
+    L['ActionbarTargetDriverFocusCast'] = "Lanzamiento sobre objetivo focal"
+    L['ActionbarTargetDriverFocusCastDesc'] =
+        "Cuando está activado (y la 'Tecla de lanzamiento sobre objetivo focal' está configurada), los botones de acción intentan apuntar al objetivo focal." ..
+            cond('[mod:FOCUSCAST, @focus, exists, nodead]')
+    L['ActionbarTargetDriverFocusCastModifier'] = FOCUS_CAST_KEY_TEXT or "Tecla de lanzamiento sobre objetivo focal"
+    L['ActionbarTargetDriverFocusCastModifierDesc'] =
+        "Al mantener esta tecla, permitirá lanzar hechizos sobre el objetivo focal, incluso si hay una unidad ya seleccionada."
+    L['ActionbarTargetDriverSelfCast'] = (SELF_CAST or "Autolanzamiento")
+    L['ActionbarTargetDriverSelfCastDesc'] = (OPTION_TOOLTIP_AUTO_SELF_CAST or "") .. cond('[mod: SELFCAST]')
+    L['ActionbarTargetDriverSelfCastModifier'] = AUTO_SELF_CAST_KEY_TEXT or "Tecla de autolanzamiento"
+    L['ActionbarTargetDriverSelfCastModifierDesc'] = OPTION_TOOLTIP_AUTO_SELF_CAST_KEY_TEXT or ""
 
     -- buttonTable
     L["ButtonTableActive"] = "Activo"
@@ -226,6 +278,11 @@ do
     L["ButtonTableButtonScaleDesc"] = ""
     L["ButtonTableOrientation"] = "Orientación"
     L["ButtonTableOrientationDesc"] = "Orientación"
+    L["ButtonTableGrowthDirection"] = "Dirección de crecimiento"
+    L["ButtonTableGrowthDirectionDesc"] =
+        "Establece la dirección en la que la barra 'crece' al usar múltiples filas(/columnas)."
+    L["ButtonTableFlyoutDirection"] = "Dirección del desplegable"
+    L["ButtonTableFlyoutDirectionDesc"] = "Establece la dirección del desplegable de hechizos."
     L["ButtonTableReverseButtonOrder"] = "Invertir orden de botones"
     L["ButtonTableReverseButtonOrderDesc"] = ""
     L["ButtonTableNumRows"] = "Número de filas"
@@ -244,6 +301,9 @@ do
     L["ButtonTableMacroNameFontSizeDesc"] = ""
     L["ButtonTableHideKeybindText"] = "Ocultar texto de asignación de teclas"
     L["ButtonTableHideKeybindTextDesc"] = ""
+    L["ButtonTableShortenKeybindText"] = "Acortar texto de tecla"
+    L["ButtonTableShortenKeybindTextDesc"] =
+        "Acorta el texto de la tecla, por ejemplo 'sF' en lugar de 's-F' y reemplazos similares."
     L["ButtonTableKeybindFontSize"] = "Tamaño de fuente de asignación de teclas"
     L["ButtonTableKeybindFontSizeDesc"] = ""
     L["MoreOptionsHideBarArt"] = "Ocultar arte de la barra"
@@ -444,6 +504,12 @@ do
     L["ExtraOptionsResetToDefaultStyle"] = "Restablecer al estilo predeterminado"
     L["ExtraOptionsPresetStyleDesc"] =
         "Restablece todas las configuraciones que cambian el estilo de la barra de lanzamiento, pero no modifica ninguna otra configuración."
+
+    -- mirror timer
+    L["CastbarMirrorTimerName"] = "Temporizador espejo del jugador"
+    L["CastbarMirrorTimerNameDesc"] = ""
+    L["CastbarMirrorHideBlizzard"] = "Ocultar Blizzard"
+    L["CastbarMirrorHideBlizzardDesc"] = "Oculta el temporizador espejo predeterminado de Blizzard."
 end
 
 -- Minimap
@@ -460,6 +526,9 @@ do
     L["MinimapSkinMinimapButtons"] = "Personalizar botones del minimapa"
     L["MinimapSkinMinimapButtonsDesc"] =
         "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
+    L["MinimapSkinMinimapHideButtons"] = "Ocultar botones del minimapa"
+    L["MinimapSkinMinimapHideButtonsDesc"] = "Oculta los botones del minimapa cuando el cursor no está sobre él." ..
+                                                 "\n\nNota: solo funciona con botones que usan LibDBIcon"
     L["MinimapZonePanelPosition"] = "Posición del panel de zona"
     L["MinimapZonePanelPositionDesc"] =
         "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
@@ -548,6 +617,45 @@ do
     L["TooltipShowItemID"] = "Mostrar ID del objeto"
     L["TooltipShowItemIDDesc"] = ""
 
+    -- backdrop
+    L["TooltipBackdropHeader"] = "Fondo"
+    L["TooltipBackdropHeaderDesc"] = ""
+    L["TooltipBackdropColor"] = "Color de fondo"
+    L["TooltipBackdropColorDesc"] = ""
+    L["TooltipBackdropAlpha"] = "Opacidad del fondo"
+    L["TooltipBackdropAlphaDesc"] = ""
+    L["TooltipBackdropCustomTexture"] = "Textura del fondo"
+    L["TooltipBackdropCustomTextureDesc"] = ""
+
+    -- border
+    L["TooltipBorderName"] = "Borde"
+    L["TooltipBorderNameDesc"] = ""
+    L["TooltipBorderCustomTexture"] = "Textura del borde"
+    L["TooltipBorderCustomTextureDesc"] = ""
+    L["TooltipBorderColor"] = "Color del borde"
+    L["TooltipBorderColorDesc"] = ""
+    L["TooltipBorderAlpha"] = "Opacidad del borde"
+    L["TooltipBorderAlphaDesc"] = ""
+
+    L["TooltipBorderInsetLeft"] = "Margen izquierdo"
+    L["TooltipBorderInsetRight"] = "Margen derecho"
+    L["TooltipBorderInsetTop"] = "Margen superior"
+    L["TooltipBorderInsetBottom"] = "Margen inferior"
+    L["TooltipBorderInsetDesc"] = ""
+
+    L["TooltipBorderInsetEdgeSize"] = "Tamaño del borde"
+    L["TooltipBorderInsetEdgeSizeDesc"] = ""
+
+    -- statusbar
+    L["TooltipUnitHealthbarName"] = "Barra de estado"
+    L["TooltipUnitHealthbarNameDesc"] = ""
+    L["TooltipUnitHealthbar"] = "Mostrar barra de vida"
+    L["TooltipUnitHealthbarDesc"] = ""
+    L["TooltipUnitHealthbarHeight"] = "Altura de la barra de vida"
+    L["TooltipUnitHealthbarHeightDesc"] = "."
+    L["TooltipUnitHealthbarText"] = "Mostrar texto de la barra de vida"
+    L["TooltipUnitHealthbarTextDesc"] = ""
+
     -- unittooltip
     L["TooltipUnitTooltip"] = "Información de la unidad"
     L["TooltipUnitTooltipDesc"] = ""
@@ -592,6 +700,9 @@ do
     L["PlayerFrameStyle"] = L["ButtonTableStyle"]
     L["PlayerFrameClassColor"] = "Color de clase"
     L["PlayerFrameClassColorDesc"] = "Activa los colores de clase para la barra de vida"
+    L["PlayerFrameGradientColor"] = "Color del degradado"
+    L["PlayerFrameGradientColorDesc"] =
+        "Activa colores degradados para la barra de vida que dependen del porcentaje de vida.\nNo es compatible con los colores de clase."
     L["PlayerFrameClassIcon"] = "Retrato con icono de clase"
     L["PlayerFrameClassIconDesc"] = "Activa el icono de clase como retrato (actualmente desactivado)"
     L["PlayerFrameBreakUpLargeNumbers"] = "Separar números grandes"
@@ -611,6 +722,33 @@ do
     L["PlayerFrameHideAlternatePowerBar"] = "Ocultar barra de poder alternativo de druida"
     L["PlayerFrameHideAlternatePowerBarDesc"] =
         "Oculta la barra de poder alternativo de druida (barra de maná en forma de oso/gato)."
+    L["PlayerFrameHideRestingGlow"] = "Ocultar iluminación de descanso"
+    L["PlayerFrameHideRestingGlowDesc"] = "Oculta la iluminación de estado de descanso en el marco del jugador."
+    L["PlayerFrameHideRestingIcon"] = "Ocultar icono de descanso"
+    L["PlayerFrameHideRestingIconDesc"] = "Oculta el icono de descanso en el marco del jugador."
+    L["PlayerFrameHidePVP"] = "Ocultar icono JcJ"
+    L["PlayerFrameHidePVPDesc"] = "Oculta el icono de JcJ."
+
+    local note =
+        "\n\nNOTA: Las texturas personalizadas usan el color de barra predeterminado de Blizzard.\nSi deseas algo diferente, debes modificarlo mediante código.\n"
+    L["PlayerFrameCustomHealthbarTexture"] = "Textura de la barra de vida"
+    L["PlayerFrameCustomHealthbarTextureDesc"] =
+        "Cambia la textura de la barra de vida por una personalizada de LibSharedMedia." .. note
+    L["PlayerFrameCustomPowerbarTexture"] = "Textura de la barra de poder"
+    L["PlayerFrameCustomPowerbarTextureDesc"] =
+        "Cambia la textura de la barra de poder por una personalizada de LibSharedMedia." .. note
+
+    -- Player Secondary< Res
+    L["PlayerSecondaryResName"] = "Recurso secundario del jugador"
+    L["PlayerSecondaryResNameDesc"] = ""
+
+    -- TotemFrame
+    L["PlayerTotemFrameName"] = "Marco de tótems del jugador"
+    L["PlayerTotemFrameNameDesc"] = ""
+
+    -- PowerBar_Alt
+    L["PowerBarAltName"] = "Barra de poder alternativa del jugador"
+    L["PowerBarAltNameDesc"] = ""
 
     -- Target
     L["TargetFrameDesc"] = "Configuraciones del marco del objetivo"

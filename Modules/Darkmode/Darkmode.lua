@@ -8,6 +8,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 Mixin(Module, DragonflightUIModulesMixin)
 
 local CreateColor = DFCreateColor
+local CreateColorFromRGBHexString = DFCreateColorFromRGBHexString
 
 local defaults = {
     profile = {
@@ -414,6 +415,8 @@ function Module:UpdateMinimap(state)
             Module:UpdateMinimapButton(btn)
         end
     end
+
+    if _G['MiniMapBattlefieldFrame'] then Module:UpdateMinimapButton(_G['MiniMapBattlefieldFrame']) end
 
     if DF.Era then
         -- if _G['LFGMinimapFrameBorder'] then

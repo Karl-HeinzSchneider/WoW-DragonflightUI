@@ -141,7 +141,7 @@ function Module:RefreshOptionScreens()
     end
     self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
     PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
-    PetFrame.DFEditModeSelection:RefreshOptionScreen();
+    self.SubPet.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
     -- self.SubRaid.PreviewRaid.DFEditModeSelection:RefreshOptionScreen();
     self.SubTarget.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
     self.SubTargetOfTarget.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
@@ -349,12 +349,7 @@ function Module:AddPortraitMasks()
     end
 
     local function addMask(f, port, maskTexture)
-        if not f or not port then return end
-        if not maskTexture then maskTexture = circularMaskTexture end
-        local mask = f:CreateMaskTexture()
-        mask:SetAllPoints(port)
-        mask:SetTexture(maskTexture, 'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        port:AddMaskTexture(mask)
+        Helper:AddCircleMask(f, port, maskTexture)
     end
 
     addMask(TargetFrame, TargetFramePortrait)

@@ -50,10 +50,10 @@ function DragonflightUIEditModePreviewTargetMixin:SetUnit(unit)
                                                     unit.displayTexture)
 
             if not self.TargetFramePortrait.CircleMask then
-                local circleMask = self:CreateMaskTexture()
-                circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask')
-                circleMask:SetPoint('TOPLEFT', self.TargetFramePortrait, 'TOPLEFT', 1, -1)
-                circleMask:SetPoint('BOTTOMRIGHT', self.TargetFramePortrait, 'BOTTOMRIGHT', -1, 1)
+                local circleMask = self:CreateMaskTexture('DFCircularMask')
+                circleMask:SetAllPoints(self.TargetFramePortrait)
+                circleMask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask',
+                                      'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
                 self.TargetFramePortrait:AddMaskTexture(circleMask)
                 self.TargetFramePortrait.CircleMask = circleMask;
             end
@@ -117,7 +117,7 @@ end
 function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    local textureFrame = CreateFrame('Frame', 'DragonflightUITargetFrameTextureFrame', self)
+    local textureFrame = CreateFrame('Frame', self:GetName() .. 'TextureFrame', self)
     textureFrame:SetPoint('CENTER')
     textureFrame:SetFrameLevel(3)
     self.TextureFrame = textureFrame
@@ -134,7 +134,7 @@ function DragonflightUIEditModePreviewTargetMixin:SetupFrame()
     -- border:SetPoint('LEFT', self, 'LEFT', 0, -32.5 + 10)
     -- self.TargetFrameBorder = border
 
-    local portrait = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetFramePortrait')
+    local portrait = self:CreateTexture(self:GetName() .. 'Portrait')
     portrait:SetDrawLayer('BACKGROUND', 0)
     portrait:SetSize(56, 56)
     -- local CorrectionY = -3
@@ -351,13 +351,13 @@ end
 function DragonflightUIEditModePreviewTargetOfTargetMixin:SetupFrame()
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframe'
 
-    local textureFrame = CreateFrame('Frame', 'DragonflightUITargetOfTargetTextureFrame', self)
+    local textureFrame = CreateFrame('Frame', self:GetName() .. 'TextureFrame', self)
     textureFrame:SetPoint('CENTER')
     textureFrame:SetFrameLevel(3)
     self.TextureFrame = textureFrame
     local totDelta = 1
 
-    local portrait = self.TextureFrame:CreateTexture('DragonflightUIPreviewTargetOfTargetFramePortrait')
+    local portrait = self:CreateTexture(self:GetName() .. 'Portrait')
     portrait:SetDrawLayer('BACKGROUND', 0)
     portrait:SetSize(37, 37)
 

@@ -91,7 +91,7 @@ UI_shared.xsd">
 					</Anchors>
 				</FontString>
 				<FontString parentKey="CastTimeTextCompact" inherits="GameFontHighlightSmall" justifyH="RIGHT">
-					<Size x="70" y="16" />
+					<Size y="16" />
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-7" y="-15" />
 					</Anchors>

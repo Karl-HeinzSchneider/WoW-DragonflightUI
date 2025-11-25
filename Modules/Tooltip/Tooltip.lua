@@ -29,12 +29,12 @@ local defaults = {
             mouseY = 8,
             -- backdrop
             backdropColor = CreateColor(0 / 255, 0 / 255, 0 / 255):GenerateHexColorNoAlpha(),
-            backdropAlpha = 1.0,
+            backdropAlpha = 0.9,
             customBackdropTexture = 'Default',
-            insetLeft = 4,
-            insetRight = 4,
-            insetTop = 4,
-            insetBottom = 4,
+            insetLeft = 3,
+            insetRight = 3,
+            insetTop = 3,
+            insetBottom = 3,
             -- border
             backdropBorderColor = CreateColor(178 / 255, 178 / 255, 178 / 255):GenerateHexColorNoAlpha(),
             backdropBorderAlpha = 1.0,
@@ -805,7 +805,7 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
     local state = Module.db.profile.general;
 
     self.DFDefaultAnchor = false;
-    Module:UpdateFrameSize(self)
+    if Module.TooltipsRefTable[self] then Module:UpdateFrameSize(self) end
 
     -- spells
     if state.anchorSpells then
@@ -925,6 +925,8 @@ function Module:UpdateFrameSize(self)
             bar:GetStatusBarTexture():SetTexture(customTex)
         end
     end
+
+    self:SetScale(state.scale)
 end
 
 function Module:AddBackdrops()
@@ -935,10 +937,11 @@ function Module:AddBackdrops()
         ItemRefShoppingTooltip2, FriendsTooltip, self.PreviewTooltip
     }
     Module.Tooltips = tooltips
+    Module.TooltipsRefTable = {}
 
     for k, v in ipairs(tooltips) do
         v:SetScale(state.scale)
-
+        Module.TooltipsRefTable[v] = true;
         if not v.SetBackdrop then
             -- 
             -- print(v:GetName(), 'no Setbackdrop')
@@ -961,7 +964,8 @@ function Module:SetDefaultBackdrop(self)
     local state = Module.db.profile.general;
 
     local backdrop = {
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        -- bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        bgFile = "Interface\\Collections\\CollectionsBackgroundTile",
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
         edgeSize = 14,
         insets = {left = 4, right = 4, top = 4, bottom = 4}
@@ -1115,8 +1119,16 @@ function Module:HookStatusBar()
     GameTooltip:HookScript('OnShow', function(self)
         --
         -- print('GameTooltip OnShow')
+        local item = self:GetItem()
+        if item then return end
+        -- print('noitem')
         Module:UpdateFrameSize(self)
         if self.DFDefaultAnchor then Module:UpdateDefaultAnchor(self) end
+    end)
+
+    GameTooltip:HookScript('OnHide', function(self)
+        -- print('OnHide')
+        self.DFDefaultAnchor = false;
     end)
 
     -- if (SharedTooltip_SetBackdropStyle) then
@@ -1228,7 +1240,7 @@ function Module:CheckForRecipe(self, classID)
 end
 
 function Module:OnTooltipSetItem(self)
-    -- print('Module:OnTooltipSetItem(self)')
+    -- print('Module:OnTooltipSetItem(self)', self:GetName(), self:GetItem())
     -- print('SetItemQuality', tip:GetName())
     local state = Module.db.profile.general;
 

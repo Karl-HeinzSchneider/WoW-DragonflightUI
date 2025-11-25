@@ -1,7 +1,12 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
 ---@diagnostic disable: undefined-global
 ---@class DragonflightUI
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+
+local eraFix = true;
+eraFix = DF.API.Version.IsClassic and (DF.API.Version.InterfaceVersion >= 11508)
 
 DragonflightUIMixin = {}
 
@@ -755,34 +760,87 @@ function DragonflightUIMixin:ChangeDressupFrame()
 
     frame:SetSize(354, 447 + 6)
 
+    if eraFix then
+        frame:SetSize(354 - 20 - 2, 447 + 6 - 28 - 1)
+
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+    end
+
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
 
     DragonflightUIMixin:UIPanelCloseButton(DressUpFrameCloseButton)
     DressUpFrameCloseButton:SetPoint('TOPRIGHT', DressUpFrame, 'TOPRIGHT', 1, 0)
 
-    DressUpFrameCancelButton:SetPoint('BOTTOMRIGHT', DressUpFrame, 'BOTTOMRIGHT', -7, 14)
+    DressUpFrameCancelButton:ClearAllPoints()
+    DressUpFrameCancelButton:SetPoint('BOTTOMRIGHT', DressUpFrame, 'BOTTOMRIGHT', -7, 5)
 
+    local container = DressUpFrame.TitleContainer;
     DressUpFrameTitleText:ClearAllPoints()
-    DressUpFrameTitleText:SetPoint('TOP', DressUpFrame, 'TOP', 0, -5)
-    DressUpFrameTitleText:SetPoint('LEFT', DressUpFrame, 'LEFT', 60, 0)
-    DressUpFrameTitleText:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -60, 0)
+    -- DressUpFrameTitleText:SetPoint('TOP', container, 'TOP', 0, 0)
+    -- DressUpFrameTitleText:SetPoint('LEFT', container, 'LEFT', 60, 0)
+    -- DressUpFrameTitleText:SetPoint('RIGHT', container, 'RIGHT',-30, 0)
+    -- DressUpFrameTitleText:SetParent(container)
+
+    local newTitle = container:CreateFontString('DFDressUpFrameTitleText', 'OVERLAY', 'GameFontHighlight')
+    newTitle:SetText(DRESSUP_FRAME)
+    newTitle:SetHeight(14)
+    newTitle:SetPoint('TOP', DressUpFrame, 'TOP', 0, -4)
+    newTitle:SetPoint('LEFT', DressUpFrame, 'LEFT', 60, 0)
+    newTitle:SetPoint('RIGHT', DressUpFrame, 'RIGHT', -30, 0)
+
+    DressUpFrameDescriptionText:ClearAllPoints()
+    DressUpFrameDescriptionText:SetPoint('TOP', newTitle, 'BOTTOM', 6, -6)
 
     DressUpModelFrame:ClearAllPoints()
     DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
     DressUpModelFrame:SetHeight(351 - 18)
 
-    do
-        local inset = CreateFrame('Frame', 'DragonflightUIInset', DressUpModelFrame, 'InsetFrameTemplate')
-        inset:ClearAllPoints()
-        inset:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
-        inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 0)
-        -- inset:SetFrameLevel(1)
+    if eraFix then
+        --
+        DressUpModelFrame:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19 - 10 - 2, -75 + 10 + 1)
+    end
 
-        _G[inset:GetName() .. 'Bg']:Hide()
+    do
+        -- local inset = CreateFrame('Frame', 'DragonflightUIInset', DressUpModelFrame, 'InsetFrameTemplate')
+        -- inset:ClearAllPoints()
+        -- inset:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
+        -- inset:SetPoint('BOTTOMRIGHT', DressUpModelFrame, 'BOTTOMRIGHT', 0, 0)
+        -- -- inset:SetFrameLevel(1)
+
+        -- _G[inset:GetName() .. 'Bg']:Hide()
     end
 
     DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19, -75)
+    if eraFix then
+        --
+        DressUpFrameBackgroundTopLeft:ClearAllPoints()
+        -- DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpFrame, 'TOPLEFT', 19 - 10 - 1, -75 + 10)
+        DressUpFrameBackgroundTopLeft:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, 0)
+    end
+
+    local rotateBtn = DressUpModelFrameRotateRightButton
+    if rotateBtn then
+        rotateBtn:ClearAllPoints()
+        rotateBtn:SetPoint('TOPLEFT', DressUpModelFrame, 'TOPLEFT', 0, -4)
+    end
 
     do
         local port = DressUpFramePortrait
@@ -833,7 +891,232 @@ function DragonflightUIMixin:EnhanceDressupFrame()
     end)
 end
 
+function DragonflightUIMixin:ChangeInspectFrameEra()
+    if not InspectFrame or InspectFrame.DFHooked then return end
+
+    InspectFrame:SetSize(336, 424)
+
+    local frame = InspectFrame
+    if true then
+
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+    end
+
+    DragonflightUIMixin:AddNineSliceTextures(InspectFrame, true)
+    DragonflightUIMixin:ButtonFrameTemplateNoPortrait(InspectFrame)
+
+    DragonflightUIMixin:UIPanelCloseButton(InspectFrameCloseButton)
+    InspectFrameCloseButton:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', 1, 0)
+
+    do
+        local port = InspectFramePortrait
+        port:SetSize(62, 62)
+        port:ClearAllPoints()
+        port:SetPoint('TOPLEFT', -5, 7)
+        port:SetDrawLayer('OVERLAY', 6)
+
+        Helper:AddCircleMask(InspectFrame, InspectFramePortrait)
+
+        InspectFrame.PortraitFrame = InspectFrame:CreateTexture('PortraitFrame')
+        local pp = InspectFrame.PortraitFrame
+        pp:SetTexture(base .. 'UI-Frame-PortraitMetal-CornerTopLeft')
+        pp:SetTexCoord(0.0078125, 0.0078125, 0.0078125, 0.6171875, 0.6171875, 0.0078125, 0.6171875, 0.6171875)
+        pp:SetSize(84, 84)
+        pp:ClearAllPoints()
+        pp:SetPoint('CENTER', port, 'CENTER', 0, 0)
+        pp:SetDrawLayer('OVERLAY', 7)
+
+        InspectFramePortraitFrame:Hide()
+    end
+
+    DragonflightUIMixin:FrameBackgroundSolid(InspectFrame, true)
+
+    do
+        local name = _G['InspectNameFrame']
+        name:ClearAllPoints()
+        name:SetPoint('TOP', InspectFrame, 'TOP', 0, -5)
+        name:SetPoint('LEFT', InspectFrame, 'LEFT', 60, 0)
+        name:SetPoint('RIGHT', InspectFrame, 'RIGHT', -60, 0)
+
+        local level = InspectLevelText
+        level:ClearAllPoints()
+        level:SetPoint('TOP', name, 'BOTTOM', 0, -10)
+        level:SetDrawLayer('ARTWORK')
+    end
+
+    do
+        local model = _G['InspectModelFrame']
+        model:ClearAllPoints()
+        model:SetPoint('TOPLEFT', InspectPaperDollFrame, 'TOPLEFT', 52, -74 + 10)
+
+        local inset = CreateFrame('Frame', 'DragonflightUICharacterFrameInset', InspectPaperDollFrame,
+                                  'InsetFrameTemplate')
+        inset:ClearAllPoints()
+        inset:SetPoint('TOPLEFT', model, 'TOPLEFT', 0, 0)
+        inset:SetPoint('BOTTOMRIGHT', model, 'BOTTOMRIGHT', 0, 8)
+
+        local tl = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'TopLeft', 'BACKGROUND')
+        tl:SetSize(212, 245)
+        tl:SetPoint('TOPLEFT', 0, 0)
+        tl:SetTexCoord(0.171875, 1, 0.0392156862745098, 1)
+
+        local tr = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'TopRight', 'BACKGROUND')
+        tr:SetSize(19, 245)
+        tr:SetPoint('TOPLEFT', tl, 'TOPRIGHT')
+        tr:SetTexCoord(0, 0.296875, 0.0392156862745098, 1)
+
+        local delta = 56
+
+        local bl = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'BotLeft', 'BACKGROUND')
+        bl:SetSize(212, 128 - delta)
+        bl:SetPoint('TOPLEFT', tl, 'BOTTOMLEFT')
+        bl:SetTexCoord(0.171875, 1, 0, 1 - delta / 128)
+
+        local br = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'BotRight', 'BACKGROUND')
+        br:SetSize(19, 128 - delta)
+        br:SetPoint('TOPLEFT', tl, 'BOTTOMRIGHT')
+        br:SetTexCoord(0, 0.296875, 0, 1 - delta / 128)
+
+        local overlay = model:CreateTexture('DragonflightUIInspectModelFrame' .. 'Overlay', 'BORDER')
+        overlay:SetPoint('TOPLEFT', tl, 'TOPLEFT', 0, 0)
+        overlay:SetPoint('BOTTOMRIGHT', br, 'BOTTOMRIGHT', 0, 0)
+        overlay:SetColorTexture(0, 0, 0)
+
+        _G['InspectModelFrameBackgroundOverlay']:Hide()
+        _G['InspectModelFrameBackgroundTopLeft']:Hide()
+        _G['InspectModelFrameBackgroundTopRight']:Hide()
+        _G['InspectModelFrameBackgroundBotLeft']:Hide()
+        _G['InspectModelFrameBackgroundBotRight']:Hide()
+
+        -- overlay:Hide()     
+
+        local backgroundDesaturate = function(on)
+            tl:SetDesaturated(on);
+            tr:SetDesaturated(on);
+            bl:SetDesaturated(on);
+            br:SetDesaturated(on);
+        end
+
+        local updateBackground = function(unit)
+            -- print('updateBackground', unit, UnitRace(unit))
+            local race, fileName = UnitRace(unit);
+            if not fileName then return end
+            local texture = DressUpTexturePath(fileName);
+            tl:SetTexture(texture .. tostring(1));
+            tr:SetTexture(texture .. tostring(2));
+            bl:SetTexture(texture .. tostring(3));
+            br:SetTexture(texture .. tostring(4));
+
+            if (strupper(fileName) == "BLOODELF") then
+                overlay:SetAlpha(0.8);
+            elseif (strupper(fileName) == "NIGHTELF") then
+                overlay:SetAlpha(0.6);
+            elseif (strupper(fileName) == "SCOURGE") then
+                overlay:SetAlpha(0.3);
+            elseif (strupper(fileName) == "TROLL" or strupper(fileName) == "ORC") then
+                overlay:SetAlpha(0.6);
+            elseif (strupper(fileName) == "WORGEN") then
+                overlay:SetAlpha(0.5);
+            elseif (strupper(fileName) == "GOBLIN") then
+                overlay:SetAlpha(0.6);
+            else
+                overlay:SetAlpha(0.7);
+            end
+        end
+
+        InspectFrame:HookScript('OnEvent', function(self, event, unit, ...)
+            --  
+            -- print('hookEvent', self:GetName(), event, unit, ...)
+            if event == 'INSPECT_READY' then
+                if InspectFrame and InspectFrame.unit then updateBackground(InspectFrame.unit) end
+                -- backgroundDesaturate(true)
+            end
+        end)
+    end
+
+    -- honor Era
+    if InspectHonorFrame then
+        local regions = {InspectHonorFrame:GetRegions()}
+        for k, child in ipairs(regions) do
+            --     
+            if child:GetObjectType() == 'Texture' then
+                local layer, layerNr = child:GetDrawLayer()
+                -- print(layer, layerNr, child:GetTexture())
+                if layer == 'BACKGROUND' then child:Hide() end
+                -- if layer == 'ARTWORK' then child:Hide() end
+            end
+        end
+        local dx = -2
+        local dy = 4
+
+        InspectHonorFrame:SetPoint('TOPLEFT', InspectFrame, 'TOPLEFT', 0 + dx, 0 + dy)
+        InspectHonorFrame:SetPoint('BOTTOMRIGHT', InspectFrame, 'BOTTOMRIGHT', 0 + dx, 0 + dy)
+
+        local deltaTitle = 6;
+
+        _G['InspectHonorFrameCurrentPVPTitle']:SetPoint('TOP', InspectHonorFrame, 'TOP', -21.33, -83 + deltaTitle)
+
+        hooksecurefunc('InspectHonorFrame_Update', function()
+            -- Recenter rank text
+            InspectHonorFrameCurrentPVPTitle:SetPoint("TOP", "InspectHonorFrame", "TOP",
+                                                      -InspectHonorFrameCurrentPVPRank:GetWidth() / 2, -83 + deltaTitle);
+        end)
+    end
+
+    UIPanelWindows["InspectFrame"] = {
+        whileDead = 1,
+        height = InspectFrame:GetHeight(),
+        width = InspectFrame:GetWidth(),
+        bottomClampOverride = 152,
+        xoffset = 0,
+        yoffset = 0,
+        pushable = 3,
+        area = "left"
+    }
+
+    do
+        local firstTab = _G['InspectFrameTab1']
+        firstTab:ClearAllPoints()
+        firstTab:SetPoint('TOPLEFT', InspectFrame, 'BOTTOMLEFT', 12, 1)
+
+        for i = 1, 4 do
+            --
+            local tab = _G['InspectFrameTab' .. i]
+
+            if tab then
+                DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab)
+
+                if i == 1 then
+                    tab.DFFirst = true
+                elseif i > 1 then
+                    tab.DFChangePoint = true
+                end
+            end
+        end
+    end
+
+    InspectFrame.DFHooked = true
+end
+
 function DragonflightUIMixin:ChangeInspectFrame()
+    -- print('ChangeInspectFrame')
     if not InspectFrame or InspectFrame.DFHooked then return end
     if DF.API.Version.IsMoP then return end -- TODO
 
@@ -888,7 +1171,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
     end
 
     -- talent
-    if InspectTalentFrame then
+    if InspectTalentFrame and not DF.API.Version.IsMoP then
         local regions = {InspectTalentFrame:GetRegions()}
         for k, child in ipairs(regions) do
             --     
@@ -914,7 +1197,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
         end
 
         local scroll = InspectTalentFrameScrollFrame
-        scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66)
+        if scroll then scroll:SetPoint('TOPRIGHT', InspectFrame, 'TOPRIGHT', -32, -66) end
 
         for i = 1, 28 do
             --
@@ -946,6 +1229,8 @@ function DragonflightUIMixin:ChangeInspectFrame()
         port:ClearAllPoints()
         port:SetPoint('TOPLEFT', -5, 7)
         port:SetDrawLayer('OVERLAY', 6)
+
+        Helper:AddCircleMask(InspectFrame, InspectFramePortrait)
 
         InspectFrame.PortraitFrame = InspectFrame:CreateTexture('PortraitFrame')
         local pp = InspectFrame.PortraitFrame
@@ -1090,7 +1375,7 @@ function DragonflightUIMixin:ChangeInspectFrame()
         firstTab:ClearAllPoints()
         firstTab:SetPoint('TOPLEFT', InspectFrame, 'BOTTOMLEFT', 12, 1)
 
-        for i = 1, 3 do
+        for i = 1, 4 do
             --
             local tab = _G['InspectFrameTab' .. i]
 
@@ -2277,7 +2562,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
     frame:SetSize(338, 496)
     greeting:SetSize(338, 496)
 
-    if DF.API.Version.IsMoP then
+    if DF.API.Version.IsMoP or eraFix then
         local slice = frame.NineSlice
 
         slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
@@ -2320,7 +2605,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
     do
         local scroll = greeting.ScrollBox
         scroll:SetSize(300, 403)
-        if DF.API.Version.IsMoP then
+        if DF.API.Version.IsMoP or eraFix then
             scroll:SetPoint('TOPLEFT', frame, 'TOPLEFT', 8, -65)
         else
             scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
@@ -2336,7 +2621,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
 
         local anchorFrame;
 
-        if DF.API.Version.IsMoP then
+        if DF.API.Version.IsMoP or DF.API.Version.IsClassic then
             anchorFrame = frame;
 
             local r = {frame:GetRegions()}
@@ -3446,7 +3731,9 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
             tab:SetScript('OnEnter', function(self)
                 --
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(), ''), 1.0, 1.0, 1.0);
+                GameTooltip:SetText(MicroButtonTooltipText(tab:GetText(),
+                                                           'CLICK DragonflightUISpellbookProfessionFrameToggleButton:Keybind'),
+                                    1.0, 1.0, 1.0);
             end)
         elseif i == 3 then
             tab.DFChangePoint = true
@@ -3529,6 +3816,9 @@ function DragonflightUIMixin:SpellbookEraProfessions()
         local frame = self:GetFrameRef("ProfessionFrame");
         frame:Show();    
         
+        local handler = self:GetFrameRef("handler");
+        handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '')
+        
         -- local tabs = self:GetFrameRef("TabsFrame");
         -- tabs:Hide();   
     ]]);
@@ -3544,6 +3834,9 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     frame.buttonHide:SetAttribute("_onclick", [[      
         local frame = self:GetFrameRef("ProfessionFrame");
         frame:Hide();   
+
+        local handler = self:GetFrameRef("handler");
+        handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '')
         
         -- local tabs = self:GetFrameRef("TabsFrame");
         -- tabs:Show();    
@@ -3554,15 +3847,82 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     frame.buttonHide:SetAllPoints(frame);
     frame:SetAttribute("addchild", frame.buttonHide);
 
-    -- local showButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameShowButton', SpellBookFrame,
-    --                                'SecureActionButtonTemplate')
-    -- showButton:SetAttribute('type', 'macro')
-    -- showButton:SetAttribute('macrotext', "")
-    -- showButton:SetScript('PostClick', function(self, button, down)
-    --     --
-    --     -- SpellBookFrame.DFSpellBookProfessionFrame:Show()
-    -- end)
-    -- SpellBookFrame.DFShowButton = showButton
+    do
+        local toggleButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameToggleButton', UIParent,
+                                         'SecureActionButtonTemplate')
+        toggleButton:SetAttribute('type', 'macro')
+        -- toggleButton:SetAttribute('macrotext', "/run print('test')")
+        local macroTextDefault = "/click SpellbookMicroButton" .. "\n" ..
+                                     "/click DragonflightUISpellbookProfessionFrameShowButton"
+        local macroTextDefaultClose = "/click SpellbookMicroButton" .. "\n" ..
+                                          "/click DragonflightUISpellbookProfessionFrameHideButton"
+        local macroTextOpen = "/click DragonflightUISpellbookProfessionFrameShowButton"
+        local macroTextClose = "/click DragonflightUISpellbookProfessionFrameHideButton"
+        toggleButton:SetAttribute('macrotext', macroTextDefault)
+        toggleButton:SetAttribute('macroTextDefault', macroTextDefault)
+        toggleButton:SetAttribute('macroTextDefaultClose', macroTextDefaultClose)
+        toggleButton:SetAttribute('macroTextOpen', macroTextOpen)
+        toggleButton:SetAttribute('macroTextClose', macroTextClose)
+
+        local tabFrame = SpellBookFrame.DFTabFrame
+        toggleButton:SetScript('PostClick', function(self, button, down)
+            --        
+            -- print('postclick', button, down, frame:IsVisible())
+            -- DragonflightUICharacterTabMixin:Tab_OnClick(self, tabFrame)
+            -- local numTabs = PetHasSpellbook() and 3 or 2
+            if frame:IsVisible() then
+                DragonflightUICharacterTabMixin:Tab_OnClick(tabFrame.Tabs[2], tabFrame)
+            else
+                DragonflightUICharacterTabMixin:Tab_OnClick(tabFrame.Tabs[1], tabFrame)
+            end
+        end)
+
+        local handler = CreateFrame('Frame', 'DragonflightUISpellbookHandler', nil, 'SecureHandlerBaseTemplate');
+        handler:SetAttribute('UpdateToggleButtonMacro', [=[
+            local state = ...
+            -- print('UpdateToggleButtonMacro',state)
+            local Spellbook = self:GetFrameRef("Spellbook");
+            local ProfessionFrame = self:GetFrameRef("ProfessionFrame");
+            local ToggleButton = self:GetFrameRef("ToggleButton");
+
+            if Spellbook:IsVisible() then
+                 if ProfessionFrame:IsVisible() then
+                    ToggleButton:SetAttribute('macrotext', ToggleButton:GetAttribute('macroTextDefaultClose'))
+                else
+                    ToggleButton:SetAttribute('macrotext', ToggleButton:GetAttribute('macroTextOpen'))
+                end 
+            else
+                ProfessionFrame:Hide()
+                ToggleButton:SetAttribute('macrotext', ToggleButton:GetAttribute('macroTextDefault'))
+            end 
+        ]=])
+        handler:SetFrameRef("Spellbook", SpellBookFrame)
+        handler:SetFrameRef("ProfessionFrame", frame)
+        handler:SetFrameRef("ToggleButton", toggleButton)
+
+        local shower = CreateFrame('FRAME', 'DragonflightUISpellbookFrameShower', SpellBookFrame,
+                                   'SecureHandlerShowHideTemplate')
+        shower:SetPoint('TOPLEFT')
+        shower:SetPoint('BOTTOMRIGHT')
+        shower:SetAttribute('_onshow', [[   
+            -- print('_onshow') 
+            local handler = self:GetFrameRef("handler");
+            handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '_onshow')
+        ]])
+        shower:SetAttribute('_onhide', [[   
+            -- print('_onhide') 
+            local handler = self:GetFrameRef("handler");
+            handler:Run(handler:GetAttribute('UpdateToggleButtonMacro'), '_onhide')
+        ]])
+        shower:SetFrameRef("handler", handler)
+
+        shower:HookScript('OnHide', function()
+            DragonflightUICharacterTabMixin:Tab_OnClick(tabFrame.Tabs[1], tabFrame)
+        end)
+
+        frame.buttonShow:SetFrameRef("handler", handler)
+        frame.buttonHide:SetFrameRef("handler", handler)
+    end
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)

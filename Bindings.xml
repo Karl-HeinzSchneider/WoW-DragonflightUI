@@ -178,4 +178,6 @@
 	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub10:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
 	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub11:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
 	<Binding name="CLICK DragonflightUISpellFlyoutCustom10ButtonSub12:Keybind" category="BINDING_CATEGORY_DFCUSTOMFLYOUT10" />
+	<!-- General -->
+	<Binding name="CLICK DragonflightUISpellbookProfessionFrameToggleButton:Keybind" category="BINDING_CATEGORY_DRAGONFLIGHTUI" header="BINDING_HEADER_DFFRAMES" />
 </Bindings>

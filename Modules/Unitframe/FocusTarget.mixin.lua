@@ -19,6 +19,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        gradient = false,
         reactioncolor = false,
         classicon = false,
         fadeOut = false,
@@ -120,6 +121,15 @@ function SubModuleMixin:SetupOptions()
                 desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focusTarget'),
                 group = 'headerStyling',
                 order = 2,
+                editmode = true
+            },
+            gradient = {
+                type = 'toggle',
+                name = L["PlayerFrameGradientColor"],
+                desc = L["PlayerFrameGradientColorDesc"] .. getDefaultStr('gradient', 'focusTarget'),
+                group = 'headerStyling',
+                order = 2.1,
+                new = true,
                 editmode = true
             },
             reactioncolor = {
@@ -304,7 +314,7 @@ function SubModuleMixin:Update()
     f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    f:SetUserPlaced(true)
+    -- f:SetUserPlaced(true)
 
     f:SetIgnoreParentAlpha(state.fadeOut and true or false)
 

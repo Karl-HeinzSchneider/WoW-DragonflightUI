@@ -109,6 +109,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -157,6 +158,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -205,6 +207,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -253,6 +256,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = true,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -301,6 +305,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = false,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -349,6 +354,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = false,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -397,6 +403,7 @@ local defaults = {
             -- Style
             alwaysShow = true,
             activate = false,
+            hideArt = true,
             range = true,
             hideMacro = false,
             macroFontSize = 14,
@@ -1123,6 +1130,15 @@ local function GetBarOption(n)
             --     new = false,
             --     editmode = true
             -- }
+            hideArt = {
+                type = 'toggle',
+                name = L["MoreOptionsHideBarArt"],
+                desc = L["MoreOptionsHideBarArtDesc"] .. getDefaultStr('hideArt', barname),
+                group = 'headerStyling',
+                order = 50.2,
+                editmode = true,
+                new = true
+            }
         }
         for k, v in pairs(moreOptions) do opt.args[k] = v end
     end
@@ -2283,13 +2299,16 @@ function Module:SetupActionbarFrames()
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
     hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
-        -- print('ActionButton_UpdateHotkeys')        
-        if self.DragonflightFixHotkeyPosition then self.DragonflightFixHotkeyPosition() end
+        -- print('ActionButton_UpdateHotkeys')
+        if self.DragonflightFixHotkey then self:DragonflightFixHotkey() end
     end)
 
     for i = 1, 8 do
         local bar = Module['bar' .. i]
-        if bar then bar:AddTargetStateDriver() end
+        if bar then
+            bar:AddDecoNew(i)
+            bar:AddTargetStateDriver()
+        end
     end
 
     do
@@ -3563,9 +3582,9 @@ function frameBagToggle:OnEvent(event, arg1)
     elseif event == 'PLAYER_ENTERING_WORLD' then
         Module.UpdateBagSlotIcons()
     elseif event == 'UNIT_ENTERED_VEHICLE' then
-        frameBagToggle:Hide()
+        -- frameBagToggle:Hide()
     elseif event == 'UNIT_EXITED_VEHICLE' then
-        frameBagToggle:Show()
+        -- frameBagToggle:Show()
     end
 end
 frameBagToggle:SetScript('OnEvent', frameBagToggle.OnEvent)

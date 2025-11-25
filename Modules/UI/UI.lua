@@ -227,27 +227,7 @@ local frame = CreateFrame('FRAME')
 function frame:OnEvent(event, arg1, ...)
     -- print('event', event, arg1, ...)   
     if event == 'INSPECT_READY' then
-        -- print('INSPECT_READY')
-        local db = Module.db.profile.first
-        if db.itemcolor then DragonflightUIItemColorMixin:HookInspectFrame() end
-        if db.changeInspect and not Module.InspectHooked then
-            Module.InspectHooked = true
-
-            Module:FuncOrWaitframe('Blizzard_InspectUI', function()
-                DragonflightUIMixin:ChangeInspectFrame()
-            end)
-
-            if InspectFrame and not InspectFrame.DFTacoTipHooked then
-                --    
-                Module:FuncOrWaitframe('TacoTip', function()
-                    DF.Compatibility:TacoTipInspect()
-                end)
-                InspectFrame.DFTacoTipHooked = true
-            end
-        elseif not db.changeInspect and Module.InspectHooked then
-            DF:Print(
-                "'Change InspectFrame Window' was deactivated, but InspectFrame was already modified, please /reload.")
-        end
+        --
     elseif event == 'BAG_UPDATE_DELAYED' then
         -- print('BAG_UPDATE_DELAYED')
         DragonflightUIItemColorMixin:UpdateAllBags(false)
@@ -394,7 +374,10 @@ function Module:ApplySettingsInternal(sub, key)
     self:ConditionalOption('itemcolor', 'first', 'Colored Inventory Items', function()
         Module:HookColor()
 
-        frame:RegisterEvent('INSPECT_READY')
+        local loaded, value = DF:LoadAddOn('Blizzard_InspectUI')
+        Module:FuncOrWaitframe('Blizzard_InspectUI', function()
+            DragonflightUIItemColorMixin:HookInspectFrame()
+        end)
     end)
 
     self:ConditionalOption('changeTradeskill', 'first', 'Change Profession Window', function()
@@ -433,6 +416,21 @@ function Module:ApplySettingsInternal(sub, key)
                 RuneFrameControlButton:SetPoint('TOPRIGHT', CharacterFrame, 'TOPRIGHT', -8, -26)
             end)
         end
+    end)
+
+    self:ConditionalOption('changeInspect', 'first', 'Change InspectFrame', function()
+        local loaded, value = DF:LoadAddOn('Blizzard_InspectUI')
+        Module:FuncOrWaitframe('Blizzard_InspectUI', function()
+            if DF.Era then
+                DragonflightUIMixin:ChangeInspectFrameEra()
+            else
+                DragonflightUIMixin:ChangeInspectFrame()
+            end
+
+            Module:FuncOrWaitframe('TacoTip', function()
+                DF.Compatibility:TacoTipInspect()
+            end)
+        end)
     end)
 
     if (DF.Era or (DF.Wrath and not DF.Cata and false)) then
@@ -957,7 +955,7 @@ function Module:Cata()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('INSPECT_READY')
+    -- frame:RegisterEvent('INSPECT_READY')
 end
 
 function Module:Mists()
@@ -968,5 +966,5 @@ function Module:Mists()
 
     frame:RegisterEvent('ADDON_LOADED')
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-    frame:RegisterEvent('INSPECT_READY')
+    -- frame:RegisterEvent('INSPECT_READY')
 end

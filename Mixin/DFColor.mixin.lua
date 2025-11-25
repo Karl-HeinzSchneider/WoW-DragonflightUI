@@ -95,7 +95,9 @@ function DFCreateColorFromRGBAHexString(hexColor)
 end
 if not CreateColorFromRGBAHexString then CreateColorFromRGBAHexString = DFCreateColorFromRGBAHexString end
 
+local defaultColor = DFCreateColor(1, 1, 1):GenerateHexColorNoAlpha()
 function DFCreateColorFromRGBHexString(hexColor)
+    if not hexColor then hexColor = defaultColor end -- custom
     if #hexColor == #COLOR_FORMAT_RGB then
         local r, g, b = ExtractColorValueFromHex(hexColor, 1), ExtractColorValueFromHex(hexColor, 3),
                         ExtractColorValueFromHex(hexColor, 5);

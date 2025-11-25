@@ -103,7 +103,7 @@ function DragonflightUISpellFlyoutButtonMixin:UpdateArrow(dir)
 end
 
 function DragonflightUISpellFlyoutButtonMixin:InitButtons()
-    DragonflightUIActionbarMixin:StyleButton(self);
+    DragonflightUIActionbarMixin:StyleButton(self, true);
 
     local n = self:GetName()
 
@@ -877,6 +877,18 @@ end
 function DragonflightUISpellSubButtonMixin:UpdateStateEquipmentset()
     local equipName = self:GetAttribute('equipmentsetName');
     local id = C_EquipmentSet.GetEquipmentSetID(equipName)
+
+    if not id then
+        -- equipmentSet missing
+        -- self.ModuleRef:Print('EquipmentID missing on ' .. self:GetName() .. ' - maybe deleted profile?')
+
+        self.PickupFunc = function()
+            return false;
+        end;
+
+        self.ModuleRef:TryFixBrokenEquipmentSet(self:GetAttribute('DFAction'), true)
+        return;
+    end
 
     self.PickupFunc = function()
         C_EquipmentSet.PickupEquipmentSet(id)

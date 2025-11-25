@@ -260,5 +260,67 @@ table.insert(DF.VIPTable, {
     displayTexture = 'marnik2'
 })
 
+table.insert(DF.VIPTable, {
+    name = 'Shirin',
+    titleAfter = " the Kingslayer",
+    realm = 'Everlook',
+    guild = 'Horizon',
+    guildRank = 'Ghettobitch',
+    zone = 'Stormwind City',
+    race = 'Human',
+    female = true,
+    level = '90',
+    class = 'PRIEST',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'HEALER',
+    extra = 'worldboss',
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'shirin'
+})
+
+table.insert(DF.VIPTable, {
+    name = 'Nalany',
+    titleAfter = " the Ringless",
+    realm = 'Thunderstrike',
+    guild = 'Dinos',
+    guildRank = 'Officer',
+    zone = 'Darnassus',
+    race = 'Nightelf',
+    female = true,
+    level = '60',
+    class = 'DRUID',
+    powerType = 'MANA',
+    hpAmount = 100,
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'HEALER',
+    extra = 'worldboss',
+    displayID = 176, -- awrwrwrll
+    displayTexture = 'nalany'
+})
+
+table.insert(DF.VIPTable, {
+    name = 'Mayomay',
+    -- titleAfter = ", ?",
+    realm = 'Thunderstrike',
+    guild = 'Wolfrudel',
+    guildRank = 'Sergeant Major',
+    zone = 'Stormwind City',
+    race = 'Human',
+    female = true,
+    level = '60',
+    class = 'WARLOCK',
+    powerType = 'MANA',
+    hpAmount = 100, -- 5514
+    energyAmount = 100,
+    targetIcon = 0,
+    role = 'DAMAGER',
+    extra = '',
+    displayTexture = 'mayomay'
+})
+
 -- DevTools_Dump(DF.VIPTable)
 maxVIPs = #DF.VIPTable;

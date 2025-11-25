@@ -17,6 +17,7 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         classcolor = false,
+        gradient = false,
         breakUpLargeNumbers = true,
         scale = 1.0,
         override = false,
@@ -139,6 +140,15 @@ function SubModuleMixin:SetupOptions()
                 desc = L["PartyFrameClassColorDesc"] .. getDefaultStr('classcolor', 'party'),
                 group = 'headerStyling',
                 order = 7,
+                editmode = true
+            },
+            gradient = {
+                type = 'toggle',
+                name = L["PlayerFrameGradientColor"],
+                desc = L["PlayerFrameGradientColorDesc"] .. getDefaultStr('gradient', 'party'),
+                group = 'headerStyling',
+                order = 2.1,
+                new = true,
                 editmode = true
             },
             breakUpLargeNumbers = {
@@ -869,6 +879,11 @@ function SubModuleMixin:UpdatePartyHPBar(i)
                 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Status')
             local localizedClass, englishClass, classIndex = UnitClass(pf.unit)
             healthbar:SetStatusBarColor(DF:GetClassColor(englishClass, 1))
+        elseif self.ModuleRef.db.profile.party.gradient then
+            healthbar:GetStatusBarTexture():SetTexture(
+                'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Status')
+            local r, g, b = Helper:ColorGradiant(Helper:GetUnitHealthPercent(pf.unit))
+            healthbar:SetStatusBarColor(r, g, b, 1)
         else
             healthbar:GetStatusBarTexture():SetTexture(
                 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')

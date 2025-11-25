@@ -282,10 +282,12 @@ function DragonflightUIActionbarMixin:Update()
                 btn:SetAttribute("showgrid", 0)
             end
 
-            if state.hideArt then
-                if btn.DFDeco then btn.DFDeco:Hide() end
-            else
-                if btn.DFDeco then btn.DFDeco:Show() end
+            if btn.DFDeco then
+                if state.hideArt then
+                    btn.DFDeco:Hide()
+                else
+                    btn.DFDeco:Show()
+                end
             end
 
             local name = btn:GetName()
@@ -826,6 +828,10 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
         harmDriver = harmDriver .. '[harm]nil; [@targettarget, harm]targettarget';
     end
 
+    helpDriver = string.format('%s%s%s', preSelf, preFocus, helpDriver)
+    harmDriver = string.format('%s%s', preFocus, harmDriver)
+    allDriver = string.format('%s%s%s', preSelf, preFocus, allDriver)
+
     local changed = false;
     if helpDriver ~= self.HelpDriverCache then
         --
@@ -836,7 +842,7 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
         if helpDriver ~= '' then
             --
-            helpDriver = string.format('%s%s%s nil', preSelf, preFocus, helpDriver)
+            helpDriver = string.format('%s nil', helpDriver)
             RegisterStateDriver(handler, 'target-help', helpDriver)
         end
     end
@@ -850,7 +856,7 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
         if harmDriver ~= '' then
             --
-            harmDriver = string.format('%s%s nil', preFocus, harmDriver)
+            harmDriver = string.format('%s nil', harmDriver)
             RegisterStateDriver(handler, 'target-harm', harmDriver)
         end
     end
@@ -864,7 +870,7 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
 
         if allDriver ~= '' then
             --
-            allDriver = string.format('%s%s%s nil', preSelf, preFocus, allDriver)
+            allDriver = string.format('%s nil', allDriver)
             RegisterStateDriver(handler, 'target-all', allDriver)
         end
     end
@@ -1207,13 +1213,14 @@ function DragonflightUIActionbarMixin:UpdateNumberFrame()
     end
 end
 
-function DragonflightUIActionbarMixin:AddDecoNew()
+function DragonflightUIActionbarMixin:AddDecoNew(index)
+    if index == 1 then return end
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
     -- self.decoFrame:SetPoint('TOPLEFT')
     -- self.decoFrame:SetPoint('BOTTOMRIGHT')
 
-    do
+    if false then
         self.decoFrame = CreateFrame('Frame', 'DragonflightUIMainActionBarDecoFrame', self)
         self.decoFrame:SetFrameStrata('LOW')
         self.decoFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
@@ -1327,7 +1334,19 @@ function DragonflightUIActionbarMixin:StyleButtons()
     end
 end
 
-function DragonflightUIActionbarMixin:StyleButton(btn)
+-- C_Timer.After(0, function()
+--     print(':3')
+--     local btn = CreateFrame("CheckButton", "testbutton", UIParent, "ActionBarButtonTemplate")
+--     btn:SetSize(64, 64)
+--     btn:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+--     btn:SetScale(5.0)
+--     btn:SetAttribute("type", "action")
+--     btn:SetAttribute("action", 6) -- Action slot 1
+
+--     DragonflightUIActionbarMixin:StyleButton(btn)
+-- end)
+
+function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
     local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
@@ -1351,35 +1370,6 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     mask:SetSize(45, 45)
 
     icon:AddMaskTexture(mask)
-    --[[  OLD: #hack
-        -- mask
-        do
-              local mask = btn:CreateTexture('DragonflightUIMaskTexture')
-            btn.DragonflightUIMaskTexture = mask
-            mask:SetSize(45, 45)
-            mask:SetPoint('CENTER', 0, 0)
-            -- mask:SetColorTexture(0, 1, 0, 1)       
-            mask:SetMask('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
-            mask:SetDrawLayer('BACKGROUND')
-            -- mask:SetTexture(136197)
-
-            hooksecurefunc(icon, 'Show', function(self)
-                local tex = self:GetTexture()
-                if tex then
-                    mask:Show()
-                    mask:SetTexture(tex)
-                end
-            end) ]]
-    --[[ 
-            hooksecurefunc(icon, 'Hide', function(self)
-                mask:Hide()
-            end)
-            hooksecurefunc(icon, 'SetVertexColor', function(self)
-                local r, g, b = self:GetVertexColor()
-                mask:SetVertexColor(r, g, b)
-            end) 
-        end
-        ]]
 
     local cd = _G[btnName .. 'Cooldown']
     cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha')
@@ -1427,31 +1417,42 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     pushed:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
     -- pushed:SetAlpha(0)
 
-    if false then
-        --
-        local customFrame = CreateFrame('FRAME', 'DragonflightUIPushTextureFrame', btn)
-        customFrame:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0)
-        customFrame:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
-        customFrame:SetFrameStrata('MEDIUM')
-        customFrame:SetFrameLevel(6)
-        btn.DFCustomPushedTextureFrame = customFrame;
-        customFrame:Hide()
-
-        local customPush = customFrame:CreateTexture('DragonflightUIPushedTexture')
-        customPush:ClearAllPoints()
-        customPush:SetSize(46, 45)
-        customPush:SetPoint('TOPLEFT')
-        customPush:SetTexture(textureRefTwo)
-        customPush:SetTexCoord(0.701171875, 0.880859375, 0.43017578125, 0.47412109375)
-    end
-
     -- iconframe-mouseover
     local highlight = btn:GetHighlightTexture()
     highlight:ClearAllPoints()
     highlight:SetSize(46, 45)
     highlight:SetPoint('TOPLEFT')
     highlight:SetTexture(textureRefTwo)
-    highlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+    highlight:SetTexCoord(0.701171875, 0.880859375 + 18 * 0.0001, 0.52001953125, 0.56396484375 + 6 * 0.0001)
+
+    if not keepNormalHighlight then
+        local ontop = CreateFrame('Frame', btn:GetName() .. 'DFOnTopFrame', btn)
+        ontop:SetFrameStrata('MEDIUM')
+        ontop:SetFrameLevel(5)
+        ontop:SetPoint('TOPLEFT')
+        ontop:SetPoint('BOTTOMRIGHT')
+
+        local fakeHighlight = ontop:CreateTexture(btn:GetName() .. 'DFFakeHighlight', 'ARTWORK')
+        fakeHighlight:ClearAllPoints()
+        fakeHighlight:SetSize(46, 45)
+        fakeHighlight:SetPoint('TOPLEFT')
+        fakeHighlight:SetTexture(textureRefTwo)
+        -- fakeHighlight:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+        fakeHighlight:SetTexCoord(0.701171875, 0.880859375 + 18 * 0.0001, 0.52001953125, 0.56396484375 + 6 * 0.0001)
+
+        fakeHighlight:Hide()
+
+        highlight:SetTexture('')
+
+        btn:HookScript('OnEnter', function()
+            -- print('OnEnter')
+            fakeHighlight:Show()
+        end)
+        btn:HookScript('OnLeave', function()
+            -- print('OnLeave')
+            fakeHighlight:Hide()
+        end)
+    end
 
     -- iconframe-mouseover
     if btn.GetCheckedTexture then
@@ -1515,20 +1516,18 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
     end
     btn:UpdateFlyoutDirection(nil);
 
-    btn.DragonflightFixHotkeyPosition = function()
-        local hotkey = _G[btnName .. 'HotKey']
+    function btn:SetKeybindFontSize(newSize)
+        local hotkey = self.HotKey
+        local fontFile, fontHeight, flags = hotkey:GetFont()
+        hotkey:SetFont(fontFile, newSize, "OUTLINE")
+    end
+
+    function btn:FixHotkeyPosition()
+        local hotkey = self.HotKey
         hotkey:ClearAllPoints()
         hotkey:SetSize(46 - 10, 10)
         hotkey:SetPoint('TOPRIGHT', -5, -5)
-
-        function btn:SetKeybindFontSize(newSize)
-            local fontFile, fontHeight, flags = hotkey:GetFont()
-            hotkey:SetFont(fontFile, newSize, "OUTLINE")
-        end
-
-        btn:SetKeybindFontSize(14 + 2)
     end
-    btn.DragonflightFixHotkeyPosition()
 
     do
         function btn:UpdateHotkeyDisplayText(shorten)
@@ -1571,6 +1570,20 @@ function DragonflightUIActionbarMixin:StyleButton(btn)
 
         btn:UpdateHotkeyDisplayText(false)
     end
+
+    btn.BarRef = self;
+    function btn:DragonflightFixHotkey()
+        self:FixHotkeyPosition()
+
+        local state = self.BarRef.state;
+        if not state then
+            self:SetKeybindFontSize(14 + 2)
+            return
+        end
+        self:UpdateHotkeyDisplayText(state.shortenKeybind)
+        self:SetKeybindFontSize(state.keybindFontSize)
+    end
+    btn:DragonflightFixHotkey()
 
     do
         local name = _G[btnName .. 'Name']
@@ -1949,6 +1962,43 @@ function DragonflightUIPetbarMixin:StylePetButton()
         local autoSize = 80
         auto:SetSize(autoSize, autoSize)
         auto:SetDrawLayer('OVERLAY', 2)
+
+        --
+        local checked = btn:GetCheckedTexture()
+        checked:SetAlpha(1.0)
+        checked:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+
+        local color = DFCreateColorFromRGBHexString('FFE143')
+        checked:SetVertexColor(color.r, color.g, color.b, color.a)
+
+        if true then
+            local fakeChecked = btn:CreateTexture(btn:GetName() .. 'DFFakeChecked', 'OVERLAY')
+            btn.DFFakeChecked = fakeChecked
+            fakeChecked:ClearAllPoints()
+            fakeChecked:SetSize(46, 45)
+            fakeChecked:SetPoint('TOPLEFT')
+            fakeChecked:SetTexture(textureRefTwo)
+            -- fakeChecked:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
+            fakeChecked:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+            fakeChecked:Hide()
+            fakeChecked:SetVertexColor(color.r, color.g, color.b, color.a)
+
+            hooksecurefunc(btn, 'SetChecked', function(_, isChecked)
+                -- print('SetChecked', btn:GetName(), isChecked)
+                fakeChecked:SetShown(isChecked)
+            end)
+        end
+
+        if true then
+            local cornerTex = 'Interface\\Addons\\DragonflightUI\\Textures\\UIActionbarPetCorner2x'
+
+            local petAutoCastableTexture = _G[btn:GetName() .. "AutoCastable"];
+            petAutoCastableTexture:SetTexture(cornerTex)
+            petAutoCastableTexture:SetTexCoord(0, 68 / 128, 0, 68 / 128)
+            petAutoCastableTexture:ClearAllPoints()
+            petAutoCastableTexture:SetPoint('TOPLEFT', -1, 1)
+            petAutoCastableTexture:SetPoint('BOTTOMRIGHT')
+        end
     end
 end
 

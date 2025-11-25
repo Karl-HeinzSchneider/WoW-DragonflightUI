@@ -37,6 +37,8 @@ function DragonFlightUICastbarMixin:OnLoad(unit)
     self.BorderShield:ClearAllPoints();
     self.BorderShield:SetPoint('CENTER', self.Icon, 'CENTER', 0, -2.25);
 
+    self.TextCompact:SetPoint('RIGHT', self.CastTimeTextCompact, 'LEFT', -2, 0)
+
     -- icon mask
     local mask = self:CreateMaskTexture('DragonflightUIIconMask')
     local delta = 0

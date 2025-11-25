@@ -1063,6 +1063,8 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
+    self:CheckDBForBrokenEquipmentSets(false)
+
     self:EnableAddonSpecific()
 
     Module:AddEditMode()
@@ -1232,6 +1234,56 @@ function Module:SetAction(index, type, value)
     end
 end
 
+function Module:HookEquipmentSetDelete()
+    if not C_EquipmentSet then return end
+    hooksecurefunc(C_EquipmentSet, 'DeleteEquipmentSet', function(...)
+        -- print('DeleteEquipmentSet', ...)
+        self:CheckDBForBrokenEquipmentSets(true)
+    end)
+end
+
+function Module:CheckDBForBrokenEquipmentSets(shouldTryUpdate)
+    local t = self:GetActionTable()
+    -- DevTools_Dump(t)
+
+    for k, v in pairs(t) do
+        if v and v.type == 'equipmentset' then
+            --
+            -- print('equipmentset', k, v.type, v.value)
+            self:TryFixBrokenEquipmentSet(k, false)
+        end
+    end
+
+    if not InCombatLockdown() and shouldTryUpdate then
+        --
+        self:ApplySettings()
+    end
+end
+
+function Module:TryFixBrokenEquipmentSet(id, shouldTryUpdate)
+    -- print('TryFixBrokenEquipmentSet', id, shouldTryUpdate)
+
+    local action = self:GetAction(id)
+
+    if not action then return end
+    if action.type ~= 'equipmentset' then return end
+
+    local equipSetID = C_EquipmentSet.GetEquipmentSetID(action.value)
+    if equipSetID then
+        -- set exists
+        return true;
+    end
+
+    self:SetAction(id, nil, nil)
+
+    if not InCombatLockdown() and shouldTryUpdate then
+        --
+        self:ApplySettings()
+    end
+
+    return false;
+end
+
 function Module:HookCollections()
     hooksecurefunc(C_MountJournal, 'Pickup', function(index)
         local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction,
@@ -1331,6 +1383,7 @@ function Module:AddCustomButtons()
         --
         local btn = CreateFrame("Button", "DragonflightUISpellFlyout" .. "Custom" .. i .. "Button", UIParent,
                                 "DFSpellFlyoutButtonTemplate", 1000 + 5 + i)
+        btn:SetFrameLevel(42)
         Module['Custom' .. i .. 'Button'] = btn;
     end
 
@@ -1345,6 +1398,7 @@ end
 frame:SetScript('OnEvent', frame.OnEvent)
 
 function Module:Era()
+    Module:HookEquipmentSetDelete()
     Module:HookCollections()
 
     -- Module:AddWarlockButton()
