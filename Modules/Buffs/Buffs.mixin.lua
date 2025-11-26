@@ -330,7 +330,7 @@ function SubModuleMixin:Update()
 end
 
 function SubModuleMixin:CreateBuffFrame()
-    local f = CreateFrame('FRAME', 'DragonflightUIBuffFrame', UIParent)
+    local f = CreateFrame('FRAME', 'DragonflightUIPlayerBuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (3 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13)
     self.DFBuffFrame = f
@@ -351,6 +351,7 @@ function SubModuleMixin:CreateBuffFrame()
     toggleFrame:SetSize(16, 30)
     toggleFrame:SetPoint('TOPLEFT', f, 'TOPRIGHT', 0, 0)
     self.DFToggleFrame = toggleFrame
+    toggleFrame:Hide() -- TODO
 
     local toggle = CreateFrame('CHECKBUTTON', 'DragonflightUI', toggleFrame)
     toggle:SetSize(16, 30)
