@@ -494,6 +494,9 @@ do
     L["BuffsGrowthDirection"] = "Growth Direction"
     L["BuffsGrowthDirectionDesc"] = ""
 
+    L["BuffsHeaderStylingAura"] = "Aura Styling"
+    L["BuffsHeaderStylingAuraDesc"] = ""
+
     L["BuffsHideDurationText"] = "Hide Duration Text"
     L["BuffsHideDurationTextDesc"] = ""
     L["BuffsHideCooldownSwipe"] = "Hide Cooldown Swipe"

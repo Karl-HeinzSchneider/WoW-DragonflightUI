@@ -168,6 +168,14 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             isExpanded = true,
             editmode = true
         },
+        headerStylingAura = {
+            type = 'header',
+            name = L["BuffsHeaderStylingAura"],
+            desc = L["BuffsHeaderStylingAuraDesc"],
+            order = 20.2,
+            isExpanded = true,
+            editmode = true
+        },
         -- castTimeEnabled = {
         --     type = 'toggle',
         --     name = L["CastbarTableShowCastTimeText"],
@@ -182,7 +190,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             name = L["BuffsSeperateOwn"],
             desc = L["BuffsSeperateOwnDesc"] .. getDefaultStr('seperateOwn', sub),
             dropdownValues = seperateOwnTable,
-            order = 1,
+            order = 11,
             group = 'headerStyling',
             editmode = true
         },
@@ -191,7 +199,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             name = L["BuffsSortMethod"],
             desc = L["BuffsSortMethodDesc"] .. getDefaultStr('sortMethod', sub),
             dropdownValues = sortMethodTable,
-            order = 2,
+            order = 12,
             group = 'headerStyling',
             editmode = true
         },
@@ -200,7 +208,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             name = L["BuffsSortDirection"],
             desc = L["BuffsSortDirectionDesc"] .. getDefaultStr('sortDirection', sub),
             dropdownValues = sortDirectionTable,
-            order = 3,
+            order = 13,
             group = 'headerStyling',
             editmode = true
         },
@@ -218,7 +226,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             name = L["BuffsOrientation"],
             desc = L["BuffsOrientationDesc"] .. getDefaultStr('orientation', sub),
             dropdownValues = orientationTable,
-            order = 4.1,
+            order = 1,
             group = 'headerStyling',
             editmode = true
         },
@@ -227,7 +235,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             name = L["BuffsGrowthDirection"],
             desc = L["BuffsGrowthDirectionDesc"] .. getDefaultStr('growthDirection', sub),
             dropdownValues = DF.Settings.GrowthDirectionTable,
-            order = 4.2,
+            order = 2,
             group = 'headerStyling',
             editmode = true
         },
@@ -261,7 +269,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             max = 32,
             bigStep = 1,
             group = 'headerStyling',
-            order = 11,
+            order = 21,
             editmode = true
         },
         -- wrapXOffset = {
@@ -294,14 +302,14 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             max = 32,
             bigStep = 1,
             group = 'headerStyling',
-            order = 14,
+            order = 22,
             editmode = true
         },
         hideDurationText = {
             type = 'toggle',
             name = L["BuffsHideDurationText"],
             desc = L["BuffsHideDurationTextDesc"] .. getDefaultStr('hideDurationText', sub),
-            group = 'headerStyling',
+            group = 'headerStylingAura',
             order = 0.1,
             editmode = true
         },
@@ -309,7 +317,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             type = 'toggle',
             name = L["BuffsHideCooldownSwipe"],
             desc = L["BuffsHideCooldownSwipeDesc"] .. getDefaultStr('hideCooldownSwipe', sub),
-            group = 'headerStyling',
+            group = 'headerStylingAura',
             order = 0.2,
             editmode = true
         },
@@ -317,7 +325,7 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             type = 'toggle',
             name = L["BuffsHideCooldownDurationText"],
             desc = L["BuffsHideCooldownDurationTextDesc"] .. getDefaultStr('hideCooldownDurationText', sub),
-            group = 'headerStyling',
+            group = 'headerStylingAura',
             order = 0.3,
             editmode = true
         }

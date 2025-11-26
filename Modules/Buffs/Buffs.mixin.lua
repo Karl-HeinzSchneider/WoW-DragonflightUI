@@ -118,15 +118,15 @@ function SubModuleMixin:SetupOptions()
                 isExpanded = true,
                 editmode = true
             },
-            expanded = {
-                type = 'toggle',
-                name = L["BuffsOptionsExpanded"],
-                desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
-                group = 'headerStyling',
-                order = 10,
-                new = false,
-                editmode = true
-            },
+            -- expanded = {
+            --     type = 'toggle',
+            --     name = L["BuffsOptionsExpanded"],
+            --     desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
+            --     group = 'headerStyling',
+            --     order = 10,
+            --     new = false,
+            --     editmode = true
+            -- },
             useStateHandler = {
                 type = 'toggle',
                 name = L["BuffsOptionsUseStateHandler"],
