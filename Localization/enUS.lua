@@ -470,17 +470,15 @@ do
     L["BuffsPaddingX"] = "Padding X"
     L["BuffsPaddingXDesc"] = "The X-padding between auras."
     L["BuffsPaddingY"] = "Padding Y"
-    L["BuffsPaddingYDesc"] = "The Y-padding between auras."
+    L["BuffsPaddingYDesc"] = "The Y-padding between aura rows."
     L["BuffsWrapAfter"] = "Wrap After"
-    L["BuffsWrapAfterDesc"] =
-        "Begin a new row or column after this many auras.\nIf 0, never wrap or limit the first row."
-    L["BuffsWrapXOffset"] = "Wrap X-Offset"
-    L["BuffsWrapXOffsetDesc"] = "The X-offset from one row or column to the next."
-    L["BuffsWrapYOffset"] = "Wrap Y-Offset"
-    L["BuffsWrapYOffsetDesc"] = "The Y-offset from one row or column to the next."
+    L["BuffsWrapAfterDesc"] = "Begin a new row this many auras.\nIf 0, never wrap or limit the first row."
+    -- L["BuffsWrapXOffset"] = "Wrap X-Offset"
+    -- L["BuffsWrapXOffsetDesc"] = "The X-offset from one row or column to the next."
+    -- L["BuffsWrapYOffset"] = "Wrap Y-Offset"
+    -- L["BuffsWrapYOffsetDesc"] = "The Y-offset from one row or column to the next."
     L["BuffsMaxWraps"] = "Max Wraps"
-    L["BuffsMaxWrapsDesc"] =
-        "Limit the number of rows or columns.\nIf 0, the number of rows or columns will not be limited. "
+    L["BuffsMaxWrapsDesc"] = "Limit the number of rows.\nIf 0, the number of rows or columns will not be limited. "
     L["BuffsSeperateOwn"] = "Seperate Own Auras"
     L["BuffsSeperateOwnDesc"] =
         "Indicate wheter buffs you cast yourself should be seperated before (1) or after (-1) others.\nIf (0), no seperation is done."
@@ -488,6 +486,21 @@ do
     L["BuffsSortMethodDesc"] = "Defines how the group is sorted."
     L["BuffsSortDirection"] = "Sort Direction"
     L["BuffsSortDirectionDesc"] = "Defines the sort order."
+    L["BuffsPoint"] = "Anchor Point"
+    L["BuffsPointDesc"] = ""
+
+    L["BuffsOrientation"] = "Orientation"
+    L["BuffsOrientationDesc"] = ""
+    L["BuffsGrowthDirection"] = "Growth Direction"
+    L["BuffsGrowthDirectionDesc"] = ""
+
+    L["BuffsHideDurationText"] = "Hide Duration Text"
+    L["BuffsHideDurationTextDesc"] = ""
+    L["BuffsHideCooldownSwipe"] = "Hide Cooldown Swipe"
+    L["BuffsHideCooldownSwipeDesc"] = ""
+    L["BuffsHideCooldownDurationText"] = "Hide Cooldown Duration Text"
+    L["BuffsHideCooldownDurationTextDesc"] = ""
+
 end
 
 -- Flyout

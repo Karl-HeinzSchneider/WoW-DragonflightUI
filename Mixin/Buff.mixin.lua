@@ -22,6 +22,22 @@ local sortDirectionTable = {
     {value = '-', text = '-', tooltip = 'descr', label = 'label'}
 }
 
+local orientationTable = {
+    {value = 'leftToRight', text = 'Left To Right', tooltip = 'descr', label = 'label'},
+    {value = 'rightToLeft', text = 'Right To Left', tooltip = 'descr', label = 'label'}
+}
+
+local pointTable = {
+    {value = 'TOP', text = 'TOP', tooltip = 'descr', label = 'label'},
+    {value = 'RIGHT', text = 'RIGHT', tooltip = 'descr', label = 'label'},
+    {value = 'BOTTOM', text = 'BOTTOM', tooltip = 'descr', label = 'label'},
+    {value = 'LEFT', text = 'LEFT', tooltip = 'descr', label = 'label'},
+    {value = 'TOPRIGHT', text = 'TOPRIGHT', tooltip = 'descr', label = 'label'},
+    {value = 'TOPLEFT', text = 'TOPLEFT', tooltip = 'descr', label = 'label'},
+    {value = 'BOTTOMLEFT', text = 'BOTTOMLEFT', tooltip = 'descr', label = 'label'},
+    {value = 'BOTTOMRIGHT', text = 'BOTTOMRIGHT', tooltip = 'descr', label = 'label'}
+}
+
 function DragonflightUIBuffContainerMixin:AddAuraTable(Module, optionTable, sub, getDefaultStr)
     local AuraHeaderTable = {
         headerStyling = {
@@ -188,6 +204,33 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             group = 'headerStyling',
             editmode = true
         },
+        -- point = {
+        --     type = 'select',
+        --     name = L["BuffsPoint"],
+        --     desc = L["BuffsPointDesc"] .. getDefaultStr('point', sub),
+        --     dropdownValues = pointTable,
+        --     order = 4,
+        --     group = 'headerStyling',
+        --     editmode = true
+        -- },
+        orientation = {
+            type = 'select',
+            name = L["BuffsOrientation"],
+            desc = L["BuffsOrientationDesc"] .. getDefaultStr('orientation', sub),
+            dropdownValues = orientationTable,
+            order = 4.1,
+            group = 'headerStyling',
+            editmode = true
+        },
+        growthDirection = {
+            type = 'select',
+            name = L["BuffsGrowthDirection"],
+            desc = L["BuffsGrowthDirectionDesc"] .. getDefaultStr('growthDirection', sub),
+            dropdownValues = DF.Settings.GrowthDirectionTable,
+            order = 4.2,
+            group = 'headerStyling',
+            editmode = true
+        },
         paddingX = {
             type = 'range',
             name = L["BuffsPaddingX"],
@@ -221,28 +264,28 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             order = 11,
             editmode = true
         },
-        wrapXOffset = {
-            type = 'range',
-            name = L["BuffsWrapXOffset"],
-            desc = L["BuffsWrapXOffsetDesc"] .. getDefaultStr('wrapXOffset', sub),
-            min = 0,
-            max = 30,
-            bigStep = 1,
-            group = 'headerStyling',
-            order = 12,
-            editmode = true
-        },
-        wrapYOffset = {
-            type = 'range',
-            name = L["BuffsWrapYOffset"],
-            desc = L["BuffsWrapYOffsetDesc"] .. getDefaultStr('wrapYOffset', sub),
-            min = 0,
-            max = 30,
-            bigStep = 1,
-            group = 'headerStyling',
-            order = 13,
-            editmode = true
-        },
+        -- wrapXOffset = {
+        --     type = 'range',
+        --     name = L["BuffsWrapXOffset"],
+        --     desc = L["BuffsWrapXOffsetDesc"] .. getDefaultStr('wrapXOffset', sub),
+        --     min = 0,
+        --     max = 30,
+        --     bigStep = 1,
+        --     group = 'headerStyling',
+        --     order = 12,
+        --     editmode = true
+        -- },
+        -- wrapYOffset = {
+        --     type = 'range',
+        --     name = L["BuffsWrapYOffset"],
+        --     desc = L["BuffsWrapYOffsetDesc"] .. getDefaultStr('wrapYOffset', sub),
+        --     min = 0,
+        --     max = 30,
+        --     bigStep = 1,
+        --     group = 'headerStyling',
+        --     order = 13,
+        --     editmode = true
+        -- },
         maxWraps = {
             type = 'range',
             name = L["BuffsMaxWraps"],
@@ -252,6 +295,30 @@ function DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, optionTable
             bigStep = 1,
             group = 'headerStyling',
             order = 14,
+            editmode = true
+        },
+        hideDurationText = {
+            type = 'toggle',
+            name = L["BuffsHideDurationText"],
+            desc = L["BuffsHideDurationTextDesc"] .. getDefaultStr('hideDurationText', sub),
+            group = 'headerStyling',
+            order = 0.1,
+            editmode = true
+        },
+        hideCooldownSwipe = {
+            type = 'toggle',
+            name = L["BuffsHideCooldownSwipe"],
+            desc = L["BuffsHideCooldownSwipeDesc"] .. getDefaultStr('hideCooldownSwipe', sub),
+            group = 'headerStyling',
+            order = 0.2,
+            editmode = true
+        },
+        hideCooldownDurationText = {
+            type = 'toggle',
+            name = L["BuffsHideCooldownDurationText"],
+            desc = L["BuffsHideCooldownDurationTextDesc"] .. getDefaultStr('hideCooldownDurationText', sub),
+            group = 'headerStyling',
+            order = 0.3,
             editmode = true
         }
     }
@@ -277,9 +344,9 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     local filter = self:GetAttribute('DFFilter');
     local name;
     if filter == 'HELPFUL' then
-        name = 'DFPlayerBuff'
+        name = 'DFPlayerBuffHeader'
     elseif filter == 'HARMFUL' then
-        name = 'DFPlayerDebuff'
+        name = 'DFPlayerDebuffHeader'
     else
         print('shouldnt happen :§')
     end
@@ -377,7 +444,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
         self.BuffAlphaValue = (self.BuffAlphaValue * (1 - BUFF_MIN_ALPHA)) + BUFF_MIN_ALPHA;
     end)
 
-    function header:UpdateStyle()
+    function header:UpdateStyleAll()
         for _, frame in header:ActiveChildren() do
             --
             frame:UpdateStyle()
@@ -387,9 +454,9 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     header:HookScript('OnEvent', function(event, ...)
         --
         -- print('OnEvent:', event, ...)
-        header:UpdateStyle()
+        header:UpdateStyleAll()
     end)
-    header:UpdateStyle()
+    header:UpdateStyleAll()
 end
 
 function DragonflightUIBuffFrameContainerTemplateMixin:SetState(state)
@@ -407,12 +474,47 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
     -- header:SetAttribute("minWidth", 30);
     -- header:SetAttribute("minHeight", 30);
 
-    -- header:SetAttribute("point", "TOPRIGHT");
-    header:SetAttribute("xOffset", -30 - state.paddingX);
-    header:SetAttribute("yOffset", state.paddingY);
+    local size = 30;
+
+    header:SetAttribute("yOffset", 0);
+    header:SetAttribute("wrapXOffset", 0);
+
+    if state.orientation == 'leftToRight' then
+        if state.growthDirection == 'down' then
+            header:ClearAllPoints()
+            header:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+
+            header:SetAttribute("point", 'TOPLEFT');
+            header:SetAttribute("xOffset", size + state.paddingX);
+            header:SetAttribute("wrapYOffset", -size - state.paddingY);
+        else
+            header:ClearAllPoints()
+            header:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0 + 14);
+
+            header:SetAttribute("point", 'BOTTOMLEFT');
+            header:SetAttribute("xOffset", size + state.paddingX);
+            header:SetAttribute("wrapYOffset", size + state.paddingY);
+        end
+    else
+        -- state.orientation == 'rightToLeft' 
+        if state.growthDirection == 'down' then
+            header:ClearAllPoints()
+            header:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, 0);
+
+            header:SetAttribute("point", 'TOPRIGHT');
+            header:SetAttribute("xOffset", -size - state.paddingX);
+            header:SetAttribute("wrapYOffset", -size - state.paddingY);
+        else
+            header:ClearAllPoints()
+            header:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + 14);
+
+            header:SetAttribute("point", 'BOTTOMRIGHT');
+            header:SetAttribute("xOffset", -size - state.paddingX);
+            header:SetAttribute("wrapYOffset", size + state.paddingY);
+        end
+    end
+
     header:SetAttribute("wrapAfter", state.wrapAfter);
-    header:SetAttribute("wrapXOffset", state.wrapXOffset);
-    header:SetAttribute("wrapYOffset", -30 - state.wrapYOffset);
     header:SetAttribute("maxWraps", state.maxWraps);
 
     -- sorting
@@ -425,7 +527,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
     header.hideDurationText = state.hideDurationText;
     header.hideCooldownSwipe = state.hideCooldownSwipe;
     header.hideCooldownDurationText = state.hideCooldownDurationText;
-    header:UpdateStyle();
+    header:UpdateStyleAll();
 end
 
 -- button template
@@ -446,7 +548,10 @@ function DragonflightUIAuraButtonTemplateMixin:OnLoad()
     -- self:SetScale(1.5)
 
     --
+    self.DFUnit = 'player';
+
     local filter = self:GetAttribute('DFFilter');
+    self.DFFilter = filter;
 
     DragonflightUIMixin:AddIconBorder(self, true)
     self.DFIconBorder:SetDesaturated(false)
@@ -455,9 +560,9 @@ end
 
 function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId,
-          canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, shouldConsolidate = UnitAura("player",
+          canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, shouldConsolidate = UnitAura(self.DFUnit,
                                                                                                             self:GetID(),
-                                                                                                            "HELPFUL");
+                                                                                                            self.DFFilter);
     -- print('~', name, icon, count, expirationTime - duration)
     -- local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
     -- print('~', name, shouldConsolidate, #auraData.points > 0)
@@ -513,7 +618,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
     -- print('updateAuraDuration', self:GetName(), elapsed, self.Duration:GetText())
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId,
           canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod =
-        UnitAura("player", self:GetID(), "HELPFUL");
+        UnitAura(self.DFUnit, self:GetID(), self.DFFilter);
     -- print(timeMod) 
 
     local shouldHide = self:GetParent().hideDurationText
@@ -544,7 +649,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
         end
 
         if (self:GetParent().BuffFrameUpdateTime > 0) then return; end
-        if (GameTooltip:IsOwned(self)) then GameTooltip:SetUnitAura(PlayerFrame.unit, self:GetID(), 'HELPFUL'); end
+        if (GameTooltip:IsOwned(self)) then GameTooltip:SetUnitAura(self.DFUnit, self:GetID(), self.DFFilter); end
     else
         self.Duration:Hide()
         self:SetAlpha(1.0);
