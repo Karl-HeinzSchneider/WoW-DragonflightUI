@@ -497,7 +497,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
             header:SetAttribute("wrapYOffset", -size - state.paddingY);
         else
             header:ClearAllPoints()
-            header:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0 + 14);
+            header:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 0 + state.paddingY);
 
             header:SetAttribute("point", 'BOTTOMLEFT');
             header:SetAttribute("xOffset", size + state.paddingX);
@@ -514,7 +514,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
             header:SetAttribute("wrapYOffset", -size - state.paddingY);
         else
             header:ClearAllPoints()
-            header:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + 14);
+            header:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0 + state.paddingY);
 
             header:SetAttribute("point", 'BOTTOMRIGHT');
             header:SetAttribute("xOffset", -size - state.paddingX);
@@ -524,6 +524,32 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
 
     header:SetAttribute("wrapAfter", state.wrapAfter);
     header:SetAttribute("maxWraps", state.maxWraps);
+
+    -- parentframe
+    do
+        -- f:SetSize(30 + (10 - 1) * 35, 30 + (3 - 1) * 35)
+        local w = size;
+        local h = size + state.paddingY;
+
+        if state.wrapAfter == 0 then
+            -- no wrap, set size like 10
+            w = size + (10 - 1) * (size + state.paddingX)
+        else
+            local maxWraps = state.maxWraps;
+            if maxWraps == 0 then maxWraps = 10 end -- show only 10 rows
+
+            local rowsCeil = math.ceil(32 / state.wrapAfter)
+            local rows = math.min(rowsCeil, maxWraps)
+
+            -- print('rows:', rows)
+
+            w = size + (state.wrapAfter - 1) * (size + state.paddingX)
+            h = (size + state.paddingY) * (rows)
+        end
+
+        local parent = self:GetParent()
+        parent:SetSize(w, h)
+    end
 
     -- sorting
     -- header:SetAttribute("filter", filter);
