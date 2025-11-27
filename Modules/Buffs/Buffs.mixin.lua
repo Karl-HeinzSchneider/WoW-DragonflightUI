@@ -238,10 +238,8 @@ function SubModuleMixin:Setup()
 
     --
     self:CreateBuffFrame()
-    -- self:AddBuffBorders()
-    -- self:MoveBuffs()
-
     self:CreateNewBuffs()
+    self:RemoveDefaultBuffs()
 
     --
     local EditModeModule = DF:GetModule('Editmode');
@@ -259,10 +257,6 @@ function SubModuleMixin:Setup()
         end,
         moduleRef = self.ModuleRef
     });
-
-    -- Module.DFBuffFrame.DFEditModeSelection:ClearAllPoints()
-    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('TOPLEFT', Module.DFBuffFrame, 'TOPLEFT', -16, 32)
-    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.DFBuffFrame, 'BOTTOMRIGHT', 16, -16)
 end
 
 function SubModuleMixin:OnEvent(event, ...)
@@ -319,10 +313,10 @@ function SubModuleMixin:Update()
     -- TemporaryEnchantFrame:SetScale(state.scale)
     -- TemporaryEnchantFrame:SetParent(f)
 
-    -- if state.useStateHandler and not self.StateHandlerAdded then
-    --     self.StateHandlerAdded = true;
-    --     self:AddStateUpdater()
-    -- end
+    if state.useStateHandler and not self.StateHandlerAdded then
+        self.StateHandlerAdded = true;
+        self:AddStateUpdater()
+    end
 
     self.NewBuffs:SetState(state)
 
@@ -500,3 +494,13 @@ function SubModuleMixin:CreateNewBuffs()
     self.NewBuffs = container
 end
 
+function SubModuleMixin:RemoveDefaultBuffs()
+    if TemporaryEnchantFrame then
+        TemporaryEnchantFrame:UnregisterAllEvents()
+        TemporaryEnchantFrame:Hide()
+    end
+    if BuffFrame then
+        BuffFrame:UnregisterAllEvents()
+        BuffFrame:Hide()
+    end
+end
