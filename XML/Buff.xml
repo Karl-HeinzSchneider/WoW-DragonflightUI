@@ -42,7 +42,7 @@ UI_shared.xsd">
 			</OnLeave>
 		</Scripts>
 	</Button>
-	<Button name="DragonflightUIAuraButtonBuffTemplate" inherits="DragonflightUIAuraButtonTemplate" virtual="true">
+	<Button name="DragonflightUIAuraButtonBuffTemplate" inherits="DragonflightUIAuraButtonTemplate" registerForClicks="RightButtonUp" virtual="true">
 		<Attributes>
 			<Attribute name="DFFilter" type="string" value="HELPFUL" />
 		</Attributes>

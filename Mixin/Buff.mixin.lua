@@ -576,8 +576,6 @@ end
 DragonflightUIAuraButtonTemplateMixin = {}
 
 function DragonflightUIAuraButtonTemplateMixin:OnLoad()
-    self:RegisterForClicks("RightButtonUp")
-
     local cd = CreateFrame("Cooldown", nil, self, 'CooldownFrameTemplate')
     cd:SetAllPoints(self.Icon)
     cd:SetSwipeTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNewAlpha', 1.0, 1.0, 1.0, 0.8)
@@ -595,7 +593,14 @@ function DragonflightUIAuraButtonTemplateMixin:OnLoad()
     local filter = self:GetAttribute('DFFilter');
     self.DFFilter = filter;
 
-    DragonflightUIMixin:AddIconBorder(self, filter == 'HELPFUL')
+    if filter == 'HELPFUL' then
+        DragonflightUIMixin:AddIconBorder(self, true)
+    elseif filter == 'HARMFUL' then
+        DragonflightUIMixin:AddIconBorder(self, false)
+    else
+        DragonflightUIMixin:AddIconBorder(self, true)
+    end
+
     self.DFIconBorder:SetDesaturated(false)
     self.DFIconBorder:SetVertexColor(1.0, 1.0, 1.0)
 end
@@ -653,10 +658,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
                 color = DebuffTypeColor[dispelType];
                 -- doesnt seem to work, but is in default code
                 if (ENABLE_COLORBLIND_MODE == "1") then
-                    buff.symbol:Show();
-                    buff.symbol:SetText(DebuffTypeSymbol[dispelType] or "");
+                    -- buff.symbol:Show();
+                    -- buff.symbol:SetText(DebuffTypeSymbol[dispelType] or "");
                 else
-                    buff.symbol:Hide();
+                    -- buff.symbol:Hide();
                 end
             else
                 color = DebuffTypeColor['none']
