@@ -620,7 +620,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
 
         if count > 1 then
             self.Count:SetText(count);
-            self.count:Show();
+            self.Count:Show();
         else
             self.Count:SetText("");
         end
