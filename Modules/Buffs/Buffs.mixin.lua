@@ -34,7 +34,7 @@ function SubModuleMixin:SetDefaults()
         growthDirection = 'down',
         paddingX = 5,
         paddingY = 14,
-        wrapAfter = 10,
+        wrapAfter = 12,
         -- wrapXOffset = 0,
         -- wrapYOffset = 14,
         maxWraps = 4,
@@ -368,15 +368,6 @@ function SubModuleMixin:CreateBuffFrame()
 
     toggle:SetScript('OnClick', function()
         setOption({'buffs', 'expanded'}, not self.ModuleRef.db.profile.buffs.expanded)
-    end)
-end
-
-function SubModuleMixin:MoveBuffs()
-    hooksecurefunc('UIParent_UpdateTopFramePositions', function()
-        -- print('UIParent_UpdateTopFramePositions')
-        -- local state = self.ModuleRef.db.profile.buffs
-        -- self:UpdateBuffState(state)
-        self:Update()
     end)
 end
 

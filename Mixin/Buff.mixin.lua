@@ -353,8 +353,10 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     local name;
     if filter == 'HELPFUL' then
         name = 'DFPlayerBuffHeader'
+        self.DFBuffLimit = BUFF_MAX_DISPLAY or 32;
     elseif filter == 'HARMFUL' then
         name = 'DFPlayerDebuffHeader'
+        self.DFBuffLimit = DEBUFF_MAX_DISPLAY or 16;
     else
         print('shouldnt happen :§')
     end
@@ -538,7 +540,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
             local maxWraps = state.maxWraps;
             if maxWraps == 0 then maxWraps = 10 end -- show only 10 rows
 
-            local rowsCeil = math.ceil(32 / state.wrapAfter)
+            local rowsCeil = math.ceil(self.DFBuffLimit / state.wrapAfter)
             local rows = math.min(rowsCeil, maxWraps)
 
             -- print('rows:', rows)

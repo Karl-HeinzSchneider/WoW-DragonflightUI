@@ -34,7 +34,7 @@ UI_shared.xsd">
 				if self:GetAttribute("target-slot") == 16 or self:GetAttribute("target-slot") == 17 or self:GetAttribute("target-slot") == 18 then
 				GameTooltip:SetInventoryItem("player", self:GetID());
 				else
-				GameTooltip:SetUnitAura("player", self:GetID());
+				GameTooltip:SetUnitAura("player", self:GetID(),self.DFFilter);
 				end
 			</OnEnter>
 			<OnLeave>
@@ -55,6 +55,16 @@ UI_shared.xsd">
 	<Frame name="DragonflightUIBuffFrameContainerTemplate" mixin="DragonflightUIBuffFrameContainerTemplateMixin" virtual="true">
 		<Attributes>
 			<Attribute name="DFFilter" type="string" value="HELPFUL" />
+		</Attributes>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnEvent method="OnEvent" /> -->
+			<!-- <OnUpdate method="OnUpdate" /> -->
+		</Scripts>
+	</Frame>
+	<Frame name="DragonflightUIDebuffFrameContainerTemplate" mixin="DragonflightUIBuffFrameContainerTemplateMixin" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HARMFUL" />
 		</Attributes>
 		<Scripts>
 			<OnLoad method="OnLoad" />
