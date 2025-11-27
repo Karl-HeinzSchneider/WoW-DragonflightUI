@@ -238,6 +238,7 @@ function SubModuleMixin:Setup()
 
     --
     self:CreateBuffFrame()
+    self:AddBuffBorders()
     self:CreateNewBuffs()
     self:RemoveDefaultBuffs()
 
@@ -379,35 +380,35 @@ function SubModuleMixin:AddBuffBorders()
     self.BuffDesaturate = false;
 
     -- buffs
-    hooksecurefunc('AuraButton_Update', function(buttonName, index, filter) --
+    -- hooksecurefunc('AuraButton_Update', function(buttonName, index, filter) --
 
-        local buffName = buttonName .. index;
-        local buff = _G[buffName];
+    --     local buffName = buttonName .. index;
+    --     local buff = _G[buffName];
 
-        if not buff then return end
-        if not buff:IsShown() then return end
+    --     if not buff then return end
+    --     if not buff:IsShown() then return end
 
-        -- print(buttonName, index, filter)
-        local helpful = (filter == "HELPFUL" or filter == "HELPFUL");
+    --     -- print(buttonName, index, filter)
+    --     local helpful = (filter == "HELPFUL" or filter == "HELPFUL");
 
-        if not buff.DFIconBorder then
-            --
-            DragonflightUIMixin:AddIconBorder(buff, helpful)
-            buff.DFIconBorder:SetDesaturated(self.BuffDesaturate)
-            buff.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG, self.BuffVertexColorB)
-        end
+    --     if not buff.DFIconBorder then
+    --         --
+    --         DragonflightUIMixin:AddIconBorder(buff, helpful)
+    --         buff.DFIconBorder:SetDesaturated(self.BuffDesaturate)
+    --         buff.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG, self.BuffVertexColorB)
+    --     end
 
-        if (not helpful) then
-            local debuffSlot = _G[buffName .. "Border"];
-            if not debuffSlot then return end
+    --     if (not helpful) then
+    --         local debuffSlot = _G[buffName .. "Border"];
+    --         if not debuffSlot then return end
 
-            debuffSlot:Hide()
+    --         debuffSlot:Hide()
 
-            local r, g, b = debuffSlot:GetVertexColor()
-            -- print(r, g, b)
-            buff.DFIconBorder:SetVertexColor(r, g, b)
-        end
-    end)
+    --         local r, g, b = debuffSlot:GetVertexColor()
+    --         -- print(r, g, b)
+    --         buff.DFIconBorder:SetVertexColor(r, g, b)
+    --     end
+    -- end)
 
     hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
         -- also styles focusFrame
@@ -452,7 +453,7 @@ function SubModuleMixin:AddBuffBorders()
                     --
                     debuffSlot:Hide()
                     local r, g, b = debuffSlot:GetVertexColor()
-                    -- print(r, g, b)
+                    -- print(r, g, b) 
                     frame.DFIconBorder:SetVertexColor(r, g, b)
                 end
             end

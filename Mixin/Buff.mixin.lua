@@ -423,6 +423,12 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     header.BuffFrameFlashState = 1;
     header.BuffAlphaValue = 1;
 
+    -- set default, may be overriden by darkmode module
+    header.BuffVertexColorR = 1.0;
+    header.BuffVertexColorG = 1.0;
+    header.BuffVertexColorB = 1.0;
+    header.BuffDesaturate = false;
+
     header:HookScript('OnUpdate', function(self, elapsed)
         --
         if (self.BuffFrameUpdateTime > 0) then
@@ -589,7 +595,7 @@ function DragonflightUIAuraButtonTemplateMixin:OnLoad()
     local filter = self:GetAttribute('DFFilter');
     self.DFFilter = filter;
 
-    DragonflightUIMixin:AddIconBorder(self, true)
+    DragonflightUIMixin:AddIconBorder(self, filter == 'HELPFUL')
     self.DFIconBorder:SetDesaturated(false)
     self.DFIconBorder:SetVertexColor(1.0, 1.0, 1.0)
 end
@@ -631,6 +637,37 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
             self.Duration:Hide()
             self:SetScript('OnUpdate', nil)
             self:SetAlpha(1.0)
+        end
+
+        -- border
+        local parent = self:GetParent();
+        if self.DFFilter == 'HELPFUL' then
+            -- print('help', parent.BuffDesaturate, parent.BuffVertexColorR, parent.BuffVertexColorG,
+            --       parent.BuffVertexColorB)
+            self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
+            self.DFIconBorder:SetVertexColor(parent.BuffVertexColorR, parent.BuffVertexColorG, parent.BuffVertexColorB)
+        elseif self.DFFilter == 'HARMFUL' then
+            local color;
+
+            if dispelType then
+                color = DebuffTypeColor[dispelType];
+                -- doesnt seem to work, but is in default code
+                if (ENABLE_COLORBLIND_MODE == "1") then
+                    buff.symbol:Show();
+                    buff.symbol:SetText(DebuffTypeSymbol[dispelType] or "");
+                else
+                    buff.symbol:Hide();
+                end
+            else
+                color = DebuffTypeColor['none']
+            end
+
+            self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
+            self.DFIconBorder:SetVertexColor(color.r, color.g, color.b)
+        else
+            -- should not happen
+            self.DFIconBorder:SetDesaturated(false)
+            self.DFIconBorder:SetVertexColor(1.0, 1.0, 1.0)
         end
     else
         self.Icon:Hide();
