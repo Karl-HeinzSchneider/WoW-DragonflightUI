@@ -22,7 +22,25 @@ function SubModuleMixin:SetDefaults()
         anchor = 'TOPRIGHT',
         anchorParent = 'TOPLEFT',
         x = -55,
-        y = -13 - 110,
+        y = -155, -- -13 - 110
+        -- auraheader
+        seperateOwn = '0',
+        sortMethod = 'INDEX',
+        sortDirection = '+',
+        groupBy = '',
+        point = 'TOPRIGHT',
+        orientation = 'rightToLeft',
+        growthDirection = 'down',
+        paddingX = 5,
+        paddingY = 14,
+        wrapAfter = 8,
+        -- wrapXOffset = 0,
+        -- wrapYOffset = 14,
+        maxWraps = 2,
+        --
+        hideDurationText = false,
+        hideCooldownSwipe = false,
+        hideCooldownDurationText = true,
         -- Visibility
         alphaNormal = 1.0,
         alphaCombat = 1.0,
@@ -95,6 +113,7 @@ function SubModuleMixin:SetupOptions()
 
     DF.Settings:AddPositionTable(Module, options, 'debuffs', 'Debuffs', getDefaultStr, frameTable)
     DragonflightUIStateHandlerMixin:AddStateTable(Module, options, 'debuffs', 'Debuffs', getDefaultStr)
+    DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, options, sub, getDefaultStr)
     local optionsEditmode = {
         name = 'Debuff',
         desc = 'Debuff',
@@ -146,7 +165,8 @@ function SubModuleMixin:Setup()
 
     --
     self:CreateDebuffFrame()
-    self:MoveDebuffs()
+    self:CreateNewDebuffs()
+    self:RemoveDefaultDebuffs()
     --
     local EditModeModule = DF:GetModule('Editmode');
     EditModeModule:AddEditModeToFrame(self.DFDebuffFrame)
@@ -190,53 +210,49 @@ function SubModuleMixin:Update()
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    for i = 1, 12 do
-        local buff = _G['DebuffButton' .. i];
-        if buff then
-            buff:SetScale(state.scale)
-            buff:SetParent(f)
-            -- buff:Show()
-        end
-    end
-
     if state.useStateHandler and not self.StateHandlerAdded then
         self.StateHandlerAdded = true;
         self:AddStateUpdater()
     end
 
+    self.NewDebuffs:SetState(state)
+
     if self.StateHandlerAdded then f:UpdateStateHandler(state) end
 end
 
 function SubModuleMixin:CreateDebuffFrame()
-    local f = CreateFrame('FRAME', 'DragonflightUIDebuffFrame', UIParent)
+    local f = CreateFrame('FRAME', 'DragonflightUIPlayerDebuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (2 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13 - 110)
     f:SetClampedToScreen(true)
     self.DFDebuffFrame = f
 end
 
-function SubModuleMixin:MoveDebuffs()
-    local f = self.DFDebuffFrame
-    local moduleRef = self.ModuleRef;
-    hooksecurefunc('DebuffButton_UpdateAnchors', function(buttonName, index)
-        -- print('update', buttonName, index)
-
-        local state = moduleRef.db.profile.debuffs
-        local buff = _G[buttonName .. index];
-        buff:SetScale(state.scale or 1.0)
-        buff:SetParent(f)
-        -- buff:Show()
-
-        if index ~= 1 then return end
-
-        -- buff:SetPoint("TOPRIGHT", BuffFrame, "BOTTOMRIGHT", 0, -DebuffButton1.offsetY);
-        buff:ClearAllPoints()
-        buff:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0);
-    end)
-end
-
 function SubModuleMixin:AddStateUpdater()
     Mixin(self.DFDebuffFrame, DragonflightUIStateHandlerMixin)
     self.DFDebuffFrame:InitStateHandler(4, 4)
+end
+
+function SubModuleMixin:CreateNewDebuffs()
+    local container = CreateFrame("Frame", "DragonflightUIPlayerDebuffFrameContainer", self.DFDebuffFrame,
+                                  "DragonflightUIDebuffFrameContainerTemplate");
+    container:SetPoint('TOPRIGHT', self.DFDebuffFrame, 'TOPRIGHT', 0, 0)
+    container:SetPoint('BOTTOMLEFT', self.DFDebuffFrame, 'BOTTOMLEFT', 0, 0)
+    container.Header:SetParent(self.DFDebuffFrame)
+    -- container:SetSize(30, 30)
+    container:Show();
+
+    self.NewDebuffs = container
+end
+
+function SubModuleMixin:RemoveDefaultDebuffs()
+    -- if TemporaryEnchantFrame then
+    --     TemporaryEnchantFrame:UnregisterAllEvents()
+    --     TemporaryEnchantFrame:Hide()
+    -- end
+    -- if BuffFrame then
+    --     BuffFrame:UnregisterAllEvents()
+    --     BuffFrame:Hide()
+    -- end
 end
 

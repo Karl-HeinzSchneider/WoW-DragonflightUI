@@ -1,0 +1,122 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+	<Script file="Mixin/Buff.mixin.lua" />
+	<Button name="DragonflightUIAuraButtonTemplate" mixin="DragonflightUIAuraButtonTemplateMixin" inherits="SecureActionButtonTemplate" virtual="true">
+		<Size x="30" y="30" />
+		<Attributes>
+			<Attribute name="type2" value="cancelaura" />
+			<Attribute name="DFFilter" type="string" value="HELPFUL" />
+		</Attributes>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentIcon" parentKey="Icon" />
+				<FontString name="$parentCount" inherits="NumberFontNormal" parentKey="Count">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="-2" y="2" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentDuration" inherits="GameFontNormalSmall" hidden="true" parentKey="Duration">
+					<Anchors>
+						<Anchor point="TOP" relativePoint="BOTTOM" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
+				GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
+				if self:GetAttribute("target-slot") == 16 or self:GetAttribute("target-slot") == 17 or self:GetAttribute("target-slot") == 18 then
+				GameTooltip:SetInventoryItem("player", self:GetID());
+				else
+				GameTooltip:SetUnitAura("player", self:GetID(),self.DFFilter);
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Button name="DragonflightUIAuraButtonBuffTemplate" inherits="DragonflightUIAuraButtonTemplate" registerForClicks="RightButtonUp" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HELPFUL" />
+		</Attributes>
+	</Button>
+	<Button name="DragonflightUIAuraButtonDebuffTemplate" inherits="DragonflightUIAuraButtonTemplate" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HARMFUL" />
+		</Attributes>
+	</Button>
+	<Frame name="DragonflightUIBuffFrameContainerTemplate" mixin="DragonflightUIBuffFrameContainerTemplateMixin" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HELPFUL" />
+		</Attributes>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnEvent method="OnEvent" /> -->
+			<!-- <OnUpdate method="OnUpdate" /> -->
+		</Scripts>
+	</Frame>
+	<Frame name="DragonflightUIDebuffFrameContainerTemplate" mixin="DragonflightUIBuffFrameContainerTemplateMixin" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HARMFUL" />
+		</Attributes>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<!-- <OnEvent method="OnEvent" /> -->
+			<!-- <OnUpdate method="OnUpdate" /> -->
+		</Scripts>
+	</Frame>
+	<!--
+	<Button name="DragonflightUIConsolidatedBuffsTemplate" mixin="DragonflightUIConsolidatedBuffsTemplateMixin" inherits="AuraButtonTemplate" virtual="true">
+	<Scripts>
+	<OnLoad method="OnLoad" />
+	<OnUpdate method="OnUpdate" />
+	<OnEnter method="OnEnter" />
+	<OnShow method="OnShow" />
+	<OnHide method="OnHide" />
+	</Scripts>
+	</Button>
+	<Frame name="DragonflightUIConsolidateBuffsProxyHeaderTemplate" mixin="DragonflightUIConsolidateBuffsProxyHeaderTemplateMixin" inherits="SecureAuraHeaderTemplate" virtual="true">
+	<Scripts>
+	<OnLoad method="OnLoad" />
+	</Scripts>
+	</Frame>
+	<Frame name="DragonflightUIConsolidatedBuffsTooltip" inherits="TooltipBackdropTemplate" frameStrata="TOOLTIP" clampedToScreen="true" virtual="true">
+	<Anchors>
+	<Anchor point="TOPLEFT" />
+	</Anchors>
+	<Size x="60" y="60" />
+	<Frames>
+	<Frame parentKey="Container">
+	<Size x="60" y="60" />
+	<Anchors>
+	<Anchor point="TOPLEFT" x="16" y="-16" />
+	</Anchors>
+	</Frame>
+	</Frames>
+	<Scripts>
+	<OnLoad>
+	self.Container:SetScale(0.66);
+	</OnLoad>
+	<OnEnter>
+	self.mousedOver = true;
+	</OnEnter>
+	<OnUpdate>
+	if ( self.mousedOver and not ConsolidatedBuffs.mousedOver and not self:IsMouseOver() ) then
+	self.mousedOver = nil;
+	self:Hide();
+	end
+	</OnUpdate>
+	<OnHide>
+	self.mousedOver = nil;
+	</OnHide>
+	</Scripts>
+	</Frame>
+	-->
+</Ui>

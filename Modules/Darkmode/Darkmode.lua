@@ -879,17 +879,25 @@ function Module:UpdateBuff(state)
     f.BuffVertexColorG = c.g;
     f.BuffVertexColorB = c.b;
 
+    local buffHeader = f.NewBuffs.Header;
+
+    buffHeader.BuffVertexColorR = c.r;
+    buffHeader.BuffVertexColorG = c.g;
+    buffHeader.BuffVertexColorB = c.b;
+    buffHeader.BuffDesaturate = state.buffDesaturate;
+
     local buff;
     -- player
-    for i = 1, 40 do
-        --
-        buff = _G['BuffButton' .. i]
-        if buff and buff.DFIconBorder then
-            --
-            buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
-            buff.DFIconBorder:SetVertexColor(c:GetRGB())
-        end
-    end
+    -- for i = 1, 32 do
+    --     --
+    --     buff = _G['BuffButton' .. i]
+    --     if buff and buff.DFIconBorder then
+    --         --
+    --         buff.DFIconBorder:SetDesaturated(state.buffDesaturate)
+    --         buff.DFIconBorder:SetVertexColor(c:GetRGB())
+    --     end
+    -- end
+    for _, frame in buffHeader:ActiveChildren() do frame:UpdateStyle() end
     -- target 
     for i = 1, MAX_TARGET_BUFFS do
         --   
