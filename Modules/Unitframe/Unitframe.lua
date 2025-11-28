@@ -455,15 +455,19 @@ function Module:ChangeFonts()
     changeFont(TargetFrameTextureFrame.ManaBarTextRight, std)
 
     for i = 1, 4 do
-        -- local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
-        -- changeFont(healthbar.DFHealthBarText, std)
-        -- changeFont(healthbar.DFHealthBarTextLeft, std)
-        -- changeFont(healthbar.DFHealthBarTextRight, std)
+        local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
+        if healthbar then
+            changeFont(healthbar.DFHealthBarText, std)
+            changeFont(healthbar.DFHealthBarTextLeft, std)
+            changeFont(healthbar.DFHealthBarTextRight, std)
+        end
 
-        -- local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
-        -- changeFont(manabar.DFManaBarText, std)
-        -- changeFont(manabar.DFManaBarTextLeft, std)
-        -- changeFont(manabar.DFManaBarTextRight, std)
+        local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
+        if manabar then
+            changeFont(manabar.DFManaBarText, std)
+            changeFont(manabar.DFManaBarTextLeft, std)
+            changeFont(manabar.DFManaBarTextRight, std)
+        end
     end
 
     if DF.Wrath or DF.API.Version.IsTBC then
