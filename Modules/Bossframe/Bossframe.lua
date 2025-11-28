@@ -10,6 +10,16 @@ Module.Tmp = {}
 
 Mixin(Module, DragonflightUIModulesMixin)
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 local defaults = {
     profile = {
         scale = 1,

@@ -734,6 +734,11 @@ function Module:Era()
 end
 
 function Module:TBC()
+    Module.MoveTracker()
+    Module:ChangeLFG()
+
+    self.SubDurability:Setup()
+    self.SubMinimap:Setup()
 end
 
 function Module:Wrath()

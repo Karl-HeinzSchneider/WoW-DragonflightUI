@@ -8,6 +8,16 @@ local subModuleName = 'PetFrame';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
@@ -460,9 +470,11 @@ function SubModuleMixin:ChangePetFrame()
 
     PetFrameHealthBarText:SetPoint('CENTER', PetFrameHealthBar, 'CENTER', 0, 0)
 
-    hooksecurefunc('PetFrame_Update', function(_)
-        self:UpdatePetManaBarTexture()
-    end)
+    if PetFrame_Update then
+        hooksecurefunc('PetFrame_Update', function(_)
+            self:UpdatePetManaBarTexture()
+        end)
+    end
     self:UpdatePetManaBarTexture()
     self:UpdatePetHealthBarTexture()
 

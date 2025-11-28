@@ -10,6 +10,16 @@ local subModuleName = 'Target';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
@@ -576,11 +586,19 @@ function SubModuleMixin:Setup()
         self:ReApplyTargetFrame()
     end
 
-    hooksecurefunc('TargetFrame_CheckFaction', function(f)
-        --
-        if f ~= TargetFrame then return end
-        if self.ModuleRef.db.profile.target.hidePVP then f.pvpIcon:Hide() end
-    end)
+    if TargetFrame_CheckFaction then
+        hooksecurefunc('TargetFrame_CheckFaction', function(f)
+            --
+            if f ~= TargetFrame then return end
+            if self.ModuleRef.db.profile.target.hidePVP then f.pvpIcon:Hide() end
+        end)
+    else
+        hooksecurefunc(TargetFrame, 'CheckFaction', function(f)
+            --
+            if f ~= TargetFrame then return end
+            if self.ModuleRef.db.profile.target.hidePVP then f.pvpIcon:Hide() end
+        end)
+    end
 
     -- state
     Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
@@ -659,7 +677,11 @@ function SubModuleMixin:Update()
     TargetFrameNameBackground:SetShown(not state.hideNameBackground)
     AuraDurations.frame:SetState(state)
     UnitFramePortrait_Update(TargetFrame)
-    TargetFrame_CheckFaction(TargetFrame)
+    if TargetFrame_CheckFaction then
+        TargetFrame_CheckFaction(TargetFrame)
+    else
+        TargetFrame:CheckFaction()
+    end
     TargetFrame:UpdateStateHandler(state)
 
     self.PreviewTarget:UpdateState(state);
@@ -761,7 +783,7 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
         frame:DFFixLevelText()
 
         local module = DF:GetModule('Unitframe');
-        if module and not module.TargetFrameNameHooked then
+        if module and not module.TargetFrameNameHooked and TargetFrame_UpdateLevelTextAnchor then
             module.TargetFrameNameHooked = true;
             hooksecurefunc('TargetFrame_UpdateLevelTextAnchor', function(f, targetLevel)
                 if f.DFFixLevelText and type(f.DFFixLevelText) == 'function' then

@@ -69,7 +69,7 @@ function frame:Update()
     SetCVarFunc('noBuffDebuffFilterOnTarget', AuraDurationsDB.noDebuffFilter)
     SetCVarFunc('showDynamicBuffSize', AuraDurationsDB.dynamicBuffSize)
 
-    TargetFrame_UpdateAuras(TargetFrame)
+    if TargetFrame_UpdateAuras then TargetFrame_UpdateAuras(TargetFrame) end
 end
 
 frame:SetScript("OnEvent", function(self, event, ...)
@@ -99,6 +99,7 @@ function frame:PLAYER_LOGIN(event, ...)
         UnitAura = LibClassicDurations.UnitAuraWrapper
     end
 
+    if not TargetFrame_UpdateAuras then return end
     hooksecurefunc("TargetFrame_UpdateAuras", frame.TargetBuffHook)
     hooksecurefunc("CompactUnitFrame_UtilSetBuff", frame.CompactUnitFrameBuffHook)
     hooksecurefunc("CompactUnitFrame_UtilSetDebuff", frame.CompactUnitFrameDeBuffHook)

@@ -5,6 +5,16 @@ local Helper = addonTable.Helper;
 
 local RangeCheck = LibStub("LibRangeCheck-3.0")
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 DragonflightUIBossframeMixin = {}
 
 function DragonflightUIBossframeMixin:OnLoad()

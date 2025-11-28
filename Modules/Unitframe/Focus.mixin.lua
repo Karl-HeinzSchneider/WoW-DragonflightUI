@@ -9,6 +9,16 @@ local subModuleName = 'Focus';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
@@ -319,11 +329,19 @@ function SubModuleMixin:Setup()
         self:ReApplyFocusFrame()
     end
 
-    hooksecurefunc('TargetFrame_CheckFaction', function(f)
-        --
-        if f ~= FocusFrame then return end
-        if self.ModuleRef.db.profile.focus.hidePVP then f.pvpIcon:Hide() end
-    end)
+    if TargetFrame_CheckFaction then
+        hooksecurefunc('TargetFrame_CheckFaction', function(f)
+            --
+            if f ~= FocusFrame then return end
+            if self.ModuleRef.db.profile.focus.hidePVP then f.pvpIcon:Hide() end
+        end)
+    else
+        hooksecurefunc(FocusFrame, 'CheckFaction', function(f)
+            --
+            if f ~= FocusFrame then return end
+            if self.ModuleRef.db.profile.focus.hidePVP then f.pvpIcon:Hide() end
+        end)
+    end
 
     -- state handler
     Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
@@ -410,7 +428,11 @@ function SubModuleMixin:Update()
     TextStatusBar_UpdateTextString(FocusFrameHealthBar)
     FocusFrameNameBackground:SetShown(not state.hideNameBackground)
     UnitFramePortrait_Update(FocusFrame)
-    TargetFrame_CheckFaction(FocusFrame)
+    if TargetFrame_CheckFaction then
+        TargetFrame_CheckFaction(FocusFrame)
+    else
+        FocusFrame:CheckFaction()
+    end
     FocusFrame:UpdateStateHandler(state)
     self.PreviewFocus:UpdateState(state);
 end
