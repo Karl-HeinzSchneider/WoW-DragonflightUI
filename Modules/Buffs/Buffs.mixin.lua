@@ -410,6 +410,7 @@ function SubModuleMixin:AddBuffBorders()
     --     end
     -- end)
 
+    if not TargetFrame_UpdateAuras then return end-- TODOTBC
     hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
         -- also styles focusFrame
         -- print('TargetFrame_UpdateAuras', self:GetName())
