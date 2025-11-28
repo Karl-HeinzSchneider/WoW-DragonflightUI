@@ -21,8 +21,8 @@ function SubModuleMixin:SetDefaults()
         customAnchorFrame = '',
         anchor = 'TOPRIGHT',
         anchorParent = 'TOPRIGHT',
-        x = -234,
-        y = -143, -- -13 - 110
+        x = -250,
+        y = -146, -- -13 - 110
         -- auraheader
         seperateOwn = '0',
         sortMethod = 'INDEX',
