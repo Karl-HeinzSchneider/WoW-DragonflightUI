@@ -17,12 +17,12 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         scale = 1,
-        anchorFrame = 'MinimapCluster',
+        anchorFrame = 'UIParent',
         customAnchorFrame = '',
         anchor = 'TOPRIGHT',
-        anchorParent = 'TOPLEFT',
-        x = -55,
-        y = -13,
+        anchorParent = 'TOPRIGHT',
+        x = -234,
+        y = -5,
         expanded = true,
         -- auraheader
         seperateOwn = '0',
@@ -410,7 +410,7 @@ function SubModuleMixin:AddBuffBorders()
     --     end
     -- end)
 
-    if not TargetFrame_UpdateAuras then return end-- TODOTBC
+    if not TargetFrame_UpdateAuras then return end -- TODOTBC
     hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
         -- also styles focusFrame
         -- print('TargetFrame_UpdateAuras', self:GetName())

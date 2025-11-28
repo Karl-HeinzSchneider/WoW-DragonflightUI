@@ -17,12 +17,12 @@ end
 function SubModuleMixin:SetDefaults()
     local defaults = {
         scale = 1,
-        anchorFrame = 'MinimapCluster',
+        anchorFrame = 'UIParent',
         customAnchorFrame = '',
         anchor = 'TOPRIGHT',
-        anchorParent = 'TOPLEFT',
-        x = -55,
-        y = -155, -- -13 - 110
+        anchorParent = 'TOPRIGHT',
+        x = -234,
+        y = -143, -- -13 - 110
         -- auraheader
         seperateOwn = '0',
         sortMethod = 'INDEX',

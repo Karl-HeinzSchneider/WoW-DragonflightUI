@@ -245,7 +245,7 @@ function Module:RefreshOptionScreens()
     configFrame:RefreshCatSub(cat, 'Durability')
     configFrame:RefreshCatSub(cat, 'LFG')
 
-    Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen()
+    if Module.TrackerFrameRef then Module.TrackerFrameRef.DFEditModeSelection:RefreshOptionScreen() end
     if Module.LFG then Module.LFG.DFEditModeSelection:RefreshOptionScreen() end
 
     self.SubDurability.BaseFrame.DFEditModeSelection:RefreshOptionScreen()
@@ -376,7 +376,8 @@ function Module:AddEditMode()
     local EditModeModule = DF:GetModule('Editmode');
 
     -- QuestTracker
-    local trackerFrame = (DF.Era and QuestWatchFrame) or (DF.Wrath and WatchFrame) or (DF.Cata and WatchFrame);
+    local trackerFrame = (DF.Era and QuestWatchFrame) or (DF.API.Version.IsTBC and QuestWatchFrame) or
+                             (DF.Wrath and WatchFrame) or (DF.Cata and WatchFrame);
     if trackerFrame then
         Module.TrackerFrameRef = trackerFrame;
         EditModeModule:AddEditModeToFrame(trackerFrame)
@@ -478,6 +479,19 @@ function Module.UpdateTrackerState(state)
         QuestTimerFrame:ClearAllPoints()
         -- QuestTimerFrame:SetPoint('TOP', Minimap, 'BOTTOMLEFT', 0, 0)
         QuestTimerFrame:SetPoint('BOTTOMRIGHT', QuestWatchFrame, 'TOPRIGHT', -25, 0)
+    elseif DF.API.Version.IsTBC then
+        QuestWatchFrame:SetClampedToScreen(false)
+
+        QuestWatchFrame:SetScale(state.scale)
+        QuestWatchFrame:ClearAllPoints()
+        QuestWatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+        -- QuestWatchFrame:SetHeight(800)
+        -- QuestWatchFrame:SetWidth(204)    
+
+        QuestTimerFrame:ClearAllPoints()
+        -- QuestTimerFrame:SetPoint('TOP', Minimap, 'BOTTOMLEFT', 0, 0)
+        QuestTimerFrame:SetPoint('BOTTOMRIGHT', QuestWatchFrame, 'TOPRIGHT', -25, 0)
     elseif DF.Cata then
         if not WatchFrame then return end
         WatchFrame:SetClampedToScreen(false)
@@ -566,6 +580,16 @@ function Module.MoveTracker()
     local setting
 
     if DF.Era then
+        hooksecurefunc(QuestWatchFrame, 'SetPoint', function(self)
+            if not setting then
+                setting = true
+                -- print('WatchFrame SetPoint')
+                local state = Module.db.profile.tracker
+                Module.UpdateTrackerState(state)
+                setting = nil
+            end
+        end)
+    elseif DF.API.Version.IsTBC then
         hooksecurefunc(QuestWatchFrame, 'SetPoint', function(self)
             if not setting then
                 setting = true
