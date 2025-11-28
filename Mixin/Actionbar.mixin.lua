@@ -1848,6 +1848,7 @@ end
 
 -- TODO only debug for now..
 function DragonflightUIActionbarMixin:HookGrid()
+    if not ActionButton_ShowGrid then return end-- TODOTBC
     hooksecurefunc('ActionButton_ShowGrid', function(btn)
         if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 1); end
     end)
