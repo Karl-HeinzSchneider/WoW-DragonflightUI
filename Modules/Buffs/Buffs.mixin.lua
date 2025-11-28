@@ -24,6 +24,24 @@ function SubModuleMixin:SetDefaults()
         x = -55,
         y = -13,
         expanded = true,
+        -- auraheader
+        seperateOwn = '0',
+        sortMethod = 'INDEX',
+        sortDirection = '+',
+        groupBy = '',
+        point = 'TOPRIGHT',
+        orientation = 'rightToLeft',
+        growthDirection = 'down',
+        paddingX = 5,
+        paddingY = 14,
+        wrapAfter = 12,
+        -- wrapXOffset = 0,
+        -- wrapYOffset = 14,
+        maxWraps = 4,
+        --
+        hideDurationText = false,
+        hideCooldownSwipe = false,
+        hideCooldownDurationText = true,
         -- Visibility
         alphaNormal = 1.0,
         alphaCombat = 1.0,
@@ -100,15 +118,15 @@ function SubModuleMixin:SetupOptions()
                 isExpanded = true,
                 editmode = true
             },
-            expanded = {
-                type = 'toggle',
-                name = L["BuffsOptionsExpanded"],
-                desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
-                group = 'headerStyling',
-                order = 10,
-                new = false,
-                editmode = true
-            },
+            -- expanded = {
+            --     type = 'toggle',
+            --     name = L["BuffsOptionsExpanded"],
+            --     desc = L["BuffsOptionsExpandedDesc"] .. getDefaultStr('expanded', 'buffs'),
+            --     group = 'headerStyling',
+            --     order = 10,
+            --     new = false,
+            --     editmode = true
+            -- },
             useStateHandler = {
                 type = 'toggle',
                 name = L["BuffsOptionsUseStateHandler"],
@@ -168,6 +186,8 @@ function SubModuleMixin:SetupOptions()
 
     DF.Settings:AddPositionTable(Module, options, 'buffs', 'Buffs', getDefaultStr, frameTable)
     DragonflightUIStateHandlerMixin:AddStateTable(Module, options, 'buffs', 'Buffs', getDefaultStr)
+    DragonflightUIBuffContainerMixin:AddAuraHeaderTable(Module, options, sub, getDefaultStr)
+
     local optionsEditmode = {
         name = 'Buff',
         desc = 'Buff',
@@ -219,7 +239,8 @@ function SubModuleMixin:Setup()
     --
     self:CreateBuffFrame()
     self:AddBuffBorders()
-    self:MoveBuffs()
+    self:CreateNewBuffs()
+    self:RemoveDefaultBuffs()
 
     --
     local EditModeModule = DF:GetModule('Editmode');
@@ -237,10 +258,6 @@ function SubModuleMixin:Setup()
         end,
         moduleRef = self.ModuleRef
     });
-
-    -- Module.DFBuffFrame.DFEditModeSelection:ClearAllPoints()
-    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('TOPLEFT', Module.DFBuffFrame, 'TOPLEFT', -16, 32)
-    -- Module.DFBuffFrame.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.DFBuffFrame, 'BOTTOMRIGHT', 16, -16)
 end
 
 function SubModuleMixin:OnEvent(event, ...)
@@ -286,31 +303,42 @@ function SubModuleMixin:Update()
         toggle:GetHighlightTexture():SetRotation(rotation)
     end
 
-    BuffFrame:SetScale(state.scale)
-    BuffFrame:ClearAllPoints()
-    -- BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
-    BuffFrame:SetPoint('TOPRIGHT', f, 'TOPRIGHT', 0, 0)
+    -- BuffFrame:SetScale(state.scale)
+    -- BuffFrame:ClearAllPoints()
+    -- -- BuffFrame:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    -- BuffFrame:SetPoint('TOPRIGHT', f, 'TOPRIGHT', 0, 0)
 
-    BuffFrame:SetShown(state.expanded)
-    BuffFrame:SetParent(f)
+    -- BuffFrame:SetShown(state.expanded)
+    -- BuffFrame:SetParent(f)
 
-    TemporaryEnchantFrame:SetScale(state.scale)
-    TemporaryEnchantFrame:SetParent(f)
+    -- TemporaryEnchantFrame:SetScale(state.scale)
+    -- TemporaryEnchantFrame:SetParent(f)
 
     if state.useStateHandler and not self.StateHandlerAdded then
         self.StateHandlerAdded = true;
         self:AddStateUpdater()
     end
 
+    self.NewBuffs:SetState(state)
+
     if self.StateHandlerAdded then f:UpdateStateHandler(state) end
 end
 
 function SubModuleMixin:CreateBuffFrame()
-    local f = CreateFrame('FRAME', 'DragonflightUIBuffFrame', UIParent)
+    local f = CreateFrame('FRAME', 'DragonflightUIPlayerBuffFrame', UIParent)
     f:SetSize(30 + (10 - 1) * 35, 30 + (3 - 1) * 35)
     f:SetPoint('TOPRIGHT', MinimapCluster, 'TOPLEFT', -55, -13)
     self.DFBuffFrame = f
     f:SetClampedToScreen(true)
+
+    local function SetEditMode(editmode)
+        -- print('~> SetEditMode', editmode)
+        self.DFEditMode = editmode
+    end
+
+    function f:SetEditMode(editmode)
+        SetEditMode(editmode)
+    end
 
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\bagslots2x'
 
@@ -318,6 +346,7 @@ function SubModuleMixin:CreateBuffFrame()
     toggleFrame:SetSize(16, 30)
     toggleFrame:SetPoint('TOPLEFT', f, 'TOPRIGHT', 0, 0)
     self.DFToggleFrame = toggleFrame
+    toggleFrame:Hide() -- TODO
 
     local toggle = CreateFrame('CHECKBUTTON', 'DragonflightUI', toggleFrame)
     toggle:SetSize(16, 30)
@@ -343,15 +372,6 @@ function SubModuleMixin:CreateBuffFrame()
     end)
 end
 
-function SubModuleMixin:MoveBuffs()
-    hooksecurefunc('UIParent_UpdateTopFramePositions', function()
-        -- print('UIParent_UpdateTopFramePositions')
-        -- local state = self.ModuleRef.db.profile.buffs
-        -- self:UpdateBuffState(state)
-        self:Update()
-    end)
-end
-
 function SubModuleMixin:AddBuffBorders()
     -- set default, may be overriden by darkmode module
     self.BuffVertexColorR = 1.0;
@@ -360,35 +380,35 @@ function SubModuleMixin:AddBuffBorders()
     self.BuffDesaturate = false;
 
     -- buffs
-    hooksecurefunc('AuraButton_Update', function(buttonName, index, filter) --
+    -- hooksecurefunc('AuraButton_Update', function(buttonName, index, filter) --
 
-        local buffName = buttonName .. index;
-        local buff = _G[buffName];
+    --     local buffName = buttonName .. index;
+    --     local buff = _G[buffName];
 
-        if not buff then return end
-        if not buff:IsShown() then return end
+    --     if not buff then return end
+    --     if not buff:IsShown() then return end
 
-        -- print(buttonName, index, filter)
-        local helpful = (filter == "HELPFUL" or filter == "HELPFUL");
+    --     -- print(buttonName, index, filter)
+    --     local helpful = (filter == "HELPFUL" or filter == "HELPFUL");
 
-        if not buff.DFIconBorder then
-            --
-            DragonflightUIMixin:AddIconBorder(buff, helpful)
-            buff.DFIconBorder:SetDesaturated(self.BuffDesaturate)
-            buff.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG, self.BuffVertexColorB)
-        end
+    --     if not buff.DFIconBorder then
+    --         --
+    --         DragonflightUIMixin:AddIconBorder(buff, helpful)
+    --         buff.DFIconBorder:SetDesaturated(self.BuffDesaturate)
+    --         buff.DFIconBorder:SetVertexColor(self.BuffVertexColorR, self.BuffVertexColorG, self.BuffVertexColorB)
+    --     end
 
-        if (not helpful) then
-            local debuffSlot = _G[buffName .. "Border"];
-            if not debuffSlot then return end
+    --     if (not helpful) then
+    --         local debuffSlot = _G[buffName .. "Border"];
+    --         if not debuffSlot then return end
 
-            debuffSlot:Hide()
+    --         debuffSlot:Hide()
 
-            local r, g, b = debuffSlot:GetVertexColor()
-            -- print(r, g, b)
-            buff.DFIconBorder:SetVertexColor(r, g, b)
-        end
-    end)
+    --         local r, g, b = debuffSlot:GetVertexColor()
+    --         -- print(r, g, b)
+    --         buff.DFIconBorder:SetVertexColor(r, g, b)
+    --     end
+    -- end)
 
     hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
         -- also styles focusFrame
@@ -433,7 +453,7 @@ function SubModuleMixin:AddBuffBorders()
                     --
                     debuffSlot:Hide()
                     local r, g, b = debuffSlot:GetVertexColor()
-                    -- print(r, g, b)
+                    -- print(r, g, b) 
                     frame.DFIconBorder:SetVertexColor(r, g, b)
                 end
             end
@@ -454,3 +474,25 @@ function SubModuleMixin:AddStateUpdater()
     self.DFBuffFrame.DFMouseHandler:SetPoint('BOTTOMRIGHT', self.DFBuffFrame, 'BOTTOMRIGHT', 14, -4)
 end
 
+function SubModuleMixin:CreateNewBuffs()
+    local container = CreateFrame("Frame", "DragonflightUIPlayerBuffFrameContainer", self.DFBuffFrame,
+                                  "DragonflightUIBuffFrameContainerTemplate");
+    container:SetPoint('TOPRIGHT', self.DFBuffFrame, 'TOPRIGHT', 0, 0)
+    container:SetPoint('BOTTOMLEFT', self.DFBuffFrame, 'BOTTOMLEFT', 0, 0)
+    container.Header:SetParent(self.DFBuffFrame)
+    -- container:SetSize(30, 30)
+    container:Show();
+
+    self.NewBuffs = container
+end
+
+function SubModuleMixin:RemoveDefaultBuffs()
+    if TemporaryEnchantFrame then
+        TemporaryEnchantFrame:UnregisterAllEvents()
+        TemporaryEnchantFrame:Hide()
+    end
+    if BuffFrame then
+        BuffFrame:UnregisterAllEvents()
+        BuffFrame:Hide()
+    end
+end
