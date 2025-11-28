@@ -368,6 +368,9 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
 
     if filter == 'HELPFUL' then
         header:SetAttribute("template", "DragonflightUIAuraButtonBuffTemplate");
+
+        header:SetAttribute("includeWeapons", 2);
+        header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplate');
     elseif filter == 'HARMFUL' then
         header:SetAttribute("template", "DragonflightUIAuraButtonDebuffTemplate");
     else
@@ -377,9 +380,6 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     header:SetAttribute("unit", "player");
     header:SetAttribute("minWidth", 30);
     header:SetAttribute("minHeight", 30);
-
-    header:SetAttribute("includeWeapons", 2);
-    header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplate');
 
     header:SetAttribute("point", "TOPRIGHT");
     header:SetAttribute("xOffset", -30 - 5);
@@ -464,6 +464,12 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
         for _, frame in header:ActiveChildren() do
             --
             frame:UpdateStyle()
+        end
+
+        for weapon = 2, 1, -1 do
+            local weaponAttr = "tempEnchant" .. weapon
+            local tempEnchant = header:GetAttribute(weaponAttr)
+            if tempEnchant then tempEnchant:UpdateTempStyle(weapon) end
         end
     end
 
@@ -610,7 +616,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
           canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, shouldConsolidate = UnitAura(self.DFUnit,
                                                                                                             self:GetID(),
                                                                                                             self.DFFilter);
-    -- print('~', name, icon, count, expirationTime - duration)
+    -- print('~', name, icon, count, duration, expirationTime)
     -- local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
     -- print('~', name, shouldConsolidate, #auraData.points > 0)
 
@@ -692,6 +698,95 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
     self.Cooldown:SetHideCountdownNumbers(header.hideCooldownDurationText)
 end
 
+function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
+    local hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID, hasOffHandEnchant,
+          offHandExpiration, offHandCharges, offHandEnchantID, hasRangedEnchant, rangedExpiration, rangedCharges,
+          rangedEnchantID = GetWeaponEnchantInfo()
+    -- print('UpdateTempStyle', id)
+    -- print('~', hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID)
+
+    local textureMapping = {
+        [1] = 16, -- Main hand
+        [2] = 17, -- Off-hand
+        [3] = 18 -- Ranged
+    };
+
+    if id == 1 then
+        -- mainhand
+        local textureName = GetInventoryItemTexture("player", textureMapping[1]);
+
+        self.Icon:SetTexture(textureName);
+        self.Icon:Show();
+
+        if mainHandCharges > 1 then
+            self.Count:SetText(mainHandCharges);
+            self.Count:Show();
+        else
+            self.Count:SetText("");
+            self.Count:Hide()
+        end
+
+        -- Show buff durations if necessary
+        if (mainHandExpiration) then
+            mainHandExpiration = mainHandExpiration / 1000;
+
+            if mainHandExpiration > 0 then
+                --
+                self.Duration:Show()
+                self.Duration:SetText(mainHandExpiration)
+
+                self.DFTempID = id;
+                self:SetScript('OnUpdate', self.UpdateTempAuraDuration)
+                self:UpdateTempAuraDuration(0);
+            else
+                self.Duration:Hide()
+                self:SetScript('OnUpdate', nil)
+                self:SetAlpha(1.0)
+            end
+        end
+        -- print('~~', mainHandExpiration)
+    elseif id == 2 then
+        -- offhand
+        local textureName = GetInventoryItemTexture("player", textureMapping[2]);
+
+        self.Icon:SetTexture(textureName);
+        self.Icon:Show();
+
+        if offHandCharges > 1 then
+            self.Count:SetText(offHandCharges);
+            self.Count:Show();
+        else
+            self.Count:SetText("");
+            self.Count:Hide()
+        end
+
+        -- Show buff durations if necessary
+        if (offHandExpiration) then
+            offHandExpiration = offHandExpiration / 1000;
+
+            if offHandExpiration > 0 then
+                --
+                self.Duration:Show()
+                self.Duration:SetText(offHandExpiration)
+
+                self.DFTempID = id;
+                self:SetScript('OnUpdate', self.UpdateTempAuraDuration)
+                self:UpdateTempAuraDuration(0);
+            else
+                self.Duration:Hide()
+                self:SetScript('OnUpdate', nil)
+                self:SetAlpha(1.0)
+            end
+        end
+    else
+        -- should not happen
+    end
+
+    local parent = self:GetParent();
+    self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
+    self.DFIconBorder:SetVertexColor(parent.BuffVertexColorR, parent.BuffVertexColorG, parent.BuffVertexColorB)
+end
+
 function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
     -- print('updateAuraDuration', self:GetName(), elapsed, self.Duration:GetText())
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId,
@@ -728,6 +823,59 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
 
         if (self:GetParent().BuffFrameUpdateTime > 0) then return; end
         if (GameTooltip:IsOwned(self)) then GameTooltip:SetUnitAura(self.DFUnit, self:GetID(), self.DFFilter); end
+    else
+        self.Duration:Hide()
+        self:SetAlpha(1.0);
+    end
+end
+
+function DragonflightUIAuraButtonTemplateMixin:UpdateTempAuraDuration(elapsed)
+    -- print('UpdateTempAuraDuration')
+    local hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID, hasOffHandEnchant,
+          offHandExpiration, offHandCharges, offHandEnchantID, hasRangedEnchant, rangedExpiration, rangedCharges,
+          rangedEnchantID = GetWeaponEnchantInfo()
+
+    local id = self.DFTempID or 0;
+
+    local shouldShow = false;
+    local expiration = 0;
+
+    if id == 1 then
+        shouldShow = hasMainHandEnchant;
+
+        if (mainHandExpiration) then mainHandExpiration = mainHandExpiration / 1000; end
+        expiration = mainHandExpiration or 0;
+    elseif id == 2 then
+        shouldShow = hasOffHandEnchant;
+
+        if (offHandExpiration) then offHandExpiration = offHandExpiration / 1000; end
+        expiration = offHandExpiration or 0;
+    end
+
+    local shouldHide = self:GetParent().hideDurationText
+
+    if shouldShow and expiration > 0 and not shouldHide then
+        self.Duration:Show()
+
+        -- local timeLeft = (expirationTime - GetTime()); 
+        local timeLeft = expiration
+        timeLeft = max(timeLeft, 0);
+
+        self.Duration:SetFormattedText(SecondsToTimeAbbrev(timeLeft));
+        if (timeLeft < BUFF_DURATION_WARNING_TIME) then
+            self.Duration:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+        else
+            self.Duration:SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+        end
+
+        if (timeLeft < BUFF_WARNING_TIME) then
+            self:SetAlpha(self:GetParent().BuffAlphaValue);
+        else
+            self:SetAlpha(1.0);
+        end
+
+        if (self:GetParent().BuffFrameUpdateTime > 0) then return; end
+        -- if (GameTooltip:IsOwned(self)) then GameTooltip:SetUnitAura(self.DFUnit, self:GetID(), self.DFFilter); end
     else
         self.Duration:Hide()
         self:SetAlpha(1.0);
