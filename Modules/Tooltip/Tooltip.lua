@@ -16,7 +16,7 @@ local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
     else
-        f:UpdateTextString()
+        -- f:UpdateTextString()
     end
 end
 
@@ -855,8 +855,8 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
         end
 
         -- @TODO @HACK GetMouseFoci returns empty table on units instead of one with worldframe :(
-        if focused == WorldFrame or (DF.Era and not focused) or (DF.API.Version.IsWotlk and not focused) or
-            (DF.API.Version.IsMoP and not focused) then
+        if focused == WorldFrame or (DF.Era and not focused) or (DF.API.Version.IsTBC and not focused) or
+            (DF.API.Version.IsWotlk and not focused) or (DF.API.Version.IsMoP and not focused) then
             -- units etc
             self:ClearAllPoints();
             self:SetOwner(parent, state.mouseAnchor, state.mouseX, state.mouseY); -- TODO config           
@@ -2007,10 +2007,17 @@ function Module:Era()
     Module:HookFunctions()
     Module:HookSpellTooltip()
     Module:HookStatusBar()
-
 end
 
 function Module:TBC()
+    self:CreatePreviewFrame()
+
+    Module:HookDefaultAnchor()
+    Module:AddBackdrops()
+
+    Module:HookFunctions()
+    Module:HookSpellTooltip()
+    Module:HookStatusBar()
 end
 
 function Module:Wrath()
