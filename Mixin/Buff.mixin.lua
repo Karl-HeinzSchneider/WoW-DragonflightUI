@@ -460,18 +460,29 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
         self.BuffAlphaValue = (self.BuffAlphaValue * (1 - BUFF_MIN_ALPHA)) + BUFF_MIN_ALPHA;
     end)
 
-    function header:UpdateStyleAll()
-        for _, frame in header:ActiveChildren() do
-            --
-            frame:UpdateStyle()
-        end
-
+    function header:UpdateTempEnchants()
+        -- print('---UpdateTempEnchants')
         for weapon = 2, 1, -1 do
             local weaponAttr = "tempEnchant" .. weapon
             local tempEnchant = header:GetAttribute(weaponAttr)
             if tempEnchant then tempEnchant:UpdateTempStyle(weapon) end
         end
     end
+
+    function header:UpdateStyleAll()
+        -- print('UpdateStyleAll')
+        for _, frame in header:ActiveChildren() do
+            --
+            frame:UpdateStyle()
+        end
+
+        header:UpdateTempEnchants()
+        C_Timer.After(0, function()
+            header:UpdateTempEnchants()
+        end)
+    end
+
+    header:RegisterEvent('UNIT_INVENTORY_CHANGED')
 
     header:HookScript('OnEvent', function(event, ...)
         --
@@ -616,7 +627,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
           canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, shouldConsolidate = UnitAura(self.DFUnit,
                                                                                                             self:GetID(),
                                                                                                             self.DFFilter);
-    -- print('~', name, icon, count, duration, expirationTime)
+    -- print('UpdateStyle~', name, icon, count, duration, expirationTime)
     -- local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
     -- print('~', name, shouldConsolidate, #auraData.points > 0)
 
@@ -703,7 +714,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
           offHandExpiration, offHandCharges, offHandEnchantID, hasRangedEnchant, rangedExpiration, rangedCharges,
           rangedEnchantID = GetWeaponEnchantInfo()
     -- print('UpdateTempStyle', id)
-    -- print('~', hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID)
+    -- print('UpdateTempStyle~', hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID)
 
     local textureMapping = {
         [1] = 16, -- Main hand
@@ -711,7 +722,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
         [3] = 18 -- Ranged
     };
 
-    if id == 1 then
+    if id == 1 and hasMainHandEnchant then
         -- mainhand
         local textureName = GetInventoryItemTexture("player", textureMapping[1]);
 
@@ -745,7 +756,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
             end
         end
         -- print('~~', mainHandExpiration)
-    elseif id == 2 then
+    elseif id == 2 and hasOffHandEnchant then
         -- offhand
         local textureName = GetInventoryItemTexture("player", textureMapping[2]);
 
