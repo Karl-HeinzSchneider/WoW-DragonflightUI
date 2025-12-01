@@ -666,7 +666,10 @@ function SubModuleMixin:Update()
 
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    f:SetUserPlaced(true)
+    if DF.API.Version.IsTBC then
+    else
+        f:SetUserPlaced(true)
+    end
     f:SetScale(state.scale)
 
     self:ReApplyTargetFrame()

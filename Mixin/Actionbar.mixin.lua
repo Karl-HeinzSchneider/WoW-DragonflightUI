@@ -399,7 +399,7 @@ function DragonflightUIActionbarMixin:Update()
     --     end)
     -- end
 
-    if self.StylePetButton then PetActionBar_Update() end
+    if self.StylePetButton and PetActionBar_Update then PetActionBar_Update() end
 end
 
 function DragonflightUIActionbarMixin:UpdateGridState()
@@ -419,7 +419,7 @@ function DragonflightUIActionbarMixin:UpdateGridState()
         else
             btn:SetAttribute("showgrid", 0)
         end
-        ActionButton_ShowGrid(btn)
+        if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
     end
 end
 
@@ -1053,6 +1053,13 @@ function DragonflightUIActionbarMixin:AddGryphons()
     gryphonRight.texture:SetPoint('CENTER')
 
     self.gryphonRight = gryphonRight
+
+    if DF.API.Version.IsTBC then
+        --
+        _G['MainActionBar'].EndCaps:Hide()
+        _G['MainActionBar'].EndCaps.LeftEndCap:Hide()
+        _G['MainActionBar'].EndCaps.RightEndCap:Hide()
+    end
 end
 
 function DragonflightUIActionbarMixin:UpdateGryphons(gryphons)
@@ -1118,6 +1125,10 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     f:SetFrameLevel(6)
 
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
+
+    local ActionBarUpButton = ActionBarUpButton or MainActionBar.ActionBarPageNumber.UpButton;
+    local ActionBarDownButton = ActionBarDownButton or MainActionBar.ActionBarPageNumber.DownButton;
+    local MainMenuBarPageNumber = MainMenuBarPageNumber or MainActionBar.ActionBarPageNumber.Text;
 
     -- actionbar switch buttons
     ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
@@ -1512,7 +1523,7 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
 
     function btn:UpdateFlyoutDirection(dir)
         btn:SetAttribute("flyoutDirection", dir);
-        if self.action then ActionButton_UpdateFlyout(btn); end
+        if self.action and ActionButton_UpdateFlyout then ActionButton_UpdateFlyout(btn); end -- TODOTBC
     end
     btn:UpdateFlyoutDirection(nil);
 
@@ -1848,7 +1859,7 @@ end
 
 -- TODO only debug for now..
 function DragonflightUIActionbarMixin:HookGrid()
-    if not ActionButton_ShowGrid then return end-- TODOTBC
+    if not ActionButton_ShowGrid then return end -- TODOTBC
     hooksecurefunc('ActionButton_ShowGrid', function(btn)
         if (btn.NormalTexture) then btn.NormalTexture:SetVertexColor(1.0, 1.0, 1.0, 1); end
     end)
@@ -1924,6 +1935,16 @@ function DragonflightUIPetbarMixin:UpdateGrid()
 end
 
 function DragonflightUIPetbarMixin:StylePetButton()
+
+    if DF.API.Version.IsTBC then
+        --
+        _G['PetActionBar']:Hide()
+        _G['PetActionBar'].BackgroundArt1:SetTexture('')
+        _G['PetActionBar'].BackgroundArt1:Hide()
+        _G['PetActionBar'].BackgroundArt2:SetTexture('')
+        _G['PetActionBar'].BackgroundArt2:Hide()
+    end
+
     local count = #(self.buttonTable)
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
     local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
@@ -1936,9 +1957,11 @@ function DragonflightUIPetbarMixin:StylePetButton()
         btn.buttonType = 'BONUSACTIONBUTTON'
 
         local normalTwo = _G[btnName .. 'NormalTexture2']
-        normalTwo:Hide()
-        normalTwo:SetTexture('')
-        normalTwo:SetAlpha(0)
+        if normalTwo then -- TODOTBC
+            normalTwo:Hide()
+            normalTwo:SetTexture('')
+            normalTwo:SetAlpha(0)
+        end
 
         local newNormal = btn:CreateTexture('DragonflightUINormalTexture2Replacement', 'OVERLAY')
         newNormal:ClearAllPoints()
@@ -1961,8 +1984,10 @@ function DragonflightUIPetbarMixin:StylePetButton()
 
         local auto = _G[btnName .. 'AutoCastable']
         local autoSize = 80
-        auto:SetSize(autoSize, autoSize)
-        auto:SetDrawLayer('OVERLAY', 2)
+        if auto then -- TODOTBC
+            auto:SetSize(autoSize, autoSize)
+            auto:SetDrawLayer('OVERLAY', 2)
+        end
 
         --
         local checked = btn:GetCheckedTexture()
@@ -1994,11 +2019,13 @@ function DragonflightUIPetbarMixin:StylePetButton()
             local cornerTex = 'Interface\\Addons\\DragonflightUI\\Textures\\UIActionbarPetCorner2x'
 
             local petAutoCastableTexture = _G[btn:GetName() .. "AutoCastable"];
-            petAutoCastableTexture:SetTexture(cornerTex)
-            petAutoCastableTexture:SetTexCoord(0, 68 / 128, 0, 68 / 128)
-            petAutoCastableTexture:ClearAllPoints()
-            petAutoCastableTexture:SetPoint('TOPLEFT', -1, 1)
-            petAutoCastableTexture:SetPoint('BOTTOMRIGHT')
+            if petAutoCastableTexture then -- TODOTBC
+                petAutoCastableTexture:SetTexture(cornerTex)
+                petAutoCastableTexture:SetTexCoord(0, 68 / 128, 0, 68 / 128)
+                petAutoCastableTexture:ClearAllPoints()
+                petAutoCastableTexture:SetPoint('TOPLEFT', -1, 1)
+                petAutoCastableTexture:SetPoint('BOTTOMRIGHT')
+            end
         end
     end
 end
@@ -2095,6 +2122,8 @@ function DragonflightUIStancebarMixinCode:CreateCustomStanceBarButtons()
     -- end)
 
 end
+
+local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10;
 
 function DragonflightUIStancebarMixinCode:UpdateButtonState(showHide)
     local numForms = GetNumShapeshiftForms();
@@ -2375,7 +2404,7 @@ DragonflightUIStancebarMixin = CreateFromMixins(DragonflightUIActionbarMixin, Dr
 DragonflightUIFPSMixin = {}
 
 function DragonflightUIFPSMixin:OnLoad()
-    UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil
+    if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.FramerateLabel = nil end
 
     self:SetupFrame()
 
