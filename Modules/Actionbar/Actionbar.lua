@@ -9,6 +9,8 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 local noop = function()
 end
 
+local PossessBarFrame = PossessBarFrame or CreateFrame('Frame', 'FAKEPOSSES', UIParent)
+
 Mixin(Module, DragonflightUIModulesMixin)
 
 Module.SubVehicleLeave = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['VehicleLeaveButton'])
@@ -2298,10 +2300,13 @@ function Module:SetupActionbarFrames()
 
     DragonFlightUIQuickKeybindMixin:HookExtraButtons()
 
-    hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
-        -- print('ActionButton_UpdateHotkeys')
-        if self.DragonflightFixHotkey then self:DragonflightFixHotkey() end
-    end)
+    -- TODOTBC
+    if ActionButton_UpdateHotkeys then
+        hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)
+            -- print('ActionButton_UpdateHotkeys')
+            if self.DragonflightFixHotkey then self:DragonflightFixHotkey() end
+        end)
+    end
 
     for i = 1, 8 do
         local bar = Module['bar' .. i]
@@ -2361,7 +2366,7 @@ function Module:SetupActionbarFrames()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
         MultiBarBottomRight:SetPoint('TOP', UIParent, 'BOTTOM', 0, 0)
 
-        UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil;
+        if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil; end
     end
 end
 
@@ -2383,8 +2388,12 @@ function Module.AddStateUpdater()
 
     ---
     local microFrame = Module.MicroFrame
-    Mixin(microFrame, DragonflightUIStateHandlerMixin)
-    microFrame:InitStateHandler()
+    -- TODOTBC
+    if DF.API.Version.IsTBC then
+    else
+        Mixin(microFrame, DragonflightUIStateHandlerMixin)
+        microFrame:InitStateHandler()
+    end
 end
 
 function Module:AddEditMode()
@@ -2561,6 +2570,18 @@ function Module:AddEditMode()
         end,
         moduleRef = self
     });
+
+    if DF.API.Version.IsTBC then
+        hooksecurefunc(BagsBar, 'ApplySystemAnchor', function()
+            -- print('BagsBar: ApplySystemAnchor')
+            if not InCombatLockdown() then
+                --
+                -- print('not lock')
+                -- local db = Module.db.profile
+                -- Module.UpdateBagState(db.bags)
+            end
+        end)
+    end
 
     -- Micro 
     EditModeModule:AddEditModeToFrame(Module.MicroFrame)
@@ -2843,35 +2864,39 @@ function Module.ChangeActionbar()
     StanceButton1:SetPoint('LEFT', MultiBarBottomLeft, 'LEFT', 1, 77)
     StanceButton1.ignoreFramePositionManager = true
 
-    StanceBarLeft:Hide()
-    StanceBarMiddle:Hide()
-    StanceBarRight:Hide()
-
-    hooksecurefunc(StanceBarRight, 'Show', function()
-        StanceBarLeft:Hide()
-        StanceBarMiddle:Hide()
-        StanceBarRight:Hide()
-    end)
-
     --[[    ActionBarUpButton:ClearAllPoints()
     ActionBarUpButton:SetPoint('LEFT', ActionButton1, 'TOPLEFT', -40, -6)
     ActionBarDownButton:ClearAllPoints()
     ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7) ]]
 
-    MainMenuBar:SetSize(1, 1)
+    if DF.API.Version.IsTBC then
+        _G['StatusTrackingBarManager']:Hide()
+    else
+        StanceBarLeft:Hide()
+        StanceBarMiddle:Hide()
+        StanceBarRight:Hide()
 
-    MainMenuExpBar:Hide()
-    hooksecurefunc(MainMenuExpBar, 'Show', function()
+        hooksecurefunc(StanceBarRight, 'Show', function()
+            StanceBarLeft:Hide()
+            StanceBarMiddle:Hide()
+            StanceBarRight:Hide()
+        end)
+
+        MainMenuBar:SetSize(1, 1)
+
         MainMenuExpBar:Hide()
-    end)
-    ReputationWatchBar:Hide()
-    hooksecurefunc(ReputationWatchBar, 'Show', function()
+        hooksecurefunc(MainMenuExpBar, 'Show', function()
+            MainMenuExpBar:Hide()
+        end)
         ReputationWatchBar:Hide()
-    end)
-    MainMenuBarMaxLevelBar:Hide()
-    hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+        hooksecurefunc(ReputationWatchBar, 'Show', function()
+            ReputationWatchBar:Hide()
+        end)
         MainMenuBarMaxLevelBar:Hide()
-    end)
+        hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+            MainMenuBarMaxLevelBar:Hide()
+        end)
+    end
 end
 
 function Module.CreateNewXPBar()
@@ -2956,18 +2981,21 @@ function Module.GetPetbarOffset()
 end
 
 function Module.HookPetBar()
-    PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-    PetActionBarFrame.ignoreFramePositionManager = true
+    if PetActionBarFrame then
+        PetActionBarFrame:ClearAllPoints()
+        PetActionBarFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+        PetActionBarFrame.ignoreFramePositionManager = true
+    end
 
-    SlidingActionBarTexture0:SetTexture('')
-    SlidingActionBarTexture1:SetTexture('')
+    if SlidingActionBarTexture0 then SlidingActionBarTexture0:SetTexture('') end
+    if SlidingActionBarTexture1 then SlidingActionBarTexture1:SetTexture('') end
 
     -- frame:RegisterEvent('PET_BAR_UPDATE')
 
     for i = 1, 10 do
         _G['PetActionButton' .. i]:SetSize(30, 30)
-        _G['PetActionButton' .. i .. 'NormalTexture2']:SetSize(50, 50)
+        local normalTexture2 = _G['PetActionButton' .. i .. 'NormalTexture2'];
+        if normalTexture2 then normalTexture2:SetSize(50, 50) end
     end
 
     local spacing = 7 -- default: 8
@@ -3656,6 +3684,31 @@ function Module:Era()
 end
 
 function Module:TBC()
+    Module.ChangeActionbar()
+    Module.CreateNewXPBar()
+    Module.CreateNewRepBar()
+    Module:RemoveActionbarAnimations()
+
+    Module.HookPetBar()
+    -- Module.MoveTotem()
+    -- Module.ChangePossessBar()
+
+    frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+    Module.ChangeGryphon()
+    -- Module.DrawActionbarDeco()
+
+    Module.ChangeMicroMenu()
+    Module.ChangeBackpack()
+    Module.MoveBars()
+    Module.ChangeFramerate()
+    Module.CreateBagExpandButton()
+    Module.RefreshBagBarToggle()
+    Module.HookBags()
+
+    self.SubVehicleLeave:Setup()
+    self.SubActionbarRange:Setup()
 end
 
 function Module:Wrath()

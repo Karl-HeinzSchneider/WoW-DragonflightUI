@@ -230,11 +230,14 @@ function SubModuleMixin:Setup()
     end)
 
     -- ActionButton_UpdateUsable
-    hooksecurefunc('ActionButton_UpdateUsable', function(btn)
-        -- print('ActionButton_UpdateUsable', btn:GetName() or '')
-        if not self.activate then return end
-        self:UpdateRangeAndUsable(btn, btn.checksRange or false, btn.inRange or false);
-    end)
+    if DF.API.Version.IsTBC then
+    else
+        hooksecurefunc('ActionButton_UpdateUsable', function(btn)
+            -- print('ActionButton_UpdateUsable', btn:GetName() or '')
+            if not self.activate then return end
+            self:UpdateRangeAndUsable(btn, btn.checksRange or false, btn.inRange or false);
+        end)
+    end
 end
 
 function SubModuleMixin:OnEvent(event, ...)

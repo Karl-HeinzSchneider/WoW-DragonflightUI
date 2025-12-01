@@ -47,10 +47,12 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         self:UpdateLayout()
     end)
 
-    hooksecurefunc('UpdateMicroButtonsParent', function(parent)
-        -- print('#UpdateMicroButtonsParent')
-        self:OnUpdateMicroButtonsParent(parent)
-    end)
+    if UpdateMicroButtonsParent then
+        hooksecurefunc('UpdateMicroButtonsParent', function(parent)
+            -- print('#UpdateMicroButtonsParent')
+            self:OnUpdateMicroButtonsParent(parent)
+        end)
+    end
 
     -- inside calls UpdateMicroButtons
     -- hooksecurefunc('MoveMicroButtons', function()
@@ -63,7 +65,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         self:OnActionBarController_UpdateAll()
     end)
 
-    UpdateMicroButtonsParent(self)
+    if UpdateMicroButtonsParent then UpdateMicroButtonsParent(self) end
 
     local talentAlert = _G['TalentMicroButtonAlert']
     if talentAlert then talentAlert:SetPoint('BOTTOM', _G['TalentMicroButton'], 'TOP', 0, -8 + 16); end
@@ -156,7 +158,17 @@ function DragonflightUIMicroMenuMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, _G[state.anchorFrame], state.anchorParent, state.x, state.y)
 
-    self:UpdateStateHandler(state)
+    if DF.API.Version.IsTBC then
+        --
+        local f = _G['MicroMenuContainer']
+
+        --   self:SetClampedToScreen(true)
+        -- self:SetScale(state.scale)
+        f:ClearAllPoints()
+        f:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+    end
+
+    if self.UpdateStateHandler then self:UpdateStateHandler(state) end
 end
 
 function DragonflightUIMicroMenuMixin:ChangeButtons()
@@ -231,6 +243,24 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         -- MainMenuBarPerformanceBar:ClearAllPoints()
         MainMenuBarPerformanceBar:SetPoint('BOTTOM', MainMenuMicroButton, 'BOTTOM', 0, 0)
         MainMenuBarPerformanceBar:SetSize(19, 39)
+    elseif DF.API.Version.IsTBC then
+        self:ChangeCharacterMicroButton()
+        self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
+        self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
+        self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
+        if SocialsMicroButton then self:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities') end
+        -- if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
+        -- if WorldMapMicroButton then self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections') end
+        -- if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
+
+        self:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
+        self:ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
+
+        MainMenuBarPerformanceBarFrame:Hide()
+
+        local perf = _G['MainMenuMicroButton'].PerformanceIndicator;
+        perf:ClearAllPoints()
+        perf:SetPoint('BOTTOM')
     elseif DF.Era then
         self:ChangeCharacterMicroButton()
         self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
