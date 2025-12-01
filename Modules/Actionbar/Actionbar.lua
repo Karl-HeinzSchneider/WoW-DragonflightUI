@@ -2571,6 +2571,18 @@ function Module:AddEditMode()
         moduleRef = self
     });
 
+    if DF.API.Version.IsTBC then
+        hooksecurefunc(BagsBar, 'ApplySystemAnchor', function()
+            -- print('BagsBar: ApplySystemAnchor')
+            if not InCombatLockdown() then
+                --
+                -- print('not lock')
+                -- local db = Module.db.profile
+                -- Module.UpdateBagState(db.bags)
+            end
+        end)
+    end
+
     -- Micro 
     EditModeModule:AddEditModeToFrame(Module.MicroFrame)
 
