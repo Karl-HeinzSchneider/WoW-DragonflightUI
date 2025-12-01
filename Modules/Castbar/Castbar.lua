@@ -798,8 +798,15 @@ local frame = CreateFrame('FRAME', 'DragonflightUICastbarFrame', UIParent)
 Module.frame = frame
 
 function Module.ChangeDefaultCastbar()
-    CastingBarFrame:UnregisterAllEvents()
-    CastingBarFrame:Hide()
+    if CastingBarFrame then
+        CastingBarFrame:UnregisterAllEvents()
+        CastingBarFrame:Hide()
+    end
+
+    if PlayerCastingBarFrame then
+        PlayerCastingBarFrame:UnregisterAllEvents()
+        PlayerCastingBarFrame:Hide()
+    end
 
     TargetFrameSpellBar:UnregisterAllEvents()
     TargetFrameSpellBar:Hide()
@@ -904,10 +911,13 @@ function Module.AddNewCastbar()
         Module.FocusCastbar = focus
     end
 
-    hooksecurefunc('Target_Spellbar_AdjustPosition', function(self)
-        -- print('Target_Spellbar_AdjustPosition', self:GetName())
-        if self.DFCastbar then self.DFCastbar:AdjustPosition() end
-    end)
+    if DF.API.Version.IsTBC then
+    else
+        hooksecurefunc('Target_Spellbar_AdjustPosition', function(self)
+            -- print('Target_Spellbar_AdjustPosition', self:GetName())
+            if self.DFCastbar then self.DFCastbar:AdjustPosition() end
+        end)
+    end
 end
 
 function Module:FixScale()
@@ -928,6 +938,7 @@ function Module:Era()
 end
 
 function Module:TBC()
+    Module:Wrath()
 end
 
 function Module:Wrath()
