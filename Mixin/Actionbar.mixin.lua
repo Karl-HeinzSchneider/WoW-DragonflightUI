@@ -1059,6 +1059,16 @@ function DragonflightUIActionbarMixin:AddGryphons()
         _G['MainActionBar'].EndCaps:Hide()
         _G['MainActionBar'].EndCaps.LeftEndCap:Hide()
         _G['MainActionBar'].EndCaps.RightEndCap:Hide()
+
+        _G['MainMenuBarMaxLevelBar']:Hide()
+        _G['MainMenuBarMaxLevelBar']:ClearAllPoints()
+
+        _G['MainMenuMaxLevelBar0']:Hide()
+        _G['MainMenuMaxLevelBar0']:ClearAllPoints()
+        _G['MainMenuMaxLevelBar1']:Hide()
+        _G['MainMenuMaxLevelBar1']:ClearAllPoints()
+        _G['MainMenuMaxLevelBar2']:Hide()
+        _G['MainMenuMaxLevelBar2']:ClearAllPoints()
     end
 end
 
