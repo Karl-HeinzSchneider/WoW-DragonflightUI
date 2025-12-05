@@ -953,7 +953,7 @@ function SubModuleMixin:ChangeTargetFrame()
         end
     end
 
-    if DF.Wrath or DF.Era then
+    if DF.Wrath or DF.Era or DF.API.Version.IsTBC then
         local dx = 5
         -- health vs mana bar
         local deltaSize = 134 - 125
