@@ -1,7 +1,8 @@
-## Interface: 50502, 40402, 30405, 30404, 11508
+## Interface: 50502, 40402, 30405, 30404, 20505, 11508
 ## Interface-Mists: 50502
 ## Interface-Cata: 40402
 ## Interface-Wrath: 30405, 30404
+## Interface-TBC: 20505
 ## Interface-Classic: 11508
 ## Title: DragonflightUI |cff8080ff@project-version@|r
 ## Notes: Brings the modern retail UI to classic.|n|cffbbbbbbBy Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
