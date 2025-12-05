@@ -49,7 +49,7 @@ function DF:EnableModule(name, force)
 end
 
 local name, realm = UnitName('player')
-local showDebug = name == 'Zimtdev'
+local showDebug = (name == 'Zimtdev') or (name == 'Zimtdevtwo')
 DF.ShowDebug = showDebug;
 function DF:Debug(m, ...)
     if showDebug then m:Print(...) end

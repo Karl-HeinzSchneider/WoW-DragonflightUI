@@ -22,7 +22,7 @@ Version.InterfaceVersion = select(4, GetBuildInfo())
 
 --- Addon is running on Classic "Vanilla" client, e.g. Era and SoD etc
 ---@type boolean
-Version.IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+Version.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and (DF.InterfaceVersion < 20000)
 
 --- Addon is running on Classic Season of Discovery client
 ---@type boolean
@@ -38,7 +38,8 @@ if C_Seasons.HasActiveSeason() then Version.SeasonID = C_Seasons.GetActiveSeason
 
 --- Addon is running on Classic TBC client
 ---@type boolean
-Version.IsTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+-- Version.IsTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC -- TODO
+Version.IsTBC = (DF.InterfaceVersion >= 20505) and (DF.InterfaceVersion < 30000)
 
 --- Addon is running on Classic Wotlk client
 ---@type boolean
@@ -52,4 +53,4 @@ Version.IsCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 ---@type boolean
 Version.IsMoP = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
--- DevTools_Dump(API.Version)
+DevTools_Dump(API.Version)

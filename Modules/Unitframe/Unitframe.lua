@@ -9,6 +9,16 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 Module.SubAltPower = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['AltPower'])
 Module.SubFocus = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Focus'])
 Module.SubFocusTarget = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['FocusTarget'])
@@ -106,7 +116,7 @@ function Module:RegisterSettings()
     register('targetoftarget',
              {order = 0, name = self.SubTargetOfTarget.Options.name, descr = 'Targetss', isNew = false})
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         register('focus', {order = 0, name = self.SubFocus.Options.name, descr = 'Focusss', isNew = false})
         register('focusTarget', {order = 0, name = self.SubFocusTarget.Options.name, descr = 'Focusss', isNew = false})
     end
@@ -132,7 +142,7 @@ function Module:RefreshOptionScreens()
     refreshCat('Target')
     refreshCat('TargetOfTarget')
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         refreshCat('Focus')
         refreshCat('focusTarget')
 
@@ -225,7 +235,7 @@ function Module:ApplySettingsInternal(sub, key)
     self.SubTargetOfTarget:UpdateState(db.tot)
     self.SubRaid:UpdateState(db.raid)
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         self.SubFocus:UpdateState(db.focus)
         self.SubFocusTarget:UpdateState(db.focusTarget)
     end
@@ -233,8 +243,10 @@ function Module:ApplySettingsInternal(sub, key)
 end
 
 function Module:FixBlizzardBug()
-    SetTextStatusBarText(PlayerFrameManaBar, PlayerFrameManaBarText)
-    SetTextStatusBarText(PlayerFrameHealthBar, PlayerFrameHealthBarText)
+    if SetTextStatusBarText then
+        SetTextStatusBarText(PlayerFrameManaBar, PlayerFrameManaBarText)
+        SetTextStatusBarText(PlayerFrameHealthBar, PlayerFrameHealthBarText)
+    end
     TextStatusBar_UpdateTextString(PlayerFrameHealthBar)
     TextStatusBar_UpdateTextString(PlayerFrameManaBar)
 end
@@ -248,7 +260,9 @@ function Module:HookDrag()
         self:RefreshOptionScreens()
     end
     PlayerFrame:HookScript('OnDragStop', DragStopPlayerFrame)
-    hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
+    if PlayerFrame_ResetUserPlacedPosition then
+        hooksecurefunc('PlayerFrame_ResetUserPlacedPosition', DragStopPlayerFrame)
+    end
 
     local DragStopTargetFrame = function(_)
         self:SaveLocalSettings()
@@ -258,7 +272,9 @@ function Module:HookDrag()
         self:RefreshOptionScreens()
     end
     TargetFrame:HookScript('OnDragStop', DragStopTargetFrame)
-    hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
+    if TargetFrame_ResetUserPlacedPosition then
+        hooksecurefunc('TargetFrame_ResetUserPlacedPosition', DragStopTargetFrame)
+    end
 
     if DF.Wrath then
         local DragStopFocusFrame = function(_)
@@ -360,7 +376,7 @@ function Module:AddPortraitMasks()
 
     addMask(PetFrame, PetPortrait)
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         addMask(FocusFrame, FocusFramePortrait)
         addMask(self.SubFocus.PreviewFocus, self.SubFocus.PreviewFocus.TargetFramePortrait)
         addMask(FocusFrameToT, FocusFrameToTPortrait)
@@ -440,17 +456,21 @@ function Module:ChangeFonts()
 
     for i = 1, 4 do
         local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
-        changeFont(healthbar.DFHealthBarText, std)
-        changeFont(healthbar.DFHealthBarTextLeft, std)
-        changeFont(healthbar.DFHealthBarTextRight, std)
+        if healthbar then
+            changeFont(healthbar.DFHealthBarText, std)
+            changeFont(healthbar.DFHealthBarTextLeft, std)
+            changeFont(healthbar.DFHealthBarTextRight, std)
+        end
 
         local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
-        changeFont(manabar.DFManaBarText, std)
-        changeFont(manabar.DFManaBarTextLeft, std)
-        changeFont(manabar.DFManaBarTextRight, std)
+        if manabar then
+            changeFont(manabar.DFManaBarText, std)
+            changeFont(manabar.DFManaBarTextLeft, std)
+            changeFont(manabar.DFManaBarTextRight, std)
+        end
     end
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         changeFont(FocusFrameTextureFrame.HealthBarText, std)
         changeFont(FocusFrameTextureFrame.HealthBarTextLeft, std)
         changeFont(FocusFrameTextureFrame.HealthBarTextRight, std)
@@ -526,6 +546,25 @@ function Module:Era()
 end
 
 function Module:TBC()
+    self.SubFocus:Setup()
+    self.SubFocusTarget:Setup()
+
+    -- self.SubAltPower:Setup()
+    self.SubParty:Setup()
+    self.SubPlayer:Setup()
+    self.SubPlayerSecondaryRes:Setup()
+    self.SubPlayerTotemFrame:Setup()
+
+    self.SubPet:Setup()
+    self.SubTarget:Setup()
+    self.SubTargetOfTarget:Setup()
+    self.SubRaid:Setup()
+
+    self:HookEnergyBar()
+    self:ChangeFonts()
+    self:HookDrag()
+    self:AddPortraitMasks()
+    self:HookClassIcon()
 end
 
 function Module:Wrath()

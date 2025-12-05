@@ -623,7 +623,7 @@ function SubModuleMixin:ChangeZoneText()
 end
 
 function SubModuleMixin:ChangeClock()
-    local loaded, reason = LoadAddOn('Blizzard_TimeManager')
+    local loaded, reason = DF:LoadAddOn('Blizzard_TimeManager')
 
     local btn = _G['TimeManagerClockButton']
     local regions = {btn:GetRegions()}
@@ -792,7 +792,9 @@ end
 
 function SubModuleMixin:HideDefaultStuff()
     _G['MinimapBorder']:Hide()
-    _G['MinimapBorderTop']:Hide()
+    if _G['MinimapBorderTop'] then _G['MinimapBorderTop']:Hide() end
+
+    if _G['MinimapCluster'].BorderTop then _G['MinimapCluster'].BorderTop:Hide() end -- tbc
 
     if MinimapToggleButton then MinimapToggleButton:Hide() end
 

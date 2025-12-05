@@ -310,14 +310,17 @@ end
 end ]]
 
 function Module:AddMainMenuButton()
-    hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
-        -- print('GameMenuFrame_UpdateVisibleButtons')
-        local blizzHeight = self:GetHeight()
+    -- TODOTBC
+    if GameMenuFrame_UpdateVisibleButtons then
+        hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
+            -- print('GameMenuFrame_UpdateVisibleButtons')
+            local blizzHeight = self:GetHeight()
 
-        self:SetHeight(blizzHeight + 22 + 22)
+            self:SetHeight(blizzHeight + 22 + 22)
 
-        Module.UpdateMainMenuButtons()
-    end)
+            Module.UpdateMainMenuButtons()
+        end)
+    end
 
     local btn = CreateFrame('Button', 'DragonflightUIMainMenuButton', GameMenuFrame, 'UIPanelButtonTemplate')
     btn:SetSize(145, 21)
@@ -343,7 +346,8 @@ function Module:AddMainMenuButton()
             btn:SetPoint('TOP', GameMenuButtonHelp, 'BOTTOM', 0, -16)
         end
 
-        GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1)
+        -- TODOTBC
+        if GameMenuButtonOptions then GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1) end
     end
     Module.UpdateMainMenuButtons()
 

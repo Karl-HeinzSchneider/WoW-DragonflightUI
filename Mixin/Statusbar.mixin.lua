@@ -83,7 +83,7 @@ function DragonflightUIXPBarMixin:CreateBar()
     f.Border = border
 
     -- text
-    local Path, Size, Flags = MainMenuBarExpText:GetFont()
+    -- local Path, Size, Flags = MainMenuBarExpText:GetFont()
     f.Bar:EnableMouse(true)
 
     f.Text = f.Bar:CreateFontString('XPBarText', 'HIGHLIGHT', 'SystemFont_Outline_Small')
@@ -107,7 +107,16 @@ function DragonflightUIXPBarMixin:SetupTooltip()
         local label = XPBAR_LABEL
         GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
         GameTooltip.canAddRestStateLine = 1
-        ExhaustionToolTipText()
+
+        if DF.API.Version.IsTBC then
+            local exhaustionStateID, exhaustionStateName, exhaustionStateMultiplier = GetRestState();
+            exhaustionStateMultiplier = exhaustionStateMultiplier * 100;
+            local restedText = format(EXHAUST_TOOLTIP1, exhaustionStateName, exhaustionStateMultiplier);
+            GameTooltip:AddLine(' ')
+            GameTooltip:AddLine(restedText)
+        else
+            ExhaustionToolTipText()
+        end
 
         local playerCurrXP = UnitXP('player')
         local playerMaxXP = UnitXPMax('player')
@@ -286,6 +295,22 @@ function DragonflightUIXPBarMixin:Collapse(collapse)
 end
 
 -----
+
+local GetWatchedFactionInfo_Orig = GetWatchedFactionInfo;
+
+local function GetWatchedFactionInfo()
+    if GetWatchedFactionInfo_Orig then
+        local name, standing, min, max, value = GetWatchedFactionInfo_Orig()
+        return name, standing, min, max, value
+    else
+        local watchedFactionData = C_Reputation.GetWatchedFactionData();
+
+        if not watchedFactionData then return nil, 0, 0, 0, 0 end
+
+        return watchedFactionData.name, watchedFactionData.reaction, watchedFactionData.currentReactionThreshold,
+               watchedFactionData.nextReactionThreshold, watchedFactionData.currentStanding
+    end
+end
 
 DragonflightUIRepBarMixin = {}
 

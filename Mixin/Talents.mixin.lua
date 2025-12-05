@@ -1069,7 +1069,7 @@ function DragonflightUITalentsFrameMixin:OnLoad()
     -- self:RegisterEvent("UNIT_PET");
     -- self:RegisterEvent("UNIT_MODEL_CHANGED");
     self:RegisterEvent("UNIT_LEVEL");
-    self:RegisterEvent("LEARNED_SPELL_IN_TAB");
+    -- self:RegisterEvent("LEARNED_SPELL_IN_TAB");
     self:RegisterEvent("PLAYER_TALENT_UPDATE");
     -- self:RegisterEvent("PET_TALENT_UPDATE");
     self:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED");

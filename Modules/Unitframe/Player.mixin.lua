@@ -8,6 +8,16 @@ local subModuleName = 'PlayerFrame';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
+-- TODOTBC
+local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
+local function TextStatusBar_UpdateTextString(f)
+    if TextStatusBar_UpdateTextString_orig then
+        TextStatusBar_UpdateTextString_orig(f)
+    else
+        f:UpdateTextString()
+    end
+end
+
 function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Unitframe')
     self:SetDefaults()
@@ -548,7 +558,10 @@ function SubModuleMixin:Update()
     f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    f:SetUserPlaced(true)
+    if DF.API.Version.IsTBC then
+    else
+        f:SetUserPlaced(true)
+    end
 
     self:ChangePlayerframe()
     self:SetPlayerBiggerHealthbar(state.biggerHealthbar)
