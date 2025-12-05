@@ -1612,7 +1612,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     end)
 
     -- add characterstats panel + equzipment manager
-    if DF.API.Version.IsClassic or DF.API.Version.IsWotlk then
+    if DF.API.Version.IsClassic or DF.API.Version.IsTBC or DF.API.Version.IsWotlk then
         --
         local btn = CreateFrame('Button', 'DragonflightUICharacterFrameExpandButton', PaperDollFrame,
                                 'DFCharacterFrameExpandButton')
@@ -1629,6 +1629,8 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         local statsTemplate
         if DF.API.Version.IsClassic then
             statsTemplate = 'DFCharacterStatsPanelEra';
+        elseif DF.API.Version.IsTBC then
+            statsTemplate = 'DFCharacterStatsPanelTbc';
         elseif DF.API.Version.IsWotlk then
             statsTemplate = 'DFCharacterStatsPanelWrath';
         else

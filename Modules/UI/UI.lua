@@ -381,7 +381,7 @@ function Module:ApplySettingsInternal(sub, key)
     end)
 
     self:ConditionalOption('changeTradeskill', 'first', 'Change Profession Window', function()
-        Module:UpdateTradeskills()
+        if not DF.API.Version.IsTBC then Module:UpdateTradeskills() end
     end)
 
     if DF.Era or (DF.Wrath and not DF.Cata) then
@@ -415,6 +415,8 @@ function Module:ApplySettingsInternal(sub, key)
                 RuneFrameControlButton:ClearAllPoints()
                 RuneFrameControlButton:SetPoint('TOPRIGHT', CharacterFrame, 'TOPRIGHT', -8, -26)
             end)
+        elseif DF.API.Version.IsTBC then
+            DragonflightUIMixin:ChangeCharacterFrameEra()
         end
     end)
 
@@ -526,6 +528,49 @@ function Module:ChangeFrames()
         end)
         Module:ChangeWidgetBelow()
     elseif Version.IsTBC then
+        if DF:IsAddOnLoaded('Leatrix_Plus') then
+            --
+            if QuestLogFrame:GetWidth() > 400 then
+                --
+                DF:Print(
+                    "Leatrix_Plus detected with 'Interface -> Enhance quest log' activated - please deactivate or you might encounter bugs.")
+            end
+        end
+        DragonflightUIMixin:ChangeQuestLogFrameEra()
+        DragonflightUIMixin:ChangeDressupFrame()
+        DragonflightUIMixin:EnhanceDressupFrame()
+        DragonflightUIMixin:ChangeTradeFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
+        DragonflightUIMixin:ChangeQuestFrame()
+        DragonflightUIMixin:ShowQuestXP()
+        DragonflightUIMixin:ChangeTaxiFrame()
+        DragonflightUIMixin:ImproveTaxiFrame()
+        DragonflightUIMixin:ChangeLootFrame()
+        DragonflightUIMixin:PortraitFrameTemplate(_G['FriendsFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVPFrame'])
+        -- DragonflightUIMixin:PortraitFrameTemplate(_G['PVEFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MailFrame'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['AddonList'])
+        DragonflightUIMixin:PortraitFrameTemplate(_G['MerchantFrame'])
+
+        Module:FuncOrWaitframe('Blizzard_Communities', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['CommunitiesFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_GroupFinder_VanillaStyle', function()
+            --
+            -- DragonflightUIMixin:ChangeLFGListingFrameEra()
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_MacroUI', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['MacroFrame'])
+        end)
+
+        Module:FuncOrWaitframe('Blizzard_TimeManager', function()
+            DragonflightUIMixin:PortraitFrameTemplate(_G['TimeManagerFrame'])
+            _G['TimeManagerGlobe']:SetDrawLayer('OVERLAY', 5)
+        end)
+        Module:ChangeWidgetBelow()
     elseif Version.IsWotlk then
         DragonflightUIMixin:ChangeQuestLogFrameCata()
         DragonflightUIMixin:ChangeDressupFrame()
@@ -941,6 +986,15 @@ function Module:Era()
 end
 
 function Module:TBC()
+    Module:ChangeFrames()
+    self.SubGroupLootContainer:Setup()
+
+    -- frame:RegisterEvent('ADDON_LOADED')
+    -- frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    -- DF.Compatibility:FuncOrWaitframe('Ranker', function()
+    --     DF.Compatibility:ClassicRanker()
+    -- end)
 end
 
 function Module:Wrath()

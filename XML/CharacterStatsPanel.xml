@@ -2,6 +2,7 @@
 UI_shared.xsd">
 	<Script file="Mixin/CharacterStatsPanel.mixin.lua" />
 	<Script file="Mixin/CharacterStatsEra.mixin.lua" />
+	<Script file="Mixin/CharacterStatsTbc.mixin.lua" />
 	<Script file="Mixin/CharacterStatsWrath.mixin.lua" />
 	<Frame name="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsPanelMixin" virtual="true">
 		<Frames>
@@ -25,6 +26,8 @@ UI_shared.xsd">
 		</Scripts>
 	</Frame>
 	<Frame name="DFCharacterStatsPanelEra" inherits="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsEraMixin" virtual="true">
+	</Frame>
+	<Frame name="DFCharacterStatsPanelTbc" inherits="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsTbcMixin" virtual="true">
 	</Frame>
 	<Frame name="DFCharacterStatsPanelWrath" inherits="DFCharacterStatsPanel" mixin="DragonflightUICharacterStatsWrathMixin" virtual="true">
 	</Frame>
