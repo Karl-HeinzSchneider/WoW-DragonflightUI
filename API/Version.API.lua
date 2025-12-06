@@ -53,4 +53,4 @@ Version.IsCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 ---@type boolean
 Version.IsMoP = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
-DevTools_Dump(API.Version)
+-- DevTools_Dump(API.Version)
