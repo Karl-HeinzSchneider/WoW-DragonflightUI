@@ -1384,11 +1384,17 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     -- icon:SetAlpha(0)
     btn.Icon = icon
 
-    local mask = btn:CreateMaskTexture('DragonflightUIIconMask')
-    btn.Mask = mask
+    local mask;
+    if btn.IconMask then
+        -- tbc etc
+        mask = btn.IconMask
+    else
+        mask = btn:CreateMaskTexture('DragonflightUIIconMask')
+    end
     mask:SetAllPoints(icon)
     mask:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\maskNew')
     mask:SetSize(45, 45)
+    btn.Mask = mask
 
     icon:AddMaskTexture(mask)
 
