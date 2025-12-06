@@ -798,6 +798,26 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
     self.DFIconBorder:SetVertexColor(parent.BuffVertexColorR, parent.BuffVertexColorG, parent.BuffVertexColorB)
 end
 
+function DFSecondsToTimeAbbrev(seconds)
+    local tempTime;
+    local threshold = 1.5;
+    -- if thresholdOverride then threshold = thresholdOverride; end
+
+    if (seconds >= SECONDS_PER_DAY * threshold) then
+        tempTime = ceil(seconds / SECONDS_PER_DAY);
+        return DAY_ONELETTER_ABBR, tempTime;
+    end
+    if (seconds >= SECONDS_PER_HOUR * (2)) then
+        tempTime = ceil(seconds / SECONDS_PER_HOUR);
+        return HOUR_ONELETTER_ABBR, tempTime;
+    end
+    if (seconds >= SECONDS_PER_MIN * threshold) then
+        tempTime = ceil(seconds / SECONDS_PER_MIN);
+        return MINUTE_ONELETTER_ABBR, tempTime;
+    end
+    return SECOND_ONELETTER_ABBR, seconds;
+end
+
 function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
     -- print('updateAuraDuration', self:GetName(), elapsed, self.Duration:GetText())
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId,
@@ -819,7 +839,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
 
         timeLeft = max(timeLeft, 0);
 
-        self.Duration:SetFormattedText(SecondsToTimeAbbrev(timeLeft));
+        self.Duration:SetFormattedText(DFSecondsToTimeAbbrev(timeLeft));
         if (timeLeft < BUFF_DURATION_WARNING_TIME) then
             self.Duration:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
         else
@@ -872,7 +892,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempAuraDuration(elapsed)
         local timeLeft = expiration
         timeLeft = max(timeLeft, 0);
 
-        self.Duration:SetFormattedText(SecondsToTimeAbbrev(timeLeft));
+        self.Duration:SetFormattedText(DFSecondsToTimeAbbrev(timeLeft));
         if (timeLeft < BUFF_DURATION_WARNING_TIME) then
             self.Duration:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
         else
