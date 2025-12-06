@@ -34,6 +34,7 @@ Libs\AceConfig-3.0\AceConfig-3.0.xml
 Libs\LibDeflate\lib.xml
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\lib.xml
+Libs\LibEditModeOverride\LibEditModeOverride.xml
 Libs\LibQuestXP\LibQuestXP-Classic.xml
 Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
 Libs\LibSharedMedia-3.0\lib.xml

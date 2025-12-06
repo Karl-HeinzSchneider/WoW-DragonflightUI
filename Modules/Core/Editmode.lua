@@ -470,10 +470,20 @@ function Module:SelectFrame(frameRef)
     end
 end
 
+function Module:InitEditmodeOverride()
+    print('InitEditmodeOverride')
+
+    local LibEditModeOverride = LibStub("LibEditModeOverride-1.0");
+    LibEditModeOverride:LoadLayouts();
+
+    addonTable.LibEditModeOverride = LibEditModeOverride;
+end
+
 function Module:Era()
 end
 
 function Module:TBC()
+    self:InitEditmodeOverride()
 end
 
 function Module:Wrath()
