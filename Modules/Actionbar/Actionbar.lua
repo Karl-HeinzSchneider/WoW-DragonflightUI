@@ -2871,6 +2871,16 @@ function Module.ChangeActionbar()
 
     if DF.API.Version.IsTBC then
         _G['StatusTrackingBarManager']:Hide()
+
+        local stancebar = _G['StanceBar'];
+        local t = {'BackgroundArtLeft', 'BackgroundArtMiddle', 'BackgroundArtRight'}
+
+        for k, v in ipairs(t) do
+            --
+            stancebar[v]:Hide()
+            stancebar[v]:ClearAllPoints()
+            stancebar[v]:SetTexture('')
+        end
     else
         StanceBarLeft:Hide()
         StanceBarMiddle:Hide()
