@@ -657,6 +657,11 @@ function DFCharacterStatsStatTemplateMixin:OnEnter()
                         end
                     end
 
+                    if v.texture then
+                        --
+                        GameTooltip:AddTexture(v.texture)
+                    end
+
                     -- print(k, v.left, v.right)
                 end
             end
