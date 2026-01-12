@@ -537,6 +537,16 @@ function Module:UpdatePlayerFrame(state)
     playerFramePortaitExtra:SetVertexColor(0.6, 0.6, 0.6) -- TODO
 
     -- PlayerFrameHealthBar:GetStatusBarTexture():SetDesaturated(state.unitframeHealthDesaturate)
+
+    local altPowerBorder = _G['PlayerFrameAlternateManaBarBorder']
+    local altPowerBorderLeft = _G['PlayerFrameAlternateManaBarLeftBorder']
+    local altPowerBorderRight = _G['PlayerFrameAlternateManaBarRightBorder']
+
+    if not altPowerBorder or not altPowerBorderLeft or not altPowerBorderRight then return end
+
+    altPowerBorder:SetVertexColor(c:GetRGB())
+    altPowerBorderLeft:SetVertexColor(c:GetRGB())
+    altPowerBorderRight:SetVertexColor(c:GetRGB())
 end
 
 function Module:UpdatePetFrame(state)
