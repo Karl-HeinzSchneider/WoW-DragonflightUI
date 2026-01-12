@@ -191,11 +191,8 @@ end
 
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
-    if DF.Wrath then
-        Module:Wrath()
-    else
-        Module:Era()
-    end
+
+    self:EnableAddonSpecific()
 
     Helper:Benchmark('ConfigModule:ApplySettings()', function()
         Module:ApplySettings()
@@ -310,7 +307,6 @@ end
 end ]]
 
 function Module:AddMainMenuButton()
-    -- TODOTBC
     if GameMenuFrame_UpdateVisibleButtons then
         hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
             -- print('GameMenuFrame_UpdateVisibleButtons')
@@ -348,6 +344,64 @@ function Module:AddMainMenuButton()
 
         -- TODOTBC
         if GameMenuButtonOptions then GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1) end
+    end
+    Module.UpdateMainMenuButtons()
+
+    btn:SetScript('OnClick', function()
+        Module:ToggleConfigFrame()
+        -- HideUIPanel(GameMenuFrame)
+    end)
+end
+
+function Module:AddMainMenuButtonTBC()
+    -- print('AddMainMenuButtonTBC')
+    -- if GameMenuFrame_UpdateVisibleButtons then
+    --     hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
+    --         -- print('GameMenuFrame_UpdateVisibleButtons')
+    --         local blizzHeight = self:GetHeight()
+
+    --         self:SetHeight(blizzHeight + 22 + 22)
+
+    --         Module.UpdateMainMenuButtons()
+    --     end)
+    -- end
+
+    -- GameMenuFrame:AddButton('Test', function()
+    --     print('click')
+    -- end)
+
+    -- GameMenuFrame:AddSection();
+    -- GameMenuFrame:AddSection();
+    -- GameMenuFrame:AddSection();
+
+    local btn = CreateFrame('Button', 'DragonflightUIMainMenuButton', GameMenuFrame, 'UIPanelButtonTemplate')
+    btn:SetSize(145, 21)
+    btn:SetText(L["MainMenuDragonflightUI"])
+    btn:SetPoint('BOTTOM', GameMenuFrame, 'TOP', 0, 36)
+    Module.MainMenuButton = btn
+
+    local editBtn = CreateFrame('Button', 'DragonflightUIEditModeButton', GameMenuFrame, 'UIPanelButtonTemplate')
+    editBtn:SetSize(145, 21)
+    editBtn:SetText(L["MainMenuEditmode"])
+    editBtn:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
+    Module.EditModeButton = editBtn
+
+    Module.UpdateMainMenuButtons = function()
+        -- print('UpdateMainMenuButtons')
+        -- local btn = Module.MainMenuButton
+        -- local editBtn = Module.EditModeButton
+
+        -- -- TODO:
+        -- -- 'Interface action failed because of an AddOn' when infight and clicking DF Menu button    
+        -- local storeIsRestricted = IsTrialAccount();
+        -- if (C_StorePublic.IsEnabled() and C_StorePublic.HasPurchaseableProducts() and not storeIsRestricted) then
+        --     btn:SetPoint('TOP', GameMenuButtonStore, 'BOTTOM', 0, -16)
+        -- else
+        --     btn:SetPoint('TOP', GameMenuButtonHelp, 'BOTTOM', 0, -16)
+        -- end
+
+        -- -- TODOTBC
+        -- if GameMenuButtonOptions then GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1) end
     end
     Module.UpdateMainMenuButtons()
 
@@ -477,6 +531,20 @@ function frame:OnEvent(event, arg1)
 end
 frame:SetScript('OnEvent', frame.OnEvent)
 
+function Module:Era()
+    Module:AddConfigFrame()
+    Module:AddMainMenuButton()
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+end
+
+function Module:TBC()
+    Module:AddConfigFrame()
+    Module:AddMainMenuButtonTBC()
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+end
+
 function Module:Wrath()
     Module:AddConfigFrame()
     Module:AddMainMenuButton()
@@ -484,6 +552,17 @@ function Module:Wrath()
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function Module:Era()
-    Module:Wrath()
+function Module:Cata()
+    Module:AddConfigFrame()
+    Module:AddMainMenuButton()
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
+
+function Module:Mists()
+    Module:AddConfigFrame()
+    Module:AddMainMenuButton()
+
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+end
+
