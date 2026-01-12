@@ -13,7 +13,7 @@ function DragonflightUICharacterStatsTbcMixin:SetupStats()
     self:AddStatsAttributes()
     -- self:AddStatsMelee()
     -- self:AddStatsRanged()
-    -- self:AddStatsSpell()
+    self:AddStatsSpell()
     -- self:AddStatsDefense()
     self:AddStatsResistance()
     -- self:AddStatsSpell()
@@ -634,7 +634,7 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsSpell()
 
     local function GetSpellDamageTable()
         local newTable = {}
-        newTable[1] = {left = STAT_SPELLPOWER}
+        newTable[1] = {left = BONUS_DAMAGE}
         newTable[2] = {left = STAT_SPELLPOWER_TOOLTIP}
         newTable[3] = {left = ' '}
 
@@ -647,8 +647,34 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsSpell()
             maxDamage = max(maxDamage, spellDamage);
             -- spellDamage = 5;
             if spellDamage > 0 then
-                table.insert(newTable, {left = cap[i - 1] .. ' ' .. DAMAGE, right = string.format('%d', spellDamage)})
+                table.insert(newTable, {
+                    left = cap[i - 1] .. ' ' .. DAMAGE,
+                    right = string.format('%d', spellDamage),
+                    texture = "Interface\\PaperDollInfoFrame\\SpellSchoolIcon" .. i
+                })
             end
+        end
+
+        newTable[1].left = string.format('%s %d', BONUS_DAMAGE, maxDamage);
+
+        -- warlock pet
+        local petStr, damage;
+        local shadow = GetSpellBonusDamage(6);
+        local fire = GetSpellBonusDamage(3);
+
+        if (shadow > fire) then
+            petStr = PET_BONUS_TOOLTIP_WARLOCK_SPELLDMG_SHADOW;
+            damage = shadow;
+        else
+            petStr = PET_BONUS_TOOLTIP_WARLOCK_SPELLDMG_FIRE;
+            damage = fire;
+        end
+
+        local petBonusAP = ComputePetBonus("PET_BONUS_SPELLDMG_TO_AP", damage);
+        local petBonusDmg = ComputePetBonus("PET_BONUS_SPELLDMG_TO_SPELLDMG", damage);
+        if (petBonusAP > 0 or petBonusDmg > 0) then
+            table.insert(newTable, {left = ' '})
+            table.insert(newTable, {left = format(petStr, petBonusAP, petBonusDmg)})
         end
 
         if #newTable == 3 then newTable[3] = nil; end
@@ -657,8 +683,8 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsSpell()
     end
 
     self:RegisterElement('damage', 'spell', {
-        order = 5,
-        name = STAT_SPELLPOWER,
+        order = 1,
+        name = BONUS_DAMAGE,
         descr = '..',
         func = function()
             local spellTable, dmg = GetSpellDamageTable()
@@ -669,60 +695,107 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsSpell()
     })
 
     self:RegisterElement('healing', 'spell', {
-        order = 5.5,
-        name = STAT_SPELLHEALING,
+        order = 2,
+        name = BONUS_HEALING,
         descr = '..',
         func = function()
             local healing = GetSpellBonusHealing();
 
             local str = string.format(' %d', healing);
-            return str, STAT_SPELLHEALING .. str, STAT_SPELLHEALING_TOOLTIP;
+            return str, BONUS_HEALING .. str, format(BONUS_HEALING_TOOLTIP, healing);
         end
     })
 
+    -- CR_HIT_SPELL = 8
     self:RegisterElement('hit', 'spell', {
-        order = 6,
-        name = STAT_HIT_CHANCE,
+        order = 3,
+        name = _G['COMBAT_RATING_NAME' .. CR_HIT_SPELL],
         descr = '..',
         func = function()
-            local hit = GetSpellHitModifier()
-            if not hit then hit = 0; end
+            local rating = GetCombatRating(CR_HIT_SPELL);
+            local ratingBonus = GetCombatRatingBonus(CR_HIT_SPELL);
 
-            local str = string.format(' %.2F', hit) .. '%';
-            return str, STAT_HIT_CHANCE .. str, 'Reduces your chance to miss.'
+            local str = rating;
+            local label = string.format('%s %d', STAT_HIT_CHANCE, rating);
+            local tt = format(CR_HIT_SPELL_TOOLTIP, UnitLevel("player"), ratingBonus, GetSpellPenetration(),
+                              GetSpellPenetration());
+            return str, label, tt
         end
     })
 
-    local function GetRealSpellCrit()
-        local minCrit = GetSpellCritChance(2);
-        local spellCrit;
+    -- CR_HASTE_SPELL = 20
+    self:RegisterElement('haste', 'spell', {
+        order = 5,
+        name = SPELL_HASTE,
+        descr = '..',
+        func = function()
+            local rating = GetCombatRating(CR_HASTE_SPELL);
+            local ratingBonus = GetCombatRatingBonus(CR_HASTE_SPELL);
+
+            local str = rating;
+            local label = string.format('%s %d', SPELL_HASTE, rating);
+            local tt = format(SPELL_HASTE_TOOLTIP, ratingBonus)
+            return str, label, tt
+        end
+    })
+
+    local function GetSpellCritTable()
+        local rating = GetCombatRating(11);
+
+        local newTable = {}
+        -- newTable[1] = {left = SPELL_CRIT_CHANCE}
+        newTable[1] = {left = COMBAT_RATING_NAME11 .. " " .. rating}
+        newTable[2] = {left = ' '}
+
+        local maxDamage = GetSpellCritChance(2);
+        local spellDamage;
 
         for i = 2, 7 do
-            spellCrit = GetSpellCritChance(i);
+            spellDamage = GetSpellCritChance(i);
             -- minCrit = min(minCrit, spellCrit);
-            minCrit = max(minCrit, spellCrit);
+            maxDamage = max(maxDamage, spellDamage);
+            -- spellDamage = 5;
+            if spellDamage > 0 then
+                table.insert(newTable, {
+                    left = cap[i - 1],
+                    right = string.format('%.2f%%', spellDamage),
+                    texture = "Interface\\PaperDollInfoFrame\\SpellSchoolIcon" .. i
+                })
+            end
         end
 
-        return minCrit;
+        -- newTable[1].left = string.format('%s %.2f%%', SPELL_CRIT_CHANCE, maxDamage);
+        newTable[1].left = string.format('%s %d', COMBAT_RATING_NAME11, rating);
+
+        if #newTable == 3 then newTable[3] = nil; end
+
+        return newTable, maxDamage, rating;
     end
 
     self:RegisterElement('crit', 'spell', {
-        order = 7,
-        name = STAT_CRITICAL_STRIKE,
+        order = 4,
+        name = SPELL_CRIT_CHANCE,
         descr = '..',
         func = function()
-            local crit = GetRealSpellCrit()
-            local str = string.format(' %.2f', crit) .. '%';
-            return str, CRIT_CHANCE .. str, 'Chance of spells doing extra damage.'
+            local spellTable, dmg, rating = GetSpellCritTable();
+
+            local str = format("%.2f%%", dmg);
+
+            return str, nil, nil, spellTable;
         end
     })
 
     self:RegisterElement('mana', 'spell', {
-        order = 8,
+        order = 6,
         name = MANA_REGEN,
         descr = '..',
         func = function()
-            local base, casting = GetManaRegen()
+            if not UnitHasMana("player") then return MANA_REGEN, '0' end
+
+            local base, casting = GetManaRegen();
+            -- -- All mana regen stats are displayed as mana/5 sec.
+            -- base = floor(base * 5.0);
+            -- casting = floor(casting * 5.0);
 
             local newTable = {}
             newTable[1] = {left = MANA_REGEN}

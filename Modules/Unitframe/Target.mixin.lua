@@ -572,6 +572,9 @@ function SubModuleMixin:Setup()
     if DF.Era then
         self:AddMobhealth();
         self:CreatThreatIndicator();
+    elseif DF.API.Version.IsTBC then
+        self:AddMobhealth();
+        self:CreatThreatIndicator();
     end
 
     local UpdateTargetStatusBars = function()

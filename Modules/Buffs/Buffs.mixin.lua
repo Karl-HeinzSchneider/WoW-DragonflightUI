@@ -496,4 +496,8 @@ function SubModuleMixin:RemoveDefaultBuffs()
         BuffFrame:UnregisterAllEvents()
         BuffFrame:Hide()
     end
+    if DebuffFrame then
+        DebuffFrame:UnregisterAllEvents()
+        DebuffFrame:Hide()
+    end
 end

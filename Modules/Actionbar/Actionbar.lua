@@ -2881,6 +2881,12 @@ function Module.ChangeActionbar()
             stancebar[v]:ClearAllPoints()
             stancebar[v]:SetTexture('')
         end
+
+        local mab = _G['MainActionBar']
+
+        mab:UnregisterAllEvents()
+        mab:ClearAllPoints()
+        mab:Hide()
     else
         StanceBarLeft:Hide()
         StanceBarMiddle:Hide()
