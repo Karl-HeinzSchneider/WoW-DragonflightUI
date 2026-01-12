@@ -280,7 +280,7 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
     end
 end
 
-function DragonflightUIMicroMenuMixin:ChangeCharacterMicroButton()
+function DragonflightUIMicroMenuMixin:ChangeCharacterMicroButton(dontInsert)
     -- print('~~DragonflightUIMicroMenuMixin:ChangeCharacterMicroButton()')
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
@@ -291,7 +291,7 @@ function DragonflightUIMicroMenuMixin:ChangeCharacterMicroButton()
     ]]
 
     local frame = CharacterMicroButton
-    table.insert(self.MicroButtons, frame)
+    if not dontInsert then table.insert(self.MicroButtons, frame) end
 
     local sizeX, sizeY = 32, 40
     local offX, offY = frame:GetPushedTextOffset()
@@ -495,9 +495,9 @@ function DragonflightUIMicroMenuMixin:BetterPVPMicroButton(btn)
     end
 end
 
-function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
+function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name, dontInsert)
     -- print('~~DragonflightUIMicroMenuMixin:ChangeMicroMenuButton()')
-    table.insert(self.MicroButtons, frame)
+    if not dontInsert then table.insert(self.MicroButtons, frame) end
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
     if DF.Era then microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA' end

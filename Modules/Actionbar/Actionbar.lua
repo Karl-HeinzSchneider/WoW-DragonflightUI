@@ -2390,6 +2390,8 @@ function Module.AddStateUpdater()
     local microFrame = Module.MicroFrame
     -- TODOTBC
     if DF.API.Version.IsTBC then
+        Mixin(microFrame, DragonflightUIStateHandlerMixin)
+        microFrame:InitStateHandler()
     else
         Mixin(microFrame, DragonflightUIStateHandlerMixin)
         microFrame:InitStateHandler()
@@ -3198,6 +3200,58 @@ function Module.ChangeMicroMenu()
     Module.MicroFrame = microFrame
 end
 
+function Module:ChangeMicroMenuTBC()
+    print('ChangeMicroMenuTBC')
+    local f = MicroMenu;
+    Module.MicroFrame = f
+
+    function f:UpdateState(state)
+        self.State = state
+        self:Update()
+    end
+
+    function f:Update()
+        local state = self.State
+
+        self:SetClampedToScreen(true)
+        self:SetScale(state.scale)
+        self:ClearAllPoints()
+        self:SetPoint(state.anchor, _G[state.anchorFrame], state.anchorParent, state.x, state.y)
+
+        -- if DF.API.Version.IsTBC then
+        --     --
+        --     local f = _G['MicroMenuContainer']
+
+        --     --   self:SetClampedToScreen(true)
+        --     -- self:SetScale(state.scale)
+        --     f:ClearAllPoints()
+        --     f:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+        -- end
+
+        if self.UpdateStateHandler then self:UpdateStateHandler(state) end
+    end
+
+    DragonflightUIMicroMenuMixin:ChangeCharacterMicroButton(true)
+    DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities', true)
+    DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents', true)
+    DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog', true)
+    if SocialsMicroButton then
+        DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities', true)
+    end
+    -- if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
+    -- if WorldMapMicroButton then self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections') end
+    -- if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
+
+    DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop', true)
+    DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(HelpMicroButton, 'GameMenu', true)
+
+    MainMenuBarPerformanceBarFrame:Hide()
+
+    local perf = _G['MainMenuMicroButton'].PerformanceIndicator;
+    perf:ClearAllPoints()
+    perf:SetPoint('BOTTOM')
+end
+
 function Module.UpdateTotemState(state)
     -- print('UpdateTotemState')
     Module.Temp.TotemFixing = true
@@ -3574,6 +3628,7 @@ function Module.MoveBars()
     elseif DF.Era then
         CharacterMicroButton:ClearAllPoints()
         CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 95, 0)
+    elseif DF.API.Version.IsTBC then
     else
         CharacterMicroButton:ClearAllPoints()
         CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
@@ -3715,7 +3770,7 @@ function Module:TBC()
     Module.ChangeGryphon()
     -- Module.DrawActionbarDeco()
 
-    Module.ChangeMicroMenu()
+    Module:ChangeMicroMenuTBC()
     Module.ChangeBackpack()
     Module.MoveBars()
     Module.ChangeFramerate()
