@@ -542,11 +542,14 @@ function Module:UpdatePlayerFrame(state)
     local altPowerBorderLeft = _G['PlayerFrameAlternateManaBarLeftBorder']
     local altPowerBorderRight = _G['PlayerFrameAlternateManaBarRightBorder']
 
-    if not altPowerBorder or not altPowerBorderLeft or not altPowerBorderRight then return end
+    if altPowerBorder and altPowerBorderLeft and altPowerBorderRight then
+        altPowerBorder:SetVertexColor(c:GetRGB())
+        altPowerBorderLeft:SetVertexColor(c:GetRGB())
+        altPowerBorderRight:SetVertexColor(c:GetRGB())
+    end
 
-    altPowerBorder:SetVertexColor(c:GetRGB())
-    altPowerBorderLeft:SetVertexColor(c:GetRGB())
-    altPowerBorderRight:SetVertexColor(c:GetRGB())
+    local altPowerBorderDF = _G['DragonflightUIAlternatePowerBarBorder']
+    if altPowerBorderDF then altPowerBorderDF:SetVertexColor(c:GetRGB()) end
 end
 
 function Module:UpdatePetFrame(state)
