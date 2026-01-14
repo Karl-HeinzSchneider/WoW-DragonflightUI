@@ -3435,6 +3435,18 @@ function Module.ChangeBackpack()
         end
 
     end
+
+    if DF.API.Version.IsTBC then
+        hooksecurefunc(BagsBar, 'Layout', function()
+            -- print('BagsBar:Layout()')
+
+            local db = Module.db.profile
+            local state = db.bags
+            MainMenuBarBackpackButton:ClearAllPoints()
+            MainMenuBarBackpackButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+            MainMenuBarBackpackButton:SetScale(1.5 * state.scale)
+        end)
+    end
 end
 
 function Module.UpdateBagSlotIcons()
