@@ -3368,6 +3368,7 @@ function Module.ChangeBackpack()
 
     -- keyring
     if not DF.Cata then
+        -- print('KEYRING')
         KeyRingButton:SetSize(30, 30)
         KeyRingButton:ClearAllPoints()
         KeyRingButton:SetPoint('RIGHT', _G['CharacterBag3Slot'], 'LEFT', 0, 0)
@@ -3610,7 +3611,7 @@ function Module.CreateBagExpandButton()
     f:GetPushedTexture():SetTexCoord(0.951171875, 0.982421875, 0.015625, 0.25)
 
     f:SetScript('OnClick', function()
-        setOption({'bags', 'expanded'}, not Module.db.profile.bags.expanded)
+        -- setOption({'bags', 'expanded'}, not Module.db.profile.bags.expanded)
         -- Module.BagBarExpandToggled(Module.db.profile.bagsExpanded)
     end)
     f:RegisterEvent('BAG_UPDATE_DELAYED')
