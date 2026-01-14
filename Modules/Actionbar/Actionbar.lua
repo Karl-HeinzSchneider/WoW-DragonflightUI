@@ -3445,6 +3445,15 @@ function Module.ChangeBackpack()
             MainMenuBarBackpackButton:ClearAllPoints()
             MainMenuBarBackpackButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
             MainMenuBarBackpackButton:SetScale(1.5 * state.scale)
+
+            CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
+            for i = 1, 3 do
+                local gap = 0
+                _G['CharacterBag' .. i .. 'Slot']:SetPoint('RIGHT', _G['CharacterBag' .. (i - 1) .. 'Slot'], 'LEFT',
+                                                           -gap, 0)
+            end
+            -- KeyRingButton:ClearAllPoints()
+            -- KeyRingButton:SetPoint('RIGHT', _G['CharacterBag3Slot'], 'LEFT', 0, 0)
         end)
     end
 end
