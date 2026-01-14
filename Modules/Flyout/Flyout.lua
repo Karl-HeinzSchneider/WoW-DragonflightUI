@@ -1407,6 +1407,7 @@ function Module:Era()
 end
 
 function Module:TBC()
+    Module:Era()
 end
 
 function Module:Wrath()
