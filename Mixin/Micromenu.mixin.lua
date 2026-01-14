@@ -29,6 +29,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
     if DF.Era then
         -- socials/guild button
         numButtons = numButtons - 1
+    elseif DF.API.Version.IsTBC then
     elseif DF.Cata then
         -- socials/guild button
         numButtons = numButtons - 1
@@ -44,7 +45,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
 
     hooksecurefunc('UpdateMicroButtons', function()
         -- print('#UpdateMicroButtons')
-        self:UpdateLayout()
+        self:UpdateLayout(true)
     end)
 
     if UpdateMicroButtonsParent then
@@ -120,7 +121,9 @@ function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
 end
 
 function DragonflightUIMicroMenuMixin:UpdateLayout(force)
-    -- print('UpdateLayout()', #self.MicroButtons)
+    -- print('UpdateLayout()', #self.MicroButtons, force)
+    -- if true then return end
+    -- force = true
     local _, relativeTo, _, _, _ = CharacterMicroButton:GetPoint(1)
     if (relativeTo == self) then
         -- print('~> ALREADY SET');
@@ -143,6 +146,8 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             v:SetPoint(unpack(self.OriginalAnchors[k]))
         end
     end
+
+    self:AnchorMicroMenuContainer()
 end
 
 function DragonflightUIMicroMenuMixin:UpdateState(state)
@@ -158,17 +163,24 @@ function DragonflightUIMicroMenuMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, _G[state.anchorFrame], state.anchorParent, state.x, state.y)
 
-    if DF.API.Version.IsTBC then
-        --
-        local f = _G['MicroMenuContainer']
-
-        --   self:SetClampedToScreen(true)
-        -- self:SetScale(state.scale)
-        f:ClearAllPoints()
-        f:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
-    end
+    self:AnchorMicroMenuContainer() -- only tbc
 
     if self.UpdateStateHandler then self:UpdateStateHandler(state) end
+end
+
+function DragonflightUIMicroMenuMixin:AnchorMicroMenuContainer()
+    -- print('AnchorMicroMenuContainer')
+
+    if not DF.API.Version.IsTBC then
+        --      
+        return;
+    end
+    local f = _G['MicroMenuContainer']
+
+    --   self:SetClampedToScreen(true)
+    -- self:SetScale(state.scale)
+    f:ClearAllPoints()
+    f:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
 end
 
 function DragonflightUIMicroMenuMixin:ChangeButtons()

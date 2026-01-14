@@ -3574,6 +3574,7 @@ function Module.MoveBars()
     elseif DF.Era then
         CharacterMicroButton:ClearAllPoints()
         CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 95, 0)
+    elseif DF.API.Version.IsTBC then
     else
         CharacterMicroButton:ClearAllPoints()
         CharacterMicroButton:SetPoint('BOTTOMRIGHT', UIParent, -300 + 5, 0)
