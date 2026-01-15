@@ -601,7 +601,7 @@ function Module:UpdatePartyFrame(state)
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
 
-        if pf.PartyFrameBorder then
+        if pf and pf.PartyFrameBorder then
             -- print('yes')
             pf.PartyFrameBorder:SetDesaturated(state.unitframeDesaturate)
             pf.PartyFrameBorder:SetVertexColor(c:GetRGB())
@@ -612,10 +612,12 @@ function Module:UpdatePartyFrame(state)
 
     -- editmode
     local e = f.PreviewParty
-    for k, v in ipairs(e.PartyFrames) do
-        --
-        v.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
-        v.TargetFrameBorder:SetVertexColor(c:GetRGB())
+    if e then
+        for k, v in ipairs(e.PartyFrames) do
+            --
+            v.TargetFrameBorder:SetDesaturated(state.unitframeDesaturate)
+            v.TargetFrameBorder:SetVertexColor(c:GetRGB())
+        end
     end
 end
 
