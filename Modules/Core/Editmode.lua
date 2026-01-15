@@ -477,6 +477,63 @@ function Module:InitEditmodeOverride()
     LibEditModeOverride:LoadLayouts();
 
     addonTable.LibEditModeOverride = LibEditModeOverride;
+
+    local DFLayoutName = 'DragonflightUI_Layout'
+    if not LibEditModeOverride:DoesLayoutExist(DFLayoutName) then
+        --
+        LibEditModeOverride:AddLayout(Enum.EditModeLayoutType.Character, DFLayoutName)
+    end
+
+    -- force edit profile - TODO?
+    LibEditModeOverride:SetActiveLayout(DFLayoutName)
+
+    -- if not LibEditModeOverride:CanEditActiveLayout() then
+    --     --
+    --     LibEditModeOverride:SetActiveLayout(DFLayoutName)
+    -- end
+    LibEditModeOverride:ApplyChanges()
+
+    function addonTable:OverrideBlizzEditmode(f, ...)
+        if not (LibEditModeOverride:GetActiveLayout() == DFLayoutName) then
+            print('Wrong EditMode layout detected - please use ' .. DFLayoutName .. ' and /reload .')
+            return;
+        end
+        LibEditModeOverride:ReanchorFrame(f, ...)
+
+        if InCombatLockdown() then
+            LibEditModeOverride:SaveOnly()
+        else
+            LibEditModeOverride:ApplyChanges()
+        end
+    end
+
+    function addonTable:HookBlizzEditmodeAndFunc(fun, both)
+        local lastUpdate = GetTime()
+
+        EventRegistry:RegisterCallback("EditMode.Exit", function()
+            -- print('EditMode.Exit', GetTime())
+            local newUpdate = GetTime()
+
+            if newUpdate > lastUpdate then
+                lastUpdate = newUpdate;
+                print('~> update')
+                fun()
+            end
+        end)
+        if both then
+            EventRegistry:RegisterCallback("EditMode.Enter", function()
+                -- print('EditMode.Enter')
+                local newUpdate = GetTime()
+
+                if newUpdate > lastUpdate then
+                    lastUpdate = newUpdate;
+                    print('~> update')
+                    fun()
+                end
+            end)
+        end
+        fun()
+    end
 end
 
 function Module:Era()
