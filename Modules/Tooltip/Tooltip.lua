@@ -1102,28 +1102,31 @@ function Module:HookStatusBar()
     bar:HookScript('OnValueChanged', function(self, value)
         --       
         -- print('GameTooltipStatusBar OnValueChanged')
-        local state = Module.db.profile.general;
 
-        if value <= 0 then
-            -- bar.TextString:SetText('DEADS')
-            -- TextStatusBar_UpdateTextString(self)
-            local _, maxValue = self:GetMinMaxValues()
-            bar.LeftText:SetFormattedText('|cffffcc33<%s>|r', DEAD)
-            bar.RightText:SetFormattedText('|cff999999%s|r', AbbreviateLargeNumbers(maxValue))
+        local unitName, unit = GameTooltip:GetUnit()
+        Module:UpdateStatusbar(unit)
+        -- local state = Module.db.profile.general;
 
-            bar.LeftText:Show()
-            bar.RightText:Show()
-            bar.TextString:Hide()
-        else
-            -- bar.TextString:SetText(value)
-            TextStatusBar_UpdateTextString(self)
-        end
+        -- if value <= 0 then
+        --     -- bar.TextString:SetText('DEADS')
+        --     -- TextStatusBar_UpdateTextString(self)
+        --     local _, maxValue = self:GetMinMaxValues()
+        --     bar.LeftText:SetFormattedText('|cffffcc33<%s>|r', DEAD)
+        --     bar.RightText:SetFormattedText('|cff999999%s|r', AbbreviateLargeNumbers(maxValue))
 
-        if not state.unitHealthbarText then
-            bar.LeftText:Hide()
-            bar.RightText:Hide()
-            bar.TextString:Hide()
-        end
+        --     bar.LeftText:Show()
+        --     bar.RightText:Show()
+        --     bar.TextString:Hide()
+        -- else
+        --     -- bar.TextString:SetText(value)
+        --     TextStatusBar_UpdateTextString(self)
+        -- end
+
+        -- if not state.unitHealthbarText then
+        --     bar.LeftText:Hide()
+        --     bar.RightText:Hide()
+        --     bar.TextString:Hide()
+        -- end
     end)
 
     GameTooltip:HookScript('OnShow', function(self)
@@ -1325,6 +1328,8 @@ function Module:UnitPlayerTooltip(self)
     local state = Module.db.profile.general;
 
     local name, unit = self:GetUnit()
+    -- print('UnitPlayerTooltip', name, unit)
+    Module:UpdateStatusbar(unit)
 
     local localizedClass, englishClass, classIndex = UnitClass(unit);
     if not class then return end -- TODO
@@ -1481,8 +1486,9 @@ function Module:UnitNPCTooltip(self)
     local state = Module.db.profile.general;
 
     local name, unit = self:GetUnit()
-
     -- print('Module:UnitNPCTooltip(self)', name, unit)
+    Module:UpdateStatusbar(unit)
+
     local r, g, b = GameTooltip_UnitColor(unit)
     local level = UnitLevel(unit)
 
@@ -1650,6 +1656,51 @@ function Module:GrayOutOnDeath(self, unit)
             line:SetTextColor(0.7, 0.7, 0.7);
             line:SetText(text)
         end
+    end
+end
+
+function Module:UpdateStatusbar(unit)
+    -- print('UpdateStatusbar', unit)
+    local state = Module.db.profile.general;
+    local bar = GameTooltipStatusBar
+
+    if not unit then
+        bar.LeftText:Hide()
+        bar.RightText:Hide()
+        bar.TextString:Hide()
+        return
+    end -- TODO
+
+    local health = UnitHealth(unit)
+    local _, maxValue = bar:GetMinMaxValues()
+    -- print(health, maxValue)
+
+    if health <= 0 then
+        bar.LeftText:SetFormattedText('|cffffcc33<%s>|r', DEAD)
+        bar.RightText:SetFormattedText('|cff999999%s|r', AbbreviateLargeNumbers(maxValue))
+
+        bar.LeftText:Show()
+        bar.RightText:Show()
+        bar.TextString:Hide()
+    else
+        local extra = ''
+
+        if UnitIsPlayer(unit) and maxValue == 100 then
+            -- most likely no API -> only percent
+            extra = '%'
+        end
+
+        bar.RightText:SetFormattedText('|cffffffff%s%s|r', AbbreviateLargeNumbers(health), extra)
+
+        bar.LeftText:Hide()
+        bar.RightText:Show()
+        bar.TextString:Hide()
+    end
+
+    if not state.unitHealthbarText then
+        bar.LeftText:Hide()
+        bar.RightText:Hide()
+        bar.TextString:Hide()
     end
 end
 
