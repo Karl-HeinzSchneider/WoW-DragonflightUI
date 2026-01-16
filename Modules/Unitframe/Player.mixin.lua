@@ -458,7 +458,7 @@ function SubModuleMixin:Setup()
     self:CreateRestFlipbook()
     self:HookRestFunctions()
 
-    if DF.Era then self:AddAlternatePowerBar() end
+    if DF.Era or DF.API.Version.IsTBC then self:AddAlternatePowerBar() end
 
     PlayerFrameHealthBar:HookScript('OnValueChanged', function()
         self:UpdatePlayerFrameHealthBar()
@@ -1102,7 +1102,7 @@ function SubModuleMixin:AddAlternatePowerBar()
         self:RegisterEvent("PLAYER_ENTERING_WORLD");
         self:RegisterEvent("UNIT_DISPLAYPOWER");
 
-        SetTextStatusBarText(self, _G[self:GetName() .. "Text"])
+        if SetTextStatusBarText then SetTextStatusBarText(self, _G[self:GetName() .. "Text"]) end
 
         local info = PowerBarColor[self.powerName];
         self:SetStatusBarColor(info.r, info.g, info.b);
@@ -1114,7 +1114,11 @@ function SubModuleMixin:AddAlternatePowerBar()
         self.cvarLabel = "STATUS_TEXT_PLAYER";
         self.capNumericDisplay = true -- DF
         AlternatePowerBar_Initialize(self);
-        TextStatusBar_Initialize(self);
+        if DF.API.Version.IsTBC then
+            self:InitializeTextStatusBar()
+        else
+            TextStatusBar_Initialize(self);
+        end
     end
 
     local function AlternatePowerBar_UpdateValue(self)
@@ -1160,12 +1164,21 @@ function SubModuleMixin:AddAlternatePowerBar()
 
     -- 
     AlternatePowerBar_OnLoad(bar)
-    TextStatusBar_Initialize(bar)
+    if DF.API.Version.IsTBC then
+        bar:InitializeTextStatusBar()
+    else
+        TextStatusBar_Initialize(bar);
+    end
 
     bar:SetScript('OnEvent', function(self, event, ...)
         -- 
         AlternatePowerBar_OnEvent(self, event, ...);
-        TextStatusBar_OnEvent(self, event, ...);
+
+        if DF.API.Version.IsTBC then
+            self:TextStatusBarOnEvent(event, ...);
+        else
+            TextStatusBar_OnEvent(self, event, ...);
+        end
     end)
     bar:SetScript('OnUpdate', function(self, elapsed)
         -- 
