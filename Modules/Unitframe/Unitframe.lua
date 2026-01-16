@@ -149,8 +149,8 @@ function Module:RefreshOptionScreens()
         self.SubFocus.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
         self.SubFocusTarget.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
-    self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen();
-    PlayerFrame.DFEditModeSelection:RefreshOptionScreen();
+    if self.SubParty.PreviewParty then self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen(); end
+    _G['DragonflightUIPlayerFrame'].DFEditModeSelection:RefreshOptionScreen();
     self.SubPet.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
     -- self.SubRaid.PreviewRaid.DFEditModeSelection:RefreshOptionScreen();
     self.SubTarget.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
