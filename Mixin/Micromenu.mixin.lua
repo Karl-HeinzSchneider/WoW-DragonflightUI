@@ -150,8 +150,6 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             v:SetPoint(unpack(self.OriginalAnchors[k]))
         end
     end
-
-    self:AnchorMicroMenuContainer()
 end
 
 function DragonflightUIMicroMenuMixin:UpdateState(state)
