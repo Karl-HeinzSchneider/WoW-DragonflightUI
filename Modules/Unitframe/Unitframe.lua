@@ -146,7 +146,7 @@ function Module:RefreshOptionScreens()
         refreshCat('Focus')
         refreshCat('focusTarget')
 
-        self.SubFocus.PreviewFocus.DFEditModeSelection:RefreshOptionScreen();
+        _G['DragonflightUIFocusFrame'].DFEditModeSelection:RefreshOptionScreen();
         self.SubFocusTarget.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
     end
     if self.SubParty.PreviewParty then self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen(); end
