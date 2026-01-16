@@ -569,13 +569,8 @@ function SubModuleMixin:Setup()
     self:ReApplyTargetFrame()
     self:ChangeTargetComboFrame()
 
-    if DF.Era then
-        self:AddMobhealth();
-        self:CreatThreatIndicator();
-    elseif DF.API.Version.IsTBC then
-        self:AddMobhealth();
-        self:CreatThreatIndicator();
-    end
+    self:AddMobhealth();
+    self:CreatThreatIndicator();
 
     local UpdateTargetStatusBars = function()
         self:ReApplyTargetFrame()
@@ -603,28 +598,41 @@ function SubModuleMixin:Setup()
         end)
     end
 
+    local f = _G['DragonflightUITargetFrame']
+    f:SetSize(232, 100)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
+    if DF.API.Version.IsTBC then
+        --
+        addonTable:OverrideBlizzEditmode(TargetFrame, 'CENTER', f, 'CENTER', 0, 0)
+    end
+
     -- state
-    Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
-    TargetFrame:InitStateHandler()
-    TargetFrame:SetUnit('target')
+    Mixin(f, DragonflightUIStateHandlerMixin)
+    f:InitStateHandler()
+    -- f:SetUnit('target')
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
+    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', f,
                                    'DFEditModePreviewTargetTemplate')
     fakeTarget:OnLoad()
+    fakeTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
     self.PreviewTarget = fakeTarget;
 
-    EditModeModule:AddEditModeToFrame(fakeTarget)
+    EditModeModule:AddEditModeToFrame(f)
 
-    fakeTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    fakeTarget.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
-        parentExtra = TargetFrame,
+        -- parentExtra = TargetFrame,
         default = function()
             setDefaultSubValues('target')
         end,
@@ -634,13 +642,15 @@ function SubModuleMixin:Setup()
             -- TargetFrame.unit = 'player';
             -- TargetFrame_Update(TargetFrame);
             -- TargetFrame:Show()
-            TargetFrame:SetAlpha(0)
+            -- TargetFrame:SetAlpha(0)
+            fakeTarget:Show()
         end,
         hideFunction = function()
             --        
             -- TargetFrame.unit = 'target';
             -- TargetFrame_Update(TargetFrame);
-            TargetFrame:SetAlpha(1)
+            -- TargetFrame:SetAlpha(1)
+            fakeTarget:Hide()
         end
     });
 end
@@ -658,7 +668,10 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = TargetFrame
+    local f_orig = TargetFrame
+    local f = _G['DragonflightUITargetFrame']
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -667,13 +680,20 @@ function SubModuleMixin:Update()
         parent = _G[state.anchorFrame]
     end
 
+    f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    -- f_orig:SetParent(f)
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    f_orig:SetScale(state.scale)
+
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetUserPlaced(true)
     end
-    f:SetScale(state.scale)
 
     self:ReApplyTargetFrame()
     -- Module.ReApplyToT()
@@ -688,7 +708,7 @@ function SubModuleMixin:Update()
     else
         TargetFrame:CheckFaction()
     end
-    TargetFrame:UpdateStateHandler(state)
+    f:UpdateStateHandler(state)
 
     self.PreviewTarget:UpdateState(state);
 end

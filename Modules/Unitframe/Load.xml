@@ -11,4 +11,10 @@
 	<Include file="Target.mixin.lua" />
 	<Include file="TargetOfTarget.mixin.lua" />
 	<Include file="Unitframe.lua" />
+	<Frame name="DragonflightUIPlayerFrame" hidden="true">
+	</Frame>
+	<Frame name="DragonflightUITargetFrame" hidden="true">
+	</Frame>
+	<Frame name="DragonflightUIFocusFrame" hidden="true">
+	</Frame>
 </Ui>

@@ -248,7 +248,9 @@ function SubModuleMixin:Update()
 end
 
 function SubModuleMixin:CreateVehicleLeaveButton()
-    local fakeWidget = CreateFrame('Frame', 'DragonflightUIVehicleLeaveButton', UIParent)
+    -- local fakeWidget = CreateFrame('Frame', 'DragonflightUIVehicleLeaveButton', UIParent)
+    local fakeWidget = _G['DragonflightUIVehicleLeaveButton']
+    fakeWidget:SetParent(UIParent)
     fakeWidget:SetSize(32, 32)
     self.PreviewFrame = fakeWidget
 
@@ -263,11 +265,16 @@ function SubModuleMixin:CreateVehicleLeaveButton()
     fakeWidget.FakePreview = fakeArrow;
 
     local btn = _G['MainMenuBarVehicleLeaveButton'];
-    btn:UnregisterAllEvents()
 
-    btn:SetParent(fakeWidget)
-    btn:ClearAllPoints()
-    btn:SetPoint('CENTER', fakeWidget, 'CENTER', 0, 0)
-    -- btn:Show()
-
+    if DF.API.Version.IsTBC then
+        -- addonTable:HookBlizzEditmodeAndFunc(function()
+        --     addonTable:OverrideBlizzEditmode(btn, 'CENTER', fakeWidget, 'CENTER', 0, 0)
+        -- end, false)
+    else
+        btn:UnregisterAllEvents()
+        btn:SetParent(fakeWidget)
+        btn:ClearAllPoints()
+        btn:SetPoint('CENTER', fakeWidget, 'CENTER', 0, 0)
+        -- btn:Show()
+    end
 end

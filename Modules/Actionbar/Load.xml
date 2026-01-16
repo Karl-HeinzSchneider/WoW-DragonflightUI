@@ -2,4 +2,6 @@
 	<Include file="VehicleLeaveButton.mixin.lua" />
 	<Include file="ActionbarRange.mixin.lua" />
 	<Include file="Actionbar.lua" />
+	<Frame name="DragonflightUIVehicleLeaveButton" hidden="true">
+	</Frame>
 </Ui>

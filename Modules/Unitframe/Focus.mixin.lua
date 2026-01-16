@@ -343,28 +343,40 @@ function SubModuleMixin:Setup()
         end)
     end
 
+    local f = _G['DragonflightUIFocusFrame']
+    f:SetSize(232, 100)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
+    if DF.API.Version.IsTBC then
+        --
+        addonTable:OverrideBlizzEditmode(FocusFrame, 'CENTER', f, 'CENTER', 0, 0)
+    end
+
     -- state handler
-    Mixin(FocusFrame, DragonflightUIStateHandlerMixin)
-    FocusFrame:InitStateHandler()
-    FocusFrame:SetUnit('focus')
+    Mixin(f, DragonflightUIStateHandlerMixin)
+    f:InitStateHandler()
 
     -- Edit mode
     local EditModeModule = DF:GetModule('Editmode');
-    local fakeFocus = CreateFrame('Frame', 'DragonflightUIEditModeFocusFramePreview', UIParent,
+    local fakeFocus = CreateFrame('Frame', 'DragonflightUIEditModeFocusFramePreview', f,
                                   'DFEditModePreviewTargetTemplate')
     fakeFocus:OnLoad()
+    fakeFocus:SetPoint('CENTER', f, 'CENTER', 0, 0)
     self.PreviewFocus = fakeFocus;
 
-    EditModeModule:AddEditModeToFrame(fakeFocus)
+    EditModeModule:AddEditModeToFrame(f)
 
-    fakeFocus.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    fakeFocus.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
-        parentExtra = FocusFrame,
+        -- parentExtra = FocusFrame,
         default = function()
             setDefaultSubValues('focus')
         end,
@@ -374,13 +386,15 @@ function SubModuleMixin:Setup()
             -- FocusFrame.unit = 'player';
             -- TargetFrame_Update(FocusFrame);
             -- FocusFrame:Show()
-            FocusFrame:SetAlpha(0)
+            -- FocusFrame:SetAlpha(0)
+            fakeFocus:Show()
         end,
         hideFunction = function()
             --
             -- FocusFrame.unit = 'focus';
             -- TargetFrame_Update(FocusFrame);
-            FocusFrame:SetAlpha(1)
+            -- FocusFrame:SetAlpha(1)
+            fakeFocus:Hide()
         end
     });
 end
@@ -408,7 +422,10 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = FocusFrame
+    local f_orig = FocusFrame
+    local f = _G['DragonflightUIFocusFrame']
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -420,9 +437,16 @@ function SubModuleMixin:Update()
     f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    -- f_orig:SetParent(f)
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    f_orig:SetScale(state.scale)
+
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetUserPlaced(true)
     end
 
     self:ReApplyFocusFrame()
@@ -436,7 +460,7 @@ function SubModuleMixin:Update()
     else
         FocusFrame:CheckFaction()
     end
-    FocusFrame:UpdateStateHandler(state)
+    f:UpdateStateHandler(state)
     self.PreviewFocus:UpdateState(state);
 end
 

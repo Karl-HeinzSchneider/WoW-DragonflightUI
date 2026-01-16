@@ -492,19 +492,31 @@ function SubModuleMixin:Setup()
         if self.ModuleRef.db.profile.player.hidePVP then PlayerPVPIcon:Hide() end
     end)
 
+    local f = _G['DragonflightUIPlayerFrame']
+    f:SetSize(232, 100)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
+    if DF.API.Version.IsTBC then
+        --
+        addonTable:OverrideBlizzEditmode(PlayerFrame, 'CENTER', f, 'CENTER', 0, 0)
+    end
+
     -- state handler
-    Mixin(PlayerFrame, DragonflightUIStateHandlerMixin)
-    PlayerFrame:InitStateHandler()
+    Mixin(f, DragonflightUIStateHandlerMixin)
+    f:InitStateHandler()
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    EditModeModule:AddEditModeToFrame(PlayerFrame)
+    EditModeModule:AddEditModeToFrame(f)
 
-    PlayerFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    PlayerFrame.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
         default = function()
@@ -512,7 +524,6 @@ function SubModuleMixin:Setup()
         end,
         moduleRef = self.ModuleRef
     });
-
 end
 
 function SubModuleMixin:OnEvent(event, ...)
@@ -521,6 +532,12 @@ function SubModuleMixin:OnEvent(event, ...)
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
         self:ChangeStatusIcons()
+
+        C_Timer.After(0, function()
+            -- print('after?') -- @TODO
+            self:ChangePlayerframe()
+            self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
+        end)
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
@@ -546,7 +563,10 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = PlayerFrame
+    local f_orig = PlayerFrame
+    local f = _G['DragonflightUIPlayerFrame']
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -558,9 +578,15 @@ function SubModuleMixin:Update()
     f:SetScale(state.scale)
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    f_orig:SetParent(f)
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetUserPlaced(true)
     end
 
     self:ChangePlayerframe()
