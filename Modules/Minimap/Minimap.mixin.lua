@@ -438,7 +438,7 @@ function SubModuleMixin:Update()
                 self.BottomFrame:SetHeight(0.0000001)
 
                 MiniMapMailFrame:ClearAllPoints()
-                if DF.Wrath or DF.Cata then
+                if DF.Wrath or DF.Cata or DF.API.Version.IsTBC then
                     MiniMapMailFrame:SetPoint('TOPRIGHT', MiniMapTracking, 'BOTTOMRIGHT', 2, -1)
                 else
                     MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
@@ -449,7 +449,7 @@ function SubModuleMixin:Update()
                 self.TopFrame:SetHeight(0.0000001)
 
                 MiniMapMailFrame:ClearAllPoints()
-                if DF.Wrath or DF.Cata then
+                if DF.Wrath or DF.Cata or DF.API.Version.IsTBC then
                     MiniMapMailFrame:SetPoint('BOTTOMRIGHT', MiniMapTracking, 'TOPRIGHT', 2, 1)
                 else
                     MiniMapMailFrame:SetPoint('RIGHT', self.InfoPanel, 'LEFT', 0, 0)
