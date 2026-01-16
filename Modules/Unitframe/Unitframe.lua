@@ -153,7 +153,7 @@ function Module:RefreshOptionScreens()
     _G['DragonflightUIPlayerFrame'].DFEditModeSelection:RefreshOptionScreen();
     self.SubPet.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
     -- self.SubRaid.PreviewRaid.DFEditModeSelection:RefreshOptionScreen();
-    self.SubTarget.PreviewTarget.DFEditModeSelection:RefreshOptionScreen();
+    _G['DragonflightUITargetFrame'].DFEditModeSelection:RefreshOptionScreen();
     self.SubTargetOfTarget.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
     if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 end
