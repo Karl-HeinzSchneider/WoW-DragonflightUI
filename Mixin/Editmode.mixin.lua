@@ -521,6 +521,8 @@ function DFEditModeSystemSelectionBaseMixin:SetNinesliceSelected(selected)
     local slice = self.NineSlice
     local base = 'Interface\\Addons\\DragonflightUI\\Textures\\Editmode\\'
 
+    slice.Center:SetVertexColor(1, 0, 0, 0.5)
+
     if selected then
         --
         slice.TopLeftCorner:SetTexture(base .. 'EditModeUI')
