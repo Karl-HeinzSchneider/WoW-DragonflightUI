@@ -2371,25 +2371,28 @@ function Module:SetupActionbarFrames()
 end
 
 function Module.AddStateUpdater()
-    Mixin(MainMenuBarBackpackButton, DragonflightUIStateHandlerMixin)
-    MainMenuBarBackpackButton:InitStateHandler()
+    local DFBagBar = _G['DragonflightUIBagBar']
+    Mixin(DFBagBar, DragonflightUIStateHandlerMixin)
+    DFBagBar:InitStateHandler()
     -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag0Slot, 2)
     -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag1Slot, 3)
     -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag2Slot, 4)
     -- MainMenuBarBackpackButton:SetHideFrame(CharacterBag3Slot, 5)
 
-    MainMenuBarBackpackButton.DFShower:ClearAllPoints()
-    MainMenuBarBackpackButton.DFShower:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
-    MainMenuBarBackpackButton.DFShower:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
+    -- DFBagBar.DFShower:ClearAllPoints()
+    -- MainMenuBarBackpackButton.DFShower:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
+    -- DFBagBar.DFShower:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
 
-    MainMenuBarBackpackButton.DFMouseHandler:ClearAllPoints()
-    MainMenuBarBackpackButton.DFMouseHandler:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
-    MainMenuBarBackpackButton.DFMouseHandler:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
+    -- MainMenuBarBackpackButton.DFMouseHandler:ClearAllPoints()
+    -- MainMenuBarBackpackButton.DFMouseHandler:SetPoint('TOPLEFT', MainMenuBarBackpackButton, 'TOPLEFT', -95, 6)
+    -- MainMenuBarBackpackButton.DFMouseHandler:SetPoint('BOTTOMRIGHT', MainMenuBarBackpackButton, 'BOTTOMRIGHT', 6, -6)
 
     ---
     local microFrame = Module.MicroFrame
     -- TODOTBC
     if DF.API.Version.IsTBC then
+        Mixin(microFrame, DragonflightUIStateHandlerMixin)
+        microFrame:InitStateHandler()
     else
         Mixin(microFrame, DragonflightUIStateHandlerMixin)
         microFrame:InitStateHandler()
@@ -2555,13 +2558,14 @@ function Module:AddEditMode()
     end
 
     -- Bags
-    EditModeModule:AddEditModeToFrame(MainMenuBarBackpackButton)
+    local DFBagBar = _G['DragonflightUIBagBar']
+    EditModeModule:AddEditModeToFrame(DFBagBar)
 
-    MainMenuBarBackpackButton.DFEditModeSelection:SetGetLabelTextFunction(function()
+    DFBagBar.DFEditModeSelection:SetGetLabelTextFunction(function()
         return bagsOptions.name
     end)
 
-    MainMenuBarBackpackButton.DFEditModeSelection:RegisterOptions({
+    DFBagBar.DFEditModeSelection:RegisterOptions({
         options = bagsOptions,
         extra = optionsBagsEdtimode,
         default = function()
@@ -2571,17 +2575,17 @@ function Module:AddEditMode()
         moduleRef = self
     });
 
-    if DF.API.Version.IsTBC then
-        hooksecurefunc(BagsBar, 'ApplySystemAnchor', function()
-            -- print('BagsBar: ApplySystemAnchor')
-            if not InCombatLockdown() then
-                --
-                -- print('not lock')
-                -- local db = Module.db.profile
-                -- Module.UpdateBagState(db.bags)
-            end
-        end)
-    end
+    -- if DF.API.Version.IsTBC then
+    --     hooksecurefunc(BagsBar, 'ApplySystemAnchor', function()
+    --         -- print('BagsBar: ApplySystemAnchor')
+    --         if not InCombatLockdown() then
+    --             --
+    --             -- print('not lock')
+    --             -- local db = Module.db.profile
+    --             -- Module.UpdateBagState(db.bags)
+    --         end
+    --     end)
+    -- end
 
     -- Micro 
     EditModeModule:AddEditModeToFrame(Module.MicroFrame)
@@ -2596,6 +2600,11 @@ function Module:AddEditMode()
         default = function()
             setDefaultSubValues('micro')
         end,
+        -- dragStopFunction = function()
+        --     if not DF.API.Version.IsTBC then return end
+        --     -- print('dragStopFunction')
+        --     Module.MicroFrame:UpdateTBCPosition()
+        -- end,
         moduleRef = self
     });
 
@@ -2746,7 +2755,7 @@ function Module:RefreshOptionScreens()
         Module.ExtraActionButtonPreview.DFEditModeSelection:RefreshOptionScreen();
     end
 
-    MainMenuBarBackpackButton.DFEditModeSelection:RefreshOptionScreen();
+    _G['DragonflightUIBagBar'].DFEditModeSelection:RefreshOptionScreen();
     Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.FPSFrame.DFEditModeSelection:RefreshOptionScreen();
 
@@ -2887,6 +2896,8 @@ function Module.ChangeActionbar()
         mab:UnregisterAllEvents()
         mab:ClearAllPoints()
         mab:Hide()
+
+        Module:ForceMoveBlizzEditModeGhosts()
     else
         StanceBarLeft:Hide()
         StanceBarMiddle:Hide()
@@ -3023,6 +3034,15 @@ function Module.HookPetBar()
     -- local offset = 0 + 34
     -- local offset = Module.GetPetbarOffset()
     -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
+end
+
+function Module:ForceMoveBlizzEditModeGhosts()
+    local t = {_G['MainActionBar'], _G['StanceBar'], _G['PetActionBar'], _G['PossessActionBar']}
+
+    for k, v in ipairs(t) do
+        v:SetClampedToScreen(false)
+        addonTable:OverrideBlizzEditmode(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+    end
 end
 
 -- TODO
@@ -3191,11 +3211,23 @@ function Module.SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
 end
 
 function Module.ChangeMicroMenu()
-    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent,
-                                   'DragonflightUIMicroMenuFrameTemplate')
+    -- local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent,
+    --                                'DragonflightUIMicroMenuFrameTemplate')
+    local microFrame = _G['DragonflightUIMicroMenuBar']
+    microFrame:SetSize(100, 100)
+    microFrame:SetParent(UIParent)
+    microFrame:SetClampedToScreen(true)
+    microFrame:SetMovable(true)
+    microFrame:OnLoad()
     -- microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
     -- microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
     Module.MicroFrame = microFrame
+
+    if DF.API.Version.IsTBC then
+        -- addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
+        addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', microFrame, 'TOPLEFT', 0, 0)
+    else
+    end
 end
 
 function Module.UpdateTotemState(state)
@@ -3436,25 +3468,16 @@ function Module.ChangeBackpack()
 
     end
 
+    local f = _G['DragonflightUIBagBar']
+    f:SetSize(232, 100)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
     if DF.API.Version.IsTBC then
-        hooksecurefunc(BagsBar, 'Layout', function()
-            -- print('BagsBar:Layout()')
-
-            local db = Module.db.profile
-            local state = db.bags
-            MainMenuBarBackpackButton:ClearAllPoints()
-            MainMenuBarBackpackButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
-            MainMenuBarBackpackButton:SetScale(1.5 * state.scale)
-
-            CharacterBag0Slot:SetPoint('RIGHT', MainMenuBarBackpackButton, 'LEFT', -12, 0)
-            for i = 1, 3 do
-                local gap = 0
-                _G['CharacterBag' .. i .. 'Slot']:SetPoint('RIGHT', _G['CharacterBag' .. (i - 1) .. 'Slot'], 'LEFT',
-                                                           -gap, 0)
-            end
-            -- KeyRingButton:ClearAllPoints()
-            -- KeyRingButton:SetPoint('RIGHT', _G['CharacterBag3Slot'], 'LEFT', 0, 0)
-        end)
+        --
+        addonTable:OverrideBlizzEditmode(_G['BagsBar'], 'RIGHT', f, 'RIGHT', 0, 0)
     end
 end
 
@@ -3561,9 +3584,39 @@ function Module.HookBags()
 end
 
 function Module.UpdateBagState(state)
-    MainMenuBarBackpackButton:ClearAllPoints()
-    MainMenuBarBackpackButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
-    MainMenuBarBackpackButton:SetScale(1.5 * state.scale)
+    if not state then return end
+
+    local f = _G['DragonflightUIBagBar']
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
+
+    f:SetScale(state.scale)
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    -- MainMenuBarBackpackButton:ClearAllPoints()
+    -- MainMenuBarBackpackButton:SetPoint(state.anchor, state.anchorFrame, state.anchorParent, state.x, state.y)
+    MainMenuBarBackpackButton:SetParent(f)
+    MainMenuBarBackpackButton:SetScale(1.5)
+
+    if DF.API.Version.IsTBC then
+        local b = _G['BagsBar']
+        -- b:SetScale(state.scale)
+
+        local point, relativeTo, relativePoint, xOfs, yOfs = b:GetPoint(1)
+
+        if not (relativeTo == f) then addonTable:OverrideBlizzEditmode(b, 'RIGHT', f, 'RIGHT', 0, 0) end
+    else
+        MainMenuBarBackpackButton:ClearAllPoints()
+        MainMenuBarBackpackButton:SetPoint('RIGHT', f, 'RIGHT', 0, 0)
+    end
 
     for i = 0, 3 do
         local slot = _G['CharacterBag' .. i .. 'Slot']
@@ -3583,7 +3636,7 @@ function Module.UpdateBagState(state)
 
     if state.overrideBagAnchor and ContainerFrame1:IsVisible() then UpdateContainerFrameAnchors() end
 
-    MainMenuBarBackpackButton:UpdateStateHandler(state)
+    f:UpdateStateHandler(state)
 end
 
 function Module.MoveBars()
@@ -3712,7 +3765,7 @@ function Module:Era()
 
     Module.ChangeMicroMenu()
     Module.ChangeBackpack()
-    Module.MoveBars()
+    -- Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()
@@ -3740,7 +3793,7 @@ function Module:TBC()
 
     Module.ChangeMicroMenu()
     Module.ChangeBackpack()
-    Module.MoveBars()
+    -- Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()
@@ -3768,7 +3821,7 @@ function Module:Wrath()
 
     Module.ChangeMicroMenu()
     Module.ChangeBackpack()
-    Module.MoveBars()
+    -- Module.MoveBars()
     Module.ChangeFramerate()
     Module.CreateBagExpandButton()
     Module.RefreshBagBarToggle()

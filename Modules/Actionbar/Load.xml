@@ -4,4 +4,10 @@
 	<Include file="Actionbar.lua" />
 	<Frame name="DragonflightUIVehicleLeaveButton" hidden="true">
 	</Frame>
+	<Frame name="DragonflightUIMicroMenuBar" inherits="DragonflightUIMicroMenuFrameTemplate" setAllPoints="true" hidden="true">
+		<Size x="235" y="40" />
+	</Frame>
+	<Frame name="DragonflightUIBagBar" setAllPoints="true" hidden="true">
+		<Size x="200" y="37" />
+	</Frame>
 </Ui>
