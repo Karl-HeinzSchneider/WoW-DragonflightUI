@@ -532,6 +532,12 @@ function SubModuleMixin:OnEvent(event, ...)
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
         self:ChangeStatusIcons()
+
+        C_Timer.After(0, function()
+            -- print('after?') -- @TODO
+            self:ChangePlayerframe()
+            self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
+        end)
     elseif event == 'UNIT_ENTERED_VEHICLE' then
         self:ChangePlayerframe()
         self:SetPlayerBiggerHealthbar(self.ModuleRef.db.profile.player.biggerHealthbar)
