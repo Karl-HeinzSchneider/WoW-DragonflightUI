@@ -2390,6 +2390,8 @@ function Module.AddStateUpdater()
     local microFrame = Module.MicroFrame
     -- TODOTBC
     if DF.API.Version.IsTBC then
+        Mixin(microFrame, DragonflightUIStateHandlerMixin)
+        microFrame:InitStateHandler()
     else
         Mixin(microFrame, DragonflightUIStateHandlerMixin)
         microFrame:InitStateHandler()
@@ -2596,6 +2598,11 @@ function Module:AddEditMode()
         default = function()
             setDefaultSubValues('micro')
         end,
+        -- dragStopFunction = function()
+        --     if not DF.API.Version.IsTBC then return end
+        --     -- print('dragStopFunction')
+        --     Module.MicroFrame:UpdateTBCPosition()
+        -- end,
         moduleRef = self
     });
 
@@ -3191,11 +3198,23 @@ function Module.SetButtonFromAtlas(frame, atlas, textureRef, pre, name)
 end
 
 function Module.ChangeMicroMenu()
-    local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent,
-                                   'DragonflightUIMicroMenuFrameTemplate')
+    -- local microFrame = CreateFrame('Frame', 'DragonflightUIMicroMenuBar', UIParent,
+    --                                'DragonflightUIMicroMenuFrameTemplate')
+    local microFrame = _G['DragonflightUIMicroMenuBar']
+    microFrame:SetSize(100, 100)
+    microFrame:SetParent(UIParent)
+    microFrame:SetClampedToScreen(true)
+    microFrame:SetMovable(true)
+    microFrame:OnLoad()
     -- microFrame:SetPoint('TOPLEFT', CharacterMicroButton, 'TOPLEFT', 0, 0)
     -- microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
     Module.MicroFrame = microFrame
+
+    if DF.API.Version.IsTBC then
+        -- addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
+        addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', microFrame, 'TOPLEFT', 0, 0)
+    else
+    end
 end
 
 function Module.UpdateTotemState(state)

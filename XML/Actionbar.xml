@@ -28,7 +28,7 @@
 	</Frame>
 	<Frame name="DragonflightUIMicroMenuFrameTemplate" mixin="DragonflightUIMicroMenuMixin" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
 		<Scripts>
-			<OnLoad method="OnLoad" />
+			<!-- <OnLoad method="OnLoad" /> -->
 		</Scripts>
 	</Frame>
 	<CheckButton name="DragonflightUIMultibarButton6Template" virtual="true" inherits="MultiBarButtonTemplate">

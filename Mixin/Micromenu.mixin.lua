@@ -1,3 +1,4 @@
+local addonName, addonTable = ...;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 DragonflightUIMicroMenuMixin = {}
@@ -30,6 +31,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         -- socials/guild button
         numButtons = numButtons - 1
     elseif DF.API.Version.IsTBC then
+        numButtons = 8
     elseif DF.Cata then
         -- socials/guild button
         numButtons = numButtons - 1
@@ -43,29 +45,31 @@ function DragonflightUIMicroMenuMixin:OnLoad()
     local height = sizeY
     self:SetSize(width, height)
 
-    hooksecurefunc('UpdateMicroButtons', function()
-        -- print('#UpdateMicroButtons')
-        self:UpdateLayout(true)
-    end)
+    if DF.API.Version.IsTBC then
+    else
+        hooksecurefunc('UpdateMicroButtons', function()
+            -- print('#UpdateMicroButtons')
+            self:UpdateLayout(true)
+        end)
 
-    if UpdateMicroButtonsParent then
-        hooksecurefunc('UpdateMicroButtonsParent', function(parent)
-            -- print('#UpdateMicroButtonsParent')
-            self:OnUpdateMicroButtonsParent(parent)
+        if UpdateMicroButtonsParent then
+            hooksecurefunc('UpdateMicroButtonsParent', function(parent)
+                -- print('#UpdateMicroButtonsParent')
+                self:OnUpdateMicroButtonsParent(parent)
+            end)
+        end
+
+        -- inside calls UpdateMicroButtons
+        -- hooksecurefunc('MoveMicroButtons', function()
+        --     -- print('#MoveMicroButtons')
+        --     self:UpdateLayout(true)
+        -- end)
+
+        hooksecurefunc('ActionBarController_UpdateAll', function(force)
+            -- print('#ActionBarController_UpdateAll')
+            self:OnActionBarController_UpdateAll()
         end)
     end
-
-    -- inside calls UpdateMicroButtons
-    -- hooksecurefunc('MoveMicroButtons', function()
-    --     -- print('#MoveMicroButtons')
-    --     self:UpdateLayout(true)
-    -- end)
-
-    hooksecurefunc('ActionBarController_UpdateAll', function(force)
-        -- print('#ActionBarController_UpdateAll')
-        self:OnActionBarController_UpdateAll()
-    end)
-
     if UpdateMicroButtonsParent then UpdateMicroButtonsParent(self) end
 
     local talentAlert = _G['TalentMicroButtonAlert']
@@ -157,30 +161,62 @@ end
 
 function DragonflightUIMicroMenuMixin:Update()
     local state = self.State
+    if not state then return end
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
+    end
 
     self:SetClampedToScreen(true)
     self:SetScale(state.scale)
     self:ClearAllPoints()
-    self:SetPoint(state.anchor, _G[state.anchorFrame], state.anchorParent, state.x, state.y)
+    self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    self:AnchorMicroMenuContainer() -- only tbc
+    if DF.API.Version.IsTBC then
+        local f = _G['MicroMenuContainer']
+        -- print('s', f:GetSize())
+        -- print('->', self:GetSize())
+        f:SetScale(state.scale)
+        -- addonTable:OverrideBlizzEditmode(f, state.anchor, parent, state.anchorParent, state.x, state.y)
+        -- addonTable:OverrideBlizzEditmode(f, 'TOPLEFT', self, 'TOPLEFT', 0, 0)
+
+        local point, relativeTo, relativePoint, xOfs, yOfs = f:GetPoint(1)
+
+        if not (relativeTo == self) then addonTable:OverrideBlizzEditmode(f, 'TOPLEFT', self, 'TOPLEFT', 0, 0) end
+
+        -- if not self.FirstMoved then
+        --     self.FirstMoved = true;
+        --     self:UpdateTBCPosition()
+        -- end
+    else
+    end
 
     if self.UpdateStateHandler then self:UpdateStateHandler(state) end
 end
 
-function DragonflightUIMicroMenuMixin:AnchorMicroMenuContainer()
-    -- print('AnchorMicroMenuContainer')
+function DragonflightUIMicroMenuMixin:UpdateTBCPosition()
+    local state = self.State
+    if not state then return end
+    if not DF.API.Version.IsTBC then return end
 
-    if not DF.API.Version.IsTBC then
-        --      
-        return;
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
+
+    local parent;
+    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
+        parent = _G[state.customAnchorFrame]
+    else
+        parent = _G[state.anchorFrame]
     end
-    local f = _G['MicroMenuContainer']
 
-    --   self:SetClampedToScreen(true)
-    -- self:SetScale(state.scale)
-    f:ClearAllPoints()
-    f:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0);
+    local f = _G['MicroMenuContainer']
+    addonTable:OverrideBlizzEditmode(f, 'TOPLEFT', self, 'TOPLEFT', 0, 0)
+    -- f:SetScale(state.scale)
+    -- addonTable:OverrideBlizzEditmode(f, state.anchor, parent, state.anchorParent, state.x, state.y)
 end
 
 function DragonflightUIMicroMenuMixin:ChangeButtons()
@@ -261,8 +297,8 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
         if SocialsMicroButton then self:ChangeMicroMenuButton(SocialsMicroButton, 'GuildCommunities') end
-        -- if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
-        -- if WorldMapMicroButton then self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections') end
+        if GuildMicroButton then self:ChangeMicroMenuButton(GuildMicroButton, 'GuildCommunities') end
+        if WorldMapMicroButton then self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections') end
         -- if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
 
         self:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
@@ -512,7 +548,9 @@ function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
     table.insert(self.MicroButtons, frame)
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
-    if DF.Era then microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA' end
+    if DF.Era or DF.API.Version.IsTBC then
+        microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2xERA'
+    end
 
     local pre = 'UI-HUD-MicroMenu-'
     local key = pre .. name
