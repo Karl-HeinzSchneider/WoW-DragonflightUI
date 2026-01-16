@@ -135,8 +135,8 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
     -- print('~> set custom anchors')
     -- set custom anchors
     for k, v in ipairs(self.MicroButtons) do
-        -- print(k, v:GetName(), v)
-        if v == CharacterMicroButton then
+        --print(k, v:GetName(), v)
+        if v == CharacterMicroButton or (DF.API.Version.IsTBC and v == SocialsMicroButton) then -- Socials button doesn't like us? This works for some reason
             --
             -- print('~~>> CharacterMicroButton')
             v:ClearAllPoints()
