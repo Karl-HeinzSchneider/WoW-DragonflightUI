@@ -2896,6 +2896,8 @@ function Module.ChangeActionbar()
         mab:UnregisterAllEvents()
         mab:ClearAllPoints()
         mab:Hide()
+
+        Module:ForceMoveBlizzEditModeGhosts()
     else
         StanceBarLeft:Hide()
         StanceBarMiddle:Hide()
@@ -3032,6 +3034,15 @@ function Module.HookPetBar()
     -- local offset = 0 + 34
     -- local offset = Module.GetPetbarOffset()
     -- PetActionButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'TOPLEFT', 0.5, 4 + offset)
+end
+
+function Module:ForceMoveBlizzEditModeGhosts()
+    local t = {_G['MainActionBar'], _G['StanceBar'], _G['PetActionBar'], _G['PossessActionBar']}
+
+    for k, v in ipairs(t) do
+        v:SetClampedToScreen(false)
+        addonTable:OverrideBlizzEditmode(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+    end
 end
 
 -- TODO
