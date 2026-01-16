@@ -497,6 +497,7 @@ function SubModuleMixin:Setup()
     f:SetParent(UIParent)
     f:SetScale(1.0)
     f:SetClampedToScreen(true)
+    f:SetMovable(true)
 
     if DF.API.Version.IsTBC then
         --
@@ -556,7 +557,7 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    -- local f = PlayerFrame
+    local f_orig = PlayerFrame
     local f = _G['DragonflightUIPlayerFrame']
 
     if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
@@ -568,17 +569,18 @@ function SubModuleMixin:Update()
         parent = _G[state.anchorFrame]
     end
 
-    if DF.API.Version.IsTBC then
-        f:SetScale(state.scale)
-        f:ClearAllPoints()
-        f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    f:SetScale(state.scale)
+    f:ClearAllPoints()
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-        PlayerFrame:SetParent(f)
+    f_orig:SetParent(f)
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+
+    if DF.API.Version.IsTBC then
     else
-        f:SetScale(state.scale)
-        f:ClearAllPoints()
-        f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
         f:SetUserPlaced(true)
+        f_orig:SetUserPlaced(true)
     end
 
     self:ChangePlayerframe()
