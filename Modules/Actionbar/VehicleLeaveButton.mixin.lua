@@ -267,9 +267,9 @@ function SubModuleMixin:CreateVehicleLeaveButton()
     local btn = _G['MainMenuBarVehicleLeaveButton'];
 
     if DF.API.Version.IsTBC then
-        addonTable:HookBlizzEditmodeAndFunc(function()
-            addonTable:OverrideBlizzEditmode(btn, 'CENTER', fakeWidget, 'CENTER', 0, 0)
-        end, false)
+        -- addonTable:HookBlizzEditmodeAndFunc(function()
+        --     addonTable:OverrideBlizzEditmode(btn, 'CENTER', fakeWidget, 'CENTER', 0, 0)
+        -- end, false)
     else
         btn:UnregisterAllEvents()
         btn:SetParent(fakeWidget)
