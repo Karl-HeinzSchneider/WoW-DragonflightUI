@@ -623,7 +623,7 @@ local defaults = {
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
             x = 0,
-            y = 26,
+            y = 50,
             expanded = true,
             hideArrow = false,
             overrideBagAnchor = false,
@@ -3469,7 +3469,7 @@ function Module.ChangeBackpack()
     end
 
     local f = _G['DragonflightUIBagBar']
-    f:SetSize(232, 100)
+    f:SetSize(200, 37)
     f:SetParent(UIParent)
     f:SetScale(1.0)
     f:SetClampedToScreen(true)
