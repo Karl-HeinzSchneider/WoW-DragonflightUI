@@ -4011,6 +4011,27 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     end
 end
 
+function DragonflightUIMixin:ChangeTBCPVPFrame()
+    local frame = _G['PVPFrame']
+
+    local regions = {frame:GetRegions()}
+
+    for k, child in ipairs(regions) do
+        --     
+        if child:GetObjectType() == 'Texture' then
+            local layer, layerNr = child:GetDrawLayer()
+            -- print(layer, layerNr, child:GetTexture())
+            -- if layer == 'ARTWORK' then child:Hide() end
+            child:Hide()
+        end
+    end
+
+    local frameBG = _G['PVPFrameBackground']
+    frameBG:Show()
+    frameBG:SetPoint('TOPLEFT', frame, 'TOPLEFT', 14 - 14, -36 + 14)
+    frameBG:SetSize(512 - 5, 512)
+end
+
 function DragonflightUIMixin:ChangeWrathPVPFrame()
     local frame = _G['PVPFrame']
 

@@ -417,6 +417,7 @@ function Module:ApplySettingsInternal(sub, key)
             end)
         elseif DF.API.Version.IsTBC then
             DragonflightUIMixin:ChangeCharacterFrameEra()
+            DragonflightUIMixin:ChangeTBCPVPFrame()
         end
     end)
 
