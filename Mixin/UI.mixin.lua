@@ -1354,9 +1354,14 @@ function DragonflightUIMixin:ChangeInspectFrame()
     do
         -- <Anchor point="BOTTOMLEFT" x="130" y="16"/>
         local main = _G['InspectMainHandSlot']
-        main:ClearAllPoints()
-        local x = (InspectPaperDollItemsFrame:GetWidth() / 2) - 1.5 * main:GetWidth() - 5
-        main:SetPoint('BOTTOMLEFT', InspectPaperDollItemsFrame, 'BOTTOMLEFT', x, 16)
+        if DF.API.Version.IsTBC then
+            -- @TODO
+            --  main:SetPoint('BOTTOMLEFT', InspectPaperDollItemsFrame, 'BOTTOMLEFT', x, 16)
+        else
+            main:ClearAllPoints()
+            local x = (InspectPaperDollItemsFrame:GetWidth() / 2) - 1.5 * main:GetWidth() - 5
+            main:SetPoint('BOTTOMLEFT', InspectPaperDollItemsFrame, 'BOTTOMLEFT', x, 16)
+        end
     end
 
     UIPanelWindows["InspectFrame"] = {
