@@ -3321,7 +3321,7 @@ function DragonflightUIMixin:ChangeTalentsEra()
 
     frame:SetSize(646, 468)
 
-    if DF.API.Version.IsTBC then frame:SetHeight(468 + 100) end
+    if DF.API.Version.IsTBC then frame:SetHeight(468 + 90) end
 
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)

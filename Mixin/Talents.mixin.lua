@@ -965,15 +965,15 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         -- panel:Refresh()
 
         if DF.API.Version.IsTBC then
-            panel:SetHeight(376 + 100)
+            panel:SetHeight(376 + 90)
 
             local bgTop = panel.BgTopLeft;
             local bgBottom = panel.BgBottomLeft;
 
             local totalH = bgTop:GetHeight() + bgBottom:GetHeight()
 
-            bgTop:SetHeight(bgTop:GetHeight() + 100 * (bgTop:GetHeight() / totalH))
-            bgBottom:SetHeight(bgBottom:GetHeight() + 100 * (bgBottom:GetHeight() / totalH))
+            bgTop:SetHeight(bgTop:GetHeight() + 90 * (bgTop:GetHeight() / totalH))
+            bgBottom:SetHeight(bgBottom:GetHeight() + 90 * (bgBottom:GetHeight() / totalH))
         end
 
         PlayerTalentFrame.DFPanels[i] = panel
