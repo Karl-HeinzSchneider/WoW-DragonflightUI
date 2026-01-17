@@ -204,10 +204,13 @@ local TALENT_ARROW_TEXTURECOORDS = {
     left = {[1] = {0.5, 1.0, 0, 0.5}, [-1] = {0.5, 1.0, 0.5, 1.0}}
 };
 
+local talentRows = 7;
+if DF.API.Version.IsTBC then talentRows = 9; end
+
 function DragonflightUITalentsPanelMixin:OnLoad()
     self.TALENT_BRANCH_ARRAY = {};
     self.BUTTON_ARRAY = {}
-    for i = 1, 7 do
+    for i = 1, talentRows do
         self.TALENT_BRANCH_ARRAY[i] = {};
         self.BUTTON_ARRAY[i] = {};
         for j = 1, 4 do
@@ -447,9 +450,9 @@ function DragonflightUITalentsPanelMixin:Refresh()
             local forceDesaturated, tierUnlocked;
             if i <= numTalents then
                 local name, iconPath, tier, column, currentRank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq,
-                ---@diagnostic disable-next-line: param-type-mismatch
                       isExceptional, goldBorder = GetTalentInfo(panelID, i, false, false, selectedSpec);
 
+                -- print(name, tier, column, currentRank, maxRank)
                 if name then
                     local displayRank;
                     if (preview) then
@@ -559,7 +562,7 @@ function DragonflightUITalentsPanelMixin:Refresh()
         local buttonSpacingX = 46
         local buttonSpacingY = 46
 
-        for i = 1, 7 do
+        for i = 1, talentRows do
             for j = 1, 4 do
                 --
                 node = self.TALENT_BRANCH_ARRAY[i][j];
@@ -960,6 +963,18 @@ function DragonflightUITalentsFrameMixin:OnLoad()
         -- panel:SetSize(208, 376)
         panel:Init(i)
         -- panel:Refresh()
+
+        if DF.API.Version.IsTBC then
+            panel:SetHeight(376 + 100)
+
+            local bgTop = panel.BgTopLeft;
+            local bgBottom = panel.BgBottomLeft;
+
+            local totalH = bgTop:GetHeight() + bgBottom:GetHeight()
+
+            bgTop:SetHeight(bgTop:GetHeight() + 100 * (bgTop:GetHeight() / totalH))
+            bgBottom:SetHeight(bgBottom:GetHeight() + 100 * (bgBottom:GetHeight() / totalH))
+        end
 
         PlayerTalentFrame.DFPanels[i] = panel
         self.Panels[i] = panel
