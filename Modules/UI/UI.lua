@@ -384,7 +384,7 @@ function Module:ApplySettingsInternal(sub, key)
         if not DF.API.Version.IsTBC then Module:UpdateTradeskills() end
     end)
 
-    if DF.Era or (DF.Wrath and not DF.Cata) then
+    if DF.Era or DF.API.Version.IsTBC or (DF.Wrath and not DF.Cata) then
         self:ConditionalOption('changeSpellBook', 'first', 'Change SpellBook', function()
             DragonflightUIMixin:ChangeSpellbookEra()
         end)
