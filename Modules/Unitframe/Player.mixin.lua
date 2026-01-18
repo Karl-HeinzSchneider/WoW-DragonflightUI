@@ -888,6 +888,12 @@ function SubModuleMixin:ChangeStatusIcons()
     -- TargetFrameTextureFrameLeaderIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-Group-LeaderIcon'))
     -- TargetFrameTextureFrameLeaderIcon:ClearAllPoints()
     -- TargetFrameTextureFrameLeaderIcon:SetPoint('BOTTOMLEFT', TargetFramePortrait, 'TOPRIGHT', -10 - 3, -10)
+
+    if DF.API.Version.IsTBC then
+        local t = PlayerPVPIcon;
+        t:ClearAllPoints()
+        t:SetPoint('LEFT', PlayerPortrait, 'LEFT', -22, -18)
+    end
 end
 
 local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'

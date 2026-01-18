@@ -830,6 +830,12 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
         unconsciousText:SetPoint('CENTER', healthBar, 'CENTER', 0, 0)
     end
 
+    if DF.API.Version.IsTBC then
+        local t = TargetFrame.pvpIcon;
+        t:ClearAllPoints()
+        t:SetPoint('LEFT', TargetFramePortrait, 'RIGHT', -22, -18)
+    end
+
     if flash and DF.Wrath then
         flash:SetTexture('')
 
