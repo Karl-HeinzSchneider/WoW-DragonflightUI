@@ -31,7 +31,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         -- socials/guild button
         numButtons = numButtons - 1
     elseif DF.API.Version.IsTBC then
-        numButtons = 8
+        numButtons = 7
     elseif DF.Cata then
         -- socials/guild button
         numButtons = numButtons - 1
@@ -43,7 +43,13 @@ function DragonflightUIMicroMenuMixin:OnLoad()
     local sizeX, sizeY = self.MicroButtons[1]:GetSize()
     local width = (sizeX - 3) * numButtons + 3
     local height = sizeY
-    self:SetSize(width, height)
+
+    if DF.API.Version.IsTBC then
+        width = numButtons * 26 + 6;
+        self:SetSize(width, height)
+    else
+        self:SetSize(width, height)
+    end
 
     if DF.API.Version.IsTBC then
     else
