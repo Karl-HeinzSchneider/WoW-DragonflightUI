@@ -11,7 +11,7 @@ function DragonflightUICharacterStatsTbcMixin:SetupStats()
 
     self:AddStatsGeneral()
     self:AddStatsAttributes()
-    -- self:AddStatsMelee()
+    self:AddStatsMelee()
     -- self:AddStatsRanged()
     self:AddStatsSpell()
     -- self:AddStatsDefense()
@@ -201,166 +201,166 @@ end
 
 function DragonflightUICharacterStatsTbcMixin:AddStatsMelee()
 
-    local function melee()
-        local frameText; -- df
-        local tooltip; -- df
-        local tooltip2; -- df
-        local tooltipTable = {}
+    -- local function melee()
+    --     local frameText; -- df
+    --     local tooltip; -- df
+    --     local tooltip2; -- df
+    --     local tooltipTable = {}
 
-        local speed, offhandSpeed = UnitAttackSpeed('player');
+    --     local speed, offhandSpeed = UnitAttackSpeed('player');
 
-        local minDamage;
-        local maxDamage;
-        local minOffHandDamage;
-        local maxOffHandDamage;
-        local physicalBonusPos;
-        local physicalBonusNeg;
-        local percent;
-        minDamage, maxDamage, minOffHandDamage, maxOffHandDamage, physicalBonusPos, physicalBonusNeg, percent =
-            UnitDamage('player');
-        local displayMin = max(floor(minDamage), 1);
-        local displayMax = max(ceil(maxDamage), 1);
+    --     local minDamage;
+    --     local maxDamage;
+    --     local minOffHandDamage;
+    --     local maxOffHandDamage;
+    --     local physicalBonusPos;
+    --     local physicalBonusNeg;
+    --     local percent;
+    --     minDamage, maxDamage, minOffHandDamage, maxOffHandDamage, physicalBonusPos, physicalBonusNeg, percent =
+    --         UnitDamage('player');
+    --     local displayMin = max(floor(minDamage), 1);
+    --     local displayMax = max(ceil(maxDamage), 1);
 
-        minDamage = (minDamage / percent) - physicalBonusPos - physicalBonusNeg;
-        maxDamage = (maxDamage / percent) - physicalBonusPos - physicalBonusNeg;
+    --     minDamage = (minDamage / percent) - physicalBonusPos - physicalBonusNeg;
+    --     maxDamage = (maxDamage / percent) - physicalBonusPos - physicalBonusNeg;
 
-        local baseDamage = (minDamage + maxDamage) * 0.5;
-        local fullDamage = (baseDamage + physicalBonusPos + physicalBonusNeg) * percent;
-        local totalBonus = (fullDamage - baseDamage);
-        local damagePerSecond = (max(fullDamage, 1) / speed);
-        local damageTooltip = max(floor(minDamage), 1) .. " - " .. max(ceil(maxDamage), 1);
+    --     local baseDamage = (minDamage + maxDamage) * 0.5;
+    --     local fullDamage = (baseDamage + physicalBonusPos + physicalBonusNeg) * percent;
+    --     local totalBonus = (fullDamage - baseDamage);
+    --     local damagePerSecond = (max(fullDamage, 1) / speed);
+    --     local damageTooltip = max(floor(minDamage), 1) .. " - " .. max(ceil(maxDamage), 1);
 
-        local colorPos = "|cff20ff20";
-        local colorNeg = "|cffff2020";
-        if (totalBonus == 0) then
-            if ((displayMin < 100) and (displayMax < 100)) then
-                frameText = displayMin .. " - " .. displayMax;
-            else
-                frameText = displayMin .. "-" .. displayMax;
-            end
-        else
+    --     local colorPos = "|cff20ff20";
+    --     local colorNeg = "|cffff2020";
+    --     if (totalBonus == 0) then
+    --         if ((displayMin < 100) and (displayMax < 100)) then
+    --             frameText = displayMin .. " - " .. displayMax;
+    --         else
+    --             frameText = displayMin .. "-" .. displayMax;
+    --         end
+    --     else
 
-            local color;
-            if (totalBonus > 0) then
-                color = colorPos;
-            else
-                color = colorNeg;
-            end
-            if ((displayMin < 100) and (displayMax < 100)) then
-                frameText = color .. displayMin .. " - " .. displayMax .. "|r";
-            else
-                frameText = color .. displayMin .. "-" .. displayMax .. "|r";
-            end
-            if (physicalBonusPos > 0) then
-                damageTooltip = damageTooltip .. colorPos .. " +" .. physicalBonusPos .. "|r";
-            end
-            if (physicalBonusNeg < 0) then
-                damageTooltip = damageTooltip .. colorNeg .. " " .. physicalBonusNeg .. "|r";
-            end
-            if (percent > 1) then
-                damageTooltip = damageTooltip .. colorPos .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
-            elseif (percent < 1) then
-                damageTooltip = damageTooltip .. colorNeg .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
-            end
+    --         local color;
+    --         if (totalBonus > 0) then
+    --             color = colorPos;
+    --         else
+    --             color = colorNeg;
+    --         end
+    --         if ((displayMin < 100) and (displayMax < 100)) then
+    --             frameText = color .. displayMin .. " - " .. displayMax .. "|r";
+    --         else
+    --             frameText = color .. displayMin .. "-" .. displayMax .. "|r";
+    --         end
+    --         if (physicalBonusPos > 0) then
+    --             damageTooltip = damageTooltip .. colorPos .. " +" .. physicalBonusPos .. "|r";
+    --         end
+    --         if (physicalBonusNeg < 0) then
+    --             damageTooltip = damageTooltip .. colorNeg .. " " .. physicalBonusNeg .. "|r";
+    --         end
+    --         if (percent > 1) then
+    --             damageTooltip = damageTooltip .. colorPos .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
+    --         elseif (percent < 1) then
+    --             damageTooltip = damageTooltip .. colorNeg .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
+    --         end
 
-        end
-        tooltipTable.damage = damageTooltip;
-        tooltipTable.attackSpeed = speed;
-        tooltipTable.dps = damagePerSecond;
+    --     end
+    --     tooltipTable.damage = damageTooltip;
+    --     tooltipTable.attackSpeed = speed;
+    --     tooltipTable.dps = damagePerSecond;
 
-        -- If there's an offhand speed then add the offhand info to the tooltip
-        if (offhandSpeed) then
-            minOffHandDamage = (minOffHandDamage / percent) - physicalBonusPos - physicalBonusNeg;
-            maxOffHandDamage = (maxOffHandDamage / percent) - physicalBonusPos - physicalBonusNeg;
+    --     -- If there's an offhand speed then add the offhand info to the tooltip
+    --     if (offhandSpeed) then
+    --         minOffHandDamage = (minOffHandDamage / percent) - physicalBonusPos - physicalBonusNeg;
+    --         maxOffHandDamage = (maxOffHandDamage / percent) - physicalBonusPos - physicalBonusNeg;
 
-            local offhandBaseDamage = (minOffHandDamage + maxOffHandDamage) * 0.5;
-            local offhandFullDamage = (offhandBaseDamage + physicalBonusPos + physicalBonusNeg) * percent;
-            local offhandDamagePerSecond = (max(offhandFullDamage, 1) / offhandSpeed);
-            local offhandDamageTooltip = max(floor(minOffHandDamage), 1) .. " - " .. max(ceil(maxOffHandDamage), 1);
-            if (physicalBonusPos > 0) then
-                offhandDamageTooltip = offhandDamageTooltip .. colorPos .. " +" .. physicalBonusPos .. "|r";
-            end
-            if (physicalBonusNeg < 0) then
-                offhandDamageTooltip = offhandDamageTooltip .. colorNeg .. " " .. physicalBonusNeg .. "|r";
-            end
-            if (percent > 1) then
-                offhandDamageTooltip = offhandDamageTooltip .. colorPos .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
-            elseif (percent < 1) then
-                offhandDamageTooltip = offhandDamageTooltip .. colorNeg .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
-            end
-            tooltipTable.offhandDamage = offhandDamageTooltip;
-            tooltipTable.offhandAttackSpeed = offhandSpeed;
-            tooltipTable.offhandDps = offhandDamagePerSecond;
-        else
-            tooltipTable.offhandAttackSpeed = nil;
-        end
-        return frameText, tooltip, tooltip2, tooltipTable
+    --         local offhandBaseDamage = (minOffHandDamage + maxOffHandDamage) * 0.5;
+    --         local offhandFullDamage = (offhandBaseDamage + physicalBonusPos + physicalBonusNeg) * percent;
+    --         local offhandDamagePerSecond = (max(offhandFullDamage, 1) / offhandSpeed);
+    --         local offhandDamageTooltip = max(floor(minOffHandDamage), 1) .. " - " .. max(ceil(maxOffHandDamage), 1);
+    --         if (physicalBonusPos > 0) then
+    --             offhandDamageTooltip = offhandDamageTooltip .. colorPos .. " +" .. physicalBonusPos .. "|r";
+    --         end
+    --         if (physicalBonusNeg < 0) then
+    --             offhandDamageTooltip = offhandDamageTooltip .. colorNeg .. " " .. physicalBonusNeg .. "|r";
+    --         end
+    --         if (percent > 1) then
+    --             offhandDamageTooltip = offhandDamageTooltip .. colorPos .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
+    --         elseif (percent < 1) then
+    --             offhandDamageTooltip = offhandDamageTooltip .. colorNeg .. " x" .. floor(percent * 100 + 0.5) .. "%|r";
+    --         end
+    --         tooltipTable.offhandDamage = offhandDamageTooltip;
+    --         tooltipTable.offhandAttackSpeed = offhandSpeed;
+    --         tooltipTable.offhandDps = offhandDamagePerSecond;
+    --     else
+    --         tooltipTable.offhandAttackSpeed = nil;
+    --     end
+    --     return frameText, tooltip, tooltip2, tooltipTable
 
-    end
+    -- end
 
-    self:RegisterElement('damage', 'melee', {
-        order = 1,
-        name = DAMAGE,
-        descr = '..',
-        func = function()
-            local frameText; -- df
-            local tooltip; -- df
-            local tooltip2; -- df
-            local tooltipTable = {}
+    -- self:RegisterElement('damage', 'melee', {
+    --     order = 1,
+    --     name = DAMAGE,
+    --     descr = '..',
+    --     func = function()
+    --         local frameText; -- df
+    --         local tooltip; -- df
+    --         local tooltip2; -- df
+    --         local tooltipTable = {}
 
-            frameText, tooltip, tooltip2, tooltipTable = melee()
+    --         frameText, tooltip, tooltip2, tooltipTable = melee()
 
-            local newTable = {} -- df
+    --         local newTable = {} -- df
 
-            newTable[1] = {left = INVTYPE_WEAPONMAINHAND}
-            newTable[2] = {left = ATTACK_SPEED_SECONDS, right = string.format('%.2f', tooltipTable.attackSpeed)}
-            newTable[3] = {left = DAMAGE, right = tooltipTable.damage}
-            newTable[4] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.dps)}
+    --         newTable[1] = {left = INVTYPE_WEAPONMAINHAND}
+    --         newTable[2] = {left = ATTACK_SPEED_SECONDS, right = string.format('%.2f', tooltipTable.attackSpeed)}
+    --         newTable[3] = {left = DAMAGE, right = tooltipTable.damage}
+    --         newTable[4] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.dps)}
 
-            if tooltipTable.offhandAttackSpeed then
-                newTable[5] = {left = ' '}
-                newTable[6] = {left = INVTYPE_WEAPONOFFHAND, white = true}
-                newTable[7] = {
-                    left = ATTACK_SPEED_SECONDS,
-                    right = string.format('%.2f', tooltipTable.offhandAttackSpeed)
-                }
-                newTable[8] = {left = DAMAGE, right = tooltipTable.offhandDamage}
-                newTable[9] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.offhandDps)}
-            end
+    --         if tooltipTable.offhandAttackSpeed then
+    --             newTable[5] = {left = ' '}
+    --             newTable[6] = {left = INVTYPE_WEAPONOFFHAND, white = true}
+    --             newTable[7] = {
+    --                 left = ATTACK_SPEED_SECONDS,
+    --                 right = string.format('%.2f', tooltipTable.offhandAttackSpeed)
+    --             }
+    --             newTable[8] = {left = DAMAGE, right = tooltipTable.offhandDamage}
+    --             newTable[9] = {left = DAMAGE_PER_SECOND, right = string.format('%.1f', tooltipTable.offhandDps)}
+    --         end
 
-            -- print(frameText, tooltip, tooltip2)
-            return frameText, tooltip, tooltip2, newTable
-        end
-    })
+    --         -- print(frameText, tooltip, tooltip2)
+    --         return frameText, tooltip, tooltip2, newTable
+    --     end
+    -- })
 
-    self:RegisterElement('dps', 'melee', {
-        order = 2,
-        name = STAT_DPS_SHORT,
-        descr = '..',
-        func = function()
-            local frameText; -- df
-            local tooltip; -- df
-            local tooltip2; -- df
-            local tooltipTable = {}
+    -- self:RegisterElement('dps', 'melee', {
+    --     order = 2,
+    --     name = STAT_DPS_SHORT,
+    --     descr = '..',
+    --     func = function()
+    --         local frameText; -- df
+    --         local tooltip; -- df
+    --         local tooltip2; -- df
+    --         local tooltipTable = {}
 
-            local newTable = {} -- df
+    --         local newTable = {} -- df
 
-            frameText, tooltip, tooltip2, tooltipTable = melee()
-            frameText = string.format('%.1f', tooltipTable.dps);
+    --         frameText, tooltip, tooltip2, tooltipTable = melee()
+    --         frameText = string.format('%.1f', tooltipTable.dps);
 
-            newTable[1] = {left = DAMAGE_PER_SECOND}
-            newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = frameText}
+    --         newTable[1] = {left = DAMAGE_PER_SECOND}
+    --         newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = frameText}
 
-            if tooltipTable.offhandAttackSpeed then
-                newTable[3] = {left = INVTYPE_WEAPONOFFHAND, right = string.format('%.1f', tooltipTable.offhandDps)}
-            end
+    --         if tooltipTable.offhandAttackSpeed then
+    --             newTable[3] = {left = INVTYPE_WEAPONOFFHAND, right = string.format('%.1f', tooltipTable.offhandDps)}
+    --         end
 
-            return frameText, nil, nil, newTable
-        end
-    })
+    --         return frameText, nil, nil, newTable
+    --     end
+    -- })
 
     self:RegisterElement('ap', 'melee', {
-        order = 3,
+        order = 5,
         name = ATTACK_POWER_TOOLTIP,
         descr = '..',
         func = function()
@@ -388,9 +388,15 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsMelee()
             newTable[1] = {left = ATTACK_SPEED_SECONDS} -- era
             newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = frameText}
 
+            local i = 3;
             if offhandSpeed then
                 newTable[3] = {left = INVTYPE_WEAPONOFFHAND, right = string.format('%.2f', offhandSpeed)}
+                i = i + 1;
             end
+            newTable[i] = {
+                left = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_MELEE),
+                              GetCombatRatingBonus(CR_HASTE_MELEE))
+            }
 
             return frameText, nil, nil, newTable
         end
@@ -401,22 +407,63 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsMelee()
         name = STAT_HIT_CHANCE,
         descr = '..',
         func = function()
-            local hit = GetHitModifier()
-            if not hit then hit = 0; end
 
-            local str = string.format(' %.2F', hit) .. '%';
-            return str, STAT_HIT_CHANCE .. str, 'Reduces your chance to miss.'
+            local rating = GetCombatRating(CR_HIT_MELEE);
+            local ratingBonus = GetCombatRatingBonus(CR_HIT_MELEE);
+
+            local str = rating;
+            local label = string.format('%s %d', STAT_HIT_CHANCE, rating);
+            local tt = format(CR_HIT_MELEE_TOOLTIP, UnitLevel("player"), ratingBonus, GetArmorPenetration());
+            return str, label, tt
         end
     })
 
     self:RegisterElement('crit', 'melee', {
         order = 7,
-        name = STAT_CRITICAL_STRIKE,
+        name = MELEE_CRIT_CHANCE,
         descr = '..',
         func = function()
             local crit = GetCritChance()
             local str = string.format(' %.2F', crit) .. '%';
-            return str, CRIT_CHANCE .. str, 'Chance of attacks doing extra damage.'
+            local tt =
+                format(CR_CRIT_MELEE_TOOLTIP, GetCombatRating(CR_CRIT_MELEE), GetCombatRatingBonus(CR_CRIT_MELEE))
+            return str, MELEE_CRIT_CHANCE .. str, tt
+        end
+    })
+
+    self:RegisterElement('expertise', 'melee', {
+        order = 9,
+        name = STAT_EXPERTISE,
+        descr = '..',
+        func = function()
+            local frameText; -- df
+            local newTable = {} -- df
+
+            local expertise, offhandExpertise = GetExpertise();
+            local speed, offhandSpeed = UnitAttackSpeed('player');
+            local text = 'test';
+            if (offhandSpeed) then
+                text = tostring(expertise) .. " / " .. tostring(offhandExpertise);
+            else
+                text = tostring(expertise);
+            end
+
+            --    frameText = string.format('%.2f', text);
+            newTable[1] = {left = STAT_EXPERTISE .. ' ' .. text} -- era
+            newTable[2] = {left = INVTYPE_WEAPONMAINHAND, right = tostring(expertise)}
+
+            local i = 3;
+            if offhandSpeed then
+                --
+                newTable[3] = {left = INVTYPE_WEAPONOFFHAND, right = tostring(offhandExpertise)}
+                i = 4;
+            end
+            newTable[i] = {
+                left = format(CR_EXPERTISE_TOOLTIP, text, GetCombatRating(CR_EXPERTISE),
+                              GetCombatRatingBonus(CR_EXPERTISE))
+            }
+
+            return text, nil, nil, newTable
         end
     })
 end
