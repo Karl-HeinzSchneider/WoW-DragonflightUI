@@ -1688,8 +1688,8 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         res:Hide()
 
         local att = CharacterAttributesFrame
-        -- att:ClearAllPoints()
-        -- att:Hide()
+        att:ClearAllPoints()
+        att:Hide()
 
         -- local model = CharacterModelFrame
         model:SetPoint('TOPLEFT', PaperDollFrame, 'TOPLEFT', 52, -66)
