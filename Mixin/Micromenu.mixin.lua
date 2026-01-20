@@ -31,7 +31,7 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         -- socials/guild button
         numButtons = numButtons - 1
     elseif DF.API.Version.IsTBC then
-        numButtons = 7
+        numButtons = 8
     elseif DF.Cata then
         -- socials/guild button
         numButtons = numButtons - 1
