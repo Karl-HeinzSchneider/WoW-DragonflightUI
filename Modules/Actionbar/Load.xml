@@ -3,6 +3,7 @@
 	<Include file="ActionbarRange.mixin.lua" />
 	<Include file="Actionbar.lua" />
 	<Frame name="DragonflightUIVehicleLeaveButton" hidden="true">
+		<Size x="32" y="32" />
 	</Frame>
 	<Frame name="DragonflightUIMicroMenuBar" inherits="DragonflightUIMicroMenuFrameTemplate" setAllPoints="true" hidden="true">
 		<Size x="235" y="40" />

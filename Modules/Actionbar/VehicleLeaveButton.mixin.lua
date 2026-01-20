@@ -176,17 +176,22 @@ function SubModuleMixin:Setup()
     self:RegisterEvent("UNIT_EXITED_VEHICLE");
     self:RegisterEvent("VEHICLE_UPDATE");
 
+    local f = _G['DragonflightUIVehicleLeaveButton']
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    local fakeWidget = self.PreviewFrame
 
-    EditModeModule:AddEditModeToFrame(fakeWidget)
+    EditModeModule:AddEditModeToFrame(f)
 
-    fakeWidget.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    fakeWidget.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
         default = function()
@@ -195,12 +200,12 @@ function SubModuleMixin:Setup()
         moduleRef = self.ModuleRef,
         showFunction = function()
             --         
-            fakeWidget.FakePreview:Show()
+            f.FakePreview:Show()
         end,
         hideFunction = function()
             --
-            fakeWidget:Show()
-            fakeWidget.FakePreview:Hide()
+            -- fakeWidget:Show()
+            f.FakePreview:Hide()
         end
     });
 end
@@ -228,7 +233,7 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = self.PreviewFrame
+    local f = _G['DragonflightUIVehicleLeaveButton']
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -244,15 +249,20 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     -- f:SetUserPlaced(true)
 
+    if DF.API.Version.IsTBC then
+        local btn = _G['MainMenuBarVehicleLeaveButton'];
+        btn:SetScale(state.scale)
+    end
+
     -- f:UpdateStateHandler(state)
 end
 
 function SubModuleMixin:CreateVehicleLeaveButton()
-    -- local fakeWidget = CreateFrame('Frame', 'DragonflightUIVehicleLeaveButton', UIParent)
-    local fakeWidget = _G['DragonflightUIVehicleLeaveButton']
-    fakeWidget:SetParent(UIParent)
-    fakeWidget:SetSize(32, 32)
-    self.PreviewFrame = fakeWidget
+    local f = _G['DragonflightUIVehicleLeaveButton']
+    -- local fakeWidget = CreateFrame('Frame', 'DragonflightUIVehicleLeaveButtonPreview', f)
+    -- fakeWidget:SetParent(UIParent)
+    -- fakeWidget:SetSize(32, 32)
+    local fakeWidget = f;
 
     local tex = 'Interface\\Addons\\DragonflightUI\\Textures\\UI-Vehicles-Button-Exit-Up'
     local fakeArrow = fakeWidget:CreateTexture('DragonflightUIFakeVehicleLeaveButton', "ARTWORK")
@@ -265,16 +275,13 @@ function SubModuleMixin:CreateVehicleLeaveButton()
     fakeWidget.FakePreview = fakeArrow;
 
     local btn = _G['MainMenuBarVehicleLeaveButton'];
-
     if DF.API.Version.IsTBC then
-        -- addonTable:HookBlizzEditmodeAndFunc(function()
-        --     addonTable:OverrideBlizzEditmode(btn, 'CENTER', fakeWidget, 'CENTER', 0, 0)
-        -- end, false)
+        addonTable:OverrideBlizzEditmode(btn, 'CENTER', f, 'CENTER', 0, 0)
     else
         btn:UnregisterAllEvents()
-        btn:SetParent(fakeWidget)
+        btn:SetParent(f)
         btn:ClearAllPoints()
-        btn:SetPoint('CENTER', fakeWidget, 'CENTER', 0, 0)
+        btn:SetPoint('CENTER', f, 'CENTER', 0, 0)
         -- btn:Show()
     end
 end
