@@ -14,10 +14,8 @@ function DragonflightUICharacterStatsTbcMixin:SetupStats()
     self:AddStatsMelee()
     -- self:AddStatsRanged()
     self:AddStatsSpell()
-    -- self:AddStatsDefense()
+    self:AddStatsDefense()
     self:AddStatsResistance()
-    -- self:AddStatsSpell()
-    -- self:AddStatsSpell()
 end
 
 function DragonflightUICharacterStatsTbcMixin:AddDefaultCategorys()
@@ -871,10 +869,11 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsDefense()
 
         frameText, tooltip, tooltip2 = self:PaperDollFormatStat(ARMOR, base, posBuff, negBuff);
         local playerLevel = UnitLevel('player');
-        local armorReduction = effectiveArmor / ((85 * playerLevel) + 400);
-        armorReduction = 100 * (armorReduction / (armorReduction + 1));
 
-        tooltip2 = format(ARMOR_TOOLTIP, playerLevel, armorReduction);
+        local armorReduction = PaperDollFrame_GetArmorReduction(effectiveArmor, UnitLevel('player'));
+        local armorReductionText = format("%.2f", armorReduction);
+
+        tooltip2 = format(DEFAULT_STATARMOR_TOOLTIP, armorReductionText);
 
         return frameText, tooltip, tooltip2
     end
@@ -888,35 +887,35 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsDefense()
         end
     })
 
-    local function GetDefense()
-        for i = 1, GetNumSkillLines() do
-            local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier = GetSkillLineInfo(i)
-            if skillName == DEFENSE then
-                -- print(name, rank, tempRank, mod)
-                -- print('skillName, skillRank, numTempPoints, skillModifier')
-                return skillName, skillRank, numTempPoints, skillModifier
-            end
-        end
-    end
+    -- local function GetDefense()
+    --     for i = 1, GetNumSkillLines() do
+    --         local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier = GetSkillLineInfo(i)
+    --         if skillName == DEFENSE then
+    --             -- print(name, rank, tempRank, mod)
+    --             -- print('skillName, skillRank, numTempPoints, skillModifier')
+    --             return skillName, skillRank, numTempPoints, skillModifier
+    --         end
+    --     end
+    -- end
 
     self:RegisterElement('defense', 'defense', {
         order = 2,
         name = DEFENSE,
         descr = '..',
         func = function()
-            local skillName, skillRank, numTempPoints, skillModifier = GetDefense();
-
+            local base, modifier = UnitDefense('player');
             local posBuff = 0;
             local negBuff = 0;
-            if (skillModifier > 0) then
-                posBuff = skillModifier;
-            elseif (skillModifier < 0) then
-                negBuff = skillModifier;
+            if (modifier > 0) then
+                posBuff = modifier;
+            elseif (modifier < 0) then
+                negBuff = modifier;
             end
+            local frameText, tooltip, tooltip2 = self:PaperDollFormatStat(DEFENSE, base, posBuff, negBuff);
 
-            local frameText, tooltip, tooltip2 = self:PaperDollFormatStat(DEFENSE, skillRank, posBuff, negBuff);
-
-            tooltip2 = 'Increases chance to Dodge, Block and Parry.\nDecreases chance to be hit and critically hit.';
+            local defensePercent = GetDodgeBlockParryChanceFromDefense();
+            tooltip2 = format(DEFAULT_STATDEFENSE_TOOLTIP, GetCombatRating(CR_DEFENSE_SKILL),
+                              GetCombatRatingBonus(CR_DEFENSE_SKILL), defensePercent, defensePercent);
 
             return frameText, tooltip, tooltip2
         end
@@ -928,8 +927,12 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsDefense()
         descr = '..',
         func = function()
             local dodge = GetDodgeChance()
-            local str = string.format(' %.2F', dodge) .. '%';
-            return str, DODGE_CHANCE .. str, nil
+            local str = string.format(' %.02F', dodge) .. '%';
+
+            local tooltip = getglobal("DODGE_CHANCE") .. ' ' .. str
+            local tooltip2 = format(CR_DODGE_TOOLTIP, GetCombatRating(CR_DODGE), GetCombatRatingBonus(CR_DODGE))
+
+            return str, tooltip, tooltip2
         end
     })
 
@@ -939,8 +942,12 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsDefense()
         descr = '..',
         func = function()
             local parry = GetParryChance()
-            local str = string.format(' %.2F', parry) .. '%';
-            return str, PARRY_CHANCE .. str, nil
+            local str = string.format(' %.02F', parry) .. '%';
+
+            local tooltip = getglobal("PARRY_CHANCE") .. ' ' .. str
+            local tooltip2 = format(CR_PARRY_TOOLTIP, GetCombatRating(CR_PARRY), GetCombatRatingBonus(CR_PARRY))
+
+            return str, tooltip, tooltip2
         end
     })
 
@@ -950,8 +957,30 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsDefense()
         descr = '..',
         func = function()
             local block = GetBlockChance()
-            local str = string.format(' %.2F', block) .. '%';
-            return str, BLOCK_CHANCE .. str, nil
+            local str = string.format(' %.02F', block) .. '%';
+
+            local tooltip = getglobal("BLOCK_CHANCE") .. ' ' .. str
+            local tooltip2 = format(CR_BLOCK_TOOLTIP, GetCombatRating(CR_BLOCK), GetCombatRatingBonus(CR_BLOCK),
+                                    GetShieldBlock())
+
+            return str, tooltip, tooltip2
+        end
+    })
+
+    self:RegisterElement('resilience', 'defense', {
+        order = 6,
+        name = STAT_RESILIENCE,
+        descr = '..',
+        func = function()
+            local resilience = GetCombatRating(CR_RESILIENCE_CRIT_TAKEN);
+            local bonus = GetCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
+
+            local str = string.format(' %s', tostring(resilience));
+
+            local tooltip = getglobal("STAT_RESILIENCE") .. ' ' .. resilience
+            local tooltip2 = format(RESILIENCE_TOOLTIP, bonus, min(bonus * 2, 25.00), bonus)
+
+            return str, tooltip, tooltip2
         end
     })
 end
