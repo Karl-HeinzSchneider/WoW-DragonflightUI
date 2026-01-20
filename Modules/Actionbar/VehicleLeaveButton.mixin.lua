@@ -249,10 +249,8 @@ function SubModuleMixin:Update()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     -- f:SetUserPlaced(true)
 
-    if DF.API.Version.IsTBC then
-        local btn = _G['MainMenuBarVehicleLeaveButton'];
-        btn:SetScale(state.scale)
-    end
+    local btn = _G['MainMenuBarVehicleLeaveButton'];
+    btn:SetScale(state.scale)
 
     -- f:UpdateStateHandler(state)
 end
@@ -279,7 +277,7 @@ function SubModuleMixin:CreateVehicleLeaveButton()
         addonTable:OverrideBlizzEditmode(btn, 'CENTER', f, 'CENTER', 0, 0)
     else
         btn:UnregisterAllEvents()
-        btn:SetParent(f)
+        -- btn:SetParent(f)
         btn:ClearAllPoints()
         btn:SetPoint('CENTER', f, 'CENTER', 0, 0)
         -- btn:Show()
