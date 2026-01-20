@@ -1664,7 +1664,7 @@ function DFProfessionMixin:UpdateProfessionData()
 
             skillTable['beast'] = data
         end
-    elseif DF.Era then
+    elseif DF.Era or DF.API.Version.IsTBC then
         for i = 1, GetNumSkillLines() do
             local nameLoc, _, _, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost,
                   rankCost, minLevel, skillCostType, skillDescription = GetSkillLineInfo(i)
@@ -3021,6 +3021,15 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListCraft()
                     requiredLevel = requiredLevel
                 }
             }
+
+            if not DF.API.Version.IsClassic then
+                --
+                -- local _, dur = Helper:Benchmark('GetRecipeExpansion' .. i, function()
+                local expansion = parent:GetRecipeExpansion(i);
+                data.expansion = expansion;
+                -- end, 2)
+                -- summer = summer + dur;
+            end
 
             local filtered = true
 
