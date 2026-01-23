@@ -283,7 +283,7 @@ function SubModuleMixin:Setup()
                                            'DFEditModePreviewTargetOfTargetTemplate')
     fakeTargetOfTarget.IsToT = true;
     fakeTargetOfTarget:OnLoad()
-    fakeTargetOfTarget:SetParent(fakeTarget)
+    fakeTargetOfTarget:SetParent(f)
     fakeTargetOfTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
     -- fakeTargetOfTarget:SetIgnoreParentScale(true)
     self.PreviewTargetOfTarget = fakeTargetOfTarget;
@@ -387,7 +387,8 @@ function SubModuleMixin:ChangeToTFrame(self, frame)
     end
 
     healthBar:ClearAllPoints()
-    healthBar:SetPoint('BOTTOMLEFT', port, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    -- healthBar:SetPoint('BOTTOMLEFT', port, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    healthBar:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 44, 22)
     healthBar:SetSize(70, 10 + 0.5)
     healthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')

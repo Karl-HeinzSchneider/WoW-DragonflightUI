@@ -277,7 +277,7 @@ function SubModuleMixin:Setup()
     local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeFocusTargetOfTargetFramePreview', f,
                                         'DFEditModePreviewTargetOfTargetTemplate')
     fakeFocusTarget:OnLoad()
-    fakeFocusTarget:SetParent(fakeFocus)
+    fakeFocusTarget:SetParent(f)
     fakeFocusTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
     self.PreviewFocusTarget = fakeFocusTarget;
 

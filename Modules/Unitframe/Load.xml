@@ -13,6 +13,8 @@
 	<Include file="Unitframe.lua" />
 	<Frame name="DragonflightUIPlayerFrame" hidden="true">
 	</Frame>
+	<Frame name="DragonflightUIPetFrame" hidden="true">
+	</Frame>
 	<Frame name="DragonflightUITargetFrame" hidden="true">
 	</Frame>
 	<Frame name="DragonflightUITargetToTFrame" hidden="true">

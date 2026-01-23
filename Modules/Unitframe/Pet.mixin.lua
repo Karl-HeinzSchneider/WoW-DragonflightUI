@@ -284,21 +284,38 @@ function SubModuleMixin:Setup()
 
     --
     self:ChangePetFrame()
-    self:CreateFakePet()
 
     _G['PetFrameManaBar'].DFUpdateFunc = function()
         self:UpdatePetManaBarTexture();
     end
 
+    local f = _G['DragonflightUIPetFrame']
+    f:SetSize(120, 49)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
+    if DF.API.Version.IsTBC then
+        --
+        addonTable:OverrideBlizzEditmode(PetFrame, 'CENTER', f, 'CENTER', 0, 0)
+    end
+
     -- state
-    PetFrame:SetParent(UIParent)
-    Mixin(PetFrame, DragonflightUIStateHandlerMixin)
-    PetFrame:InitStateHandler()
-    PetFrame:SetUnit('pet')
+    PetFrame:SetParent(f)
+    Mixin(f, DragonflightUIStateHandlerMixin)
+    f:InitStateHandler()
+    -- f:SetUnit('pet')
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    local f = self.PreviewFrame
+    local fakePet = CreateFrame('Frame', 'DragonflightUIEditModePetFramePreview', f,
+                                'DFEditModePreviewTargetOfTargetTemplate');
+    fakePet:OnLoad();
+    fakePet:SetParent(f)
+    fakePet:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    self.FakePreview = fakePet;
+
     EditModeModule:AddEditModeToFrame(f)
 
     f.DFEditModeSelection:SetGetLabelTextFunction(function()
@@ -313,23 +330,16 @@ function SubModuleMixin:Setup()
         end,
         moduleRef = self.ModuleRef,
         showFunction = function()
-            --       
-            PetFrame:Lower()
-            self.PreviewFrame:Raise()
-            PetFrame:Lower()
-            PetFrame:SetToplevel(false)
+            -- 
             if UnitExists('pet') then
                 self.FakePreview:Hide()
             else
                 self.FakePreview:Show()
             end
-            -- PetFrame:SetParent(self.PreviewFrame)
         end,
         hideFunction = function()
             --
             self.FakePreview:Hide()
-            -- PetFrame:SetParent(UIParent)
-            PetFrame:SetToplevel(true)
         end
     });
 end
@@ -346,7 +356,10 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = self.PreviewFrame
+    local f_orig = PetFrame
+    local f = _G['DragonflightUIPetFrame']
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -359,9 +372,15 @@ function SubModuleMixin:Update()
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    PetFrame:SetScale(state.scale)
-    PetFrame:ClearAllPoints()
-    PetFrame:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    f_orig:SetScale(state.scale)
+
+    if DF.API.Version.IsTBC then
+    else
+        f:SetUserPlaced(true)
+        -- f_orig:SetUserPlaced(true)
+    end
 
     PetFrame.breakUpLargeNumbers = state.breakUpLargeNumbers
     TextStatusBar_UpdateTextString(PetFrameHealthBar)
@@ -395,7 +414,7 @@ function SubModuleMixin:Update()
         end
     end
 
-    PetFrame:UpdateStateHandler(state)
+    f:UpdateStateHandler(state)
 end
 
 function SubModuleMixin:ChangePetFrame()
@@ -536,16 +555,4 @@ end
 
 function SubModuleMixin:UpdatePetManaBarTexture()
     self.ModuleRef.SubTargetOfTarget:UpdateToTPowerBarTexture(PetFrameManaBar, self.ModuleRef.db.profile.pet, 'pet')
-end
-
-function SubModuleMixin:CreateFakePet()
-    local fakeWidget = CreateFrame('Frame', 'DragonflightUIPetFrame', UIParent)
-    fakeWidget:SetSize(120, 49)
-    self.PreviewFrame = fakeWidget
-
-    local fakePet = CreateFrame('Frame', 'DragonflightUIEditModePetFramePreview', fakeWidget,
-                                'DFEditModePreviewTargetOfTargetTemplate');
-    fakePet:OnLoad();
-    self.FakePreview = fakePet;
-    fakePet:SetPoint('CENTER')
 end
