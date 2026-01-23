@@ -654,7 +654,7 @@ function Module:RegisterSettings()
     register('mirrorTimer', {order = 1.5, name = self.SubMirrorTimer.Options.name, descr = 'Focusss', isNew = true})
     register('target', {order = 2, name = optionsTarget.name, descr = 'Target Cast Bar', isNew = false})
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         register('focus', {order = 3, name = optionsFocus.name, descr = 'Focus Cast Bar', isNew = false})
     end
 end
@@ -674,7 +674,7 @@ function Module:RegisterOptionScreens()
         end
     })
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         DF.ConfigModule:RegisterSettingsData('focus', 'castbar', {
             options = optionsFocus,
             default = function()
@@ -782,7 +782,7 @@ function Module:ApplySettingsInternal(sub, key)
         self.SubMirrorTimer:UpdateState(db.mirrorTimer)
         Module.TargetCastbar:UpdateState(db.target)
 
-        if DF.Wrath then Module.FocusCastbar:UpdateState(db.focus) end
+        if DF.Wrath or DF.API.Version.IsTBC then Module.FocusCastbar:UpdateState(db.focus) end
     elseif sub == 'player' then
         Module.PlayerCastbar:UpdateState(db.player)
     elseif sub == 'target' then
@@ -811,7 +811,7 @@ function Module.ChangeDefaultCastbar()
     TargetFrameSpellBar:UnregisterAllEvents()
     TargetFrameSpellBar:Hide()
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         FocusFrameSpellBar:UnregisterAllEvents()
         FocusFrameSpellBar:Hide()
     end
@@ -903,7 +903,7 @@ function Module.AddNewCastbar()
     TargetFrameSpellBar.DFCastbar = target
     Module.TargetCastbar = target
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         local focus = CreateFrame('StatusBar', 'DragonflightUIFocusCastbar', UIParent,
                                   'DragonflightUIFocusCastbarTemplate')
         focus.DefaultParent = FocusFrame;
