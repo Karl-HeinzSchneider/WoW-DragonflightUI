@@ -15,6 +15,10 @@
 	</Frame>
 	<Frame name="DragonflightUITargetFrame" hidden="true">
 	</Frame>
+	<Frame name="DragonflightUITargetToTFrame" hidden="true">
+	</Frame>
 	<Frame name="DragonflightUIFocusFrame" hidden="true">
+	</Frame>
+	<Frame name="DragonflightUIFocusToTFrame" hidden="true">
 	</Frame>
 </Ui>
