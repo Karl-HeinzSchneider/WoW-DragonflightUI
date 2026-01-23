@@ -42,6 +42,7 @@ if locale == 'deDE' then
     DF_CHARACTER_PROFESSIONHERBALISM = "Kräuterkunde";
     DF_CHARACTER_PROFESSIONINSCRIPTION = "Inschriftenkunde";
     DF_CHARACTER_PROFESSIONJEWELCRAFTING = "Juwelierskunst";
+    if DF.API.Version.IsTBC then DF_CHARACTER_PROFESSIONJEWELCRAFTING = "Juwelenschleifen"; end -- 
     DF_CHARACTER_PROFESSIONLEATHERWORKING = "Lederverarbeitung";
     DF_CHARACTER_PROFESSIONMINING = "Bergbau";
     DF_CHARACTER_PROFESSIONSKINNING = "Kürschnerei";
