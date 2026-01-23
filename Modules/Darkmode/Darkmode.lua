@@ -487,7 +487,7 @@ function Module:UpdateUnitframe(state)
     self:UpdatePartyFrame(state)
 
     -- focus
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         --      
         if not f.DarkmodeFocusHooked then
             f.DarkmodeFocusHooked = true
