@@ -259,22 +259,35 @@ function SubModuleMixin:Setup()
         self:ReApplyFocusToT()
     end
 
+    local f = _G['DragonflightUIFocusToTFrame']
+    f:SetSize(120, 49)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
+    if DF.API.Version.IsTBC then
+        --
+        -- addonTable:OverrideBlizzEditmode(FocusFrameToT, 'CENTER', f, 'CENTER', 0, 0)
+    end
+
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
     local fakeFocus = _G['DragonflightUIEditModeFocusFramePreview']
-    local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeFocusTargetOfTargetFramePreview', UIParent,
+    local fakeFocusTarget = CreateFrame('Frame', 'DragonflightUIEditModeFocusTargetOfTargetFramePreview', f,
                                         'DFEditModePreviewTargetOfTargetTemplate')
     fakeFocusTarget:OnLoad()
-    fakeFocusTarget:SetParent(fakeFocus)
+    fakeFocusTarget:SetParent(f)
+    fakeFocusTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
     self.PreviewFocusTarget = fakeFocusTarget;
 
-    EditModeModule:AddEditModeToFrame(fakeFocusTarget)
+    EditModeModule:AddEditModeToFrame(f)
 
-    fakeFocusTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    fakeFocusTarget.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
         default = function()
@@ -283,9 +296,11 @@ function SubModuleMixin:Setup()
         moduleRef = self.ModuleRef,
         showFunction = function()
             --         
+            fakeFocusTarget:Show()
         end,
         hideFunction = function()
             --
+            fakeFocusTarget:Hide()
         end
     });
 end
@@ -302,7 +317,8 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = FocusFrameToT
+    local f_orig = FocusFrameToT
+    local f = _G['DragonflightUIFocusToTFrame']
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -315,6 +331,16 @@ function SubModuleMixin:Update()
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     -- f:SetUserPlaced(true)
+
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    f_orig:SetScale(state.scale)
+
+    if DF.API.Version.IsTBC then
+    else
+        f:SetUserPlaced(true)
+        f_orig:SetUserPlaced(true)
+    end
 
     f:SetIgnoreParentAlpha(state.fadeOut and true or false)
 

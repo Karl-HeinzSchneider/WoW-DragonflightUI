@@ -264,24 +264,37 @@ function SubModuleMixin:Setup()
         self:ReApplyToT()
     end
 
+    local f = _G['DragonflightUITargetToTFrame']
+    f:SetSize(120, 49)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+
+    if DF.API.Version.IsTBC then
+        --
+        -- addonTable:OverrideBlizzEditmode(TargetFrameToT, 'CENTER', f, 'CENTER', 0, 0)
+    end
+
     -- edit mode
     local EditModeModule = DF:GetModule('Editmode');
     local fakeTarget = _G['DragonflightUIEditModeTargetFramePreview']
-    local fakeTargetOfTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetOfTargetFramePreview', UIParent,
+    local fakeTargetOfTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetOfTargetFramePreview', f,
                                            'DFEditModePreviewTargetOfTargetTemplate')
     fakeTargetOfTarget.IsToT = true;
     fakeTargetOfTarget:OnLoad()
-    fakeTargetOfTarget:SetParent(fakeTarget)
+    fakeTargetOfTarget:SetParent(f)
+    fakeTargetOfTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
     -- fakeTargetOfTarget:SetIgnoreParentScale(true)
     self.PreviewTargetOfTarget = fakeTargetOfTarget;
 
-    EditModeModule:AddEditModeToFrame(fakeTargetOfTarget)
+    EditModeModule:AddEditModeToFrame(f)
 
-    fakeTargetOfTarget.DFEditModeSelection:SetGetLabelTextFunction(function()
+    f.DFEditModeSelection:SetGetLabelTextFunction(function()
         return self.Options.name
     end)
 
-    fakeTargetOfTarget.DFEditModeSelection:RegisterOptions({
+    f.DFEditModeSelection:RegisterOptions({
         options = self.Options,
         extra = self.OptionsEditmode,
         default = function()
@@ -290,12 +303,13 @@ function SubModuleMixin:Setup()
         moduleRef = self.ModuleRef,
         showFunction = function()
             --         
+            fakeTargetOfTarget:Show()
         end,
         hideFunction = function()
             --
+            fakeTargetOfTarget:Hide()
         end
     });
-
 end
 
 function SubModuleMixin:OnEvent(event, ...)
@@ -310,7 +324,10 @@ function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
 
-    local f = TargetFrameToT
+    local f_orig = TargetFrameToT
+    local f = _G['DragonflightUITargetToTFrame']
+
+    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -322,6 +339,16 @@ function SubModuleMixin:Update()
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     f:SetScale(state.scale)
+
+    f_orig:ClearAllPoints()
+    f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    f_orig:SetScale(state.scale)
+
+    if DF.API.Version.IsTBC then
+    else
+        f:SetUserPlaced(true)
+        f_orig:SetUserPlaced(true)
+    end
 
     f:SetIgnoreParentAlpha(state.fadeOut and true or false)
 
@@ -360,7 +387,8 @@ function SubModuleMixin:ChangeToTFrame(self, frame)
     end
 
     healthBar:ClearAllPoints()
-    healthBar:SetPoint('BOTTOMLEFT', port, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    -- healthBar:SetPoint('BOTTOMLEFT', port, 'RIGHT', 2 - portDelta, -2.75 - portDelta - 0.5)
+    healthBar:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 44, 22)
     healthBar:SetSize(70, 10 + 0.5)
     healthBar:GetStatusBarTexture():SetTexture(
         'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health')
