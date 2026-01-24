@@ -410,8 +410,7 @@ function SubModuleMixin:AddBuffBorders()
     --     end
     -- end)
 
-    if not TargetFrame_UpdateAuras then return end -- TODOTBC
-    hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
+    local function UpdateAuras(frameRef)
         -- also styles focusFrame
         -- print('TargetFrame_UpdateAuras', self:GetName())
         local frame, frameName, frameStealable;
@@ -459,7 +458,25 @@ function SubModuleMixin:AddBuffBorders()
                 end
             end
         end
-    end)
+    end
+
+    if TargetFrame_UpdateAuras then
+        hooksecurefunc('TargetFrame_UpdateAuras', function(frameRef)
+            UpdateAuras(frameRef)
+        end)
+    end
+
+    if DF.API.Version.IsTBC then
+        --
+        local t = {TargetFrame --[[, FocusFrame ]] }
+
+        for k, v in ipairs(t) do
+            --
+            hooksecurefunc(v, 'UpdateAuras', function()
+                UpdateAuras(v)
+            end)
+        end
+    end
 end
 
 function SubModuleMixin:AddStateUpdater()
