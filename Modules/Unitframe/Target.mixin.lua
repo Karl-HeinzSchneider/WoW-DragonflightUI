@@ -604,6 +604,7 @@ function SubModuleMixin:Setup()
     f:SetScale(1.0)
     f:SetClampedToScreen(true)
     f:SetMovable(true)
+    f:SetFrameStrata('LOW')
 
     if DF.API.Version.IsTBC then
         --
