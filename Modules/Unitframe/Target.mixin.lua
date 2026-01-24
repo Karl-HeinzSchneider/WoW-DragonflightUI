@@ -506,7 +506,7 @@ function SubModuleMixin:SetupOptions()
                     TARGET_FRAME_BUFFS_ON_TOP = false
                     TargetFrame.buffsOnTop = false
                 end
-                TargetFrame_UpdateAuras(TargetFrame)
+                if TargetFrame_UpdateAuras then TargetFrame_UpdateAuras(TargetFrame) end
             else
                 setOption(info, value)
             end
