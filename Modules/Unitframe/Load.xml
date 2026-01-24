@@ -11,16 +11,16 @@
 	<Include file="Target.mixin.lua" />
 	<Include file="TargetOfTarget.mixin.lua" />
 	<Include file="Unitframe.lua" />
-	<Frame name="DragonflightUIPlayerFrame" hidden="true">
+	<Frame name="DragonflightUIPlayerFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
-	<Frame name="DragonflightUIPetFrame" hidden="true">
+	<Frame name="DragonflightUIPetFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
-	<Frame name="DragonflightUITargetFrame" hidden="true">
+	<Frame name="DragonflightUITargetFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
-	<Frame name="DragonflightUITargetToTFrame" hidden="true">
+	<Frame name="DragonflightUITargetToTFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
-	<Frame name="DragonflightUIFocusFrame" hidden="true">
+	<Frame name="DragonflightUIFocusFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
-	<Frame name="DragonflightUIFocusToTFrame" hidden="true">
+	<Frame name="DragonflightUIFocusToTFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
 </Ui>
