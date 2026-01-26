@@ -569,7 +569,7 @@ function SubModuleMixin:Setup()
     self:ReApplyTargetFrame()
     self:ChangeTargetComboFrame()
 
-    self:AddMobhealth();
+    if DF.Era then self:AddMobhealth(); end
     self:CreatThreatIndicator();
 
     local UpdateTargetStatusBars = function()
