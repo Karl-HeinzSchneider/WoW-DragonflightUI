@@ -565,6 +565,10 @@ function Module:TBC()
     self:HookDrag()
     self:AddPortraitMasks()
     self:HookClassIcon()
+
+    local EditModeModule = DF:GetModule('Editmode');
+
+    EditModeModule:ShowEditmodeWarning(3, 0, 'Target and Focus')
 end
 
 function Module:Wrath()
