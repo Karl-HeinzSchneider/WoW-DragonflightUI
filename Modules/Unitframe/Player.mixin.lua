@@ -669,6 +669,9 @@ function SubModuleMixin:CreateCustomPortrait()
     PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
     PlayerPortrait:SetSize(57, 57)
 
+    PlayerHitIndicator:ClearAllPoints()
+    PlayerHitIndicator:SetPoint('CENTER', PlayerPortrait, 'CENTER', 0, 0)
+
     -- function PlayerPortrait:fixClassSize(class)
     --     --
     --     -- print('fixClassSize', class)
