@@ -127,7 +127,7 @@ local frameTable = {
     {value = 'PlayerFrame', text = 'PlayerFrame', tooltip = 'descr', label = 'label'},
     {value = 'TargetFrame', text = 'TargetFrame', tooltip = 'descr', label = 'label'}
 }
-if DF.Wrath then
+if DF.Wrath or DF.API.Version.IsTBC then
     table.insert(frameTable, {value = 'FocusFrame', text = 'FocusFrame', tooltip = 'descr', label = 'label'})
 end
 
@@ -699,7 +699,7 @@ function Module:RefreshOptionScreens()
     Module.PlayerCastbar.DFEditModeSelection:RefreshOptionScreen();
     Module.TargetCastbar.DFEditModeSelection:RefreshOptionScreen();
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         refreshCat('Focus')
         Module.FocusCastbar.DFEditModeSelection:RefreshOptionScreen();
     end
@@ -744,7 +744,7 @@ function Module:AddEditMode()
     Module.TargetCastbar.DFEditModeSelection:SetPoint('TOPLEFT', Module.TargetCastbar, 'TOPLEFT', -4, 4)
     Module.TargetCastbar.DFEditModeSelection:SetPoint('BOTTOMRIGHT', Module.TargetCastbar, 'BOTTOMRIGHT', 4, -16)
 
-    if DF.Wrath then
+    if DF.Wrath or DF.API.Version.IsTBC then
         EditModeModule:AddEditModeToFrame(Module.FocusCastbar)
         Module.FocusCastbar.DFEditModeSelection:SetGetLabelTextFunction(function()
             return optionsFocus.name
