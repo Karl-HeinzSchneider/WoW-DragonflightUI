@@ -534,6 +534,29 @@ function Module:InitEditmodeOverride()
         end
         fun()
     end
+
+    function addonTable:GetBlizzEditmodeFrameSetting(f, setting)
+        return LibEditModeOverride:GetFrameSetting(f, setting)
+    end
+
+    function addonTable:GetBlizzEditmodeFrameSettingBool(f, setting)
+        local value = LibEditModeOverride:GetFrameSetting(f, setting)
+        if value == 1 then
+            return true;
+        else
+            return false;
+        end
+    end
+
+    function addonTable:SetBlizzEditmodeFrameSetting(f, setting, value)
+        LibEditModeOverride:SetFrameSetting(f, setting, value)
+
+        if InCombatLockdown() then
+            LibEditModeOverride:SaveOnly()
+        else
+            LibEditModeOverride:ApplyChanges()
+        end
+    end
 end
 
 function Module:GetEditmodeSettingValue(setting)
