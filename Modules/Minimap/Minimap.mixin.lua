@@ -239,7 +239,12 @@ function SubModuleMixin:SetupOptions()
             local sub = info[2]
 
             if sub == 'rotate' then
-                return C_CVar.GetCVarBool("rotateMinimap")
+                if DF.API.Version.IsTBC then
+                    return addonTable:GetBlizzEditmodeFrameSettingBool(MinimapCluster,
+                                                                       Enum.EditModeMinimapSetting.RotateMinimap);
+                else
+                    return C_CVar.GetCVarBool("rotateMinimap")
+                end
             else
                 return getOption(info)
             end
@@ -250,11 +255,23 @@ function SubModuleMixin:SetupOptions()
             local sub = info[2]
 
             if sub == 'rotate' then
-                if value then
-                    C_CVar.SetCVar("rotateMinimap", 1)
+                if DF.API.Version.IsTBC then
+                    if value then
+                        addonTable:SetBlizzEditmodeFrameSetting(MinimapCluster,
+                                                                Enum.EditModeMinimapSetting.RotateMinimap, 1)
+
+                    else
+                        addonTable:SetBlizzEditmodeFrameSetting(MinimapCluster,
+                                                                Enum.EditModeMinimapSetting.RotateMinimap, 0)
+                    end
                 else
-                    C_CVar.SetCVar("rotateMinimap", 0)
+                    if value then
+                        C_CVar.SetCVar("rotateMinimap", 1)
+                    else
+                        C_CVar.SetCVar("rotateMinimap", 0)
+                    end
                 end
+
                 self:UpdateMinimapShape()
             else
                 setOption(info, value)
