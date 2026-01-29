@@ -303,9 +303,12 @@ function SubModuleMixin:Setup()
 
     -- state
     PetFrame:SetParent(f)
-    Mixin(f, DragonflightUIStateHandlerMixin)
-    f:InitStateHandler()
-    -- f:SetUnit('pet')
+    if not DF.API.Version.IsTBC then
+        -- TODO TBC
+        Mixin(f, DragonflightUIStateHandlerMixin)
+        f:InitStateHandler()
+        -- f:SetUnit('pet')
+    end
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
@@ -414,7 +417,7 @@ function SubModuleMixin:Update()
         end
     end
 
-    f:UpdateStateHandler(state)
+    if f.DFStateHandler then f:UpdateStateHandler(state) end
 end
 
 function SubModuleMixin:ChangePetFrame()
