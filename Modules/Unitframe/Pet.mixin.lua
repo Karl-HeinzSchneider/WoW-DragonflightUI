@@ -433,6 +433,9 @@ function SubModuleMixin:ChangePetFrame()
 
     self.ModuleRef.SubTargetOfTarget:ChangeToTFrame(self, PetFrame)
 
+    PetHitIndicator:ClearAllPoints()
+    PetHitIndicator:SetPoint('CENTER', PetPortrait, 'CENTER', 0, 0)
+
     PetFrame:SetSize(120, 49)
 
     if not self.PetAttackModeTexture then
