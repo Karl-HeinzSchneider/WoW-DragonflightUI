@@ -424,7 +424,7 @@ function Module:ApplySettingsInternal(sub, key)
     self:ConditionalOption('changeInspect', 'first', 'Change InspectFrame', function()
         local loaded, value = DF:LoadAddOn('Blizzard_InspectUI')
         Module:FuncOrWaitframe('Blizzard_InspectUI', function()
-            if DF.Era then
+            if DF.Era or DF.API.Version.IsTBC then
                 DragonflightUIMixin:ChangeInspectFrameEra()
             else
                 DragonflightUIMixin:ChangeInspectFrame()
