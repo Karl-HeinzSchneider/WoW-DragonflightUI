@@ -6,7 +6,7 @@ local Helper = addonTable.Helper;
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 local eraFix = true;
-eraFix = DF.API.Version.IsClassic and (DF.API.Version.InterfaceVersion >= 11508)
+eraFix = DF.API.Version.IsClassic and (DF.API.Version.InterfaceVersion >= 11508) or DF.API.Version.IsTBC
 
 DragonflightUIMixin = {}
 
