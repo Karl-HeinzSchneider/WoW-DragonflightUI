@@ -1019,7 +1019,7 @@ function SubModuleMixin:SetPlayerBiggerHealthbar(bigger)
         PlayerStatusTexture:SetSize(192, 71)
         PlayerStatusTexture:SetTexCoord(0, 192 / 256, 0, 71 / 128)
         PlayerStatusTexture:ClearAllPoints()
-        PlayerStatusTexture:SetPoint('CENTER', PlayerFrame, 'CENTER', 16, 6.05)
+        PlayerStatusTexture:SetPoint('CENTER', PlayerFrame, 'CENTER', 16 - 1, 6.05 + 1)
 
         PlayerFrameHealthBar:SetSize(124, 32)
         PlayerFrameHealthBar:ClearAllPoints()
