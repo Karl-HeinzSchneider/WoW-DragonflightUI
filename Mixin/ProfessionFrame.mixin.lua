@@ -262,6 +262,9 @@ function DFProfessionMixin:SetupFrameStyle()
         icon:SetDrawLayer('OVERLAY', 6)
         self.Icon = icon
 
+        Helper:AddCircleMask(self, self.Icon)
+        if _G['CraftFramePortrait'] then _G['CraftFramePortrait']:Hide() end
+
         _G['TradeSkillFramePortrait']:Hide()
         _G['TradeSkillFramePortrait']:SetAlpha(0)
         hooksecurefunc(_G['TradeSkillFramePortrait'], 'Show', function()
