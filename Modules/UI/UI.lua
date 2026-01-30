@@ -149,7 +149,7 @@ local UIOptions = {
     }
 }
 
-if DF.Era or (DF.Wrath and not DF.Cata) then
+if DF.Era or DF.API.Version.IsTBC or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
         changeTalents = {
             type = 'toggle',
