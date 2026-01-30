@@ -608,19 +608,22 @@ function SubModuleMixin:Setup()
     f:SetMovable(true)
     f:SetFrameStrata('LOW')
 
+    f:Hide()
+
     if DF.API.Version.IsTBC then
         --
         addonTable:OverrideBlizzEditmode(TargetFrame, 'CENTER', f, 'CENTER', 0, 0)
     end
 
     -- state
-    Mixin(f, DragonflightUIStateHandlerMixin)
-    f:InitStateHandler()
-    -- f:SetUnit('target')
+    Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
+    TargetFrame:InitStateHandler()
+    TargetFrame:SetUnit('target')
+    -- f:SetHideFrame(TargetFrame, 1)
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', f,
+    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
                                    'DFEditModePreviewTargetTemplate')
     fakeTarget:OnLoad()
     fakeTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
@@ -711,7 +714,7 @@ function SubModuleMixin:Update()
     else
         TargetFrame:CheckFaction()
     end
-    f:UpdateStateHandler(state)
+    TargetFrame:UpdateStateHandler(state)
 
     self.PreviewTarget:UpdateState(state);
 end
