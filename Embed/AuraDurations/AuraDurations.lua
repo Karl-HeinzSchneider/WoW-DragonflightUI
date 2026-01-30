@@ -200,8 +200,8 @@ frame.UpdateAuraPositions = function(self, auraName, numAuras, numOppositeAuras,
     end
 end
 
-function TargetFrame_UpdateBuffAnchor(self, buffName, index, numDebuffs, anchorIndex, size, offsetX, offsetY,
-                                      mirrorVertically)
+local function TargetFrame_UpdateBuffAnchor(self, buffName, index, numDebuffs, anchorIndex, size, offsetX, offsetY,
+                                            mirrorVertically)
     local AURA_START_Y = AuraDurationsDB.auraStartY;
     local AURA_START_X = AuraDurationsDB.auraStartX;
     local AURA_OFFSET_Y = AuraDurationsDB.auraOffsetY;
@@ -250,8 +250,8 @@ function TargetFrame_UpdateBuffAnchor(self, buffName, index, numDebuffs, anchorI
     buff:SetHeight(size);
 end
 
-function TargetFrame_UpdateDebuffAnchor(self, debuffName, index, numBuffs, anchorIndex, size, offsetX, offsetY,
-                                        mirrorVertically)
+local function TargetFrame_UpdateDebuffAnchor(self, debuffName, index, numBuffs, anchorIndex, size, offsetX, offsetY,
+                                              mirrorVertically)
     local AURA_START_Y = AuraDurationsDB.auraStartY;
     local AURA_START_X = AuraDurationsDB.auraStartX;
     local AURA_OFFSET_Y = AuraDurationsDB.auraOffsetY;
@@ -303,6 +303,28 @@ function TargetFrame_UpdateDebuffAnchor(self, debuffName, index, numBuffs, ancho
     local debuffFrame = _G[debuffName .. index .. "Border"];
     debuffFrame:SetWidth(size + 2);
     debuffFrame:SetHeight(size + 2);
+end
+
+local function TargetFrame_ShouldShowDebuffs(unit, caster, nameplateShowAll, casterIsAPlayer)
+    if (GetCVarBool("noBuffDebuffFilterOnTarget")) then return true; end
+
+    if (nameplateShowAll) then return true; end
+
+    if (caster and (UnitIsUnit("player", caster) or UnitIsOwnerOrControllerOfUnit("player", caster))) then
+        return true;
+    end
+
+    if (UnitIsUnit("player", unit)) then return true; end
+
+    local targetIsFriendly = not UnitCanAttack("player", unit);
+    local targetIsAPlayer = UnitIsPlayer(unit);
+    local targetIsAPlayerPet = UnitIsOtherPlayersPet(unit);
+
+    if (not targetIsAPlayer and not targetIsAPlayerPet and not targetIsFriendly and casterIsAPlayer) then
+        return false;
+    end
+
+    return true;
 end
 
 frame.TargetBuffHook = function(self)
