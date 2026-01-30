@@ -122,8 +122,8 @@ function frame:PLAYER_LOGIN(event, ...)
             frame.TargetBuffHook(FocusFrame)
         end)
     end
-    hooksecurefunc("CompactUnitFrame_UtilSetBuff", frame.CompactUnitFrameBuffHook)
-    hooksecurefunc("CompactUnitFrame_UtilSetDebuff", frame.CompactUnitFrameDeBuffHook)
+    -- hooksecurefunc("CompactUnitFrame_UtilSetBuff", frame.CompactUnitFrameBuffHook)
+    -- hooksecurefunc("CompactUnitFrame_UtilSetDebuff", frame.CompactUnitFrameDeBuffHook)
 end
 
 function frame:Embed()
