@@ -287,10 +287,12 @@ function DragonflightUIXPBarMixin:Collapse(collapse)
         self:Hide()
         self:SetHeight(0.00000001)
         self.RestedBarMark:Hide()
+        self.Text:Hide()
     else
         self:Show()
         self:SetHeight(state.height)
         -- self.RestedBarMark:Show()
+        self.Text:Show()
     end
 end
 
