@@ -59,6 +59,8 @@ function SubModuleMixin:SetDefaults()
         -- buff - from AuraDurations
         auraSizeSmall = 17, -- SMALL_AURA_SIZE,
         auraSizeLarge = 21, -- LARGE_AURA_SIZE,
+        auraStartX = 5, -- AURA_START_X 5
+        auraStartY = 32, -- AURA_START_Y 32
         auraOffsetY = 1, -- AURA_OFFSET_Y,
         noDebuffFilter = true, -- noBuffDebuffFilterOnTarget
         dynamicBuffSize = true, -- showDynamicBuffSize

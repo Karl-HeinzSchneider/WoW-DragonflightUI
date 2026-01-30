@@ -1,10 +1,11 @@
 local isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
+local isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC;
 local addonName, addonTable = ...
 local standalone = (addonName == 'AuraDurations');
 
-if standalone and not isClassic then return; end
+-- if standalone and not (isClassic or isTBC) then return; end
 
-local lib = LibStub:NewLibrary("AuraDurations-1.0", 1);
+local lib = LibStub:NewLibrary("AuraDurations-1.0", 2);
 
 if not lib then
     return -- already loaded and no upgrade necessary
@@ -35,6 +36,8 @@ local GetCVarFunc = GetCVarBool;
 local defaults = {
     auraSizeSmall = 17, -- SMALL_AURA_SIZE,
     auraSizeLarge = 21, -- LARGE_AURA_SIZE,
+    auraStartX = 21, -- AURA_START_X 5
+    auraStartY = 28, -- AURA_START_Y 32
     auraOffsetY = 1, -- AURA_OFFSET_Y,
     noDebuffFilter = true, -- noBuffDebuffFilterOnTarget
     dynamicBuffSize = true, -- showDynamicBuffSize
@@ -70,6 +73,8 @@ function frame:Update()
     SetCVarFunc('showDynamicBuffSize', AuraDurationsDB.dynamicBuffSize)
 
     if TargetFrame_UpdateAuras then TargetFrame_UpdateAuras(TargetFrame) end
+    if TargetFrame.UpdateAuras then TargetFrame:UpdateAuras() end
+    if FocusFrame.UpdateAuras then FocusFrame:UpdateAuras() end
 end
 
 frame:SetScript("OnEvent", function(self, event, ...)
@@ -88,19 +93,35 @@ function frame:PLAYER_LOGIN(event, ...)
         AuraDurationsDB = {}
         frame:SetDefaults()
     end
+    frame:SetDefaults()
+
     lib.AuraDurationsDB = AuraDurationsDB;
     self.AuraDurationsDB = AuraDurationsDB;
     self:AddMissingKeys()
     self:Update()
 
-    LibClassicDurations = LibStub("LibClassicDurations", true)
-    if LibClassicDurations then
-        LibClassicDurations:Register("AuraDurations")
-        UnitAura = LibClassicDurations.UnitAuraWrapper
-    end
+    -- LibClassicDurations = LibStub("LibClassicDurations", true)
+    -- if LibClassicDurations then
+    --     LibClassicDurations:Register("AuraDurations")
+    --     UnitAura = LibClassicDurations.UnitAuraWrapper
+    -- end
 
-    if not TargetFrame_UpdateAuras then return end
-    hooksecurefunc("TargetFrame_UpdateAuras", frame.TargetBuffHook)
+    if TargetFrame_UpdateAuras then
+        -- Era etc
+        hooksecurefunc("TargetFrame_UpdateAuras", frame.TargetBuffHook)
+    end
+    if TargetFrame.UpdateAuras then
+        -- TBC
+        hooksecurefunc(TargetFrame, "UpdateAuras", function()
+            frame.TargetBuffHook(TargetFrame)
+        end)
+    end
+    if FocusFrame.UpdateAuras then
+        -- TBC
+        hooksecurefunc(FocusFrame, "UpdateAuras", function()
+            frame.TargetBuffHook(FocusFrame)
+        end)
+    end
     hooksecurefunc("CompactUnitFrame_UtilSetBuff", frame.CompactUnitFrameBuffHook)
     hooksecurefunc("CompactUnitFrame_UtilSetDebuff", frame.CompactUnitFrameDeBuffHook)
 end
@@ -179,13 +200,117 @@ frame.UpdateAuraPositions = function(self, auraName, numAuras, numOppositeAuras,
     end
 end
 
+function TargetFrame_UpdateBuffAnchor(self, buffName, index, numDebuffs, anchorIndex, size, offsetX, offsetY,
+                                      mirrorVertically)
+    local AURA_START_Y = AuraDurationsDB.auraStartY;
+    local AURA_START_X = AuraDurationsDB.auraStartX;
+    local AURA_OFFSET_Y = AuraDurationsDB.auraOffsetY;
+
+    -- For mirroring vertically
+    local point, relativePoint;
+    local startY, auraOffsetY;
+    if (mirrorVertically) then
+        point = "BOTTOM";
+        relativePoint = "TOP";
+        startY = -15;
+        offsetY = -offsetY;
+        auraOffsetY = -AURA_OFFSET_Y;
+    else
+        point = "TOP";
+        relativePoint = "BOTTOM";
+        startY = AURA_START_Y;
+        auraOffsetY = AURA_OFFSET_Y;
+    end
+
+    local buff = _G[buffName .. index];
+    if not buff then return end
+    if (index == 1) then
+        if (UnitIsFriend("player", self.unit) or numDebuffs == 0) then
+            -- unit is friendly or there are no debuffs...buffs start on top
+            buff:SetPoint(point .. "LEFT", self, relativePoint .. "LEFT", AURA_START_X, startY);
+        else
+            -- unit is not friendly and we have debuffs...buffs start on bottom
+            buff:SetPoint(point .. "LEFT", self.debuffs, relativePoint .. "LEFT", 0, -offsetY);
+        end
+        self.buffs:SetPoint(point .. "LEFT", buff, point .. "LEFT", 0, 0);
+        self.buffs:SetPoint(relativePoint .. "LEFT", buff, relativePoint .. "LEFT", 0, -auraOffsetY);
+        self.spellbarAnchor = buff;
+    elseif (anchorIndex ~= (index - 1)) then
+        -- anchor index is not the previous index...must be a new row
+        buff:SetPoint(point .. "LEFT", _G[buffName .. anchorIndex], relativePoint .. "LEFT", 0, -offsetY);
+        self.buffs:SetPoint(relativePoint .. "LEFT", buff, relativePoint .. "LEFT", 0, -auraOffsetY);
+        self.spellbarAnchor = buff;
+    else
+        -- anchor index is the previous index
+        buff:SetPoint(point .. "LEFT", _G[buffName .. anchorIndex], point .. "RIGHT", offsetX, 0);
+    end
+
+    -- Resize
+    buff:SetWidth(size);
+    buff:SetHeight(size);
+end
+
+function TargetFrame_UpdateDebuffAnchor(self, debuffName, index, numBuffs, anchorIndex, size, offsetX, offsetY,
+                                        mirrorVertically)
+    local AURA_START_Y = AuraDurationsDB.auraStartY;
+    local AURA_START_X = AuraDurationsDB.auraStartX;
+    local AURA_OFFSET_Y = AuraDurationsDB.auraOffsetY;
+
+    local buff = _G[debuffName .. index];
+    local isFriend = UnitIsFriend("player", self.unit);
+
+    -- For mirroring vertically
+    local point, relativePoint;
+    local startY, auraOffsetY;
+    if (mirrorVertically) then
+        point = "BOTTOM";
+        relativePoint = "TOP";
+        startY = -15;
+        offsetY = -offsetY;
+        auraOffsetY = -AURA_OFFSET_Y;
+    else
+        point = "TOP";
+        relativePoint = "BOTTOM";
+        startY = AURA_START_Y;
+        auraOffsetY = AURA_OFFSET_Y;
+    end
+
+    if not buff then return end
+    if (index == 1) then
+        if (isFriend and numBuffs > 0) then
+            -- unit is friendly and there are buffs...debuffs start on bottom
+            buff:SetPoint(point .. "LEFT", self.buffs, relativePoint .. "LEFT", 0, -offsetY);
+        else
+            -- unit is not friendly or there are no buffs...debuffs start on top
+            buff:SetPoint(point .. "LEFT", self, relativePoint .. "LEFT", AURA_START_X, startY);
+        end
+        self.debuffs:SetPoint(point .. "LEFT", buff, point .. "LEFT", 0, 0);
+        self.debuffs:SetPoint(relativePoint .. "LEFT", buff, relativePoint .. "LEFT", 0, -auraOffsetY);
+        if ((isFriend) or (not isFriend and numBuffs == 0)) then self.spellbarAnchor = buff; end
+    elseif (anchorIndex ~= (index - 1)) then
+        -- anchor index is not the previous index...must be a new row
+        buff:SetPoint(point .. "LEFT", _G[debuffName .. anchorIndex], relativePoint .. "LEFT", 0, -offsetY);
+        self.debuffs:SetPoint(relativePoint .. "LEFT", buff, relativePoint .. "LEFT", 0, -auraOffsetY);
+        if ((isFriend) or (not isFriend and numBuffs == 0)) then self.spellbarAnchor = buff; end
+    else
+        -- anchor index is the previous index
+        buff:SetPoint(point .. "LEFT", _G[debuffName .. (index - 1)], point .. "RIGHT", offsetX, 0);
+    end
+
+    -- Resize
+    buff:SetWidth(size);
+    buff:SetHeight(size);
+    local debuffFrame = _G[debuffName .. index .. "Border"];
+    debuffFrame:SetWidth(size + 2);
+    debuffFrame:SetHeight(size + 2);
+end
+
 frame.TargetBuffHook = function(self)
     -- print('TargetBuffHook')
     local frameName, frameCooldown;
     local numBuffs = 0;
     local numDebuffs = 0;
     local selfName = self:GetName();
-    ---@diagnostic disable-next-line: undefined-field
     local unit = self.unit;
 
     for i = 1, MAX_TARGET_BUFFS do
@@ -204,14 +329,16 @@ frame.TargetBuffHook = function(self)
             -- using Lib
             -- Handle cooldowns
             frameCooldown = _G[frameName .. "Cooldown"];
-            if LibClassicDurations then
-                local durationLib, expirationTimeLib = LibClassicDurations:GetAuraDurationByUnit(unit, spellId, caster);
-                if duration == 0 and durationLib then
-                    duration = durationLib;
-                    expirationTime = expirationTimeLib;
-                end
+            -- if LibClassicDurations then
+            --     local durationLib, expirationTimeLib = LibClassicDurations:GetAuraDurationByUnit(unit, spellId, caster);
+            --     if duration == 0 and durationLib then
+            --         duration = durationLib;
+            --         expirationTime = expirationTimeLib;
+            --     end
+            -- end
+            if frameCooldown then
+                CooldownFrame_Set(frameCooldown, expirationTime - duration, duration, duration > 0, true);
             end
-            CooldownFrame_Set(frameCooldown, expirationTime - duration, duration, duration > 0, true);
         else
             break
         end
@@ -241,16 +368,17 @@ frame.TargetBuffHook = function(self)
                     -- using Lib
                     -- Handle cooldowns
                     frameCooldown = _G[frameName .. "Cooldown"];
-                    if LibClassicDurations then
-                        local durationLib, expirationTimeLib =
-                            LibClassicDurations:GetAuraDurationByUnit(unit, spellId, caster);
-                        if duration == 0 and durationLib then
-                            duration = durationLib;
-                            expirationTime = expirationTimeLib;
-                        end
+                    -- if LibClassicDurations then
+                    --     local durationLib, expirationTimeLib =
+                    --         LibClassicDurations:GetAuraDurationByUnit(unit, spellId, caster);
+                    --     if duration == 0 and durationLib then
+                    --         duration = durationLib;
+                    --         expirationTime = expirationTimeLib;
+                    --     end
+                    -- end
+                    if frameCooldown then
+                        CooldownFrame_Set(frameCooldown, expirationTime - duration, duration, duration > 0, true);
                     end
-                    CooldownFrame_Set(frameCooldown, expirationTime - duration, duration, duration > 0, true);
-
                     frameNum = frameNum + 1;
                 end
             end
@@ -283,7 +411,7 @@ frame.TargetBuffHook = function(self)
     frame.UpdateAuraPositions(self, selfName .. "Debuff", numDebuffs, numBuffs, largeDebuffList,
                               TargetFrame_UpdateDebuffAnchor, maxRowWidth, 3, mirrorAurasVertically);
     -- update the spell bar position
-    if (self.spellbar) then Target_Spellbar_AdjustPosition(self.spellbar); end
+    if (self.spellbar and Target_Spellbar_AdjustPosition) then Target_Spellbar_AdjustPosition(self.spellbar); end
 end
 
 -- based on blizz: function CompactUnitFrame_UtilSetBuff(buffFrame, unit, index, filter)
@@ -291,13 +419,13 @@ frame.CompactUnitFrameBuffHook = function(buffFrame, unit, index, filter)
     local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, _, spellId, canApplyAura =
         UnitBuff(unit, index, filter);
 
-    if LibClassicDurations then
-        local durationLib, expirationTimeLib = LibClassicDurations:GetAuraDurationByUnit(unit, spellId, unitCaster);
-        if duration == 0 and durationLib then
-            duration = durationLib;
-            expirationTime = expirationTimeLib;
-        end
-    end
+    -- if LibClassicDurations then
+    --     local durationLib, expirationTimeLib = LibClassicDurations:GetAuraDurationByUnit(unit, spellId, unitCaster);
+    --     if duration == 0 and durationLib then
+    --         duration = durationLib;
+    --         expirationTime = expirationTimeLib;
+    --     end
+    -- end
 
     -- CompactUnitFrame_UpdateCooldownFrame(buffFrame, expirationTime - duration, duration, true); -- blizz default
 
@@ -326,13 +454,13 @@ frame.CompactUnitFrameDeBuffHook = function(debuffFrame, unit, index, filter, is
                                                                                                                filter);
     end
 
-    if LibClassicDurations then
-        local durationLib, expirationTimeLib = LibClassicDurations:GetAuraDurationByUnit(unit, spellId, unitCaster);
-        if duration == 0 and durationLib then
-            duration = durationLib;
-            expirationTime = expirationTimeLib;
-        end
-    end
+    -- if LibClassicDurations then
+    --     local durationLib, expirationTimeLib = LibClassicDurations:GetAuraDurationByUnit(unit, spellId, unitCaster);
+    --     if duration == 0 and durationLib then
+    --         duration = durationLib;
+    --         expirationTime = expirationTimeLib;
+    --     end
+    -- end
 
     -- CompactUnitFrame_UpdateCooldownFrame(debuffFrame, expirationTime, duration, false);
 
