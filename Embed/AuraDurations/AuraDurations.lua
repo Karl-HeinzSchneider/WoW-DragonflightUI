@@ -74,7 +74,7 @@ function frame:Update()
 
     if TargetFrame_UpdateAuras then TargetFrame_UpdateAuras(TargetFrame) end
     if TargetFrame.UpdateAuras then TargetFrame:UpdateAuras() end
-    if FocusFrame.UpdateAuras then FocusFrame:UpdateAuras() end
+    if FocusFrame and FocusFrame.UpdateAuras then FocusFrame:UpdateAuras() end
 end
 
 frame:SetScript("OnEvent", function(self, event, ...)
@@ -116,7 +116,7 @@ function frame:PLAYER_LOGIN(event, ...)
             frame.TargetBuffHook(TargetFrame)
         end)
     end
-    if FocusFrame.UpdateAuras then
+    if FocusFrame and FocusFrame.UpdateAuras then
         -- TBC
         hooksecurefunc(FocusFrame, "UpdateAuras", function()
             frame.TargetBuffHook(FocusFrame)
