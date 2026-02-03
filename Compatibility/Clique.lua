@@ -73,44 +73,53 @@ function DF.Compatibility:Clique()
     end
 
     -- party
-    local function fixParty()
-    	if not PartyFrame or not PartyFrame.MemberFrame1 then
-    		return
-    	end
+    if DF.API.Version.IsTBC then
+        local function fixParty()
+            if not PartyFrame or not PartyFrame.MemberFrame1 then return end
 
-    	for i = 1, 4 do
-    		local f = PartyFrame["MemberFrame" .. i]
-    		if f and f.HealthBar and f.ManaBar then
-    			local healthbar = f.HealthBar
-    			local manabar = f.ManaBar
-    
-    			healthbar:SetPropagateMouseMotion(true)
-    			manabar:SetPropagateMouseMotion(true)
-    
-    			if healthbar.TextString then
-    				healthbar.TextString:SetPropagateMouseMotion(true)
-    			end
-    			if manabar.TextString then
-    				manabar.TextString:SetPropagateMouseMotion(true)
-    			end
-    
-    			for _, bar in pairs({ healthbar, manabar }) do
-    				if bar.LeftText then
-    					bar.LeftText:SetPropagateMouseMotion(true)
-    				end
-    				if bar.RightText then
-    					bar.RightText:SetPropagateMouseMotion(true)
-    				end
-    			end
-    		end
-	    end
-    end
+            for i = 1, 4 do
+                local f = PartyFrame["MemberFrame" .. i]
+                if f and f.HealthBar and f.ManaBar then
+                    local healthbar = f.HealthBar
+                    local manabar = f.ManaBar
 
-    -- Defer until frames exist
-    if PartyFrame and PartyFrame.MemberFrame1 then
-    	fixParty()
+                    healthbar:SetPropagateMouseMotion(true)
+                    manabar:SetPropagateMouseMotion(true)
+
+                    if healthbar.TextString then healthbar.TextString:SetPropagateMouseMotion(true) end
+                    if manabar.TextString then manabar.TextString:SetPropagateMouseMotion(true) end
+
+                    for _, bar in pairs({healthbar, manabar}) do
+                        if bar.LeftText then bar.LeftText:SetPropagateMouseMotion(true) end
+                        if bar.RightText then bar.RightText:SetPropagateMouseMotion(true) end
+                    end
+                end
+            end
+        end
+
+        -- Defer until frames exist
+        if PartyFrame and PartyFrame.MemberFrame1 then
+            fixParty()
+        else
+            C_Timer.After(0, fixParty)
+        end
     else
-    	C_Timer.After(0, fixParty)
+        local fixParty = function()
+            for i = 1, 4 do
+                local f = _G['PartyFrame' .. i]
+                local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
+                healthbar:SetPropagateMouseMotion(true)
+                healthbar.DFTextString:SetPropagateMouseMotion(true)
+                healthbar.DFLeftText:SetPropagateMouseMotion(true)
+                healthbar.DFRightText:SetPropagateMouseMotion(true)
+
+                local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
+                manabar:SetPropagateMouseMotion(true)
+                manabar.DFTextString:SetPropagateMouseMotion(true)
+                manabar.DFLeftText:SetPropagateMouseMotion(true)
+                manabar.DFRightText:SetPropagateMouseMotion(true)
+            end
+        end
+        fixParty()
     end
-      
 end
