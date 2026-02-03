@@ -1534,6 +1534,18 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
         flash:SetDrawLayer('OVERLAY')
     end
 
+    local textOverlayContainer = btn.TextOverlayContainer
+    if textOverlayContainer then
+        -- tbc etc
+        textOverlayContainer:Hide()
+    end
+
+    local slotBackground = btn.SlotBackground
+    if slotBackground then
+        -- tbc etc
+        slotBackground:Hide()
+    end
+
     -- TODO: support dynamic
     -- btn:SetAttribute("flyoutDirection", nil);
 
