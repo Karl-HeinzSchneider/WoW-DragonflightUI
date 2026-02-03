@@ -2292,6 +2292,29 @@ function DragonflightUIMixin:ChangeQuestFrame()
     progress:SetSize(338, 496)
     greeting:SetSize(338, 496)
 
+    if DF.API.Version.IsTBC then
+        local slice = frame.NineSlice
+
+        slice.TopLeftCorner = _G[frame:GetName() .. 'TopLeftCorner']
+        slice.TopLeftCorner:Show()
+        slice.TopRightCorner = _G[frame:GetName() .. 'TopRightCorner']
+
+        slice.BottomLeftCorner = _G[frame:GetName() .. 'BtnCornerLeft']
+        _G[frame:GetName() .. 'BotLeftCorner']:Hide()
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BotRightCorner']
+        slice.BottomRightCorner = _G[frame:GetName() .. 'BtnCornerRight']
+        _G[frame:GetName() .. 'BotRightCorner']:Hide()
+
+        slice.TopEdge = _G[frame:GetName() .. 'TopBorder']
+        slice.BottomEdge = _G[frame:GetName() .. 'BottomBorder']
+        _G[frame:GetName() .. 'ButtonBottomBorder']:Hide()
+
+        slice.LeftEdge = _G[frame:GetName() .. 'LeftBorder']
+        slice.RightEdge = _G[frame:GetName() .. 'RightBorder']
+
+        _G['QuestFramePortraitFrame']:Hide()
+    end
+
     DragonflightUIMixin:AddNineSliceTextures(frame, true)
     DragonflightUIMixin:ButtonFrameTemplateNoPortrait(frame)
 
@@ -2332,6 +2355,17 @@ function DragonflightUIMixin:ChangeQuestFrame()
 
     local completeP = QuestFrameCompleteButton
     completeP:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 6, 4)
+
+    if DF.API.Version.IsTBC then
+        detail:ClearAllPoints()
+        detail:SetPoint('TOPLEFT')
+
+        local detailBG = _G['QuestFrameDetailPanelBg']
+        detailBG:Hide()
+
+        local scroll = QuestDetailScrollFrame
+        scroll:ClearAllPoints() -- see below
+    end
 
     do
         local scroll = QuestDetailScrollFrame
