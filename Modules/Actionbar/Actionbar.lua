@@ -2759,7 +2759,7 @@ function Module:RefreshOptionScreens()
     Module.MicroFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.FPSFrame.DFEditModeSelection:RefreshOptionScreen();
 
-    self.SubVehicleLeave.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
+    _G['DragonflightUIVehicleLeaveButton'].DFEditModeSelection:RefreshOptionScreen();
 end
 
 function Module:ApplySettings(sub, key)

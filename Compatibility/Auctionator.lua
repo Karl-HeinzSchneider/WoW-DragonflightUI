@@ -72,7 +72,7 @@ function DF.Compatibility:AuctionatorCraftingInfoFrame()
         end)
     end)
 
-    if DF.Era then
+    if DF.Era or DF.API.Version.IsTBC then
         hooksecurefunc(Auctionator.EnchantInfo, 'Initialize', function()
             --
             -- print('Auctionator.CraftingInfo:Initialize()')

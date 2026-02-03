@@ -147,14 +147,14 @@ function Module:RefreshOptionScreens()
         refreshCat('focusTarget')
 
         _G['DragonflightUIFocusFrame'].DFEditModeSelection:RefreshOptionScreen();
-        self.SubFocusTarget.PreviewFocusTarget.DFEditModeSelection:RefreshOptionScreen();
+        _G['DragonflightUIFocusToTFrame'].DFEditModeSelection:RefreshOptionScreen();
     end
     if self.SubParty.PreviewParty then self.SubParty.PreviewParty.DFEditModeSelection:RefreshOptionScreen(); end
     _G['DragonflightUIPlayerFrame'].DFEditModeSelection:RefreshOptionScreen();
-    self.SubPet.PreviewFrame.DFEditModeSelection:RefreshOptionScreen();
+    _G['DragonflightUIPetFrame'].DFEditModeSelection:RefreshOptionScreen();
     -- self.SubRaid.PreviewRaid.DFEditModeSelection:RefreshOptionScreen();
     _G['DragonflightUITargetFrame'].DFEditModeSelection:RefreshOptionScreen();
-    self.SubTargetOfTarget.PreviewTargetOfTarget.DFEditModeSelection:RefreshOptionScreen();
+    _G['DragonflightUITargetToTFrame'].DFEditModeSelection:RefreshOptionScreen();
     if DF.Cata then self.SubAltPower.PowerBarAltPreview.DFEditModeSelection:RefreshOptionScreen(); end
 end
 
@@ -565,6 +565,10 @@ function Module:TBC()
     self:HookDrag()
     self:AddPortraitMasks()
     self:HookClassIcon()
+
+    local EditModeModule = DF:GetModule('Editmode');
+
+    EditModeModule:ShowEditmodeWarning(3, 0, 'Target and Focus')
 end
 
 function Module:Wrath()

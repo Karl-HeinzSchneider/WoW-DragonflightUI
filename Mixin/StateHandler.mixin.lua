@@ -62,7 +62,9 @@ function DragonflightUIStateHandlerMixin:InitStateHandler(extraX, extraY)
         local frameRef = self:GetFrameRef("MainHandler")
 
         local unitRef = frameRef:GetAttribute('UnitRef')
-        if unitRef and not UnitExists(unitRef) then
+        local editModeActive = frameRef:GetAttribute('EditModeActive')
+
+        if (unitRef and not UnitExists(unitRef)) and not editModeActive then
             return
         end
 
@@ -163,6 +165,8 @@ end
 
 function DragonflightUIStateHandlerMixin:UpdateStateHandler(state, activateOverride)
     local handler = self.DFStateHandler
+    -- handler:SetAttribute('EditModeActive', state.EditModeActive)
+    handler:SetAttribute('EditModeActive', false)
 
     local driverTable = {}
 

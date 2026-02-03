@@ -669,6 +669,9 @@ function SubModuleMixin:CreateCustomPortrait()
     PlayerPortrait:SetDrawLayer('BACKGROUND', -1)
     PlayerPortrait:SetSize(57, 57)
 
+    PlayerHitIndicator:ClearAllPoints()
+    PlayerHitIndicator:SetPoint('CENTER', PlayerPortrait, 'CENTER', 0, 0)
+
     -- function PlayerPortrait:fixClassSize(class)
     --     --
     --     -- print('fixClassSize', class)
@@ -888,6 +891,12 @@ function SubModuleMixin:ChangeStatusIcons()
     -- TargetFrameTextureFrameLeaderIcon:SetTexCoord(Module.GetCoords('UI-HUD-UnitFrame-Player-Group-LeaderIcon'))
     -- TargetFrameTextureFrameLeaderIcon:ClearAllPoints()
     -- TargetFrameTextureFrameLeaderIcon:SetPoint('BOTTOMLEFT', TargetFramePortrait, 'TOPRIGHT', -10 - 3, -10)
+
+    if DF.API.Version.IsTBC then
+        local t = PlayerPVPIcon;
+        t:ClearAllPoints()
+        t:SetPoint('LEFT', PlayerPortrait, 'LEFT', -22, -18)
+    end
 end
 
 local texBase = 'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\'
@@ -1012,6 +1021,8 @@ function SubModuleMixin:SetPlayerBiggerHealthbar(bigger)
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\plunderstorm-UI-HUD-UnitFrame-Player-PortraitOn-InCombat')
         PlayerStatusTexture:SetSize(192, 71)
         PlayerStatusTexture:SetTexCoord(0, 192 / 256, 0, 71 / 128)
+        PlayerStatusTexture:ClearAllPoints()
+        PlayerStatusTexture:SetPoint('CENTER', PlayerFrame, 'CENTER', 16 - 1, 6.05 + 1)
 
         PlayerFrameHealthBar:SetSize(124, 32)
         PlayerFrameHealthBar:ClearAllPoints()

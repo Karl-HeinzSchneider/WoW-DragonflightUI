@@ -149,7 +149,7 @@ local UIOptions = {
     }
 }
 
-if DF.Era or (DF.Wrath and not DF.Cata) then
+if DF.Era or DF.API.Version.IsTBC or (DF.Wrath and not DF.Cata) then
     local moreOptions = {
         changeTalents = {
             type = 'toggle',
@@ -381,7 +381,7 @@ function Module:ApplySettingsInternal(sub, key)
     end)
 
     self:ConditionalOption('changeTradeskill', 'first', 'Change Profession Window', function()
-        if not DF.API.Version.IsTBC then Module:UpdateTradeskills() end
+        Module:UpdateTradeskills();
     end)
 
     if DF.Era or DF.API.Version.IsTBC or (DF.Wrath and not DF.Cata) then
@@ -424,7 +424,7 @@ function Module:ApplySettingsInternal(sub, key)
     self:ConditionalOption('changeInspect', 'first', 'Change InspectFrame', function()
         local loaded, value = DF:LoadAddOn('Blizzard_InspectUI')
         Module:FuncOrWaitframe('Blizzard_InspectUI', function()
-            if DF.Era then
+            if DF.Era or DF.API.Version.IsTBC then
                 DragonflightUIMixin:ChangeInspectFrameEra()
             else
                 DragonflightUIMixin:ChangeInspectFrame()
@@ -541,7 +541,7 @@ function Module:ChangeFrames()
         DragonflightUIMixin:ChangeDressupFrame()
         DragonflightUIMixin:EnhanceDressupFrame()
         DragonflightUIMixin:ChangeTradeFrame()
-        -- DragonflightUIMixin:ChangeGossipFrame()
+        DragonflightUIMixin:ChangeGossipFrame()
         DragonflightUIMixin:ChangeQuestFrame()
         DragonflightUIMixin:ShowQuestXP()
         DragonflightUIMixin:ChangeTaxiFrame()

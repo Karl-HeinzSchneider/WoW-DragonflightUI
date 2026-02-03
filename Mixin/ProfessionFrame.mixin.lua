@@ -262,6 +262,9 @@ function DFProfessionMixin:SetupFrameStyle()
         icon:SetDrawLayer('OVERLAY', 6)
         self.Icon = icon
 
+        Helper:AddCircleMask(self, self.Icon)
+        if _G['CraftFramePortrait'] then _G['CraftFramePortrait']:Hide() end
+
         _G['TradeSkillFramePortrait']:Hide()
         _G['TradeSkillFramePortrait']:SetAlpha(0)
         hooksecurefunc(_G['TradeSkillFramePortrait'], 'Show', function()
@@ -430,7 +433,7 @@ function DFProfessionMixin:SetupFrameStyle()
     end
 
     -- pet training points @ERA
-    if DF.Era then
+    if DF.Era or DF.API.Version.IsTBC then
         local trainingFrame = CreateFrame('Frame', 'DragonflightUIProfessionTrainingPointFrame', self)
         trainingFrame:SetSize(120, 18)
         -- trainigFrame:SetPoint('TOPLEFT', self, 'TOPLEFT', 280, -40) 
@@ -467,14 +470,14 @@ function DFProfessionMixin:UpdateTrainingPoints()
             self.TrainingFrame:Show()
 
             local totalPoints, spent = GetPetTrainingPoints();
-            if (totalPoints > 0) then
-                self.TrainingFrameLabel:Show();
-                self.TrainingFrameText:Show();
-                self.TrainingFrameText:SetText(totalPoints - spent);
-            else
-                self.TrainingFrameLabel:Hide();
-                self.TrainingFrameText:Hide();
-            end
+            -- if (totalPoints > 0 or spent > 0) then
+            self.TrainingFrameLabel:Show();
+            self.TrainingFrameText:Show();
+            self.TrainingFrameText:SetText(totalPoints - spent);
+            -- else
+            -- self.TrainingFrameLabel:Hide();
+            -- self.TrainingFrameText:Hide();
+            -- end
         else
             self.TrainingFrame:Hide()
         end
@@ -1664,7 +1667,7 @@ function DFProfessionMixin:UpdateProfessionData()
 
             skillTable['beast'] = data
         end
-    elseif DF.Era then
+    elseif DF.Era or DF.API.Version.IsTBC then
         for i = 1, GetNumSkillLines() do
             local nameLoc, _, _, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost,
                   rankCost, minLevel, skillCostType, skillDescription = GetSkillLineInfo(i)
@@ -3021,6 +3024,15 @@ function DFProfessionFrameRecipeListMixin:UpdateRecipeListCraft()
                     requiredLevel = requiredLevel
                 }
             }
+
+            if not DF.API.Version.IsClassic then
+                --
+                -- local _, dur = Helper:Benchmark('GetRecipeExpansion' .. i, function()
+                local expansion = parent:GetRecipeExpansion(i);
+                data.expansion = expansion;
+                -- end, 2)
+                -- summer = summer + dur;
+            end
 
             local filtered = true
 

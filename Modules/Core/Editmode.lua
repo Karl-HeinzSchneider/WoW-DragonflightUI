@@ -534,6 +534,57 @@ function Module:InitEditmodeOverride()
         end
         fun()
     end
+
+    function addonTable:GetBlizzEditmodeFrameSetting(f, setting)
+        return LibEditModeOverride:GetFrameSetting(f, setting)
+    end
+
+    function addonTable:GetBlizzEditmodeFrameSettingBool(f, setting)
+        local value = LibEditModeOverride:GetFrameSetting(f, setting)
+        if value == 1 then
+            return true;
+        else
+            return false;
+        end
+    end
+
+    function addonTable:SetBlizzEditmodeFrameSetting(f, setting, value)
+        LibEditModeOverride:SetFrameSetting(f, setting, value)
+
+        if InCombatLockdown() then
+            LibEditModeOverride:SaveOnly()
+        else
+            LibEditModeOverride:ApplyChanges()
+        end
+    end
+end
+
+function Module:GetEditmodeSettingValue(setting)
+    local accountSettings = C_EditMode.GetAccountSettings()
+
+    for k, v in ipairs(accountSettings) do if v.setting == setting then return v.value; end end
+
+    return -1;
+end
+
+function Module:ShowEditmodeWarning(setting, value, str)
+    if self:GetEditmodeSettingValue(setting) == value then return; end
+
+    local valueStr = tostring(value);
+
+    if value == 0 then
+        valueStr = 'unchecked'
+    elseif value == 1 then
+        valueStr = 'checked'
+    end
+
+    local outputStr = string.format(
+                          "Conflicting blizzard editmode setting found! Please enter the blizzard editmode and change setting |cff8080ff%s|r to |cff8080ff%s|r, or you risk game breaking issues.",
+                          str, valueStr);
+
+    C_Timer.After(5, function()
+        DF:Print(outputStr)
+    end)
 end
 
 function Module:Era()

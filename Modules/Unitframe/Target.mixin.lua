@@ -59,6 +59,8 @@ function SubModuleMixin:SetDefaults()
         -- buff - from AuraDurations
         auraSizeSmall = 17, -- SMALL_AURA_SIZE,
         auraSizeLarge = 21, -- LARGE_AURA_SIZE,
+        auraStartX = 5, -- AURA_START_X 5
+        auraStartY = 32, -- AURA_START_Y 32
         auraOffsetY = 1, -- AURA_OFFSET_Y,
         noDebuffFilter = true, -- noBuffDebuffFilterOnTarget
         dynamicBuffSize = true, -- showDynamicBuffSize
@@ -506,7 +508,7 @@ function SubModuleMixin:SetupOptions()
                     TARGET_FRAME_BUFFS_ON_TOP = false
                     TargetFrame.buffsOnTop = false
                 end
-                TargetFrame_UpdateAuras(TargetFrame)
+                if TargetFrame_UpdateAuras then TargetFrame_UpdateAuras(TargetFrame) end
             else
                 setOption(info, value)
             end
@@ -569,7 +571,7 @@ function SubModuleMixin:Setup()
     self:ReApplyTargetFrame()
     self:ChangeTargetComboFrame()
 
-    self:AddMobhealth();
+    self:AddMobhealth()
     self:CreatThreatIndicator();
 
     local UpdateTargetStatusBars = function()
@@ -604,6 +606,9 @@ function SubModuleMixin:Setup()
     f:SetScale(1.0)
     f:SetClampedToScreen(true)
     f:SetMovable(true)
+    f:SetFrameStrata('LOW')
+
+    f:Hide()
 
     if DF.API.Version.IsTBC then
         --
@@ -611,13 +616,14 @@ function SubModuleMixin:Setup()
     end
 
     -- state
-    Mixin(f, DragonflightUIStateHandlerMixin)
-    f:InitStateHandler()
-    -- f:SetUnit('target')
+    Mixin(TargetFrame, DragonflightUIStateHandlerMixin)
+    TargetFrame:InitStateHandler()
+    TargetFrame:SetUnit('target')
+    -- f:SetHideFrame(TargetFrame, 1)
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
-    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', f,
+    local fakeTarget = CreateFrame('Frame', 'DragonflightUIEditModeTargetFramePreview', UIParent,
                                    'DFEditModePreviewTargetTemplate')
     fakeTarget:OnLoad()
     fakeTarget:SetPoint('CENTER', f, 'CENTER', 0, 0)
@@ -708,7 +714,7 @@ function SubModuleMixin:Update()
     else
         TargetFrame:CheckFaction()
     end
-    f:UpdateStateHandler(state)
+    TargetFrame:UpdateStateHandler(state)
 
     self.PreviewTarget:UpdateState(state);
 end
@@ -828,6 +834,12 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
     if unconsciousText then
         unconsciousText:ClearAllPoints()
         unconsciousText:SetPoint('CENTER', healthBar, 'CENTER', 0, 0)
+    end
+
+    if DF.API.Version.IsTBC then
+        local t = TargetFrame.pvpIcon;
+        t:ClearAllPoints()
+        t:SetPoint('LEFT', TargetFramePortrait, 'RIGHT', -22, -18)
     end
 
     if flash and DF.Wrath then
