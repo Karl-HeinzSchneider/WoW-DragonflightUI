@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
 	<Script file="Mixin/Spellflyout.mixin.lua" />
-	<Button name="DFSpellFlyoutButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" mixin="DragonflightUISpellFlyoutButtonMixin" virtual="true">
+	<Button name="DFSpellFlyoutButtonTemplate" inherits="DFActionButtonTemplate, SecureActionButtonTemplate" mixin="DragonflightUISpellFlyoutButtonMixin" virtual="true">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<!-- <OnClick method="OnClick" /> -->
@@ -11,7 +11,7 @@
 			<OnLeave method="OnLeave" />
 		</Scripts>
 	</Button>
-	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="ActionButtonTemplate, SecureActionButtonTemplate" mixin="DragonflightUISpellSubButtonMixin" virtual="true">
+	<Button name="DFSpellFlyoutSubButtonTemplate" inherits="DFActionButtonTemplate, SecureActionButtonTemplate" mixin="DragonflightUISpellSubButtonMixin" virtual="true">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<!-- <OnClick method="OnClick" /> -->
