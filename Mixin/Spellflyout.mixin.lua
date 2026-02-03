@@ -71,11 +71,11 @@ function DragonflightUISpellFlyoutButtonMixin:AddArrow()
     arr:SetTexCoord(0.884766, 0.955078, 0.438965, 0.445801)
     arr:SetPoint('TOP', self, 'TOP', 0, 6)
 
-    self.Arrow = arr;
+    self.DFArrow = arr;
 end
 
 function DragonflightUISpellFlyoutButtonMixin:UpdateArrow(dir)
-    local arr = self.Arrow
+    local arr = self.DFArrow
 
     local o = (self.BG:IsShown() and 1) or 0;
 
@@ -158,7 +158,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     local id = self:GetID() - 1000;
     -- print(n, id, '=', (id - 1) * 12 + 1, '-', (id - 1) * 12 + 12)
 
-    handler:SetFrameRef('flyout', f)
+    handler:SetFrameRef('DFflyout', f)
 
     self.Handler = handler;
 
@@ -170,7 +170,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
                                        "SecureHandlerAttributeTemplate");
     attributeFrame:SetFrameRef('shower', self.DFShower)
     attributeFrame:SetFrameRef('mouse', self.DFMouseHandler)
-    attributeFrame:SetFrameRef('flyout', f)
+    attributeFrame:SetFrameRef('DFflyout', f)
     attributeFrame:SetFrameRef('parent', self)
 
     attributeFrame:SetAttribute("_onattributechanged", [=[
@@ -188,7 +188,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         shower:ClearAllPoints()
         mouse:ClearAllPoints() 
 
-        local flyout = control:GetFrameRef("flyout")
+        local flyout = control:GetFrameRef("DFflyout")
         if flyout and flyout:IsShown() then
             if dir == 'LEFT' then
                 mouse:SetPoint('TOPRIGHT', parent, 'TOPRIGHT', 2, 2)
@@ -273,7 +273,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
                 return false;    
             end         
 
-            local flyout = control:GetFrameRef("flyout")
+            local flyout = control:GetFrameRef("DFflyout")
             local closeAfterClick = control:GetAttribute('closeAfterClick')
             if flyout and flyout:IsShown() and closeAfterClick then
                 flyout:Hide()
