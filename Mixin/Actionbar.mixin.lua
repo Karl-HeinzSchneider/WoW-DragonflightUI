@@ -1537,7 +1537,7 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     local textOverlayContainer = btn.TextOverlayContainer
     if textOverlayContainer then
         -- tbc etc
-        textOverlayContainer:Hide()
+        -- textOverlayContainer:Hide()
     end
 
     local slotBackground = btn.SlotBackground
