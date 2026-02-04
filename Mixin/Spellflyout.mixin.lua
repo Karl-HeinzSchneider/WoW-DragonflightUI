@@ -22,6 +22,8 @@ DragonflightUISpellFlyoutButtonMixin = {}
 function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     -- print('DragonflightUISpellFlyoutButtonMixin:OnLoad()')
 
+    self:RegisterForClicks('LeftButtonUp', 'LeftButtonDown')
+
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
 
@@ -159,6 +161,44 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     -- print(n, id, '=', (id - 1) * 12 + 1, '-', (id - 1) * 12 + 12)
 
     handler:SetFrameRef('DFflyout', f)
+    do
+        handler:SetAttribute("ActionButtonUseKeyDown", GetCVarBool('ActionButtonUseKeyDown'));
+
+        handler:SetScript("OnEvent", function(f, event, ...)
+            f[event](f, ...)
+        end)
+        handler:RegisterEvent('VARIABLES_LOADED');
+        handler:RegisterEvent('CVAR_UPDATE');
+        handler:RegisterEvent('PLAYER_REGEN_ENABLED');
+
+        handler.dirtyTable = {};
+        function handler:TrySetAttribute(key, value)
+            if InCombatLockdown() then
+                self.dirtyTable[key] = value;
+                return;
+            end
+
+            self:SetAttribute(key, value);
+        end
+
+        function handler:PLAYER_REGEN_ENABLED()
+            for k, v in pairs(self.dirtyTable) do
+                self:SetAttribute(k, v);
+                self.dirtyTable[k] = nil;
+            end
+        end
+
+        function handler:VARIABLES_LOADED()
+            self:TrySetAttribute('ActionButtonUseKeyDown', GetCVarBool('ActionButtonUseKeyDown'))
+        end
+
+        function handler:CVAR_UPDATE(cvar)
+            if cvar == 'ActionButtonUseKeyDown' then
+                --
+                self:TrySetAttribute(cvar, GetCVarBool(cvar))
+            end
+        end
+    end
 
     self.Handler = handler;
 
@@ -242,6 +282,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         local btn = CreateFrame("Button", n .. 'Sub' .. i, self.BG, "DFSpellFlyoutSubButtonTemplate");
         btn:SetAttribute('DFAction', (id - 1) * 12 + i)
         -- print(i, n, btn:GetName(), btn:GetAttribute('DFAction'))
+        btn:RegisterForClicks('LeftButtonUp', 'LeftButtonDown')
 
         DragonflightUIActionbarMixin:StyleButton(btn);
         btn:SetScale(0.8);
@@ -260,7 +301,7 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
         btn.Name = _G[btn:GetName() .. 'Name']
 
         handler:WrapScript(btn, 'OnClick', [[
-            -- print('wraped OnClick')
+            -- print('wraped OnClick', self:GetName(), button, down)
 
             local inCombatState = control:GetAttribute('state-combat')
             local inCombat = inCombat == 'true'
@@ -268,19 +309,51 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
             local cursorState = control:GetAttribute('state-cursor')
             local hasCursor = cursorState == 'true'
 
+            local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")
+
             if hasCursor and not inCombat then             
                 self:CallMethod('OnReceiveDrag')
                 return false;    
-            end         
+            end 
 
             local flyout = control:GetFrameRef("DFflyout")
             local closeAfterClick = control:GetAttribute('closeAfterClick')
-            if flyout and flyout:IsShown() and closeAfterClick then
+            if flyout and flyout:IsShown() and closeAfterClick and (down == useKeyDown) and not IsModifiedClick("PICKUPACTION") then
                 flyout:Hide()
             end      
             
             local attributeFrame = control:GetFrameRef("attributeFrame")
             attributeFrame:SetAttribute('update', not attributeFrame:GetAttribute('update'))
+
+            if button == 'Keybind' then                
+                -- if useKeyDown then
+                --     if down then
+                --         return 'LeftButton';
+                --     else
+                --         return false;
+                --     end                    
+                -- else
+                --     if down then
+                --         return false;
+                --     else
+                --         return 'LeftButton';
+                --     end    
+                -- end
+                if down == useKeyDown then
+                    return "LeftButton"
+                end
+                return false
+            end
+
+            if IsModifiedClick("PICKUPACTION") then
+                -- print('PICKUPACTION')
+                return false;
+            end 
+
+            if down == useKeyDown then
+                return button
+            end
+            return false  
         ]])
 
         btn:HookScript('OnClick', function()
