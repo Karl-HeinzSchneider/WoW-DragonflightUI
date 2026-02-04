@@ -3758,6 +3758,7 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
         DragonflightUIMixin:CharacterFrameTabButtonTemplate(tab, true, true)
 
         tab:SetAttribute('type', 'macro')
+        tab:RegisterForClicks('LeftButtonUp', 'LeftButtonDown')
 
         tab:SetScript('PostClick', function(self, button, down)
             --        
