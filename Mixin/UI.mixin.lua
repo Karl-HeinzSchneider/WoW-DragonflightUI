@@ -3793,6 +3793,7 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
     end
 
     function tabFrame:UpdateTabs()
+        -- print('UpdateTabs')
         if InCombatLockdown() then
             -- prevent unsecure update in combat TODO: message?
             self.ShouldUpdate = true
@@ -3837,11 +3838,17 @@ function DragonflightUIMixin:SpellbookEraAddTabs()
         --
         -- print('OnShow PETS')
         tabFrame:UpdateTabs()
+        C_Timer.After(0, function()
+            tabFrame:UpdateTabs()
+        end)
     end)
     PetFrame:HookScript('OnHide', function()
         --
-        -- print('OnShow PETS')
+        -- print('OnHide PETS')
         tabFrame:UpdateTabs()
+        C_Timer.After(0, function()
+            tabFrame:UpdateTabs()
+        end)
     end)
 end
 
