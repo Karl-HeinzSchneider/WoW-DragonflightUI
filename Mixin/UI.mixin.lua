@@ -3007,6 +3007,12 @@ function DragonflightUIMixin:ChangeQuestLogFrameEra()
         QuestLogQuestCount:ClearAllPoints()
         QuestLogQuestCount:SetParent(count)
         QuestLogQuestCount:SetPoint('TOPRIGHT', _G['DragonflightUIQuestLogCountTopRight'], 'BOTTOMLEFT', 1, 3)
+        if DF.API.Version.IsTBC then
+            --
+            hooksecurefunc('QuestLogUpdateQuestCount', function()
+                QuestLogCount:Hide()
+            end)
+        end
     end
 
     do
