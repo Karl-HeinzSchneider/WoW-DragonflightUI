@@ -573,14 +573,37 @@ if DF.API.Version.IsClassic then
             displayName = L["FlyoutMageWater"],
             tooltip = L["FlyoutMageWaterDesc"],
             flyoutDirection = 'TOP',
-            spells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 468766}
+            spells = {5504, 5505, 5506, 6127, 10138, 10139, 10140}
         },
         [4] = {
             icon = 134029,
             displayName = L["FlyoutMageFood"],
             tooltip = L["FlyoutMageFoodDesc"],
             flyoutDirection = 'TOP',
-            spells = {587, 597, 990, 6129, 10144, 10145, 28612}
+            spells = {587, 597, 990, 6129, 10144, 10145}
+        }
+    }
+    for k, v in pairs(t) do
+        classDefaults.MAGE_ALLIANCE[k] = v;
+        classDefaults.MAGE_HORDE[k] = v;
+    end
+elseif DF.API.Version.IsTBC then
+    classDefaults.MAGE_HORDE[1].icon = 135759;
+    classDefaults.MAGE_ALLIANCE[1].icon = 135763;
+    local t = {
+        [3] = {
+            icon = 132793,
+            displayName = L["FlyoutMageWater"],
+            tooltip = L["FlyoutMageWaterDesc"],
+            flyoutDirection = 'TOP',
+            spells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 27090}
+        },
+        [4] = {
+            icon = 134029,
+            displayName = L["FlyoutMageFood"],
+            tooltip = L["FlyoutMageFoodDesc"],
+            flyoutDirection = 'TOP',
+            spells = {587, 597, 990, 6129, 10144, 10145, 33717}
         }
     }
     for k, v in pairs(t) do
@@ -1050,6 +1073,7 @@ function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
     self.db = DF.db:RegisterNamespace(mName, defaults)
     Module:AddClassDefaults()
+    Module:MigrateTBCIcons()
 
     hooksecurefunc(DF:GetModule('Config'), 'AddConfigFrame', function()
         Module:RegisterSettings()
@@ -1316,6 +1340,37 @@ function Module:HookCollections()
         DF:Debug(self, '~picked up:', Module.PreCursorMountID, Module.PreCursorMountSpellID)
         -- self:Print('~picked up:', Module.PreCursorMountID, Module.PreCursorMountSpellID)
     end)
+end
+
+function Module:MigrateTBCIcons()
+    -- print('MigrateTBCIcons')
+    if not DF.API.Version.IsTBC then return end
+
+    local localizedClass, englishClass, classIndex = UnitClass('player')
+
+    if englishClass == 'MAGE' then
+        local englishFaction, localizedFaction = UnitFactionGroup('player')
+
+        if englishFaction then englishClass = englishClass .. '_' .. englishFaction:upper() end
+        -- englishClass = 'MAGE_HORDE'
+    else
+        return;
+    end
+
+    for i = 1, 10 do
+        local t = self.db.char['custom' .. i]
+        if t then
+            -- print(t.icon)
+            if tonumber(t.icon) == 237509 then
+                -- print('~>', englishClass)
+                if englishClass == 'MAGE_ALLIANCE' then
+                    t.icon = 135763;
+                elseif englishClass == 'MAGE_HORDE' then
+                    t.icon = 135759;
+                end
+            end
+        end
+    end
 end
 
 function Module:AddClassDefaults()
