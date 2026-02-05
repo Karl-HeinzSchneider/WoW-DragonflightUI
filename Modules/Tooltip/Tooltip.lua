@@ -2101,7 +2101,7 @@ local function DF_ModifyTooltip(tt)
     local playerLevel = UnitLevel("player")
 
     if playerLevel < reqLevel then
-        tt:AddLine("|cffff4444Benutzbar ab Level "..reqLevel.."|r")
+        tt:AddLine("|cffff4444Benutzbar from Level "..reqLevel.."|r")
     else
         tt:AddLine("|cff44ff44Benutzbar (Level "..reqLevel..")|r")
     end
@@ -2112,4 +2112,12 @@ local function DF_ModifyTooltip(tt)
         self.DFWaterFood = nil
     end)
 end
+
+GameTooltip:HookScript("OnTooltipSetSpell", function(self)
+    DF_ModifyTooltip(self)
+end)
+
+GameTooltip:HookScript("OnTooltipSetItem", function(self)
+    DF_ModifyTooltip(self)
+end)
 
