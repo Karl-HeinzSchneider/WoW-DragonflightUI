@@ -2398,6 +2398,11 @@ function DragonflightUIMixin:ChangeQuestFrame()
         local scroll = QuestProgressScrollFrame
         scroll:SetSize(300, 403)
         scroll:SetPoint('TOPLEFT', progress, 'TOPLEFT', 8, -65)
+
+        if DF.API.Version.IsTBC then
+            progress:ClearAllPoints()
+            progress:SetPoint('TOPLEFT')
+        end
     end
 
     do
