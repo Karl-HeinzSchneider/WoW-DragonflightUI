@@ -556,6 +556,9 @@ do
     L["FlyoutHeaderClassPresets"] = "Class Presets"
     L["FlyoutHeaderClassPresetsDesc"] =
         "Sets the flyout settings and also the buttons of the flyout to a character specific preset."
+    L["FlyoutMageConsumble"] = "Mage conjured Consumable"
+    L["Usable at Level"] = "Usable at Level"
+    L["Usable"] = "Usable"
 end
 
 -- Castbar
