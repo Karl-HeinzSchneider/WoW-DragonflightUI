@@ -2126,14 +2126,14 @@ local function DF_ModifyTooltip(tt)
     tt.DFWaterFood = true
 
     tt:AddLine(" ")
-    tt:AddLine("|cff69ccf0Mage Conjured Consumable|r")
+    tt:AddLine("|cff69ccf0"..L["Mage Consumable"].."|r")
 
     local playerLevel = UnitLevel("player")
-
+    
     if playerLevel < reqLevel then
-        tt:AddLine("|cffff4444Benutzbar from Level "..reqLevel.."|r")
+        tt:AddLine("|cffff4444"..L["Usable at Level"].." "..reqLevel.."|r")
     else
-        tt:AddLine("|cff44ff44Benutzbar (Level "..reqLevel..")|r")
+        tt:AddLine("|cff44ff44"..L["Usable"].." (Level "..reqLevel..")|r")
     end
 
     tt:Show()
