@@ -2083,6 +2083,36 @@ function Module:Mists()
     Module:Era()
 end
 
+
+local mageConsumables = {
+    -- WATER
+    [5504] = 5,    -- Conjure Water Rank1
+    [5505] = 15,
+    [5506] = 25,
+    [6127] = 35,
+    [10138] = 45,
+    [10139] = 55,
+    [10140] = 60,
+    [37420] = 65,
+    [27090] = 70,
+    [42955] = 75,
+    [74625] = 80,
+
+    -- FOOD
+    [587] = 5,     -- Conjure Food R1
+    [597] = 15,
+    [990] = 25,
+    [6129] = 35,
+    [10144] = 45,
+    [10145] = 55,
+    [28612] = 60,
+    [33717] = 65,
+    [27089] = 70,
+    [42956] = 75,
+    [74624] = 80,
+}
+
+
 local function DF_ModifyTooltip(tt)
     if not tt or tt:IsForbidden() then return end
     if tt.DFWaterFood then return end
