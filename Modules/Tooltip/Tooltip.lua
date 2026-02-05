@@ -2082,3 +2082,34 @@ end
 function Module:Mists()
     Module:Era()
 end
+
+local function DF_ModifyTooltip(tt)
+    if not tt or tt:IsForbidden() then return end
+    if tt.DFWaterFood then return end
+
+    local name, spellID = tt:GetSpell()
+    if not spellID then return end
+
+    local reqLevel = mageConsumables[spellID]
+    if not reqLevel then return end
+
+    tt.DFWaterFood = true
+
+    tt:AddLine(" ")
+    tt:AddLine("|cff69ccf0Mage Conjured Consumable|r")
+
+    local playerLevel = UnitLevel("player")
+
+    if playerLevel < reqLevel then
+        tt:AddLine("|cffff4444Benutzbar ab Level "..reqLevel.."|r")
+    else
+        tt:AddLine("|cff44ff44Benutzbar (Level "..reqLevel..")|r")
+    end
+
+    tt:Show()
+
+    tt:HookScript("OnHide", function(self)
+        self.DFWaterFood = nil
+    end)
+end
+
