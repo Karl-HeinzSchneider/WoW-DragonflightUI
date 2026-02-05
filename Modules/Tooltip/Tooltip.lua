@@ -2085,63 +2085,90 @@ end
 
 
 local mageConsumables = {
-    -- WATER
-    [5504] = 5,    -- Conjure Water Rank1
-    [5505] = 15,
-    [5506] = 25,
-    [6127] = 35,
-    [10138] = 45,
-    [10139] = 55,
-    [10140] = 60,
-    [37420] = 65,
-    [27090] = 70,
-    [42955] = 75,
-    [74625] = 80,
+    [5504] = 5,[5505] = 15,[5506] = 25,[6127] = 35,
+    [10138] = 45,[10139] = 55,[10140] = 60,
+    [37420] = 65,[27090] = 70,[42955] = 75,[74625] = 80,
 
-    -- FOOD
-    [587] = 5,     -- Conjure Food R1
-    [597] = 15,
-    [990] = 25,
-    [6129] = 35,
-    [10144] = 45,
-    [10145] = 55,
-    [28612] = 60,
-    [33717] = 65,
-    [27089] = 70,
-    [42956] = 75,
-    [74624] = 80,
+    [587] = 5,[597] = 15,[990] = 25,[6129] = 35,
+    [10144] = 45,[10145] = 55,[28612] = 60,
+    [33717] = 65,[27089] = 70,[42956] = 75,[74624] = 80,
 }
 
+local warlockSpells = {
+    [697] = {level=10, questID=1795},   -- Voidwalker
+    [712] = {level=20, questID=1716},   -- Succubus
+    [691] = {level=30, questID=1740},   -- Felhunter
+    [5784] = {level=20, questID=nil},   -- Felsteed
+    [23161] = {level=40, questID=7631}, -- Dreadsteed
+}
 
 local function DF_ModifyTooltip(tt)
     if not tt or tt:IsForbidden() then return end
-    if tt.DFWaterFood then return end
+    if tt.DFModified then return end
 
     local name, spellID = tt:GetSpell()
     if not spellID then return end
 
-    local reqLevel = mageConsumables[spellID]
-    if not reqLevel then return end
-
-    tt.DFWaterFood = true
-
-    tt:AddLine(" ")
-    tt:AddLine("|cff69ccf0"..L["Mage Consumable"].."|r")
+    tt.DFModified = true
 
     local playerLevel = UnitLevel("player")
-    
-    if playerLevel < reqLevel then
-        tt:AddLine("|cffff4444"..L["Usable at Level"].." "..reqLevel.."|r")
-    else
-        tt:AddLine("|cff44ff44"..L["Usable"].." (Level "..reqLevel..")|r")
+
+    -- =========================
+    -- MAGE WATER / FOOD
+    -- =========================
+    local req = mageConsumables[spellID]
+    if req then
+        tt:AddLine(" ")
+        tt:AddLine("|cff69ccf0Mage Consumable|r")
+
+        if playerLevel < req then
+            tt:AddLine("|cffff4444Benutzbar ab Level "..req.."|r")
+        else
+            tt:AddLine("|cff44ff44Benutzbar (Level "..req..")|r")
+        end
+
+        tt:Show()
     end
 
-    tt:Show()
+    -- =========================
+    -- WARLOCK SPELLS
+    -- =========================
+    local data = warlockSpells[spellID]
+    if data and not IsPlayerSpell(spellID) then
+        tt:AddLine(" ")
+        tt:AddLine("|cffff66ccWarlock Spell|r")
+        tt:AddLine("|cffff4444Noch nicht gelernt|r")
+
+        if playerLevel < data.level then
+            tt:AddLine("|cffffff00Benötigt Level: "..data.level.."|r")
+        else
+            tt:AddLine("|cff44ff44Jetzt lernbar|r")
+        end
+
+        if data.questID then
+            local title = nil
+
+            if C_QuestLog and C_QuestLog.GetTitleForQuestID then
+                title = C_QuestLog.GetTitleForQuestID(data.questID)
+            end
+
+            if not title then
+                title = "QuestID "..data.questID
+            end
+
+            tt:AddLine("|cff00ccffQuest: "..title.."|r")
+        end
+
+        tt:Show()
+    end
 
     tt:HookScript("OnHide", function(self)
-        self.DFWaterFood = nil
+        self.DFModified = nil
     end)
 end
+
+
+
 
 GameTooltip:HookScript("OnTooltipSetSpell", function(self)
     DF_ModifyTooltip(self)
