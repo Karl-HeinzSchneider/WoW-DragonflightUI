@@ -2387,6 +2387,11 @@ function DragonflightUIMixin:ChangeQuestFrame()
         local scroll = QuestRewardScrollFrame
         scroll:SetSize(300, 403)
         scroll:SetPoint('TOPLEFT', reward, 'TOPLEFT', 8, -65)
+
+        if DF.API.Version.IsTBC then
+            reward:ClearAllPoints()
+            reward:SetPoint('TOPLEFT')
+        end
     end
 
     do
