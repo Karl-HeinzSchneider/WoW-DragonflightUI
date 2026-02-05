@@ -603,7 +603,7 @@ elseif DF.API.Version.IsTBC then
             displayName = L["FlyoutMageFood"],
             tooltip = L["FlyoutMageFoodDesc"],
             flyoutDirection = 'TOP',
-            spells = {587, 597, 990, 6129, 10144, 10145, 33717}
+            spells = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
         }
     }
     for k, v in pairs(t) do
