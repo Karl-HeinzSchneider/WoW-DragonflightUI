@@ -1,5 +1,5 @@
 -- print('esES, esMX')
--- Spanish Translations by Woopy
+-- Spanish Translations by Dalan
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 local L = {}
 
@@ -302,27 +302,51 @@ do
     L["ButtonTableHideKeybindText"] = "Ocultar texto de asignación de teclas"
     L["ButtonTableHideKeybindTextDesc"] = ""
     L["ButtonTableShortenKeybindText"] = "Acortar texto de tecla"
-    L["ButtonTableShortenKeybindTextDesc"] =
-        "Acorta el texto de la tecla, por ejemplo 'sF' en lugar de 's-F' y reemplazos similares."
+    L["ButtonTableShortenKeybindTextDesc"] = "Acorta el texto de la tecla, por ejemplo 'sF' en lugar de 's-F' y reemplazos similares."
     L["ButtonTableKeybindFontSize"] = "Tamaño de fuente de asignación de teclas"
     L["ButtonTableKeybindFontSizeDesc"] = ""
-    L["MoreOptionsHideBarArt"] = "Ocultar arte de la barra"
+    
+    L["MoreOptionsHideBarArt"] = "Ocultar arte de la barra"    
     L["MoreOptionsHideBarArtDesc"] = ""
     L["MoreOptionsHideBarScrolling"] = "Ocultar desplazamiento de barra"
     L["MoreOptionsHideBarScrollingDesc"] = ""
+    L["MoreOptionsHideBorder"] = "Ocultar borde"
+    L["MoreOptionsHideBorderDesc"] = "*En progreso*"
+    L["MoreOptionsHideDivider"] = "Ocultar separador de la barra"
+    L["MoreOptionsHideDividerDesc"] = "Oculta la línea divisoria entre secciones de la barra"
+
     L["MoreOptionsGryphons"] = "Grifos"
     L["MoreOptionsGryphonsDesc"] = "Grifos"
     L["MoreOptionsIconRangeColor"] = "Color del icono por alcance"
-    L["MoreOptionsIconRangeColorDesc"] =
-        "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
+    L["MoreOptionsIconRangeColorDesc"] = "Cambia el color del icono cuando esté fuera de alcance, similar a RedRange/tullaRange"
     L["ExtraOptionsPreset"] = "Preajuste"
     L["ExtraOptionsResetToDefaultPosition"] = "Restablecer a la posición predeterminada"
-    L["ExtraOptionsPresetDesc"] =
-        "Establece la escala, anclaje, anchorparent, anchorframe, X y Y al preajuste elegido, pero no cambia ninguna otra configuración."
+    L["ExtraOptionsPresetDesc"] = "Establece la escala, anclaje, anchorparent, anchorframe, X y Y al preajuste elegido, pero no cambia ninguna otra configuración."
     L["ExtraOptionsModernLayout"] = "Diseño moderno (predeterminado)"
     L["ExtraOptionsModernLayoutDesc"] = ""
     L["ExtraOptionsClassicLayout"] = "Diseño clásico (barra lateral)"
     L["ExtraOptionsClassicLayoutDesc"] = ""
+
+    -- Range
+    L["ActionbarRangeName"] = "Alcance de la barra de acción"
+    L["ActionbarRangeNameDesc"] = "Configuraciones relacionadas con el alcance de habilidades en la barra de acción"
+
+    L["ActionbarRangeHeader"] = "Opciones de alcance"
+    L["ActionbarRangeHeaderDesc"] = "Ajustes para indicar cuando una habilidad está fuera de alcance, sin maná o no usable"
+
+    L["ActionbarRangeHeaderHotkey"] = "Tecla asignada" -- HotKey
+    L["ActionbarRangeHeaderHotkeyDesc"] = "Opciones de color para las teclas asignadas según el estado de la habilidad"
+    L["ActionbarRangeHotkeyColor"] = "Normal"
+    L["ActionbarRangeHotkeyColorDesc"] = "Color normal de la fuente de la tecla asignada"
+    L["ActionbarRangeHotkeyOutOfRangeColor"] = "Fuera de alcance"
+    L["ActionbarRangeHotkeyOutOfRangeColorDesc"] = "Color de la fuente de la tecla asignada cuando la habilidad está fuera de alcance"
+
+    L["ActionbarRangeHeaderNotUsable"] = "No usable"
+    L["ActionbarRangeHeaderNotUsableDesc"] = "Opciones para cuando la habilidad no se puede usar"
+    L["ActionbarRangeHeaderOutOfRange"] = "Fuera de alcance"
+    L["ActionbarRangeHeaderOutOfRangeDesc"] = "Opciones para cuando la habilidad está fuera de alcance"
+    L["ActionbarRangeHeaderOutOfMana"] = "Sin maná"
+    L["ActionbarRangeHeaderOutOfManaDesc"] = "Opciones para cuando no hay suficiente maná para usar la habilidad"
 
     -- XP
     L["XPOptionsName"] = "EXP"
@@ -338,7 +362,7 @@ do
     L["XPOptionsShowXPPercent"] = "Mostrar porcentaje de EXP"
     L["XPOptionsShowXPPercentDesc"] = ""
 
-    -- Reputación
+    -- rep
     L["RepOptionsName"] = "Reputación"
     L["RepOptionsDesc"] = "Reputación"
     L["RepOptionsStyle"] = L["ButtonTableStyle"]
@@ -402,8 +426,7 @@ do
     L["BuffsOptionsExpandedDesc"] = ""
 
     L["BuffsOptionsUseStateHandler"] = "Usar manejador de estado"
-    L["BuffsOptionsUseStateHandlerDesc"] =
-        "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros complementos (por ejemplo, MinimapAlert), ya que no hace que los marcos sean seguros."
+    L["BuffsOptionsUseStateHandlerDesc"] = "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros complementos (por ejemplo, MinimapAlert), ya que no hace que los marcos sean seguros."
 end
 
 -- Flyout
@@ -519,22 +542,31 @@ do
     L["MinimapShowPing"] = "Mostrar ping"
     L["MinimapNotYetImplemented"] = "(NO IMPLEMENTADO AÚN)"
     L["MinimapShowPingInChat"] = "Mostrar ping en el chat"
+    L["MinimapShape"] = "Forma del minimapa"
+    L["MinimapShapeDesc"] = "Selecciona la forma del minimapa (redondo o cuadrado)"
+    L["MinimapRotateDescAdditional"] = "\n\nNota: Solo funciona con la forma redonda del minimapa."
     L["MinimapHideCalendar"] = "Ocultar calendario"
     L["MinimapHideCalendarDesc"] = "Oculta el botón del calendario"
+    L["MinimapHideHeader"] = "Ocultar encabezado"
+    L["MinimapHideHeaderDesc"] = "Oculta el encabezado del minimapa"
+    L["MinimapHideClock"] = "Ocultar reloj"
+    L["MinimapHideClockDesc"] = "Oculta el reloj del minimapa"
+    L["MinimapHideZoneText"] = "Ocultar texto de zona"
+    L["MinimapHideZoneTextDesc"] = "Oculta el texto de la zona en el minimapa"
     L["MinimapHideZoomButtons"] = "Ocultar botones de zoom"
     L["MinimapHideZoomDesc"] = "Oculta los botones de zoom (+) (-)"
     L["MinimapSkinMinimapButtons"] = "Personalizar botones del minimapa"
-    L["MinimapSkinMinimapButtonsDesc"] =
-        "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
+    L["MinimapSkinMinimapButtonsDesc"] = "Cambia el estilo de los botones del minimapa usando LibDBIcon (la mayoría de los addons lo usan)"
     L["MinimapSkinMinimapHideButtons"] = "Ocultar botones del minimapa"
-    L["MinimapSkinMinimapHideButtonsDesc"] = "Oculta los botones del minimapa cuando el cursor no está sobre él." ..
-                                                 "\n\nNota: solo funciona con botones que usan LibDBIcon"
-    L["MinimapZonePanelPosition"] = "Posición del panel de zona"
-    L["MinimapZonePanelPositionDesc"] =
-        "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
+    L["MinimapSkinMinimapHideButtonsDesc"] = "Oculta los botones del minimapa cuando el cursor no está sobre él." .."\n\nNota: solo funciona con botones que usan LibDBIcon"
+    L["MinimapZonePanelPosition"] = "Posición del encabezado"
+    L["MinimapZonePanelPositionDesc"] = "Establece la posición del encabezado"
     L["MinimapUseStateHandler"] = "Usar controlador de estado"
-    L["MinimapUseStateHandlerDesc"] =
-        "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."
+    L["MinimapUseStateHandlerDesc"] = "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."
+
+    L["MinimapTrackerName"] = "Rastreador"
+    L["MinimapDurabilityName"] = "Durabilidad"
+    L["MinimapLFGName"] = "Buscando grupo"
 end
 
 -- UI
