@@ -511,6 +511,9 @@ do
     L["FlyoutHeaderClassPresets"] = "Пресеты классов"
     L["FlyoutHeaderClassPresetsDesc"] =
         "Устанавливает настройки выпадающего меню и кнопки выпадающего меню в соответствии с пресетом, специфичным для персонажа."
+    L["FlyoutMageConsumble"] = "Mage conjured Consumable"
+    L["Usable at Level"] = "Usable at Level"
+    L["Usable"] = "Usable"
 end
 
 -- Castbar
