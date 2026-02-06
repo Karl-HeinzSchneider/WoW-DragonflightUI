@@ -2113,18 +2113,20 @@ local function DF_ModifyTooltip(tt)
 
     local playerLevel = UnitLevel("player")
 
-    -- =========================
-    -- MAGE WATER / FOOD
-    -- =========================
+-- =========================
+-- MAGE WATER / FOOD
+-- =========================
     local req = mageConsumables[spellID]
     if req then
         tt:AddLine(" ")
-        tt:AddLine("|cff69ccf0Mage Consumable|r")
+        tt:AddLine("|cff69ccf0"..L["FlyoutMageConsumble"].."|r")
+
+        local playerLevel = UnitLevel("player")
 
         if playerLevel < req then
-            tt:AddLine("|cffff4444Benutzbar ab Level "..req.."|r")
+            tt:AddLine("|cffff4444"..L["Usable at Level"].." "..req.."|r")
         else
-            tt:AddLine("|cff44ff44Benutzbar (Level "..req..")|r")
+            tt:AddLine("|cff44ff44"..L["Usable"].." (Level "..req..")|r")
         end
 
         tt:Show()
