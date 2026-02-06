@@ -559,6 +559,11 @@ do
     L["FlyoutMageConsumble"] = "Mage conjured Consumable"
     L["Usable at Level"] = "Usable at Level"
     L["Usable"] = "Usable"
+    L["WARLOCK_SPELL"] = "Warlock Spell"
+    L["NOT_LEARNED"] = "Not learned yet"
+    L["LEARNABLE_NOW"] = "Learnable now"
+    L["REQUIRES_LEVEL"] = "Requires level"
+    L["QUEST_REQUIRED"] = "Quest required:"
 end
 
 -- Castbar
