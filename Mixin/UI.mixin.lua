@@ -3387,6 +3387,12 @@ function DragonflightUIMixin:ChangeTalentsEra()
     closeButton:ClearAllPoints()
     closeButton:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 1, 0)
 
+    local blizzClose = _G['PlayerTalentFrameCancelButton']
+    if blizzClose then
+        blizzClose:ClearAllPoints()
+        blizzClose:Hide()
+    end
+
     PlayerTalentFrameTitleText:ClearAllPoints()
     PlayerTalentFrameTitleText:SetPoint('TOP', frame, 'TOP', 0, -5)
     PlayerTalentFrameTitleText:SetPoint('LEFT', frame, 'LEFT', 60, 0)
