@@ -610,6 +610,8 @@ elseif DF.API.Version.IsTBC then
         classDefaults.MAGE_ALLIANCE[k] = v;
         classDefaults.MAGE_HORDE[k] = v;
     end
+
+    classDefaults.WARLOCK[1].spells = {688, 697, 712, 713, 691, 30146, 1122, 18540}
 end
 -- DevTools_Dump(classDefaults)
 
