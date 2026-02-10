@@ -346,7 +346,7 @@ local optionsPlayer = {
     set = setOption,
     args = {}
 }
-if DF.Era then
+if DF.Era or DF.API.Version.IsTBC then
     local moreOptions = {
         showRank = {
             type = 'toggle',
