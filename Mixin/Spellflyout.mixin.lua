@@ -22,7 +22,7 @@ DragonflightUISpellFlyoutButtonMixin = {}
 function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     -- print('DragonflightUISpellFlyoutButtonMixin:OnLoad()')
 
-    self:RegisterForClicks('LeftButtonUp', 'LeftButtonDown')
+    self:RegisterForClicks('LeftButtonUp')
 
     Mixin(self, DragonflightUIStateHandlerMixin)
     self:InitStateHandler()
