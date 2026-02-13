@@ -1769,7 +1769,7 @@ function DFProfessionMixin:UpdateHeader()
     else
         self.NineSlice.Text:SetText(prof.nameLoc)
 
-        if DF.Era then
+        if DF.Era or DF.API.Version.IsTBC then
             self.LinkButton:Hide()
         else
             self.LinkButton:Show()
