@@ -2612,6 +2612,7 @@ function DFProfessionFrameRecipeListMixin:OnLoad()
                             if elementData.isTradeskill then
                                 HandleModifiedItemClick(GetTradeSkillRecipeLink(elementData.id));
                             elseif elementData.isCraft then
+                                HandleModifiedItemClick(GetCraftRecipeLink(elementData.id));
                             end
                         else
                             self.selectionBehavior:Select(button);
