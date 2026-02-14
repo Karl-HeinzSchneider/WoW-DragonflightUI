@@ -1,5 +1,7 @@
-if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then
-    return
+if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then return end
+
+if not (G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC) then
+    return -- only era
 end
 
 LibQuestXPDB = {
@@ -4351,5 +4353,5 @@ LibQuestXPDB = {
     [9422] = {["xp"] = 6600, ["level"] = 60},
     [9556] = {["xp"] = 4950, ["level"] = 60},
     [9664] = {["xp"] = 6600, ["level"] = 60},
-    [9665] = {["xp"] = 6600, ["level"] = 60},
+    [9665] = {["xp"] = 6600, ["level"] = 60}
 }
