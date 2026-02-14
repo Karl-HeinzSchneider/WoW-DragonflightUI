@@ -2,7 +2,7 @@ if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then
     return -- Don't load for Retail
 end
 
-if not (G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC) then
+if not (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC) then
     return -- only tbc
 end
 

@@ -1,6 +1,6 @@
 if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then return end
 
-if not (G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC) then
+if not (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC) then
     return -- only era
 end
 
