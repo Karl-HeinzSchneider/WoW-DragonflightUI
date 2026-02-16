@@ -481,6 +481,96 @@ function Module:ChangeFonts()
     end
 end
 
+function Module:AddRoleSelectDropdownOption()
+    -- 
+    local PlayerClassRoleTable = DragonflightUITalentsPanelMixin.PlayerClassRoleTable
+    local function canUnitClassBeRole(unit, role)
+        local _, _, classID = UnitClass(unit)
+
+        local classTable = PlayerClassRoleTable[classID]
+        if not classTable then return false; end
+
+        -- DevTools_Dump(classTable)
+
+        for _, v in ipairs(classTable) do
+            --
+            for _, v2 in ipairs(v) do
+                --
+                -- print(k2, v2)
+                if v2 == role then return true; end
+            end
+        end
+
+        return false;
+    end
+
+    local function addMenu(ownerRegion, rootDescription, contextData)
+        local unit = contextData.unit;
+        if not unit then return end
+
+        if not UnitIsPlayer(unit) then return end
+        -- if not IsInGroup() and not IsInRaid() then return end;
+
+        -- local menuButton = MenuUtil.CreateButton('testbutton')
+        rootDescription:CreateDivider()
+        rootDescription:CreateTitle("DragonflightUI")
+
+        local submenu = rootDescription:CreateButton('Select Role')
+
+        local isLeader = UnitIsGroupLeader('player');
+        local hasAssist = UnitIsGroupAssistant('player');
+
+        if isLeader or hasAssist or UnitIsUnit(unit, 'player') then
+            submenu:SetEnabled(true);
+        else
+            submenu:SetEnabled(false);
+        end
+
+        local tank = submenu:CreateRadio(
+                         '|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:16:16:0:0:64:64:0:19:22:41|t ' .. 'Tank',
+                         function()
+                return UnitGroupRolesAssigned(unit) == 'TANK'
+            end, function()
+                UnitSetRole(unit, 'TANK')
+            end)
+        if not canUnitClassBeRole(unit, 'TANK') then tank:SetEnabled(false) end
+
+        local heal = submenu:CreateRadio(
+                         '|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:16:16:0:0:64:64:20:39:1:20|t ' .. 'Healer',
+                         function()
+                return UnitGroupRolesAssigned(unit) == 'HEALER'
+            end, function()
+                UnitSetRole(unit, 'HEALER')
+            end)
+        if not canUnitClassBeRole(unit, 'HEALER') then heal:SetEnabled(false) end
+
+        local dd = submenu:CreateRadio(
+                       '|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES:16:16:0:0:64:64:20:39:22:41|t ' .. 'Damage',
+                       function()
+                return UnitGroupRolesAssigned(unit) == 'DAMAGER'
+            end, function()
+                UnitSetRole(unit, 'DAMAGER')
+            end)
+        -- if not canUnitClassBeRole(unit, 'DAMAGER') then dd:SetEnabled(false) end
+
+        local noRole = submenu:CreateRadio('No Role', function()
+            return UnitGroupRolesAssigned(unit) == 'NONE'
+        end, function()
+            UnitSetRole(unit, 'NONE')
+        end)
+    end
+
+    local t = {
+        'MENU_UNIT_SELF', 'MENU_UNIT_PLAYER', 'MENU_UNIT_TARGET', 'MENU_UNIT_FOCUS', 'MENU_UNIT_PARTY',
+        'MENU_UNIT_RAID', 'MENU_UNIT_RAID_PLAYER'
+    }
+    for k, v in ipairs(t) do
+        --
+        Menu.ModifyMenu(v, addMenu)
+    end
+
+end
+
 function Module:TakePicture()
     if not Module.PictureTakerFrame then
         local pt = CreateFrame('FRAME', 'DragonflightUIPictureTakerFrame', UIParent);
@@ -565,6 +655,7 @@ function Module:TBC()
     self:HookDrag()
     self:AddPortraitMasks()
     self:HookClassIcon()
+    self:AddRoleSelectDropdownOption()
 
     local EditModeModule = DF:GetModule('Editmode');
 

@@ -867,6 +867,8 @@ if DF.API.Version.IsSoD then
     PlayerClassRoleTable[7][2] = {'DAMAGER', 'TANK'} -- shaman tank
 end
 
+DragonflightUITalentsPanelMixin.PlayerClassRoleTable = PlayerClassRoleTable;
+
 function DragonflightUITalentsPanelMixin:GetPlayerRole(panelID)
     local localizedClass, englishClass, classIndex = UnitClass('player');
 
