@@ -1275,9 +1275,38 @@ function DragonflightUIPlayerSpecMixin:Update()
         self:SetChecked(false)
     end
 
+    self:UpdateIcon()
+end
+
+function DragonflightUIPlayerSpecMixin:UpdateIcon()
     local normalTexture = self:GetNormalTexture();
-    -- SetPortraitTexture(normalTexture, 'player');
-    normalTexture:SetTexture('Interface\\Icons\\Ability_Marksmanship')
+
+    local specIndex = self.specIndex;
+
+    local t = {}
+    local icons = {}
+
+    for i = 1, 3 do
+        local id, name, description, iconTexture, pointsSpent, background, previewPointsSpent, isUnlocked =
+            GetTalentTabInfo(i, false, false, specIndex)
+        local totalPoints = pointsSpent + previewPointsSpent
+        t[i] = totalPoints
+        icons[i] = iconTexture
+    end
+
+    if t[1] > t[2] and t[1] > t[3] then
+        -- print(111)
+        normalTexture:SetTexture(icons[1])
+    elseif t[2] > t[1] and t[2] > t[3] then
+        -- print(222)
+        normalTexture:SetTexture(icons[2])
+    elseif t[3] > t[1] and t[3] > t[2] then
+        -- print(333)
+        normalTexture:SetTexture(icons[3])
+    else
+        -- print('else')
+        normalTexture:SetTexture('Interface\\Icons\\Ability_Marksmanship')
+    end
 end
 
 -------
