@@ -2505,6 +2505,9 @@ do
         local searchText = strupper(searchBoxRef:GetText())
 
         if searchText == '' then return true end
+        if string.find(searchText, "%%") then return false end
+        -- if searchText == '%' then return false end
+        -- searchText = string.gsub(searchText, "%%", "")
 
         local id = elementData.id
         local info = elementData.recipeInfo
