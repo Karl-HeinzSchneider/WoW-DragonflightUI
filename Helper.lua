@@ -107,3 +107,61 @@ function Helper:ColorGradiant(percent)
     return red, green, blue
 end
 
+function Helper:CreateFrameEventCallback(event, fn)
+    return EventRegistry:RegisterFrameEventAndCallback(event, function(_, ...)
+        fn(...)
+    end)
+end
+
+function Helper:CreateCVARCallback(cvar, fn, notInCombat)
+    -- print('CreateCVARCallback', cvar)
+
+    local ownerID = nil;
+    local ownerIDLoaded = nil;
+    local ownerIDCombat = nil;
+
+    if notInCombat then
+        ownerIDLoaded = Helper:CreateFrameEventCallback('VARIABLES_LOADED', function(...)
+            -- print('~VARIABLES_LOADED', ...)
+            if InCombatLockdown() then return end
+            fn();
+        end)
+
+        ownerID = Helper:CreateFrameEventCallback('CVAR_UPDATE', function(...)
+            -- print('~CVAR_UPDATE', ...)
+            if InCombatLockdown() then return end
+            local c, value = ...;
+
+            if c == cvar then fn(); end
+        end)
+
+        ownerIDCombat = Helper:CreateFrameEventCallback('PLAYER_REGEN_ENABLED', function(...)
+            -- print('~PLAYER_REGEN_ENABLED', ...)
+            if InCombatLockdown() then return end
+            fn();
+        end)
+    else
+        ownerIDLoaded = Helper:CreateFrameEventCallback('VARIABLES_LOADED', function(...)
+            -- print('~VARIABLES_LOADED', ...)
+            fn();
+        end)
+
+        ownerID = Helper:CreateFrameEventCallback('CVAR_UPDATE', function(...)
+            -- print('~CVAR_UPDATE', ...)
+            local c, value = ...;
+
+            if c == cvar then fn(); end
+        end)
+    end
+
+    return ownerID, ownerIDLoaded, ownerIDCombat
+end
+
+-- function Helper:CreateFrameEventCallback(event, cvar, fn)
+--     print('CreateFrameEventCallback', event, cvar)
+--     return EventRegistry:RegisterFrameEventAndCallback(event, function(self, c, value)
+--         -- print("showed the mount journal")
+--         print(event, c, value)
+--     end)
+-- end
+
