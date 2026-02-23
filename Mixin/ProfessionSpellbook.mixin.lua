@@ -1,3 +1,8 @@
+local addonName, addonTable = ...;
+local Helper = addonTable.Helper;
+local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
+
 ---@diagnostic disable: undefined-global, undefined-field, need-check-nil, inject-field, param-type-mismatch
 DragonFlightUIProfessionSpellbookMixin = {}
 local base = 'Interface\\Addons\\DragonflightUI\\Textures\\UI\\'
@@ -21,19 +26,75 @@ for k, v in ipairs(primary) do profs.primary[v] = true end
 function DragonFlightUIProfessionSpellbookMixin:InitHook()
     self:SetScript('OnEvent', self.OnEvent)
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    self:RegisterEvent("SPELLS_CHANGED");
+    self:RegisterEvent("SKILL_LINES_CHANGED");
+
+    if not DF.Era then self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE"); end
+
+    if DF.API.Version.IsTBC then
+        local ownerID, ownerIDLoaded, ownerIDCombat = Helper:CreateCVARCallback('ActionButtonUseKeyDown', function()
+            -- print('cb')
+            self:FixSpellButtonsCVAR();
+        end, true)
+    end
+end
+
+function DragonFlightUIProfessionSpellbookMixin:FixSpellButtonsCVAR()
+    if true then return end
+    -- print('FixSpellButtonsCVAR')
+
+    if InCombatLockdown() then
+        -- prevent unsecure update in combat TODO: message?
+        self.ShouldUpdate = true
+        return
+    end
+
+    local key;
+    if GetCVarBool('ActionButtonUseKeyDown') then
+        key = 'AnyUp';
+    else
+        key = 'AnyDown';
+    end
+    -- print('~>', key)
+
+    local t = {
+        self.PrimaryProfession1, self.PrimaryProfession2, self.SecondaryProfession1, self.SecondaryProfession2,
+        self.SecondaryProfession3, self.SecondaryProfession4
+    }
+
+    for k, v in ipairs(t) do
+        --
+        -- v.SpellButton1:Hide();
+        -- v.SpellButton2:Hide();
+        if v.SpellButton1 then
+            --
+            -- print(1)
+            v.SpellButton1:RegisterForClicks(key)
+        end
+
+        if v.SpellButton2 then
+            --
+            -- print(2)
+            v.SpellButton2:RegisterForClicks(key)
+        end
+    end
 end
 
 function DragonFlightUIProfessionSpellbookMixin:OnEvent(event, arg1, ...)
+    -- print('SpellbookMixin:', event, arg1, ...)
     if event == 'PLAYER_REGEN_ENABLED' then
         --
         -- print('PLAYER_REGEN_ENABLED', self.ShouldUpdate)
         if self.ShouldUpdate then self:Update() end
+    else
+        self:Update()
     end
 end
 
 function DragonFlightUIProfessionSpellbookMixin:Update()
     -- print('DragonFlightUIProfessionSpellbookMixin:Update()')
-
     if InCombatLockdown() then
         -- prevent unsecure update in combat TODO: message?
         self.ShouldUpdate = true
@@ -137,6 +198,8 @@ function DragonFlightUIProfessionSpellbookMixin:Update()
     self:FormatProfession(self.SecondaryProfession2, skillTable['fishing'])
     self:FormatProfession(self.SecondaryProfession3, skillTable['cooking'])
     self:FormatProfession(self.SecondaryProfession4, skillTable['firstaid'])
+
+    if DF.API.Version.IsTBC then self:FixSpellButtonsCVAR(); end
 end
 
 function DragonFlightUIProfessionSpellbookMixin:GetSpellBookID(name)
@@ -168,15 +231,17 @@ local function UpdateProfessionButton(self)
     if self.spellString:GetText() == data.nameLoc then
         --
         -- print('UpdateProfessionButton', 'no update needed')
-        return
+        -- return
     end
 
     if InCombatLockdown() then return end -- prevent unsecure update in combat TODO: message?
 
     local skillType, spellID = GetSpellBookItemInfo(data.nameLoc)
+    -- print(skillType, spellID)
     self.DFNameLoc = data.nameLoc
     self.DFSpellID = spellID
 
+    if DF.API.Version.IsTBC then self:RegisterForClicks('AnyUp', 'AnyDown') end
     self:SetAttribute('type1', 'spell')
     self:SetAttribute('spell', spellID)
 
