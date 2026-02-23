@@ -511,11 +511,24 @@ function Module:AddRoleSelectDropdownOption()
         if not UnitIsPlayer(unit) then return end
         -- if not IsInGroup() and not IsInRaid() then return end;
 
-        -- local menuButton = MenuUtil.CreateButton('testbutton')
-        rootDescription:CreateDivider()
-        rootDescription:CreateTitle("DragonflightUI")
+        local submenu;
+        if false then
+            -- local menuButton = MenuUtil.CreateButton('testbutton')
+            rootDescription:CreateDivider()
+            rootDescription:CreateTitle("DragonflightUI")
 
-        local submenu = rootDescription:CreateButton('Select Role')
+            submenu = rootDescription:CreateButton('Select Role')
+        else
+            local tit = MenuUtil.CreateTitle('DragonflightUI')
+            rootDescription:Insert(tit, 2)
+
+            ---@diagnostic disable-next-line: missing-parameter
+            submenu = MenuUtil.CreateButton('Select Role')
+            rootDescription:Insert(submenu, 3)
+
+            local div = MenuUtil.CreateDivider()
+            rootDescription:Insert(div, 4)
+        end
 
         local isLeader = UnitIsGroupLeader('player');
         local hasAssist = UnitIsGroupAssistant('player');
