@@ -367,10 +367,10 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
     -- print('~', header:GetName())
 
     if filter == 'HELPFUL' then
-        header:SetAttribute("template", "DragonflightUIAuraButtonBuffTemplate");
+        header:SetAttribute("template", "DragonflightUIAuraButtonBuffTemplateKeyDown");
 
         header:SetAttribute("includeWeapons", 2);
-        header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplateKeyUp');
+        header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplateKeyDown');
     elseif filter == 'HARMFUL' then
         header:SetAttribute("template", "DragonflightUIAuraButtonDebuffTemplate");
     else
@@ -415,6 +415,17 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
 
     function header:ActiveChildren()
         return siter_active_children, self, 0;
+    end
+
+    -- provide a simple iterator to the header
+    local function siter__children(h, i)
+        i = i + 1;
+        local child = h:GetAttribute("child" .. i);
+        if child then return i, child, child:GetAttribute("index"); end
+    end
+
+    function header:AllChildren()
+        return siter__children, self, 0;
     end
 
     -- The update style function
@@ -490,6 +501,48 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
         header:UpdateStyleAll()
     end)
     header:UpdateStyleAll()
+
+    if self:GetAttribute('DFFilter') == 'HELPFUL' then
+        self:FixCancelAura();
+
+        local ownerID, ownerIDLoaded, ownerIDCombat = Helper:CreateCVARCallback('ActionButtonUseKeyDown', function()
+            -- print('cb')
+            self:FixCancelAura();
+        end, true)
+    end
+end
+
+function DragonflightUIBuffFrameContainerTemplateMixin:FixCancelAura()
+    local filter = self:GetAttribute('DFFilter');
+    if (filter ~= 'HELPFUL') then return end
+
+    -- print('FixCancelAura')
+
+    -- C_CVar.SetCVar('ActionButtonUseKeyDown', 1)
+    -- C_CVar.SetCVar('ActionButtonUseKeyDown', 0)
+    -- GetCVarBool('ActionButtonUseKeyDown')
+    local template;
+    local key;
+
+    if GetCVarBool('ActionButtonUseKeyDown') then
+        template = 'DragonflightUIAuraButtonBuffTemplateKeyDown';
+        key = 'RightButtonDown';
+    else
+        template = 'DragonflightUIAuraButtonBuffTemplateKeyUp';
+        key = 'RightButtonUp';
+    end
+    -- print('~>', template, key)
+
+    local header = self.Header;
+
+    header:SetAttribute("template", template);
+    -- header:SetAttribute("includeWeapons", 2);
+    header:SetAttribute("weaponTemplate", template);
+
+    for _, frame in header:AllChildren() do
+        --
+        frame:RegisterForClicks(key)
+    end
 end
 
 function DragonflightUIBuffFrameContainerTemplateMixin:SetState(state)
@@ -587,6 +640,8 @@ function DragonflightUIBuffFrameContainerTemplateMixin:Update()
     header.hideCooldownSwipe = state.hideCooldownSwipe;
     header.hideCooldownDurationText = state.hideCooldownDurationText;
     header:UpdateStyleAll();
+
+    if self:GetAttribute('DFFilter') == 'HELPFUL' then self:FixCancelAura() end
 end
 
 -- button template
