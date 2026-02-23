@@ -504,7 +504,12 @@ function Module:AddRoleSelectDropdownOption()
         return false;
     end
 
+    local function incombatWarning()
+        Module:Print("Can't set role in combat through addon code, sorry.")
+    end
+
     local function addMenu(ownerRegion, rootDescription, contextData)
+        -- print('addMenu', ownerRegion, rootDescription, contextData)
         local unit = contextData.unit;
         if not unit then return end
 
@@ -544,6 +549,10 @@ function Module:AddRoleSelectDropdownOption()
                          function()
                 return UnitGroupRolesAssigned(unit) == 'TANK'
             end, function()
+                if InCombatLockdown() then
+                    incombatWarning();
+                    return;
+                end
                 UnitSetRole(unit, 'TANK')
             end)
         if not canUnitClassBeRole(unit, 'TANK') then tank:SetEnabled(false) end
@@ -553,6 +562,10 @@ function Module:AddRoleSelectDropdownOption()
                          function()
                 return UnitGroupRolesAssigned(unit) == 'HEALER'
             end, function()
+                if InCombatLockdown() then
+                    incombatWarning();
+                    return;
+                end
                 UnitSetRole(unit, 'HEALER')
             end)
         if not canUnitClassBeRole(unit, 'HEALER') then heal:SetEnabled(false) end
@@ -562,6 +575,10 @@ function Module:AddRoleSelectDropdownOption()
                        function()
                 return UnitGroupRolesAssigned(unit) == 'DAMAGER'
             end, function()
+                if InCombatLockdown() then
+                    incombatWarning();
+                    return;
+                end
                 UnitSetRole(unit, 'DAMAGER')
             end)
         -- if not canUnitClassBeRole(unit, 'DAMAGER') then dd:SetEnabled(false) end
@@ -569,6 +586,10 @@ function Module:AddRoleSelectDropdownOption()
         local noRole = submenu:CreateRadio('No Role', function()
             return UnitGroupRolesAssigned(unit) == 'NONE'
         end, function()
+            if InCombatLockdown() then
+                incombatWarning();
+                return;
+            end
             UnitSetRole(unit, 'NONE')
         end)
     end
