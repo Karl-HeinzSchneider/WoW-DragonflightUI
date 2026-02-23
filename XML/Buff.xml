@@ -47,6 +47,16 @@ UI_shared.xsd">
 			<Attribute name="DFFilter" type="string" value="HELPFUL" />
 		</Attributes>
 	</Button>
+	<Button name="DragonflightUIAuraButtonBuffTemplateKeyDown" inherits="DragonflightUIAuraButtonTemplate" registerForClicks="RightButtonDown" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HELPFUL" />
+		</Attributes>
+	</Button>
+	<Button name="DragonflightUIAuraButtonBuffTemplateKeyUp" inherits="DragonflightUIAuraButtonTemplate" registerForClicks="RightButtonUp" virtual="true">
+		<Attributes>
+			<Attribute name="DFFilter" type="string" value="HELPFUL" />
+		</Attributes>
+	</Button>
 	<Button name="DragonflightUIAuraButtonDebuffTemplate" inherits="DragonflightUIAuraButtonTemplate" virtual="true">
 		<Attributes>
 			<Attribute name="DFFilter" type="string" value="HARMFUL" />

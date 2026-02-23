@@ -370,7 +370,7 @@ function DragonflightUIBuffFrameContainerTemplateMixin:OnLoad()
         header:SetAttribute("template", "DragonflightUIAuraButtonBuffTemplate");
 
         header:SetAttribute("includeWeapons", 2);
-        header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplate');
+        header:SetAttribute("weaponTemplate", 'DragonflightUIAuraButtonBuffTemplateKeyUp');
     elseif filter == 'HARMFUL' then
         header:SetAttribute("template", "DragonflightUIAuraButtonDebuffTemplate");
     else
