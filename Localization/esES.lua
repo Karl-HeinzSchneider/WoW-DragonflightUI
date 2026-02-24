@@ -401,9 +401,6 @@ do
     L["BuffsOptionsExpanded"] = "Expandido"
     L["BuffsOptionsExpandedDesc"] = ""
 
-    L["BuffsOptionsUseStateHandler"] = "Usar manejador de estado"
-    L["BuffsOptionsUseStateHandlerDesc"] =
-        "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros complementos (por ejemplo, MinimapAlert), ya que no hace que los marcos sean seguros."
 end
 
 -- Flyout
@@ -532,9 +529,6 @@ do
     L["MinimapZonePanelPosition"] = "Posición del panel de zona"
     L["MinimapZonePanelPositionDesc"] =
         "Establece la posición del panel de texto de la zona, incluyendo los marcos anclados a él (por ejemplo, calendario, rastreo, correo, etc.)."
-    L["MinimapUseStateHandler"] = "Usar controlador de estado"
-    L["MinimapUseStateHandlerDesc"] =
-        "Sin esto, la configuración de visibilidad anterior no funcionará, pero podría mejorar la compatibilidad con otros addons (por ejemplo, MinimapAlert) ya que no hace que los marcos sean seguros."
 end
 
 -- UI

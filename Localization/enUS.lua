@@ -457,10 +457,6 @@ do
     L["BuffsOptionsExpanded"] = "Expanded"
     L["BuffsOptionsExpandedDesc"] = ""
 
-    L["BuffsOptionsUseStateHandler"] = "Use State Handler"
-    L["BuffsOptionsUseStateHandlerDesc"] =
-        "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
-
     --
     L["BuffsAura"] = "Aura"
 
@@ -651,10 +647,6 @@ do
                                                  "\n\nNote: only works for buttons using LibDBIcon"
     L["MinimapZonePanelPosition"] = "Header Position"
     L["MinimapZonePanelPositionDesc"] = "Sets the header position."
-    L["MinimapUseStateHandler"] = "Use State Handler"
-    L["MinimapUseStateHandlerDesc"] =
-        "Without this, the visibility settings above won't work, but might improve other addon compatibility (e.g. for MinimapAlert) as it does not make frames secure."
-
     L["MinimapTrackerName"] = "Tracker"
     L["MinimapDurabilityName"] = "Durability"
     L["MinimapLFGName"] = "LFG"

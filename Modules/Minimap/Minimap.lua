@@ -189,8 +189,6 @@ function Module:OnEnable()
 
     Module.Tmp.MinimapX = 0
     Module.Tmp.MinimapY = 0
-    -- Module.AddStateUpdater()
-
     Module:ApplySettings()
     Module:RegisterOptionScreens()
     Module:AddEditMode()

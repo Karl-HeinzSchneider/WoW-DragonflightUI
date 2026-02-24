@@ -457,9 +457,6 @@ do
     L["BuffsOptionsExpanded"] = "Развернуто"
     L["BuffsOptionsExpandedDesc"] = ""
 
-    L["BuffsOptionsUseStateHandler"] = "Использовать обработчик состояния"
-    L["BuffsOptionsUseStateHandlerDesc"] =
-        "Без этого настройки видимости выше не будут работать, но это может улучшить совместимость с другими аддонами (например, для MinimapAlert), так как не делает рамки защищенными."
 end
 
 -- Flyout
@@ -605,10 +602,6 @@ do
                                                  "\n\nПримечание: работает только для кнопок, использующих LibDBIcon"
     L["MinimapZonePanelPosition"] = "Положение заголовка"
     L["MinimapZonePanelPositionDesc"] = "Устанавливает положение заголовка."
-    L["MinimapUseStateHandler"] = "Использовать обработчик состояния"
-    L["MinimapUseStateHandlerDesc"] =
-        "Без этого настройки видимости выше не будут работать, но это может улучшить совместимость с другими аддонами (например, для MinimapAlert), так как не делает рамки защищенными."
-
     L["MinimapTrackerName"] = "Трекер"
     L["MinimapDurabilityName"] = "Прочность"
     L["MinimapLFGName"] = "LFG"

@@ -447,9 +447,6 @@ do
     L["BuffsOptionsExpanded"] = "展开状态"
     L["BuffsOptionsExpandedDesc"] = ""
 
-    L["BuffsOptionsUseStateHandler"] = "使用状态处理器"
-    L["BuffsOptionsUseStateHandlerDesc"] =
-        "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框体变为安全框体。"
 end
 
 -- Flyout
@@ -596,10 +593,6 @@ do
                                                  "\n\n注意：只适用于使用 LibDBIcon 的按钮"
     L["MinimapZonePanelPosition"] = "区域面板位置"
     L["MinimapZonePanelPositionDesc"] = "设置区域文本面板的位置。"
-    L["MinimapUseStateHandler"] = "使用状态处理器"
-    L["MinimapUseStateHandlerDesc"] =
-        "禁用此项将导致上方可见性设置失效，但可能提升其他插件兼容性(如MinimapAlert)，因为它不会使框体变为安全框体。"
-
     L["MinimapTrackerName"] = "追踪器"
     L["MinimapDurabilityName"] = "耐久"
     L["MinimapLFGName"] = "LFG"

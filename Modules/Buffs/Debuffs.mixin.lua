@@ -56,8 +56,7 @@ function SubModuleMixin:SetDefaults()
         hideNoStealth = false,
         hideBattlePet = false,
         hideCustom = false,
-        hideCustomCond = '',
-        useStateHandler = true
+        hideCustomCond = ''
     };
     self.Defaults = defaults;
 end
@@ -210,14 +209,14 @@ function SubModuleMixin:Update()
     f:ClearAllPoints()
     f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
-    if state.useStateHandler and not self.StateHandlerAdded then
+    if not self.StateHandlerAdded then
         self.StateHandlerAdded = true;
         self:AddStateUpdater()
     end
 
     self.NewDebuffs:SetState(state)
 
-    if self.StateHandlerAdded then f:UpdateStateHandler(state) end
+    f:UpdateStateHandler(state)
 end
 
 function SubModuleMixin:CreateDebuffFrame()

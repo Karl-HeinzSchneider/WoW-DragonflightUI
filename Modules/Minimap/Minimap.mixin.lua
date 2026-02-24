@@ -53,7 +53,6 @@ function SubModuleMixin:SetDefaults()
         hideBattlePet = false,
         hideCustom = false,
         hideCustomCond = ''
-        -- useStateHandler = true
     };
     self.Defaults = defaults;
 end

@@ -57,8 +57,7 @@ function SubModuleMixin:SetDefaults()
         hideNoStealth = false,
         hideBattlePet = false,
         hideCustom = false,
-        hideCustomCond = '',
-        useStateHandler = true
+        hideCustomCond = ''
     };
     self.Defaults = defaults;
 end
@@ -126,14 +125,7 @@ function SubModuleMixin:SetupOptions()
             --     order = 10,
             --     new = false,
             --     editmode = true
-            -- },
-            useStateHandler = {
-                type = 'toggle',
-                name = L["BuffsOptionsUseStateHandler"],
-                desc = L["BuffsOptionsUseStateHandlerDesc"] .. getDefaultStr('useStateHandler', 'buffs'),
-                group = 'headerStyling',
-                order = 115
-            }
+            -- }
         }
     }
     -- -- blizz options buffs
@@ -314,14 +306,14 @@ function SubModuleMixin:Update()
     -- TemporaryEnchantFrame:SetScale(state.scale)
     -- TemporaryEnchantFrame:SetParent(f)
 
-    if state.useStateHandler and not self.StateHandlerAdded then
+    if not self.StateHandlerAdded then
         self.StateHandlerAdded = true;
         self:AddStateUpdater()
     end
 
     self.NewBuffs:SetState(state)
 
-    if self.StateHandlerAdded then f:UpdateStateHandler(state) end
+    f:UpdateStateHandler(state)
 end
 
 function SubModuleMixin:CreateBuffFrame()
