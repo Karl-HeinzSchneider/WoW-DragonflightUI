@@ -238,7 +238,7 @@ end
 
 function DF.Compatibility:BaganatorEquipment()
     -- print('DF.Compatibility:BaganatorEquipment()')
-    if not DF.API.Version.IsClassic or not Syndicator then return end
+    if not DF.API.Version.IsClassic and not DF.API.Version.IsTBC or not Syndicator then return end
 
     local EquipmentManager_UnpackLocation = EquipmentManager_UnpackLocation or
                                                 function(location) -- Use me, I'm here to be used.
@@ -348,7 +348,7 @@ function DF.Compatibility:BaganatorEquipment()
                 for _, locationID in pairs(C_EquipmentSet.GetItemLocations(setID) or {}) do
                     if locationID ~= -1 and locationID ~= 0 and locationID ~= 1 then
                         local player, bank, bags, _, slot, bag
-                        if DF.API.Version.IsClassic then --   if addonTable.Constants.IsClassic then
+                        if DF.API.Version.IsClassic or DF.API.Version.IsTBC then --   if addonTable.Constants.IsClassic then
                             player, bank, bags, slot, bag = EquipmentManager_UnpackLocation(locationID)
                         else
                             player, bank, bags, _, slot, bag = EquipmentManager_UnpackLocation(locationID)
