@@ -170,6 +170,9 @@ do
     L['CompatWhatsTraining'] = "WhatsTraining"
     L['CompatWhatsTrainingDesc'] =
         "Adds compatibility for WhatsTraining when using the UI Module with 'Change SpellBook' enabled."
+    L['CompatMinimapAlert'] = "Minimap Alert"
+    L['CompatMinimapAlertDesc'] =
+        "Makes DragonflightUI's minimap compatible with 'Minimap Alert' (repositions the minimap correctly for its tooltip-scanning)."
 end
 
 -- __Settings
