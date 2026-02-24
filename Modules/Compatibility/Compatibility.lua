@@ -147,7 +147,7 @@ local compatOptions = {
     }
 }
 
-if DF.API.Version.IsClassic then
+if DF.API.Version.IsClassic or DF.API.Version.IsTBC then
     compatOptions.args.baganatorEquipment = {
         type = 'toggle',
         name = L["CompatBaganatorEquipment"],
