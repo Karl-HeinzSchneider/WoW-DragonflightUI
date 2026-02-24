@@ -1478,3 +1478,12 @@ end
 function Module:Mists()
     Module:Era()
 end
+
+-- ========================================
+-- Mage Water/Food Flyout Tooltip Support
+-- ========================================
+hooksecurefunc("SpellFlyoutButton_OnEnter", function()
+    if GameTooltip:IsShown() then
+        DF_ModifyTooltip(GameTooltip)
+    end
+end)

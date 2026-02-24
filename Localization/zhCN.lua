@@ -501,6 +501,9 @@ do
 
     L["FlyoutHeaderClassPresets"] = "职业预设"
     L["FlyoutHeaderClassPresetsDesc"] = "将弹出按钮预设设置为角色专有预设。"
+    L["FlyoutMageConsumble"] = "Mage conjured Consumable"
+    L["Usable at Level"] = "Usable at Level"
+    L["Usable"] = "Usable"
 end
 
 -- Castbar

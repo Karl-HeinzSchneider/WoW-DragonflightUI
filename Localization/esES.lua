@@ -455,7 +455,9 @@ do
     L["FlyoutHeaderClassPresets"] = "Preajustes de clase"
     L["FlyoutHeaderClassPresetsDesc"] =
         "Establece la configuración del desplegable y también los botones del desplegable según un preajuste específico del personaje."
-
+    L["FlyoutMageConsumble"] = "Mage conjured Consumable"
+    L["Usable at Level"] = "Usable at Level"
+    L["Usable"] = "Usable"
 end
 
 -- Castbar
