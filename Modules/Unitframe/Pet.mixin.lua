@@ -233,6 +233,11 @@ function SubModuleMixin:SetupOptions()
     end
     DF.Settings:AddPositionTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr, frameTableWithout('PetFrame'))
 
+    if DF.API.Version.IsTBC then
+        optionsPet.args.scale.min = 1.0;
+        optionsPet.args.scale.max = 2.0;
+    end
+
     DragonflightUIStateHandlerMixin:AddStateTable(Module, optionsPet, 'pet', 'Pet', getDefaultStr)
     local optionsPetEditmode = {
         name = 'Pet',
@@ -380,6 +385,18 @@ function SubModuleMixin:Update()
     f_orig:SetScale(state.scale)
 
     if DF.API.Version.IsTBC then
+        if state.scale < 1.0 then
+            state.scale = 1.0;
+        elseif state.scale > 2.0 then
+            state.scale = 2.0;
+        end
+        -- print(addonTable:GetBlizzEditmodeFrameSetting(f_orig, Enum.EditModeUnitFrameSetting.FrameSize))
+        local tbcScale = ((state.scale) - 1.0) * 20;
+        -- print('tbcScale', tbcScale)
+        tbcScale = math.floor(tbcScale + 0.5)
+        -- print('tbcScaleINT', tbcScale)
+        addonTable:SetBlizzEditmodeFrameSetting(f_orig, Enum.EditModeUnitFrameSetting.FrameSize, tbcScale, true)
+        -- print(addonTable:GetBlizzEditmodeFrameSetting(f_orig, Enum.EditModeUnitFrameSetting.FrameSize))
     else
         f:SetUserPlaced(true)
         -- f_orig:SetUserPlaced(true)
