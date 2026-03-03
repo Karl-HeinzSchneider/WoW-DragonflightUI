@@ -275,6 +275,22 @@ function DragonflightUISpellFlyoutButtonMixin:InitButtons()
     frame:SetFrameRef("attributeFrame", attributeFrame);
     handler:SetFrameRef("attributeFrame", attributeFrame);
 
+    handler:WrapScript(self, 'OnClick', [[
+        -- print('wraped OnClick', self:GetName(), button, down)
+
+        local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")
+        -- print('useKeyDown',useKeyDown)
+
+        if down == useKeyDown then
+            return "LeftButton"
+        end
+        return false
+    ]])
+
+    -- handler:WrapScript(frame, 'OnClick', [[
+    --     print('wraped OnClick', self:GetName(), button, down)
+    -- ]])
+
     --
     local t = {}
     for i = 1, self.MaxButtons do
