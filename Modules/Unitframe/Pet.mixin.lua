@@ -397,6 +397,8 @@ function SubModuleMixin:Update()
         -- print('tbcScaleINT', tbcScale)
         addonTable:SetBlizzEditmodeFrameSetting(f_orig, Enum.EditModeUnitFrameSetting.FrameSize, tbcScale, true)
         -- print(addonTable:GetBlizzEditmodeFrameSetting(f_orig, Enum.EditModeUnitFrameSetting.FrameSize))
+
+        f_orig:SetFrameLevel(10)
     else
         f:SetUserPlaced(true)
         -- f_orig:SetUserPlaced(true)
