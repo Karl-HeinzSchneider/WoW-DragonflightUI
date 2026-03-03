@@ -502,6 +502,8 @@ function SubModuleMixin:Setup()
     if DF.API.Version.IsTBC then
         --
         addonTable:OverrideBlizzEditmode(PlayerFrame, 'CENTER', f, 'CENTER', 0, 0)
+
+        PlayerFrame:SetHitRectInsets(30, 0, 0, 20)
     end
 
     -- state handler
