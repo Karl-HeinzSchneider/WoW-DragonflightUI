@@ -480,10 +480,15 @@ function SubModuleMixin:SetupOptions()
                     return false
                 end
             elseif sub == 'buffsOnTop' then
-                if TARGET_FRAME_BUFFS_ON_TOP then
-                    return true
+                if DF.API.Version.IsTBC then
+                    return addonTable:GetBlizzEditmodeFrameSettingBool(TargetFrame,
+                                                                       Enum.EditModeUnitFrameSetting.BuffsOnTop);
                 else
-                    return false
+                    if TARGET_FRAME_BUFFS_ON_TOP then
+                        return true;
+                    else
+                        return false;
+                    end
                 end
             else
                 return getOption(info)
@@ -507,6 +512,11 @@ function SubModuleMixin:SetupOptions()
                 else
                     TARGET_FRAME_BUFFS_ON_TOP = false
                     TargetFrame.buffsOnTop = false
+                end
+                if DF.API.Version.IsTBC then
+                    local b = 0;
+                    if value then b = 1; end
+                    addonTable:SetBlizzEditmodeFrameSetting(TargetFrame, Enum.EditModeUnitFrameSetting.BuffsOnTop, b);
                 end
                 if TargetFrame_UpdateAuras then TargetFrame_UpdateAuras(TargetFrame) end
             else
