@@ -496,7 +496,7 @@ function SubModuleMixin:Setup()
     f:SetSize(232, 100)
     f:SetParent(UIParent)
     f:SetScale(1.0)
-    f:SetClampedToScreen(true)
+    -- f:SetClampedToScreen(true)
     f:SetMovable(true)
 
     if DF.API.Version.IsTBC then
