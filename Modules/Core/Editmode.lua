@@ -548,10 +548,10 @@ function Module:InitEditmodeOverride()
         end
     end
 
-    function addonTable:SetBlizzEditmodeFrameSetting(f, setting, value)
+    function addonTable:SetBlizzEditmodeFrameSetting(f, setting, value, saveOnly)
         LibEditModeOverride:SetFrameSetting(f, setting, value)
 
-        if InCombatLockdown() then
+        if InCombatLockdown() or saveOnly then
             LibEditModeOverride:SaveOnly()
         else
             LibEditModeOverride:ApplyChanges()
