@@ -434,7 +434,7 @@ function SubModuleMixin:Update()
 end
 
 function SubModuleMixin:ChangePartyFrame()
-    local PartyMoveFrame = CreateFrame('Frame', 'DraggonflightUIPartyMoveFrame', UIParent)
+    local PartyMoveFrame = CreateFrame('Frame', 'DragonflightUIPartyMoveFrame', UIParent)
     PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
     PartyMoveFrame:SetFrameStrata('LOW')
     PartyMoveFrame:SetFrameLevel(2)
