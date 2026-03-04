@@ -4103,6 +4103,11 @@ function DragonflightUIMixin:ChangeTBCPVPFrame()
     frameBG:Show()
     frameBG:SetPoint('TOPLEFT', frame, 'TOPLEFT', 14 - 14, -36 + 14)
     frameBG:SetSize(512 - 5, 512)
+
+    local seasonStatsBtn = _G['PVPFrameToggleButton']
+    -- seasonStatsBtn:Show()
+    seasonStatsBtn:ClearAllPoints()
+    seasonStatsBtn:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -10, 6)
 end
 
 function DragonflightUIMixin:ChangeWrathPVPFrame()
