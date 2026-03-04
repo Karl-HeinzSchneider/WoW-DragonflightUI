@@ -72,6 +72,19 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
         if multi then self:SetAttribute('actionpage', multi) end
         shouldSetParent = true;
     elseif extraBars then
+        -- print('~~extraBars', barNumber)
+        -- if DF.API.Version.IsTBC then
+        -- if barNumber == 6 then
+        --     multi = 5;
+        -- elseif barNumber == 7 then
+        --     multi = 5;
+        -- elseif barNumber == 8 then
+        --     multi = 5;
+        -- end
+
+        -- if multi then self:SetAttribute('actionpage', multi) end
+        -- end
+
         shouldSetParent = true;
     elseif barNumber == 42 then
         -- stance

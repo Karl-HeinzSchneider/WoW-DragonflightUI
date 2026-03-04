@@ -284,6 +284,25 @@ function DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     end
 end
 
+function DragonFlightUIQuickKeybindMixin:HookExtraButtonsTBC()
+    local ActionBarButtonNames = {"MultiBar5Button", "MultiBar6Button", "MultiBar7Button"}
+
+    for b, actionBar in ipairs(ActionBarButtonNames) do
+        for i = 1, 12 do
+            local btn = _G[actionBar .. i]
+
+            btn.command = 'MULTIACTIONBAR' .. (b + 5 - 1) .. 'BUTTON' .. i
+            btn.commandHuman = 'Action Bar ' .. (b + 5) .. ' Button ' .. i
+
+            btn:HookScript('OnEnter', function(selfButton)
+                if DragonflightUIQuickKeybindFrame:IsInQuickKeybindMode() then
+                    DragonflightUIQuickKeybindButtonOverlay:SetButton(selfButton)
+                end
+            end)
+        end
+    end
+end
+
 function DragonFlightUIQuickKeybindMixin:HookCustomFlyoutButtons()
     for f = 1, 10 do
         local expander = _G['DragonflightUISpellFlyoutCustom' .. f .. 'Button']

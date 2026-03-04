@@ -2315,14 +2315,31 @@ function Module:SetupActionbarFrames()
         bar:ReplaceNormalTexture2()
     end
 
-    createExtra(6)
-    createExtra(7)
-    createExtra(8)
+    if DF.API.Version.IsTBC then
+        createStuff(6, 'MultiBar5Button')
+        createStuff(7, 'MultiBar6Button')
+        createStuff(8, 'MultiBar7Button')
 
-    DragonflightUIActionbarMixin:MigrateOldKeybinds()
+        for i = 6, 8 do
+            local bar = Module['bar' .. i]
+            if bar then
+                bar:StyleButtons()
+                bar:HookQuickbindMode()
+                bar:ReplaceNormalTexture2()
+            end
+        end
+
+        DragonFlightUIQuickKeybindMixin:HookExtraButtonsTBC()
+    else
+        createExtra(6)
+        createExtra(7)
+        createExtra(8)
+
+        DragonFlightUIQuickKeybindMixin:HookExtraButtons()
+    end
+
     -- DragonflightUIActionbarMixin:HookGlow()
-
-    DragonFlightUIQuickKeybindMixin:HookExtraButtons()
+    DragonflightUIActionbarMixin:MigrateOldKeybinds()
 
     -- TODOTBC
     if ActionButton_UpdateHotkeys then
