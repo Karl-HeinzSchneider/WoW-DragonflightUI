@@ -2211,6 +2211,21 @@ function Module:SetupActionbarFrames()
         end
     end
 
+    -- -- ActionBarActionButtonMixin:OnClick(button, down)
+    -- if ActionBarActionButtonMixin and ActionBarActionButtonMixin.OnClick then
+    --     hooksecurefunc(ActionBarActionButtonMixin, 'OnClick', function(s, button, down)
+    --         print('~OnClick:', s:GetName(), button, down)
+    --     end)
+    -- end
+
+    -- -- SecureActionButton_OnClick(self, button, down, isKeyPress, isSecureAction);
+
+    -- hooksecurefunc('SecureActionButton_OnClick', function(s, button, down, isKeyPress, isSecureAction)
+    --     print('~~~SecureActionButton_OnClick')
+    --     print('~~~ ->', s:GetName(), button, down, isKeyPress, isSecureAction)
+    --     print('~~~')
+    -- end)
+
     local createExtra = function(n)
         local btns = {}
 
@@ -2225,13 +2240,19 @@ function Module:SetupActionbarFrames()
             btn:SetPoint("CENTER", UIParent, "CENTER", 64 * i, 0)
             btn:SetAttribute("type", "action")
             btn:SetAttribute("action", 144 + (n - 6) * 12 + i) -- Action slot 1
+            -- btn:SetAttribute("DFaction", 144 + (n - 6) * 12 + i) -- Action slot 1
             btn:SetFrameLevel(3)
 
             btn:EnableMouseWheel()
-            btn:RegisterForClicks('AnyDown', 'AnyUp')
 
-            handler:WrapScript(btn, "OnClick", [[
-                -- print('OnClick',self:GetName(),button)
+            if DF.API.Version.IsTBC then
+                btn:RegisterForClicks('AnyDown', 'AnyUp')
+                -- btn:SetAttribute('downbutton', 'LeftButton')
+            else
+                btn:RegisterForClicks('AnyDown', 'AnyUp')
+
+                handler:WrapScript(btn, "OnClick", [[
+                -- print('OnClick',self:GetName(),button, down)
                 if self:GetAttribute("type") == "action" then
                     local type, action = GetActionInfo(self:GetAttribute("action"))
 
@@ -2241,11 +2262,14 @@ function Module:SetupActionbarFrames()
                     end                               
 
                     if button == 'Keybind' then    
+                        -- print('keybind')
                         local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")                         
 
                         if down == useKeyDown then
+                            -- print('down == useKeyDown')
                             return "LeftButton"
                         end
+                        -- print('return false')
                         return false
                     end
 
@@ -2254,7 +2278,6 @@ function Module:SetupActionbarFrames()
                         return false;
                     end  
 
-                  
                     if down then 
                         return false
                     else
@@ -2269,6 +2292,7 @@ function Module:SetupActionbarFrames()
 
                 return "LeftButton"               
             ]])
+            end
 
             btn.command = "CLICK DragonflightUIMultiactionBar" .. n .. "Button" .. i .. ":Keybind"
             btn.commandHuman = "Action Bar " .. n .. ' Button ' .. i
