@@ -2672,7 +2672,7 @@ function DragonflightUIMixin:ChangeGossipFrame()
 
         local anchorFrame;
 
-        if DF.API.Version.IsMoP or DF.API.Version.IsClassic then
+        if DF.API.Version.IsMoP or DF.API.Version.IsClassic or DF.API.Version.IsTBC then
             anchorFrame = frame;
 
             local r = {frame:GetRegions()}
