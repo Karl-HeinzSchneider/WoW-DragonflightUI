@@ -8,7 +8,7 @@ BINDING_CATEGORY_DRAGONFLIGHTUI = "DragonflightUI"
 local prefix = ''
 if DF.API.Version.IsTBC then
     --
-    prefix = '(DONT USE) ';
+    prefix = '(OLD) ';
 end
 
 -- Actionbars
