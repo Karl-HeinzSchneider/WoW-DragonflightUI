@@ -2359,6 +2359,8 @@ function Module:SetupActionbarFrames()
     -- DragonflightUIActionbarMixin:HookGlow()
     DragonflightUIActionbarMixin:MigrateOldKeybinds()
 
+    if DF.API.Version.IsTBC then DragonflightUIActionbarMixin:MigrateOldKeybindsTBC(); end
+
     -- TODOTBC
     if ActionButton_UpdateHotkeys then
         hooksecurefunc('ActionButton_UpdateHotkeys', function(self, actionButtonType)

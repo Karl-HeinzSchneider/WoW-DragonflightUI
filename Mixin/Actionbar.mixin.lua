@@ -1730,6 +1730,38 @@ function DragonflightUIActionbarMixin:MigrateOldKeybinds()
     if changed then SaveBindings(which) end
 end
 
+function DragonflightUIActionbarMixin:MigrateOldKeybindsTBC()
+    DF:Debug(DF, '~~MigrateOldKeybindsTBC()~~')
+    local which = GetCurrentBindingSet()
+    local changed = false;
+    for i = 6, 8 do
+        for j = 1, 12 do
+            local n = "CLICK DragonflightUIMultiactionBar" .. i .. "Button" .. j .. ":Keybind"
+            local updated = "MULTIACTIONBAR" .. (i - 1) .. "BUTTON" .. j;
+
+            local key1, key2 = GetBindingKey(n)
+
+            -- if key1 or key2 then print(updated) end
+
+            if key1 and key2 then
+                -- print('~OLD:', n, key1 or "", ' | ', key2 or "")
+                local ok1 = SetBinding(key1, updated)
+                local ok2 = SetBinding(key2, updated)
+                -- print('~CHANGED?', ok1, ok2)
+                changed = true;
+            elseif key1 then
+                -- print('~OLD:', n, key1 or "")
+                local ok1 = SetBinding(key1, updated)
+                -- print('~CHANGED?', ok1)
+                changed = true;
+            end
+        end
+    end
+    DF:Debug(DF, '~~~> changes?', changed);
+
+    if changed then SaveBindings(which) end
+end
+
 function DragonflightUIActionbarMixin:ReplaceNormalTexture2()
     local count = #(self.buttonTable)
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar'
