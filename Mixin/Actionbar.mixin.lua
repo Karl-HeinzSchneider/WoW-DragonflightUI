@@ -877,10 +877,18 @@ function DragonflightUIActionbarMixin:UpdateTargetStateDriver(state)
         allDriver = string.format('[@mouseover,nodead,exists%s]mouseover;', modifier);
     end
 
+    helpDriver = helpDriver .. '[help]nil;';
+    harmDriver = harmDriver .. '[harm]nil;';
+    allDriver = allDriver .. '[help]nil;[harm]nil;';
+
     if state.useAutoAssist then
-        helpDriver = helpDriver .. '[help]nil; [@targettarget, help]targettarget';
-        harmDriver = harmDriver .. '[harm]nil; [@targettarget, harm]targettarget';
+        helpDriver = helpDriver .. '[@targettarget, help]targettarget;';
+        harmDriver = harmDriver .. '[@targettarget, harm]targettarget;';
+        allDriver = allDriver .. '[@targettarget, help]targettarget;[@targettarget, harm]targettarget;';
     end
+
+    helpDriver = helpDriver .. 'player';
+    allDriver = allDriver .. 'player';
 
     helpDriver = string.format('%s%s%s', preSelf, preFocus, helpDriver)
     harmDriver = string.format('%s%s', preFocus, harmDriver)
