@@ -336,6 +336,8 @@ function DragonflightUIActionbarMixin:Update()
     end
     self:ShowHighlight(false)
 
+    if self.BlizzEditmodeFrame then self:UpdateBlizzEditmodeState(); end
+
     -- print(self.buttonTable[1]:GetName(), 'update')
     -- self:UpdateGrid(state.alwaysShow)
 
@@ -415,6 +417,43 @@ function DragonflightUIActionbarMixin:Update()
     if self.StylePetButton and PetActionBar_Update then PetActionBar_Update() end
 end
 
+function DragonflightUIActionbarMixin:UpdateBlizzEditmodeState()
+    -- print('UpdateBlizzEditmodeState')
+    local state = self.state;
+    if not state then return end
+
+    local buttonTable = self.buttonTable
+    local btnCount = #buttonTable
+    if btnCount < 1 then return end
+
+    if not self.BlizzEditmodeFrame then return end
+    if not DF.API.Version.IsTBC then return end
+
+    local editmodeAlwaysShow = addonTable:GetBlizzEditmodeFrameSettingBool(self.BlizzEditmodeFrame,
+                                                                           Enum.EditModeActionBarSetting
+                                                                               .AlwaysShowButtons)
+    if editmodeAlwaysShow ~= state.alwaysShow then
+        -- print('diff')
+        if state.alwaysShow then
+            -- btn:SetAttribute("showgrid", 1)
+            addonTable:SetBlizzEditmodeFrameSetting(self.BlizzEditmodeFrame,
+                                                    Enum.EditModeActionBarSetting.AlwaysShowButtons, 1, true)
+        else
+            -- btn:SetAttribute("showgrid", 0)
+            addonTable:SetBlizzEditmodeFrameSetting(self.BlizzEditmodeFrame,
+                                                    Enum.EditModeActionBarSetting.AlwaysShowButtons, 0, true)
+        end
+        -- self.BlizzEditmodeFrame:UpdateSystemSettingAlwaysShowButtons()
+    else
+        -- print('same')
+    end
+
+    for i = 1, btnCount do
+        local btn = buttonTable[i]
+        if btn and btn.UpdateAction then btn:UpdateAction(true) end
+    end
+end
+
 function DragonflightUIActionbarMixin:UpdateGridState()
     local state = self.state;
     if not state then return end
@@ -434,6 +473,8 @@ function DragonflightUIActionbarMixin:UpdateGridState()
         end
         if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
     end
+
+    if DF.API.Version.IsTBC then self:UpdateBlizzEditmodeState(); end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()

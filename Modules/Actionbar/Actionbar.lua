@@ -2330,6 +2330,24 @@ function Module:SetupActionbarFrames()
         end
 
         DragonFlightUIQuickKeybindMixin:HookExtraButtonsTBC()
+
+        local actionbarToBlizzEditmodeFrame = {}
+        actionbarToBlizzEditmodeFrame[1] = _G['MainActionBar']
+        actionbarToBlizzEditmodeFrame[2] = _G['MultiBarBottomLeft']
+        actionbarToBlizzEditmodeFrame[3] = _G['MultiBarBottomRight']
+        actionbarToBlizzEditmodeFrame[4] = _G['MultiBarLeft']
+        actionbarToBlizzEditmodeFrame[5] = _G['MultiBarRight']
+        actionbarToBlizzEditmodeFrame[6] = _G['MultiBar5']
+        actionbarToBlizzEditmodeFrame[7] = _G['MultiBar6']
+        actionbarToBlizzEditmodeFrame[8] = _G['MultiBar7']
+
+        for i = 1, 8 do
+            local bar = Module['bar' .. i]
+            if bar then
+                --
+                bar.BlizzEditmodeFrame = actionbarToBlizzEditmodeFrame[i];
+            end
+        end
     else
         createExtra(6)
         createExtra(7)
