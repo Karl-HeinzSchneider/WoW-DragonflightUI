@@ -72,6 +72,19 @@ function DragonflightUIActionbarMixin:SetButtons(buttons, barNumber)
         if multi then self:SetAttribute('actionpage', multi) end
         shouldSetParent = true;
     elseif extraBars then
+        -- print('~~extraBars', barNumber)
+        -- if DF.API.Version.IsTBC then
+        -- if barNumber == 6 then
+        --     multi = 5;
+        -- elseif barNumber == 7 then
+        --     multi = 5;
+        -- elseif barNumber == 8 then
+        --     multi = 5;
+        -- end
+
+        -- if multi then self:SetAttribute('actionpage', multi) end
+        -- end
+
         shouldSetParent = true;
     elseif barNumber == 42 then
         -- stance
@@ -323,6 +336,8 @@ function DragonflightUIActionbarMixin:Update()
     end
     self:ShowHighlight(false)
 
+    if self.BlizzEditmodeFrame then self:UpdateBlizzEditmodeState(); end
+
     -- print(self.buttonTable[1]:GetName(), 'update')
     -- self:UpdateGrid(state.alwaysShow)
 
@@ -402,6 +417,43 @@ function DragonflightUIActionbarMixin:Update()
     if self.StylePetButton and PetActionBar_Update then PetActionBar_Update() end
 end
 
+function DragonflightUIActionbarMixin:UpdateBlizzEditmodeState()
+    -- print('UpdateBlizzEditmodeState')
+    local state = self.state;
+    if not state then return end
+
+    local buttonTable = self.buttonTable
+    local btnCount = #buttonTable
+    if btnCount < 1 then return end
+
+    if not self.BlizzEditmodeFrame then return end
+    if not DF.API.Version.IsTBC then return end
+
+    local editmodeAlwaysShow = addonTable:GetBlizzEditmodeFrameSettingBool(self.BlizzEditmodeFrame,
+                                                                           Enum.EditModeActionBarSetting
+                                                                               .AlwaysShowButtons)
+    if editmodeAlwaysShow ~= state.alwaysShow then
+        -- print('diff')
+        if state.alwaysShow then
+            -- btn:SetAttribute("showgrid", 1)
+            addonTable:SetBlizzEditmodeFrameSetting(self.BlizzEditmodeFrame,
+                                                    Enum.EditModeActionBarSetting.AlwaysShowButtons, 1, true)
+        else
+            -- btn:SetAttribute("showgrid", 0)
+            addonTable:SetBlizzEditmodeFrameSetting(self.BlizzEditmodeFrame,
+                                                    Enum.EditModeActionBarSetting.AlwaysShowButtons, 0, true)
+        end
+        -- self.BlizzEditmodeFrame:UpdateSystemSettingAlwaysShowButtons()
+    else
+        -- print('same')
+    end
+
+    for i = 1, btnCount do
+        local btn = buttonTable[i]
+        if btn and btn.UpdateAction then btn:UpdateAction(true) end
+    end
+end
+
 function DragonflightUIActionbarMixin:UpdateGridState()
     local state = self.state;
     if not state then return end
@@ -421,6 +473,8 @@ function DragonflightUIActionbarMixin:UpdateGridState()
         end
         if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
     end
+
+    if DF.API.Version.IsTBC then self:UpdateBlizzEditmodeState(); end
 end
 
 function DragonflightUIActionbarMixin:HookQuickbindMode()
@@ -1455,7 +1509,7 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     if not keepNormalHighlight then
         local ontop = CreateFrame('Frame', btn:GetName() .. 'DFOnTopFrame', btn)
         ontop:SetFrameStrata('MEDIUM')
-        ontop:SetFrameLevel(5)
+        ontop:SetFrameLevel(btn:GetFrameLevel() + 1)
         ontop:SetPoint('TOPLEFT')
         ontop:SetPoint('BOTTOMRIGHT')
 
@@ -1673,6 +1727,38 @@ function DragonflightUIActionbarMixin:MigrateOldKeybinds()
         end
     end
     DF:Debug(DF, '~~~> changes?', changed);
+    if changed then SaveBindings(which) end
+end
+
+function DragonflightUIActionbarMixin:MigrateOldKeybindsTBC()
+    DF:Debug(DF, '~~MigrateOldKeybindsTBC()~~')
+    local which = GetCurrentBindingSet()
+    local changed = false;
+    for i = 6, 8 do
+        for j = 1, 12 do
+            local n = "CLICK DragonflightUIMultiactionBar" .. i .. "Button" .. j .. ":Keybind"
+            local updated = "MULTIACTIONBAR" .. (i - 1) .. "BUTTON" .. j;
+
+            local key1, key2 = GetBindingKey(n)
+
+            -- if key1 or key2 then print(updated) end
+
+            if key1 and key2 then
+                -- print('~OLD:', n, key1 or "", ' | ', key2 or "")
+                local ok1 = SetBinding(key1, updated)
+                local ok2 = SetBinding(key2, updated)
+                -- print('~CHANGED?', ok1, ok2)
+                changed = true;
+            elseif key1 then
+                -- print('~OLD:', n, key1 or "")
+                local ok1 = SetBinding(key1, updated)
+                -- print('~CHANGED?', ok1)
+                changed = true;
+            end
+        end
+    end
+    DF:Debug(DF, '~~~> changes?', changed);
+
     if changed then SaveBindings(which) end
 end
 

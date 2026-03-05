@@ -2315,14 +2315,51 @@ function Module:SetupActionbarFrames()
         bar:ReplaceNormalTexture2()
     end
 
-    createExtra(6)
-    createExtra(7)
-    createExtra(8)
+    if DF.API.Version.IsTBC then
+        createStuff(6, 'MultiBar5Button')
+        createStuff(7, 'MultiBar6Button')
+        createStuff(8, 'MultiBar7Button')
 
-    DragonflightUIActionbarMixin:MigrateOldKeybinds()
+        for i = 6, 8 do
+            local bar = Module['bar' .. i]
+            if bar then
+                bar:StyleButtons()
+                bar:HookQuickbindMode()
+                bar:ReplaceNormalTexture2()
+            end
+        end
+
+        DragonFlightUIQuickKeybindMixin:HookExtraButtonsTBC()
+
+        local actionbarToBlizzEditmodeFrame = {}
+        actionbarToBlizzEditmodeFrame[1] = _G['MainActionBar']
+        actionbarToBlizzEditmodeFrame[2] = _G['MultiBarBottomLeft']
+        actionbarToBlizzEditmodeFrame[3] = _G['MultiBarBottomRight']
+        actionbarToBlizzEditmodeFrame[4] = _G['MultiBarLeft']
+        actionbarToBlizzEditmodeFrame[5] = _G['MultiBarRight']
+        actionbarToBlizzEditmodeFrame[6] = _G['MultiBar5']
+        actionbarToBlizzEditmodeFrame[7] = _G['MultiBar6']
+        actionbarToBlizzEditmodeFrame[8] = _G['MultiBar7']
+
+        for i = 1, 8 do
+            local bar = Module['bar' .. i]
+            if bar then
+                --
+                bar.BlizzEditmodeFrame = actionbarToBlizzEditmodeFrame[i];
+            end
+        end
+    else
+        createExtra(6)
+        createExtra(7)
+        createExtra(8)
+
+        DragonFlightUIQuickKeybindMixin:HookExtraButtons()
+    end
+
     -- DragonflightUIActionbarMixin:HookGlow()
+    DragonflightUIActionbarMixin:MigrateOldKeybinds()
 
-    DragonFlightUIQuickKeybindMixin:HookExtraButtons()
+    if DF.API.Version.IsTBC then DragonflightUIActionbarMixin:MigrateOldKeybindsTBC(); end
 
     -- TODOTBC
     if ActionButton_UpdateHotkeys then
