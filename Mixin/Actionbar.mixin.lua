@@ -1509,7 +1509,7 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     if not keepNormalHighlight then
         local ontop = CreateFrame('Frame', btn:GetName() .. 'DFOnTopFrame', btn)
         ontop:SetFrameStrata('MEDIUM')
-        ontop:SetFrameLevel(5)
+        ontop:SetFrameLevel(btn:GetFrameLevel() + 1)
         ontop:SetPoint('TOPLEFT')
         ontop:SetPoint('BOTTOMRIGHT')
 
