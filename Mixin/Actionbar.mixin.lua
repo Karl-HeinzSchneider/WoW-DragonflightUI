@@ -450,7 +450,7 @@ function DragonflightUIActionbarMixin:UpdateBlizzEditmodeState()
 
     for i = 1, btnCount do
         local btn = buttonTable[i]
-        if btn and btn.UpdateAction then btn:UpdateAction(true) end
+        -- if btn and btn.UpdateAction then btn:UpdateAction(true) end -- @TODO:TAINT?!
     end
 end
 
