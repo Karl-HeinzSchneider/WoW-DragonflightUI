@@ -531,6 +531,9 @@ do
     L["FlyoutDisplaynameDesc"] = ""
     L["FlyoutTooltip"] = "Tooltip"
     L["FlyoutTooltipDesc"] = ""
+    L["FlyoutInventoryCount"] = "Count"
+    L["FlyoutInventoryCountDesc"] =
+        "Shows the count of a specific inventory item, e.g. Soulshards for warlock pets.\nAccepts an ItemID or ItemName."
 
     L["FlyoutButtonWarlock"] = "Warlock Summon Flyout"
     L["FlyoutButtonMagePort"] = "Teleport Flyout"

@@ -187,6 +187,11 @@
 						<Anchor point="BOTTOM" x="0" y="2" />
 					</Anchors>
 				</FontString>
+				<FontString name="$parentCount" inherits="NumberFontNormal" parentKey="Count" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="-2" y="2" />
+					</Anchors>
+				</FontString>
 				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" parentKey="Border" hidden="true" alphaMode="ADD">
 					<Size x="62" y="62" />
 					<Anchors>

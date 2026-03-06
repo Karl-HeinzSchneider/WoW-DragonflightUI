@@ -37,12 +37,14 @@ function DragonflightUISpellFlyoutButtonMixin:OnLoad()
     self:UpdateArrow()
 
     self:RegisterEvent('UPDATE_BINDINGS')
+    self:RegisterEvent('BAG_UPDATE_DELAYED')
 end
 
 function DragonflightUISpellFlyoutButtonMixin:OnEvent(event, ...)
     if event == 'UPDATE_BINDINGS' then
         self:UpdateHotkeyDisplayText()
-        return;
+    elseif event == 'BAG_UPDATE_DELAYED' then
+        self:UpdateCountText();
     end
 end
 
@@ -62,6 +64,23 @@ end
 
 function DragonflightUISpellFlyoutButtonMixin:OnLeave()
     GameTooltip:Hide()
+end
+
+function DragonflightUISpellFlyoutButtonMixin:UpdateCountText()
+    local name = self:GetName()
+    local count = _G[name .. 'Count']
+    local state = self.state
+    local char = self.stateChar
+
+    if not state or not char or not count then return; end
+
+    if not char.inventoryCount or char.inventoryCount == '' then
+        count:SetText('')
+        return;
+    end
+
+    local amount = C_Item.GetItemCount(char.inventoryCount) or 0;
+    count:SetText(tostring(amount))
 end
 
 function DragonflightUISpellFlyoutButtonMixin:AddArrow()
@@ -410,6 +429,7 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
         local name = self:GetName()
         local macroText = _G[name .. 'Name']
         local keybindText = _G[name .. 'HotKey']
+        local count = _G[name .. 'Count']
 
         if macroText then
             if state.hideMacro then
@@ -431,6 +451,15 @@ function DragonflightUISpellFlyoutButtonMixin:Update()
             self:SetKeybindFontSize(state.keybindFontSize)
 
             self:UpdateHotkeyDisplayText(state.shortenKeybind)
+        end
+
+        if count then
+            -- if state.hideCount then
+            -- count:SetAlpha(0)
+            -- else
+            -- count:SetAlpha(1)
+            -- end
+            self:UpdateCountText()
         end
     end
     local buttonTable = self.buttonTable
