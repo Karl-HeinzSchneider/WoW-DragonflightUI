@@ -471,8 +471,8 @@ do
     L["FlyoutMageFood"] = "Conjurar comida"
     L["FlyoutMageFoodDesc"] = L["FlyoutMageWaterDesc"]
 
-    L["FlyoutButtonCustomFormat"] = "Desplegable personalizado %d"
-    L["FlyoutCustomNameFormat"] = "Desplegable personalizado %d"
+    L["FlyoutButtonCustomFormat"] = "Desplegable %d"
+    L["FlyoutCustomNameFormat"] = "Desplegable %d"
     L["FlyoutCustomNameDescFormat"] = "Botón desplegable por personaje con hasta 12 botones de acción adicionales."
 
     L["FlyoutHeaderClassPresets"] = "Preajustes de clase"
