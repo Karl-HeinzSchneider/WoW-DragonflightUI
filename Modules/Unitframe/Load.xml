@@ -23,4 +23,6 @@
 	</Frame>
 	<Frame name="DragonflightUIFocusToTFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
 	</Frame>
+	<Frame name="DragonflightUIPartyFrame" inherits="SecureFrameTemplate,SecureHandlerEnterLeaveTemplate" hidden="true">
+	</Frame>
 </Ui>

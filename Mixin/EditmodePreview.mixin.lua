@@ -559,7 +559,14 @@ DragonflightUIEditModePreviewPartyFrameMixin = {}
 function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
     -- print('~~ DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()')
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local party1;
+    if DF.API.Version.IsTBC then
+        party1 = _G['PartyFrame'].MemberFrame1
+    else
+        party1 = _G['PartyMemberFrame' .. 1]
+    end
+
+    local sizeX, sizeY = party1:GetSize()
     local gap = 10;
     self:SetSize(sizeX, sizeY * 4 + 3 * gap)
 
@@ -631,7 +638,14 @@ function DragonflightUIEditModePreviewPartyFrameMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local party1;
+    if DF.API.Version.IsTBC then
+        party1 = _G['PartyFrame'].MemberFrame1
+    else
+        party1 = _G['PartyMemberFrame' .. 1]
+    end
+
+    local sizeX, sizeY = party1:GetSize()
 
     if state.orientation == 'vertical' then
         self:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
@@ -657,6 +671,12 @@ function DragonflightUIEditModePreviewPartyFrameMixin:Update()
     end
 
     self:UpdateVisibility()
+end
+
+if not GetDisplayedAllyFrames then
+    function GetDisplayedAllyFrames()
+        return 'party'
+    end
 end
 
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateVisibility()
@@ -696,7 +716,14 @@ Mixin(DragonflightUIEditModePreviewPartyMixin, DragonflightUIEditModePreviewTarg
 function DragonflightUIEditModePreviewPartyMixin:OnLoad()
     -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewPartyMixin:OnLoad()')
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local party1;
+    if DF.API.Version.IsTBC then
+        party1 = _G['PartyFrame'].MemberFrame1
+    else
+        party1 = _G['PartyMemberFrame' .. 1]
+    end
+
+    local sizeX, sizeY = party1:GetSize()
     self:SetSize(sizeX, sizeY)
     self:SetupFrame()
     self:SetRandomUnit()

@@ -303,7 +303,7 @@ function SubModuleMixin:SetupOptions()
 end
 
 function SubModuleMixin:Setup()
-    if DF.API.Version.IsTBC then return end
+    -- if DF.API.Version.IsTBC then return end
     local function setDefaultSubValues(sub)
         self.ModuleRef:SetDefaultSubValues(sub)
     end
@@ -317,8 +317,30 @@ function SubModuleMixin:Setup()
     --
     self:RegisterEvent('CVAR_UPDATE')
     --
+
+    local partyFrameTable = {}
+
+    for k = 1, 4 do
+        if DF.API.Version.IsTBC then
+            local pf = _G['PartyFrame'];
+            partyFrameTable[k] = pf['MemberFrame' .. k];
+        else
+            partyFrameTable[k] = _G['PartyMemberFrame' .. k];
+        end
+    end
+    self.PartyFrameTable = partyFrameTable;
+
+    local f = _G['DragonflightUIPartyFrame']
+    -- f:SetSize(232, 100)
+    f:SetParent(UIParent)
+    f:SetScale(1.0)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+    f:SetFrameStrata('LOW')
+    f:Hide()
+
     self:ChangePartyFrame()
-    self:AddStateUpdater()
+    -- self:AddStateUpdater()
 
     -- editmode
     local EditModeModule = DF:GetModule('Editmode');
@@ -380,7 +402,7 @@ function SubModuleMixin:UpdateState(state)
 end
 
 function SubModuleMixin:Update()
-    if DF.API.Version.IsTBC then return end -- TODOTBC
+    -- if DF.API.Version.IsTBC then return end -- TODOTBC
     local state = self.state;
     if not state then return end
 
@@ -393,7 +415,8 @@ function SubModuleMixin:Update()
     -- party1:ClearAllPoints()
     -- party1:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local party1 = self.PartyFrameTable[1];
+    local sizeX, sizeY = party1:GetSize()
 
     if state.orientation == 'vertical' then
         self.PartyMoveFrame:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
@@ -401,352 +424,357 @@ function SubModuleMixin:Update()
         self.PartyMoveFrame:SetSize(sizeX * 4 + 3 * state.padding, sizeY)
     end
 
-    for i = 2, 4 do
-        local pf = _G['PartyMemberFrame' .. i]
-        pf:ClearAllPoints()
+    -- for i = 2, 4 do
+    --     local pf = _G['PartyMemberFrame' .. i]
+    --     pf:ClearAllPoints()
 
-        if state.orientation == 'vertical' then
-            pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'BOTTOMLEFT', 0, -state.padding)
-        else
-            pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'TOPRIGHT', state.padding, 0)
-        end
-    end
+    --     if state.orientation == 'vertical' then
+    --         pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'BOTTOMLEFT', 0, -state.padding)
+    --     else
+    --         pf:SetPoint('TOPLEFT', _G['PartyMemberFrame' .. (i - 1)], 'TOPRIGHT', state.padding, 0)
+    --     end
+    -- end
 
-    for i = 1, 4 do
-        local pf = _G['PartyMemberFrame' .. i]
+    -- for i = 1, 4 do
+    --     local pf = _G['PartyMemberFrame' .. i]
 
-        local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
-        if state.orientation == 'vertical' then
-            debuffOne:SetPoint('TOPLEFT', 120, -20)
-        else
-            debuffOne:SetPoint('TOPLEFT', 40 + 2, -40)
-        end
+    --     local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
+    --     if state.orientation == 'vertical' then
+    --         debuffOne:SetPoint('TOPLEFT', 120, -20)
+    --     else
+    --         debuffOne:SetPoint('TOPLEFT', 40 + 2, -40)
+    --     end
 
-        self:UpdatePartyHPBar(i)
-        TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
-        TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
+    --     self:UpdatePartyHPBar(i)
+    --     TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'HealthBar'])
+    --     TextStatusBar_UpdateTextString(_G['PartyMemberFrame' .. i .. 'ManaBar'])
 
-        pf:UpdateStateHandler(state)
-        PartyMemberFrame_UpdateMember(pf)
-    end
+    --     pf:UpdateStateHandler(state)
+    --     PartyMemberFrame_UpdateMember(pf)
+    -- end
 
     self.PreviewParty:UpdateState(state)
 end
 
 function SubModuleMixin:ChangePartyFrame()
-    local PartyMoveFrame = CreateFrame('Frame', 'DragonflightUIPartyMoveFrame', UIParent)
+    -- local PartyMoveFrame = CreateFrame('Frame', 'DragonflightUIPartyMoveFrame', UIParent)
+    local PartyMoveFrame = _G['DragonflightUIPartyFrame']
+
+    PartyMoveFrame:ClearAllPoints()
     PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
     PartyMoveFrame:SetFrameStrata('LOW')
     PartyMoveFrame:SetFrameLevel(2)
     self.PartyMoveFrame = PartyMoveFrame
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local party1 = self.PartyFrameTable[1];
+
+    local sizeX, sizeY = party1:GetSize()
     local gap = 10;
     PartyMoveFrame:SetSize(sizeX, sizeY * 4 + 3 * gap)
 
-    local first = _G['PartyMemberFrame' .. 1]
-    -- first:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
-    first:ClearAllPoints()
-    first:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
+    -- local first = _G['PartyMemberFrame' .. 1]
+    -- party1:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+    party1:ClearAllPoints()
+    party1:SetPoint('TOPLEFT', PartyMoveFrame, 'TOPLEFT', 0, 0)
 
-    for i = 1, 4 do
-        local pf = _G['PartyMemberFrame' .. i]
-        pf:SetParent(PartyMoveFrame)
-        pf:SetSize(120, 53)
-        -- pf:ClearAllPoints()
-        -- pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
+    -- for i = 1, 4 do
+    --     local pf = _G['PartyMemberFrame' .. i]
+    --     pf:SetParent(PartyMoveFrame)
+    --     pf:SetSize(120, 53)
+    --     -- pf:ClearAllPoints()
+    --     -- pf:SetPoint('TOPLEFT', CompactRaidFrameManager, 'TOPRIGHT', 0, 0)
 
-        pf:SetHitRectInsets(0, 0, 0, 12)
+    --     pf:SetHitRectInsets(0, 0, 0, 12)
 
-        -- layer = 'BACKGROUND => Flash,Portrait,Background
-        local bg = _G['PartyMemberFrame' .. i .. 'Background']
-        bg:Hide()
+    --     -- layer = 'BACKGROUND => Flash,Portrait,Background
+    --     local bg = _G['PartyMemberFrame' .. i .. 'Background']
+    --     bg:Hide()
 
-        local flash = _G['PartyMemberFrame' .. i .. 'Flash']
-        flash:SetSize(114, 47)
-        flash:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
-        flash:SetTexCoord(0.480469, 0.925781, 0.453125, 0.636719)
-        flash:SetPoint('TOPLEFT', 1 + 1, -2)
-        flash:SetVertexColor(1, 0, 0, 1)
-        flash:SetDrawLayer('ARTWORK', 5)
+    --     local flash = _G['PartyMemberFrame' .. i .. 'Flash']
+    --     flash:SetSize(114, 47)
+    --     flash:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+    --     flash:SetTexCoord(0.480469, 0.925781, 0.453125, 0.636719)
+    --     flash:SetPoint('TOPLEFT', 1 + 1, -2)
+    --     flash:SetVertexColor(1, 0, 0, 1)
+    --     flash:SetDrawLayer('ARTWORK', 5)
 
-        local portrait = _G['PartyMemberFrame' .. i .. 'Portrait']
-        -- portrait:SetSize(37,37)
-        -- portrait:SetPoint('TOPLEFT',7,-6)
+    --     local portrait = _G['PartyMemberFrame' .. i .. 'Portrait']
+    --     -- portrait:SetSize(37,37)
+    --     -- portrait:SetPoint('TOPLEFT',7,-6)
 
-        -- layer = 'BORDER' => Texture, VehicleTexture,Name
-        local texture = _G['PartyMemberFrame' .. i .. 'Texture']
-        texture:SetTexture()
-        texture:Hide()
+    --     -- layer = 'BORDER' => Texture, VehicleTexture,Name
+    --     local texture = _G['PartyMemberFrame' .. i .. 'Texture']
+    --     texture:SetTexture()
+    --     texture:Hide()
 
-        local name = _G['PartyMemberFrame' .. i .. 'Name']
-        name:ClearAllPoints()
-        name:SetSize(57, 12)
-        name:SetPoint('TOPLEFT', 46, -6)
+    --     local name = _G['PartyMemberFrame' .. i .. 'Name']
+    --     name:ClearAllPoints()
+    --     name:SetSize(57, 12)
+    --     name:SetPoint('TOPLEFT', 46, -6)
 
-        if not UnitGroupRolesAssigned then name:SetWidth(100) end
+    --     if not UnitGroupRolesAssigned then name:SetWidth(100) end
 
-        -- layer = 'ARTWORK' => Status
+    --     -- layer = 'ARTWORK' => Status
 
-        if not pf.PartyFrameBorder then
-            local border = pf:CreateTexture('DragonflightUIPartyFrameBorder')
-            -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')
-            border:SetDrawLayer('ARTWORK', 3)
-            border:SetSize(120, 49)
-            border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
-            border:SetTexCoord(0.480469, 0.949219, 0.222656, 0.414062)
-            border:SetPoint('TOPLEFT', 1, -2)
-            -- border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
-            -- border:Hide()
+    --     if not pf.PartyFrameBorder then
+    --         local border = pf:CreateTexture('DragonflightUIPartyFrameBorder')
+    --         -- border = _G['PartyMemberFrame' .. i .. 'HealthBar']:CreateTexture('DragonflightUIPartyFrameBorder')
+    --         border:SetDrawLayer('ARTWORK', 3)
+    --         border:SetSize(120, 49)
+    --         border:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+    --         border:SetTexCoord(0.480469, 0.949219, 0.222656, 0.414062)
+    --         border:SetPoint('TOPLEFT', 1, -2)
+    --         -- border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
+    --         -- border:Hide()
 
-            pf.PartyFrameBorder = border
-        end
+    --         pf.PartyFrameBorder = border
+    --     end
 
-        local status = _G['PartyMemberFrame' .. i .. 'Status']
-        status:SetSize(114, 47)
-        status:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
-        status:SetTexCoord(0.00390625, 0.472656, 0.453125, 0.644531)
-        status:SetPoint('TOPLEFT', 1, -2)
-        status:SetDrawLayer('ARTWORK', 5)
+    --     local status = _G['PartyMemberFrame' .. i .. 'Status']
+    --     status:SetSize(114, 47)
+    --     status:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe')
+    --     status:SetTexCoord(0.00390625, 0.472656, 0.453125, 0.644531)
+    --     status:SetPoint('TOPLEFT', 1, -2)
+    --     status:SetDrawLayer('ARTWORK', 5)
 
-        -- layer = 'OVERLAY' => LeaderIcon etc
+    --     -- layer = 'OVERLAY' => LeaderIcon etc
 
-        local updateSmallIcons = function()
-            local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
-            leaderIcon:ClearAllPoints()
-            leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+    --     local updateSmallIcons = function()
+    --         local leaderIcon = _G['PartyMemberFrame' .. i .. 'LeaderIcon']
+    --         leaderIcon:ClearAllPoints()
+    --         leaderIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
 
-            local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
-            masterIcon:ClearAllPoints()
-            masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
+    --         local masterIcon = _G['PartyMemberFrame' .. i .. 'MasterIcon']
+    --         masterIcon:ClearAllPoints()
+    --         masterIcon:SetPoint('BOTTOM', pf, 'TOP', -10 + 16, -6)
 
-            local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
-            guideIcon:ClearAllPoints()
-            guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
+    --         local guideIcon = _G['PartyMemberFrame' .. i .. 'GuideIcon']
+    --         guideIcon:ClearAllPoints()
+    --         guideIcon:SetPoint('BOTTOM', pf, 'TOP', -10, -6)
 
-            local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
-            pvpIcon:ClearAllPoints()
-            pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
+    --         local pvpIcon = _G['PartyMemberFrame' .. i .. 'PVPIcon']
+    --         pvpIcon:ClearAllPoints()
+    --         pvpIcon:SetPoint('CENTER', pf, 'TOPLEFT', 7, -24)
 
-            local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
-            readyCheck:ClearAllPoints()
-            readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
+    --         local readyCheck = _G['PartyMemberFrame' .. i .. 'ReadyCheck']
+    --         readyCheck:ClearAllPoints()
+    --         readyCheck:SetPoint('CENTER', portrait, 'CENTER', 0, -2)
 
-            local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
-            notPresentIcon:ClearAllPoints()
-            notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
-        end
-        updateSmallIcons()
+    --         local notPresentIcon = _G['PartyMemberFrame' .. i .. 'NotPresentIcon']
+    --         notPresentIcon:ClearAllPoints()
+    --         notPresentIcon:SetPoint('LEFT', pf, 'RIGHT', 2, -2)
+    --     end
+    --     updateSmallIcons()
 
-        if UnitGroupRolesAssigned then
-            local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
-            roleIcon:SetSize(12, 12)
-            roleIcon:SetPoint('TOPRIGHT', -5, -5)
-            roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
-            roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+    --     if UnitGroupRolesAssigned then
+    --         local roleIcon = pf:CreateTexture('DragonflightUIPartyFrameRoleIcon')
+    --         roleIcon:SetSize(12, 12)
+    --         roleIcon:SetPoint('TOPRIGHT', -5, -5)
+    --         roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
+    --         roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
 
-            pf.RoleIcon = roleIcon
+    --         pf.RoleIcon = roleIcon
 
-            local updateRoleIcon = function()
-                local role = UnitGroupRolesAssigned(pf.unit)
-                roleIcon:Show()
-                if role == 'TANK' then
-                    roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
-                elseif role == 'HEALER' then
-                    roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
-                elseif role == 'DAMAGER' then
-                    roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
-                else
-                    roleIcon:Hide()
-                end
-            end
+    --         local updateRoleIcon = function()
+    --             local role = UnitGroupRolesAssigned(pf.unit)
+    --             roleIcon:Show()
+    --             if role == 'TANK' then
+    --                 roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
+    --             elseif role == 'HEALER' then
+    --                 roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
+    --             elseif role == 'DAMAGER' then
+    --                 roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+    --             else
+    --                 roleIcon:Hide()
+    --             end
+    --         end
 
-            updateRoleIcon()
+    --         updateRoleIcon()
 
-            pf:HookScript('OnEvent', function(self, event, ...)
-                -- print('events', event)
-                if event == 'GROUP_ROSTER_UPDATE' then updateRoleIcon() end
-            end)
-        end
+    --         pf:HookScript('OnEvent', function(self, event, ...)
+    --             -- print('events', event)
+    --             if event == 'GROUP_ROSTER_UPDATE' then updateRoleIcon() end
+    --         end)
+    --     end
 
-        local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
-        healthbar:SetSize(70 + 1, 10)
-        healthbar:ClearAllPoints()
-        healthbar:SetPoint('TOPLEFT', 45 - 1, -19)
-        healthbar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
-        healthbar:SetStatusBarColor(1, 1, 1, 1)
+    --     local healthbar = _G['PartyMemberFrame' .. i .. 'HealthBar']
+    --     healthbar:SetSize(70 + 1, 10)
+    --     healthbar:ClearAllPoints()
+    --     healthbar:SetPoint('TOPLEFT', 45 - 1, -19)
+    --     healthbar:GetStatusBarTexture():SetTexture(
+    --         'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
+    --     healthbar:SetStatusBarColor(1, 1, 1, 1)
 
-        local hpMask = healthbar:CreateMaskTexture()
-        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
-        hpMask:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
-        hpMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Mask',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        hpMask:SetSize(70 + 1, 10)
-        healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
+    --     local hpMask = healthbar:CreateMaskTexture()
+    --     -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
+    --     hpMask:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+    --     hpMask:SetTexture(
+    --         'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Mask',
+    --         'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    --     hpMask:SetSize(70 + 1, 10)
+    --     healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
 
-        healthbar.DFHealthBarText = healthbar:CreateFontString('DragonflightUIHealthBarText', 'OVERLAY',
-                                                               'TextStatusBarText')
-        healthbar.DFHealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
-        healthbar.DFTextString = healthbar.DFHealthBarText
+    --     healthbar.DFHealthBarText = healthbar:CreateFontString('DragonflightUIHealthBarText', 'OVERLAY',
+    --                                                            'TextStatusBarText')
+    --     healthbar.DFHealthBarText:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+    --     healthbar.DFTextString = healthbar.DFHealthBarText
 
-        healthbar.DFHealthBarTextLeft = healthbar:CreateFontString('DragonflightUIHealthBarTextLeft', 'OVERLAY',
-                                                                   'TextStatusBarText')
-        healthbar.DFHealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
-        healthbar.DFLeftText = healthbar.DFHealthBarTextLeft
+    --     healthbar.DFHealthBarTextLeft = healthbar:CreateFontString('DragonflightUIHealthBarTextLeft', 'OVERLAY',
+    --                                                                'TextStatusBarText')
+    --     healthbar.DFHealthBarTextLeft:SetPoint('LEFT', healthbar, 'LEFT', 0, 0)
+    --     healthbar.DFLeftText = healthbar.DFHealthBarTextLeft
 
-        healthbar.DFHealthBarTextRight = healthbar:CreateFontString('DragonflightUIHealthBarTextRight', 'OVERLAY',
-                                                                    'TextStatusBarText')
-        healthbar.DFHealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
-        healthbar.DFRightText = healthbar.DFHealthBarTextRight
+    --     healthbar.DFHealthBarTextRight = healthbar:CreateFontString('DragonflightUIHealthBarTextRight', 'OVERLAY',
+    --                                                                 'TextStatusBarText')
+    --     healthbar.DFHealthBarTextRight:SetPoint('RIGHT', healthbar, 'RIGHT', 0, 0)
+    --     healthbar.DFRightText = healthbar.DFHealthBarTextRight
 
-        healthbar:HookScript('OnEnter', function(self)
-            if healthbar.DFHealthBarTextRight:IsVisible() or healthbar.DFTextString:IsVisible() then
-            else
-                local max_health = UnitHealthMax('party' .. i)
-                local health = UnitHealth('party' .. i)
-                healthbar.DFTextString:SetText(health .. ' / ' .. max_health)
-                healthbar.DFTextString:Show()
-            end
-            PartyMemberBuffTooltip_Update(pf);
-        end)
-        healthbar:HookScript('OnLeave', function(hb)
-            healthbar.DFTextString:Hide()
-            self:UpdatePartyHPBar(i)
-        end)
-        healthbar:HookScript('OnValueChanged', function(_)
-            -- print('OnValueChanged', i)
-            self:UpdatePartyHPBar(i)
-        end)
-        healthbar:HookScript('OnEvent', function(_, event, arg1)
-            -- print('OnValueChanged', i)
-            if event == 'UNIT_MAXHEALTH' then self:UpdatePartyHPBar(i) end
-        end)
+    --     healthbar:HookScript('OnEnter', function(self)
+    --         if healthbar.DFHealthBarTextRight:IsVisible() or healthbar.DFTextString:IsVisible() then
+    --         else
+    --             local max_health = UnitHealthMax('party' .. i)
+    --             local health = UnitHealth('party' .. i)
+    --             healthbar.DFTextString:SetText(health .. ' / ' .. max_health)
+    --             healthbar.DFTextString:Show()
+    --         end
+    --         PartyMemberBuffTooltip_Update(pf);
+    --     end)
+    --     healthbar:HookScript('OnLeave', function(hb)
+    --         healthbar.DFTextString:Hide()
+    --         self:UpdatePartyHPBar(i)
+    --     end)
+    --     healthbar:HookScript('OnValueChanged', function(_)
+    --         -- print('OnValueChanged', i)
+    --         self:UpdatePartyHPBar(i)
+    --     end)
+    --     healthbar:HookScript('OnEvent', function(_, event, arg1)
+    --         -- print('OnValueChanged', i)
+    --         if event == 'UNIT_MAXHEALTH' then self:UpdatePartyHPBar(i) end
+    --     end)
 
-        self:UpdatePartyHPBar(i)
+    --     self:UpdatePartyHPBar(i)
 
-        local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
-        manabar:SetSize(74, 7)
-        manabar:ClearAllPoints()
-        manabar:SetPoint('TOPLEFT', 41, -30)
-        manabar:GetStatusBarTexture():SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana')
-        manabar:SetStatusBarColor(1, 1, 1, 1)
+    --     local manabar = _G['PartyMemberFrame' .. i .. 'ManaBar']
+    --     manabar:SetSize(74, 7)
+    --     manabar:ClearAllPoints()
+    --     manabar:SetPoint('TOPLEFT', 41, -30)
+    --     manabar:GetStatusBarTexture():SetTexture(
+    --         'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana')
+    --     manabar:SetStatusBarColor(1, 1, 1, 1)
 
-        local manaMask = manabar:CreateMaskTexture()
-        -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
-        manaMask:SetPoint('CENTER', manabar, 'CENTER', 0, 0)
-        manaMask:SetTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
-            'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
-        manaMask:SetSize(74, 7)
-        manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
+    --     local manaMask = manabar:CreateMaskTexture()
+    --     -- hpMask:SetPoint('TOPLEFT', pf, 'TOPLEFT', -29, 3)
+    --     manaMask:SetPoint('CENTER', manabar, 'CENTER', 0, 0)
+    --     manaMask:SetTexture(
+    --         'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
+    --         'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+    --     manaMask:SetSize(74, 7)
+    --     manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
 
-        manabar.DFManaBarText = manabar:CreateFontString('DragonflightUIManaBarText', 'OVERLAY', 'TextStatusBarText')
-        manabar.DFManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
-        manabar.DFTextString = manabar.DFManaBarText
+    --     manabar.DFManaBarText = manabar:CreateFontString('DragonflightUIManaBarText', 'OVERLAY', 'TextStatusBarText')
+    --     manabar.DFManaBarText:SetPoint('CENTER', manabar, 'CENTER', 1.5, 0)
+    --     manabar.DFTextString = manabar.DFManaBarText
 
-        manabar.DFManaBarTextLeft = manabar:CreateFontString('DragonflightUIManaBarTextLeft', 'OVERLAY',
-                                                             'TextStatusBarText')
-        manabar.DFManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
-        manabar.DFLeftText = manabar.DFManaBarTextLeft
+    --     manabar.DFManaBarTextLeft = manabar:CreateFontString('DragonflightUIManaBarTextLeft', 'OVERLAY',
+    --                                                          'TextStatusBarText')
+    --     manabar.DFManaBarTextLeft:SetPoint('LEFT', manabar, 'LEFT', 3, 0)
+    --     manabar.DFLeftText = manabar.DFManaBarTextLeft
 
-        manabar.DFManaBarTextRight = manabar:CreateFontString('DragonflightUIManaBarTextRight', 'OVERLAY',
-                                                              'TextStatusBarText')
-        manabar.DFManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
-        manabar.DFRightText = manabar.DFManaBarTextRight
+    --     manabar.DFManaBarTextRight = manabar:CreateFontString('DragonflightUIManaBarTextRight', 'OVERLAY',
+    --                                                           'TextStatusBarText')
+    --     manabar.DFManaBarTextRight:SetPoint('RIGHT', manabar, 'RIGHT', 0, 0)
+    --     manabar.DFRightText = manabar.DFManaBarTextRight
 
-        manabar:HookScript('OnEnter', function(self)
-            if manabar.DFManaBarTextRight:IsVisible() or manabar.DFTextString:IsVisible() then
-            else
-                local max_mana = UnitPowerMax('party' .. i)
-                local mana = UnitPower('party' .. i)
+    --     manabar:HookScript('OnEnter', function(self)
+    --         if manabar.DFManaBarTextRight:IsVisible() or manabar.DFTextString:IsVisible() then
+    --         else
+    --             local max_mana = UnitPowerMax('party' .. i)
+    --             local mana = UnitPower('party' .. i)
 
-                if max_mana == 0 then
-                    manabar.DFTextString:SetText('')
-                else
-                    manabar.DFTextString:SetText(mana .. ' / ' .. max_mana)
-                end
-                manabar.DFTextString:Show()
-            end
-            PartyMemberBuffTooltip_Update(pf);
-        end)
-        manabar:HookScript('OnLeave', function(mb)
-            manabar.DFTextString:Hide()
-            self:UpdatePartyManaBar(i)
-        end)
+    --             if max_mana == 0 then
+    --                 manabar.DFTextString:SetText('')
+    --             else
+    --                 manabar.DFTextString:SetText(mana .. ' / ' .. max_mana)
+    --             end
+    --             manabar.DFTextString:Show()
+    --         end
+    --         PartyMemberBuffTooltip_Update(pf);
+    --     end)
+    --     manabar:HookScript('OnLeave', function(mb)
+    --         manabar.DFTextString:Hide()
+    --         self:UpdatePartyManaBar(i)
+    --     end)
 
-        self:UpdatePartyManaBar(i)
+    --     self:UpdatePartyManaBar(i)
 
-        manabar.DFUpdateFunc = function()
-            self:UpdatePartyManaBar(i)
-        end
+    --     manabar.DFUpdateFunc = function()
+    --         self:UpdatePartyManaBar(i)
+    --     end
 
-        -- debuff
-        local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
-        debuffOne:SetPoint('TOPLEFT', 120, -20)
+    --     -- debuff
+    --     local debuffOne = _G['PartyMemberFrame' .. i .. 'Debuff1']
+    --     debuffOne:SetPoint('TOPLEFT', 120, -20)
 
-        -- CompactUnitFrame_UpdateInRange
-        local function updateRange()
-            local inRange, checkedRange = UnitInRange('party' .. i);
-            if (checkedRange and not inRange) then
-                pf:SetAlpha(0.55);
-            else
-                pf:SetAlpha(1);
-            end
-        end
+    --     -- CompactUnitFrame_UpdateInRange
+    --     local function updateRange()
+    --         local inRange, checkedRange = UnitInRange('party' .. i);
+    --         if (checkedRange and not inRange) then
+    --             pf:SetAlpha(0.55);
+    --         else
+    --             pf:SetAlpha(1);
+    --         end
+    --     end
 
-        pf:HookScript('OnUpdate', updateRange)
+    --     pf:HookScript('OnUpdate', updateRange)
 
-        pf:HookScript('OnEvent', function(p, event, ...)
-            local texture = _G['PartyMemberFrame' .. i .. 'Texture']
-            texture:SetTexture()
-            texture:Hide()
-            healthbar:SetStatusBarColor(1, 1, 1, 1)
+    --     pf:HookScript('OnEvent', function(p, event, ...)
+    --         local texture = _G['PartyMemberFrame' .. i .. 'Texture']
+    --         texture:SetTexture()
+    --         texture:Hide()
+    --         healthbar:SetStatusBarColor(1, 1, 1, 1)
 
-            updateSmallIcons()
-            updateRange()
+    --         updateSmallIcons()
+    --         updateRange()
 
-            self:UpdatePartyHPBar(i)
-        end)
-    end
+    --         self:UpdatePartyHPBar(i)
+    --     end)
+    -- end
 
-    local moduleRef = self.ModuleRef
-    hooksecurefunc('PartyMemberBuffTooltip_Update', function(self)
-        -- print('PartyMemberBuffTooltip_Update', self:GetName())
-        local tooltip = PartyMemberBuffTooltip;
+    -- local moduleRef = self.ModuleRef
+    -- hooksecurefunc('PartyMemberBuffTooltip_Update', function(self)
+    --     -- print('PartyMemberBuffTooltip_Update', self:GetName())
+    --     local tooltip = PartyMemberBuffTooltip;
 
-        local state = moduleRef.db.profile.party;
-        local disableBuffTooltip = state.disableBuffTooltip
+    --     local state = moduleRef.db.profile.party;
+    --     local disableBuffTooltip = state.disableBuffTooltip
 
-        if disableBuffTooltip == 'NEVER' then
-            -- do nothing
-        elseif disableBuffTooltip == 'ALWAYS' then
-            tooltip:Hide()
-            return;
-        elseif disableBuffTooltip == 'INCOMBAT' then
-            if InCombatLockdown() then
-                tooltip:Hide()
-                return;
-            end
-        end
+    --     if disableBuffTooltip == 'NEVER' then
+    --         -- do nothing
+    --     elseif disableBuffTooltip == 'ALWAYS' then
+    --         tooltip:Hide()
+    --         return;
+    --     elseif disableBuffTooltip == 'INCOMBAT' then
+    --         if InCombatLockdown() then
+    --             tooltip:Hide()
+    --             return;
+    --         end
+    --     end
 
-        if state.orientation == 'vertical' then
-            tooltip:ClearAllPoints()
-            tooltip:SetPoint('LEFT', self, 'RIGHT', 0, 0)
-        else
-            tooltip:ClearAllPoints()
-            tooltip:SetPoint('BOTTOMRIGHT', self, 'TOPRIGHT', 0, 0)
-        end
+    --     if state.orientation == 'vertical' then
+    --         tooltip:ClearAllPoints()
+    --         tooltip:SetPoint('LEFT', self, 'RIGHT', 0, 0)
+    --     else
+    --         tooltip:ClearAllPoints()
+    --         tooltip:SetPoint('BOTTOMRIGHT', self, 'TOPRIGHT', 0, 0)
+    --     end
 
-        local scale = state.scale;
-        if scale > 2 then
-            scale = 2
-        else
-        end
-        tooltip:SetScale(0.8 * scale)
-    end)
+    --     local scale = state.scale;
+    --     if scale > 2 then
+    --         scale = 2
+    --     else
+    --     end
+    --     tooltip:SetScale(0.8 * scale)
+    -- end)
 end
 
 local function DFTextStatusBar_UpdateTextStringWithValues(statusFrame, textString, value, valueMin, valueMax)
