@@ -3,5 +3,7 @@
 	<Include file="libs\LibStub\LibStub.lua" />
 	<Include file="db\classic_db.lua" />
 	<Include file="db\tbc_db.lua" />
+	<Include file="db\wotlk_db.lua" />
+	<Include file="db\cata_db.lua" />
 	<Include file="LibQuestXP.lua" />
 </Ui>

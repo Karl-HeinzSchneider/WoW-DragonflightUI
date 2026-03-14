@@ -1,5 +1,7 @@
-if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then
-    return
+if _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE then return end
+
+if not (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_WRATH_CLASSIC) then
+    return -- only wotlk
 end
 
 LibQuestXPDB = {
