@@ -769,9 +769,13 @@ local frameTable = {
     {value = 'DragonflightUIMicroMenuBar', text = L["MicroMenu"], tooltip = 'descr', label = 'label'}
 }
 
+-- Bars 4 and 5 were swapped in RegisterOptionScreens to fix Blizz's numbering mismatch. Need to
+-- be swapped here as well, or the two will be inverted in the Anchor Frame dropdown in Edit Mode.
 for i = 1, 8 do
+    local frameNumber = i
+    if i == 4 then frameNumber = 5 elseif i == 5 then frameNumber = 4 end
     table.insert(frameTable, i + 1, {
-        value = 'DragonflightUIActionbarFrame' .. i,
+        value = 'DragonflightUIActionbarFrame' .. frameNumber,
         text = L["ActionbarNameFormat"]:format(i),
         tooltip = 'descr',
         label = 'label'
