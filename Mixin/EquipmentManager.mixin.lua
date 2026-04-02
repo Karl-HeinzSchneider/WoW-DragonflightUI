@@ -362,7 +362,8 @@ function DragonflightUIEquipmentManagerPanelMixin:Update(equipmentSetsDirty)
     end
 
     if (equipmentSetsDirty) then
-        self.equipmentSetIDs = self:SortEquipmentSetIDs(C_EquipmentSet.GetEquipmentSetIDs());
+        -- self.equipmentSetIDs = self:SortEquipmentSetIDs(C_EquipmentSet.GetEquipmentSetIDs());
+        self.equipmentSetIDs = self:SortEquipmentSetIDsByName(C_EquipmentSet.GetEquipmentSetIDs()); -- custom
     end
 
     -- DevTools_Dump(self.equipmentSetIDs)
@@ -401,6 +402,35 @@ function DragonflightUIEquipmentManagerPanelMixin:SortEquipmentSetIDs(equipmentS
             sortedIDs[#sortedIDs + 1] = equipmentSetID;
         end
     end
+
+    return sortedIDs;
+end
+
+-- custom
+function DragonflightUIEquipmentManagerPanelMixin:SortEquipmentSetIDsByName(equipmentSetIDs)
+    local sortedIDs = {};
+
+    -- local name, texture, setID, isEquipped, _, _, _, numLost = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIndex);
+
+    local nameTable = {}
+    local nameSorted = {}
+
+    -- Add all the spec-assigned sets first because they should appear first.
+    for i, equipmentSetID in ipairs(equipmentSetIDs) do
+        local name = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID);
+        table.insert(nameSorted, name);
+        nameTable[name] = equipmentSetID;
+    end
+
+    table.sort(nameSorted)
+
+    for k, v in ipairs(nameSorted) do
+        --
+        -- print(k, v)
+        table.insert(sortedIDs, nameTable[v])
+    end
+
+    -- DevTools_Dump(sortedIDs)
 
     return sortedIDs;
 end
