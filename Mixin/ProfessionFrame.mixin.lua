@@ -1041,9 +1041,14 @@ function DFProfessionMixin:SetupTabs()
             elseif spellToCast == 'Marroquinería' then
                 spellToCast = 'Peletería'
             elseif spellToCast == 'Minería' then
-                spellToCast = 'Fundiendo'
-                if DF.API.Version.IsTBC or DF.API.Version.IsMoP then spellToCast = 'Fundición' end
-                if DF.API.Version.IsClassic then spellToCast = 'Fundición' end
+                locale == GetLocale()
+                if DF.API.Version.IsClassic then
+                    if locale == "esES" then
+                       spellToCast = "Fundiendo"
+                    end
+                else 
+                    spellToCast = "Fundición"
+                end
             elseif spellToCast == 'Secourisme' then
                 spellToCast = 'Premiers soins'
             end
