@@ -433,6 +433,10 @@ function Module:ApplySettingsInternal(sub, key)
             Module:FuncOrWaitframe('TacoTip', function()
                 DF.Compatibility:TacoTipInspect()
             end)
+
+            Module:FuncOrWaitframe('GearScoreTBCClassic', function()
+                DF.Compatibility:GearscoreInspect()
+            end)
         end)
     end)
 

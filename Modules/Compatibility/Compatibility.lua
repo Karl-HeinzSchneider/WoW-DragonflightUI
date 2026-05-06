@@ -18,6 +18,7 @@ local defaults = {
             characterstatsclassic = true,
             classicalendar = true,
             clique = true,
+            gearscore = true,
             leatrixPlus = true,
             lfgbulletinboard = true,
             merinspect = true,
@@ -94,6 +95,12 @@ local compatOptions = {
             desc = L["CompatCliqueDesc"] .. getDefaultStr('clique', 'general'),
             order = 21,
             new = false
+        },
+        gearscore = {
+            type = 'toggle',
+            name = L["CompatGearscore"],
+            desc = L["CompatGearscoreDesc"] .. getDefaultStr('gearscore', 'general'),
+            order = 21
         },
         leatrixPlus = {
             type = 'toggle',
@@ -305,6 +312,19 @@ function Module:ApplySettingsInternal(sub, key)
         DF.API.Modules:HookEnableModule('Unitframe', function(m)
             Module:FuncOrWaitframe('Clique', DF.Compatibility.Clique)
         end)
+    end)
+
+    self:ConditionalOption('gearscore', 'general', L['CompatGearscore'], function()
+        if UIModule['changeCharacterframe' .. 'Hooked'] then
+            Module:FuncOrWaitframe('GearScoreTBCClassic', DF.Compatibility.GearscoreCharacter)
+        else
+            DF.API.Modules:HookModuleFunction('UI', 'ApplySettings', function()
+                if UIModule['changeCharacterframe' .. 'Hooked'] and not Module['gearscore' .. 'Func'] then
+                    Module['gearscore' .. 'Func'] = true
+                    Module:FuncOrWaitframe('GearScoreTBCClassic', DF.Compatibility.GearscoreCharacter)
+                end
+            end)
+        end
     end)
 
     self:ConditionalOption('leatrixPlus', 'general', L['CompatLeatrixPlus'], function()

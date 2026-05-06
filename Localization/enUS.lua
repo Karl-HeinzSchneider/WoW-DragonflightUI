@@ -164,6 +164,9 @@ do
     L['CompatTacoTip'] = "TacoTip"
     L['CompatTacoTipDesc'] =
         "Adds compatibility for TacoTip when using the UI Module with 'Change CharacterFrame' enabled."
+    L['CompatGearscore'] = "GearscoreTBCClassic"
+    L['CompatGearscoreDesc'] =
+        "Adds compatibility for GearscoreTBCClassic when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatTDInspect'] = "TDInspect"
     L['CompatTDInspectDesc'] =
         "Adds compatibility for TDInspect when using the UI Module with 'Change CharacterFrame' enabled."
