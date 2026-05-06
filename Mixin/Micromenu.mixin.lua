@@ -548,7 +548,7 @@ function DragonflightUIMicroMenuMixin:BetterPVPMicroButton(btn)
 end
 
 function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
-    -- print('~~DragonflightUIMicroMenuMixin:ChangeMicroMenuButton()')
+    -- print('~~DragonflightUIMicroMenuMixin:ChangeMicroMenuButton()', frame:GetName())
     table.insert(self.MicroButtons, frame)
     local microTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\Micromenu\\uimicromenu2x'
 
@@ -587,6 +587,30 @@ function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
             frame:SetDisabledTexture(microTexture)
             frame:SetPushedTexture(microTexture)
             frame:SetHighlightTexture(microTexture)
+        end)
+    end
+
+    if DF.API.Version.IsTBC and frame == GuildMicroButton then
+        -- print('here')
+        -- GuildMicroButtonMixin:UpdateTabard(forceUpdate)
+
+        hooksecurefunc(frame, 'UpdateTabard', function(s, ...)
+            -- print('updateTabard', s, ...)
+            frame:SetNormalTexture(microTexture)
+            frame:GetNormalTexture():SetTexCoord(up[3], up[4], up[5], up[6])
+
+            -- local disabled = DragonflightUIMicroMenuMixin.MicromenuAtlas[key .. '-Disabled']
+            frame:SetDisabledTexture(microTexture)
+            frame:GetDisabledTexture():SetTexCoord(disabled[3], disabled[4], disabled[5], disabled[6])
+
+            -- local down = DragonflightUIMicroMenuMixin.MicromenuAtlas[key .. '-Down']
+            frame:SetPushedTexture(microTexture)
+            frame:GetPushedTexture():SetTexCoord(down[3], down[4], down[5], down[6])
+
+            -- local mouseover = DragonflightUIMicroMenuMixin.MicromenuAtlas[key .. '-Mouseover']
+            frame:SetHighlightTexture(microTexture)
+            frame:GetHighlightTexture():SetTexCoord(mouseover[3], mouseover[4], mouseover[5], mouseover[6])
+            frame:GetHighlightTexture():SetSize(sizeX, sizeY)
         end)
     end
 
