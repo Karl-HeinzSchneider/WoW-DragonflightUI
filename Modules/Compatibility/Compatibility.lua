@@ -22,6 +22,7 @@ local defaults = {
             leatrixPlus = true,
             lfgbulletinboard = true,
             merinspect = true,
+            minimapAlert = true,
             pawn = true,
             ranker = true,
             tacotip = true,
@@ -118,6 +119,12 @@ local compatOptions = {
             type = 'toggle',
             name = L["CompatMerInspect"],
             desc = L["CompatMerInspectDesc"] .. getDefaultStr('merinspect', 'general'),
+            order = 21
+        },
+        minimapAlert = {
+            type = 'toggle',
+            name = L["CompatMinimapAlert"],
+            desc = L["CompatMinimapAlertDesc"] .. getDefaultStr('minimapAlert', 'general'),
             order = 21
         },
         pawn = {
@@ -415,6 +422,10 @@ function Module:ApplySettingsInternal(sub, key)
                 Module:FuncOrWaitframe('WhatsTraining', DF.Compatibility.WhatsTraining)
             end)
         end
+    end)
+
+    self:ConditionalOption('minimapAlert', 'general', L['CompatMinimapAlert'], function()
+        DF.Compatibility:MinimapAlert()
     end)
 
 end
