@@ -69,6 +69,7 @@ LocalizationData.lua
 Localization\Bindings.lua
 Localization\BlizzardData\Professions.lua
 Localization\enUS.lua
+Localization\deDE.lua
 Localization\esES.lua
 Localization\ruRU.lua
 Localization\zhCN.lua
