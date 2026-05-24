@@ -701,6 +701,7 @@ do
     L['CharacterStatsSpellPen'] = ITEM_MOD_SPELL_PENETRATION_SHORT or "Spell Penetration" -- ITEM_MOD_SPELL_PENETRATION_SHORT
     L['CharacterStatsSpellPenTooltipFormat'] = SPELL_PENETRATION_TOOLTIP or
                                                    "Spell Penetration %d \n(Reduces enemy resistances by %d)."
+    L['CharacterStatsMovementSpeed'] = STAT_MOVEMENT_SPEED
 
     -- ProfessionFrame
     L["ProfessionFrameHasSkillUp"] = TRADESKILL_FILTER_HAS_SKILL_UP or "Has skill up"
