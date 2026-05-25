@@ -2406,7 +2406,11 @@ function DragonflightUIMixin:ChangeQuestFrame()
     end
 
     do
+        greeting:ClearAllPoints()
+        greeting:SetPoint('TOPLEFT')
+
         local scroll = QuestGreetingScrollFrame
+        scroll:ClearAllPoints()
         scroll:SetSize(300, 403)
         scroll:SetPoint('TOPLEFT', greeting, 'TOPLEFT', 8, -65)
     end
