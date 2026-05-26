@@ -3925,6 +3925,8 @@ function DragonflightUIMixin:SpellbookEraProfessions()
     do
         local toggleButton = CreateFrame('BUTTON', 'DragonflightUISpellbookProfessionFrameToggleButton', UIParent,
                                          'SecureActionButtonTemplate')
+        toggleButton:RegisterForClicks('AnyUp', 'AnyDown')
+        toggleButton:SetSize(1, 1)
         toggleButton:SetAttribute('type', 'macro')
         -- toggleButton:SetAttribute('macrotext', "/run print('test')")
         local macroTextDefault = "/click SpellbookMicroButton" .. "\n" ..
