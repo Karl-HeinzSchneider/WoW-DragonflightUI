@@ -383,6 +383,7 @@ function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then return end -- TODOTBC
     local state = self.state;
     if not state then return end
+    if not self.PartyMoveFrame then return end -- Exit if PartyMoveFrame doesn't exist
 
     local parent = _G[state.anchorFrame]
     self.PartyMoveFrame:ClearAllPoints();
@@ -434,6 +435,11 @@ function SubModuleMixin:Update()
 end
 
 function SubModuleMixin:ChangePartyFrame()
+    -- Check if party frames exist
+    if not _G['PartyMemberFrame1'] then
+        return
+    end
+
     local PartyMoveFrame = CreateFrame('Frame', 'DragonflightUIPartyMoveFrame', UIParent)
     PartyMoveFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
     PartyMoveFrame:SetFrameStrata('LOW')
@@ -451,6 +457,10 @@ function SubModuleMixin:ChangePartyFrame()
 
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
+        if not pf then
+            break
+        end
+        
         pf:SetParent(PartyMoveFrame)
         pf:SetSize(120, 53)
         -- pf:ClearAllPoints()
@@ -909,9 +919,11 @@ end
 function SubModuleMixin:AddStateUpdater()
     for i = 1, 4 do
         local pf = _G['PartyMemberFrame' .. i]
-        Mixin(pf, DragonflightUIStateHandlerMixin)
-        pf:InitStateHandler()
-        pf:SetUnit('party' .. i)
+        if pf then
+            Mixin(pf, DragonflightUIStateHandlerMixin)
+            pf:InitStateHandler()
+            pf:SetUnit('party' .. i)
+        end
     end
 end
 

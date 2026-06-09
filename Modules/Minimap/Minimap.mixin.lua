@@ -348,7 +348,10 @@ function SubModuleMixin:Setup()
 
     self:SetScript('OnEvent', self.OnEvent);
     self:RegisterEvent('MINIMAP_UPDATE_TRACKING')
-    self:RegisterEvent('MINIMAP_PING')
+    -- MINIMAP_PING event was removed in recent patches
+    if C_EventUtils and C_EventUtils.IsEventValid("MINIMAP_PING") then
+        self:RegisterEvent('MINIMAP_PING')
+    end
 
     local f = self.BaseFrame
     -- state

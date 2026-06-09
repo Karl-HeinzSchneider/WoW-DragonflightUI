@@ -217,12 +217,17 @@ local base = 'Interface\\Addons\\DragonflightUI\\Textures\\'
 function SubModuleMixin:SkinTotems()
     for i = 1, 4 do
         local totem = _G['TotemFrameTotem' .. i];
+        if not totem then
+            return
+        end
 
         local bg = _G['TotemFrameTotem' .. i .. 'Background'];
-        bg:SetSize(31, 31)
-        bg:SetTexture(base .. 'ui-minimap-background')
-        bg:ClearAllPoints()
-        bg:SetPoint("CENTER", totem, "CENTER")
+        if bg then
+            bg:SetSize(31, 31)
+            bg:SetTexture(base .. 'ui-minimap-background')
+            bg:ClearAllPoints()
+            bg:SetPoint("CENTER", totem, "CENTER")
+        end
 
         local icon = totem.icon
         -- print(icon:GetSize())
