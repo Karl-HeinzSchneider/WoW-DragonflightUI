@@ -559,9 +559,17 @@ DragonflightUIEditModePreviewPartyFrameMixin = {}
 function DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()
     -- print('~~ DragonflightUIEditModePreviewPartyFrameMixin:OnLoad()')
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
-    local gap = 10;
-    self:SetSize(sizeX, sizeY * 4 + 3 * gap)
+    local partyFrame = _G['PartyMemberFrame' .. 1]
+    local gap = 10
+
+    if not partyFrame then
+        -- Fallback if party frames don't exist yet
+        self:SetSize(120, 265)
+    else
+        local sizeX, sizeY = partyFrame:GetSize()
+        local gap = 10;
+        self:SetSize(sizeX, sizeY * 4 + 3 * gap)
+    end
 
     self.LastUpdate = GetTime()
     self.PartyFrames = {}
@@ -631,7 +639,13 @@ function DragonflightUIEditModePreviewPartyFrameMixin:Update()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
     self:SetScale(state.scale)
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
+    local partyFrame = _G['PartyMemberFrame' .. 1]
+    local sizeX, sizeY
+    if partyFrame then
+        sizeX, sizeY = partyFrame:GetSize()
+    else
+        sizeX, sizeY = 120, 53
+    end
 
     if state.orientation == 'vertical' then
         self:SetSize(sizeX, sizeY * 4 + 3 * state.padding)
@@ -660,6 +674,14 @@ function DragonflightUIEditModePreviewPartyFrameMixin:Update()
 end
 
 function DragonflightUIEditModePreviewPartyFrameMixin:UpdateVisibility()
+    if not GetDisplayedAllyFrames then
+        -- Function doesn't exist, show all frames
+        for k, v in ipairs(self.PartyFrames) do
+            v:Show()
+        end
+        return
+    end
+
     if (GetDisplayedAllyFrames() ~= "party") then
         for k, v in ipairs(self.PartyFrames) do
             --           
@@ -696,8 +718,14 @@ Mixin(DragonflightUIEditModePreviewPartyMixin, DragonflightUIEditModePreviewTarg
 function DragonflightUIEditModePreviewPartyMixin:OnLoad()
     -- print('~~~~~~~~~~~~DragonflightUIEditModePreviewPartyMixin:OnLoad()')
 
-    local sizeX, sizeY = _G['PartyMemberFrame' .. 1]:GetSize()
-    self:SetSize(sizeX, sizeY)
+    local partyFrame = _G['PartyMemberFrame' .. 1]
+    if not partyFrame then
+        -- Fallback size if party frames don't exist yet
+        self:SetSize(120, 53)
+    else
+        local sizeX, sizeY = partyFrame:GetSize()
+        self:SetSize(sizeX, sizeY)
+    end
     self:SetupFrame()
     self:SetRandomUnit()
 end
@@ -775,7 +803,7 @@ function DragonflightUIEditModePreviewPartyMixin:SetupFrame()
     -- end
     -- -- self.PortraitExtra:UpdateStyle('worldboss')
 
-    if DF.Wrath then
+    if DF and DF.Wrath then
         local roleIcon = self.TextureFrame:CreateTexture('DragonflightUIPartyFrameRoleIcon')
         roleIcon:SetSize(12, 12)
         roleIcon:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -5, -5)

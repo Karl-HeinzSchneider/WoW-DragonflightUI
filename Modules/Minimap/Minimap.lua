@@ -678,6 +678,10 @@ function Module:ChangeLFG()
     if DF.Wrath then
         Module.LFG = _G['MiniMapLFGFrame']
 
+        if not Module.LFG then
+            return
+        end
+
         -- Module.LFG:SetFrameLevel(10)
         Module.LFG:Raise()
 

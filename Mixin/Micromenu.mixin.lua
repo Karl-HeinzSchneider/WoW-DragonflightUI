@@ -22,7 +22,9 @@ function DragonflightUIMicroMenuMixin:OnLoad()
 
     self.OriginalAnchors = {}
     for k, v in ipairs(self.MicroButtons) do
-        self.OriginalAnchors[k] = {v:GetPoint(1)}
+        local point, relativeTo, relativePoint, xOfs, yOfs = v:GetPoint(1)
+        -- Store with explicit nil handling
+        self.OriginalAnchors[k] = {point, relativeTo, relativePoint, xOfs or 0, yOfs or 0}
         v:SetFrameLevel(self:GetFrameLevel() + 1)
     end
 
@@ -125,7 +127,10 @@ function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
             --
         else
             v:ClearAllPoints()
-            v:SetPoint(unpack(self.OriginalAnchors[k]))
+            local anchorData = self.OriginalAnchors[k]
+            if anchorData and anchorData[1] then
+                v:SetPoint(anchorData[1], anchorData[2], anchorData[3], anchorData[4], anchorData[5])
+            end
         end
     end
 end
@@ -153,54 +158,71 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
         else
             v:ClearAllPoints()
-            v:SetPoint(unpack(self.OriginalAnchors[k]))
+            local anchorData = self.OriginalAnchors[k]
+            if anchorData and anchorData[1] then
+                -- Handle the case where relativeTo might be nil or the button itself
+                local point, relativeTo, relativePoint, xOfs, yOfs = anchorData[1], anchorData[2], anchorData[3], anchorData[4], anchorData[5]
+                v:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs)
+            end
         end
     end
 end
 
 function DragonflightUIMicroMenuMixin:UpdateState(state)
     self.State = state
+    -- Validate state before updating
+    if not state or not state.anchorFrame then
+        DF:Debug(self, 'Invalid MicroMenu state')
+        return
+    end
+
     self:Update()
+    self:UpdateStateHandler(state)
 end
 
 function DragonflightUIMicroMenuMixin:Update()
     local state = self.State
     if not state then return end
 
-    if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
+    self:ClearAllPoints()
 
-    local parent;
-    if DF.Settings.ValidateFrame(state.customAnchorFrame) then
-        parent = _G[state.customAnchorFrame]
-    else
-        parent = _G[state.anchorFrame]
+    -- Add validation for anchor frame
+    local anchorFrameName = state.customAnchorFrame ~= '' and state.customAnchorFrame or state.anchorFrame
+    local parent = _G[anchorFrameName]
+
+    -- Prevent anchoring to itself
+    if not parent or parent == self then
+        parent = UIParent
+        DF:Debug(self, 'MicroMenu: Invalid anchor (self or nil), using UIParent instead:', anchorFrameName)
     end
 
-    self:SetClampedToScreen(true)
-    self:SetScale(state.scale)
-    self:ClearAllPoints()
+    -- If anchor frame doesn't exist yet, retry after a short delay
+    if not parent:IsShown() then
+        C_Timer.After(0.1, function()
+            if self and self.Update then
+                self:Update()
+            end
+        end)
+        parent = UIParent
+    end
+
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+    self:SetScale(state.scale)
 
     if DF.API.Version.IsTBC then
         local f = _G['MicroMenuContainer']
-        -- print('s', f:GetSize())
-        -- print('->', self:GetSize())
         f:SetScale(state.scale)
-        -- addonTable:OverrideBlizzEditmode(f, state.anchor, parent, state.anchorParent, state.x, state.y)
-        -- addonTable:OverrideBlizzEditmode(f, 'TOPLEFT', self, 'TOPLEFT', 0, 0)
 
         local point, relativeTo, relativePoint, xOfs, yOfs = f:GetPoint(1)
 
-        if not (relativeTo == self) then addonTable:OverrideBlizzEditmode(f, 'TOPLEFT', self, 'TOPLEFT', 0, 0) end
-
-        -- if not self.FirstMoved then
-        --     self.FirstMoved = true;
-        --     self:UpdateTBCPosition()
-        -- end
-    else
+        if not (relativeTo == self) then 
+            addonTable:OverrideBlizzEditmode(f, 'TOPLEFT', self, 'TOPLEFT', 0, 0) 
+        end
     end
 
-    if self.UpdateStateHandler then self:UpdateStateHandler(state) end
+    if self.UpdateStateHandler then 
+        self:UpdateStateHandler(state) 
+    end
 end
 
 function DragonflightUIMicroMenuMixin:UpdateTBCPosition()

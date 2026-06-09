@@ -43,10 +43,13 @@ end
 function SubModuleMixin:SetupOptions()
     local Module = self.ModuleRef;
     local function getDefaultStr(key, sub, extra)
-        -- return Module:GetDefaultStr(key, sub)
         local value = self.Defaults[key]
-        local defaultFormat = L["SettingsDefaultStringFormat"]
-        return string.format(defaultFormat, (extra or '') .. tostring(value))
+        if value == nil then
+            value = 'N/A'
+        end
+        local defaultFormat = L["SettingsDefaultStringFormat"] or "Default: %s"
+        local prefix = extra or ''
+        return string.format(defaultFormat, prefix .. tostring(value))
     end
 
     local function setDefaultValues()
@@ -118,7 +121,7 @@ function SubModuleMixin:SetupOptions()
             classcolor = {
                 type = 'toggle',
                 name = L["FocusFrameClassColor"],
-                desc = L["FocusFrameClassColorDesc"] .. getDefaultStr('classcolor', 'focusTarget'),
+                desc = L["FocusFrameClassColorDesc"] .. ' ' .. getDefaultStr('classcolor', 'focusTarget', ''),
                 group = 'headerStyling',
                 order = 2,
                 editmode = true
@@ -240,6 +243,34 @@ function SubModuleMixin:SetupOptions()
 end
 
 function SubModuleMixin:Setup()
+
+    if FocusFrameToT then
+        FocusFrameToT.ignoreFramePositionManager = true
+        FocusFrameToT.ignoreInLayout = true
+
+        -- Remove from edit mode management tables immediately
+        if FRAME_POSITIONS then
+            FRAME_POSITIONS["FocusFrameToT"] = nil
+        end
+        if UIPARENT_MANAGED_FRAME_POSITIONS then
+            UIPARENT_MANAGED_FRAME_POSITIONS["FocusFrameToT"] = nil
+        end
+
+        -- Hook SetPoint to prevent any external attempts to reposition
+        if not FocusFrameToT.DFSetPointHooked then
+            FocusFrameToT.DFSetPointHooked = true
+            local originalSetPoint = FocusFrameToT.SetPoint
+            FocusFrameToT.SetPoint = function(self, ...)
+                -- Only allow SetPoint from our addon, not from Blizzard's edit mode
+                local stack = debugstack(2, 1, 0)
+                if stack and stack:find("DragonflightUI") then
+                    originalSetPoint(self, ...)
+                end
+                -- Silently ignore all other SetPoint calls to prevent the warning
+            end
+        end
+    end
+    
     local function setDefaultSubValues(sub)
         self.ModuleRef:SetDefaultSubValues(sub)
     end
@@ -265,6 +296,9 @@ function SubModuleMixin:Setup()
     f:SetScale(1.0)
     f:SetClampedToScreen(true)
     f:SetMovable(true)
+
+    self:ChangeFocusToT()
+    self:ReApplyFocusToT()
 
     if DF.API.Version.IsTBC then
         --
@@ -305,6 +339,7 @@ function SubModuleMixin:Setup()
     });
 end
 
+
 function SubModuleMixin:OnEvent(event, ...)
 end
 
@@ -318,7 +353,10 @@ function SubModuleMixin:Update()
     if not state then return end
 
     local f_orig = FocusFrameToT
+    if not f_orig then return end
+
     local f = _G['DragonflightUIFocusToTFrame']
+    if not f then return end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -327,17 +365,32 @@ function SubModuleMixin:Update()
         parent = _G[state.anchorFrame]
     end
 
-    f:SetScale(state.scale)
-    f:ClearAllPoints()
-    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-    -- f:SetUserPlaced(true)
+    if not parent then
+        parent = UIParent
+    end
 
+    -- Completely detach from Blizzard's edit mode system
+    f_orig.ignoreFramePositionManager = true
+
+    -- Break ALL existing connections
+    f_orig:SetMovable(true)
+    f_orig:SetParent(UIParent)
+    f_orig:ClearAllPoints()
+
+    -- Configure container
+    f:SetMovable(true)
+    f:SetParent(UIParent)
+    f:ClearAllPoints()
+    f:SetScale(state.scale)
+    f:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
+
+    -- Re-parent and anchor the original frame to our container
+    f_orig:SetParent(f)
+    f_orig:SetScale(1.0)
     f_orig:ClearAllPoints()
     f_orig:SetPoint('CENTER', f, 'CENTER', 0, 0)
-    f_orig:SetScale(state.scale)
 
-    if DF.API.Version.IsTBC then
-    else
+    if not DF.API.Version.IsTBC then
         f:SetUserPlaced(true)
         f_orig:SetUserPlaced(true)
     end
@@ -345,15 +398,33 @@ function SubModuleMixin:Update()
     f:SetIgnoreParentAlpha(state.fadeOut and true or false)
 
     self:ReApplyFocusToT()
-    UnitFramePortrait_Update(FocusFrameToT)
 
-    self.PreviewFocusTarget:UpdateState(state);
+    if UnitFramePortrait_Update then
+        UnitFramePortrait_Update(FocusFrameToT)
+    end
+
+    if self.PreviewFocusTarget then
+        self.PreviewFocusTarget:UpdateState(state)
+    end
 end
 
 function SubModuleMixin:ChangeFocusToT()
+    local f = _G['DragonflightUIFocusToTFrame']
+
+    -- Break the original anchor connection to prevent circular dependency
+    FocusFrameToT:SetParent(f or UIParent)
     FocusFrameToT:ClearAllPoints()
-    FocusFrameToT:SetPoint('BOTTOMRIGHT', FocusFrame, 'BOTTOMRIGHT', -35 + 27, -10 - 5)
+
+    -- Don't anchor to FocusFrame directly - let Update() handle positioning
+    if not f then
+        -- Fallback only if container doesn't exist yet
+        FocusFrameToT:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    else
+        FocusFrameToT:SetPoint('CENTER', f, 'CENTER', 0, 0)
+    end
+
     FocusFrameToT:SetSize(93 + 27, 45)
+    FocusFrameToT.ignoreFramePositionManager = true
 
     FocusFrameToT.Portrait = FocusFrameToTPortrait;
     FocusFrameToT.Name = FocusFrameToTTextureFrameName;
@@ -369,6 +440,19 @@ function SubModuleMixin:ChangeFocusToT()
 
     FocusFrameToTTextureFrameUnconsciousText:ClearAllPoints()
     FocusFrameToTTextureFrameUnconsciousText:SetPoint('CENTER', FocusFrameToTHealthBar, 'CENTER', 0, 0)
+
+    -- Prevent Blizzard's secure code from repositioning this frame
+    if FocusFrameToT.SetAttribute then
+        FocusFrameToT:SetAttribute("ignoreFramePositionManager", true)
+    end
+
+    -- Remove from Blizzard's edit mode system
+    if FRAME_POSITIONS then
+        FRAME_POSITIONS["FocusFrameToT"] = nil
+    end
+    if UIPARENT_MANAGED_FRAME_POSITIONS then
+        UIPARENT_MANAGED_FRAME_POSITIONS["FocusFrameToT"] = nil
+    end
 
     if not FocusFrameToT.DFRangeHooked then
         FocusFrameToT.DFRangeHooked = true;

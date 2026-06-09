@@ -115,7 +115,10 @@ function DragonflightUIXPBarMixin:SetupTooltip()
             GameTooltip:AddLine(' ')
             GameTooltip:AddLine(restedText)
         else
-            ExhaustionToolTipText()
+            -- Check if the function exists before calling (removed in some recent patches)
+            if ExhaustionToolTipText then
+                ExhaustionToolTipText()
+            end
         end
 
         local playerCurrXP = UnitXP('player')
@@ -170,6 +173,9 @@ end
 
 function DragonflightUIXPBarMixin:Update()
     local state = self.state
+
+    -- Check if state exists before proceeding
+    if not state then return end
 
     local showXP = false
     if DF.Wrath then

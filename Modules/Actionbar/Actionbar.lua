@@ -2601,7 +2601,7 @@ function Module:AddEditMode()
     });
 
     -- totem
-    if DF.Cata then
+    if DF.Cata and MultiCastActionBarFrame then
         EditModeModule:AddEditModeToFrame(MultiCastActionBarFrame)
 
         MultiCastActionBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
@@ -2895,6 +2895,11 @@ function Module:ApplySettingsInternal(sub, key)
     elseif sub == 'bags' then
         Module.UpdateBagState(db.bags)
     elseif sub == 'micro' then
+        if db.micro.anchorFrame == 'DragonflightUIMicroMenuBar' then
+            db.micro.anchorFrame = 'UIParent'
+            DF:Debug(self, 'Fixed circular anchor reference in MicroMenu')
+        end
+
         Module.MicroFrame:UpdateState(db.micro)
     elseif sub == 'fps' then
         Module.FPSFrame:SetState(db.fps)
@@ -2960,30 +2965,40 @@ function Module.ChangeActionbar()
 
         Module:ForceMoveBlizzEditModeGhosts()
     else
-        StanceBarLeft:Hide()
-        StanceBarMiddle:Hide()
-        StanceBarRight:Hide()
-
-        hooksecurefunc(StanceBarRight, 'Show', function()
+        if StanceBarLeft then
             StanceBarLeft:Hide()
             StanceBarMiddle:Hide()
             StanceBarRight:Hide()
-        end)
+
+            hooksecurefunc(StanceBarRight, 'Show', function()
+                StanceBarLeft:Hide()
+                StanceBarMiddle:Hide()
+                StanceBarRight:Hide()
+            end)
+        end
 
         MainMenuBar:SetSize(1, 1)
 
-        MainMenuExpBar:Hide()
-        hooksecurefunc(MainMenuExpBar, 'Show', function()
+        if MainMenuExpBar then
             MainMenuExpBar:Hide()
-        end)
-        ReputationWatchBar:Hide()
-        hooksecurefunc(ReputationWatchBar, 'Show', function()
+            hooksecurefunc(MainMenuExpBar, 'Show', function()
+                MainMenuExpBar:Hide()
+            end)
+        end
+
+        if ReputationWatchBar then
             ReputationWatchBar:Hide()
-        end)
-        MainMenuBarMaxLevelBar:Hide()
-        hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+            hooksecurefunc(ReputationWatchBar, 'Show', function()
+                ReputationWatchBar:Hide()
+            end)
+        end
+
+        if MainMenuBarMaxLevelBar then
             MainMenuBarMaxLevelBar:Hide()
-        end)
+            hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+                MainMenuBarMaxLevelBar:Hide()
+            end)
+        end
     end
 end
 
@@ -3108,6 +3123,8 @@ end
 
 -- TODO
 function Module.MoveTotem()
+    if not MultiCastActionBarFrame then return end
+
     MultiCastActionBarFrame.ignoreFramePositionManager = true
     Module.Temp.TotemFixing = nil
     hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
@@ -3292,6 +3309,8 @@ function Module.ChangeMicroMenu()
 end
 
 function Module.UpdateTotemState(state)
+    if not MultiCastActionBarFrame then return end
+
     -- print('UpdateTotemState')
     Module.Temp.TotemFixing = true
     -- MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
