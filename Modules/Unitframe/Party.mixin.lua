@@ -12,7 +12,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -317,6 +317,7 @@ function SubModuleMixin:Setup()
     --
     self:RegisterEvent('CVAR_UPDATE')
     --
+    if not _G['PartyMemberFrame1'] then return end
     self:ChangePartyFrame()
     self:AddStateUpdater()
 
@@ -363,6 +364,7 @@ function SubModuleMixin:Setup()
 end
 
 function SubModuleMixin:OnEvent(event, ...)
+    if not self.PartyMoveFrame then return end
     if event == 'CVAR_UPDATE' then
         local arg1 = ...;
         if arg1 == 'statusText' or arg1 == 'statusTextDisplay' then
@@ -381,6 +383,7 @@ end
 
 function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then return end -- TODOTBC
+    if not self.PartyMoveFrame then return end
     local state = self.state;
     if not state then return end
 

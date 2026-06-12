@@ -10,7 +10,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -480,7 +480,9 @@ function DragonflightUIBossframeMixin:UpdateHealth(unit)
         self.HealthBar.lockShow = 1
     end
 
-    TextStatusBar_UpdateTextStringWithValues(self.HealthBar, self.HealthBar.HealthBarText, value, valueMin, valueMax)
+    if TextStatusBar_UpdateTextStringWithValues then
+        TextStatusBar_UpdateTextStringWithValues(self.HealthBar, self.HealthBar.HealthBarText, value, valueMin, valueMax)
+    end
 end
 
 function DragonflightUIBossframeMixin:UpdatePower(unit)
@@ -504,6 +506,8 @@ function DragonflightUIBossframeMixin:UpdatePower(unit)
         self.ManaBar.lockShow = 1
     end
 
-    TextStatusBar_UpdateTextStringWithValues(self.ManaBar, self.ManaBar.ManaBarText, value, valueMin, valueMax)
+    if TextStatusBar_UpdateTextStringWithValues then
+        TextStatusBar_UpdateTextStringWithValues(self.ManaBar, self.ManaBar.ManaBarText, value, valueMin, valueMax)
+    end
 end
 

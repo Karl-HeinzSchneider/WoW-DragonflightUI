@@ -505,16 +505,14 @@ function SubModuleMixin:CreateNewBuffs()
 end
 
 function SubModuleMixin:RemoveDefaultBuffs()
-    if TemporaryEnchantFrame then
-        TemporaryEnchantFrame:UnregisterAllEvents()
-        TemporaryEnchantFrame:Hide()
+    local function suppressFrame(f)
+        if not f then return end
+        f:UnregisterAllEvents()
+        f:Hide()
+        hooksecurefunc(f, 'Show', function() f:Hide() end)
     end
-    if BuffFrame then
-        BuffFrame:UnregisterAllEvents()
-        BuffFrame:Hide()
-    end
-    if DebuffFrame then
-        DebuffFrame:UnregisterAllEvents()
-        DebuffFrame:Hide()
-    end
+
+    suppressFrame(TemporaryEnchantFrame)
+    suppressFrame(BuffFrame)
+    suppressFrame(DebuffFrame)
 end

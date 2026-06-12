@@ -11,7 +11,9 @@ function DragonflightUIMicroMenuMixin:OnLoad()
 
     self.MicroButtons = {}
     self:ChangeButtons()
-    self.disabled = false
+	if DF.API.Version.IsMoP then
+		self.disabled = false
+	end
 
     if self.MicroButtons[1]:GetParent() == MainMenuBarArtFrame then
         self.ParentByUI = false;
@@ -26,8 +28,6 @@ function DragonflightUIMicroMenuMixin:OnLoad()
         self.OriginalAnchors[k] = {v:GetPoint(1)}
         v:SetFrameLevel(self:GetFrameLevel() + 1)
     end
-
-    if self.disabled then return end
 
     local numButtons = #self.MicroButtons;
     if DF.Era then
@@ -49,83 +49,93 @@ function DragonflightUIMicroMenuMixin:OnLoad()
     local width = (sizeX - 3) * numButtons + 3
     local height = sizeY
 
-    if DF.API.Version.IsTBC then
+--    if (DF.API.Version.IsTBC or DF.API.Version.IsMoP) then
+    if DF.API.Version.IsTBC then	
         width = numButtons * 26 + 6;
         self:SetSize(width, height)
     else
         self:SetSize(width, height)
     end
 
-    hooksecurefunc('UpdateMicroButtons', function()
-        self:UpdateLayout(true)
-    end)
-
-    if MoveMicroButtons then
-        hooksecurefunc('MoveMicroButtons', function()
+    if DF.API.Version.IsTBC then
+    else
+        hooksecurefunc('UpdateMicroButtons', function()
+            -- print('#UpdateMicroButtons')
             self:UpdateLayout(true)
         end)
-    end
 
-    self:UpdateLayout(true)
+        if UpdateMicroButtonsParent then
+            hooksecurefunc('UpdateMicroButtonsParent', function(parent)
+                -- print('#UpdateMicroButtonsParent')
+                self:OnUpdateMicroButtonsParent(parent)
+            end)
+        end
+
+        -- inside calls UpdateMicroButtons
+        -- hooksecurefunc('MoveMicroButtons', function()
+        --     -- print('#MoveMicroButtons')
+        --     self:UpdateLayout(true)
+        -- end)
+
+        hooksecurefunc('ActionBarController_UpdateAll', function(force)
+            -- print('#ActionBarController_UpdateAll')
+            self:OnActionBarController_UpdateAll()
+        end)
+    end
+    if UpdateMicroButtonsParent then UpdateMicroButtonsParent(self) end
 
     local talentAlert = _G['TalentMicroButtonAlert']
     if talentAlert then talentAlert:SetPoint('BOTTOM', _G['TalentMicroButton'], 'TOP', 0, -8 + 16); end
 
-    local function hideMicroButton(v)
-        v:SetAlpha(0)
-        v:EnableMouse(false)
-    end
-
-    local function showMicroButton(v)
-        v:SetAlpha(1)
-        v:EnableMouse(true)
-    end
-
     self:HookScript('OnHide', function()
         for _, v in ipairs(self.MicroButtons) do
-            hideMicroButton(v)
+            v:Hide()
         end
     end)
 
     self:HookScript('OnShow', function()
         for _, v in ipairs(self.MicroButtons) do
-            showMicroButton(v)
-        end
-        self:UpdateLayout(true)
-    end)
-
-    local bar = self
-    local buttons = self.MicroButtons
-    local enforcer = CreateFrame('Frame')
-    local t = 0
-    enforcer:SetScript('OnUpdate', function(_, elapsed)
-        t = t + elapsed
-        if t < 0.1 then return end
-        t = 0
-        if not bar:IsShown() then
-            for _, v in ipairs(buttons) do
-                if v:GetAlpha() > 0 then hideMicroButton(v) end
-            end
-        else
-            local _, relativeTo = CharacterMicroButton:GetPoint(1)
-            if relativeTo ~= bar then
-                bar:UpdateLayout(true)
-            end
+            v:Show()
         end
     end)
-
 end
 
+function DragonflightUIMicroMenuMixin:OnUpdateMicroButtonsParent(parent)
+    -- print('OnUpdateMicroButtonsParent() to ', parent:GetName())
+
+    if (not parent) or (parent == UIParent) then
+        -- normal
+        -- print('~~> normal')
+        UpdateMicroButtonsParent(self)
+        -- self:UpdateLayout()
+    elseif parent == OverrideActionBar then
+        -- vehicle etc
+        -- print('~~> vehicle')
+        UpdateMicroButtonsParent(self)
+    elseif parent == PetBattleFrame then
+        -- pet battle
+        -- print('~~> pet battle')
+        UpdateMicroButtonsParent(self)
+    elseif parent == self then
+        -- custom
+        -- print('~~> self')
+        self:UpdateLayout(false)
+    else
+        -- ELSE - should not happen?
+        -- print('~~> ELSE')
+        UpdateMicroButtonsParent(self)
+    end
+end
 
 function DragonflightUIMicroMenuMixin:OnActionBarController_UpdateAll()
+    -- print('OnActionBarController_UpdateAll()', ActionBarController_GetCurrentActionBarState())
     local abState = ActionBarController_GetCurrentActionBarState();
     if abState == LE_ACTIONBAR_STATE_MAIN and not (C_PetBattles and C_PetBattles.IsInBattle()) then
-        self:UpdateLayout(true)
+        self:UpdateLayout()
     end
 end
 
 function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
-    if self.disabled then return end
     -- print('BlizzardMicroMenuShow()')
     -- restore anchors
     for k, v in ipairs(self.MicroButtons) do
@@ -142,7 +152,6 @@ function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
 end
 
 function DragonflightUIMicroMenuMixin:UpdateLayout(force)
-    if self.disabled then return end
     -- print('UpdateLayout()', #self.MicroButtons, force)
     -- if true then return end
     -- force = true
@@ -165,7 +174,7 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
         else
             v:ClearAllPoints()
-            v:SetPoint('TOPLEFT', self.MicroButtons[k - 1], 'TOPRIGHT', -3, 0)
+            v:SetPoint(unpack(self.OriginalAnchors[k]))
         end
     end
 end
@@ -179,6 +188,7 @@ function DragonflightUIMicroMenuMixin:Update()
     local state = self.State
     if not state then return end
 
+--    if (DF.API.Version.IsTBC or DF.API.Version.IsMoP) then state.customAnchorFrame = ''; end
     if DF.API.Version.IsTBC then state.customAnchorFrame = ''; end
 
     local parent;
@@ -193,6 +203,7 @@ function DragonflightUIMicroMenuMixin:Update()
     self:ClearAllPoints()
     self:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
 
+--    if (DF.API.Version.IsTBC or DF.API.Version.IsMoP) then
     if DF.API.Version.IsTBC then
         local f = _G['MicroMenuContainer']
         -- print('s', f:GetSize())
@@ -604,7 +615,7 @@ function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
         end)
     end
 
-    if (DF.API.Version.IsTBC or DF.API.Version.IsMoP or DF.Cata) and frame == GuildMicroButton then
+    if (DF.API.Version.IsTBC or DF.API.Version.IsMoP) and frame == GuildMicroButton then
         -- print('here')
         -- GuildMicroButtonMixin:UpdateTabard(forceUpdate)
 

@@ -513,7 +513,7 @@ function DragonFlightUICastbarMixin:OnUpdate(elapsed)
     elseif (GetTime() < self.holdTime) then
         return;
     elseif (self.fadeOut) then
-        local alpha = self:GetAlpha() - CASTING_BAR_ALPHA_STEP;
+        local alpha = self:GetAlpha() - (CASTING_BAR_ALPHA_STEP or 0.05);
         if (alpha > 0) then
             -- CastingBarFrame_ApplyAlpha(self, alpha);
             self:SetAlpha(alpha)

@@ -600,8 +600,11 @@ end
 
 function DFEditModeSystemSelectionBaseMixin:OnUpdate()
     if self.isDragging then
-        --
-        -- print('drag drag')
+        local x, y = self.parent:GetCenter()
+        if x and y then
+            self.lastDragX = x
+            self.lastDragY = y
+        end
         -- local anchor, anchorFrame, anchorParent, xxx, yyy = self:CalcSnapParentToGrid()
         -- self:SetPoint(anchor, anchorFrame, anchorParent, xxx, yyy)
     end
@@ -626,6 +629,17 @@ function DFEditModeSystemSelectionBaseMixin:CalcSnapParentToGrid()
     local parentname = self.parent:GetName()
 
     local x, y = self.parent:GetCenter()
+    if not x or not y then
+        x, y = self:GetCenter()
+    end
+    if not x or not y then
+        local cx, cy = GetCursorPosition()
+        local uiScale = UIParent:GetEffectiveScale()
+        if cx and uiScale and uiScale > 0 then
+            x = (cx / uiScale) - (self.grabOffsetX or 0)
+            y = (cy / uiScale) - (self.grabOffsetY or 0)
+        end
+    end
     local centerX = x - screenW / 2
     local centerY = y - screenH / 2
 
@@ -650,6 +664,17 @@ function DFEditModeSystemSelectionBaseMixin:OnDragStart()
 
     self.StartX = x;
     self.StartY = y;
+
+    -- capture cursor offset from frame center before StartMoving() invalidates GetCenter()
+    local cx, cy = GetCursorPosition()
+    local uiScale = UIParent:GetEffectiveScale()
+    if x and y and uiScale and uiScale > 0 then
+        self.grabOffsetX = (cx / uiScale) - x
+        self.grabOffsetY = (cy / uiScale) - y
+    else
+        self.grabOffsetX = 0
+        self.grabOffsetY = 0
+    end
 
     -- self:StartMoving()
     self.parent = self:GetParent();
