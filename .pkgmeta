@@ -1,5 +1,0 @@
-package-as: DragonflightUI
-
-ignore:
-  - Screenshots
-  - "*.png"

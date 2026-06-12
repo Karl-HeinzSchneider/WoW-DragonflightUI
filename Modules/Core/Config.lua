@@ -411,6 +411,34 @@ function Module:AddMainMenuButtonTBC()
     end)
 end
 
+function Module:AddMainMenuButtonMists()
+    -- Hide Blizzard's native Edit Mode button permanently
+    if GameMenuButtonEditMode then
+        GameMenuButtonEditMode:Hide()
+        hooksecurefunc(GameMenuButtonEditMode, 'Show', function(f) f:Hide() end)
+    end
+
+    local btn = CreateFrame('Button', 'DragonflightUIMainMenuButton', GameMenuFrame, 'UIPanelButtonTemplate')
+    btn:SetSize(145, 21)
+    btn:SetText(L["MainMenuDragonflightUI"])
+    Module.MainMenuButton = btn
+
+    local editBtn = CreateFrame('Button', 'DragonflightUIEditModeButton', GameMenuFrame, 'UIPanelButtonTemplate')
+    editBtn:SetSize(145, 21)
+    editBtn:SetText(L["MainMenuEditmode"])
+    editBtn:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
+    Module.EditModeButton = editBtn
+
+    -- Position above the GameMenuFrame (same as TBC style)
+    btn:SetPoint('BOTTOM', GameMenuFrame, 'TOP', 0, 36)
+
+    Module.UpdateMainMenuButtons = function() end
+
+    btn:SetScript('OnClick', function()
+        Module:ToggleConfigFrame()
+    end)
+end
+
 function Module:AddConfigFrame()
     local config = CreateFrame('Frame', 'DragonflightUIConfigFrame', UIParent, 'DragonflightUIConfigFrameTemplate')
     Module.ConfigFrame = config
@@ -561,7 +589,7 @@ end
 
 function Module:Mists()
     Module:AddConfigFrame()
-    Module:AddMainMenuButton()
+    Module:AddMainMenuButtonMists()
 
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end

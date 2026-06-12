@@ -1,4 +1,4 @@
-## Interface: 50503, 40402, 30405, 30404, 20505, 11508
+## Interface: 50504
 ## Title: DragonflightUI |cff8080ffv0.40.3|r
 ## Notes: Brings the modern retail UI to classic.|n|cffbbbbbbBy Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
 ## Notes-esES: La interfaz moderna para la versión clásica.|n|cffbbbbbbPor Karl-Heinz Schneider|r|n|n|TInterface/Addons/DragonflightUI/Textures/Art/coffee:12:12|t |cff82c5ffbuymeacoffee.com/karlheinzschneider|r
@@ -6,7 +6,7 @@
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## X-Curse-Project-ID: 819757
-## Version: v0.40.3
+## Version: v0.40.4
 ## X-Date: 20260506143535
 ## Category: UI Overhaul
 ## Category-deDE: UI-Überholung

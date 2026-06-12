@@ -911,8 +911,7 @@ function Module.AddNewCastbar()
         Module.FocusCastbar = focus
     end
 
-    if DF.API.Version.IsTBC then
-    else
+    if not DF.API.Version.IsTBC and Target_Spellbar_AdjustPosition then
         hooksecurefunc('Target_Spellbar_AdjustPosition', function(self)
             -- print('Target_Spellbar_AdjustPosition', self:GetName())
             if self.DFCastbar then self.DFCastbar:AdjustPosition() end

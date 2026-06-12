@@ -499,17 +499,12 @@ function Module.UpdateTrackerState(state)
         WatchFrame:SetScale(state.scale)
         WatchFrame:ClearAllPoints()
         WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-
-        WatchFrame:SetHeight(800)
-        WatchFrame:SetWidth(204)
     elseif DF.Wrath then
         if not WatchFrame then return end
         WatchFrame:SetClampedToScreen(false)
         WatchFrame:SetScale(state.scale)
         WatchFrame:ClearAllPoints()
         WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-        WatchFrame:SetHeight(800)
-        WatchFrame:SetWidth(204)
     end
 end
 
@@ -600,6 +595,10 @@ function Module.MoveTracker()
             end
         end)
     elseif DF.Cata then
+        if WatchFrame then
+            WatchFrame:SetHeight(800)
+            WatchFrame:SetWidth(204)
+        end
         hooksecurefunc(WatchFrame, 'SetPoint', function(self)
             if not setting then
                 setting = true
@@ -610,6 +609,10 @@ function Module.MoveTracker()
             end
         end)
     elseif DF.Wrath then
+        if WatchFrame then
+            WatchFrame:SetHeight(800)
+            WatchFrame:SetWidth(204)
+        end
         hooksecurefunc(WatchFrame, 'SetPoint', function(self)
             if not setting then
                 setting = true
@@ -675,7 +678,7 @@ function Module:ChangeLFG()
         });
     end
 
-    if DF.Wrath then
+    if DF.Wrath and _G['MiniMapLFGFrame'] then
         Module.LFG = _G['MiniMapLFGFrame']
 
         -- Module.LFG:SetFrameLevel(10)

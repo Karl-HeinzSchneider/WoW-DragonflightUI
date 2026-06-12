@@ -230,8 +230,7 @@ function SubModuleMixin:Setup()
     end)
 
     -- ActionButton_UpdateUsable
-    if DF.API.Version.IsTBC then
-    else
+    if not DF.API.Version.IsTBC and ActionButton_UpdateUsable then
         hooksecurefunc('ActionButton_UpdateUsable', function(btn)
             -- print('ActionButton_UpdateUsable', btn:GetName() or '')
             if not self.activate then return end

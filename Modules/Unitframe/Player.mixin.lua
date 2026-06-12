@@ -13,7 +13,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -588,6 +588,7 @@ function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetMovable(true)
         f_orig:SetUserPlaced(true)
     end
 
@@ -881,6 +882,7 @@ function SubModuleMixin:ChangeStatusIcons()
     PlayerFrameGroupIndicator:ClearAllPoints()
     -- PlayerFrameGroupIndicator:SetPoint('BOTTOMRIGHT', PlayerFrameHealthBar, 'TOPRIGHT', 4, 13)
     PlayerFrameGroupIndicator:SetPoint('BOTTOM', PlayerName, 'TOP', 0, 0)
+    PlayerFrameGroupIndicator:Hide()
 
     PlayerLeaderIcon:SetTexture(base)
     PlayerLeaderIcon:SetTexCoord(0.1259765625, 0.1416015625, 0.919921875, 0.951171875)

@@ -2601,7 +2601,7 @@ function Module:AddEditMode()
     });
 
     -- totem
-    if DF.Cata then
+    if DF.Cata and MultiCastActionBarFrame then
         EditModeModule:AddEditModeToFrame(MultiCastActionBarFrame)
 
         MultiCastActionBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
@@ -2666,7 +2666,7 @@ function Module:AddEditMode()
         --     -- print('dragStopFunction')
         --     Module.MicroFrame:UpdateTBCPosition()
         -- end,
-        moduleRef = self
+        moduleRef = self,
     });
 
     -- fps 
@@ -2811,7 +2811,7 @@ function Module:RefreshOptionScreens()
     Module.repbar.DFEditModeSelection:RefreshOptionScreen();
     PossessBarFrame.DFEditModeSelection:RefreshOptionScreen();
     Module.stancebar.DFEditModeSelection:RefreshOptionScreen();
-    if DF.Cata then
+    if DF.Cata and MultiCastActionBarFrame then
         MultiCastActionBarFrame.DFEditModeSelection:RefreshOptionScreen();
         Module.ExtraActionButtonPreview.DFEditModeSelection:RefreshOptionScreen();
     end
@@ -2960,30 +2960,54 @@ function Module.ChangeActionbar()
 
         Module:ForceMoveBlizzEditModeGhosts()
     else
-        StanceBarLeft:Hide()
-        StanceBarMiddle:Hide()
-        StanceBarRight:Hide()
-
-        hooksecurefunc(StanceBarRight, 'Show', function()
+        if StanceBarLeft then
             StanceBarLeft:Hide()
             StanceBarMiddle:Hide()
             StanceBarRight:Hide()
-        end)
+
+            hooksecurefunc(StanceBarRight, 'Show', function()
+                StanceBarLeft:Hide()
+                StanceBarMiddle:Hide()
+                StanceBarRight:Hide()
+            end)
+        end
 
         MainMenuBar:SetSize(1, 1)
 
-        MainMenuExpBar:Hide()
-        hooksecurefunc(MainMenuExpBar, 'Show', function()
+        if MainMenuExpBar then
             MainMenuExpBar:Hide()
-        end)
-        ReputationWatchBar:Hide()
-        hooksecurefunc(ReputationWatchBar, 'Show', function()
+            hooksecurefunc(MainMenuExpBar, 'Show', function()
+                MainMenuExpBar:Hide()
+            end)
+        end
+        if ReputationWatchBar then
             ReputationWatchBar:Hide()
-        end)
-        MainMenuBarMaxLevelBar:Hide()
-        hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+            hooksecurefunc(ReputationWatchBar, 'Show', function()
+                ReputationWatchBar:Hide()
+            end)
+        end
+        if StatusTrackingBarManager then
+            StatusTrackingBarManager:Hide()
+            hooksecurefunc(StatusTrackingBarManager, 'Show', function()
+                StatusTrackingBarManager:Hide()
+            end)
+        end
+        if MainMenuBarMaxLevelBar then
             MainMenuBarMaxLevelBar:Hide()
-        end)
+            hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+                MainMenuBarMaxLevelBar:Hide()
+            end)
+        end
+
+        if DF.API.Version.IsMoP then
+            local mab = _G['MainActionBar']
+            if mab then
+                mab:UnregisterAllEvents()
+                mab:ClearAllPoints()
+                mab:Hide()
+            end
+            Module:ForceMoveBlizzEditModeGhosts()
+        end
     end
 end
 
@@ -3108,6 +3132,7 @@ end
 
 -- TODO
 function Module.MoveTotem()
+    if not MultiCastActionBarFrame then return end
     MultiCastActionBarFrame.ignoreFramePositionManager = true
     Module.Temp.TotemFixing = nil
     hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
@@ -3293,6 +3318,7 @@ end
 
 function Module.UpdateTotemState(state)
     -- print('UpdateTotemState')
+    if not MultiCastActionBarFrame then return end
     Module.Temp.TotemFixing = true
     -- MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
 

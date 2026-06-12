@@ -7,6 +7,11 @@ local subModuleName = 'Durability';
 local SubModuleMixin = {};
 addonTable.SubModuleMixins[subModuleName] = SubModuleMixin;
 
+-- Create the anchor frame at file-load time so it exists before EditMode
+-- applies saved layouts (Editmode module initializes before Minimap).
+local _durabilityBaseFrame = CreateFrame('Frame', 'DragonflightUIDurabilityFrame', UIParent)
+_durabilityBaseFrame:SetSize(92, 75)
+
 function SubModuleMixin:Init()
     self.ModuleRef = DF:GetModule('Minimap')
     self:SetDefaults()
@@ -188,8 +193,7 @@ function SubModuleMixin:Update()
 end
 
 function SubModuleMixin:CreateBase()
-    local baseFrame = CreateFrame('Frame', 'DragonflightUIDurabilityFrame', UIParent);
-    baseFrame:SetSize(92, 75);
+    local baseFrame = _durabilityBaseFrame;
     -- baseFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
     baseFrame:SetClampedToScreen(true)
     -- baseFrame:Hide()
@@ -222,7 +226,6 @@ function SubModuleMixin:CreateBase()
 
         DurabilityFrame:ClearAllPoints()
         DurabilityFrame:SetPoint('TOPRIGHT', baseFrame, 'TOPRIGHT', -delta, 0)
-        DurabilityFrame:SetParent(baseFrame)
     end
     DurabilityFrame:ClearAllPoints()
     moveDur()

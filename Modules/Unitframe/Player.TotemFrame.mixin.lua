@@ -219,6 +219,7 @@ function SubModuleMixin:SkinTotems()
         local totem = _G['TotemFrameTotem' .. i];
 
         local bg = _G['TotemFrameTotem' .. i .. 'Background'];
+        if not bg then break end
         bg:SetSize(31, 31)
         bg:SetTexture(base .. 'ui-minimap-background')
         bg:ClearAllPoints()
