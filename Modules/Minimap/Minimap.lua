@@ -662,9 +662,9 @@ function Module:ChangeLFG()
             end,
             hideFunction = function()
                 --
-                if DF.Wrath then
+                if DF.Wrath and MiniMapLFGFrame_OnEvent then
                     MiniMapLFGFrame_OnEvent(Module.LFG, 'LFG_UPDATE')
-                elseif DF.Era then
+                elseif Module.LFG then
                     Module.LFG:Show()
                 end
             end,
@@ -676,7 +676,8 @@ function Module:ChangeLFG()
     end
 
     if DF.Wrath then
-        Module.LFG = _G['MiniMapLFGFrame']
+        Module.LFG = _G['MiniMapLFGFrame'] or _G['LFGMinimapFrame']
+        if not Module.LFG then return end
 
         -- Module.LFG:SetFrameLevel(10)
         Module.LFG:Raise()

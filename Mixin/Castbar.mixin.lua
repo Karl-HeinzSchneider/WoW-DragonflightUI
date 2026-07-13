@@ -5,6 +5,8 @@ local craftingRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\Casti
 local interruptedRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarInterrupted2'
 local channelRef = 'Interface\\Addons\\DragonflightUI\\Textures\\Castbar\\CastingBarChannel'
 
+local CASTING_BAR_ALPHA_STEP = CASTING_BAR_ALPHA_STEP or 0.05
+
 local fishingTable = {
     [7620] = APPRENTICE,
     [7731] = JOURNEYMAN,
