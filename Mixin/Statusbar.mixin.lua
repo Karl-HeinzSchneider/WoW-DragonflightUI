@@ -170,6 +170,7 @@ end
 
 function DragonflightUIXPBarMixin:Update()
     local state = self.state
+    if not state then return end
 
     local showXP = false
     if DF.Wrath then

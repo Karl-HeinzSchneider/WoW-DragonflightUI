@@ -54,7 +54,7 @@ do
     L["ConfigGeneralModules"] = "Modules"
     L["ConfigGeneralInfo"] = "Info"
     L["MainMenuDragonflightUI"] = "DragonflightUI"
-    L["MainMenuEditmode"] = "Editmode"
+    L["MainMenuEditmode"] = "Edit Mode"
 
     -- config.mixin.lua
     L["ConfigMixinQuickKeybindMode"] = "Quick Keybind Mode"

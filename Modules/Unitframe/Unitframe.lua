@@ -14,7 +14,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -760,4 +760,7 @@ function Module:Mists()
     self:HookDrag()
     self:AddPortraitMasks()
     self:HookClassIcon()
+
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:ShowEditmodeWarning(3, 0, 'Target and Focus')
 end

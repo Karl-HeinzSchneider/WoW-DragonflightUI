@@ -124,8 +124,11 @@ function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
         if v == CharacterMicroButton or v == PVPMicroButton then
             --
         else
-            v:ClearAllPoints()
-            v:SetPoint(unpack(self.OriginalAnchors[k]))
+            local anchors = self.OriginalAnchors[k]
+            if anchors and anchors[1] then
+                v:ClearAllPoints()
+                v:SetPoint(unpack(anchors))
+            end
         end
     end
 end
@@ -151,6 +154,11 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             -- print('~~>> CharacterMicroButton')
             v:ClearAllPoints()
             v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+            self.LastChainButton = v
+        elseif DF.API.Version.IsMoP then
+            v:ClearAllPoints()
+            v:SetPoint('TOPLEFT', self.LastChainButton or CharacterMicroButton, 'TOPRIGHT', -3, 0)
+            if v:IsShown() then self.LastChainButton = v end
         else
             v:ClearAllPoints()
             v:SetPoint(unpack(self.OriginalAnchors[k]))

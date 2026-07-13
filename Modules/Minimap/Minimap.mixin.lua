@@ -852,10 +852,14 @@ function SubModuleMixin:ChangeCalendar()
     button:SetSize(18, 18)
     button:SetPoint('CENTER')
 
-    if DF.Wrath then
+    if DF.API.Version.IsMoP then
+        button:SetScript('OnClick', function()
+            GameTimeFrame_OnClick(GameTimeFrame)
+        end)
+    elseif DF.Wrath then
         button:SetAttribute('type', 'macro')
         button:SetAttribute('macrotext', '/click GameTimeFrame')
-    elseif DF.Era then
+    elseif DF.Era or DF.API.Version.IsTBC then
         button:SetScript('OnClick', function()
             self.ModuleRef:Print(
                 "Era doesn't have an ingame Calendar, sorry. Consider using 'Classic Calendar' by 'Toxiix', and this button will magically work...")
