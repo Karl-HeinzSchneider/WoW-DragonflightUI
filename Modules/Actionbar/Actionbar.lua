@@ -2980,6 +2980,7 @@ function Module.ChangeActionbar()
                 MainMenuExpBar:Hide()
             end)
         end
+        if StatusTrackingBarManager then StatusTrackingBarManager:Hide() end
         if ReputationWatchBar then
             ReputationWatchBar:Hide()
             hooksecurefunc(ReputationWatchBar, 'Show', function()
@@ -3546,7 +3547,7 @@ function Module.ChangeBackpack()
     f:SetClampedToScreen(true)
     f:SetMovable(true)
 
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsTBC or DF.API.Version.IsMoP then
         --
         addonTable:OverrideBlizzEditmode(_G['BagsBar'], 'RIGHT', f, 'RIGHT', 0, 0)
     end
@@ -3677,7 +3678,7 @@ function Module.UpdateBagState(state)
     MainMenuBarBackpackButton:SetParent(f)
     MainMenuBarBackpackButton:SetScale(1.5)
 
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsTBC or DF.API.Version.IsMoP then
         local b = _G['BagsBar']
         -- b:SetScale(state.scale)
 

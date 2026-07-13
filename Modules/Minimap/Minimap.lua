@@ -667,6 +667,8 @@ function Module:ChangeLFG()
                 --
                 if DF.Wrath and MiniMapLFGFrame_OnEvent then
                     MiniMapLFGFrame_OnEvent(Module.LFG, 'LFG_UPDATE')
+                elseif DF.API.Version.IsMoP and Module.LFG and Module.LFG.OnEvent then
+                    Module.LFG:OnEvent('LFG_UPDATE')
                 elseif Module.LFG then
                     Module.LFG:Show()
                 end

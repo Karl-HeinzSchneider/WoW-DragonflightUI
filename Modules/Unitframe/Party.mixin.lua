@@ -12,7 +12,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -382,6 +382,7 @@ end
 
 function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then return end -- TODOTBC
+    if not self.PartyMoveFrame then return end
     local state = self.state;
     if not state then return end
 
