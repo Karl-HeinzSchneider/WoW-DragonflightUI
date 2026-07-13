@@ -601,4 +601,5 @@ function Module:Cata()
 end
 
 function Module:Mists()
+    self:InitEditmodeOverride()
 end

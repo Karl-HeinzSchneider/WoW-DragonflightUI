@@ -108,7 +108,7 @@ function DragonflightUIXPBarMixin:SetupTooltip()
         GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
         GameTooltip.canAddRestStateLine = 1
 
-        if DF.API.Version.IsTBC then
+        if DF.API.Version.IsTBC or not ExhaustionToolTipText then
             local exhaustionStateID, exhaustionStateName, exhaustionStateMultiplier = GetRestState();
             exhaustionStateMultiplier = exhaustionStateMultiplier * 100;
             local restedText = format(EXHAUST_TOOLTIP1, exhaustionStateName, exhaustionStateMultiplier);
@@ -170,6 +170,7 @@ end
 
 function DragonflightUIXPBarMixin:Update()
     local state = self.state
+    if not state then return end
 
     local showXP = false
     if DF.Wrath then
