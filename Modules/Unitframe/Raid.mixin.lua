@@ -569,7 +569,7 @@ function SubModuleMixin:AddRaidframeRoleIcons()
             return
         else
             f.roleIcon:SetDrawLayer('OVERLAY')
-            local size = f.roleIcon:GetHeight();
+            local size = math.min(f.roleIcon:GetHeight(), 12);
             local role = UnitGroupRolesAssigned(f.unit);
             if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
                 f.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");

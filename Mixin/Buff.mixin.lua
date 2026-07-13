@@ -724,23 +724,21 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
             self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
             self.DFIconBorder:SetVertexColor(parent.BuffVertexColorR, parent.BuffVertexColorG, parent.BuffVertexColorB)
         elseif self.DFFilter == 'HARMFUL' then
-            local color;
-
-            if dispelType then
-                color = DebuffTypeColor[dispelType];
-                -- doesnt seem to work, but is in default code
-                if (ENABLE_COLORBLIND_MODE == "1") then
-                    -- buff.symbol:Show();
-                    -- buff.symbol:SetText(DebuffTypeSymbol[dispelType] or "");
-                else
-                    -- buff.symbol:Hide();
-                end
-            else
-                color = DebuffTypeColor['none']
-            end
-
             self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
-            self.DFIconBorder:SetVertexColor(color.r, color.g, color.b)
+
+            if AuraUtil and AuraUtil.SetAuraBorderColor then
+                AuraUtil.SetAuraBorderColor(self.DFIconBorder, dispelType)
+            else
+                local color;
+
+                if dispelType then
+                    color = DebuffTypeColor[dispelType] or DebuffTypeColor['none'];
+                else
+                    color = DebuffTypeColor['none']
+                end
+
+                self.DFIconBorder:SetVertexColor(color.r, color.g, color.b)
+            end
         else
             -- should not happen
             self.DFIconBorder:SetDesaturated(false)

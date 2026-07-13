@@ -304,6 +304,7 @@ end
 
 function SubModuleMixin:Setup()
     if DF.API.Version.IsTBC then return end
+    if not _G['PartyMemberFrame1'] then return end
     local function setDefaultSubValues(sub)
         self.ModuleRef:SetDefaultSubValues(sub)
     end
