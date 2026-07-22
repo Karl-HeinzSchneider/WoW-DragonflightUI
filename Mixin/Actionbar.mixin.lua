@@ -1230,7 +1230,12 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
         -- handler obeys the ActionButtonUseKeyDown cvar (default 1) and only
         -- acts on DOWN presses. Register both edges and let
         -- SecureActionButton_OnClick's clickAction logic fire exactly one.
-        btn:RegisterForClicks('AnyDown', 'AnyUp')
+        -- Explicit buttons, NOT 'AnyDown'/'AnyUp': on this client "Any"
+        -- includes MouseWheelUp/Down as click buttons, so shift-scrolling
+        -- over an arrow fired its action AND the SHIFT-MOUSEWHEEL page
+        -- binding - the binding cycles VIEWABLE pages ({1,2} with multibars
+        -- shown) and immediately wrapped the page back: the 1->2->1 flicker.
+        btn:RegisterForClicks('LeftButtonDown', 'LeftButtonUp')
         btn:SetAttribute('type', 'actionbar')
         btn:SetAttribute('_onstate-page', ([[
             local page = (tonumber(newstate) or 1) + (%d)
