@@ -55,7 +55,15 @@ function DF:OnEnable()
         end, 0, self)
         C_Timer.After(0, enableNext)
     end
-    C_Timer.After(0, enableNext)
+    -- Start strictly AFTER the loading screen (PLAYER_ENTERING_WORLD), not
+    -- from a login-time timer: keeps module setup fully clear of the
+    -- loading pipeline and its shared watchdog slice.
+    local starter = CreateFrame('Frame')
+    starter:RegisterEvent('PLAYER_ENTERING_WORLD')
+    starter:SetScript('OnEvent', function(frame)
+        frame:UnregisterAllEvents()
+        C_Timer.After(0, enableNext)
+    end)
 end
 
 function DF:OnDisable()
