@@ -18,6 +18,7 @@ local defaults = {
             ['Darkmode'] = false,
             ['Flyout'] = true,
             ['Minimap'] = true,
+            ['Nameplates'] = true,
             ['Tooltip'] = true,
             ['UI'] = true,
             ['Unitframe'] = true,
@@ -69,6 +70,14 @@ local modulesOptions = {
             name = L["ModuleActionbar"],
             desc = L["ModuleTooltipActionbar"] .. getDefaultStr('Actionbar', 'modules'),
             order = 1,
+            group = 'headerModules'
+        },
+        Nameplates = {
+            type = 'toggle',
+            name = L["ModuleNameplates"],
+            desc = L["ModuleTooltipNameplates"] .. getDefaultStr('Nameplates', 'modules'),
+            order = 2.5,
+            new = true,
             group = 'headerModules'
         },
         Castbar = {

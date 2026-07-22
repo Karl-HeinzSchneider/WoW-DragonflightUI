@@ -30,6 +30,8 @@ do
     L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
     L["ModuleFlyout"] = "Flyout"
+    L["ModuleNameplates"] = "Nameplates"
+    L["ModuleTooltipNameplates"] = "Dragonflight-styled enemy nameplates: DF health bar texture, outlined names, class-colored enemy players (1.15.9+)."
     L["ModuleActionbar"] = "Actionbar"
     L["ModuleCastbar"] = "Castbar"
     L["ModuleChat"] = "Chat"
