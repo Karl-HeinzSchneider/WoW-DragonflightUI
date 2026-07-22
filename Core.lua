@@ -28,52 +28,13 @@ function DF:OnEnable()
     -- self:Print('DragonflightUI enabled!')
     self:ShowStartMessage()
 
-    -- era-1159: the 1.15.9 login runs every addon's file load and setup
-    -- inside ONE script-watchdog slice; heavy setups trip 'script ran too
-    -- long' at whatever line happens to be executing when the shared budget
-    -- expires. Park all modules now (AceAddon is about to auto-enable them
-    -- in this same slice) and enable them one per frame instead - each timer
-    -- callback gets a fresh watchdog budget. Runtime enabling is already a
-    -- supported path (the config module toggles do it), so modules cannot
-    -- tell the difference.
-    self.deferredModules = {}
-    local configModule
-    for _, module in ipairs(self.orderedModules) do
-        if module.enabledState then
-            module:SetEnabledState(false)
-            if module.moduleName == 'Config' then
-                -- Config:OnEnable synchronously enables every other module
-                -- (its ApplySettings drives enablement) - run it LAST so the
-                -- others are already enabled, each in its own slice, and
-                -- Config's pass reduces to no-ops.
-                configModule = module
-            else
-                table.insert(self.deferredModules, module)
-            end
-        end
-    end
-    if configModule then table.insert(self.deferredModules, configModule) end
-    local Helper = addonTable.Helper
-    local index = 0
-    local function enableNext()
-        index = index + 1
-        local module = self.deferredModules[index]
-        if not module then return end
-        module:SetEnabledState(true)
-        Helper:Benchmark('DeferredEnable(' .. (module.moduleName or index) .. ')', function()
-            module:Enable()
-        end, 0, self)
-        C_Timer.After(0, enableNext)
-    end
-    -- Start strictly AFTER the loading screen (PLAYER_ENTERING_WORLD), not
-    -- from a login-time timer: keeps module setup fully clear of the
-    -- loading pipeline and its shared watchdog slice.
-    local starter = CreateFrame('Frame')
-    starter:RegisterEvent('PLAYER_ENTERING_WORLD')
-    starter:SetScript('OnEvent', function(frame)
-        frame:UnregisterAllEvents()
-        C_Timer.After(0, enableNext)
-    end)
+    -- era-1159 note: module-level enable staggering was tried here and
+    -- REVERTED: modules enabled after PLAYER_ENTERING_WORLD miss the login
+    -- events their setup depends on (classic unitframes/minimap), and
+    -- reordering broke the Editmode-before-Actionbar dependency. The only
+    -- genuinely heavy module is Actionbar, which slices its own setup into
+    -- per-frame steps internally (Helper:RunSteps); everything else fits the
+    -- login watchdog slice comfortably (~300ms total).
 end
 
 function DF:OnDisable()

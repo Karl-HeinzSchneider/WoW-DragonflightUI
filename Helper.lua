@@ -74,7 +74,8 @@ function Helper:RunSteps(steps, moduleRef, chainLabel)
         if not ok then geterrorhandler()(name .. ': ' .. tostring(err)) end
         C_Timer.After(0, runNext)
     end
-    runNext()
+    -- Fully async: even the first step runs outside the caller's slice.
+    C_Timer.After(0, runNext)
 end
 
 -- local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
