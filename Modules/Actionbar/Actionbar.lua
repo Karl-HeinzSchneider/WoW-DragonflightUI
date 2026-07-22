@@ -440,7 +440,12 @@ local defaults = {
             orientation = 'horizontal',
             growthDirection = 'up',
             reverse = false,
-            buttonScale = 0.8,
+            -- era-1159: modern PetActionButtons share the 45px main-button
+            -- base size (classic-era's were natively 30px); scale preserves
+            -- the traditional smaller pet bar. SetScale shrinks the button
+            -- AND all attached overlay art uniformly - resizing the button
+            -- alone leaves 45px-absolute overlays misaligned.
+            buttonScale = DF.API.Version.IsModern and 0.55 or 0.8,
             rows = 1,
             buttons = 10,
             padding = 2,
