@@ -58,6 +58,30 @@ end
 -- era-1159: run {label, fn} steps one per frame. Each step gets a fresh
 -- watchdog slice; a failing step is reported (so DFUIErrorGrab records it)
 -- but never breaks the chain.
+-- Combat gate for module enable chains. Everything the enable chains do to
+-- protected frames (moving Blizzard's secure action bars, state drivers,
+-- SetAttribute on secure handlers) is silently BLOCKED during combat
+-- lockdown - no Lua error, the calls just don't happen. A /reload mid-fight
+-- therefore used to run the whole setup under lockdown and leave the UI
+-- half-built. Run immediately when safe, otherwise once combat drops.
+function Helper:RunOutOfCombat(label, fn)
+    if not InCombatLockdown() then
+        fn()
+        return
+    end
+    if #perfLog < 400 then
+        perfLog[#perfLog + 1] = 'deferred ' .. label .. ' to end of combat (combat reload)'
+    end
+    print('|cff0070ddDragonflightUI:|r reloaded during combat - ' .. label
+        .. ' will finish setting up when combat ends.')
+    local gate = CreateFrame('Frame')
+    gate:RegisterEvent('PLAYER_REGEN_ENABLED')
+    gate:SetScript('OnEvent', function(g)
+        g:UnregisterAllEvents()
+        fn()
+    end)
+end
+
 function Helper:RunSteps(steps, moduleRef, chainLabel)
     local index = 0
     -- Batch steps into ~100ms slices: one step per frame made the UI

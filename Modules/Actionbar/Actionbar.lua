@@ -2076,6 +2076,12 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
+    -- The whole chain below rearranges protected frames; under a combat
+    -- reload it must wait for lockdown to drop (see Helper:RunOutOfCombat).
+    Helper:RunOutOfCombat('action bars', function() Module:EnableOutOfCombat() end)
+end
+
+function Module:EnableOutOfCombat()
     -- not the best solution, override global CVAR and let DF UI handle everything
     C_CVar.SetCVar("alwaysShowActionBars", 1)
 

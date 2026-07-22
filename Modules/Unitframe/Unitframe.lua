@@ -75,6 +75,12 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
+    -- Unit frames are secure/protected; a combat reload must defer their
+    -- setup until lockdown drops (see Helper:RunOutOfCombat).
+    Helper:RunOutOfCombat('unit frames', function() Module:EnableOutOfCombat() end)
+end
+
+function Module:EnableOutOfCombat()
     self:EnableAddonSpecific()
 
     Module:ApplySettings()
