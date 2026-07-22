@@ -209,12 +209,29 @@ function Module:FixAdoptionScale()
     if db.minimap and db.minimap.scale == 1.4 then db.minimap.scale = 1 end
 end
 
+-- One-time: tuck the minimap into the top-right corner. The ring art is
+-- 156px wide centered in the 178px container (11px dead margin each side),
+-- so x = +7 leaves the visible ring 4px off the screen edge.
+function Module:FixCornerTuck()
+    local db = self.db.profile
+    if db.minimapTuckV1 then return end
+    db.minimapTuckV1 = true
+    if db.minimap then
+        db.minimap.anchor = 'TOPRIGHT'
+        db.minimap.anchorParent = 'TOPRIGHT'
+        db.minimap.anchorFrame = 'UIParent'
+        db.minimap.x = 7
+        db.minimap.y = -4
+    end
+end
+
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
     self:AdoptDFMinimap()
     self:FixAdoptionScale()
+    self:FixCornerTuck()
 
     self:EnableAddonSpecific()
 

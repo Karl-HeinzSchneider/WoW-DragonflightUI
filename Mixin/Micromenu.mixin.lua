@@ -147,21 +147,32 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
     end
     -- print('~> set custom anchors')
     -- set custom anchors
-    for k, v in ipairs(self.MicroButtons) do
-        -- print(k, v:GetName(), v)
-        if v == CharacterMicroButton then
-            --
-            -- print('~~>> CharacterMicroButton')
+    if DF.API.Version.IsModern then
+        -- era-1159: chain RIGHT-to-LEFT from the frame's right edge. The
+        -- container is user-anchored (default BOTTOMRIGHT of the screen);
+        -- left-to-right chaining left the row's right edge at "wherever the
+        -- content happens to end", visibly misaligned with the bag bar.
+        self.LastChainButton = nil
+        for k = #self.MicroButtons, 1, -1 do
+            local v = self.MicroButtons[k]
             v:ClearAllPoints()
-            v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
-            self.LastChainButton = v
-        elseif DF.API.Version.IsModern then
-            v:ClearAllPoints()
-            v:SetPoint('TOPLEFT', self.LastChainButton or CharacterMicroButton, 'TOPRIGHT', -3, 0)
+            if not self.LastChainButton then
+                v:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, 0)
+            else
+                v:SetPoint('TOPRIGHT', self.LastChainButton, 'TOPLEFT', 3, 0)
+            end
             if v:IsShown() then self.LastChainButton = v end
-        else
-            v:ClearAllPoints()
-            v:SetPoint(unpack(self.OriginalAnchors[k]))
+        end
+    else
+        for k, v in ipairs(self.MicroButtons) do
+            if v == CharacterMicroButton then
+                v:ClearAllPoints()
+                v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+                self.LastChainButton = v
+            else
+                v:ClearAllPoints()
+                v:SetPoint(unpack(self.OriginalAnchors[k]))
+            end
         end
     end
 end
