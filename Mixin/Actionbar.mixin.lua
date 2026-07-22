@@ -2128,6 +2128,14 @@ function DragonflightUIPetbarMixin:StylePetButton()
 
         btn.buttonType = 'BONUSACTIONBUTTON'
 
+        -- era-1159: modern pet buttons carry their own slot art the classic
+        -- styling never knew about; it doubles up under the DF border.
+        if btn.SlotBackground then
+            btn.SlotBackground:Hide()
+            btn.SlotBackground:SetAlpha(0)
+        end
+        if btn.NormalTexture then btn.NormalTexture:SetAlpha(0) end
+
         local normalTwo = _G[btnName .. 'NormalTexture2']
         if normalTwo then -- TODOTBC
             normalTwo:Hide()

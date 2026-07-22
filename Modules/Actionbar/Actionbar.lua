@@ -627,7 +627,10 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = 0,
+            -- era-1159: the round backpack art carries ~6px transparent
+            -- padding inside its square button; nudge right so the VISIBLE
+            -- edge lines up with the micro menu's right edge below it.
+            x = 6,
             y = 50,
             expanded = true,
             hideArrow = false,
