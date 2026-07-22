@@ -17,12 +17,14 @@ function SubModuleMixin:SetDefaults()
     local defaults = {
         scale = 1.25,
         override = false,
-        anchorFrame = 'UIParent',
+        -- era-1159: dock at the right end of the main action bar like
+        -- retail, instead of floating at an arbitrary mid-screen offset.
+        anchorFrame = 'DragonflightUIActionbarFrame1',
         customAnchorFrame = '',
-        anchor = 'CENTER',
-        anchorParent = 'CENTER',
-        x = -215,
-        y = -285,
+        anchor = 'LEFT',
+        anchorParent = 'RIGHT',
+        x = 12,
+        y = 0,
         -- Visibility
         alphaNormal = 1.0,
         alphaCombat = 1.0,
@@ -281,5 +283,23 @@ function SubModuleMixin:CreateVehicleLeaveButton()
         btn:ClearAllPoints()
         btn:SetPoint('CENTER', f, 'CENTER', 0, 0)
         -- btn:Show()
+
+        -- era-1159: dress the real button in the retail round exit-arrow
+        -- art (shipped by DFUI but previously used only for the edit-mode
+        -- preview); the classic wooden square reads nothing like retail.
+        btn:SetSize(32, 32)
+        for _, region in ipairs({btn:GetRegions()}) do
+            if region:GetObjectType() == 'Texture' then region:SetTexture(nil) end
+        end
+        local coord = {0.140625, 0.859375, 0.140625, 0.859375}
+        btn:SetNormalTexture(tex)
+        btn:GetNormalTexture():SetTexCoord(unpack(coord))
+        btn:SetPushedTexture(tex)
+        local pushed = btn:GetPushedTexture()
+        pushed:SetTexCoord(unpack(coord))
+        pushed:SetVertexColor(0.6, 0.6, 0.6)
+        btn:SetHighlightTexture(tex, 'ADD')
+        btn:GetHighlightTexture():SetTexCoord(unpack(coord))
+        btn:GetHighlightTexture():SetAlpha(0.35)
     end
 end
