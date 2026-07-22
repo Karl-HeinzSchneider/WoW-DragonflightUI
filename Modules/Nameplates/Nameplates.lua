@@ -57,11 +57,13 @@ function Module:OnEnable()
     end
 
     -- THE switch: Era 1.15.9 defaults nameplateStyle to the classic look
-    -- (border ring + level box). Enum.NamePlateStyle.Modern is the retail
-    -- Dragonflight thin-plate renderer, fully Blizzard-native; the driver
-    -- re-reads options via the CVar callback registry on change.
+    -- (border ring + level box). Careful with the enum: 'Modern' is
+    -- MIDNIGHT's chunky plate (20px bar, name inside) - the style everyone
+    -- calls the Dragonflight plate (thin bar, name above) is 'Thin'.
+    -- Blizzard-native; the driver re-reads options via the CVar callback
+    -- registry on change.
     if self.db.profile.modernStyle and C_CVar and C_CVar.SetCVar and Enum.NamePlateStyle then
-        C_CVar.SetCVar('nameplateStyle', Enum.NamePlateStyle.Modern)
+        C_CVar.SetCVar('nameplateStyle', Enum.NamePlateStyle.Thin)
     end
 
     local frame = CreateFrame('Frame')
