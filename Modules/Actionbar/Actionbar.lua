@@ -3029,7 +3029,14 @@ function Module.ChangeActionbar()
 
         mab:UnregisterAllEvents()
         mab:ClearAllPoints()
-        mab:Hide()
+        -- era-1159: keep the bar SHOWN. ActionButton1-12 stay parented to it
+        -- (SetButtons deliberately skips reparenting bar1), so hiding it
+        -- blanks the whole main bar; it is parked offscreen by
+        -- ForceMoveBlizzEditModeGhosts below and the buttons render at their
+        -- DFUI anchors. Upstream's Hide() only worked because Blizzard's
+        -- ActionBarController re-shows the bar after PLAYER_ENTERING_WORLD,
+        -- which on stock timing ran later than this code.
+        mab:Show()
 
         Module:ForceMoveBlizzEditModeGhosts()
     else
