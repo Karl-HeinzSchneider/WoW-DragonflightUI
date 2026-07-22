@@ -629,6 +629,11 @@ function SubModuleMixin:ChangeZoneText()
     -- btn:SetWidth(self.InfoPanel:GetWidth() - 4 - 40)
     btn:SetWidth(140 - 4 - 40 - 4) -- 92
 
+    -- DFMinimap heritage: clicking the zone text opens the world map.
+    btn:SetScript('OnClick', function()
+        ToggleWorldMap()
+    end)
+
     local text = _G['MinimapZoneText']
     text:ClearAllPoints()
     text:SetSize(130, 10)

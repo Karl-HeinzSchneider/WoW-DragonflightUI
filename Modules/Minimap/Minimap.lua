@@ -181,9 +181,31 @@ function Module:OnInitialize()
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 end
 
+-- Adopt the standalone DFMinimap addon (era-1159 fork): it cannot run on
+-- Midnight-UI clients (its RawHook target Minimap_UpdateRotationSetting was
+-- removed in 1.15.9), so its look lives here now - the same Dragonflight
+-- ring art at DFMinimap's larger geometry (198px map ~= scale 1.4). One-time:
+-- bump the minimap scale preset and retire the old addon.
+function Module:AdoptDFMinimap()
+    local db = self.db.profile
+    if db.dfminimapAdopted then return end
+    if not (C_AddOns and C_AddOns.DoesAddOnExist and C_AddOns.DoesAddOnExist('DFMinimap')) then
+        return
+    end
+    db.dfminimapAdopted = true
+    if db.minimap then
+        db.minimap.scale = 1.4
+        db.minimap.shape = 'ROUND'
+    end
+    if C_AddOns.DisableAddOn then C_AddOns.DisableAddOn('DFMinimap') end
+    print('|cff69ccf0DragonflightUI:|r adopted the DFMinimap look (larger Dragonflight minimap); the standalone DFMinimap addon has been disabled and can be deleted. Adjust size under Options > Misc > Minimap > Scale.')
+end
+
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
+
+    self:AdoptDFMinimap()
 
     self:EnableAddonSpecific()
 

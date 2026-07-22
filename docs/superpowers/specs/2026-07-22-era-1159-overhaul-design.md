@@ -71,3 +71,33 @@ DFUI exposure found in recon:
 
 `scripts/deploy.sh` copies the fork over the installed addon. The pre-fork
 installed copy is preserved at `DragonflightUI.pre1159.bak` for rollback.
+
+## Implementation notes (as built, 2026-07-22)
+
+- Upstream PR #691 (icebreethe, TBC 2.5.6 + MoP 5.5.4 compat) cherry-picked
+  clean onto the fork base: its guards and TextStatusBarMixin fallbacks were
+  written for the same Midnight backport and apply to Era unchanged.
+- `DF.API.Version.IsModern` added (EditModeManagerFrame /
+  StatusTrackingBarManager feature probe); Era routes onto the PR's
+  modern-UI paths. BagsBar sites became direct feature checks because Era
+  1.15.9 keeps MainMenuBarBagButtons and has no BagsBar.
+- Party reskin is skipped on modern clients (1.15.9 pools anonymous
+  PartyFrame member frames; upstream has the same TODO for TBC). Blizzard's
+  Edit-Mode party frames take over.
+- DFMinimap merge implemented as adoption, not texture port: DFUI's Minimap
+  module already ships the same retail Dragonflight atlas at 2x resolution;
+  DFMinimap's differentiators were geometry (198px map ~ scale 1.4) and
+  zone-text click-to-map. On first login the fork detects DFMinimap, applies
+  the scale preset, adds the click behavior, disables the old addon
+  (one-time, `dfminimapAdopted` flag). DFMinimap was already dead on 1.15.9
+  (its RawHook target was removed).
+- Module isolation came free: AceAddon safecalls module lifecycle methods,
+  so a failing module degrades to an error report without killing the rest.
+- Testing as built: luac parse pass over all non-lib Lua (0 failures) plus
+  the removed-symbol audit (55 flagged references — all now guarded,
+  feature-detected, or on skipped paths; audit script accounts for
+  $parent-composed XML names and dynamic CreateFrame concat names). The
+  recording-stub boot sim was dropped: with auto-stubbing it cannot
+  distinguish removed globals from XML-created frames, so its signal beyond
+  the parse pass and static audit is negligible. In-game scriptErrors
+  iteration remains the acceptance gate.

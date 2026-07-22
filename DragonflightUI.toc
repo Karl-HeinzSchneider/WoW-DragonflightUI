@@ -11,7 +11,7 @@
 ## Author: Karl-Heinz Schneider
 ## X-Website: https://github.com/Karl-HeinzSchneider/WoW-DragonflightUI
 ## X-Curse-Project-ID: 819757
-## Version: @project-version@
+## Version: 0.40.3-era1
 ## X-Date: @project-date-integer@
 ## Category: UI Overhaul
 ## Category-deDE: UI-Überholung
