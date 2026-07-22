@@ -55,6 +55,28 @@ function Helper:Benchmark(label, func, level, moduleRef)
     return results, duration, startTime, endTime;
 end
 
+-- era-1159: run {label, fn} steps one per frame. Each step gets a fresh
+-- watchdog slice; a failing step is reported (so DFUIErrorGrab records it)
+-- but never breaks the chain.
+function Helper:RunSteps(steps, moduleRef, chainLabel)
+    local index = 0
+    local function runNext()
+        index = index + 1
+        local step = steps[index]
+        if not step then return end
+        local name = (chainLabel or 'Chain') .. ':' .. (step[1] or index)
+        local startTime = GetTimePreciseSec()
+        local ok, err = pcall(step[2])
+        local ms = (GetTimePreciseSec() - startTime) * 1000
+        if #perfLog < 400 then
+            perfLog[#perfLog + 1] = string.format('%.1fms %s%s', ms, name, ok and '' or ' [ERROR]')
+        end
+        if not ok then geterrorhandler()(name .. ': ' .. tostring(err)) end
+        C_Timer.After(0, runNext)
+    end
+    runNext()
+end
+
 -- local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'
 local circularMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\tempportraitalphamask'
 

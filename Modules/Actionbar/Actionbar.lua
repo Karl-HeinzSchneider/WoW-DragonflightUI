@@ -2070,35 +2070,75 @@ function Module:OnEnable()
 
     Module.Temp = {}
 
-    -- era-1159: the whole setup in one slice trips the (much tighter on
-    -- 1.15.9) script watchdog. Run each phase in its own frame; order is
-    -- preserved, and nothing external consumes these until settings screens
-    -- exist at the end of the chain.
-    local phases = {
-        {'EnableAddonSpecific', function() self:EnableAddonSpecific() end},
-        {'SetupActionbarFrames', function() self:SetupActionbarFrames() end},
-        {'AddStateUpdater', function() Module.AddStateUpdater() end},
-        {'AddEditMode', function() self:AddEditMode() end},
-        {'RegisterOptionScreens', function() self:RegisterOptionScreens() end},
-        {'ApplySettingsALL', function() Module:ApplySettings('ALL') end},
-        {
-            'RefreshConfigHook', function()
-                self:SecureHook(DF, 'RefreshConfig', function()
-                    Module:ApplySettings('ALL')
-                    Module:RefreshOptionScreens()
-                end)
-            end
-        }
-    }
-    local index = 0
-    local function runNext()
-        index = index + 1
-        local phase = phases[index]
-        if not phase then return end
-        Helper:Benchmark(phase[1], phase[2], 0, self)
-        C_Timer.After(0, runNext)
+    if DF.Era or DF.API.Version.IsTBC then
+        -- era-1159: the 1.15.9 watchdog budget is small AND variable
+        -- (observed kills between ~350ms and ~1s of cumulative work), and an
+        -- uncaught error used to sever the setup chain entirely. So: many
+        -- tiny steps, one per frame, each pcall-isolated. The Era/TBC flavor
+        -- body (EnableAddonSpecific) is inlined as individual steps.
+        local steps = {}
+        local add = function(label, fn) steps[#steps + 1] = {label, fn} end
+
+        add('ChangeActionbar', Module.ChangeActionbar)
+        add('NewBars', function()
+            Module.CreateNewXPBar()
+            Module.CreateNewRepBar()
+            Module:RemoveActionbarAnimations()
+        end)
+        add('PetHookAndGryphon', function()
+            Module.HookPetBar()
+            frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+            frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+            Module.ChangeGryphon()
+        end)
+        add('ChangeMicroMenu', Module.ChangeMicroMenu)
+        add('ChangeBackpack', Module.ChangeBackpack)
+        add('BagsAndFPS', function()
+            Module.ChangeFramerate()
+            Module.CreateBagExpandButton()
+            Module.RefreshBagBarToggle()
+            Module.HookBags()
+        end)
+        add('SubModules', function()
+            self.SubVehicleLeave:Setup()
+            self.SubActionbarRange:Setup()
+        end)
+        for _, step in ipairs(self:GetSetupActionbarSteps()) do
+            steps[#steps + 1] = step
+        end
+        add('AddStateUpdater', Module.AddStateUpdater)
+        add('AddEditMode', function() self:AddEditMode() end)
+        add('RegisterOptionScreens', function() self:RegisterOptionScreens() end)
+        add('ApplySettingsALL', function() Module:ApplySettings('ALL') end)
+        add('RefreshConfigHook', function()
+            self:SecureHook(DF, 'RefreshConfig', function()
+                Module:ApplySettings('ALL')
+                Module:RefreshOptionScreens()
+            end)
+        end)
+        Helper:RunSteps(steps, self, 'Actionbar')
+    else
+        Helper:Benchmark('EnableAddonSpecific', function()
+            self:EnableAddonSpecific()
+        end, 0, self)
+        Helper:Benchmark('SetupActionbarFrames', function()
+            self:SetupActionbarFrames()
+        end, 0, self)
+        Helper:Benchmark('AddStateUpdater', function()
+            Module.AddStateUpdater()
+        end, 0, self)
+        Helper:Benchmark('AddEditMode', function()
+            self:AddEditMode()
+        end, 0, self)
+        Helper:Benchmark('RegisterOptionScreens', function()
+            self:RegisterOptionScreens()
+        end, 0, self)
+        Module:ApplySettings('ALL')
+        self:SecureHook(DF, 'RefreshConfig', function()
+            Module:ApplySettings('ALL')
+            Module:RefreshOptionScreens()
+        end)
     end
-    runNext()
 end
 
 function Module:OnDisable()
@@ -2133,7 +2173,14 @@ function Module:RegisterSettings()
     end
 end
 
+-- Runs the builder synchronously - used by non-modern flavors.
 function Module:SetupActionbarFrames()
+    for _, step in ipairs(self:GetSetupActionbarSteps()) do step[2]() end
+end
+
+function Module:GetSetupActionbarSteps()
+    local steps = {}
+    local handler -- assigned in the SecureHandler step; used by createExtra
     local createStuff = function(n, base)
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
                                 'DragonflightUIActionbarFrameTemplate')
@@ -2155,31 +2202,38 @@ function Module:SetupActionbarFrames()
         Module['bar' .. n] = bar
     end
 
-    DragonflightUIActionbarMixin:HookGrid()
-    if DF.Cata then
-        -- DragonflightUIActionbarMixin:HookFlyout()
-        -- DragonflightUIActionbarMixin:StyleFlyout()
-    end
+    steps[#steps + 1] = {'HookGrid', function()
+        DragonflightUIActionbarMixin:HookGrid()
+        if DF.Cata then
+            -- DragonflightUIActionbarMixin:HookFlyout()
+            -- DragonflightUIActionbarMixin:StyleFlyout()
+        end
+    end}
 
-    createStuff(1, 'ActionButton')
-    Module.bar1:SetupMainBar()
-    Module.bar1:AddPagingStateDriver()
-    createStuff(2, 'MultiBarBottomLeftButton')
-    createStuff(3, 'MultiBarBottomRightButton')
-    createStuff(4, 'MultiBarLeftButton')
-    createStuff(5, 'MultiBarRightButton')
+    steps[#steps + 1] = {'MainBar', function()
+        createStuff(1, 'ActionButton')
+        Module.bar1:SetupMainBar()
+        Module.bar1:AddPagingStateDriver()
+    end}
+    steps[#steps + 1] = {'Bar2', function() createStuff(2, 'MultiBarBottomLeftButton') end}
+    steps[#steps + 1] = {'Bar3', function() createStuff(3, 'MultiBarBottomRightButton') end}
+    steps[#steps + 1] = {'Bar4', function() createStuff(4, 'MultiBarLeftButton') end}
+    steps[#steps + 1] = {'Bar5', function() createStuff(5, 'MultiBarRightButton') end}
 
     for i = 1, 5 do
-        local bar = Module['bar' .. i]
-        if bar then
-            bar:StyleButtons()
-            bar:HookQuickbindMode()
-            bar:ReplaceNormalTexture2()
-        end
+        steps[#steps + 1] = {'StyleBar' .. i, function()
+            local bar = Module['bar' .. i]
+            if bar then
+                bar:StyleButtons()
+                bar:HookQuickbindMode()
+                bar:ReplaceNormalTexture2()
+            end
+        end}
     end
 
+    steps[#steps + 1] = {'SecureHandler', function()
     -- secure handler
-    local handler = CreateFrame('Frame', 'DragonflightUIActionBarHandler', nil, 'SecureHandlerBaseTemplate');
+    handler = CreateFrame('Frame', 'DragonflightUIActionBarHandler', nil, 'SecureHandlerBaseTemplate');
     handler:SetAttribute("ActionButtonUseKeyDown", GetCVarBool('ActionButtonUseKeyDown'));
 
     handler:SetScript("OnEvent", function(f, event, ...)
@@ -2216,6 +2270,7 @@ function Module:SetupActionbarFrames()
             self:TrySetAttribute(cvar, GetCVarBool(cvar))
         end
     end
+    end} -- SecureHandler step
 
     -- -- ActionBarActionButtonMixin:OnClick(button, down)
     -- if ActionBarActionButtonMixin and ActionBarActionButtonMixin.OnClick then
@@ -2321,11 +2376,19 @@ function Module:SetupActionbarFrames()
         bar:ReplaceNormalTexture2()
     end
 
-    if DF.API.Version.IsTBC then
-        createStuff(6, 'MultiBar5Button')
-        createStuff(7, 'MultiBar6Button')
-        createStuff(8, 'MultiBar7Button')
+    local extraBases = {[6] = 'MultiBar5Button', [7] = 'MultiBar6Button', [8] = 'MultiBar7Button'}
+    for n = 6, 8 do
+        steps[#steps + 1] = {'ExtraBar' .. n, function()
+            if DF.API.Version.IsTBC then
+                createStuff(n, extraBases[n])
+            else
+                createExtra(n)
+            end
+        end}
+    end
 
+    steps[#steps + 1] = {'ExtraBarsFinish', function()
+    if DF.API.Version.IsTBC then
         for i = 6, 8 do
             local bar = Module['bar' .. i]
             if bar then
@@ -2355,13 +2418,11 @@ function Module:SetupActionbarFrames()
             end
         end
     else
-        createExtra(6)
-        createExtra(7)
-        createExtra(8)
-
         DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     end
+    end} -- ExtraBarsFinish step
 
+    steps[#steps + 1] = {'MigrateKeybinds', function()
     -- DragonflightUIActionbarMixin:HookGlow()
     DragonflightUIActionbarMixin:MigrateOldKeybinds()
 
@@ -2375,15 +2436,19 @@ function Module:SetupActionbarFrames()
         end)
     end
 
+    end} -- MigrateKeybinds step
+
     for i = 1, 8 do
-        local bar = Module['bar' .. i]
-        if bar then
-            bar:AddDecoNew(i)
-            bar:AddTargetStateDriver()
-        end
+        steps[#steps + 1] = {'Deco' .. i, function()
+            local bar = Module['bar' .. i]
+            if bar then
+                bar:AddDecoNew(i)
+                bar:AddTargetStateDriver()
+            end
+        end}
     end
 
-    do
+    steps[#steps + 1] = {'PetBar', function()
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbar', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}
 
@@ -2398,9 +2463,9 @@ function Module:SetupActionbarFrames()
         bar:StylePetButton()
         -- bar:ReplaceNormalTexture2()
         Module['petbar'] = bar
-    end
+    end}
 
-    do
+    steps[#steps + 1] = {'StanceBar', function()
         local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIStancebarFrameTemplate')
         local buttons = {}
 
@@ -2417,10 +2482,10 @@ function Module:SetupActionbarFrames()
         -- bar:ReplaceNormalTexture2()
         bar.stanceBar = true
         Module['stancebar'] = bar
-    end
+    end}
 
     -- @TODO
-    do
+    steps[#steps + 1] = {'ParkMultiBars', function()
         MultiBarBottomLeft.ignoreFramePositionManager = true
         MultiBarBottomLeft:ClearAllPoints()
         MultiBarBottomLeft:Hide()
@@ -2434,7 +2499,9 @@ function Module:SetupActionbarFrames()
         MultiBarBottomRight:SetPoint('TOP', UIParent, 'BOTTOM', 0, 0)
 
         if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil; end
-    end
+    end}
+
+    return steps
 end
 
 function Module.AddStateUpdater()
