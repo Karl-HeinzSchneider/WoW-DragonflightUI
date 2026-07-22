@@ -1264,6 +1264,35 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
         ActionBarUpButton = createSecurePageArrow('DragonflightUIActionBarUpButton', 1)
         ActionBarDownButton = createSecurePageArrow('DragonflightUIActionBarDownButton', -1)
         MainMenuBarPageNumber = MainActionBar.ActionBarPageNumber.Text
+
+        -- Route the page-cycling BINDINGS through the secure arrows as well.
+        -- NEXTACTIONPAGE/PREVIOUSACTIONPAGE (shift-mousewheel by default)
+        -- call ActionBar_PageUp/Down, which cycle only
+        -- VIEWABLE_ACTION_BAR_PAGES - {1,2} with the multibars shown - and a
+        -- single scroll gesture delivers a burst of wheel ticks (measured
+        -- ~40 over 1.3s), so the page just strobed 1<->2 and could never
+        -- reach bars 3-6. Overriding every key bound to those commands with
+        -- a click on our arrows gives the same full 1..6 cycle as clicking,
+        -- combat-safe, one page step per tick.
+        local BINDING_TO_ARROW = {
+            NEXTACTIONPAGE = 'DragonflightUIActionBarUpButton',
+            PREVIOUSACTIONPAGE = 'DragonflightUIActionBarDownButton',
+        }
+        local function applyPagingBindingOverrides()
+            if InCombatLockdown() then return end -- re-applied on regen
+            ClearOverrideBindings(f)
+            for command, target in pairs(BINDING_TO_ARROW) do
+                local keys = { GetBindingKey(command) }
+                for _, key in ipairs(keys) do
+                    SetOverrideBindingClick(f, false, key, target, 'LeftButton')
+                end
+            end
+        end
+        local bindingWatcher = CreateFrame('Frame')
+        bindingWatcher:RegisterEvent('UPDATE_BINDINGS')
+        bindingWatcher:RegisterEvent('PLAYER_REGEN_ENABLED')
+        bindingWatcher:SetScript('OnEvent', applyPagingBindingOverrides)
+        applyPagingBindingOverrides()
     else
         ActionBarUpButton = _G['ActionBarUpButton']
         ActionBarDownButton = _G['ActionBarDownButton']
