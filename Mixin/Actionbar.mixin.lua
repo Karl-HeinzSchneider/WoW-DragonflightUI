@@ -1478,6 +1478,19 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
 
     local btnName = btn:GetName()
 
+    -- era-1159: modern buttons ship their own SlotBackground (classic
+    -- UI-Quickslot art) at BACKGROUND,0 - it draws OVER the DF slot deco
+    -- painted at BACKGROUND,-5, which made every bar background "not load".
+    -- The old 11508 buttons had no such region, so upstream never hid it.
+    if btn.SlotBackground then
+        btn.SlotBackground:Hide()
+        btn.SlotBackground:SetAlpha(0)
+    end
+    if btn.SlotArt then
+        btn.SlotArt:Hide()
+        btn.SlotArt:SetAlpha(0)
+    end
+
     btn:SetSize(45, 45)
     -- print(btn:GetName())
     -- print(btn:GetName(), btn:GetAttribute("statehidden"))
