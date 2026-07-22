@@ -359,6 +359,11 @@ function SubModuleMixin:SetupModern()
             pf.Portrait:SetSize(37, 37)
             pf.Portrait:ClearAllPoints()
             pf.Portrait:SetPoint('TOPLEFT', 7, -6)
+            -- SetPortraitTexture swaps in a SQUARE snapshot once the unit
+            -- gets in range; the DF ring art has transparent corners, so
+            -- without the circular mask (which every other restyled portrait
+            -- gets) the snapshot's corners poke out behind the border.
+            Helper:AddCircleMask(pf, pf.Portrait)
         end
 
         local name = (overlay and overlay.Name) or pf.Name
