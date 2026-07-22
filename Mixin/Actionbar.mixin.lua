@@ -1225,7 +1225,12 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
         local btn = CreateFrame('Button', name, f,
                                 'SecureActionButtonTemplate,SecureHandlerStateTemplate')
         btn:SetSize(19, 17)
-        btn:RegisterForClicks('AnyUp')
+        -- Addon-created SecureActionButtonTemplate buttons are NOT passed the
+        -- isSecureAction OnClick argument (see SecureTemplates.xml), so the
+        -- handler obeys the ActionButtonUseKeyDown cvar (default 1) and only
+        -- acts on DOWN presses. Register both edges and let
+        -- SecureActionButton_OnClick's clickAction logic fire exactly one.
+        btn:RegisterForClicks('AnyDown', 'AnyUp')
         btn:SetAttribute('type', 'actionbar')
         btn:SetAttribute('_onstate-page', ([[
             local page = (tonumber(newstate) or 1) + (%d)
@@ -1235,8 +1240,12 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
         local drive = {}
         for i = 1, numPages do drive[#drive + 1] = '[bar:' .. i .. ']' .. i end
         RegisterStateDriver(btn, 'page', table.concat(drive, ';') .. ';1')
-        btn:SetScript('PostClick', function()
-            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+        btn:SetScript('PostClick', function(_, _, down)
+            -- Both click edges reach PostClick; only voice the one that acted.
+            local useDown = GetCVarBool and GetCVarBool('ActionButtonUseKeyDown')
+            if (down and useDown) or (not down and not useDown) then
+                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+            end
         end)
         -- create the texture regions the shared styling below expects
         btn:SetNormalTexture(textureRef)
