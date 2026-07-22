@@ -60,21 +60,30 @@ end
 -- but never breaks the chain.
 function Helper:RunSteps(steps, moduleRef, chainLabel)
     local index = 0
+    -- Batch steps into ~100ms slices: one step per frame made the UI
+    -- visibly assemble itself for ~a second after loading (40 steps = 40
+    -- frames of latency for ~250ms of actual work). 100ms + one overshooting
+    -- step stays well under the lowest observed LimitedLuaResources kill
+    -- (~350ms), and the whole chain now finishes in 2-3 frames.
+    local SLICE_BUDGET_MS = 100
     local function runNext()
-        index = index + 1
-        local step = steps[index]
-        if not step then return end
-        local name = (chainLabel or 'Chain') .. ':' .. (step[1] or index)
-        local startTime = GetTimePreciseSec()
-        local ok, err = pcall(step[2])
-        local ms = (GetTimePreciseSec() - startTime) * 1000
-        if #perfLog < 400 then
-            perfLog[#perfLog + 1] = string.format('%.1fms %s%s', ms, name, ok and '' or ' [ERROR]')
-        end
-        if not ok then geterrorhandler()(name .. ': ' .. tostring(err)) end
+        local sliceStart = GetTimePreciseSec()
+        repeat
+            index = index + 1
+            local step = steps[index]
+            if not step then return end
+            local name = (chainLabel or 'Chain') .. ':' .. (step[1] or index)
+            local startTime = GetTimePreciseSec()
+            local ok, err = pcall(step[2])
+            local ms = (GetTimePreciseSec() - startTime) * 1000
+            if #perfLog < 400 then
+                perfLog[#perfLog + 1] = string.format('%.1fms %s%s', ms, name, ok and '' or ' [ERROR]')
+            end
+            if not ok then geterrorhandler()(name .. ': ' .. tostring(err)) end
+        until (GetTimePreciseSec() - sliceStart) * 1000 > SLICE_BUDGET_MS
         C_Timer.After(0, runNext)
     end
-    -- Fully async: even the first step runs outside the caller's slice.
+    -- Fully async: even the first slice runs outside the caller's slice.
     C_Timer.After(0, runNext)
 end
 
