@@ -193,12 +193,20 @@ function Module:AdoptDFMinimap()
         return
     end
     db.dfminimapAdopted = true
-    if db.minimap then
-        db.minimap.scale = 1.4
-        db.minimap.shape = 'ROUND'
-    end
+    db.dfminimapAdoptedV2 = true
+    if db.minimap then db.minimap.shape = 'ROUND' end
     if C_AddOns.DisableAddOn then C_AddOns.DisableAddOn('DFMinimap') end
-    print('|cff69ccf0DragonflightUI:|r adopted the DFMinimap look (larger Dragonflight minimap); the standalone DFMinimap addon has been disabled and can be deleted. Adjust size under Options > Misc > Minimap > Scale.')
+    print('|cff69ccf0DragonflightUI:|r the standalone DFMinimap addon has been disabled and can be deleted. Minimap size: Options > Misc > Minimap > Scale.')
+end
+
+-- v2 repair: the original adoption preset (scale 1.4) reads comically large
+-- on the 1.15.9 cluster. Reset to 1.0 once, unless the user already picked
+-- their own value.
+function Module:FixAdoptionScale()
+    local db = self.db.profile
+    if db.dfminimapAdoptedV2 then return end
+    db.dfminimapAdoptedV2 = true
+    if db.minimap and db.minimap.scale == 1.4 then db.minimap.scale = 1 end
 end
 
 function Module:OnEnable()
@@ -206,6 +214,7 @@ function Module:OnEnable()
     self:SetWasEnabled(true)
 
     self:AdoptDFMinimap()
+    self:FixAdoptionScale()
 
     self:EnableAddonSpecific()
 
