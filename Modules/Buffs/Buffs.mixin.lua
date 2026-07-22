@@ -505,16 +505,21 @@ function SubModuleMixin:CreateNewBuffs()
 end
 
 function SubModuleMixin:RemoveDefaultBuffs()
-    if TemporaryEnchantFrame then
-        TemporaryEnchantFrame:UnregisterAllEvents()
-        TemporaryEnchantFrame:Hide()
+    -- era-1159: on Edit-Mode clients Hide() is not enough - the layout
+    -- system re-shows managed frames later, which doubled every buff.
+    -- Reparenting to a permanently hidden holder wins unconditionally.
+    local holder = _G['DragonflightUIHiddenFrameHolder']
+    if not holder then
+        holder = CreateFrame('Frame', 'DragonflightUIHiddenFrameHolder', UIParent)
+        holder:Hide()
     end
-    if BuffFrame then
-        BuffFrame:UnregisterAllEvents()
-        BuffFrame:Hide()
+    local function bury(frameRef)
+        if not frameRef then return end
+        frameRef:UnregisterAllEvents()
+        frameRef:Hide()
+        frameRef:SetParent(holder)
     end
-    if DebuffFrame then
-        DebuffFrame:UnregisterAllEvents()
-        DebuffFrame:Hide()
-    end
+    bury(TemporaryEnchantFrame)
+    bury(BuffFrame)
+    bury(DebuffFrame)
 end

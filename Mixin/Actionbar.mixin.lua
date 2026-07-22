@@ -2101,13 +2101,20 @@ end
 
 function DragonflightUIPetbarMixin:StylePetButton()
 
-    if DF.API.Version.IsTBC then
-        --
-        _G['PetActionBar']:Hide()
-        _G['PetActionBar'].BackgroundArt1:SetTexture('')
-        _G['PetActionBar'].BackgroundArt1:Hide()
-        _G['PetActionBar'].BackgroundArt2:SetTexture('')
-        _G['PetActionBar'].BackgroundArt2:Hide()
+    if DF.API.Version.IsModern and _G['PetActionBar'] then
+        -- era-1159: was IsTBC-only; Era 1.15.9 has the same modern
+        -- PetActionBar whose background art otherwise bleeds through and
+        -- makes the pet bar read as a plain action bar.
+        local pab = _G['PetActionBar']
+        pab:Hide()
+        if pab.BackgroundArt1 then
+            pab.BackgroundArt1:SetTexture('')
+            pab.BackgroundArt1:Hide()
+        end
+        if pab.BackgroundArt2 then
+            pab.BackgroundArt2:SetTexture('')
+            pab.BackgroundArt2:Hide()
+        end
     end
 
     local count = #(self.buttonTable)
@@ -2145,7 +2152,7 @@ function DragonflightUIPetbarMixin:StylePetButton()
         -- shine:SetSize(46, 46)      
 
         local child1, child2, child3 = btn:GetChildren()
-        child1:SetSize(41, 41)
+        if child1 and child1.SetSize then child1:SetSize(41, 41) end
 
         local auto = _G[btnName .. 'AutoCastable']
         local autoSize = 80
