@@ -27,6 +27,35 @@ function DF:OnEnable()
     -- Called when the addon is enabled
     -- self:Print('DragonflightUI enabled!')
     self:ShowStartMessage()
+
+    -- era-1159: the 1.15.9 login runs every addon's file load and setup
+    -- inside ONE script-watchdog slice; heavy setups trip 'script ran too
+    -- long' at whatever line happens to be executing when the shared budget
+    -- expires. Park all modules now (AceAddon is about to auto-enable them
+    -- in this same slice) and enable them one per frame instead - each timer
+    -- callback gets a fresh watchdog budget. Runtime enabling is already a
+    -- supported path (the config module toggles do it), so modules cannot
+    -- tell the difference.
+    self.deferredModules = {}
+    for _, module in ipairs(self.orderedModules) do
+        if module.enabledState then
+            module:SetEnabledState(false)
+            table.insert(self.deferredModules, module)
+        end
+    end
+    local Helper = addonTable.Helper
+    local index = 0
+    local function enableNext()
+        index = index + 1
+        local module = self.deferredModules[index]
+        if not module then return end
+        module:SetEnabledState(true)
+        Helper:Benchmark('DeferredEnable(' .. (module.moduleName or index) .. ')', function()
+            module:Enable()
+        end, 0, self)
+        C_Timer.After(0, enableNext)
+    end
+    C_Timer.After(0, enableNext)
 end
 
 function DF:OnDisable()
