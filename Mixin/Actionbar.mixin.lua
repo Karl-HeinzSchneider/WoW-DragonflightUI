@@ -1264,6 +1264,43 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     end)
     fixAnchor(GetActionBarPage())
 
+    -- era-1159: on modern clients the old ActionBarUpButton globals are gone
+    -- and the fallback arrows (MainActionBar.ActionBarPageNumber) have two
+    -- problems once DFUI takes over: (1) their OnClick uses
+    -- VIEWABLE_ACTION_BAR_PAGES, which excludes every page claimed by a
+    -- visible MultiBar - with bars 2-5 shown the cycle collapses to 1<->2;
+    -- (2) the page number text was updated by MainActionBar's
+    -- ACTIONBAR_PAGE_CHANGED handler, which died with UnregisterAllEvents.
+    -- Own both: cycle the full 1..NUM_ACTIONBAR_PAGES and keep the text
+    -- fresh ourselves. The SMART secure state driver handles the buttons'
+    -- actual paging, so this is display/UX only and combat-safe.
+    if not _G['ActionBarUpButton'] and C_ActionBar and C_ActionBar.SetActionBarPage then
+        local numPages = NUM_ACTIONBAR_PAGES or 6
+        local function cyclePage(delta)
+            local page = (C_ActionBar.GetActionBarPage() or 1) + delta
+            if page > numPages then
+                page = 1
+            elseif page < 1 then
+                page = numPages
+            end
+            C_ActionBar.SetActionBarPage(page)
+            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+        end
+        ActionBarUpButton:SetScript('OnClick', function()
+            cyclePage(1)
+        end)
+        ActionBarDownButton:SetScript('OnClick', function()
+            cyclePage(-1)
+        end)
+
+        local pageWatcher = CreateFrame('Frame')
+        pageWatcher:RegisterEvent('ACTIONBAR_PAGE_CHANGED')
+        pageWatcher:SetScript('OnEvent', function()
+            MainMenuBarPageNumber:SetText(C_ActionBar.GetActionBarPage())
+        end)
+        MainMenuBarPageNumber:SetText(C_ActionBar.GetActionBarPage())
+    end
+
     -- f:SetScale((1 / 1.5) * 0.9)
     -- f:SetScale(0.9)
 
