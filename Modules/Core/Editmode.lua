@@ -588,6 +588,12 @@ function Module:ShowEditmodeWarning(setting, value, str)
 end
 
 function Module:Era()
+    -- 1.15.9+: Era carries Blizzard Edit Mode. Every modern-UI code path
+    -- (ForceMoveBlizzEditModeGhosts, BagsBar/micromenu re-anchors, ...) calls
+    -- addonTable:OverrideBlizzEditmode, which only exists after this init -
+    -- without it the Actionbar module dies at enable time and nothing gets
+    -- styled.
+    if DF.API.Version.IsModern then self:InitEditmodeOverride() end
 end
 
 function Module:TBC()

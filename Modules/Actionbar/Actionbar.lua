@@ -3107,6 +3107,9 @@ function Module.HookPetBar()
 end
 
 function Module:ForceMoveBlizzEditModeGhosts()
+    -- Requires the Editmode module's InitEditmodeOverride to have run; if it
+    -- hasn't, skip rather than take down the whole Actionbar enable chain.
+    if not addonTable.OverrideBlizzEditmode then return end
     local t = {_G['MainActionBar'], _G['StanceBar'], _G['PetActionBar'], _G['PossessActionBar']}
 
     for k, v in ipairs(t) do
@@ -3294,7 +3297,7 @@ function Module.ChangeMicroMenu()
     -- microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
     Module.MicroFrame = microFrame
 
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsModern and MicroMenuContainer and addonTable.OverrideBlizzEditmode then
         -- addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
         addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', microFrame, 'TOPLEFT', 0, 0)
     else
