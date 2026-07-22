@@ -302,11 +302,114 @@ function SubModuleMixin:SetupOptions()
     self.OptionsEditmode = optionsPartyEditmode;
 end
 
+-- era-1159: DF-restyle for the pooled modern party member frames. Mirrors
+-- the geometry of the classic reskin above (frame 120x53, DF border art,
+-- health 71x10 @ 44,-19, mana 74x7 @ 41,-30) using the parentKeys the
+-- pooled PartyMemberFrameTemplate exposes.
+function SubModuleMixin:SetupModern()
+    local ATLAS = 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe'
+    local BARS = 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\'
+
+    local function styleMember(pf)
+        if pf.DFStyled then return end
+        pf.DFStyled = true
+
+        pf:SetSize(120, 53)
+        pf:SetHitRectInsets(0, 0, 0, 12)
+
+        if pf.Background then pf.Background:Hide() end
+        if pf.Border then pf.Border:Hide() end
+        if pf.Texture then
+            pf.Texture:SetTexture(nil)
+            pf.Texture:Hide()
+        end
+        if pf.VehicleTexture then pf.VehicleTexture:Hide() end
+
+        local border = pf:CreateTexture(nil, 'ARTWORK', nil, 3)
+        border:SetSize(120, 49)
+        border:SetTexture(ATLAS)
+        border:SetTexCoord(0.480469, 0.949219, 0.222656, 0.414062)
+        border:SetPoint('TOPLEFT', 1, -2)
+        pf.DFPartyFrameBorder = border
+
+        if pf.Flash then
+            pf.Flash:SetSize(114, 47)
+            pf.Flash:SetTexture(ATLAS)
+            pf.Flash:SetTexCoord(0.480469, 0.925781, 0.453125, 0.636719)
+            pf.Flash:ClearAllPoints()
+            pf.Flash:SetPoint('TOPLEFT', 2, -2)
+            pf.Flash:SetVertexColor(1, 0, 0, 1)
+            pf.Flash:SetDrawLayer('ARTWORK', 5)
+        end
+
+        if pf.Portrait then
+            pf.Portrait:SetSize(37, 37)
+            pf.Portrait:ClearAllPoints()
+            pf.Portrait:SetPoint('TOPLEFT', 7, -6)
+        end
+
+        if pf.Name then
+            pf.Name:ClearAllPoints()
+            pf.Name:SetPoint('TOPLEFT', 46, -6)
+            pf.Name:SetWidth(74)
+            pf.Name:SetJustifyH('LEFT')
+        end
+
+        local healthbar = pf.HealthBar
+        if healthbar then
+            healthbar:SetSize(71, 10)
+            healthbar:ClearAllPoints()
+            healthbar:SetPoint('TOPLEFT', 44, -19)
+            healthbar:SetStatusBarTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
+            healthbar:SetStatusBarColor(1, 1, 1, 1)
+
+            local hpMask = healthbar:CreateMaskTexture()
+            hpMask:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+            hpMask:SetTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Mask',
+                              'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+            hpMask:SetSize(71, 10)
+            healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        end
+
+        local manabar = pf.ManaBar
+        if manabar then
+            manabar:SetSize(74, 7)
+            manabar:ClearAllPoints()
+            manabar:SetPoint('TOPLEFT', 41, -30)
+            manabar:SetStatusBarTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana')
+            manabar:SetStatusBarColor(1, 1, 1, 1)
+
+            local manaMask = manabar:CreateMaskTexture()
+            manaMask:SetPoint('CENTER', manabar, 'CENTER', 0, 0)
+            manaMask:SetTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
+                                'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+            manaMask:SetSize(74, 7)
+            manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        end
+    end
+
+    local function styleAll()
+        if not (PartyFrame and PartyFrame.PartyMemberFramePool) then return end
+        for pf in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+            local ok, err = pcall(styleMember, pf)
+            if not ok then geterrorhandler()('DFPartyModern: ' .. tostring(err)) end
+        end
+    end
+
+    if PartyFrame and PartyFrame.InitializePartyMemberFrames then
+        hooksecurefunc(PartyFrame, 'InitializePartyMemberFrames', styleAll)
+    end
+    styleAll()
+end
+
 function SubModuleMixin:Setup()
     -- Modern (Midnight-UI) clients pool anonymous PartyFrame member frames;
-    -- the classic PartyMemberFrame1-4 reskin cannot attach. Blizzard's own
-    -- Edit-Mode party frames take over there.
-    if DF.API.Version.IsModern then return end
+    -- the classic PartyMemberFrame1-4 reskin cannot attach. Restyle the
+    -- pooled frames in place instead (era-1159).
+    if DF.API.Version.IsModern then
+        self:SetupModern()
+        return
+    end
     if not _G['PartyMemberFrame1'] then return end
     local function setDefaultSubValues(sub)
         self.ModuleRef:SetDefaultSubValues(sub)
