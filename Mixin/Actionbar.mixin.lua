@@ -2128,6 +2128,11 @@ function DragonflightUIPetbarMixin:StylePetButton()
 
         btn.buttonType = 'BONUSACTIONBUTTON'
 
+        -- era-1159: modern PetActionButtons are 45px like main buttons
+        -- (SmallActionButtonTemplate); the classic pet bar's distinct look
+        -- came from its native 30px buttons. Restore that.
+        if DF.API.Version.IsModern then btn:SetSize(30, 30) end
+
         local normalTwo = _G[btnName .. 'NormalTexture2']
         if normalTwo then -- TODOTBC
             normalTwo:Hide()

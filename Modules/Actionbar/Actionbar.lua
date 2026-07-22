@@ -2087,8 +2087,11 @@ function Module:OnEnable()
         end)
         add('PetHookAndGryphon', function()
             Module.HookPetBar()
-            frame:RegisterEvent('PLAYER_REGEN_ENABLED')
-            frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+            -- Module.Frame, NOT the file-local 'frame': that local is
+            -- declared further down the file, so this closure (unlike the
+            -- original Era() defined below it) cannot capture it.
+            Module.Frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+            Module.Frame:RegisterEvent('PLAYER_ENTERING_WORLD')
             Module.ChangeGryphon()
         end)
         add('ChangeMicroMenu', Module.ChangeMicroMenu)
