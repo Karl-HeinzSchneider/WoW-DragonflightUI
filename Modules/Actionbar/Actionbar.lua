@@ -2070,29 +2070,35 @@ function Module:OnEnable()
 
     Module.Temp = {}
 
-    Helper:Benchmark('EnableAddonSpecific', function()
-        self:EnableAddonSpecific()
-    end, 0, self)
-    Helper:Benchmark('SetupActionbarFrames', function()
-        self:SetupActionbarFrames()
-    end, 0, self)
-    Helper:Benchmark('AddStateUpdater', function()
-        Module.AddStateUpdater()
-    end, 0, self)
-    Helper:Benchmark('AddEditMode', function()
-        self:AddEditMode()
-    end, 0, self)
-    local _, dur = Helper:Benchmark('RegisterOptionScreens', function()
-        self:RegisterOptionScreens()
-    end, 0, self)
-
-    Module:ApplySettings('ALL')
-
-    self:SecureHook(DF, 'RefreshConfig', function()
-        -- print('RefreshConfig', mName)
-        Module:ApplySettings('ALL')
-        Module:RefreshOptionScreens()
-    end)
+    -- era-1159: the whole setup in one slice trips the (much tighter on
+    -- 1.15.9) script watchdog. Run each phase in its own frame; order is
+    -- preserved, and nothing external consumes these until settings screens
+    -- exist at the end of the chain.
+    local phases = {
+        {'EnableAddonSpecific', function() self:EnableAddonSpecific() end},
+        {'SetupActionbarFrames', function() self:SetupActionbarFrames() end},
+        {'AddStateUpdater', function() Module.AddStateUpdater() end},
+        {'AddEditMode', function() self:AddEditMode() end},
+        {'RegisterOptionScreens', function() self:RegisterOptionScreens() end},
+        {'ApplySettingsALL', function() Module:ApplySettings('ALL') end},
+        {
+            'RefreshConfigHook', function()
+                self:SecureHook(DF, 'RefreshConfig', function()
+                    Module:ApplySettings('ALL')
+                    Module:RefreshOptionScreens()
+                end)
+            end
+        }
+    }
+    local index = 0
+    local function runNext()
+        index = index + 1
+        local phase = phases[index]
+        if not phase then return end
+        Helper:Benchmark(phase[1], phase[2], 0, self)
+        C_Timer.After(0, runNext)
+    end
+    runNext()
 end
 
 function Module:OnDisable()
@@ -3112,9 +3118,25 @@ function Module:ForceMoveBlizzEditModeGhosts()
     if not addonTable.OverrideBlizzEditmode then return end
     local t = {_G['MainActionBar'], _G['StanceBar'], _G['PetActionBar'], _G['PossessActionBar']}
 
-    for k, v in ipairs(t) do
-        v:SetClampedToScreen(false)
-        addonTable:OverrideBlizzEditmode(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+    -- Batch: ReanchorFrame per frame, ONE ApplyChanges at the end -
+    -- ApplyChanges costs ~65ms each and four of them dominated the
+    -- ChangeActionbar phase (~260ms of watchdog budget).
+    local lib = addonTable.LibEditModeOverride
+    if lib then
+        for k, v in ipairs(t) do
+            v:SetClampedToScreen(false)
+            lib:ReanchorFrame(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+        end
+        if InCombatLockdown() then
+            lib:SaveOnly()
+        else
+            lib:ApplyChanges()
+        end
+    else
+        for k, v in ipairs(t) do
+            v:SetClampedToScreen(false)
+            addonTable:OverrideBlizzEditmode(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+        end
     end
 end
 

@@ -37,12 +37,22 @@ function DF:OnEnable()
     -- supported path (the config module toggles do it), so modules cannot
     -- tell the difference.
     self.deferredModules = {}
+    local configModule
     for _, module in ipairs(self.orderedModules) do
         if module.enabledState then
             module:SetEnabledState(false)
-            table.insert(self.deferredModules, module)
+            if module.moduleName == 'Config' then
+                -- Config:OnEnable synchronously enables every other module
+                -- (its ApplySettings drives enablement) - run it LAST so the
+                -- others are already enabled, each in its own slice, and
+                -- Config's pass reduces to no-ops.
+                configModule = module
+            else
+                table.insert(self.deferredModules, module)
+            end
         end
     end
+    if configModule then table.insert(self.deferredModules, configModule) end
     local Helper = addonTable.Helper
     local index = 0
     local function enableNext()
