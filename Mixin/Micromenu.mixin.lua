@@ -155,7 +155,7 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
             v:ClearAllPoints()
             v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
             self.LastChainButton = v
-        elseif DF.API.Version.IsMoP then
+        elseif DF.API.Version.IsModern then
             v:ClearAllPoints()
             v:SetPoint('TOPLEFT', self.LastChainButton or CharacterMicroButton, 'TOPRIGHT', -3, 0)
             if v:IsShown() then self.LastChainButton = v end

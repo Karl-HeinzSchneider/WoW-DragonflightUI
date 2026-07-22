@@ -507,7 +507,11 @@ function SubModuleMixin:Setup()
             hideFunction = function()
                 --      
                 CompactRaidFrameManager_SetSetting('Locked', true)
-                CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+                if CompactRaidFrameManager_ResizeFrame_SavePosition then
+                    if CompactRaidFrameManager_ResizeFrame_SavePosition then
+                    CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+                end
+                end
             end
         });
 

@@ -2939,7 +2939,7 @@ function Module.ChangeActionbar()
     ActionBarDownButton:ClearAllPoints()
     ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7) ]]
 
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsModern then
         _G['StatusTrackingBarManager']:Hide()
 
         local stancebar = _G['StanceBar'];
@@ -3547,7 +3547,7 @@ function Module.ChangeBackpack()
     f:SetClampedToScreen(true)
     f:SetMovable(true)
 
-    if DF.API.Version.IsTBC or DF.API.Version.IsMoP then
+    if _G['BagsBar'] then
         --
         addonTable:OverrideBlizzEditmode(_G['BagsBar'], 'RIGHT', f, 'RIGHT', 0, 0)
     end
@@ -3678,7 +3678,7 @@ function Module.UpdateBagState(state)
     MainMenuBarBackpackButton:SetParent(f)
     MainMenuBarBackpackButton:SetScale(1.5)
 
-    if DF.API.Version.IsTBC or DF.API.Version.IsMoP then
+    if _G['BagsBar'] then
         local b = _G['BagsBar']
         -- b:SetScale(state.scale)
 

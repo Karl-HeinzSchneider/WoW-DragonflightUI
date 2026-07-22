@@ -303,7 +303,10 @@ function SubModuleMixin:SetupOptions()
 end
 
 function SubModuleMixin:Setup()
-    if DF.API.Version.IsTBC then return end
+    -- Modern (Midnight-UI) clients pool anonymous PartyFrame member frames;
+    -- the classic PartyMemberFrame1-4 reskin cannot attach. Blizzard's own
+    -- Edit-Mode party frames take over there.
+    if DF.API.Version.IsModern then return end
     if not _G['PartyMemberFrame1'] then return end
     local function setDefaultSubValues(sub)
         self.ModuleRef:SetDefaultSubValues(sub)
@@ -381,7 +384,7 @@ function SubModuleMixin:UpdateState(state)
 end
 
 function SubModuleMixin:Update()
-    if DF.API.Version.IsTBC then return end -- TODOTBC
+    if DF.API.Version.IsModern then return end -- modern party frames are pooled
     if not self.PartyMoveFrame then return end
     local state = self.state;
     if not state then return end
