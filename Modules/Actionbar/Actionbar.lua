@@ -445,7 +445,7 @@ local defaults = {
             -- the traditional smaller pet bar. SetScale shrinks the button
             -- AND all attached overlay art uniformly - resizing the button
             -- alone leaves 45px-absolute overlays misaligned.
-            buttonScale = DF.API.Version.IsModern and 0.55 or 0.8,
+            buttonScale = DF.API.Version.IsModern and 0.65 or 0.8,
             rows = 1,
             buttons = 10,
             padding = 2,
