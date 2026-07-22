@@ -1204,9 +1204,57 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
 
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
-    local ActionBarUpButton = ActionBarUpButton or MainActionBar.ActionBarPageNumber.UpButton;
-    local ActionBarDownButton = ActionBarDownButton or MainActionBar.ActionBarPageNumber.DownButton;
-    local MainMenuBarPageNumber = MainMenuBarPageNumber or MainActionBar.ActionBarPageNumber.Text;
+    -- era-1159: the old ActionBarUpButton globals are gone, and adopting the
+    -- fallback arrows (MainActionBar.ActionBarPageNumber.*) failed two ways:
+    -- (1) an insecure OnClick must page via C_ActionBar.SetActionBarPage,
+    -- which combat lockdown blocks for addon code - switching died mid-fight;
+    -- (2) MainActionBar:OnShow -> UpdateEndCaps re-atlases those buttons
+    -- every time ActionBarController re-shows the bar (every loading screen),
+    -- erasing the custom skin - the arrows "vanished". So: our own SECURE
+    -- buttons. type='actionbar' pages through the protected path even in
+    -- combat, a [bar:N] state driver keeps each arrow's target page current
+    -- (state drivers stay live in combat), and the textures are ours alone.
+    -- Blizzard's secure increment/decrement is unusable here: it honors
+    -- VIEWABLE_ACTION_BAR_PAGES, which the always-shown multibars collapse
+    -- to a 1<->2 cycle.
+    local modernFallback = (not _G['ActionBarUpButton'] and C_ActionBar
+        and C_ActionBar.SetActionBarPage) and true or false
+
+    local numPages = NUM_ACTIONBAR_PAGES or 6
+    local function createSecurePageArrow(name, delta)
+        local btn = CreateFrame('Button', name, f,
+                                'SecureActionButtonTemplate,SecureHandlerStateTemplate')
+        btn:SetSize(19, 17)
+        btn:RegisterForClicks('AnyUp')
+        btn:SetAttribute('type', 'actionbar')
+        btn:SetAttribute('_onstate-page', ([[
+            local page = (tonumber(newstate) or 1) + (%d)
+            if page > %d then page = 1 elseif page < 1 then page = %d end
+            self:SetAttribute('action', page)
+        ]]):format(delta, numPages, numPages))
+        local drive = {}
+        for i = 1, numPages do drive[#drive + 1] = '[bar:' .. i .. ']' .. i end
+        RegisterStateDriver(btn, 'page', table.concat(drive, ';') .. ';1')
+        btn:SetScript('PostClick', function()
+            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+        end)
+        -- create the texture regions the shared styling below expects
+        btn:SetNormalTexture(textureRef)
+        btn:SetHighlightTexture(textureRef)
+        btn:SetPushedTexture(textureRef)
+        return btn
+    end
+
+    local ActionBarUpButton, ActionBarDownButton, MainMenuBarPageNumber
+    if modernFallback then
+        ActionBarUpButton = createSecurePageArrow('DragonflightUIActionBarUpButton', 1)
+        ActionBarDownButton = createSecurePageArrow('DragonflightUIActionBarDownButton', -1)
+        MainMenuBarPageNumber = MainActionBar.ActionBarPageNumber.Text
+    else
+        ActionBarUpButton = _G['ActionBarUpButton']
+        ActionBarDownButton = _G['ActionBarDownButton']
+        MainMenuBarPageNumber = _G['MainMenuBarPageNumber']
+    end
 
     -- actionbar switch buttons
     ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
@@ -1264,35 +1312,10 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
     end)
     fixAnchor(GetActionBarPage())
 
-    -- era-1159: on modern clients the old ActionBarUpButton globals are gone
-    -- and the fallback arrows (MainActionBar.ActionBarPageNumber) have two
-    -- problems once DFUI takes over: (1) their OnClick uses
-    -- VIEWABLE_ACTION_BAR_PAGES, which excludes every page claimed by a
-    -- visible MultiBar - with bars 2-5 shown the cycle collapses to 1<->2;
-    -- (2) the page number text was updated by MainActionBar's
-    -- ACTIONBAR_PAGE_CHANGED handler, which died with UnregisterAllEvents.
-    -- Own both: cycle the full 1..NUM_ACTIONBAR_PAGES and keep the text
-    -- fresh ourselves. The SMART secure state driver handles the buttons'
-    -- actual paging, so this is display/UX only and combat-safe.
-    if not _G['ActionBarUpButton'] and C_ActionBar and C_ActionBar.SetActionBarPage then
-        local numPages = NUM_ACTIONBAR_PAGES or 6
-        local function cyclePage(delta)
-            local page = (C_ActionBar.GetActionBarPage() or 1) + delta
-            if page > numPages then
-                page = 1
-            elseif page < 1 then
-                page = numPages
-            end
-            C_ActionBar.SetActionBarPage(page)
-            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-        end
-        ActionBarUpButton:SetScript('OnClick', function()
-            cyclePage(1)
-        end)
-        ActionBarDownButton:SetScript('OnClick', function()
-            cyclePage(-1)
-        end)
-
+    -- era-1159: the page number text was updated by MainActionBar's
+    -- ACTIONBAR_PAGE_CHANGED handler, which died with UnregisterAllEvents -
+    -- keep it fresh ourselves. Clicking is handled by the secure arrows above.
+    if modernFallback then
         local pageWatcher = CreateFrame('Frame')
         pageWatcher:RegisterEvent('ACTIONBAR_PAGE_CHANGED')
         pageWatcher:SetScript('OnEvent', function()
