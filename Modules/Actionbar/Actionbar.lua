@@ -3823,31 +3823,32 @@ function Module.ChangeFramerate()
 end
 
 function Module:Era()
-    Module.ChangeActionbar()
-    Module.CreateNewXPBar()
-    Module.CreateNewRepBar()
-    Module:RemoveActionbarAnimations()
+    local B = function(label, fn) Helper:Benchmark('Era:' .. label, fn, 2, Module) end
+    B('ChangeActionbar', Module.ChangeActionbar)
+    B('CreateNewXPBar', Module.CreateNewXPBar)
+    B('CreateNewRepBar', Module.CreateNewRepBar)
+    B('RemoveActionbarAnimations', function() Module:RemoveActionbarAnimations() end)
 
-    Module.HookPetBar()
+    B('HookPetBar', Module.HookPetBar)
     -- Module.MoveTotem()
     -- Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    Module.ChangeGryphon()
+    B('ChangeGryphon', Module.ChangeGryphon)
     -- Module.DrawActionbarDeco()
 
-    Module.ChangeMicroMenu()
-    Module.ChangeBackpack()
+    B('ChangeMicroMenu', Module.ChangeMicroMenu)
+    B('ChangeBackpack', Module.ChangeBackpack)
     -- Module.MoveBars()
-    Module.ChangeFramerate()
-    Module.CreateBagExpandButton()
-    Module.RefreshBagBarToggle()
-    Module.HookBags()
+    B('ChangeFramerate', Module.ChangeFramerate)
+    B('CreateBagExpandButton', Module.CreateBagExpandButton)
+    B('RefreshBagBarToggle', Module.RefreshBagBarToggle)
+    B('HookBags', Module.HookBags)
 
-    self.SubVehicleLeave:Setup()
-    self.SubActionbarRange:Setup()
+    B('SubVehicleLeave', function() self.SubVehicleLeave:Setup() end)
+    B('SubActionbarRange', function() self.SubActionbarRange:Setup() end)
 end
 
 function Module:TBC()

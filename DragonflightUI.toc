@@ -24,7 +24,7 @@
 ## Category-ruRU: Переработка интерфейса
 ## Category-zhCN: UI重构
 ## Category-zhTW: UI重構
-## SavedVariables: DragonflightUIDB
+## SavedVariables: DragonflightUIDB, DragonflightUIPerfLog
 ## OptionalDeps: Ace3, Blizzard_Minimap, Blizzard_TimeManager, Leatrix_Plus, NovaWorldBuffs
 
 # Libs
