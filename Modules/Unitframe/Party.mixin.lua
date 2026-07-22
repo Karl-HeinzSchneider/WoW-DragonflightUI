@@ -309,6 +309,7 @@ end
 function SubModuleMixin:SetupModern()
     local ATLAS = 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe'
     local BARS = 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\'
+    local UpdateRoleIcon
 
     local function styleMember(pf)
         if pf.DFStyled then return end
@@ -399,6 +400,34 @@ function SubModuleMixin:SetupModern()
             manaMask:SetSize(74, 7)
             manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
         end
+
+        -- Role icon (Era 1.15.x has LFG roles), same treatment as the
+        -- classic reskin: top-right corner of the member frame.
+        if UnitGroupRolesAssigned then
+            local roleIcon = pf:CreateTexture(nil, 'OVERLAY')
+            roleIcon:SetSize(12, 12)
+            roleIcon:SetPoint('TOPRIGHT', pf, 'TOPRIGHT', -5, -5)
+            roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
+            pf.DFRoleIcon = roleIcon
+            UpdateRoleIcon(pf)
+        end
+    end
+
+    function UpdateRoleIcon(pf)
+        local roleIcon = pf.DFRoleIcon
+        if not roleIcon then return end
+        local unit = pf.unitToken or ('party' .. (pf.layoutIndex or 1))
+        local role = UnitGroupRolesAssigned and UnitGroupRolesAssigned(unit)
+        roleIcon:Show()
+        if role == 'TANK' then
+            roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
+        elseif role == 'HEALER' then
+            roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
+        elseif role == 'DAMAGER' then
+            roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+        else
+            roleIcon:Hide()
+        end
     end
 
     local function styleAll()
@@ -419,6 +448,18 @@ function SubModuleMixin:SetupModern()
         hooksecurefunc(PartyFrame, 'InitializePartyMemberFrames', styleAll)
     end
     styleAll()
+
+    local roleWatcher = CreateFrame('Frame')
+    roleWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
+    if C_EventUtils and C_EventUtils.IsEventValid and C_EventUtils.IsEventValid('PLAYER_ROLES_ASSIGNED') then
+        roleWatcher:RegisterEvent('PLAYER_ROLES_ASSIGNED')
+    end
+    roleWatcher:SetScript('OnEvent', function()
+        if not (PartyFrame and PartyFrame.PartyMemberFramePool) then return end
+        for pf in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+            if pf.DFStyled then UpdateRoleIcon(pf) end
+        end
+    end)
 end
 
 function SubModuleMixin:Setup()
