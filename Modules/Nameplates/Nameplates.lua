@@ -8,7 +8,7 @@ local Module = DF:NewModule(mName, 'AceConsole-3.0', 'AceHook-3.0')
 
 Mixin(Module, DragonflightUIModulesMixin)
 
-local defaults = {profile = {classColors = true}}
+local defaults = {profile = {classColors = true, modernStyle = true}}
 Module:SetDefaults(defaults)
 
 function Module:OnInitialize()
@@ -54,6 +54,14 @@ function Module:OnEnable()
     -- health bars. Re-asserted at enable while the option is on.
     if self.db.profile.classColors and C_CVar and C_CVar.SetCVar then
         C_CVar.SetCVar('nameplateShowClassColor', 1)
+    end
+
+    -- THE switch: Era 1.15.9 defaults nameplateStyle to the classic look
+    -- (border ring + level box). Enum.NamePlateStyle.Modern is the retail
+    -- Dragonflight thin-plate renderer, fully Blizzard-native; the driver
+    -- re-reads options via the CVar callback registry on change.
+    if self.db.profile.modernStyle and C_CVar and C_CVar.SetCVar and Enum.NamePlateStyle then
+        C_CVar.SetCVar('nameplateStyle', Enum.NamePlateStyle.Modern)
     end
 
     local frame = CreateFrame('Frame')
