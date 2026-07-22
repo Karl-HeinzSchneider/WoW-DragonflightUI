@@ -660,7 +660,10 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = 0,
+            -- era-1159: micro button atlas art carries transparent padding
+            -- (scaled 0.7); +8 brings the VISIBLE right edge onto the same
+            -- line as the bag bar above it.
+            x = 8,
             y = 0,
             hidden = false,
             -- Visibility
