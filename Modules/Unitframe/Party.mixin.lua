@@ -317,19 +317,31 @@ function SubModuleMixin:SetupModern()
         pf:SetSize(120, 53)
         pf:SetHitRectInsets(0, 0, 0, 12)
 
+        -- The classic ring art, vehicle art and the Name live on the
+        -- PartyMemberOverlay CHILD frame - hiding pf.Texture etc. no-ops,
+        -- and anything painted on pf renders UNDER the overlay.
+        local overlay = pf.PartyMemberOverlay
         if pf.Background then pf.Background:Hide() end
         if pf.Border then pf.Border:Hide() end
-        if pf.Texture then
-            pf.Texture:SetTexture(nil)
-            pf.Texture:Hide()
+        for _, holder in ipairs({pf, overlay}) do
+            if holder and holder.Texture then
+                holder.Texture:SetTexture(nil)
+                holder.Texture:Hide()
+            end
+            if holder and holder.VehicleTexture then
+                holder.VehicleTexture:SetTexture(nil)
+                holder.VehicleTexture:Hide()
+            end
         end
-        if pf.VehicleTexture then pf.VehicleTexture:Hide() end
 
-        local border = pf:CreateTexture(nil, 'ARTWORK', nil, 3)
+        -- DF border goes on the overlay: above the bar child-frames (its
+        -- purpose in Blizzard's layout), below the overlay's icons/name.
+        local borderHolder = overlay or pf
+        local border = borderHolder:CreateTexture(nil, 'BORDER')
         border:SetSize(120, 49)
         border:SetTexture(ATLAS)
         border:SetTexCoord(0.480469, 0.949219, 0.222656, 0.414062)
-        border:SetPoint('TOPLEFT', 1, -2)
+        border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
         pf.DFPartyFrameBorder = border
 
         if pf.Flash then
@@ -348,11 +360,12 @@ function SubModuleMixin:SetupModern()
             pf.Portrait:SetPoint('TOPLEFT', 7, -6)
         end
 
-        if pf.Name then
-            pf.Name:ClearAllPoints()
-            pf.Name:SetPoint('TOPLEFT', 46, -6)
-            pf.Name:SetWidth(74)
-            pf.Name:SetJustifyH('LEFT')
+        local name = (overlay and overlay.Name) or pf.Name
+        if name then
+            name:ClearAllPoints()
+            name:SetPoint('TOPLEFT', pf, 'TOPLEFT', 46, -6)
+            name:SetWidth(74)
+            name:SetJustifyH('LEFT')
         end
 
         local healthbar = pf.HealthBar
@@ -390,9 +403,15 @@ function SubModuleMixin:SetupModern()
 
     local function styleAll()
         if not (PartyFrame and PartyFrame.PartyMemberFramePool) then return end
+        local count = 0
         for pf in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+            count = count + 1
             local ok, err = pcall(styleMember, pf)
             if not ok then geterrorhandler()('DFPartyModern: ' .. tostring(err)) end
+        end
+        if DragonflightUIPerfLog and #DragonflightUIPerfLog < 400 then
+            DragonflightUIPerfLog[#DragonflightUIPerfLog + 1] =
+                string.format('0.0ms DFPartyModern:styleAll(%d)', count)
         end
     end
 
