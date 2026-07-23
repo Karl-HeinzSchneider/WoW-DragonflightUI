@@ -284,6 +284,26 @@ function SubModuleMixin:CreateVehicleLeaveButton()
         btn:SetPoint('CENTER', f, 'CENTER', 0, 0)
         -- btn:Show()
 
+        -- era-1159: the plain SetPoint above is not enough. The Classic
+        -- panel manager (UIParentManageFramePositions) re-anchors this
+        -- button to UIParent/BOTTOM whenever the bars update - which is
+        -- exactly when a taxi shows it - because IsInDefaultPosition()
+        -- still reports true. Move its EditMode layout anchor as well
+        -- (the same trick ForceMoveBlizzEditModeGhosts uses for the
+        -- parked bars, and the TBC branch below already does): the
+        -- manager then skips the button and the dock anchor sticks.
+        local lib = addonTable.LibEditModeOverride
+        if lib then
+            lib:ReanchorFrame(btn, 'CENTER', f, 'CENTER', 0, 0)
+            if InCombatLockdown() then
+                lib:SaveOnly()
+            else
+                lib:ApplyChanges()
+            end
+        elseif addonTable.OverrideBlizzEditmode then
+            addonTable:OverrideBlizzEditmode(btn, 'CENTER', f, 'CENTER', 0, 0)
+        end
+
         -- era-1159: dress the real button in the retail round exit-arrow
         -- art (shipped by DFUI but previously used only for the edit-mode
         -- preview); the classic wooden square reads nothing like retail.
