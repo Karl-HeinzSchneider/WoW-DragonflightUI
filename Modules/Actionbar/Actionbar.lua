@@ -2342,16 +2342,17 @@ function Module:GetSetupActionbarSteps()
                         flyoutHandler:Hide()
                     end                               
 
-                    if button == 'Keybind' then    
-                        -- print('keybind')
-                        local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")                         
-
-                        if down == useKeyDown then
-                            -- print('down == useKeyDown')
-                            return "LeftButton"
-                        end
-                        -- print('return false')
-                        return false
+                    if button == 'Keybind' then
+                        -- era-1159: upstream gates this on down == useKeyDown
+                        -- (fire on key press, cvar default). On this client
+                        -- that edge never fires the binding - "CLICK x:Keybind"
+                        -- was completely dead while "CLICK x:LeftButton"
+                        -- (which takes the release-edge path below) works.
+                        -- Mirror that proven path: swallow down, act on
+                        -- release. Single fire regardless of which edges the
+                        -- client actually delivers.
+                        if down then return false end
+                        return "LeftButton"
                     end
 
                     if IsModifiedClick("PICKUPACTION") then
