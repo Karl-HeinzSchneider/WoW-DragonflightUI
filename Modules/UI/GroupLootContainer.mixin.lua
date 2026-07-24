@@ -667,7 +667,8 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 2, 3)
         timer:SetWidth(96)
         timer:SetHeight(8)
-        timer:SetStatusBarTexture('Interface\\Buttons\\WHITE8X8')
+        timer:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
         timer:SetStatusBarColor(1, 0.82, 0)
         -- own track + 1px frame: the template's Background is not reliable
         -- here, and the naked fill read as a floating yellow strip
