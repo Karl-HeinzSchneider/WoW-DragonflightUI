@@ -40,8 +40,20 @@ function DragonflightUIActionbarMixin:Init()
     -- Re-assert grid state once combat drops too: any grid work skipped
     -- under lockdown (SetShown on protected buttons) self-heals here.
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
+    -- Drag-grid: while a spell/item is on the cursor every slot must be a
+    -- visible drop target (stock-bar behavior); and when a slot is vacated
+    -- by a move, the grid must re-evaluate or the empty slot keeps its
+    -- populated look.
+    self:RegisterEvent('ACTIONBAR_SHOWGRID')
+    self:RegisterEvent('ACTIONBAR_HIDEGRID')
+    self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
     self:SetScript('OnEvent', function(_, event, arg1)
         -- print(self:GetName(), event, arg1)
+        if event == 'ACTIONBAR_SHOWGRID' then
+            self.DragGridActive = true
+        elseif event == 'ACTIONBAR_HIDEGRID' then
+            self.DragGridActive = false
+        end
         if InCombatLockdown() then return end
         -- self:Update()
         self:UpdateGridState()
@@ -491,11 +503,12 @@ function DragonflightUIActionbarMixin:UpdateGridState()
     -- Blizzard's own secure re-evaluations use the same formula off the
     -- showgrid attribute we set, so the two never fight.
     local canTouchProtected = not Helper:IsCombatLocked()
+    local showAll = state.alwaysShow or self.DragGridActive
     for i = 1, btnCount do
         local btn = buttonTable[i]
 
         -- print(btn:GetName(), state.alwaysShow)
-        if state.alwaysShow then
+        if showAll then
             btn:SetAttribute("showgrid", 1)
         else
             btn:SetAttribute("showgrid", 0)
@@ -505,7 +518,7 @@ function DragonflightUIActionbarMixin:UpdateGridState()
         if canTouchProtected then
             local action = btn.action or btn:GetAttribute('action')
             local show = not btn:GetAttribute('statehidden')
-                and (state.alwaysShow or (action and HasAction(action))) and true or false
+                and (showAll or (action and HasAction(action))) and true or false
             if btn:IsShown() ~= show then btn:SetShown(show) end
         end
     end
