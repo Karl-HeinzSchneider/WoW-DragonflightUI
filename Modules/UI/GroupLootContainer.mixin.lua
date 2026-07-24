@@ -170,6 +170,9 @@ function SubModuleMixin:OnEvent(event, ...)
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i];
         self:UpdateAllButtons(f);
+        -- rollID may land after OnShow; re-tint the quality border once
+        -- the roll data is definitely there.
+        if f and f:IsShown() then SubModuleMixin.ApplyDFBackdrop(f) end
     end
 end
 
@@ -439,8 +442,8 @@ function SubModuleMixin.ApplyDFBackdrop(frame)
         edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
         tile = true,
         tileSize = 32,
-        edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
+        edgeSize = 12,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
     })
     local quality
     if frame.rollID and GetLootRollItemInfo then
@@ -518,24 +521,31 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         end
 
         local name = f.Name;
-        name:SetSize(180 - 4, 28 - 4)
+        name:SetSize(190, 22)
         name:ClearAllPoints()
-        if nameFrame then
-            name:SetPoint('CENTER', nameFrame, 'CENTER', 0, 0)
-        else
-            name:SetPoint('TOPLEFT', container, 'TOPLEFT', 2, -4)
-        end
+        name:SetPoint('TOPLEFT', container, 'TOPLEFT', 2, -2)
+        name:SetJustifyH('LEFT')
 
         local fontFile, fontHeight, flags = name:GetFont()
-        name:SetFont(fontFile, 14, "OUTLINE")
-        name:SetFont(fontFile, 14, flags)
+        name:SetFont(fontFile, 12, flags)
 
+        -- Slim DF-style timer under the name instead of the chunky
+        -- yellow-green classic bar.
         local timer = f.Timer;
         if timer then
         timer:ClearAllPoints()
-        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 0 + 1)
-        timer:SetWidth(180)
-        timer.Background:SetWidth(180)
+        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 2, 4)
+        timer:SetWidth(186)
+        timer:SetHeight(9)
+        timer:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
+        timer:SetStatusBarColor(1, 0.82, 0)
+        if timer.Background then
+            timer.Background:SetTexture(nil)
+            timer.Background:SetColorTexture(0, 0, 0, 0.5)
+            timer.Background:ClearAllPoints()
+            timer.Background:SetAllPoints(timer)
+        end
 
         local regs = {timer:GetRegions()}
         for k, v in ipairs(regs) do
