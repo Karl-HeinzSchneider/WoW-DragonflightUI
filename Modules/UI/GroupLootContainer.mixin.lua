@@ -193,8 +193,10 @@ local ROLL_TYPE_ICON = {
     [3] = 'Interface\\Buttons\\UI-GroupLoot-DE-Up' -- disenchant
 }
 
--- Show the current leading roll (retail behavior): NEED outranks GREED
--- outranks DISENCHANT; within a rank the higher number leads.
+-- Corner display. Mid-roll this client never reveals roll NUMBERS (they
+-- exist only once the roll resolves), so while rolling we show the live
+-- choice tally + how many are still deciding; if numbers ever are
+-- revealed (they are at resolution), the leading "Name (roll)" wins.
 function SubModuleMixin:UpdateTopRoll(f)
     local topRoll, rollIcon = f.DFTopRoll, f.DFTopRollIcon
     if not (topRoll and f.rollID and C_LootHistory and C_LootHistory.GetNumItems) then return end
@@ -207,54 +209,117 @@ function SubModuleMixin:UpdateTopRoll(f)
             break
         end
     end
-    if not itemIdx then
-        lootlog('toproll %s rollID=%s: no history item (numItems=%d)',
-            tostring(f:GetName()), tostring(f.rollID), C_LootHistory.GetNumItems())
-        topRoll:SetText('')
-        rollIcon:Hide()
-        return
-    end
 
-    local _, _, numPlayers = C_LootHistory.GetItem(itemIdx)
-    local bestName, bestClass, bestType, bestRoll
-    for p = 1, numPlayers or 0 do
-        local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, p)
-        if name and roll and rollType and rollType > 0 then
-            if not bestType or rollType < bestType or (rollType == bestType and roll > bestRoll) then
-                bestName, bestClass, bestType, bestRoll = name, class, rollType, roll
+    -- 1) revealed numbers take precedence
+    if itemIdx then
+        local _, _, numPlayers = C_LootHistory.GetItem(itemIdx)
+        local bestName, bestClass, bestType, bestRoll
+        for pl = 1, numPlayers or 0 do
+            local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, pl)
+            if name and roll and rollType and rollType > 0 then
+                if not bestType or rollType < bestType or (rollType == bestType and roll > bestRoll) then
+                    bestName, bestClass, bestType, bestRoll = name, class, rollType, roll
+                end
             end
+        end
+        if bestName then
+            local color = bestClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[bestClass]
+            if color and color.colorStr then
+                bestName = '|c' .. color.colorStr .. bestName .. '|r'
+            end
+            topRoll:SetFormattedText('%s (%d)', bestName, bestRoll)
+            local tex = ROLL_TYPE_ICON[bestType]
+            if tex then
+                rollIcon:SetTexture(tex)
+                rollIcon:Show()
+            else
+                rollIcon:Hide()
+            end
+            lootlog('toproll %s revealed best=%s roll=%s', tostring(f:GetName()), bestName, tostring(bestRoll))
+            return
         end
     end
 
-    if not bestName then
-        lootlog('toproll %s idx=%d players=%s: no revealed rolls yet',
-            tostring(f:GetName()), itemIdx, tostring(numPlayers))
-        topRoll:SetText('')
-        rollIcon:Hide()
-        return
+    -- 2) live tally of choices + players still deciding
+    rollIcon:Hide()
+    local tableNeed, tableGreed, tablePass, tableDiss, tableNone = self:CreateTableForRollID(f.rollID)
+    local parts = {}
+    local function addPart(icon, t)
+        if t and #t > 0 then parts[#parts + 1] = ('|T%s:11:11|t%d'):format(icon, #t) end
     end
-    lootlog('toproll %s idx=%d players=%s best=%s type=%s roll=%s',
-        tostring(f:GetName()), itemIdx, tostring(numPlayers), bestName,
-        tostring(bestType), tostring(bestRoll))
+    addPart('Interface\\Buttons\\UI-GroupLoot-Dice-Up', tableNeed)
+    addPart('Interface\\Buttons\\UI-GroupLoot-Coin-Up', tableGreed)
+    addPart('Interface\\Buttons\\UI-GroupLoot-Pass-Up', tablePass)
+    if tableNone and #tableNone > 0 then
+        parts[#parts + 1] = ('|cff999999%d left|r'):format(#tableNone)
+    end
+    topRoll:SetText(table.concat(parts, '  '))
+    lootlog('toproll %s tally n=%s g=%s p=%s left=%s', tostring(f:GetName()),
+        tableNeed and #tableNeed or '-', tableGreed and #tableGreed or '-',
+        tablePass and #tablePass or '-', tableNone and #tableNone or '-')
+end
 
-    local color = bestClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[bestClass]
-    if color and color.colorStr then
-        bestName = '|c' .. color.colorStr .. bestName .. '|r'
-    end
-    topRoll:SetFormattedText('%s (%d)', bestName, bestRoll)
+-- Winner toast: numbers exist exactly when the toast frame disappears, so
+-- announce the resolution in a short-lived DF panel where the rolls stack.
+function SubModuleMixin:ShowWinnerToast(itemIdx)
+    local rollID, itemLink, numPlayers, isDone, winnerIdx = C_LootHistory.GetItem(itemIdx)
+    if not (isDone and winnerIdx) then return end
+    local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, winnerIdx)
+    if not name then return end
 
-    local tex = ROLL_TYPE_ICON[bestType]
-    if tex then
-        rollIcon:SetTexture(tex)
-        rollIcon:Show()
-    else
-        rollIcon:Hide()
+    local toast = self.WinnerToast
+    if not toast then
+        toast = CreateFrame('Frame', 'DragonflightUILootWinnerToast', UIParent, 'BackdropTemplate')
+        toast:SetSize(272, 30)
+        toast:SetFrameStrata('DIALOG')
+        SubModuleMixin.ApplyDFBackdrop(toast)
+        local text = toast:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
+        text:SetPoint('CENTER')
+        text:SetWidth(260)
+        toast.Text = text
+        toast:Hide()
+        self.WinnerToast = toast
     end
+    toast:ClearAllPoints()
+    toast:SetPoint('BOTTOM', self.PreviewRoll, 'BOTTOM', 0, -34)
+
+    local color = class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[class]
+    local coloredName = (color and color.colorStr) and ('|c' .. color.colorStr .. name .. '|r') or name
+    local typeIcon = ROLL_TYPE_ICON[rollType]
+    local typeTag = typeIcon and (' |T' .. typeIcon .. ':11:11|t') or ''
+    local rollTag = roll and (' (' .. roll .. ')') or ''
+    toast.Text:SetFormattedText('%s%s%s  %s', coloredName, typeTag, rollTag, itemLink or '')
+    toast:SetAlpha(1)
+    toast:Show()
+    lootlog('toast winner=%s roll=%s item=%s', name, tostring(roll), tostring(itemLink))
+
+    if self.WinnerToastTimer then self.WinnerToastTimer:Cancel() end
+    self.WinnerToastTimer = C_Timer.NewTimer(4, function()
+        if UIFrameFadeOut then
+            UIFrameFadeOut(toast, 0.5, 1, 0)
+            C_Timer.After(0.5, function() toast:Hide() end)
+        else
+            toast:Hide()
+        end
+    end)
 end
 
 function SubModuleMixin:OnEvent(event, ...)
     -- print(event, ...)
     if not (self.state and self.state.enabled and self.Styled) then return end
+
+    if (event == 'LOOT_HISTORY_ROLL_COMPLETE' or event == 'LOOT_ROLLS_COMPLETE')
+        and C_LootHistory and C_LootHistory.GetNumItems then
+        self.ToastedRolls = self.ToastedRolls or {}
+        for i = 1, C_LootHistory.GetNumItems() do
+            local rollID, _, _, isDone, winnerIdx = C_LootHistory.GetItem(i)
+            if rollID and isDone and winnerIdx and not self.ToastedRolls[rollID] then
+                self.ToastedRolls[rollID] = true
+                self:ShowWinnerToast(i)
+            end
+        end
+    end
+
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i];
         self:UpdateAllButtons(f);
