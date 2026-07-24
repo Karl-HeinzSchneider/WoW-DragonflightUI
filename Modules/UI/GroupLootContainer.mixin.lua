@@ -816,7 +816,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
     -- UpdateTopRoll from the loot-history events.
     if not f.DFTopRoll then
         local topRoll = f:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
-        topRoll:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -9, 4)
+        topRoll:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -9, 7)
         topRoll:SetJustifyH('RIGHT')
         f.DFTopRoll = topRoll
 
