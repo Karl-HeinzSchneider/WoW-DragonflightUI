@@ -174,6 +174,19 @@ function SubModuleMixin:Setup()
     });
 end
 
+-- TEMP diagnostics: readable from disk via DFUIErrorGrab's SavedVariables.
+local function lootlog(fmt, ...)
+    if not DFUIErrorGrabDB then return end
+    local log = DFUIErrorGrabDB.lootLog
+    if not log then
+        log = {}
+        DFUIErrorGrabDB.lootLog = log
+    end
+    if #log >= 120 then table.remove(log, 1) end
+    local ok, line = pcall(string.format, '%.1f ' .. fmt, GetTime(), ...)
+    log[#log + 1] = ok and line or ('logfail: ' .. fmt)
+end
+
 local ROLL_TYPE_ICON = {
     [1] = 'Interface\\Buttons\\UI-GroupLoot-Dice-Up', -- need
     [2] = 'Interface\\Buttons\\UI-GroupLoot-Coin-Up', -- greed
@@ -195,6 +208,8 @@ function SubModuleMixin:UpdateTopRoll(f)
         end
     end
     if not itemIdx then
+        lootlog('toproll %s rollID=%s: no history item (numItems=%d)',
+            tostring(f:GetName()), tostring(f.rollID), C_LootHistory.GetNumItems())
         topRoll:SetText('')
         rollIcon:Hide()
         return
@@ -212,10 +227,15 @@ function SubModuleMixin:UpdateTopRoll(f)
     end
 
     if not bestName then
+        lootlog('toproll %s idx=%d players=%s: no revealed rolls yet',
+            tostring(f:GetName()), itemIdx, tostring(numPlayers))
         topRoll:SetText('')
         rollIcon:Hide()
         return
     end
+    lootlog('toproll %s idx=%d players=%s best=%s type=%s roll=%s',
+        tostring(f:GetName()), itemIdx, tostring(numPlayers), bestName,
+        tostring(bestType), tostring(bestRoll))
 
     local color = bestClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[bestClass]
     if color and color.colorStr then
@@ -549,6 +569,16 @@ function SubModuleMixin.ApplyDFBackdrop(frame)
         frame:SetBackdropBorderColor(0.6, 0.6, 0.6)
     end
 
+    do
+        local t = frame.Timer
+        local mn, mx
+        if t and t.GetMinMaxValues then mn, mx = t:GetMinMaxValues() end
+        lootlog('show %s rollID=%s quality=%s timerShown=%s w=%s val=%s minmax=%s-%s',
+            tostring(frame.GetName and frame:GetName()), tostring(frame.rollID),
+            tostring(quality), tostring(t and t:IsShown()), t and t:GetWidth() or -1,
+            t and t.GetValue and t:GetValue() or -1, tostring(mn), tostring(mx))
+    end
+
     -- Blizzard's OnShow re-shows the gold dragon Decoration for BoP items
     -- and re-textures the Corner on every popup - keep them gone.
     local frameName = frame.GetName and frame:GetName()
@@ -731,6 +761,14 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
     end
     f.DFTopRoll:SetText('')
     f.DFTopRollIcon:Hide()
+
+    do
+        local t = f.Timer
+        lootlog('styled %s timer=%s w=%s h=%s pts=%s bg=%s border=%s',
+            tostring(f:GetName()), tostring(t ~= nil), t and t:GetWidth() or -1,
+            t and t:GetHeight() or -1, t and t:GetNumPoints() or -1,
+            tostring(t and t.Background ~= nil), tostring(t and t.DFBorder ~= nil))
+    end
 
     -- Refresh cycle for LIVE frames only: at setup time these are hidden,
     -- and an unconditional Hide/Show popped four empty roll frames on login.
