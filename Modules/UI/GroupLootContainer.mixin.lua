@@ -626,15 +626,27 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         -- line with the text, not tucked behind the icon.
         timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 2, 3)
         timer:SetWidth(96)
-        timer:SetHeight(6)
-        timer:SetStatusBarTexture(
-            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
+        timer:SetHeight(8)
+        timer:SetStatusBarTexture('Interface\\Buttons\\WHITE8X8')
         timer:SetStatusBarColor(1, 0.82, 0)
-        if timer.Background then
-            timer.Background:SetTexture(nil)
-            timer.Background:SetColorTexture(0, 0, 0, 0.5)
-            timer.Background:ClearAllPoints()
-            timer.Background:SetAllPoints(timer)
+        -- own track + 1px frame: the template's Background is not reliable
+        -- here, and the naked fill read as a floating yellow strip
+        local bg = timer.Background
+        if not bg then
+            bg = timer:CreateTexture(nil, 'BACKGROUND')
+            timer.Background = bg
+        end
+        bg:SetTexture(nil)
+        bg:SetColorTexture(0, 0, 0, 0.55)
+        bg:ClearAllPoints()
+        bg:SetAllPoints(timer)
+        if not timer.DFBorder then
+            local border = CreateFrame('Frame', nil, timer, 'BackdropTemplate')
+            border:SetPoint('TOPLEFT', timer, 'TOPLEFT', -1, 1)
+            border:SetPoint('BOTTOMRIGHT', timer, 'BOTTOMRIGHT', 1, -1)
+            border:SetBackdrop({edgeFile = 'Interface\\Buttons\\WHITE8X8', edgeSize = 1})
+            border:SetBackdropBorderColor(0, 0, 0, 0.9)
+            timer.DFBorder = border
         end
 
         -- The classic timer ships border/track art with rounded end caps
