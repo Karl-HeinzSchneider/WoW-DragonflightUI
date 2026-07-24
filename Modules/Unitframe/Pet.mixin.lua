@@ -549,6 +549,25 @@ function SubModuleMixin:ChangePetFrame()
         PetFrameHappiness:ClearAllPoints()
         PetFrameHappiness:SetPoint('LEFT', PetFrame, 'RIGHT', -3, -1.5)
     end
+
+    -- 1.15.9 backport repairs. PartyMemberAuraMixin renders the buff list
+    -- only when showBuffs is set, but nothing in the modern UI ever sets it
+    -- for the pet frame - pet buffs get parsed into self.buffs and never
+    -- drawn (the classic pet frame always showed them). Opt the frame in.
+    if PetFrame.UpdateAuras and PetFrame.AuraFrameContainer then
+        PetFrame.showBuffs = true
+        PetFrame:UpdateAuras()
+    end
+
+    -- The frame registers UNIT_HAPPINESS, but the backported client never
+    -- dispatches it - SetHappiness only runs on resummon/reload, so the
+    -- icon goes stale as happiness decays or the pet is fed. Refresh on a
+    -- slow ticker instead (GetPetHappiness is a cheap C call).
+    if PetFrame.SetHappiness and not self.DFHappinessTicker then
+        self.DFHappinessTicker = C_Timer.NewTicker(5, function()
+            if UnitExists('pet') then PetFrame:SetHappiness() end
+        end)
+    end
 end
 
 function SubModuleMixin:GetPetOffset(offset)
