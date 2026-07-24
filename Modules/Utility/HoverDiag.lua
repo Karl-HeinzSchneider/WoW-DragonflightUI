@@ -48,6 +48,8 @@ local function resetCounters(t)
     t.anchorN = 0
     t.sbMs, t.sbN = 0, 0
     t.fsMs, t.fsN = 0, 0
+    t.bdMs, t.bdN = 0, 0
+    t.anMs, t.anN = 0, 0
 end
 resetCounters(cur)
 resetCounters(prev)
@@ -62,6 +64,8 @@ local function resetSecond()
     sec.anchorN = 0
     sec.sbMs, sec.sbN = 0, 0
     sec.fsMs, sec.fsN = 0, 0
+    sec.bdMs, sec.bdN = 0, 0
+    sec.anMs, sec.anN = 0, 0
     sec.builds = 0
 end
 resetSecond()
@@ -108,6 +112,10 @@ local function installHooks()
         wrapTimed(tooltipModule, 'OnTooltipSetUnit', 'ttMs', 'ttN')
         wrapTimed(tooltipModule, 'UpdateStatusbar', 'sbMs', 'sbN')
         wrapTimed(tooltipModule, 'UpdateFrameSize', 'fsMs', 'fsN')
+        -- v4: also time the backdrop reapply (runs from the OnTooltipCleared
+        -- hook, previously invisible) and the anchor hook body itself
+        wrapTimed(tooltipModule, 'SetDefaultBackdrop', 'bdMs', 'bdN')
+        wrapTimed(tooltipModule, 'GameTooltipSetDefaultAnchor', 'anMs', 'anN')
     end
 end
 
@@ -156,18 +164,20 @@ local function flushSecond()
         baseFrames = baseFrames + sec.frames
     end
 
-    -- addon memory delta reveals per-hover accumulation (frames, textures,
-    -- tables) that per-call timers cannot see
-    UpdateAddOnMemoryUsage()
-    local memKb = GetAddOnMemoryUsage('DragonflightUI') or 0
+    -- heap delta reveals per-hover allocation churn. v3 used
+    -- UpdateAddOnMemoryUsage here, which itself costs tens of ms with a
+    -- full addon list and poisoned worst/over33 with a once-per-second
+    -- hitch of our own making; collectgarbage('count') is near-free.
+    local memKb = collectgarbage('count')
     local memDelta = lastMemKb and (memKb - lastMemKb) or 0
     lastMemKb = memKb
 
     -- log every second; only degraded seconds go to chat
     local line = string.format(
-                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchor=%d statusbar=%.1fms(%d) resize=%.1fms(%d) mem=%+dkb',
+                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) heap=%+dkb',
                      date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no', sec.builds,
-                     sec.ttMs, sec.ttN, sec.anchorN, sec.sbMs, sec.sbN, sec.fsMs, sec.fsN, memDelta)
+                     sec.ttMs, sec.ttN, sec.anMs, sec.anN, sec.anchorN, sec.bdMs, sec.bdN, sec.sbMs, sec.sbN, sec.fsMs,
+                     sec.fsN, memDelta)
     addLine(line)
     if avg > SLOW_FRAME * 1000 then chat(line) end
     resetSecond()
@@ -193,6 +203,8 @@ watch:SetScript('OnUpdate', function(_, elapsed)
         sec.anchorN = sec.anchorN + prev.anchorN
         sec.sbMs, sec.sbN = sec.sbMs + prev.sbMs, sec.sbN + prev.sbN
         sec.fsMs, sec.fsN = sec.fsMs + prev.fsMs, sec.fsN + prev.fsN
+        sec.bdMs, sec.bdN = sec.bdMs + prev.bdMs, sec.bdN + prev.bdN
+        sec.anMs, sec.anN = sec.anMs + prev.anMs, sec.anN + prev.anN
         if UnitExists('mouseover') then sec.hover = true end
 
         if elapsed > SPIKE_SECONDS then
