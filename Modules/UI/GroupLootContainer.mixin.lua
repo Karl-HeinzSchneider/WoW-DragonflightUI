@@ -16,6 +16,7 @@ end
 
 function SubModuleMixin:SetDefaults()
     local defaults = {
+        enabled = true,
         scale = 1,
         anchorFrame = 'UIParent',
         customAnchorFrame = '',
@@ -79,6 +80,14 @@ function SubModuleMixin:SetupOptions()
     DF.Settings:AddPositionTable(Module, rollOptions, 'roll', 'GroupLootContainer', getDefaultStr, frameTable)
     -- DragonflightUIStateHandlerMixin:AddStateTable(Module, rollOptions, 'possess', 'PossessBar', getDefaultStr)
     rollOptions.args.scale = nil;
+    rollOptions.args.enabled = {
+        type = 'toggle',
+        name = 'Enable Dragonflight loot rolls',
+        desc = 'Restyle and reposition the group loot roll frames.'
+            .. ' Turning this OFF requires a /reload to restore the classic look.'
+            .. getDefaultStr('enabled', 'roll'),
+        order = 0.5
+    }
     local rollOptionsEditmode = {
         name = 'possess',
         desc = 'possess',
@@ -127,7 +136,7 @@ function SubModuleMixin:Setup()
         end
     })
 
-    self:ChangeGroupLootContainer()
+    self:CreateRollPreview()
 
     self:SetScript('OnEvent', self.OnEvent);
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -167,6 +176,7 @@ end
 
 function SubModuleMixin:OnEvent(event, ...)
     -- print(event, ...)
+    if not (self.state and self.state.enabled and self.Styled) then return end
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i];
         self:UpdateAllButtons(f);
@@ -184,6 +194,19 @@ end
 function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
+
+    if not state.enabled then
+        if self.Styled and not self.DisabledNotePrinted then
+            self.DisabledNotePrinted = true
+            DF:Print('Dragonflight loot rolls disabled - /reload to restore the classic frames.')
+        end
+        return
+    end
+    self.DisabledNotePrinted = nil
+    if not self.Styled then
+        self.Styled = true
+        self:StyleRollFrames()
+    end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -204,7 +227,7 @@ function SubModuleMixin:Update()
     f:SetPoint('BOTTOM', preview, 'BOTTOM', 0, 0)
 end
 
-function SubModuleMixin:ChangeGroupLootContainer()
+function SubModuleMixin:CreateRollPreview()
     local fakeRoll = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerPreview', UIParent)
     fakeRoll:SetSize(256, 100)
     self.PreviewRoll = fakeRoll
@@ -215,7 +238,11 @@ function SubModuleMixin:ChangeGroupLootContainer()
     self:UpdateGroupLootFrameStyle(fakePreview)
 
     fakeRoll.FakePreview = fakePreview
+end
 
+-- Restyles the REAL roll frames - destructive, so it only runs once the
+-- 'roll' state confirms the feature is enabled (see Update).
+function SubModuleMixin:StyleRollFrames()
     -- Blizzard hardcodes reservedSize=100 per roll slot at OnLoad; with
     -- 50px frames that stacked them 50px apart. Reserve frame height + gap.
     if _G['GroupLootContainer'] then _G['GroupLootContainer'].reservedSize = 56 end
@@ -534,9 +561,9 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         local timer = f.Timer;
         if timer then
         timer:ClearAllPoints()
-        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 2)
-        timer:SetWidth(128)
-        timer:SetHeight(8)
+        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 3)
+        timer:SetWidth(96)
+        timer:SetHeight(6)
         timer:SetStatusBarTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
         timer:SetStatusBarColor(1, 0.82, 0)
