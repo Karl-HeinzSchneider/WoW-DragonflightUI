@@ -333,11 +333,25 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         perf:ClearAllPoints()
         perf:SetPoint('BOTTOM')
     elseif DF.Era then
+        -- 1.15.9: the perf bar's 'fullbar' atlas doesn't resolve on vanilla,
+        -- so it renders as a solid latency-colored square over the game-menu
+        -- button. Park it under a hidden parent FIRST - a plain Hide() has
+        -- been seen undone, and if a later step of this chain dies to the
+        -- script limiter the square must already be gone.
+        if MainMenuBarPerformanceBarFrame then
+            if not self.DFPerfBarHider then
+                self.DFPerfBarHider = CreateFrame('Frame')
+                self.DFPerfBarHider:Hide()
+            end
+            MainMenuBarPerformanceBarFrame:SetParent(self.DFPerfBarHider)
+            MainMenuBarPerformanceBarFrame:Hide()
+        end
+
         self:ChangeCharacterMicroButton()
         self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        -- WorldMapMicroButton    
+        -- WorldMapMicroButton
         self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
 
         if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
@@ -346,8 +360,6 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
 
         self:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
         self:ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-
-        MainMenuBarPerformanceBarFrame:Hide()
     end
 end
 
@@ -609,10 +621,11 @@ function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
         end)
     end
 
-    if DF.API.Version.IsTBC and frame == GuildMicroButton then
-        -- print('here')
-        -- GuildMicroButtonMixin:UpdateTabard(forceUpdate)
-
+    -- Any client with the modern guild button (1.15.9 era included) repaints
+    -- it via UpdateTabard -> LoadMicroButtonTextures on guild/community
+    -- events shortly after login, stomping this skin with atlas members that
+    -- do not resolve on vanilla (renders as garbage pixels). Re-apply ours.
+    if frame == GuildMicroButton and frame.UpdateTabard then
         hooksecurefunc(frame, 'UpdateTabard', function(s, ...)
             -- print('updateTabard', s, ...)
             frame:SetNormalTexture(microTexture)
