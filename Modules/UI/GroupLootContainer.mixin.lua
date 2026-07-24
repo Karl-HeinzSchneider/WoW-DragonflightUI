@@ -174,6 +174,64 @@ function SubModuleMixin:Setup()
     });
 end
 
+local ROLL_TYPE_ICON = {
+    [1] = 'Interface\\Buttons\\UI-GroupLoot-Dice-Up', -- need
+    [2] = 'Interface\\Buttons\\UI-GroupLoot-Coin-Up', -- greed
+    [3] = 'Interface\\Buttons\\UI-GroupLoot-DE-Up' -- disenchant
+}
+
+-- Show the current leading roll (retail behavior): NEED outranks GREED
+-- outranks DISENCHANT; within a rank the higher number leads.
+function SubModuleMixin:UpdateTopRoll(f)
+    local topRoll, rollIcon = f.DFTopRoll, f.DFTopRollIcon
+    if not (topRoll and f.rollID and C_LootHistory and C_LootHistory.GetNumItems) then return end
+
+    local itemIdx
+    for i = 1, C_LootHistory.GetNumItems() do
+        local rollID = C_LootHistory.GetItem(i)
+        if rollID == f.rollID then
+            itemIdx = i
+            break
+        end
+    end
+    if not itemIdx then
+        topRoll:SetText('')
+        rollIcon:Hide()
+        return
+    end
+
+    local _, _, numPlayers = C_LootHistory.GetItem(itemIdx)
+    local bestName, bestClass, bestType, bestRoll
+    for p = 1, numPlayers or 0 do
+        local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, p)
+        if name and roll and rollType and rollType > 0 then
+            if not bestType or rollType < bestType or (rollType == bestType and roll > bestRoll) then
+                bestName, bestClass, bestType, bestRoll = name, class, rollType, roll
+            end
+        end
+    end
+
+    if not bestName then
+        topRoll:SetText('')
+        rollIcon:Hide()
+        return
+    end
+
+    local color = bestClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[bestClass]
+    if color and color.colorStr then
+        bestName = '|c' .. color.colorStr .. bestName .. '|r'
+    end
+    topRoll:SetFormattedText('%s (%d)', bestName, bestRoll)
+
+    local tex = ROLL_TYPE_ICON[bestType]
+    if tex then
+        rollIcon:SetTexture(tex)
+        rollIcon:Show()
+    else
+        rollIcon:Hide()
+    end
+end
+
 function SubModuleMixin:OnEvent(event, ...)
     -- print(event, ...)
     if not (self.state and self.state.enabled and self.Styled) then return end
@@ -182,7 +240,10 @@ function SubModuleMixin:OnEvent(event, ...)
         self:UpdateAllButtons(f);
         -- rollID may land after OnShow; re-tint the quality border once
         -- the roll data is definitely there.
-        if f and f:IsShown() then SubModuleMixin.ApplyDFBackdrop(f) end
+        if f and f:IsShown() then
+            SubModuleMixin.ApplyDFBackdrop(f)
+            self:UpdateTopRoll(f)
+        end
     end
 end
 
@@ -614,7 +675,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         local pass = f.PassButton;
         pass:SetSize(btnSize, btnSize)
         pass:ClearAllPoints()
-        pass:SetPoint('RIGHT', f, 'RIGHT', -8, 0)
+        pass:SetPoint('RIGHT', f, 'RIGHT', -8, 4)
         pass:SetNormalTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Up')
         pass:SetHighlightTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Highlight')
         pass:SetPushedTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Down')
@@ -632,6 +693,23 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         need:SetPoint('RIGHT', greed, 'LEFT', -padding, 0)
         updateTexCoords(need, 1)
     end
+
+    -- Current leading roll, retail-style: class-colored "Name (roll)" with
+    -- the roll-type icon, bottom-right under the buttons. Fed by
+    -- UpdateTopRoll from the loot-history events.
+    if not f.DFTopRoll then
+        local topRoll = f:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
+        topRoll:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -9, 4)
+        topRoll:SetJustifyH('RIGHT')
+        f.DFTopRoll = topRoll
+
+        local rollIcon = f:CreateTexture(nil, 'OVERLAY')
+        rollIcon:SetSize(11, 11)
+        rollIcon:SetPoint('RIGHT', topRoll, 'LEFT', -2, 0)
+        f.DFTopRollIcon = rollIcon
+    end
+    f.DFTopRoll:SetText('')
+    f.DFTopRollIcon:Hide()
 
     -- Refresh cycle for LIVE frames only: at setup time these are hidden,
     -- and an unconditional Hide/Show popped four empty roll frames on login.
