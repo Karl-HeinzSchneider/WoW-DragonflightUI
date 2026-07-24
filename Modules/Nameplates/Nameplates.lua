@@ -44,6 +44,35 @@ local function StylePlate(unit)
         if path then uf.name:SetFont(path, 10, 'OUTLINE') end
         uf.name:SetShadowOffset(0, 0)
     end
+
+    -- Enemy level, top-right in line with the name. Plates are pooled, so
+    -- the FontString is created once but refreshed for every new unit.
+    if uf.name then
+        local levelText = uf.DFLevelText
+        if not levelText then
+            levelText = uf:CreateFontString(nil, 'OVERLAY')
+            local path = uf.name:GetFont()
+            if path then levelText:SetFont(path, 10, 'OUTLINE') end
+            levelText:SetShadowOffset(0, 0)
+            levelText:SetPoint('LEFT', uf.name, 'RIGHT', 4, 0)
+            uf.DFLevelText = levelText
+        end
+        if UnitCanAttack('player', unit) then
+            local level = UnitLevel(unit)
+            if level and level > 0 then
+                local color = GetQuestDifficultyColor and GetQuestDifficultyColor(level)
+                    or { r = 1, g = 0.82, b = 0 }
+                levelText:SetText(level)
+                levelText:SetTextColor(color.r, color.g, color.b)
+            else
+                levelText:SetText('??')
+                levelText:SetTextColor(1, 0.1, 0.1)
+            end
+            levelText:Show()
+        else
+            levelText:Hide()
+        end
+    end
 end
 
 function Module:OnEnable()
