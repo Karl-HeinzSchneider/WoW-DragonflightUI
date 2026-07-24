@@ -292,16 +292,18 @@ function SubModuleMixin:CreateVehicleLeaveButton()
         -- (the same trick ForceMoveBlizzEditModeGhosts uses for the
         -- parked bars, and the TBC branch below already does): the
         -- manager then skips the button and the dock anchor sticks.
+        -- SaveOnly, never ApplyChanges: ApplyChanges works by Show/Hiding
+        -- EditModeManagerFrame, which re-applies the whole Blizzard layout
+        -- mid-chain - it stomped the unitframe positions set moments
+        -- earlier, fired DFUI's EditMode enter/exit hooks against
+        -- half-built bars, and left the reskinned editmode panels stuck
+        -- open on screen. The saved anchor is applied by the next natural
+        -- layout application (and by InitEditmodeOverride's own early
+        -- ApplyChanges on every following login).
         local lib = addonTable.LibEditModeOverride
         if lib then
             lib:ReanchorFrame(btn, 'CENTER', f, 'CENTER', 0, 0)
-            if InCombatLockdown() then
-                lib:SaveOnly()
-            else
-                lib:ApplyChanges()
-            end
-        elseif addonTable.OverrideBlizzEditmode then
-            addonTable:OverrideBlizzEditmode(btn, 'CENTER', f, 'CENTER', 0, 0)
+            lib:SaveOnly()
         end
 
         -- era-1159: dress the real button in the retail round exit-arrow

@@ -81,6 +81,22 @@ function Module:OnEnable()
 end
 
 function Module:EnableOutOfCombat()
+    -- Blizzard re-applies the EditMode layout on every PLAYER_ENTERING_WORLD
+    -- (login, instance transitions), which resets player/target to the
+    -- layout's positions - DFUI's custom positions are not stored there.
+    -- Re-place our frames shortly after, once the layout application and
+    -- any loading-screen churn are done.
+    if not self.DFPEWReapply then
+        local pew = CreateFrame('Frame')
+        pew:RegisterEvent('PLAYER_ENTERING_WORLD')
+        pew:SetScript('OnEvent', function()
+            C_Timer.After(0.7, function()
+                if not InCombatLockdown() then Module:ApplySettings() end
+            end)
+        end)
+        self.DFPEWReapply = pew
+    end
+
     self:EnableAddonSpecific()
 
     Module:ApplySettings()

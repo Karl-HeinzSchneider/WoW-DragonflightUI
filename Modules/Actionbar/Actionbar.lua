@@ -2130,6 +2130,18 @@ function Module:EnableOutOfCombat()
         add('AddEditMode', function() self:AddEditMode() end)
         add('RegisterOptionScreens', function() self:RegisterOptionScreens() end)
         add('ApplySettingsALL', function() Module:ApplySettings('ALL') end)
+        add('UnitframeReapply', function()
+            -- Layout applications during this chain (InitEditmodeOverride's
+            -- ApplyChanges, ForceMoveBlizzEditModeGhosts) re-apply the
+            -- Blizzard EditMode layout AFTER the Unitframe module already
+            -- placed player/target - and DFUI's positions are not stored in
+            -- that layout, so they land at the layout's spots. Re-place them
+            -- once the chain is done.
+            local uf = DF:GetModule('Unitframe', true)
+            if uf and uf.GetWasEnabled and uf:GetWasEnabled() then
+                uf:ApplySettings()
+            end
+        end)
         add('DarkmodeReapply', function()
             -- era-1159: Darkmode (enabled before this async chain) styles
             -- the buttons, then the StyleBar/ApplySettings steps above
