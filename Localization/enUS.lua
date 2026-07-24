@@ -160,6 +160,9 @@ do
         "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatPawn'] = "Pawn"
     L['CompatPawnDesc'] = "Adds compatibility for Pawn when using the UI Module with 'Change CharacterFrame' enabled."
+    L['CompatQuestie'] = "Questie"
+    L['CompatQuestieDesc'] =
+        "Keeps Questie's group-size counter working when its initialization is cut short by the 1.15.9 client, restoring its raid safeguards (fixes frame drops in raids)."
     L['CompatRanker'] = "Ranker"
     L['CompatRankerDesc'] =
         "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
