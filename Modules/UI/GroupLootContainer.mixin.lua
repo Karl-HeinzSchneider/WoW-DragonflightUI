@@ -622,7 +622,9 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         local timer = f.Timer;
         if timer then
         timer:ClearAllPoints()
-        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 3)
+        -- x=2 matches the name text's left edge; the bar must start in
+        -- line with the text, not tucked behind the icon.
+        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 2, 3)
         timer:SetWidth(96)
         timer:SetHeight(6)
         timer:SetStatusBarTexture(
@@ -635,17 +637,14 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
             timer.Background:SetAllPoints(timer)
         end
 
-        local regs = {timer:GetRegions()}
-        for k, v in ipairs(regs) do
-            -- [04:17:42] 1 table: 000002123F4D2D20 nil
-            -- [04:17:42] 2 table: 000002123F4D3A40 136571
-            -- [04:17:42] 3 table: 000002123F4D2D70 136570
-            -- print(k, v, v:GetTexture())
-
-            local tex = v:GetTexture()
-            if tex and tex == 136571 then
-                --
-                v:SetWidth(180 + 4)
+        -- The classic timer ships border/track art with rounded end caps
+        -- anchored WIDER than the bar - that's what stuck out past the
+        -- fill on the left. Strip every region except our fill + track.
+        local fill = timer:GetStatusBarTexture()
+        for _, region in ipairs({timer:GetRegions()}) do
+            if region ~= fill and region ~= timer.Background and region.SetTexture then
+                region:SetTexture(nil)
+                region:Hide()
             end
         end
         end
