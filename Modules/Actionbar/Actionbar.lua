@@ -2543,6 +2543,23 @@ function Module:GetSetupActionbarSteps()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
         MultiBarBottomRight:SetPoint('TOP', UIParent, 'BOTTOM', 0, 0)
 
+        -- era-1159: the Midnight backport added real Blizzard frames for
+        -- action bars 6-8 (MultiBar5/6/7) with their OWN buttons, driving
+        -- the same action slots 145-180 as DFUI's extra bars - enabling
+        -- them in Blizzard's settings showed every spell twice. A plain
+        -- Hide() does not stick (the settings callback re-Shows them), so
+        -- park them under a hidden holder.
+        local hider = _G['DragonflightUIMultiBarHider']
+            or CreateFrame('Frame', 'DragonflightUIMultiBarHider', UIParent)
+        hider:Hide()
+        for _, barName in ipairs({'MultiBar5', 'MultiBar6', 'MultiBar7'}) do
+            local blizzBar = _G[barName]
+            if blizzBar then
+                blizzBar.ignoreFramePositionManager = true
+                blizzBar:SetParent(hider)
+            end
+        end
+
         if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil; end
     end}
 
