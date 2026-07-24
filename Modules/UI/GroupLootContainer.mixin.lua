@@ -209,13 +209,16 @@ function SubModuleMixin:ChangeGroupLootContainer()
     local fakePreview = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerFakeLootPreview', fakeRoll,
                                     'DFEditModePreviewGroupLootTemplate')
     fakePreview:SetPoint('CENTER')
-    self:UpdateGroupLootFrameStyleSimple(fakePreview)
+    self:UpdateGroupLootFrameStyle(fakePreview)
 
     fakeRoll.FakePreview = fakePreview
 
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i]
-        self:UpdateGroupLootFrameStyleSimple(f);
+        self:UpdateGroupLootFrameStyle(f);
+        -- Blizzard's GroupLootFrame_OnShow re-applies the classic dialog
+        -- backdrop on every popup; ours must win each time.
+        f:HookScript('OnShow', SubModuleMixin.ApplyDFBackdrop)
         f:SetScript('OnEnter', function()
         end)
     end
@@ -425,29 +428,65 @@ function SubModuleMixin:AddTooltipLines(f, btnType, showAll)
     GameTooltip:Show()
 end
 
+-- era-1159: Blizzard's GroupLootFrame_OnShow re-applies the classic
+-- dialog-box backdrop (gold for rare+) on EVERY popup, which kept the
+-- rolls looking classic no matter the restyle. Swap it for the DF dark
+-- panel and keep the quality signal on the border color.
+function SubModuleMixin.ApplyDFBackdrop(frame)
+    if not frame.SetBackdrop then return end
+    frame:SetBackdrop({
+        bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background-Dark',
+        edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+        tile = true,
+        tileSize = 32,
+        edgeSize = 16,
+        insets = {left = 4, right = 4, top = 4, bottom = 4}
+    })
+    local quality
+    if frame.rollID and GetLootRollItemInfo then
+        local _, _, _, q = GetLootRollItemInfo(frame.rollID)
+        quality = q
+    end
+    local color = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+    if color then
+        frame:SetBackdropBorderColor(color.r, color.g, color.b)
+    else
+        frame:SetBackdropBorderColor(0.6, 0.6, 0.6)
+    end
+end
+
 function SubModuleMixin:UpdateGroupLootFrameStyle(f)
     f:SetWidth(350) -- 243
     f:SetHeight(64) -- 84
 
-    -- art
+    -- art (named children are nil-guarded: the edit-mode preview template
+    -- only carries a subset of the real GroupLootFrame's regions)
     do
         local corner = _G[f:GetName() .. "Corner"]
-        corner:Hide()
+        if corner then corner:Hide() end
 
         local decoration = _G[f:GetName() .. "Decoration"]
-        decoration:ClearAllPoints()
-        decoration:SetTexture('')
-        decoration:Hide()
+        if decoration then
+            decoration:ClearAllPoints()
+            decoration:SetTexture('')
+            decoration:Hide()
+        end
 
         local slotTexture = _G[f:GetName() .. "SlotTexture"]
-        slotTexture:SetSize(60, 60)
-        slotTexture:Hide()
+        if slotTexture then
+            slotTexture:SetSize(60, 60)
+            slotTexture:Hide()
+        end
 
         local iconSize = 40;
         local iconFrame = f.IconFrame
         iconFrame:SetSize(iconSize, iconSize)
         iconFrame:ClearAllPoints()
-        iconFrame:SetPoint('CENTER', slotTexture, 'CENTER', 0, 0)
+        if slotTexture then
+            iconFrame:SetPoint('CENTER', slotTexture, 'CENTER', 0, 0)
+        else
+            iconFrame:SetPoint('LEFT', f, 'LEFT', 14, 0)
+        end
 
         local icon = iconFrame.Icon
         icon:SetSize(iconSize, iconSize)
@@ -470,22 +509,29 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         container:SetPoint('LEFT', icon, 'RIGHT', 4, 0)
 
         local nameFrame = _G[f:GetName() .. "NameFrame"]
-        nameFrame:SetSize(180, 25)
-        nameFrame:ClearAllPoints()
-        nameFrame:SetPoint('TOPLEFT', container, 'TOPLEFT', 0, 0)
-        nameFrame:SetTexCoord(0, 106 / 128, 0, 40 / 64)
-        nameFrame:Hide()
+        if nameFrame then
+            nameFrame:SetSize(180, 25)
+            nameFrame:ClearAllPoints()
+            nameFrame:SetPoint('TOPLEFT', container, 'TOPLEFT', 0, 0)
+            nameFrame:SetTexCoord(0, 106 / 128, 0, 40 / 64)
+            nameFrame:Hide()
+        end
 
         local name = f.Name;
         name:SetSize(180 - 4, 28 - 4)
         name:ClearAllPoints()
-        name:SetPoint('CENTER', nameFrame, 'CENTER', 0, 0)
+        if nameFrame then
+            name:SetPoint('CENTER', nameFrame, 'CENTER', 0, 0)
+        else
+            name:SetPoint('TOPLEFT', container, 'TOPLEFT', 2, -4)
+        end
 
         local fontFile, fontHeight, flags = name:GetFont()
         name:SetFont(fontFile, 14, "OUTLINE")
         name:SetFont(fontFile, 14, flags)
 
         local timer = f.Timer;
+        if timer then
         timer:ClearAllPoints()
         timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 0 + 1)
         timer:SetWidth(180)
@@ -504,7 +550,10 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
                 v:SetWidth(180 + 4)
             end
         end
+        end
     end
+
+    SubModuleMixin.ApplyDFBackdrop(f)
 
     -- buttons
     do
@@ -547,8 +596,12 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         updateTexCoords(need, 1)
     end
 
-    f:Hide()
-    f:Show()
+    -- Refresh cycle for LIVE frames only: at setup time these are hidden,
+    -- and an unconditional Hide/Show popped four empty roll frames on login.
+    if f:IsShown() then
+        f:Hide()
+        f:Show()
+    end
 end
 
 function SubModuleMixin:UpdateGroupLootFrameStyleSimple(f)
