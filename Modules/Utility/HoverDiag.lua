@@ -111,15 +111,34 @@ local function installHooks()
     end
 end
 
+local function moduleStates()
+    local enabled, disabled = {}, {}
+    for name, module in DF:IterateModules() do
+        if module.IsEnabled and module:IsEnabled() then
+            enabled[#enabled + 1] = name
+        else
+            disabled[#disabled + 1] = name
+        end
+    end
+    table.sort(enabled)
+    table.sort(disabled)
+    return table.concat(enabled, ','), table.concat(disabled, ',')
+end
+
 local function header()
     local version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)('DragonflightUI', 'Version')
     local _, build = GetBuildInfo()
     local _, class = UnitClass('player')
-    return string.format('DragonflightUI hover-lag log v2 | v%s | client build %s | %s | class %s | started %s',
-                         tostring(version), tostring(build),
-                         IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'), tostring(class),
-                         date('%Y-%m-%d %H:%M:%S'))
+    local profile = (DF.db and DF.db.GetCurrentProfile and DF.db:GetCurrentProfile()) or '?'
+    local enabled, disabled = moduleStates()
+    return string.format(
+               'DragonflightUI hover-lag log v3 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s',
+               tostring(version), tostring(build), IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'),
+               tostring(class), UnitLevel('player') or 0, tostring(profile), date('%Y-%m-%d %H:%M:%S'), enabled,
+               disabled == '' and '-' or disabled)
 end
+
+local lastMemKb = nil
 
 local function flushSecond()
     if sec.frames == 0 then
@@ -137,11 +156,18 @@ local function flushSecond()
         baseFrames = baseFrames + sec.frames
     end
 
+    -- addon memory delta reveals per-hover accumulation (frames, textures,
+    -- tables) that per-call timers cannot see
+    UpdateAddOnMemoryUsage()
+    local memKb = GetAddOnMemoryUsage('DragonflightUI') or 0
+    local memDelta = lastMemKb and (memKb - lastMemKb) or 0
+    lastMemKb = memKb
+
     -- log every second; only degraded seconds go to chat
     local line = string.format(
-                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchor=%d statusbar=%.1fms(%d) resize=%.1fms(%d)',
+                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchor=%d statusbar=%.1fms(%d) resize=%.1fms(%d) mem=%+dkb',
                      date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no', sec.builds,
-                     sec.ttMs, sec.ttN, sec.anchorN, sec.sbMs, sec.sbN, sec.fsMs, sec.fsN)
+                     sec.ttMs, sec.ttN, sec.anchorN, sec.sbMs, sec.sbN, sec.fsMs, sec.fsN, memDelta)
     addLine(line)
     if avg > SLOW_FRAME * 1000 then chat(line) end
     resetSecond()
@@ -197,6 +223,7 @@ function Diag:Start()
     lines = {header()}
     spikes, worstMs = 0, 0
     hoverMs, hoverFrames, baseMs, baseFrames = 0, 0, 0, 0
+    lastMemKb = nil
     resetSecond()
     resetCounters(cur)
     resetCounters(prev)
@@ -285,6 +312,13 @@ function Diag:Command(arg)
     arg = arg and arg:gsub('^%s+', ''):gsub('%s+$', ''):lower() or ''
     if arg == 'report' then
         Diag:Report()
+    elseif arg == 'modules' then
+        -- quick character-to-character comparison without a full session
+        local profile = (DF.db and DF.db.GetCurrentProfile and DF.db:GetCurrentProfile()) or '?'
+        local enabled, disabled = moduleStates()
+        chat('profile: ' .. tostring(profile))
+        chat('modules ON: ' .. enabled)
+        chat('modules OFF: ' .. (disabled == '' and '-' or disabled))
     elseif arg == '' or arg == 'toggle' then
         if active then
             Diag:Stop()
@@ -292,6 +326,6 @@ function Diag:Command(arg)
             Diag:Start()
         end
     else
-        chat('usage: |cffffffff/df hoverlag|r (start/stop), |cffffffff/df hoverlag report|r (copyable log)')
+        chat('usage: |cffffffff/df hoverlag|r (start/stop), |cffffffff/df hoverlag report|r (copyable log), |cffffffff/df hoverlag modules|r (module states)')
     end
 end
