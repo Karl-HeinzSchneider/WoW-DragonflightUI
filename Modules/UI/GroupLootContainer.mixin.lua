@@ -548,6 +548,16 @@ function SubModuleMixin.ApplyDFBackdrop(frame)
     else
         frame:SetBackdropBorderColor(0.6, 0.6, 0.6)
     end
+
+    -- Blizzard's OnShow re-shows the gold dragon Decoration for BoP items
+    -- and re-textures the Corner on every popup - keep them gone.
+    local frameName = frame.GetName and frame:GetName()
+    if frameName then
+        local corner = _G[frameName .. 'Corner']
+        if corner then corner:Hide() end
+        local decoration = _G[frameName .. 'Decoration']
+        if decoration then decoration:Hide() end
+    end
 end
 
 function SubModuleMixin:UpdateGroupLootFrameStyle(f)
