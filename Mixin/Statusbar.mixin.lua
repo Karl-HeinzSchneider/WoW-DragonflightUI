@@ -105,7 +105,16 @@ end
 function DragonflightUIXPBarMixin:SetupTooltip()
     self.Bar:SetScript('OnEnter', function(self)
         local label = XPBAR_LABEL
-        GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
+        if ExhaustionToolTipText then
+            GameTooltip_AddNewbieTip(self, label, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_XPBAR, 1)
+        else
+            -- 1.15.9+ backport: GameTooltip_AddNewbieTip is a no-op stub and the
+            -- global ExhaustionToolTipText (whose GameTooltip_SetDefaultAnchor call
+            -- used to own this tooltip) moved onto ExhaustionTickMixin - without an
+            -- explicit owner every line below lands in a tooltip that never shows.
+            GameTooltip_SetDefaultAnchor(GameTooltip, self)
+            GameTooltip:SetText(label, 1.0, 1.0, 1.0)
+        end
         GameTooltip.canAddRestStateLine = 1
 
         if DF.API.Version.IsTBC or not ExhaustionToolTipText then
