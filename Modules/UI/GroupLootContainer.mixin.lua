@@ -216,6 +216,10 @@ function SubModuleMixin:ChangeGroupLootContainer()
 
     fakeRoll.FakePreview = fakePreview
 
+    -- Blizzard hardcodes reservedSize=100 per roll slot at OnLoad; with
+    -- 50px frames that stacked them 50px apart. Reserve frame height + gap.
+    if _G['GroupLootContainer'] then _G['GroupLootContainer'].reservedSize = 56 end
+
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i]
         self:UpdateGroupLootFrameStyle(f);
@@ -504,7 +508,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         -- DragonflightUIItemColorMixin:UpdateOverlayQuality(iconFrame, 4)
 
         local container = CreateFrame("Frame", nil, f)
-        container:SetSize(146, 32)
+        container:SetSize(130, 32)
         container:SetPoint('LEFT', icon, 'RIGHT', 6, 0)
 
         local nameFrame = _G[f:GetName() .. "NameFrame"]
@@ -517,7 +521,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         end
 
         local name = f.Name;
-        name:SetSize(146, 16)
+        name:SetSize(128, 16)
         name:ClearAllPoints()
         name:SetPoint('TOPLEFT', container, 'TOPLEFT', 2, -2)
         name:SetJustifyH('LEFT')
@@ -531,7 +535,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         if timer then
         timer:ClearAllPoints()
         timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 2)
-        timer:SetWidth(144)
+        timer:SetWidth(128)
         timer:SetHeight(8)
         timer:SetStatusBarTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
