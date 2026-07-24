@@ -710,7 +710,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
             self.Duration:SetText(duration)
 
             self:SetScript('OnUpdate', self.UpdateAuraDuration)
-            self:UpdateAuraDuration(0);
+            self:UpdateAuraDuration(1);
         else
             self.Cooldown:Hide();
             self.Cooldown:SetCooldown(0, -1);
@@ -805,7 +805,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
 
                 self.DFTempID = id;
                 self:SetScript('OnUpdate', self.UpdateTempAuraDuration)
-                self:UpdateTempAuraDuration(0);
+                self:UpdateTempAuraDuration(1);
             else
                 self.Duration:Hide()
                 self:SetScript('OnUpdate', nil)
@@ -839,7 +839,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
 
                 self.DFTempID = id;
                 self:SetScript('OnUpdate', self.UpdateTempAuraDuration)
-                self:UpdateTempAuraDuration(0);
+                self:UpdateTempAuraDuration(1);
             else
                 self.Duration:Hide()
                 self:SetScript('OnUpdate', nil)
@@ -876,6 +876,13 @@ function DFSecondsToTimeAbbrev(seconds)
 end
 
 function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
+    -- 10 Hz throttle: this runs OnUpdate per visible aura button; at 60fps
+    -- the per-frame UnitAura + text formatting across 20-30 buttons churned
+    -- ~180 KB/s of garbage (the reported GC sawtooth). Direct calls pass
+    -- elapsed=1 to force an immediate refresh.
+    self.DFThrottle = (self.DFThrottle or 0) + (elapsed or 1)
+    if self.DFThrottle < 0.1 then return end
+    self.DFThrottle = 0
     -- print('updateAuraDuration', self:GetName(), elapsed, self.Duration:GetText())
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId,
           canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod =
@@ -922,6 +929,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
 end
 
 function DragonflightUIAuraButtonTemplateMixin:UpdateTempAuraDuration(elapsed)
+    -- same 10 Hz throttle as UpdateAuraDuration
+    self.DFThrottle = (self.DFThrottle or 0) + (elapsed or 1)
+    if self.DFThrottle < 0.1 then return end
+    self.DFThrottle = 0
     -- print('UpdateTempAuraDuration')
     local hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID, hasOffHandEnchant,
           offHandExpiration, offHandCharges, offHandEnchantID, hasRangedEnchant, rangedExpiration, rangedCharges,
