@@ -333,11 +333,19 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         perf:ClearAllPoints()
         perf:SetPoint('BOTTOM')
     elseif DF.Era then
-        -- 1.15.9: the perf bar's 'fullbar' atlas doesn't resolve on vanilla,
-        -- so it renders as a solid latency-colored square over the game-menu
-        -- button. Park it under a hidden parent FIRST - a plain Hide() has
-        -- been seen undone, and if a later step of this chain dies to the
-        -- script limiter the square must already be gone.
+        -- 1.15.9: the latency indicators' atlases don't resolve on vanilla,
+        -- so they render as solid latency-colored squares. There are TWO:
+        -- the standalone MainMenuBarPerformanceBarFrame (parked below) and
+        -- MainMenuMicroButton's own PerformanceIndicator child texture (the
+        -- green square ON the game-menu button - its OnUpdate only recolors,
+        -- so clearing the texture is permanent). Do this FIRST so a later
+        -- step of this chain dying to the script limiter can't leave them.
+        local perf = MainMenuMicroButton and MainMenuMicroButton.PerformanceIndicator
+        if perf then
+            perf:SetTexture(nil)
+            perf:SetAlpha(0)
+            perf:Hide()
+        end
         if MainMenuBarPerformanceBarFrame then
             if not self.DFPerfBarHider then
                 self.DFPerfBarHider = CreateFrame('Frame')
