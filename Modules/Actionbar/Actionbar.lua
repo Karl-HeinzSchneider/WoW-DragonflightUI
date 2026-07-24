@@ -2130,6 +2130,18 @@ function Module:EnableOutOfCombat()
         add('AddEditMode', function() self:AddEditMode() end)
         add('RegisterOptionScreens', function() self:RegisterOptionScreens() end)
         add('ApplySettingsALL', function() Module:ApplySettings('ALL') end)
+        add('DarkmodeReapply', function()
+            -- era-1159: Darkmode (enabled before this async chain) styles
+            -- the buttons, then the StyleBar/ApplySettings steps above
+            -- re-texture them with default art - upstream's After(0) hack
+            -- raced the same problem and loses badly against a chain that
+            -- finishes many frames after enable. Re-apply once, at the
+            -- actual end of the chain.
+            local dm = DF:GetModule('Darkmode', true)
+            if dm and dm.GetWasEnabled and dm:GetWasEnabled() then
+                dm:ApplySettings()
+            end
+        end)
         add('RefreshConfigHook', function()
             self:SecureHook(DF, 'RefreshConfig', function()
                 Module:ApplySettings('ALL')

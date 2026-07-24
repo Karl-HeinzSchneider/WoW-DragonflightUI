@@ -37,6 +37,9 @@ function DragonflightUIActionbarMixin:Init()
     self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    -- Re-assert grid state once combat drops too: any grid work skipped
+    -- under lockdown (SetShown on protected buttons) self-heals here.
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
     self:SetScript('OnEvent', function(_, event, arg1)
         -- print(self:GetName(), event, arg1)
         if InCombatLockdown() then return end
@@ -338,8 +341,9 @@ function DragonflightUIActionbarMixin:Update()
 
     if self.BlizzEditmodeFrame then self:UpdateBlizzEditmodeState(); end
 
-    -- print(self.buttonTable[1]:GetName(), 'update')
-    -- self:UpdateGrid(state.alwaysShow)
+    -- Apply the alwaysShow decision immediately (login and live toggles) -
+    -- the attribute writes above are invisible until something re-evaluates.
+    self:UpdateGridState()
 
     -- mainbar only
     if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
@@ -476,6 +480,17 @@ function DragonflightUIActionbarMixin:UpdateGridState()
     local btnCount = #buttonTable
     if btnCount < 1 then return end
 
+    -- era-1159: on the modern client a button's visibility is decided by its
+    -- Blizzard bar container: showButton = GetShowGrid() or HasAction()
+    -- (ActionBarMixin:UpdateShownButtons). Setting the showgrid attribute
+    -- alone changes NOTHING on screen until Blizzard happens to re-evaluate
+    -- - which is why alwaysShow=off left every button visible after a
+    -- reload until the first mouseover. Set the attribute, then force the
+    -- re-evaluation; buttons without a Blizzard container (the custom bars
+    -- 6-8, where alwaysShow previously did nothing at all) get the same
+    -- rule applied directly.
+    local barsToUpdate = {}
+    local canTouchProtected = not InCombatLockdown()
     for i = 1, btnCount do
         local btn = buttonTable[i]
 
@@ -486,6 +501,16 @@ function DragonflightUIActionbarMixin:UpdateGridState()
             btn:SetAttribute("showgrid", 0)
         end
         if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
+
+        if btn.bar and btn.bar.UpdateShownButtons then
+            barsToUpdate[btn.bar] = true
+        elseif canTouchProtected then
+            local action = btn.action or btn:GetAttribute('action')
+            btn:SetShown(state.alwaysShow or (action and HasAction(action)) or false)
+        end
+    end
+    if canTouchProtected then
+        for bar in pairs(barsToUpdate) do bar:UpdateShownButtons() end
     end
 
     if DF.API.Version.IsTBC then self:UpdateBlizzEditmodeState(); end
