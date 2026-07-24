@@ -3,44 +3,92 @@
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
 -- Hover-lag diagnostic (/df hoverlag) for the "frame drops when hovering
--- raid members" reports. While active, every frame that takes >90ms is
--- logged with (a) whether a GameTooltip:SetUnit build ran during that
--- frame, (b) how many ms of it were DragonflightUI's own tooltip handler,
--- and (c) how many UPDATE_MOUSEOVER_UNIT events fired (sweeping across
--- raid frames fires one per frame crossed). If skips coincide with
--- tooltip builds while the DFUI share stays near zero, another addon's
--- tooltip/mouseover hook is the offender. /df hoverlag report opens a
--- copyable log to paste into an issue.
+-- raid members" reports. v2: the first field run showed the lag can be
+-- sustained 30-80ms frames rather than single >90ms spikes, so besides
+-- spike lines this now records a per-second aggregate (fps, avg/worst
+-- frame time) split into hovering vs not-hovering seconds, plus call
+-- counts and measured milliseconds for every DragonflightUI hover-path
+-- entry point (tooltip anchor hook, unit-tooltip styling, statusbar
+-- updates, frame resize). The stop summary directly compares hover
+-- seconds against baseline seconds - if hovering is no slower than
+-- baseline, the lag is not hover-tied; if it is slower and the DFUI
+-- columns stay near zero, another addon (or the client) owns the cost.
+-- /df hoverlag report opens a copyable log to paste into an issue.
 --
--- Everything here is hooksecurefunc/OnUpdate based - no secure paths are
--- touched, and the hooks are inert (single boolean check) while the
--- diagnostic is off.
+-- Everything here is hooksecurefunc/method-wrap/OnUpdate based - no
+-- secure paths are touched, and the wraps are inert (single boolean
+-- check) while the diagnostic is off.
 local Diag = {}
 DF.HoverDiag = Diag
 
 local AUTO_STOP_SECONDS = 900 -- don't let users leave it running forever
-local MAX_LINES = 400
+local MAX_LINES = 600
 local SPIKE_SECONDS = 0.09
+local SLOW_FRAME = 1 / 30 -- frames longer than this count as degraded
 
 local active = false
 local hooksInstalled = false
 local startedAt = 0
-local lastChatAt = 0
 local lines = {}
-local spikes, worstMs, spikesWithTooltip, worstDfuiMs = 0, 0, 0, 0
 
--- flags describe the CURRENT frame's activity; the elapsed that reflects
--- that frame's cost arrives in the NEXT frame's OnUpdate, so keep a
--- one-frame history.
-local curSetUnit, prevSetUnit = false, false
-local curDfuiMs, prevDfuiMs = 0, 0
-local curMo, prevMo = 0, 0
+-- session totals
+local spikes, worstMs = 0, 0
+local hoverMs, hoverFrames, baseMs, baseFrames = 0, 0, 0, 0
+
+-- current second aggregate
+local sec = {}
+-- current/previous frame flags (the elapsed reflecting a frame's cost
+-- arrives in the NEXT frame's OnUpdate)
+local cur = {}
+local prev = {}
+
+local function resetCounters(t)
+    t.setUnit = false
+    t.ttMs, t.ttN = 0, 0
+    t.anchorN = 0
+    t.sbMs, t.sbN = 0, 0
+    t.fsMs, t.fsN = 0, 0
+end
+resetCounters(cur)
+resetCounters(prev)
+
+local function resetSecond()
+    sec.frames = 0
+    sec.sum = 0
+    sec.worst = 0
+    sec.over33 = 0
+    sec.hover = false
+    sec.ttMs, sec.ttN = 0, 0
+    sec.anchorN = 0
+    sec.sbMs, sec.sbN = 0, 0
+    sec.fsMs, sec.fsN = 0, 0
+    sec.builds = 0
+end
+resetSecond()
 
 local watch = CreateFrame('Frame')
-local moFrame = CreateFrame('Frame')
 
 local function chat(msg)
     print('|cffff8800DFUI hoverlag:|r ' .. msg)
+end
+
+local function addLine(line)
+    if #lines >= MAX_LINES then table.remove(lines, 1) end
+    lines[#lines + 1] = line
+end
+
+-- wrap a module method with a timer that feeds (msKey, nKey) on `cur`
+local function wrapTimed(owner, methodName, msKey, nKey)
+    local orig = owner[methodName]
+    if type(orig) ~= 'function' then return end
+    owner[methodName] = function(...)
+        if not active then return orig(...) end
+        local t0 = debugprofilestop()
+        local r1, r2 = orig(...)
+        cur[msKey] = cur[msKey] + (debugprofilestop() - t0)
+        cur[nKey] = cur[nKey] + 1
+        return r1, r2
+    end
 end
 
 local function installHooks()
@@ -48,34 +96,58 @@ local function installHooks()
     hooksInstalled = true
 
     hooksecurefunc(GameTooltip, 'SetUnit', function(_, unit)
-        if active then curSetUnit = unit or '?' end
+        if active then cur.setUnit = unit or '?' end
     end)
 
-    moFrame:SetScript('OnEvent', function()
-        curMo = curMo + 1
+    hooksecurefunc('GameTooltip_SetDefaultAnchor', function()
+        if active then cur.anchorN = cur.anchorN + 1 end
     end)
 
-    -- time DFUI's own unit-tooltip handler so its share is measured, not guessed
     local tooltipModule = DF:GetModule('Tooltip', true)
-    if tooltipModule and tooltipModule.OnTooltipSetUnit then
-        local orig = tooltipModule.OnTooltipSetUnit
-        tooltipModule.OnTooltipSetUnit = function(...)
-            if not active then return orig(...) end
-            local t0 = debugprofilestop()
-            local r1, r2 = orig(...)
-            curDfuiMs = curDfuiMs + (debugprofilestop() - t0)
-            return r1, r2
-        end
+    if tooltipModule then
+        wrapTimed(tooltipModule, 'OnTooltipSetUnit', 'ttMs', 'ttN')
+        wrapTimed(tooltipModule, 'UpdateStatusbar', 'sbMs', 'sbN')
+        wrapTimed(tooltipModule, 'UpdateFrameSize', 'fsMs', 'fsN')
     end
 end
 
 local function header()
     local version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)('DragonflightUI', 'Version')
     local _, build = GetBuildInfo()
-    return string.format('DragonflightUI hover-lag log | v%s | client build %s | %s | started %s',
+    local _, class = UnitClass('player')
+    return string.format('DragonflightUI hover-lag log v2 | v%s | client build %s | %s | class %s | started %s',
                          tostring(version), tostring(build),
-                         IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'), date('%Y-%m-%d %H:%M:%S'))
+                         IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'), tostring(class),
+                         date('%Y-%m-%d %H:%M:%S'))
 end
+
+local function flushSecond()
+    if sec.frames == 0 then
+        resetSecond()
+        return
+    end
+    local avg = sec.sum / sec.frames * 1000
+    local fps = sec.frames / sec.sum
+
+    if sec.hover then
+        hoverMs = hoverMs + sec.sum * 1000
+        hoverFrames = hoverFrames + sec.frames
+    else
+        baseMs = baseMs + sec.sum * 1000
+        baseFrames = baseFrames + sec.frames
+    end
+
+    -- log every second; only degraded seconds go to chat
+    local line = string.format(
+                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchor=%d statusbar=%.1fms(%d) resize=%.1fms(%d)',
+                     date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no', sec.builds,
+                     sec.ttMs, sec.ttN, sec.anchorN, sec.sbMs, sec.sbN, sec.fsMs, sec.fsN)
+    addLine(line)
+    if avg > SLOW_FRAME * 1000 then chat(line) end
+    resetSecond()
+end
+
+local lastSecond = 0
 
 watch:SetScript('OnUpdate', function(_, elapsed)
     if not active then return end
@@ -84,41 +156,36 @@ watch:SetScript('OnUpdate', function(_, elapsed)
         return
     end
 
-    if elapsed > SPIKE_SECONDS and elapsed < 5 then -- ignore loading screens
-        local mo, moGroup = '-', '-'
-        if UnitExists('mouseover') then
-            mo = UnitName('mouseover') or '?'
-            moGroup = (UnitInRaid('mouseover') and 'raid') or (UnitInParty('mouseover') and 'party') or
-                          (UnitIsPlayer('mouseover') and 'player' or 'npc')
-        end
-        local ttUnit = '-'
-        if GameTooltip:IsShown() then
-            local _, u = GameTooltip:GetUnit()
-            ttUnit = u or '-'
-        end
+    -- fold the finished frame (prev flags belong to it) into the second
+    if elapsed < 5 then -- ignore loading screens
+        sec.frames = sec.frames + 1
+        sec.sum = sec.sum + elapsed
+        if elapsed > sec.worst then sec.worst = elapsed end
+        if elapsed > SLOW_FRAME then sec.over33 = sec.over33 + 1 end
+        if prev.setUnit then sec.builds = sec.builds + 1 end
+        sec.ttMs, sec.ttN = sec.ttMs + prev.ttMs, sec.ttN + prev.ttN
+        sec.anchorN = sec.anchorN + prev.anchorN
+        sec.sbMs, sec.sbN = sec.sbMs + prev.sbMs, sec.sbN + prev.sbN
+        sec.fsMs, sec.fsN = sec.fsMs + prev.fsMs, sec.fsN + prev.fsN
+        if UnitExists('mouseover') then sec.hover = true end
 
-        local ms = elapsed * 1000
-        spikes = spikes + 1
-        if ms > worstMs then worstMs = ms end
-        if prevSetUnit then spikesWithTooltip = spikesWithTooltip + 1 end
-        if prevDfuiMs > worstDfuiMs then worstDfuiMs = prevDfuiMs end
-
-        local line = string.format(
-                         '%s skip=%dms tooltipBuild=%s dfuiShare=%.1fms moEvents=%d mouseover=%s(%s) tooltip=%s grp=%s',
-                         date('%H:%M:%S'), ms, tostring(prevSetUnit), prevDfuiMs, prevMo, mo, moGroup, ttUnit,
-                         IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'))
-        if #lines >= MAX_LINES then table.remove(lines, 1) end
-        lines[#lines + 1] = line
-
-        -- live feedback, at most one line per second
-        if GetTime() - lastChatAt > 1 then
-            lastChatAt = GetTime()
-            chat(line)
+        if elapsed > SPIKE_SECONDS then
+            spikes = spikes + 1
+            if elapsed * 1000 > worstMs then worstMs = elapsed * 1000 end
+            local mo = UnitExists('mouseover') and (UnitName('mouseover') or '?') or '-'
+            addLine(string.format('%s SPIKE %dms build=%s dfuiTT=%.1fms mouseover=%s', date('%H:%M:%S'),
+                                  elapsed * 1000, tostring(prev.setUnit), prev.ttMs, mo))
         end
     end
 
-    prevSetUnit, prevDfuiMs, prevMo = curSetUnit, curDfuiMs, curMo
-    curSetUnit, curDfuiMs, curMo = false, 0, 0
+    local now = math.floor(GetTime())
+    if now ~= lastSecond then
+        lastSecond = now
+        flushSecond()
+    end
+
+    prev, cur = cur, prev
+    resetCounters(cur)
 end)
 
 function Diag:Start()
@@ -126,21 +193,28 @@ function Diag:Start()
     installHooks()
     active = true
     startedAt = GetTime()
+    lastSecond = math.floor(GetTime())
     lines = {header()}
-    spikes, worstMs, spikesWithTooltip, worstDfuiMs = 0, 0, 0, 0
-    moFrame:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
-    chat('recording frame skips - reproduce the lag now (hover raid members/frames).')
+    spikes, worstMs = 0, 0
+    hoverMs, hoverFrames, baseMs, baseFrames = 0, 0, 0, 0
+    resetSecond()
+    resetCounters(cur)
+    resetCounters(prev)
+    chat('recording - reproduce the lag now (hover raid members/frames for a while, then look away for a while too).')
     chat('|cffffffff/df hoverlag|r stops, |cffffffff/df hoverlag report|r opens a copyable log.')
 end
 
 function Diag:Stop(auto)
     if not active then return end
     active = false
-    moFrame:UnregisterAllEvents()
+    flushSecond()
 
-    local summary = string.format('stopped%s: %d skips, worst %dms, %d during a tooltip build, DFUI max share %.1fms',
-                                  auto and ' (auto, 15min)' or '', spikes, worstMs, spikesWithTooltip, worstDfuiMs)
-    lines[#lines + 1] = summary
+    local hoverAvg = hoverFrames > 0 and (hoverMs / hoverFrames) or 0
+    local baseAvg = baseFrames > 0 and (baseMs / baseFrames) or 0
+    local summary = string.format(
+                        'stopped%s: hovering avg %.0fms/frame (%d frames) vs baseline %.0fms/frame (%d frames); %d spikes >90ms, worst %dms',
+                        auto and ' (auto, 15min)' or '', hoverAvg, hoverFrames, baseAvg, baseFrames, spikes, worstMs)
+    addLine(summary)
     chat(summary)
     chat('|cffffffff/df hoverlag report|r opens the full log to copy into the issue.')
 
