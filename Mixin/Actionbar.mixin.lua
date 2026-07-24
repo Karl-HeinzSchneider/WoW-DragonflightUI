@@ -504,16 +504,19 @@ function DragonflightUIActionbarMixin:UpdateGridState()
     -- showgrid attribute we set, so the two never fight.
     local canTouchProtected = not Helper:IsCombatLocked()
     local showAll = state.alwaysShow or self.DragGridActive
+    local gridAttr = showAll and 1 or 0
     for i = 1, btnCount do
         local btn = buttonTable[i]
 
         -- print(btn:GetName(), state.alwaysShow)
-        if showAll then
-            btn:SetAttribute("showgrid", 1)
-        else
-            btn:SetAttribute("showgrid", 0)
+        -- Only write when changed: every SetAttribute fires
+        -- OnAttributeChanged -> UpdateFlyout on all 96 buttons, and this
+        -- runs per ACTIONBAR_SLOT_CHANGED - unconditional writes churned
+        -- memory/CPU on busy event streams.
+        if btn:GetAttribute("showgrid") ~= gridAttr then
+            btn:SetAttribute("showgrid", gridAttr)
+            if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
         end
-        if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
 
         if canTouchProtected then
             local action = btn.action or btn:GetAttribute('action')
