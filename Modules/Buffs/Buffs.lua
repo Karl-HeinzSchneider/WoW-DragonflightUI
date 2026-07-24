@@ -10,8 +10,85 @@ Mixin(Module, DragonflightUIModulesMixin)
 Module.SubBuff = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Buff'])
 Module.SubDebuff = DF:CreateFrameFromMixinAndInit(addonTable.SubModuleMixins['Debuff'])
 
-local defaults = {profile = {scale = 1, buffs = Module.SubBuff.Defaults, debuffs = Module.SubDebuff.Defaults}}
+local defaults = {
+    profile = {scale = 1, buffs = Module.SubBuff.Defaults, debuffs = Module.SubDebuff.Defaults},
+    char = {auraExpirations = {}}
+}
 Module:SetDefaults(defaults)
+
+-- era-1159: the classic client does not know the real remaining time of
+-- auras that were on you before this session - UnitAura fabricates
+-- expirationTime = now + full duration for them, so cooldown swipes and
+-- countdown text restart at max after every reload/relogin. We know the
+-- true expiration of everything applied while playing, so persist it
+-- (absolute server time) and correct the fabricated values next session.
+local corrections = {}
+
+function addonTable.CorrectAuraExpiration(unit, spellId, duration, expirationTime)
+    if unit ~= 'player' or not spellId or not duration or duration <= 0 or not expirationTime then
+        return expirationTime
+    end
+    local corrected = corrections[spellId]
+    if not corrected then return expirationTime end
+    if corrected <= GetTime() then
+        corrections[spellId] = nil
+        return expirationTime
+    end
+    -- Only override a FABRICATED value: reported remaining within ~2s of
+    -- the full duration while our record says less. Anything else means
+    -- the client has real data (or the buff was refreshed) - trust it.
+    if (expirationTime - GetTime()) >= duration - 2 and corrected < expirationTime then
+        return corrected
+    end
+    corrections[spellId] = nil
+    return expirationTime
+end
+
+local function snapshotAuras()
+    local log, now, gt = {}, GetServerTime(), GetTime()
+    for _, filter in ipairs({'HELPFUL', 'HARMFUL'}) do
+        for i = 1, 40 do
+            local name, _, _, _, duration, expirationTime, _, _, _, spellId = UnitAura('player', i, filter)
+            if not name then break end
+            if spellId and duration and duration > 0 and expirationTime and expirationTime > 0 then
+                -- store the corrected time so an unrefreshed buff keeps its
+                -- true expiry across chained reloads
+                local exp = addonTable.CorrectAuraExpiration('player', spellId, duration, expirationTime)
+                log[spellId] = now + (exp - gt)
+            end
+        end
+    end
+    Module.db.char.auraExpirations = log
+end
+
+function Module:InitAuraPersistence()
+    local saved = self.db.char.auraExpirations
+    if saved then
+        local now, gt = GetServerTime(), GetTime()
+        for spellId, expiry in pairs(saved) do
+            local remaining = expiry - now
+            if remaining > 0 then corrections[spellId] = gt + remaining end
+        end
+    end
+
+    local ev = CreateFrame('Frame')
+    ev:RegisterEvent('PLAYER_LOGOUT')
+    ev:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+    ev:SetScript('OnEvent', function(_, event)
+        if event == 'PLAYER_LOGOUT' then
+            snapshotAuras()
+        else
+            local _, subevent, _, _, _, _, _, destGUID, _, _, _, spellId = CombatLogGetCurrentEventInfo()
+            if spellId and corrections[spellId] and destGUID == UnitGUID('player')
+                and (subevent == 'SPELL_AURA_APPLIED' or subevent == 'SPELL_AURA_REFRESH'
+                    or subevent == 'SPELL_AURA_REMOVED') then
+                corrections[spellId] = nil
+            end
+        end
+    end)
+    -- periodic safety net (crashes never reach PLAYER_LOGOUT)
+    C_Timer.NewTicker(60, snapshotAuras)
+end
 
 function Module:OnInitialize()
     DF:Debug(self, 'Module ' .. mName .. ' OnInitialize()')
@@ -29,6 +106,7 @@ function Module:OnEnable()
 
     self:EnableAddonSpecific()
     Module:ApplySettings()
+    Module:InitAuraPersistence()
 
     self:SecureHook(DF, 'RefreshConfig', function()
         -- print('RefreshConfig', mName)

@@ -686,6 +686,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
     -- local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
     -- print('~', name, shouldConsolidate, #auraData.points > 0)
 
+    if name and addonTable.CorrectAuraExpiration then
+        expirationTime = addonTable.CorrectAuraExpiration(self.DFUnit, spellId, duration, expirationTime)
+    end
+
     if name then
         self.Icon:SetTexture(icon);
         self.Icon:Show();
@@ -879,6 +883,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
     -- print(timeMod) 
 
     local shouldHide = self:GetParent().hideDurationText
+
+    if name and addonTable.CorrectAuraExpiration then
+        expirationTime = addonTable.CorrectAuraExpiration(self.DFUnit, spellId, duration, expirationTime)
+    end
 
     if name and duration > 0 and not shouldHide then
 
