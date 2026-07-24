@@ -54,7 +54,11 @@ local function StylePlate(unit)
             local path = uf.name:GetFont()
             if path then levelText:SetFont(path, 10, 'OUTLINE') end
             levelText:SetShadowOffset(0, 0)
-            levelText:SetPoint('LEFT', uf.name, 'RIGHT', 4, 0)
+            -- Right-aligned to the plate itself (the healthbar edge), on the
+            -- name's line - anchoring off the centered name text pushed the
+            -- level past the plate's end for long names.
+            local levelAnchor = (container and container.healthBar) or uf
+            levelText:SetPoint('BOTTOMRIGHT', levelAnchor, 'TOPRIGHT', 0, 2)
             uf.DFLevelText = levelText
         end
         if UnitCanAttack('player', unit) then

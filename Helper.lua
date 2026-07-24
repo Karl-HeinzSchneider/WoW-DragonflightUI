@@ -90,7 +90,29 @@ function Helper:RunSteps(steps, moduleRef, chainLabel)
     -- step stays well under the lowest observed LimitedLuaResources kill
     -- (~350ms), and the whole chain now finishes in 2-3 frames.
     local SLICE_BUDGET_MS = 100
+    local resumeFrame
     local function runNext()
+        -- Combat pause: these chains create secure-template frames and do
+        -- protected setup, which FAILS under combat lockdown (and cascades:
+        -- later steps index the bars earlier steps never produced). This
+        -- includes the mid-combat LOGIN case, where InCombatLockdown() reads
+        -- false during the load sequence and lockdown engages mid-chain -
+        -- so a single gate at chain start is not enough. Park the chain and
+        -- resume when combat drops.
+        if InCombatLockdown() then
+            if not resumeFrame then
+                resumeFrame = CreateFrame('Frame')
+                resumeFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+                resumeFrame:SetScript('OnEvent', function()
+                    C_Timer.After(0, runNext)
+                end)
+            end
+            if #perfLog < 400 then
+                perfLog[#perfLog + 1] = ('chain %s paused for combat before step %d'):format(
+                    tostring(chainLabel), index + 1)
+            end
+            return
+        end
         local sliceStart = GetTimePreciseSec()
         repeat
             index = index + 1

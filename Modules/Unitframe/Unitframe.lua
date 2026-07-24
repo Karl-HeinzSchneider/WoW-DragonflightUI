@@ -89,6 +89,10 @@ function Module:EnableOutOfCombat()
     if not self.DFPEWReapply then
         local pew = CreateFrame('Frame')
         pew:RegisterEvent('PLAYER_ENTERING_WORLD')
+        -- Also after combat: a mid-combat login reports no lockdown during
+        -- load, so the enable-time SetPoints get silently blocked - the
+        -- first regen re-places everything.
+        pew:RegisterEvent('PLAYER_REGEN_ENABLED')
         pew:SetScript('OnEvent', function()
             C_Timer.After(0.7, function()
                 if not InCombatLockdown() then Module:ApplySettings() end
