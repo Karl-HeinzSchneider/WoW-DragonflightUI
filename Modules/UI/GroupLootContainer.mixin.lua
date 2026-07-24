@@ -459,8 +459,8 @@ function SubModuleMixin.ApplyDFBackdrop(frame)
 end
 
 function SubModuleMixin:UpdateGroupLootFrameStyle(f)
-    f:SetWidth(350) -- 243
-    f:SetHeight(64) -- 84
+    f:SetWidth(272) -- 243
+    f:SetHeight(50) -- 84
 
     -- art (named children are nil-guarded: the edit-mode preview template
     -- only carries a subset of the real GroupLootFrame's regions)
@@ -481,15 +481,11 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
             slotTexture:Hide()
         end
 
-        local iconSize = 40;
+        local iconSize = 34;
         local iconFrame = f.IconFrame
         iconFrame:SetSize(iconSize, iconSize)
         iconFrame:ClearAllPoints()
-        if slotTexture then
-            iconFrame:SetPoint('CENTER', slotTexture, 'CENTER', 0, 0)
-        else
-            iconFrame:SetPoint('LEFT', f, 'LEFT', 14, 0)
-        end
+        iconFrame:SetPoint('LEFT', f, 'LEFT', 9, 0)
 
         local icon = iconFrame.Icon
         icon:SetSize(iconSize, iconSize)
@@ -508,8 +504,8 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         -- DragonflightUIItemColorMixin:UpdateOverlayQuality(iconFrame, 4)
 
         local container = CreateFrame("Frame", nil, f)
-        container:SetSize(180, 40)
-        container:SetPoint('LEFT', icon, 'RIGHT', 4, 0)
+        container:SetSize(146, 32)
+        container:SetPoint('LEFT', icon, 'RIGHT', 6, 0)
 
         local nameFrame = _G[f:GetName() .. "NameFrame"]
         if nameFrame then
@@ -521,7 +517,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         end
 
         local name = f.Name;
-        name:SetSize(190, 22)
+        name:SetSize(146, 16)
         name:ClearAllPoints()
         name:SetPoint('TOPLEFT', container, 'TOPLEFT', 2, -2)
         name:SetJustifyH('LEFT')
@@ -534,9 +530,9 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         local timer = f.Timer;
         if timer then
         timer:ClearAllPoints()
-        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 2, 4)
-        timer:SetWidth(186)
-        timer:SetHeight(9)
+        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 2)
+        timer:SetWidth(144)
+        timer:SetHeight(8)
         timer:SetStatusBarTexture(
             'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
         timer:SetStatusBarColor(1, 0.82, 0)
@@ -567,8 +563,8 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
 
     -- buttons
     do
-        local btnSize = 28; -- 32
-        local padding = 2;
+        local btnSize = 24; -- 32
+        local padding = 1;
 
         local texCoords = {
             [0] = {1.05, -0.1, 1.05, -0.1}, -- pass
@@ -587,7 +583,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         local pass = f.PassButton;
         pass:SetSize(btnSize, btnSize)
         pass:ClearAllPoints()
-        pass:SetPoint('RIGHT', f, 'RIGHT', -12, 0)
+        pass:SetPoint('RIGHT', f, 'RIGHT', -8, 0)
         pass:SetNormalTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Up')
         pass:SetHighlightTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Highlight')
         pass:SetPushedTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Down')

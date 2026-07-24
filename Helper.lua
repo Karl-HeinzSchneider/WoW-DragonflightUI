@@ -58,6 +58,16 @@ end
 -- era-1159: run {label, fn} steps one per frame. Each step gets a fresh
 -- watchdog slice; a failing step is reported (so DFUIErrorGrab records it)
 -- but never breaks the chain.
+-- The one true combat check for load-time gates. InCombatLockdown() reads
+-- FALSE during the entire load sequence of a mid-combat login or /reload
+-- on 1.15.9 - lockdown only engages around PLAYER_ENTERING_WORLD - while
+-- protected operations are ALREADY being blocked (proven: secure frame
+-- creation failed with the API reporting no lockdown). UnitAffectingCombat
+-- is the server-side combat state and is truthful during load.
+function Helper:IsCombatLocked()
+    return InCombatLockdown() or UnitAffectingCombat('player')
+end
+
 -- Combat gate for module enable chains. Everything the enable chains do to
 -- protected frames (moving Blizzard's secure action bars, state drivers,
 -- SetAttribute on secure handlers) is silently BLOCKED during combat
@@ -65,7 +75,7 @@ end
 -- therefore used to run the whole setup under lockdown and leave the UI
 -- half-built. Run immediately when safe, otherwise once combat drops.
 function Helper:RunOutOfCombat(label, fn)
-    if not InCombatLockdown() then
+    if not Helper:IsCombatLocked() then
         fn()
         return
     end
@@ -99,7 +109,7 @@ function Helper:RunSteps(steps, moduleRef, chainLabel)
         -- false during the load sequence and lockdown engages mid-chain -
         -- so a single gate at chain start is not enough. Park the chain and
         -- resume when combat drops.
-        if InCombatLockdown() then
+        if Helper:IsCombatLocked() then
             if not resumeFrame then
                 resumeFrame = CreateFrame('Frame')
                 resumeFrame:RegisterEvent('PLAYER_REGEN_ENABLED')

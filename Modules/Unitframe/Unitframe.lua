@@ -95,7 +95,7 @@ function Module:EnableOutOfCombat()
         pew:RegisterEvent('PLAYER_REGEN_ENABLED')
         pew:SetScript('OnEvent', function()
             C_Timer.After(0.7, function()
-                if not InCombatLockdown() then Module:ApplySettings() end
+                if not Helper:IsCombatLocked() then Module:ApplySettings() end
             end)
         end)
         self.DFPEWReapply = pew

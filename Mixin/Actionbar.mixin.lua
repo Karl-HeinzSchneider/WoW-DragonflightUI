@@ -490,7 +490,7 @@ function DragonflightUIActionbarMixin:UpdateGridState()
     -- when the state actually differs, keeps handler churn minimal, and
     -- Blizzard's own secure re-evaluations use the same formula off the
     -- showgrid attribute we set, so the two never fight.
-    local canTouchProtected = not InCombatLockdown()
+    local canTouchProtected = not Helper:IsCombatLocked()
     for i = 1, btnCount do
         local btn = buttonTable[i]
 

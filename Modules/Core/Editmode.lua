@@ -592,8 +592,15 @@ function Module:Era()
     -- (ForceMoveBlizzEditModeGhosts, BagsBar/micromenu re-anchors, ...) calls
     -- addonTable:OverrideBlizzEditmode, which only exists after this init -
     -- without it the Actionbar module dies at enable time and nothing gets
-    -- styled.
-    if DF.API.Version.IsModern then self:InitEditmodeOverride() end
+    -- styled. The init applies an EditMode layout (protected panel work), so
+    -- it must wait for combat to drop on a mid-combat load; Editmode enables
+    -- before Actionbar/Unitframe, so this regen gate fires before theirs and
+    -- the override exists by the time the deferred chains run.
+    if DF.API.Version.IsModern then
+        addonTable.Helper:RunOutOfCombat('edit mode', function()
+            self:InitEditmodeOverride()
+        end)
+    end
 end
 
 function Module:TBC()
