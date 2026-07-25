@@ -16,6 +16,7 @@ end
 
 function SubModuleMixin:SetDefaults()
     local defaults = {
+        enabled = true,
         scale = 1,
         anchorFrame = 'UIParent',
         customAnchorFrame = '',
@@ -79,6 +80,14 @@ function SubModuleMixin:SetupOptions()
     DF.Settings:AddPositionTable(Module, rollOptions, 'roll', 'GroupLootContainer', getDefaultStr, frameTable)
     -- DragonflightUIStateHandlerMixin:AddStateTable(Module, rollOptions, 'possess', 'PossessBar', getDefaultStr)
     rollOptions.args.scale = nil;
+    rollOptions.args.enabled = {
+        type = 'toggle',
+        name = 'Enable Dragonflight loot rolls',
+        desc = 'Restyle and reposition the group loot roll frames.'
+            .. ' Turning this OFF requires a /reload to restore the classic look.'
+            .. getDefaultStr('enabled', 'roll'),
+        order = 0.5
+    }
     local rollOptionsEditmode = {
         name = 'possess',
         desc = 'possess',
@@ -127,7 +136,7 @@ function SubModuleMixin:Setup()
         end
     })
 
-    self:ChangeGroupLootContainer()
+    self:CreateRollPreview()
 
     self:SetScript('OnEvent', self.OnEvent);
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -165,11 +174,181 @@ function SubModuleMixin:Setup()
     });
 end
 
+local ROLL_TYPE_ICON = {
+    [1] = 'Interface\\Buttons\\UI-GroupLoot-Dice-Up', -- need
+    [2] = 'Interface\\Buttons\\UI-GroupLoot-Coin-Up', -- greed
+    [3] = 'Interface\\Buttons\\UI-GroupLoot-DE-Up' -- disenchant
+}
+
+local function FindItemIdxForRoll(rollID)
+    if not (rollID and C_LootHistory and C_LootHistory.GetNumItems) then return nil end
+    for i = 1, C_LootHistory.GetNumItems() do
+        if C_LootHistory.GetItem(i) == rollID then return i end
+    end
+    return nil
+end
+
+-- Corner display. Roll numbers reveal INCREMENTALLY while the roll runs,
+-- so a self-computed "leader" regularly disagrees with the server's final
+-- winner. Only the server's winnerIdx is authoritative: show it once the
+-- roll is done; until then show the live choice tally.
+function SubModuleMixin:UpdateTopRoll(f)
+    local topRoll, rollIcon = f.DFTopRoll, f.DFTopRollIcon
+    if not (topRoll and f.rollID and C_LootHistory and C_LootHistory.GetNumItems) then return end
+
+    local itemIdx = FindItemIdxForRoll(f.rollID)
+    if itemIdx then
+        local _, _, _, isDone, winnerIdx = C_LootHistory.GetItem(itemIdx)
+        if isDone and winnerIdx then
+            local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, winnerIdx)
+            if name then
+                local color = class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[class]
+                if color and color.colorStr then name = '|c' .. color.colorStr .. name .. '|r' end
+                if roll then
+                    topRoll:SetFormattedText('%s (%d)', name, roll)
+                else
+                    topRoll:SetText(name)
+                end
+                local tex = ROLL_TYPE_ICON[rollType]
+                if tex then
+                    rollIcon:SetTexture(tex)
+                    rollIcon:Show()
+                else
+                    rollIcon:Hide()
+                end
+                return
+            end
+        end
+    end
+
+    -- live tally of choices + players still deciding
+    rollIcon:Hide()
+    local tableNeed, tableGreed, tablePass, tableDiss, tableNone = self:CreateTableForRollID(f.rollID)
+    local parts = {}
+    local function addPart(icon, t)
+        if t and #t > 0 then parts[#parts + 1] = ('|T%s:11:11|t%d'):format(icon, #t) end
+    end
+    addPart('Interface\\Buttons\\UI-GroupLoot-Dice-Up', tableNeed)
+    addPart('Interface\\Buttons\\UI-GroupLoot-Coin-Up', tableGreed)
+    addPart('Interface\\Buttons\\UI-GroupLoot-Pass-Up', tablePass)
+    if tableNone and #tableNone > 0 then
+        parts[#parts + 1] = ('|cff999999%d left|r'):format(#tableNone)
+    end
+    topRoll:SetText(table.concat(parts, '  '))
+end
+
+-- Winner toast: the roll frame disappears exactly when the result exists,
+-- so announce the resolution in a short-lived DF panel where the rolls
+-- stack. Queued per rollID: simultaneous completions display one after
+-- another instead of overwriting, and the history index is resolved at
+-- display time (indices shift as the history grows).
+function SubModuleMixin:QueueWinnerToast(rollID)
+    self.ToastQueue = self.ToastQueue or {}
+    table.insert(self.ToastQueue, rollID)
+    self:DrainToastQueue()
+end
+
+function SubModuleMixin:DrainToastQueue()
+    if self.ToastBusy then return end
+    local rollID = self.ToastQueue and table.remove(self.ToastQueue, 1)
+    if not rollID then return end
+    self.ToastBusy = true
+    C_Timer.After(4.5, function()
+        self.ToastBusy = false
+        self:DrainToastQueue()
+    end)
+    local itemIdx = FindItemIdxForRoll(rollID)
+    if itemIdx then self:ShowWinnerToast(itemIdx) end
+end
+
+function SubModuleMixin:ShowWinnerToast(itemIdx)
+    local rollID, itemLink, numPlayers, isDone, winnerIdx = C_LootHistory.GetItem(itemIdx)
+    if not (isDone and winnerIdx) then return end
+    local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, winnerIdx)
+    if not name then return end
+
+    local toast = self.WinnerToast
+    if not toast then
+        toast = CreateFrame('Frame', 'DragonflightUILootWinnerToast', UIParent, 'BackdropTemplate')
+        toast:SetSize(272, 30)
+        toast:SetFrameStrata('DIALOG')
+        SubModuleMixin.ApplyDFBackdrop(toast)
+        local text = toast:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
+        text:SetPoint('CENTER')
+        text:SetWidth(260)
+        toast.Text = text
+        toast:Hide()
+        self.WinnerToast = toast
+    end
+    toast:ClearAllPoints()
+    toast:SetPoint('BOTTOM', self.PreviewRoll, 'BOTTOM', 0, -34)
+
+    local color = class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[class]
+    local coloredName = (color and color.colorStr) and ('|c' .. color.colorStr .. name .. '|r') or name
+    local typeIcon = ROLL_TYPE_ICON[rollType]
+    local typeTag = typeIcon and (' |T' .. typeIcon .. ':11:11|t') or ''
+    local rollTag = roll and (' (' .. roll .. ')') or ''
+    toast.Text:SetFormattedText('%s%s%s  %s', coloredName, typeTag, rollTag, itemLink or '')
+    toast:SetAlpha(1)
+    toast:Show()
+
+    if self.WinnerToastTimer then self.WinnerToastTimer:Cancel() end
+    self.WinnerToastTimer = C_Timer.NewTimer(4, function()
+        if UIFrameFadeOut then
+            UIFrameFadeOut(toast, 0.5, 1, 0)
+            C_Timer.After(0.5, function() toast:Hide() end)
+        else
+            toast:Hide()
+        end
+    end)
+end
+
+-- Toast every completed roll exactly once. Called from the loot events AND
+-- retried after roll frames hide: the history entry can finalize a moment
+-- after the completion event, and a single missed tick used to mean no
+-- winner was ever shown.
+function SubModuleMixin:ScanForCompletedRolls()
+    if not (C_LootHistory and C_LootHistory.GetNumItems) then return end
+    self.ToastedRolls = self.ToastedRolls or {}
+    for i = 1, C_LootHistory.GetNumItems() do
+        local rollID, _, _, isDone, winnerIdx = C_LootHistory.GetItem(i)
+        if rollID and isDone and winnerIdx and not self.ToastedRolls[rollID] then
+            self.ToastedRolls[rollID] = true
+            self:QueueWinnerToast(rollID)
+        end
+    end
+end
+
 function SubModuleMixin:OnEvent(event, ...)
     -- print(event, ...)
+    if event == 'PLAYER_ENTERING_WORLD' and self.ToastedRolls then
+        -- rollIDs can restart across sessions/instances; a stale dedupe
+        -- entry would silently suppress a legitimate toast
+        wipe(self.ToastedRolls)
+    end
+    if not (self.state and self.state.enabled and self.Styled) then return end
+
+    if event == 'LOOT_HISTORY_ROLL_COMPLETE' or event == 'LOOT_ROLLS_COMPLETE' then
+        self:ScanForCompletedRolls()
+    end
+
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i];
         self:UpdateAllButtons(f);
+        -- rollID may land after OnShow; re-tint the quality border once
+        -- the roll data is definitely there.
+        if f and f:IsShown() then
+            SubModuleMixin.ApplyDFBackdrop(f)
+            self:UpdateTopRoll(f)
+        end
+        if f and not f.DFHideHooked then
+            f.DFHideHooked = true
+            f:HookScript('OnHide', function()
+                for _, delay in ipairs({0.3, 1.0, 2.5}) do
+                    C_Timer.After(delay, function() self:ScanForCompletedRolls() end)
+                end
+            end)
+        end
     end
 end
 
@@ -181,6 +360,19 @@ end
 function SubModuleMixin:Update()
     local state = self.state;
     if not state then return end
+
+    if not state.enabled then
+        if self.Styled and not self.DisabledNotePrinted then
+            self.DisabledNotePrinted = true
+            DF:Print('Dragonflight loot rolls disabled - /reload to restore the classic frames.')
+        end
+        return
+    end
+    self.DisabledNotePrinted = nil
+    if not self.Styled then
+        self.Styled = true
+        self:StyleRollFrames()
+    end
 
     local parent;
     if DF.Settings.ValidateFrame(state.customAnchorFrame) then
@@ -201,7 +393,7 @@ function SubModuleMixin:Update()
     f:SetPoint('BOTTOM', preview, 'BOTTOM', 0, 0)
 end
 
-function SubModuleMixin:ChangeGroupLootContainer()
+function SubModuleMixin:CreateRollPreview()
     local fakeRoll = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerPreview', UIParent)
     fakeRoll:SetSize(256, 100)
     self.PreviewRoll = fakeRoll
@@ -209,13 +401,24 @@ function SubModuleMixin:ChangeGroupLootContainer()
     local fakePreview = CreateFrame('Frame', 'DragonflightUIEditModeGroupLootContainerFakeLootPreview', fakeRoll,
                                     'DFEditModePreviewGroupLootTemplate')
     fakePreview:SetPoint('CENTER')
-    self:UpdateGroupLootFrameStyleSimple(fakePreview)
+    self:UpdateGroupLootFrameStyle(fakePreview)
 
     fakeRoll.FakePreview = fakePreview
+end
+
+-- Restyles the REAL roll frames - destructive, so it only runs once the
+-- 'roll' state confirms the feature is enabled (see Update).
+function SubModuleMixin:StyleRollFrames()
+    -- Blizzard hardcodes reservedSize=100 per roll slot at OnLoad; with
+    -- 50px frames that stacked them 50px apart. Reserve frame height + gap.
+    if _G['GroupLootContainer'] then _G['GroupLootContainer'].reservedSize = 56 end
 
     for i = 1, 4 do
         local f = _G['GroupLootFrame' .. i]
-        self:UpdateGroupLootFrameStyleSimple(f);
+        self:UpdateGroupLootFrameStyle(f);
+        -- Blizzard's GroupLootFrame_OnShow re-applies the classic dialog
+        -- backdrop on every popup; ours must win each time.
+        f:HookScript('OnShow', SubModuleMixin.ApplyDFBackdrop)
         f:SetScript('OnEnter', function()
         end)
     end
@@ -425,29 +628,77 @@ function SubModuleMixin:AddTooltipLines(f, btnType, showAll)
     GameTooltip:Show()
 end
 
-function SubModuleMixin:UpdateGroupLootFrameStyle(f)
-    f:SetWidth(350) -- 243
-    f:SetHeight(64) -- 84
+-- era-1159: Blizzard's GroupLootFrame_OnShow re-applies the classic
+-- dialog-box backdrop (gold for rare+) on EVERY popup, which kept the
+-- rolls looking classic no matter the restyle. Swap it for the DF dark
+-- panel and keep the quality signal on the border color.
+function SubModuleMixin.ApplyDFBackdrop(frame)
+    if not frame.SetBackdrop then return end
+    frame:SetBackdrop({
+        bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background-Dark',
+        edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+        tile = true,
+        tileSize = 32,
+        edgeSize = 12,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
+    })
+    local quality
+    if frame.rollID and GetLootRollItemInfo then
+        local _, _, _, q = GetLootRollItemInfo(frame.rollID)
+        quality = q
+    end
+    local color = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+    if color then
+        frame:SetBackdropBorderColor(color.r, color.g, color.b)
+    else
+        frame:SetBackdropBorderColor(0.6, 0.6, 0.6)
+    end
 
-    -- art
+    do
+        local t = frame.Timer
+        local mn, mx
+        if t and t.GetMinMaxValues then mn, mx = t:GetMinMaxValues() end
+    end
+
+    -- Blizzard's OnShow re-shows the gold dragon Decoration for BoP items
+    -- and re-textures the Corner on every popup - keep them gone.
+    local frameName = frame.GetName and frame:GetName()
+    if frameName then
+        local corner = _G[frameName .. 'Corner']
+        if corner then corner:Hide() end
+        local decoration = _G[frameName .. 'Decoration']
+        if decoration then decoration:Hide() end
+    end
+end
+
+function SubModuleMixin:UpdateGroupLootFrameStyle(f)
+    f:SetWidth(272) -- 243
+    f:SetHeight(50) -- 84
+
+    -- art (named children are nil-guarded: the edit-mode preview template
+    -- only carries a subset of the real GroupLootFrame's regions)
     do
         local corner = _G[f:GetName() .. "Corner"]
-        corner:Hide()
+        if corner then corner:Hide() end
 
         local decoration = _G[f:GetName() .. "Decoration"]
-        decoration:ClearAllPoints()
-        decoration:SetTexture('')
-        decoration:Hide()
+        if decoration then
+            decoration:ClearAllPoints()
+            decoration:SetTexture('')
+            decoration:Hide()
+        end
 
         local slotTexture = _G[f:GetName() .. "SlotTexture"]
-        slotTexture:SetSize(60, 60)
-        slotTexture:Hide()
+        if slotTexture then
+            slotTexture:SetSize(60, 60)
+            slotTexture:Hide()
+        end
 
-        local iconSize = 40;
+        local iconSize = 34;
         local iconFrame = f.IconFrame
         iconFrame:SetSize(iconSize, iconSize)
         iconFrame:ClearAllPoints()
-        iconFrame:SetPoint('CENTER', slotTexture, 'CENTER', 0, 0)
+        iconFrame:SetPoint('LEFT', f, 'LEFT', 9, 0)
 
         local icon = iconFrame.Icon
         icon:SetSize(iconSize, iconSize)
@@ -466,50 +717,79 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         -- DragonflightUIItemColorMixin:UpdateOverlayQuality(iconFrame, 4)
 
         local container = CreateFrame("Frame", nil, f)
-        container:SetSize(180, 40)
-        container:SetPoint('LEFT', icon, 'RIGHT', 4, 0)
+        container:SetSize(130, 32)
+        container:SetPoint('LEFT', icon, 'RIGHT', 6, 0)
 
         local nameFrame = _G[f:GetName() .. "NameFrame"]
-        nameFrame:SetSize(180, 25)
-        nameFrame:ClearAllPoints()
-        nameFrame:SetPoint('TOPLEFT', container, 'TOPLEFT', 0, 0)
-        nameFrame:SetTexCoord(0, 106 / 128, 0, 40 / 64)
-        nameFrame:Hide()
+        if nameFrame then
+            nameFrame:SetSize(180, 25)
+            nameFrame:ClearAllPoints()
+            nameFrame:SetPoint('TOPLEFT', container, 'TOPLEFT', 0, 0)
+            nameFrame:SetTexCoord(0, 106 / 128, 0, 40 / 64)
+            nameFrame:Hide()
+        end
 
         local name = f.Name;
-        name:SetSize(180 - 4, 28 - 4)
+        name:SetSize(128, 16)
         name:ClearAllPoints()
-        name:SetPoint('CENTER', nameFrame, 'CENTER', 0, 0)
+        name:SetPoint('TOPLEFT', container, 'TOPLEFT', 2, -2)
+        name:SetJustifyH('LEFT')
 
         local fontFile, fontHeight, flags = name:GetFont()
-        name:SetFont(fontFile, 14, "OUTLINE")
-        name:SetFont(fontFile, 14, flags)
+        name:SetFont(fontFile, 12, flags)
 
+        -- Slim DF-style timer under the name instead of the chunky
+        -- yellow-green classic bar.
         local timer = f.Timer;
+        if timer then
         timer:ClearAllPoints()
-        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 0, 0 + 1)
-        timer:SetWidth(180)
-        timer.Background:SetWidth(180)
+        -- x=2 matches the name text's left edge; the bar must start in
+        -- line with the text, not tucked behind the icon.
+        timer:SetPoint('BOTTOMLEFT', container, 'BOTTOMLEFT', 2, 3)
+        timer:SetWidth(96)
+        timer:SetHeight(8)
+        timer:SetStatusBarTexture(
+            'Interface\\Addons\\DragonflightUI\\Textures\\UI-HUD-UnitFrame-Player-PortraitOff-Bar-Health-Status32')
+        timer:SetStatusBarColor(1, 0.82, 0)
+        -- own track + 1px frame: the template's Background is not reliable
+        -- here, and the naked fill read as a floating yellow strip
+        local bg = timer.Background
+        if not bg then
+            bg = timer:CreateTexture(nil, 'BACKGROUND')
+            timer.Background = bg
+        end
+        bg:SetTexture(nil)
+        bg:SetColorTexture(0, 0, 0, 0.55)
+        bg:ClearAllPoints()
+        bg:SetAllPoints(timer)
+        if not timer.DFBorder then
+            local border = CreateFrame('Frame', nil, timer, 'BackdropTemplate')
+            border:SetPoint('TOPLEFT', timer, 'TOPLEFT', -1, 1)
+            border:SetPoint('BOTTOMRIGHT', timer, 'BOTTOMRIGHT', 1, -1)
+            border:SetBackdrop({edgeFile = 'Interface\\Buttons\\WHITE8X8', edgeSize = 1})
+            border:SetBackdropBorderColor(0, 0, 0, 0.9)
+            timer.DFBorder = border
+        end
 
-        local regs = {timer:GetRegions()}
-        for k, v in ipairs(regs) do
-            -- [04:17:42] 1 table: 000002123F4D2D20 nil
-            -- [04:17:42] 2 table: 000002123F4D3A40 136571
-            -- [04:17:42] 3 table: 000002123F4D2D70 136570
-            -- print(k, v, v:GetTexture())
-
-            local tex = v:GetTexture()
-            if tex and tex == 136571 then
-                --
-                v:SetWidth(180 + 4)
+        -- The classic timer ships border/track art with rounded end caps
+        -- anchored WIDER than the bar - that's what stuck out past the
+        -- fill on the left. Strip every region except our fill + track.
+        local fill = timer:GetStatusBarTexture()
+        for _, region in ipairs({timer:GetRegions()}) do
+            if region ~= fill and region ~= timer.Background and region.SetTexture then
+                region:SetTexture(nil)
+                region:Hide()
             end
+        end
         end
     end
 
+    SubModuleMixin.ApplyDFBackdrop(f)
+
     -- buttons
     do
-        local btnSize = 28; -- 32
-        local padding = 2;
+        local btnSize = 24; -- 32
+        local padding = 1;
 
         local texCoords = {
             [0] = {1.05, -0.1, 1.05, -0.1}, -- pass
@@ -528,7 +808,7 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         local pass = f.PassButton;
         pass:SetSize(btnSize, btnSize)
         pass:ClearAllPoints()
-        pass:SetPoint('RIGHT', f, 'RIGHT', -12, 0)
+        pass:SetPoint('RIGHT', f, 'RIGHT', -8, 4)
         pass:SetNormalTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Up')
         pass:SetHighlightTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Highlight')
         pass:SetPushedTexture('Interface\\Buttons\\UI-GroupLoot-Pass-Down')
@@ -547,8 +827,33 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
         updateTexCoords(need, 1)
     end
 
-    f:Hide()
-    f:Show()
+    -- Current leading roll, retail-style: class-colored "Name (roll)" with
+    -- the roll-type icon, bottom-right under the buttons. Fed by
+    -- UpdateTopRoll from the loot-history events.
+    if not f.DFTopRoll then
+        local topRoll = f:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
+        topRoll:SetPoint('BOTTOMRIGHT', f, 'BOTTOMRIGHT', -9, 7)
+        topRoll:SetJustifyH('RIGHT')
+        f.DFTopRoll = topRoll
+
+        local rollIcon = f:CreateTexture(nil, 'OVERLAY')
+        rollIcon:SetSize(11, 11)
+        rollIcon:SetPoint('RIGHT', topRoll, 'LEFT', -2, 0)
+        f.DFTopRollIcon = rollIcon
+    end
+    f.DFTopRoll:SetText('')
+    f.DFTopRollIcon:Hide()
+
+    do
+        local t = f.Timer
+    end
+
+    -- Refresh cycle for LIVE frames only: at setup time these are hidden,
+    -- and an unconditional Hide/Show popped four empty roll frames on login.
+    if f:IsShown() then
+        f:Hide()
+        f:Show()
+    end
 end
 
 function SubModuleMixin:UpdateGroupLootFrameStyleSimple(f)

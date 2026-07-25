@@ -507,7 +507,11 @@ function SubModuleMixin:Setup()
             hideFunction = function()
                 --      
                 CompactRaidFrameManager_SetSetting('Locked', true)
-                CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+                if CompactRaidFrameManager_ResizeFrame_SavePosition then
+                    if CompactRaidFrameManager_ResizeFrame_SavePosition then
+                    CompactRaidFrameManager_ResizeFrame_SavePosition(CompactRaidFrameManager)
+                end
+                end
             end
         });
 
@@ -569,7 +573,7 @@ function SubModuleMixin:AddRaidframeRoleIcons()
             return
         else
             f.roleIcon:SetDrawLayer('OVERLAY')
-            local size = f.roleIcon:GetHeight();
+            local size = math.min(f.roleIcon:GetHeight(), 12);
             local role = UnitGroupRolesAssigned(f.unit);
             if (role == "TANK" or role == "HEALER" or role == "DAMAGER") then
                 f.roleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES");

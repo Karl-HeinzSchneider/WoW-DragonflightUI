@@ -14,7 +14,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -74,6 +74,32 @@ end
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
+
+    -- Unit frames are secure/protected; a combat reload must defer their
+    -- setup until lockdown drops (see Helper:RunOutOfCombat).
+    Helper:RunOutOfCombat('unit frames', function() Module:EnableOutOfCombat() end)
+end
+
+function Module:EnableOutOfCombat()
+    -- Blizzard re-applies the EditMode layout on every PLAYER_ENTERING_WORLD
+    -- (login, instance transitions), which resets player/target to the
+    -- layout's positions - DFUI's custom positions are not stored there.
+    -- Re-place our frames shortly after, once the layout application and
+    -- any loading-screen churn are done.
+    if not self.DFPEWReapply then
+        local pew = CreateFrame('Frame')
+        pew:RegisterEvent('PLAYER_ENTERING_WORLD')
+        -- Also after combat: a mid-combat login reports no lockdown during
+        -- load, so the enable-time SetPoints get silently blocked - the
+        -- first regen re-places everything.
+        pew:RegisterEvent('PLAYER_REGEN_ENABLED')
+        pew:SetScript('OnEvent', function()
+            C_Timer.After(0.7, function()
+                if not Helper:IsCombatLocked() then Module:ApplySettings() end
+            end)
+        end)
+        self.DFPEWReapply = pew
+    end
 
     self:EnableAddonSpecific()
 
@@ -760,4 +786,7 @@ function Module:Mists()
     self:HookDrag()
     self:AddPortraitMasks()
     self:HookClassIcon()
+
+    local EditModeModule = DF:GetModule('Editmode');
+    EditModeModule:ShowEditmodeWarning(3, 0, 'Target and Focus')
 end

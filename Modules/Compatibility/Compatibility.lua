@@ -23,6 +23,7 @@ local defaults = {
             lfgbulletinboard = true,
             merinspect = true,
             pawn = true,
+            questie = true,
             ranker = true,
             tacotip = true,
             tdinspect = true,
@@ -126,6 +127,13 @@ local compatOptions = {
             desc = L["CompatPawnDesc"] .. getDefaultStr('pawn', 'general'),
             order = 21,
             new = false
+        },
+        questie = {
+            type = 'toggle',
+            name = L["CompatQuestie"],
+            desc = L["CompatQuestieDesc"] .. getDefaultStr('questie', 'general'),
+            order = 21,
+            new = true
         },
         ranker = {
             type = 'toggle',
@@ -366,6 +374,10 @@ function Module:ApplySettingsInternal(sub, key)
                 end
             end)
         end
+    end)
+
+    self:ConditionalOption('questie', 'general', L['CompatQuestie'], function()
+        DF.Compatibility:FuncOrWaitframe('Questie', DF.Compatibility.Questie)
     end)
 
     self:ConditionalOption('ranker', 'general', L['CompatRanker'], function()

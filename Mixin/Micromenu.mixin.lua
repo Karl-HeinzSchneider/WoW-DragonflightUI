@@ -124,8 +124,11 @@ function DragonflightUIMicroMenuMixin:BlizzardMicroMenuShow()
         if v == CharacterMicroButton or v == PVPMicroButton then
             --
         else
-            v:ClearAllPoints()
-            v:SetPoint(unpack(self.OriginalAnchors[k]))
+            local anchors = self.OriginalAnchors[k]
+            if anchors and anchors[1] then
+                v:ClearAllPoints()
+                v:SetPoint(unpack(anchors))
+            end
         end
     end
 end
@@ -144,16 +147,32 @@ function DragonflightUIMicroMenuMixin:UpdateLayout(force)
     end
     -- print('~> set custom anchors')
     -- set custom anchors
-    for k, v in ipairs(self.MicroButtons) do
-        -- print(k, v:GetName(), v)
-        if v == CharacterMicroButton then
-            --
-            -- print('~~>> CharacterMicroButton')
+    if DF.API.Version.IsModern then
+        -- era-1159: chain RIGHT-to-LEFT from the frame's right edge. The
+        -- container is user-anchored (default BOTTOMRIGHT of the screen);
+        -- left-to-right chaining left the row's right edge at "wherever the
+        -- content happens to end", visibly misaligned with the bag bar.
+        self.LastChainButton = nil
+        for k = #self.MicroButtons, 1, -1 do
+            local v = self.MicroButtons[k]
             v:ClearAllPoints()
-            v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
-        else
-            v:ClearAllPoints()
-            v:SetPoint(unpack(self.OriginalAnchors[k]))
+            if not self.LastChainButton then
+                v:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, 0)
+            else
+                v:SetPoint('TOPRIGHT', self.LastChainButton, 'TOPLEFT', 3, 0)
+            end
+            if v:IsShown() then self.LastChainButton = v end
+        end
+    else
+        for k, v in ipairs(self.MicroButtons) do
+            if v == CharacterMicroButton then
+                v:ClearAllPoints()
+                v:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+                self.LastChainButton = v
+            else
+                v:ClearAllPoints()
+                v:SetPoint(unpack(self.OriginalAnchors[k]))
+            end
         end
     end
 end
@@ -314,11 +333,33 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
         perf:ClearAllPoints()
         perf:SetPoint('BOTTOM')
     elseif DF.Era then
+        -- 1.15.9: the latency indicators' atlases don't resolve on vanilla,
+        -- so they render as solid latency-colored squares. There are TWO:
+        -- the standalone MainMenuBarPerformanceBarFrame (parked below) and
+        -- MainMenuMicroButton's own PerformanceIndicator child texture (the
+        -- green square ON the game-menu button - its OnUpdate only recolors,
+        -- so clearing the texture is permanent). Do this FIRST so a later
+        -- step of this chain dying to the script limiter can't leave them.
+        local perf = MainMenuMicroButton and MainMenuMicroButton.PerformanceIndicator
+        if perf then
+            perf:SetTexture(nil)
+            perf:SetAlpha(0)
+            perf:Hide()
+        end
+        if MainMenuBarPerformanceBarFrame then
+            if not self.DFPerfBarHider then
+                self.DFPerfBarHider = CreateFrame('Frame')
+                self.DFPerfBarHider:Hide()
+            end
+            MainMenuBarPerformanceBarFrame:SetParent(self.DFPerfBarHider)
+            MainMenuBarPerformanceBarFrame:Hide()
+        end
+
         self:ChangeCharacterMicroButton()
         self:ChangeMicroMenuButton(SpellbookMicroButton, 'SpellbookAbilities')
         self:ChangeMicroMenuButton(TalentMicroButton, 'SpecTalents')
         self:ChangeMicroMenuButton(QuestLogMicroButton, 'Questlog')
-        -- WorldMapMicroButton    
+        -- WorldMapMicroButton
         self:ChangeMicroMenuButton(WorldMapMicroButton, 'Collections')
 
         if LFGMicroButton then self:ChangeMicroMenuButton(LFGMicroButton, 'Groupfinder') end
@@ -327,8 +368,6 @@ function DragonflightUIMicroMenuMixin:ChangeButtons()
 
         self:ChangeMicroMenuButton(MainMenuMicroButton, 'Shop')
         self:ChangeMicroMenuButton(HelpMicroButton, 'GameMenu')
-
-        MainMenuBarPerformanceBarFrame:Hide()
     end
 end
 
@@ -590,10 +629,11 @@ function DragonflightUIMicroMenuMixin:ChangeMicroMenuButton(frame, name)
         end)
     end
 
-    if DF.API.Version.IsTBC and frame == GuildMicroButton then
-        -- print('here')
-        -- GuildMicroButtonMixin:UpdateTabard(forceUpdate)
-
+    -- Any client with the modern guild button (1.15.9 era included) repaints
+    -- it via UpdateTabard -> LoadMicroButtonTextures on guild/community
+    -- events shortly after login, stomping this skin with atlas members that
+    -- do not resolve on vanilla (renders as garbage pixels). Re-apply ours.
+    if frame == GuildMicroButton and frame.UpdateTabard then
         hooksecurefunc(frame, 'UpdateTabard', function(s, ...)
             -- print('updateTabard', s, ...)
             frame:SetNormalTexture(microTexture)
