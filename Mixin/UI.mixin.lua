@@ -1574,6 +1574,23 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                 -- getting covered by a sibling frame - lift the weapon
                 -- buttons above their siblings (retail draws them last)
                 if side == 'bottom' then btn:SetFrameLevel(7) end
+
+                -- retail caps the tray's outer edges with dedicated pieces:
+                -- Char-Slot-Bottom-Left on the first weapon slot and
+                -- Char-Slot-Bottom-Right on the last (era's last is Ranged)
+                if slotName == 'MainHand' then
+                    local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
+                    cap:SetTexture(PARTS)
+                    cap:SetSize(6, 54)
+                    cap:SetTexCoord(0.70703125, 0.73046875, 0.4375, 0.859375)
+                    cap:SetPoint('TOPRIGHT', t, 'TOPLEFT', 0, 0)
+                elseif slotName == 'Ranged' then
+                    local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
+                    cap:SetTexture(PARTS)
+                    cap:SetSize(7, 54)
+                    cap:SetTexCoord(0.671875, 0.69921875, 0.4375, 0.859375)
+                    cap:SetPoint('TOPLEFT', t, 'TOPRIGHT', 0, 0)
+                end
             end
         end
     end
