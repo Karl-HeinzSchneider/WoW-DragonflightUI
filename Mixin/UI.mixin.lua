@@ -1594,22 +1594,22 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             end
         end
 
-        -- Era-only ammo slot: classic art untouched. The 42px gap composes
-        -- with the weapon row anchor (see the MainHand SetPoint) to center
-        -- the whole tray+arrow+ammo ensemble on the pane midline. The
-        -- classic arrow natively hugs the ammo slot's left edge; re-anchor
-        -- it (the unnamed 23x41 OVERLAY region) to sit centered in the gap
-        -- with 2px clear of both the tray's right cap and the ammo art.
+        -- Era-only ammo slot: classic art untouched. Gap and arrow position
+        -- compose with the weapon row anchor (see the MainHand SetPoint) so
+        -- the classic arrow sits cleanly between the tray's right cap and
+        -- the ammo art; the arrow natively hugs the ammo slot's left edge,
+        -- so its region (the unnamed 23x41 OVERLAY texture) is re-anchored.
+        -- Values hand-tuned in game via the tuning sliders.
         local ammo = _G['CharacterAmmoSlot']
         if ammo then
             ammo:ClearAllPoints()
-            ammo:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', 42, 0)
+            ammo:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', 29.5, 0)
             for _, region in ipairs({ammo:GetRegions()}) do
                 if region:GetObjectType() == 'Texture' and region:GetDrawLayer() == 'OVERLAY' then
                     local w, h = region:GetSize()
                     if math.abs(w - 23) < 1 and math.abs(h - 41) < 1 then
                         region:ClearAllPoints()
-                        region:SetPoint('CENTER', ammo, 'CENTER', -34, 0)
+                        region:SetPoint('CENTER', ammo, 'CENTER', -28.5, 0)
                     end
                 end
             end
@@ -1733,13 +1733,10 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local main = CharacterMainHandSlot
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
-    -- With an ammo slot the whole ensemble (tray incl. caps + arrow + ammo)
-    -- is 207px wide and gets centered as one composition on the pane's
-    -- midline (x=168, same line the bare 3-slot tray centered on at 107.5).
-    -- MainHand at 74.5 + a 42px ammo gap leaves exactly 23px + 2px margins
-    -- between the tray's right cap and the ammo art - the classic arrow
-    -- (re-anchored at the ammo slot) sits centered in that space.
-    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', _G['CharacterAmmoSlot'] and 74.5 or 107.5, 16)
+    -- With an ammo slot the whole ensemble (tray incl. caps, arrow, ammo)
+    -- shifts left so the classic arrow fits between the tray's right cap
+    -- and the ammo art; values hand-tuned in game via the tuning sliders.
+    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', _G['CharacterAmmoSlot'] and 80 or 107.5, 16)
     -- if DF.API.Version.IsWotlk then main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 87, 13) end -- @TODO
     -- tabs
     do
@@ -4306,96 +4303,6 @@ function DragonflightUIMixin:ChangeWrathPVPFrame()
     end
 
     frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
-end
-
--- TEMP tuning panel (/df weapontune): live sliders for the weapon-row
--- position, ammo gap and arrow offset so exact values can be read off and
--- baked in. Remove once the layout is signed off.
-function DragonflightUIMixin:ShowWeaponTune()
-    if self.WeaponTunePanel then
-        self.WeaponTunePanel:Show()
-        return
-    end
-
-    local panel = CreateFrame('Frame', 'DragonflightUIWeaponTunePanel', UIParent, 'BackdropTemplate')
-    self.WeaponTunePanel = panel
-    panel:SetSize(280, 150)
-    panel:SetPoint('CENTER', UIParent, 'CENTER', 0, 200)
-    panel:SetFrameStrata('DIALOG')
-    panel:SetBackdrop({
-        bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-        edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
-        edgeSize = 12,
-        insets = {left = 3, right = 3, top = 3, bottom = 3}
-    })
-    panel:SetMovable(true)
-    panel:EnableMouse(true)
-    panel:RegisterForDrag('LeftButton')
-    panel:SetScript('OnDragStart', panel.StartMoving)
-    panel:SetScript('OnDragStop', panel.StopMovingOrSizing)
-
-    local close = CreateFrame('Button', nil, panel, 'UIPanelCloseButton')
-    close:SetPoint('TOPRIGHT', 0, 0)
-
-    local title = panel:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    title:SetPoint('TOP', 0, -8)
-    title:SetText('Weapon row tuning')
-
-    local arrowRegion
-    if CharacterAmmoSlot then
-        for _, region in ipairs({CharacterAmmoSlot:GetRegions()}) do
-            if region:GetObjectType() == 'Texture' and region:GetDrawLayer() == 'OVERLAY' then
-                local w, h = region:GetSize()
-                if math.abs(w - 23) < 1 and math.abs(h - 41) < 1 then arrowRegion = region end
-            end
-        end
-    end
-
-    local function makeSlider(labelText, minV, maxV, step, default, offsetY, applyFn)
-        local label = panel:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
-        label:SetPoint('TOPLEFT', panel, 'TOPLEFT', 16, offsetY)
-
-        local s = CreateFrame('Slider', nil, panel, 'BackdropTemplate')
-        s:SetOrientation('HORIZONTAL')
-        s:SetSize(180, 16)
-        s:SetPoint('TOPLEFT', panel, 'TOPLEFT', 16, offsetY - 14)
-        s:SetBackdrop({
-            bgFile = 'Interface\\Buttons\\UI-SliderBar-Background',
-            edgeFile = 'Interface\\Buttons\\UI-SliderBar-Border',
-            edgeSize = 8,
-            insets = {left = 3, right = 3, top = 6, bottom = 6}
-        })
-        s:SetThumbTexture('Interface\\Buttons\\UI-SliderBar-Button-Horizontal')
-        s:SetMinMaxValues(minV, maxV)
-        s:SetValueStep(step)
-        s:SetObeyStepOnDrag(true)
-        s:SetScript('OnValueChanged', function(_, v)
-            label:SetFormattedText('%s: |cffffffff%.1f|r', labelText, v)
-            applyFn(v)
-        end)
-        s:SetValue(default)
-        label:SetFormattedText('%s: |cffffffff%.1f|r', labelText, default)
-        return s
-    end
-
-    makeSlider('Weapon row X', 30, 160, 0.5, 74.5, -30, function(v)
-        CharacterMainHandSlot:ClearAllPoints()
-        CharacterMainHandSlot:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', v, 16)
-    end)
-
-    makeSlider('Ammo gap', 0, 90, 0.5, 42, -68, function(v)
-        if CharacterAmmoSlot then
-            CharacterAmmoSlot:ClearAllPoints()
-            CharacterAmmoSlot:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', v, 0)
-        end
-    end)
-
-    makeSlider('Arrow offset', -70, 10, 0.5, -34, -106, function(v)
-        if arrowRegion then
-            arrowRegion:ClearAllPoints()
-            arrowRegion:SetPoint('CENTER', CharacterAmmoSlot, 'CENTER', v, 0)
-        end
-    end)
 end
 
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
