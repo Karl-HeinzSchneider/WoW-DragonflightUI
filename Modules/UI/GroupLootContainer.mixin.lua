@@ -180,53 +180,48 @@ local ROLL_TYPE_ICON = {
     [3] = 'Interface\\Buttons\\UI-GroupLoot-DE-Up' -- disenchant
 }
 
--- Corner display. Mid-roll this client never reveals roll NUMBERS (they
--- exist only once the roll resolves), so while rolling we show the live
--- choice tally + how many are still deciding; if numbers ever are
--- revealed (they are at resolution), the leading "Name (roll)" wins.
+local function FindItemIdxForRoll(rollID)
+    if not (rollID and C_LootHistory and C_LootHistory.GetNumItems) then return nil end
+    for i = 1, C_LootHistory.GetNumItems() do
+        if C_LootHistory.GetItem(i) == rollID then return i end
+    end
+    return nil
+end
+
+-- Corner display. Roll numbers reveal INCREMENTALLY while the roll runs,
+-- so a self-computed "leader" regularly disagrees with the server's final
+-- winner. Only the server's winnerIdx is authoritative: show it once the
+-- roll is done; until then show the live choice tally.
 function SubModuleMixin:UpdateTopRoll(f)
     local topRoll, rollIcon = f.DFTopRoll, f.DFTopRollIcon
     if not (topRoll and f.rollID and C_LootHistory and C_LootHistory.GetNumItems) then return end
 
-    local itemIdx
-    for i = 1, C_LootHistory.GetNumItems() do
-        local rollID = C_LootHistory.GetItem(i)
-        if rollID == f.rollID then
-            itemIdx = i
-            break
-        end
-    end
-
-    -- 1) revealed numbers take precedence
+    local itemIdx = FindItemIdxForRoll(f.rollID)
     if itemIdx then
-        local _, _, numPlayers = C_LootHistory.GetItem(itemIdx)
-        local bestName, bestClass, bestType, bestRoll
-        for pl = 1, numPlayers or 0 do
-            local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, pl)
-            if name and roll and rollType and rollType > 0 then
-                if not bestType or rollType < bestType or (rollType == bestType and roll > bestRoll) then
-                    bestName, bestClass, bestType, bestRoll = name, class, rollType, roll
+        local _, _, _, isDone, winnerIdx = C_LootHistory.GetItem(itemIdx)
+        if isDone and winnerIdx then
+            local name, class, rollType, roll = C_LootHistory.GetPlayerInfo(itemIdx, winnerIdx)
+            if name then
+                local color = class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[class]
+                if color and color.colorStr then name = '|c' .. color.colorStr .. name .. '|r' end
+                if roll then
+                    topRoll:SetFormattedText('%s (%d)', name, roll)
+                else
+                    topRoll:SetText(name)
                 end
+                local tex = ROLL_TYPE_ICON[rollType]
+                if tex then
+                    rollIcon:SetTexture(tex)
+                    rollIcon:Show()
+                else
+                    rollIcon:Hide()
+                end
+                return
             end
-        end
-        if bestName then
-            local color = bestClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[bestClass]
-            if color and color.colorStr then
-                bestName = '|c' .. color.colorStr .. bestName .. '|r'
-            end
-            topRoll:SetFormattedText('%s (%d)', bestName, bestRoll)
-            local tex = ROLL_TYPE_ICON[bestType]
-            if tex then
-                rollIcon:SetTexture(tex)
-                rollIcon:Show()
-            else
-                rollIcon:Hide()
-            end
-            return
         end
     end
 
-    -- 2) live tally of choices + players still deciding
+    -- live tally of choices + players still deciding
     rollIcon:Hide()
     local tableNeed, tableGreed, tablePass, tableDiss, tableNone = self:CreateTableForRollID(f.rollID)
     local parts = {}
@@ -242,8 +237,30 @@ function SubModuleMixin:UpdateTopRoll(f)
     topRoll:SetText(table.concat(parts, '  '))
 end
 
--- Winner toast: numbers exist exactly when the toast frame disappears, so
--- announce the resolution in a short-lived DF panel where the rolls stack.
+-- Winner toast: the roll frame disappears exactly when the result exists,
+-- so announce the resolution in a short-lived DF panel where the rolls
+-- stack. Queued per rollID: simultaneous completions display one after
+-- another instead of overwriting, and the history index is resolved at
+-- display time (indices shift as the history grows).
+function SubModuleMixin:QueueWinnerToast(rollID)
+    self.ToastQueue = self.ToastQueue or {}
+    table.insert(self.ToastQueue, rollID)
+    self:DrainToastQueue()
+end
+
+function SubModuleMixin:DrainToastQueue()
+    if self.ToastBusy then return end
+    local rollID = self.ToastQueue and table.remove(self.ToastQueue, 1)
+    if not rollID then return end
+    self.ToastBusy = true
+    C_Timer.After(4.5, function()
+        self.ToastBusy = false
+        self:DrainToastQueue()
+    end)
+    local itemIdx = FindItemIdxForRoll(rollID)
+    if itemIdx then self:ShowWinnerToast(itemIdx) end
+end
+
 function SubModuleMixin:ShowWinnerToast(itemIdx)
     local rollID, itemLink, numPlayers, isDone, winnerIdx = C_LootHistory.GetItem(itemIdx)
     if not (isDone and winnerIdx) then return end
@@ -286,20 +303,33 @@ function SubModuleMixin:ShowWinnerToast(itemIdx)
     end)
 end
 
+-- Toast every completed roll exactly once. Called from the loot events AND
+-- retried after roll frames hide: the history entry can finalize a moment
+-- after the completion event, and a single missed tick used to mean no
+-- winner was ever shown.
+function SubModuleMixin:ScanForCompletedRolls()
+    if not (C_LootHistory and C_LootHistory.GetNumItems) then return end
+    self.ToastedRolls = self.ToastedRolls or {}
+    for i = 1, C_LootHistory.GetNumItems() do
+        local rollID, _, _, isDone, winnerIdx = C_LootHistory.GetItem(i)
+        if rollID and isDone and winnerIdx and not self.ToastedRolls[rollID] then
+            self.ToastedRolls[rollID] = true
+            self:QueueWinnerToast(rollID)
+        end
+    end
+end
+
 function SubModuleMixin:OnEvent(event, ...)
     -- print(event, ...)
+    if event == 'PLAYER_ENTERING_WORLD' and self.ToastedRolls then
+        -- rollIDs can restart across sessions/instances; a stale dedupe
+        -- entry would silently suppress a legitimate toast
+        wipe(self.ToastedRolls)
+    end
     if not (self.state and self.state.enabled and self.Styled) then return end
 
-    if (event == 'LOOT_HISTORY_ROLL_COMPLETE' or event == 'LOOT_ROLLS_COMPLETE')
-        and C_LootHistory and C_LootHistory.GetNumItems then
-        self.ToastedRolls = self.ToastedRolls or {}
-        for i = 1, C_LootHistory.GetNumItems() do
-            local rollID, _, _, isDone, winnerIdx = C_LootHistory.GetItem(i)
-            if rollID and isDone and winnerIdx and not self.ToastedRolls[rollID] then
-                self.ToastedRolls[rollID] = true
-                self:ShowWinnerToast(i)
-            end
-        end
+    if event == 'LOOT_HISTORY_ROLL_COMPLETE' or event == 'LOOT_ROLLS_COMPLETE' then
+        self:ScanForCompletedRolls()
     end
 
     for i = 1, 4 do
@@ -310,6 +340,14 @@ function SubModuleMixin:OnEvent(event, ...)
         if f and f:IsShown() then
             SubModuleMixin.ApplyDFBackdrop(f)
             self:UpdateTopRoll(f)
+        end
+        if f and not f.DFHideHooked then
+            f.DFHideHooked = true
+            f:HookScript('OnHide', function()
+                for _, delay in ipairs({0.3, 1.0, 2.5}) do
+                    C_Timer.After(delay, function() self:ScanForCompletedRolls() end)
+                end
+            end)
         end
     end
 end
