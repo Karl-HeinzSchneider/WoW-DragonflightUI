@@ -629,8 +629,8 @@ function DragonflightUIActionbarMixin:UpdateBorderArt(state)
         end
         if not (tlBtn and brBtn) then return false end
         border:ClearAllPoints()
-        border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -5, 5)
-        border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 7, -6)
+        border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -4.5, 4.5)
+        border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 7.5, -6.5)
         border:Show()
         if fill then
             local opacity = state.borderFill or 0
