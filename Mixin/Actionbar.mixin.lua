@@ -2408,6 +2408,17 @@ function DragonflightUIPetbarMixin:StylePetButton()
             auto:SetDrawLayer('OVERLAY', 2)
         end
 
+        -- The modern template replaces the classic AutoCastable globals
+        -- with an AutoCastOverlay child frame, CENTER-anchored at 28x28
+        -- for retail's small pet buttons - on DFUI's full-size buttons the
+        -- autocast frame rendered as an inset square. Stretch it to the
+        -- button.
+        if btn.AutoCastOverlay then
+            btn.AutoCastOverlay:ClearAllPoints()
+            btn.AutoCastOverlay:SetPoint('TOPLEFT', btn, 'TOPLEFT', 0, 0)
+            btn.AutoCastOverlay:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
+        end
+
         -- SmallActionButtonTemplate (modern pet buttons) hard-sizes the
         -- checked/highlight textures to 31.6x30.9 for retail's small pet
         -- bar; DFUI keeps the 45px base and scales the button, so re-size
