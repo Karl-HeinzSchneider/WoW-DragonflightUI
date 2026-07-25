@@ -2,29 +2,30 @@
 ---@diagnostic disable-next-line: assign-type-mismatch
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 
--- Hover-lag diagnostic (/df hoverlag) for the "frame drops when hovering
--- raid members" reports. v2: the first field run showed the lag can be
--- sustained 30-80ms frames rather than single >90ms spikes, so besides
--- spike lines this now records a per-second aggregate (fps, avg/worst
--- frame time) split into hovering vs not-hovering seconds, plus call
--- counts and measured milliseconds for every DragonflightUI hover-path
--- entry point (tooltip anchor hook, unit-tooltip styling, statusbar
--- updates, frame resize). The stop summary directly compares hover
--- seconds against baseline seconds - if hovering is no slower than
--- baseline, the lag is not hover-tied; if it is slower and the DFUI
--- columns stay near zero, another addon (or the client) owns the cost.
--- /df hoverlag report opens a copyable log to paste into an issue.
+-- Hover-lag diagnostic (/df hoverlag). v6 goal: ONE run answers everything.
 --
--- Everything here is hooksecurefunc/method-wrap/OnUpdate based - no
--- secure paths are touched, and the wraps are inert (single boolean
--- check) while the diagnostic is off.
+-- Per second it records fps, avg/worst frame time, call counts + measured ms
+-- for every DragonflightUI tooltip surface, and Lua-heap allocation split
+-- three ways: by whether DFUI tooltip code ran that frame, by what was under
+-- the mouse (player / npc / nothing), and per unique unit crossed. The
+-- single worst-allocating frame of each second is tagged with the unit that
+-- was hovered. Every 5s an addon-memory probe (UpdateAddOnMemoryUsage)
+-- snapshots per-addon deltas - that names the allocating addon directly,
+-- no addon-disable testing needed; the probe's own cost is excluded from
+-- the frame statistics. The stop summary aggregates all of it, including
+-- the unattributed remainder (allocations belonging to the Blizzard UI /
+-- client rather than any addon).
+--
+-- Everything is hooksecurefunc/method-wrap/OnUpdate based - no secure paths
+-- are touched, and the wraps are inert while the diagnostic is off.
 local Diag = {}
 DF.HoverDiag = Diag
 
-local AUTO_STOP_SECONDS = 900 -- don't let users leave it running forever
-local MAX_LINES = 600
+local AUTO_STOP_SECONDS = 900
+local MAX_LINES = 700
 local SPIKE_SECONDS = 0.09
-local SLOW_FRAME = 1 / 30 -- frames longer than this count as degraded
+local SLOW_FRAME = 1 / 30
+local ADDON_PROBE_INTERVAL = 5
 
 local active = false
 local hooksInstalled = false
@@ -34,11 +35,13 @@ local lines = {}
 -- session totals
 local spikes, worstMs = 0, 0
 local hoverMs, hoverFrames, baseMs, baseFrames = 0, 0, 0, 0
+local sessAllocPlayer, sessAllocNpc, sessAllocNone = 0, 0, 0
+local sessUnitsPlayer, sessUnitsNpc = 0, 0
+local sessWorstAllocKb, sessWorstAllocUnit = 0, '-'
+local sessAddonDelta = {} -- addon name -> accumulated positive kb growth
+local sessAllocDfui, sessAllocOther = 0, 0
 
--- current second aggregate
 local sec = {}
--- current/previous frame flags (the elapsed reflecting a frame's cost
--- arrives in the NEXT frame's OnUpdate)
 local cur = {}
 local prev = {}
 
@@ -67,12 +70,12 @@ local function resetSecond()
     sec.bdMs, sec.bdN = 0, 0
     sec.anMs, sec.anN = 0, 0
     sec.builds = 0
-    -- allocation split: churn on frames where DFUI tooltip code ran vs
-    -- frames where it did not. A per-frame tooltip scanner (OnUpdate hooks
-    -- in other addons) allocates on EVERY frame while a tooltip shows;
-    -- DFUI only runs on build/anchor events.
-    sec.heapBuildKb, sec.heapBuildN = 0, 0
-    sec.heapIdleKb, sec.heapIdleN = 0, 0
+    sec.allocDfui, sec.allocDfuiN = 0, 0
+    sec.allocOther, sec.allocOtherN = 0, 0
+    sec.allocPlayer, sec.allocNpc, sec.allocNone = 0, 0, 0
+    sec.unitsPlayer, sec.unitsNpc = 0, 0
+    sec.worstAllocKb, sec.worstAllocUnit = 0, '-'
+    sec.maxLines = 0
 end
 resetSecond()
 
@@ -87,7 +90,6 @@ local function addLine(line)
     lines[#lines + 1] = line
 end
 
--- wrap a module method with a timer that feeds (msKey, nKey) on `cur`
 local function wrapTimed(owner, methodName, msKey, nKey)
     local orig = owner[methodName]
     if type(orig) ~= 'function' then return end
@@ -118,8 +120,6 @@ local function installHooks()
         wrapTimed(tooltipModule, 'OnTooltipSetUnit', 'ttMs', 'ttN')
         wrapTimed(tooltipModule, 'UpdateStatusbar', 'sbMs', 'sbN')
         wrapTimed(tooltipModule, 'UpdateFrameSize', 'fsMs', 'fsN')
-        -- v4: also time the backdrop reapply (runs from the OnTooltipCleared
-        -- hook, previously invisible) and the anchor hook body itself
         wrapTimed(tooltipModule, 'SetDefaultBackdrop', 'bdMs', 'bdN')
         wrapTimed(tooltipModule, 'GameTooltipSetDefaultAnchor', 'anMs', 'anN')
     end
@@ -139,21 +139,68 @@ local function moduleStates()
     return table.concat(enabled, ','), table.concat(disabled, ',')
 end
 
+local GetNumAddOnsFn = (C_AddOns and C_AddOns.GetNumAddOns) or GetNumAddOns
+local GetAddOnInfoFn = (C_AddOns and C_AddOns.GetAddOnInfo) or GetAddOnInfo
+
 local function header()
     local version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)('DragonflightUI', 'Version')
     local _, build = GetBuildInfo()
     local _, class = UnitClass('player')
     local profile = (DF.db and DF.db.GetCurrentProfile and DF.db:GetCurrentProfile()) or '?'
     local enabled, disabled = moduleStates()
+    local loadedAddons = {}
+    for i = 1, GetNumAddOnsFn() do
+        local name, _, _, loadable = GetAddOnInfoFn(i)
+        if name and (C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded)(name) then
+            loadedAddons[#loadedAddons + 1] = name
+        end
+    end
+    table.sort(loadedAddons)
     return string.format(
-               'DragonflightUI hover-lag log v5 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s',
+               'DragonflightUI hover-lag log v6 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s\naddons loaded (%d): %s',
                tostring(version), tostring(build), IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'),
                tostring(class), UnitLevel('player') or 0, tostring(profile), date('%Y-%m-%d %H:%M:%S'), enabled,
-               disabled == '' and '-' or disabled)
+               disabled == '' and '-' or disabled, #loadedAddons, table.concat(loadedAddons, ','))
 end
 
-local lastMemKb = nil
+-- 5s addon-memory probe -------------------------------------------------
+local lastAddonMem = nil
+local lastProbeAt = 0
+local skipStatsOnce = false
+
+local function addonProbe()
+    UpdateAddOnMemoryUsage()
+    local now = {}
+    local deltas = {}
+    for i = 1, GetNumAddOnsFn() do
+        local name = GetAddOnInfoFn(i)
+        if name then
+            local kb = GetAddOnMemoryUsage(name) or 0
+            now[name] = kb
+            if lastAddonMem and lastAddonMem[name] then
+                local d = kb - lastAddonMem[name]
+                if d > 50 then
+                    deltas[#deltas + 1] = {name = name, d = d}
+                    sessAddonDelta[name] = (sessAddonDelta[name] or 0) + d
+                end
+            end
+        end
+    end
+    lastAddonMem = now
+    if #deltas > 0 then
+        table.sort(deltas, function(a, b) return a.d > b.d end)
+        local parts = {}
+        for i = 1, math.min(6, #deltas) do
+            parts[#parts + 1] = string.format('%s %+dkb', deltas[i].name, deltas[i].d)
+        end
+        addLine(string.format('%s ADDONMEM(5s): %s', date('%H:%M:%S'), table.concat(parts, ', ')))
+    end
+    -- the probe itself is expensive; keep its frame out of the statistics
+    skipStatsOnce = true
+end
+
 local lastFrameHeap = nil
+local lastMoGuid = nil
 
 local function flushSecond()
     if sec.frames == 0 then
@@ -171,20 +218,13 @@ local function flushSecond()
         baseFrames = baseFrames + sec.frames
     end
 
-    -- heap delta reveals per-hover allocation churn. v3 used
-    -- UpdateAddOnMemoryUsage here, which itself costs tens of ms with a
-    -- full addon list and poisoned worst/over33 with a once-per-second
-    -- hitch of our own making; collectgarbage('count') is near-free.
-    local memKb = collectgarbage('count')
-    local memDelta = lastMemKb and (memKb - lastMemKb) or 0
-    lastMemKb = memKb
-
-    -- log every second; only degraded seconds go to chat
     local line = string.format(
-                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) heap=%+dkb allocOnDfuiFrames=%dkb(%d) allocOnOtherFrames=%dkb(%d)',
-                     date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no', sec.builds,
-                     sec.ttMs, sec.ttN, sec.anMs, sec.anN, sec.anchorN, sec.bdMs, sec.bdN, sec.sbMs, sec.sbN, sec.fsMs,
-                     sec.fsN, memDelta, sec.heapBuildKb, sec.heapBuildN, sec.heapIdleKb, sec.heapIdleN)
+                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s units=P%d/N%d builds=%d lines=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) allocDfuiFrames=%dkb(%d) allocOtherFrames=%dkb(%d) allocByHover=P%d/N%d/-%dkb worstAlloc=%dkb@%s',
+                     date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no',
+                     sec.unitsPlayer, sec.unitsNpc, sec.builds, sec.maxLines, sec.ttMs, sec.ttN, sec.anMs, sec.anN,
+                     sec.anchorN, sec.bdMs, sec.bdN, sec.sbMs, sec.sbN, sec.fsMs, sec.fsN, sec.allocDfui,
+                     sec.allocDfuiN, sec.allocOther, sec.allocOtherN, sec.allocPlayer, sec.allocNpc, sec.allocNone,
+                     sec.worstAllocKb, sec.worstAllocUnit)
     addLine(line)
     if avg > SLOW_FRAME * 1000 then chat(line) end
     resetSecond()
@@ -199,8 +239,10 @@ watch:SetScript('OnUpdate', function(_, elapsed)
         return
     end
 
-    -- fold the finished frame (prev flags belong to it) into the second
-    if elapsed < 5 then -- ignore loading screens
+    local statsFrame = not skipStatsOnce
+    skipStatsOnce = false
+
+    if elapsed < 5 and statsFrame then
         sec.frames = sec.frames + 1
         sec.sum = sec.sum + elapsed
         if elapsed > sec.worst then sec.worst = elapsed end
@@ -212,22 +254,62 @@ watch:SetScript('OnUpdate', function(_, elapsed)
         sec.fsMs, sec.fsN = sec.fsMs + prev.fsMs, sec.fsN + prev.fsN
         sec.bdMs, sec.bdN = sec.bdMs + prev.bdMs, sec.bdN + prev.bdN
         sec.anMs, sec.anN = sec.anMs + prev.anMs, sec.anN + prev.anN
-        if UnitExists('mouseover') then sec.hover = true end
 
-        -- attribute allocation churn: positive heap deltas on frames where
-        -- DFUI tooltip code ran vs frames where it did not (GC reclaims
-        -- show as negative deltas and are skipped)
+        local moPlayer, moName
+        if UnitExists('mouseover') then
+            sec.hover = true
+            moPlayer = UnitIsPlayer('mouseover')
+            moName = UnitName('mouseover')
+            local g = UnitGUID('mouseover')
+            if g and g ~= lastMoGuid then
+                lastMoGuid = g
+                if moPlayer then
+                    sec.unitsPlayer = sec.unitsPlayer + 1
+                    sessUnitsPlayer = sessUnitsPlayer + 1
+                else
+                    sec.unitsNpc = sec.unitsNpc + 1
+                    sessUnitsNpc = sessUnitsNpc + 1
+                end
+            end
+        end
+
+        if prev.anchorN > 0 and GameTooltip:IsShown() then
+            local n = GameTooltip:NumLines()
+            if n > sec.maxLines then sec.maxLines = n end
+        end
+
+        -- allocation attribution
         local heapNow = collectgarbage('count')
         if lastFrameHeap then
             local d = heapNow - lastFrameHeap
             if d > 0 then
                 local dfuiRan = prev.anN > 0 or prev.ttN > 0 or prev.bdN > 0
                 if dfuiRan then
-                    sec.heapBuildKb = sec.heapBuildKb + d
-                    sec.heapBuildN = sec.heapBuildN + 1
+                    sec.allocDfui, sec.allocDfuiN = sec.allocDfui + d, sec.allocDfuiN + 1
+                    sessAllocDfui = sessAllocDfui + d
                 else
-                    sec.heapIdleKb = sec.heapIdleKb + d
-                    sec.heapIdleN = sec.heapIdleN + 1
+                    sec.allocOther, sec.allocOtherN = sec.allocOther + d, sec.allocOtherN + 1
+                    sessAllocOther = sessAllocOther + d
+                end
+                if UnitExists('mouseover') then
+                    if moPlayer then
+                        sec.allocPlayer = sec.allocPlayer + d
+                        sessAllocPlayer = sessAllocPlayer + d
+                    else
+                        sec.allocNpc = sec.allocNpc + d
+                        sessAllocNpc = sessAllocNpc + d
+                    end
+                else
+                    sec.allocNone = sec.allocNone + d
+                    sessAllocNone = sessAllocNone + d
+                end
+                if d > sec.worstAllocKb then
+                    sec.worstAllocKb = d
+                    sec.worstAllocUnit = moName and (moName .. (moPlayer and '(player)' or '(npc)')) or '-'
+                end
+                if d > sessWorstAllocKb then
+                    sessWorstAllocKb = d
+                    sessWorstAllocUnit = sec.worstAllocUnit
                 end
             end
         end
@@ -236,16 +318,23 @@ watch:SetScript('OnUpdate', function(_, elapsed)
         if elapsed > SPIKE_SECONDS then
             spikes = spikes + 1
             if elapsed * 1000 > worstMs then worstMs = elapsed * 1000 end
-            local mo = UnitExists('mouseover') and (UnitName('mouseover') or '?') or '-'
             addLine(string.format('%s SPIKE %dms build=%s dfuiTT=%.1fms mouseover=%s', date('%H:%M:%S'),
-                                  elapsed * 1000, tostring(prev.setUnit), prev.ttMs, mo))
+                                  elapsed * 1000, tostring(prev.setUnit), prev.ttMs, moName or '-'))
         end
+    else
+        -- probe frame: keep heap baseline current so the probe's own
+        -- allocations don't leak into the next frame's attribution
+        lastFrameHeap = collectgarbage('count')
     end
 
     local now = math.floor(GetTime())
     if now ~= lastSecond then
         lastSecond = now
         flushSecond()
+        if GetTime() - lastProbeAt >= ADDON_PROBE_INTERVAL then
+            lastProbeAt = GetTime()
+            addonProbe()
+        end
     end
 
     prev, cur = cur, prev
@@ -261,12 +350,21 @@ function Diag:Start()
     lines = {header()}
     spikes, worstMs = 0, 0
     hoverMs, hoverFrames, baseMs, baseFrames = 0, 0, 0, 0
-    lastMemKb = nil
+    sessAllocPlayer, sessAllocNpc, sessAllocNone = 0, 0, 0
+    sessUnitsPlayer, sessUnitsNpc = 0, 0
+    sessWorstAllocKb, sessWorstAllocUnit = 0, '-'
+    sessAddonDelta = {}
+    sessAllocDfui, sessAllocOther = 0, 0
     lastFrameHeap = nil
+    lastMoGuid = nil
+    lastAddonMem = nil
+    lastProbeAt = GetTime()
+    skipStatsOnce = false
     resetSecond()
     resetCounters(cur)
     resetCounters(prev)
-    chat('recording - reproduce the lag now (hover raid members/frames for a while, then look away for a while too).')
+    addonProbe() -- baseline snapshot
+    chat('recording - sweep across PLAYERS ~30s, then across NPCS ~30s, then stand still ~20s.')
     chat('|cffffffff/df hoverlag|r stops, |cffffffff/df hoverlag report|r opens a copyable log.')
 end
 
@@ -274,17 +372,42 @@ function Diag:Stop(auto)
     if not active then return end
     active = false
     flushSecond()
+    addonProbe() -- final delta snapshot
 
     local hoverAvg = hoverFrames > 0 and (hoverMs / hoverFrames) or 0
     local baseAvg = baseFrames > 0 and (baseMs / baseFrames) or 0
-    local summary = string.format(
-                        'stopped%s: hovering avg %.0fms/frame (%d frames) vs baseline %.0fms/frame (%d frames); %d spikes >90ms, worst %dms',
-                        auto and ' (auto, 15min)' or '', hoverAvg, hoverFrames, baseAvg, baseFrames, spikes, worstMs)
-    addLine(summary)
-    chat(summary)
+    addLine(string.format(
+                'SUMMARY: hovering avg %.0fms/frame (%d frames) vs baseline %.0fms/frame (%d frames); %d spikes >90ms, worst %dms',
+                hoverAvg, hoverFrames, baseAvg, baseFrames, spikes, worstMs))
+    addLine(string.format(
+                'SUMMARY alloc: onDfuiFrames=%dkb onOtherFrames=%dkb | byHover: players=%dkb npcs=%dkb none=%dkb | units crossed: %d players, %d npcs | per-unit: %dkb/player, %dkb/npc',
+                sessAllocDfui, sessAllocOther, sessAllocPlayer, sessAllocNpc, sessAllocNone, sessUnitsPlayer,
+                sessUnitsNpc, sessUnitsPlayer > 0 and (sessAllocPlayer / sessUnitsPlayer) or 0,
+                sessUnitsNpc > 0 and (sessAllocNpc / sessUnitsNpc) or 0))
+    addLine(string.format('SUMMARY worst single frame allocation: %dkb while over %s', sessWorstAllocKb,
+                          sessWorstAllocUnit))
+
+    local ranked = {}
+    local addonSum = 0
+    for name, d in pairs(sessAddonDelta) do
+        ranked[#ranked + 1] = {name = name, d = d}
+        addonSum = addonSum + d
+    end
+    table.sort(ranked, function(a, b) return a.d > b.d end)
+    local parts = {}
+    for i = 1, math.min(8, #ranked) do
+        parts[#parts + 1] = string.format('%s %+dkb', ranked[i].name, ranked[i].d)
+    end
+    local totalAlloc = sessAllocDfui + sessAllocOther
+    addLine(string.format('SUMMARY addon net growth (5s probes): %s | addons total %+dkb vs frame-observed %+dkb'
+                              .. ' (rest = Blizzard UI / client-side Lua)',
+                          #parts > 0 and table.concat(parts, ', ') or 'none >50kb', addonSum, totalAlloc))
+
+    chat(string.format('stopped%s: hovering %.0fms/frame vs baseline %.0fms/frame. Top allocator: %s',
+                       auto and ' (auto)' or '', hoverAvg, baseAvg, ranked[1] and
+                           string.format('%s %+dkb', ranked[1].name, ranked[1].d) or 'none detected'))
     chat('|cffffffff/df hoverlag report|r opens the full log to copy into the issue.')
 
-    -- keep the last session across /reload so the report survives
     if DF.db and DF.db.global then DF.db.global.hoverDiagLog = lines end
 end
 
@@ -352,7 +475,6 @@ function Diag:Command(arg)
     if arg == 'report' then
         Diag:Report()
     elseif arg == 'modules' then
-        -- quick character-to-character comparison without a full session
         local profile = (DF.db and DF.db.GetCurrentProfile and DF.db:GetCurrentProfile()) or '?'
         local enabled, disabled = moduleStates()
         chat('profile: ' .. tostring(profile))
