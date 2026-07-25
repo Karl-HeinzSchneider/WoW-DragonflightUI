@@ -1520,48 +1520,57 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         bg:SetAllPoints(inset)
     end
 
-    -- Slot button frames: on 1.15.9 the paperdoll buttons' native art is
-    -- atlas-based and doesn't resolve on vanilla, leaving naked icons. Give
-    -- them the same Dragonflight quickslot composition the bag buttons use
-    -- (art already shipped in Textures/UI), but KEEP IconBorder - the
-    -- paperdoll wants the quality-colored border on equipped items.
+    -- Retail slot frames, 1:1: each paperdoll button carries a piece of
+    -- Interface\CharacterFrame\Char-Paperdoll-Parts exactly as retail's
+    -- PaperDollItemSlotButtonLeft/Right/BottomTemplate composes them
+    -- (BACKGROUND sublevel -1; sizes, texcoords and anchors copied verbatim
+    -- from retail CharacterFrame.xml). Shipped as an addon copy
+    -- (charpaperdollparts.blp, FileDataID 410248) so the look does not
+    -- depend on the backport's game data. Pushed/highlight match retail's
+    -- ItemButtonTemplate; retail paperdoll buttons draw no normal texture.
     do
-        local function styleSlot(btn)
-            if not btn or btn.DFSlotStyled then return end
-            btn.DFSlotStyled = true
+        local PARTS = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollparts'
+        local PIECES = {
+            left = {49, 44, 0.20703125, 0.39843750, 0.59375000, 0.93750000, 'TOPLEFT', -4, 0},
+            right = {50, 44, 0.00390625, 0.19921875, 0.59375000, 0.93750000, 'TOPRIGHT', 4, 0},
+            bottom = {42, 53, 0.67187500, 0.83593750, 0.00781250, 0.42187500, 'TOPLEFT', -4, 8}
+        }
+        local SLOTS = {
+            Head = 'left', Neck = 'left', Shoulder = 'left', Back = 'left', Chest = 'left', Shirt = 'left',
+            Tabard = 'left', Wrist = 'left', Hands = 'right', Waist = 'right', Legs = 'right', Feet = 'right',
+            Finger0 = 'right', Finger1 = 'right', Trinket0 = 'right', Trinket1 = 'right', MainHand = 'bottom',
+            SecondaryHand = 'bottom', Ranged = 'bottom'
+        }
+        for slotName, side in pairs(SLOTS) do
+            local btn = _G['Character' .. slotName .. 'Slot']
+            if btn and not btn.DFSlotFrame then
+                local p = PIECES[side]
+                local t = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
+                t:SetTexture(PARTS)
+                t:SetSize(p[1], p[2])
+                t:SetTexCoord(p[3], p[4], p[5], p[6])
+                t:SetPoint(p[7], btn, p[7], p[8], p[9])
+                btn.DFSlotFrame = t
 
-            local bg = btn:CreateTexture('DragonflightUIBg')
-            bg:SetTexture(base .. 'BagsItemSlot2x')
-            bg:SetSize(37, 37)
-            bg:SetPoint('CENTER', 0, 0)
-            bg:SetDrawLayer('BACKGROUND', 3)
+                local normal = btn:GetNormalTexture()
+                if normal then normal:SetTexture(nil) end
 
-            local normal = btn:GetNormalTexture()
-            normal:SetTexture(base .. 'BagsItemSlot2x')
-            normal:SetSize(37, 37)
-            normal:SetPoint('CENTER', 0, 0)
-            normal:SetDrawLayer('BACKGROUND', 3)
+                local pushed = btn:GetPushedTexture()
+                if pushed then
+                    pushed:SetTexture('Interface\\Buttons\\UI-Quickslot-Depress')
+                    pushed:ClearAllPoints()
+                    pushed:SetAllPoints(btn)
+                end
 
-            local pushed = btn:GetPushedTexture()
-            pushed:SetTexture(base .. 'ui-quickslot-depress')
-            pushed:SetSize(37, 37)
-            pushed:SetPoint('CENTER', 0, 0)
-
-            local high = btn:GetHighlightTexture()
-            high:SetTexture(base .. 'buttonhilight-square')
-            high:SetSize(37, 37)
-            high:SetPoint('CENTER', 0, 0)
-
-            local border = btn:CreateTexture('DragonflightUIBorder')
-            border:SetTexture(base .. 'ui-quickslot2')
-            border:SetSize(64, 64)
-            border:SetPoint('CENTER', 0, -1)
-            border:SetDrawLayer('BACKGROUND', 4)
+                local high = btn:GetHighlightTexture()
+                if high then
+                    high:SetTexture('Interface\\Buttons\\ButtonHilight-Square')
+                    high:SetBlendMode('ADD')
+                    high:ClearAllPoints()
+                    high:SetAllPoints(btn)
+                end
+            end
         end
-        for _, slotName in ipairs({
-            'Head', 'Neck', 'Shoulder', 'Back', 'Chest', 'Shirt', 'Tabard', 'Wrist', 'Hands', 'Waist', 'Legs',
-            'Feet', 'Finger0', 'Finger1', 'Trinket0', 'Trinket1', 'MainHand', 'SecondaryHand', 'Ranged'
-        }) do styleSlot(_G['Character' .. slotName .. 'Slot']) end
     end
 
     if DF.API.Version.IsWotlk then
