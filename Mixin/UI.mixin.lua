@@ -1584,7 +1584,7 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                     cap:SetSize(6, 54)
                     cap:SetTexCoord(0.70703125, 0.73046875, 0.4375, 0.859375)
                     cap:SetPoint('TOPRIGHT', t, 'TOPLEFT', 0, 0)
-                elseif slotName == 'Ranged' and not _G['CharacterAmmoSlot'] then
+                elseif slotName == 'Ranged' then
                     local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
                     cap:SetTexture(PARTS)
                     cap:SetSize(7, 54)
@@ -1594,52 +1594,15 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             end
         end
 
-        -- Era-only ammo slot: retail has no equivalent, so integrate it as a
-        -- fourth tray slot instead of the classic 27px round oddball - full
-        -- 37px size, tray spacing off Ranged, same frame piece, and the
-        -- tray's right cap lives here. The classic round art and the
-        -- "feeds the ranged weapon" pointing arrow become redundant.
+        -- Era-only ammo slot: keep the classic look untouched (round art +
+        -- the arrow pointing at the ranged weapon). The weapon row itself is
+        -- shifted 20px left (see the MainHand anchor) so the tray's right
+        -- cap clears the arrow; widen the ammo gap by the same 20px so the
+        -- ammo slot stays exactly where it always was on screen.
         local ammo = _G['CharacterAmmoSlot']
-        if ammo and not ammo.DFSlotFrame then
-            for _, region in ipairs({ammo:GetRegions()}) do
-                if region:GetObjectType() == 'Texture' then
-                    local layer = region:GetDrawLayer()
-                    if layer == 'BACKGROUND' or layer == 'OVERLAY' then region:Hide() end
-                end
-            end
-
-            ammo:SetSize(37, 37)
+        if ammo then
             ammo:ClearAllPoints()
-            ammo:SetPoint('TOPLEFT', CharacterRangedSlot, 'TOPRIGHT', 5, 0)
-            ammo:SetFrameLevel(7)
-
-            local icon = _G['CharacterAmmoSlotIconTexture']
-            if icon then
-                icon:ClearAllPoints()
-                icon:SetAllPoints(ammo)
-            end
-
-            local p = PIECES.bottom
-            local t = ammo:CreateTexture(nil, 'BACKGROUND', nil, -1)
-            t:SetTexture(PARTS)
-            t:SetSize(p[1], p[2])
-            t:SetTexCoord(p[3], p[4], p[5], p[6])
-            t:SetPoint(p[7], ammo, p[7], p[8], p[9])
-            ammo.DFSlotFrame = t
-
-            local cap = ammo:CreateTexture(nil, 'BACKGROUND', nil, -1)
-            cap:SetTexture(PARTS)
-            cap:SetSize(7, 54)
-            cap:SetTexCoord(0.671875, 0.69921875, 0.4375, 0.859375)
-            cap:SetPoint('TOPLEFT', t, 'TOPRIGHT', 0, 0)
-
-            local high = ammo:GetHighlightTexture()
-            if high then
-                high:SetTexture('Interface\\Buttons\\ButtonHilight-Square')
-                high:SetBlendMode('ADD')
-                high:ClearAllPoints()
-                high:SetAllPoints(ammo)
-            end
+            ammo:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', 35, 0)
         end
     end
 
@@ -1760,7 +1723,10 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local main = CharacterMainHandSlot
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
-    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
+    -- shifted 20px left when an ammo slot exists so the weapon tray's right
+    -- cap clears the classic ammo arrow (the ammo slot itself keeps its
+    -- original screen position via a widened gap on its own anchor)
+    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', _G['CharacterAmmoSlot'] and 87.5 or 107.5, 16)
     -- if DF.API.Version.IsWotlk then main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 87, 13) end -- @TODO
     -- tabs
     do
