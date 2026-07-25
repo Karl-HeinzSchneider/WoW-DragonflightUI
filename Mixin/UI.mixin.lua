@@ -1507,25 +1507,17 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     hand:ClearAllPoints()
     hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
 
-    -- Retail-style plates framing the gear slots: a recessed pillar behind
-    -- each slot column and one behind the weapon row, like the Dragonflight
-    -- character pane. Built from InsetFrameTemplate (same approach as the
-    -- trainer frame) so no new art is needed. Kept below the slot buttons.
+    -- Retail character pane background: the actual Dragonflight art
+    -- (atlas member 'character-panel-background', FileDataID 5882640,
+    -- 450x420 at px 1,451,1,421 on a 1024x512 sheet) with the gear-slot
+    -- pillars baked in. Retail stretches it across the pane inset; parent
+    -- it to the inset on a high BACKGROUND sublevel so it sits above the
+    -- inset's own Bg but below its border nine-slice.
     do
-        local function slotPlate(name, topSlot, bottomSlot)
-            if not (topSlot and bottomSlot) then return end
-            local plate = CreateFrame('Frame', name, PaperDollFrame, 'InsetFrameTemplate')
-            plate:SetPoint('TOPLEFT', topSlot, 'TOPLEFT', -3, 3)
-            plate:SetPoint('BOTTOMRIGHT', bottomSlot, 'BOTTOMRIGHT', 3, -3)
-            -- one level under the slot buttons: above the big inset (created
-            -- after it), guaranteed below the slots
-            plate:SetFrameLevel(math.max(inset:GetFrameLevel(), topSlot:GetFrameLevel() - 1))
-            return plate
-        end
-        slotPlate('DragonflightUICharacterSlotPlateLeft', CharacterHeadSlot, CharacterWristSlot)
-        slotPlate('DragonflightUICharacterSlotPlateRight', CharacterHandsSlot, CharacterTrinket1Slot)
-        slotPlate('DragonflightUICharacterSlotPlateBottom', CharacterMainHandSlot,
-                  CharacterRangedSlot or CharacterSecondaryHandSlot)
+        local bg = inset:CreateTexture('DragonflightUICharacterPanelBackground', 'BACKGROUND', nil, 7)
+        bg:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uicharacterpanel2x')
+        bg:SetTexCoord(1 / 1024, 451 / 1024, 1 / 512, 421 / 512)
+        bg:SetAllPoints(inset)
     end
 
     if DF.API.Version.IsWotlk then
