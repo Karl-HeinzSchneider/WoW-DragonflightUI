@@ -1594,15 +1594,25 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
             end
         end
 
-        -- Era-only ammo slot: classic look untouched (round art + the arrow
-        -- pointing at the ranged weapon). The 31px gap composes with the
-        -- weapon row anchor (see the MainHand SetPoint) to center the whole
-        -- tray+arrow+ammo ensemble on the pane midline with the arrow clear
-        -- of the tray's right cap.
+        -- Era-only ammo slot: classic art untouched. The 42px gap composes
+        -- with the weapon row anchor (see the MainHand SetPoint) to center
+        -- the whole tray+arrow+ammo ensemble on the pane midline. The
+        -- classic arrow natively hugs the ammo slot's left edge; re-anchor
+        -- it (the unnamed 23x41 OVERLAY region) to sit centered in the gap
+        -- with 2px clear of both the tray's right cap and the ammo art.
         local ammo = _G['CharacterAmmoSlot']
         if ammo then
             ammo:ClearAllPoints()
-            ammo:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', 31, 0)
+            ammo:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', 42, 0)
+            for _, region in ipairs({ammo:GetRegions()}) do
+                if region:GetObjectType() == 'Texture' and region:GetDrawLayer() == 'OVERLAY' then
+                    local w, h = region:GetSize()
+                    if math.abs(w - 23) < 1 and math.abs(h - 41) < 1 then
+                        region:ClearAllPoints()
+                        region:SetPoint('CENTER', ammo, 'CENTER', -34, 0)
+                    end
+                end
+            end
         end
     end
 
@@ -1724,11 +1734,12 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
     -- With an ammo slot the whole ensemble (tray incl. caps + arrow + ammo)
-    -- is 196px wide and gets centered as one composition on the pane's
-    -- midline (x=168, same line the bare 3-slot tray centered on at 107.5):
-    -- MainHand at 80 + a 31px ammo gap puts the classic arrow 3px clear of
-    -- the tray's right cap, pointing into the ammo art as it always did.
-    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', _G['CharacterAmmoSlot'] and 80 or 107.5, 16)
+    -- is 207px wide and gets centered as one composition on the pane's
+    -- midline (x=168, same line the bare 3-slot tray centered on at 107.5).
+    -- MainHand at 74.5 + a 42px ammo gap leaves exactly 23px + 2px margins
+    -- between the tray's right cap and the ammo art - the classic arrow
+    -- (re-anchored at the ammo slot) sits centered in that space.
+    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', _G['CharacterAmmoSlot'] and 74.5 or 107.5, 16)
     -- if DF.API.Version.IsWotlk then main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 87, 13) end -- @TODO
     -- tabs
     do
