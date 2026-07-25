@@ -1533,6 +1533,16 @@ function DragonflightUIActionbarMixin:AddDecoNew(index)
     end
 
     for k, v in ipairs(self.buttonTable) do
+        -- retail ActionButtonTemplate: SlotBackground (dark fill,
+        -- ui-hud-actionbar-iconframe-background) under SlotArt
+        local bg = v:CreateTexture('DragonflightUISlotDecoBackground')
+        v.DFDecoBg = bg
+        bg:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar')
+        bg:SetSize(45, 45 - 2)
+        bg:SetPoint('TOPLEFT')
+        bg:SetTexCoord(0.70703125, 0.88671875, 0.4013671875, 0.4453125)
+        bg:SetDrawLayer('BACKGROUND', -6)
+
         local tex = v:CreateTexture('DragonflightUISlotDeco')
         v.DFDeco = tex
         tex:SetTexture(textureRef)
