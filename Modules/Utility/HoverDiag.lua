@@ -67,6 +67,12 @@ local function resetSecond()
     sec.bdMs, sec.bdN = 0, 0
     sec.anMs, sec.anN = 0, 0
     sec.builds = 0
+    -- allocation split: churn on frames where DFUI tooltip code ran vs
+    -- frames where it did not. A per-frame tooltip scanner (OnUpdate hooks
+    -- in other addons) allocates on EVERY frame while a tooltip shows;
+    -- DFUI only runs on build/anchor events.
+    sec.heapBuildKb, sec.heapBuildN = 0, 0
+    sec.heapIdleKb, sec.heapIdleN = 0, 0
 end
 resetSecond()
 
@@ -140,13 +146,14 @@ local function header()
     local profile = (DF.db and DF.db.GetCurrentProfile and DF.db:GetCurrentProfile()) or '?'
     local enabled, disabled = moduleStates()
     return string.format(
-               'DragonflightUI hover-lag log v3 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s',
+               'DragonflightUI hover-lag log v5 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s',
                tostring(version), tostring(build), IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'),
                tostring(class), UnitLevel('player') or 0, tostring(profile), date('%Y-%m-%d %H:%M:%S'), enabled,
                disabled == '' and '-' or disabled)
 end
 
 local lastMemKb = nil
+local lastFrameHeap = nil
 
 local function flushSecond()
     if sec.frames == 0 then
@@ -174,10 +181,10 @@ local function flushSecond()
 
     -- log every second; only degraded seconds go to chat
     local line = string.format(
-                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) heap=%+dkb',
+                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s builds=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) heap=%+dkb allocOnDfuiFrames=%dkb(%d) allocOnOtherFrames=%dkb(%d)',
                      date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no', sec.builds,
                      sec.ttMs, sec.ttN, sec.anMs, sec.anN, sec.anchorN, sec.bdMs, sec.bdN, sec.sbMs, sec.sbN, sec.fsMs,
-                     sec.fsN, memDelta)
+                     sec.fsN, memDelta, sec.heapBuildKb, sec.heapBuildN, sec.heapIdleKb, sec.heapIdleN)
     addLine(line)
     if avg > SLOW_FRAME * 1000 then chat(line) end
     resetSecond()
@@ -206,6 +213,25 @@ watch:SetScript('OnUpdate', function(_, elapsed)
         sec.bdMs, sec.bdN = sec.bdMs + prev.bdMs, sec.bdN + prev.bdN
         sec.anMs, sec.anN = sec.anMs + prev.anMs, sec.anN + prev.anN
         if UnitExists('mouseover') then sec.hover = true end
+
+        -- attribute allocation churn: positive heap deltas on frames where
+        -- DFUI tooltip code ran vs frames where it did not (GC reclaims
+        -- show as negative deltas and are skipped)
+        local heapNow = collectgarbage('count')
+        if lastFrameHeap then
+            local d = heapNow - lastFrameHeap
+            if d > 0 then
+                local dfuiRan = prev.anN > 0 or prev.ttN > 0 or prev.bdN > 0
+                if dfuiRan then
+                    sec.heapBuildKb = sec.heapBuildKb + d
+                    sec.heapBuildN = sec.heapBuildN + 1
+                else
+                    sec.heapIdleKb = sec.heapIdleKb + d
+                    sec.heapIdleN = sec.heapIdleN + 1
+                end
+            end
+        end
+        lastFrameHeap = heapNow
 
         if elapsed > SPIKE_SECONDS then
             spikes = spikes + 1
@@ -236,6 +262,7 @@ function Diag:Start()
     spikes, worstMs = 0, 0
     hoverMs, hoverFrames, baseMs, baseFrames = 0, 0, 0, 0
     lastMemKb = nil
+    lastFrameHeap = nil
     resetSecond()
     resetCounters(cur)
     resetCounters(prev)
