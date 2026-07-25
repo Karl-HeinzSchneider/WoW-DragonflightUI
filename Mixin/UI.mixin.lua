@@ -1520,6 +1520,50 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
         bg:SetAllPoints(inset)
     end
 
+    -- Slot button frames: on 1.15.9 the paperdoll buttons' native art is
+    -- atlas-based and doesn't resolve on vanilla, leaving naked icons. Give
+    -- them the same Dragonflight quickslot composition the bag buttons use
+    -- (art already shipped in Textures/UI), but KEEP IconBorder - the
+    -- paperdoll wants the quality-colored border on equipped items.
+    do
+        local function styleSlot(btn)
+            if not btn or btn.DFSlotStyled then return end
+            btn.DFSlotStyled = true
+
+            local bg = btn:CreateTexture('DragonflightUIBg')
+            bg:SetTexture(base .. 'BagsItemSlot2x')
+            bg:SetSize(37, 37)
+            bg:SetPoint('CENTER', 0, 0)
+            bg:SetDrawLayer('BACKGROUND', 3)
+
+            local normal = btn:GetNormalTexture()
+            normal:SetTexture(base .. 'BagsItemSlot2x')
+            normal:SetSize(37, 37)
+            normal:SetPoint('CENTER', 0, 0)
+            normal:SetDrawLayer('BACKGROUND', 3)
+
+            local pushed = btn:GetPushedTexture()
+            pushed:SetTexture(base .. 'ui-quickslot-depress')
+            pushed:SetSize(37, 37)
+            pushed:SetPoint('CENTER', 0, 0)
+
+            local high = btn:GetHighlightTexture()
+            high:SetTexture(base .. 'buttonhilight-square')
+            high:SetSize(37, 37)
+            high:SetPoint('CENTER', 0, 0)
+
+            local border = btn:CreateTexture('DragonflightUIBorder')
+            border:SetTexture(base .. 'ui-quickslot2')
+            border:SetSize(64, 64)
+            border:SetPoint('CENTER', 0, -1)
+            border:SetDrawLayer('BACKGROUND', 4)
+        end
+        for _, slotName in ipairs({
+            'Head', 'Neck', 'Shoulder', 'Back', 'Chest', 'Shirt', 'Tabard', 'Wrist', 'Hands', 'Waist', 'Legs',
+            'Feet', 'Finger0', 'Finger1', 'Trinket0', 'Trinket1', 'MainHand', 'SecondaryHand', 'Ranged'
+        }) do styleSlot(_G['Character' .. slotName .. 'Slot']) end
+    end
+
     if DF.API.Version.IsWotlk then
         -- head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -10)
         -- hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -10)
