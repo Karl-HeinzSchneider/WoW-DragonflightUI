@@ -461,10 +461,6 @@ function Module:SlashCommand(input)
         DF.HoverDiag:Command(hoverArg)
         return
     end
-    if cmd == 'chardump' and DragonflightUIMixin.DumpCharSlotDiag then
-        DragonflightUIMixin:DumpCharSlotDiag()
-        return
-    end
     Module:ToggleConfigFrame()
 end
 
