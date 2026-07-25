@@ -334,7 +334,9 @@ do
     L["MoreOptionsHideBarScrolling"] = "Hide Bar Scrolling"
     L["MoreOptionsHideBarScrollingDesc"] = ""
     L["MoreOptionsHideBorder"] = "Hide Border Art"
-    L["MoreOptionsHideBorderDesc"] = "*Work in Progress*"
+    L["MoreOptionsHideBorderDesc"] = "Hide the retail-style frame around the bar"
+    L["MoreOptionsBorderFill"] = "Border Fill Opacity"
+    L["MoreOptionsBorderFillDesc"] = "Darkness of the fill behind the buttons inside the border frame. Retail uses a very subtle tint (~0.2); 0 disables the fill."
     L["MoreOptionsHideDivider"] = "Hide Bar Divider"
     L["MoreOptionsHideDividerDesc"] = ""
 

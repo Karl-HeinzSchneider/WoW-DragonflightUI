@@ -585,6 +585,14 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     borderArt:Hide() -- UpdateBorderArt anchors and shows it per the hideBorder option
     self.BorderArt = borderArt
 
+    -- Solid backing behind the buttons: retail's own fill art is only a
+    -- ~20% black tint (measured from the atlas), which reads as empty over
+    -- bright scenes - so expose the opacity as the borderFill option.
+    local fill = self:CreateTexture('DragonflightUIActionbarBorderFill', 'BACKGROUND', nil, -7)
+    fill:SetColorTexture(0, 0, 0, 1)
+    fill:Hide()
+    self.BorderFill = fill
+
     local handler = self.StateHandler
     if handler then handler:SetFrameRef('mainbarFrame', self.MainBarFrame) end
 end
@@ -596,8 +604,10 @@ end
 function DragonflightUIActionbarMixin:UpdateBorderArt(state)
     local border = self.BorderArt
     if not border then return end
+    local fill = self.BorderFill
     if state.hideBorder then
         border:Hide()
+        if fill then fill:Hide() end
         return
     end
 
@@ -622,6 +632,18 @@ function DragonflightUIActionbarMixin:UpdateBorderArt(state)
         border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -4, 4)
         border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 8, -7)
         border:Show()
+        if fill then
+            local opacity = state.borderFill or 0
+            if opacity > 0 then
+                fill:ClearAllPoints()
+                fill:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -2, 2)
+                fill:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 2, -2)
+                fill:SetAlpha(opacity)
+                fill:Show()
+            else
+                fill:Hide()
+            end
+        end
         return true
     end
     -- rects resolve a frame after layout; retry once if not ready yet

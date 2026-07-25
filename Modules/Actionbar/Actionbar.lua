@@ -53,6 +53,7 @@ local defaults = {
             hideScrolling = false,
             gryphons = 'DEFAULT',
             hideBorder = false,
+            borderFill = 0.4,
             hideDivider = true,
             range = true,
             hideMacro = false,
@@ -1046,6 +1047,17 @@ local function GetBarOption(n)
                 desc = L["MoreOptionsHideBorderDesc"] .. getDefaultStr('hideBorder', barname),
                 group = 'headerButtons',
                 order = 51.4,
+                editmode = true
+            },
+            borderFill = {
+                type = 'range',
+                name = L["MoreOptionsBorderFill"],
+                desc = L["MoreOptionsBorderFillDesc"] .. getDefaultStr('borderFill', barname),
+                min = 0,
+                max = 1,
+                bigStep = 0.05,
+                group = 'headerButtons',
+                order = 51.45,
                 editmode = true
             },
             hideDivider = {
