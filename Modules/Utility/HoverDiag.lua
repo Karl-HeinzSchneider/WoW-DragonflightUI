@@ -133,6 +133,13 @@ local function actionbarCensus()
         parts[#parts + 1] = string.format('parkedMB5b1:id=%d,action=%s,vis=%s', mb5:GetID() or -1,
                                           tostring(mb5.action), tostring(mb5:IsVisible() and 1 or 0))
     end
+    local abModule = DF.GetModule and DF:GetModule('Actionbar', true)
+    local filterStats = abModule and abModule.SlotFilterStats
+    if filterStats then
+        parts[#parts + 1] = string.format('slotFilter:light=%d,full=%d', filterStats.spurious, filterStats.full)
+    else
+        parts[#parts + 1] = 'slotFilter:off'
+    end
     return table.concat(parts, ' | ')
 end
 

@@ -2582,7 +2582,99 @@ function Module:GetSetupActionbarSteps()
         if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil; end
     end}
 
+    steps[#steps + 1] = {'SlotChangedFilter', function() Module.InstallSlotChangedFilter() end}
+
     return steps
+end
+
+-- #showtooltip [@mouseover] macros make the 1.15.9 client fire one
+-- ACTIONBAR_SLOT_CHANGED per placed macro slot on EVERY mouseover change.
+-- Blizzard's central dispatcher answers each with a forced full
+-- UpdateAction() on the matching button (~5kb of Lua garbage each) even
+-- though the slot's contents never changed - only the resolved icon did.
+-- Field-measured: ~38 events and ~205kb of client-side allocation per
+-- player the mouse crosses, identical on the stock UI. The GC pressure is
+-- the "raid hover stutter".
+--
+-- Fix: take over that one event. Real slot changes (drag, learn, wipe -
+-- the action signature actually differs) get Blizzard's full pipeline,
+-- deferred to after combat if needed (they can't originate in combat
+-- anyway). Re-resolutions (signature unchanged) get exactly what visibly
+-- changed: icon texture, count, tooltip-if-hovered - on visible buttons
+-- only. Hidden buttons self-heal via OnShow -> Update(). Cooldown swipes
+-- are pushed C-side via RegisterActionUIButton and usable/range coloring
+-- arrives through ACTION_USABLE_CHANGED / ACTION_RANGE_CHECK_UPDATE, so
+-- neither needs the full update here.
+function Module.InstallSlotChangedFilter()
+    local bef = _G['ActionBarButtonEventsFrame']
+    if not bef or not bef.frames or Module.SlotFilterInstalled then return end
+    Module.SlotFilterInstalled = true
+
+    bef:UnregisterEvent('ACTIONBAR_SLOT_CHANGED')
+
+    local lastSig = {} -- slot -> "type:id:subType" signature
+    local pendingFull = {} -- slots (or 0 = all) awaiting full dispatch post-combat
+    local stats = {spurious = 0, full = 0}
+    Module.SlotFilterStats = stats
+
+    local function fullDispatch(slot)
+        stats.full = stats.full + 1
+        for _, btn in pairs(bef.frames) do if btn.OnEvent then btn:OnEvent('ACTIONBAR_SLOT_CHANGED', slot) end end
+    end
+
+    local function lightweightUpdate(slot)
+        stats.spurious = stats.spurious + 1
+        for _, btn in pairs(bef.frames) do
+            if btn.action == slot and btn:IsVisible() then
+                local tex = C_ActionBar.GetActionTexture(slot)
+                if btn.icon and tex then btn.icon:SetTexture(tex) end
+                if btn.UpdateCount then btn:UpdateCount() end
+                if GameTooltip:GetOwner() == btn and btn.SetTooltip then btn:SetTooltip() end
+            end
+        end
+    end
+
+    local filter = CreateFrame('Frame')
+    filter:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+    filter:RegisterEvent('PLAYER_REGEN_ENABLED')
+    filter:SetScript('OnEvent', function(_, event, slot)
+        if event == 'PLAYER_REGEN_ENABLED' then
+            if pendingFull[0] then
+                fullDispatch(0)
+            else
+                for s in pairs(pendingFull) do fullDispatch(s) end
+            end
+            wipe(pendingFull)
+            return
+        end
+
+        if slot == 0 then
+            -- full-bar refresh broadcast
+            if InCombatLockdown() then
+                pendingFull[0] = true
+            else
+                fullDispatch(0)
+            end
+            return
+        end
+
+        local actionType, id, subType = GetActionInfo(slot)
+        local sig = (actionType or '') .. ':' .. (id or 0) .. ':' .. (subType or '')
+        if lastSig[slot] == sig then
+            -- same action in the slot -> macro-conditional re-resolution
+            lightweightUpdate(slot)
+        else
+            lastSig[slot] = sig
+            if InCombatLockdown() then
+                -- keep the visuals current now, run the full (protected-
+                -- touching) pipeline once combat drops
+                lightweightUpdate(slot)
+                pendingFull[slot] = true
+            else
+                fullDispatch(slot)
+            end
+        end
+    end)
 end
 
 function Module.AddStateUpdater()
