@@ -1507,6 +1507,27 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     hand:ClearAllPoints()
     hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
 
+    -- Retail-style plates framing the gear slots: a recessed pillar behind
+    -- each slot column and one behind the weapon row, like the Dragonflight
+    -- character pane. Built from InsetFrameTemplate (same approach as the
+    -- trainer frame) so no new art is needed. Kept below the slot buttons.
+    do
+        local function slotPlate(name, topSlot, bottomSlot)
+            if not (topSlot and bottomSlot) then return end
+            local plate = CreateFrame('Frame', name, PaperDollFrame, 'InsetFrameTemplate')
+            plate:SetPoint('TOPLEFT', topSlot, 'TOPLEFT', -3, 3)
+            plate:SetPoint('BOTTOMRIGHT', bottomSlot, 'BOTTOMRIGHT', 3, -3)
+            -- one level under the slot buttons: above the big inset (created
+            -- after it), guaranteed below the slots
+            plate:SetFrameLevel(math.max(inset:GetFrameLevel(), topSlot:GetFrameLevel() - 1))
+            return plate
+        end
+        slotPlate('DragonflightUICharacterSlotPlateLeft', CharacterHeadSlot, CharacterWristSlot)
+        slotPlate('DragonflightUICharacterSlotPlateRight', CharacterHandsSlot, CharacterTrinket1Slot)
+        slotPlate('DragonflightUICharacterSlotPlateBottom', CharacterMainHandSlot,
+                  CharacterRangedSlot or CharacterSecondaryHandSlot)
+    end
+
     if DF.API.Version.IsWotlk then
         -- head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -10)
         -- hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -10)
