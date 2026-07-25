@@ -386,7 +386,7 @@ function DragonflightUIActionbarMixin:Update()
 
     -- mainbar only
     if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
-    if self.BorderArt then self.BorderArt:SetShown(not state.hideBorder) end
+    if self.BorderArt then self:UpdateBorderArt(state) end
 
     if self.numberFrame then self:UpdateNumberFrame() end
 
@@ -578,23 +578,52 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt', 'BACKGROUND', nil, -6)
     borderArt:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x')
     borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
-    borderArt:SetPoint('TOPLEFT', self, 'TOPLEFT', -5, 5)
-    borderArt:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 5, -5)
     if borderArt.SetTextureSliceMargins then
         borderArt:SetTextureSliceMode((Enum.UITextureSliceMode and Enum.UITextureSliceMode.Tiled) or 1)
         borderArt:SetTextureSliceMargins(20, 20, 25, 25)
     end
-    borderArt:Hide() -- UpdateState shows it per the hideBorder option
+    borderArt:Hide() -- UpdateBorderArt anchors and shows it per the hideBorder option
     self.BorderArt = borderArt
 
-    -- self.gryphonLeft:SetParent(self.MainBarFrame)
-    -- self.gryphonLeft:SetScale(0.42)
-    -- self.gryphonRight:SetParent(self.MainBarFrame)
-    -- self.gryphonRight:SetScale(0.42)
-
     local handler = self.StateHandler
-    if not handler then return end
-    handler:SetFrameRef('mainbarFrame', self.MainBarFrame)
+    if handler then handler:SetFrameRef('mainbarFrame', self.MainBarFrame) end
+end
+
+-- The bar frame is sized for editmode, not the button footprint (button
+-- scale/padding/rows shrink the real grid), so the border must hug the
+-- buttons' bounding box: anchor to the top-left-most and bottom-right-most
+-- buttons after layout.
+function DragonflightUIActionbarMixin:UpdateBorderArt(state)
+    local border = self.BorderArt
+    if not border then return end
+    if state.hideBorder then
+        border:Hide()
+        return
+    end
+
+    local PAD = 5
+    local function anchor()
+        local tlBtn, brBtn
+        for _, b in ipairs(self.buttonTable) do
+            local l, t = b:GetLeft(), b:GetTop()
+            if not l or not t then return false end
+            if not tlBtn or l < tlBtn:GetLeft() - 0.5 or (math.abs(l - tlBtn:GetLeft()) < 0.5 and t > tlBtn:GetTop()) then
+                tlBtn = b
+            end
+            if not brBtn or b:GetRight() > brBtn:GetRight() + 0.5 or
+                (math.abs(b:GetRight() - brBtn:GetRight()) < 0.5 and b:GetBottom() < brBtn:GetBottom()) then
+                brBtn = b
+            end
+        end
+        if not (tlBtn and brBtn) then return false end
+        border:ClearAllPoints()
+        border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -PAD, PAD)
+        border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', PAD, -PAD)
+        border:Show()
+        return true
+    end
+    -- rects resolve a frame after layout; retry once if not ready yet
+    if not anchor() then C_Timer.After(0, anchor) end
 end
 
 function DragonflightUIActionbarMixin:AddPagingStateDriver()
