@@ -455,6 +455,13 @@ function Module:ToggleConfigFrame()
 end
 
 function Module:SlashCommand(input)
+    local cmd = input and input:gsub('^%s+', ''):lower() or ''
+    if cmd == 'bardump' then
+        -- TEMP: main-bar border geometry diagnostics
+        local ab = DF:GetModule('Actionbar', true)
+        if ab and ab.DumpBarGeometry then ab.DumpBarGeometry() end
+        return
+    end
     Module:ToggleConfigFrame()
 end
 

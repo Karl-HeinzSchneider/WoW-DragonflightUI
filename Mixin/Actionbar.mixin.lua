@@ -601,7 +601,9 @@ function DragonflightUIActionbarMixin:UpdateBorderArt(state)
         return
     end
 
-    local PAD = 5
+    -- Retail (Mainline MainActionBar.xml): BorderArt anchors TOPLEFT(-4,4)
+    -- BOTTOMRIGHT(8,-7) to a bar sized exactly to the button grid - the
+    -- art's right/bottom edges are thicker, hence the asymmetry.
     local function anchor()
         local tlBtn, brBtn
         for _, b in ipairs(self.buttonTable) do
@@ -617,8 +619,8 @@ function DragonflightUIActionbarMixin:UpdateBorderArt(state)
         end
         if not (tlBtn and brBtn) then return false end
         border:ClearAllPoints()
-        border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -PAD, PAD)
-        border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', PAD, -PAD)
+        border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -4, 4)
+        border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 8, -7)
         border:Show()
         return true
     end
