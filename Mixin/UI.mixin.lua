@@ -1577,20 +1577,68 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
 
                 -- retail caps the tray's outer edges with dedicated pieces:
                 -- Char-Slot-Bottom-Left on the first weapon slot and
-                -- Char-Slot-Bottom-Right on the last (era's last is Ranged)
+                -- Char-Slot-Bottom-Right on the last
                 if slotName == 'MainHand' then
                     local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
                     cap:SetTexture(PARTS)
                     cap:SetSize(6, 54)
                     cap:SetTexCoord(0.70703125, 0.73046875, 0.4375, 0.859375)
                     cap:SetPoint('TOPRIGHT', t, 'TOPLEFT', 0, 0)
-                elseif slotName == 'Ranged' then
+                elseif slotName == 'Ranged' and not _G['CharacterAmmoSlot'] then
                     local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
                     cap:SetTexture(PARTS)
                     cap:SetSize(7, 54)
                     cap:SetTexCoord(0.671875, 0.69921875, 0.4375, 0.859375)
                     cap:SetPoint('TOPLEFT', t, 'TOPRIGHT', 0, 0)
                 end
+            end
+        end
+
+        -- Era-only ammo slot: retail has no equivalent, so integrate it as a
+        -- fourth tray slot instead of the classic 27px round oddball - full
+        -- 37px size, tray spacing off Ranged, same frame piece, and the
+        -- tray's right cap lives here. The classic round art and the
+        -- "feeds the ranged weapon" pointing arrow become redundant.
+        local ammo = _G['CharacterAmmoSlot']
+        if ammo and not ammo.DFSlotFrame then
+            for _, region in ipairs({ammo:GetRegions()}) do
+                if region:GetObjectType() == 'Texture' then
+                    local layer = region:GetDrawLayer()
+                    if layer == 'BACKGROUND' or layer == 'OVERLAY' then region:Hide() end
+                end
+            end
+
+            ammo:SetSize(37, 37)
+            ammo:ClearAllPoints()
+            ammo:SetPoint('TOPLEFT', CharacterRangedSlot, 'TOPRIGHT', 5, 0)
+            ammo:SetFrameLevel(7)
+
+            local icon = _G['CharacterAmmoSlotIconTexture']
+            if icon then
+                icon:ClearAllPoints()
+                icon:SetAllPoints(ammo)
+            end
+
+            local p = PIECES.bottom
+            local t = ammo:CreateTexture(nil, 'BACKGROUND', nil, -1)
+            t:SetTexture(PARTS)
+            t:SetSize(p[1], p[2])
+            t:SetTexCoord(p[3], p[4], p[5], p[6])
+            t:SetPoint(p[7], ammo, p[7], p[8], p[9])
+            ammo.DFSlotFrame = t
+
+            local cap = ammo:CreateTexture(nil, 'BACKGROUND', nil, -1)
+            cap:SetTexture(PARTS)
+            cap:SetSize(7, 54)
+            cap:SetTexCoord(0.671875, 0.69921875, 0.4375, 0.859375)
+            cap:SetPoint('TOPLEFT', t, 'TOPRIGHT', 0, 0)
+
+            local high = ammo:GetHighlightTexture()
+            if high then
+                high:SetTexture('Interface\\Buttons\\ButtonHilight-Square')
+                high:SetBlendMode('ADD')
+                high:ClearAllPoints()
+                high:SetAllPoints(ammo)
             end
         end
     end
