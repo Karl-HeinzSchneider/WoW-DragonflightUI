@@ -1569,8 +1569,79 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
                     high:ClearAllPoints()
                     high:SetAllPoints(btn)
                 end
+
+                -- the weapon tray pieces reach below the button and were
+                -- getting covered by a sibling frame - lift the weapon
+                -- buttons above their siblings (retail draws them last)
+                if side == 'bottom' then btn:SetFrameLevel(7) end
             end
         end
+    end
+
+    -- Retail inner border framing the model area (PaperDollInnerBorder* in
+    -- retail PaperDollFrame.xml, geometry verbatim): Char-Corner pieces
+    -- from the parts sheet plus tiling edges from Char-Paperdoll-Horizontal
+    -- and Char-Paperdoll-Vertical (FileDataID 410247/410249, shipped as
+    -- addon copies). Lives on the pane inset's OVERLAY layer - above the
+    -- dark pane background, below the slot buttons - like retail.
+    do
+        local PARTS = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollparts'
+        local HORIZ = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollhorizontal'
+        local VERT = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollvertical'
+
+        local function corner(l, r, t, b, point, x, y)
+            local tex = inset:CreateTexture(nil, 'OVERLAY')
+            tex:SetTexture(PARTS)
+            tex:SetSize(7, 7)
+            tex:SetTexCoord(l, r, t, b)
+            tex:SetPoint(point, inset, point, x, y)
+            return tex
+        end
+        local tl = corner(0.40625, 0.43359375, 0.8046875, 0.859375, 'TOPLEFT', 46, -4)
+        local tr = corner(0.40625, 0.43359375, 0.734375, 0.7890625, 'TOPRIGHT', -47, -4)
+        local bl = corner(0.40625, 0.43359375, 0.6640625, 0.71875, 'BOTTOMLEFT', 46, 31)
+        local br = corner(0.40625, 0.43359375, 0.59375, 0.6484375, 'BOTTOMRIGHT', -47, 31)
+
+        local left = inset:CreateTexture(nil, 'OVERLAY')
+        left:SetTexture(VERT, 'CLAMP', 'REPEAT')
+        if left.SetVertTile then left:SetVertTile(true) end
+        left:SetWidth(5)
+        left:SetTexCoord(0.0625, 0.375, 0, 1)
+        left:SetPoint('TOPLEFT', tl, 'BOTTOMLEFT', -1, 0)
+        left:SetPoint('BOTTOMLEFT', bl, 'TOPLEFT', -1, 0)
+
+        local right = inset:CreateTexture(nil, 'OVERLAY')
+        right:SetTexture(VERT, 'CLAMP', 'REPEAT')
+        if right.SetVertTile then right:SetVertTile(true) end
+        right:SetWidth(5)
+        right:SetTexCoord(0.5, 0.8125, 0, 1)
+        right:SetPoint('TOPRIGHT', tr, 'BOTTOMRIGHT', 1, 0)
+        right:SetPoint('BOTTOMRIGHT', br, 'TOPRIGHT', 1, 0)
+
+        local top = inset:CreateTexture(nil, 'OVERLAY')
+        top:SetTexture(HORIZ, 'REPEAT', 'CLAMP')
+        if top.SetHorizTile then top:SetHorizTile(true) end
+        top:SetHeight(5)
+        top:SetTexCoord(0, 1, 0.5, 0.8125)
+        top:SetPoint('TOPLEFT', tl, 'TOPRIGHT', 0, 1)
+        top:SetPoint('TOPRIGHT', tr, 'TOPLEFT', 0, 1)
+
+        local bottom = inset:CreateTexture(nil, 'OVERLAY')
+        bottom:SetTexture(HORIZ, 'REPEAT', 'CLAMP')
+        if bottom.SetHorizTile then bottom:SetHorizTile(true) end
+        bottom:SetHeight(5)
+        bottom:SetTexCoord(0, 1, 0.0625, 0.375)
+        bottom:SetPoint('BOTTOMLEFT', bl, 'BOTTOMRIGHT', 0, -1)
+        bottom:SetPoint('BOTTOMRIGHT', br, 'BOTTOMLEFT', 0, -1)
+
+        -- retail's second full-width bottom line running behind the weapon tray
+        local bottom2 = inset:CreateTexture(nil, 'OVERLAY')
+        bottom2:SetTexture(HORIZ, 'REPEAT', 'CLAMP')
+        if bottom2.SetHorizTile then bottom2:SetHorizTile(true) end
+        bottom2:SetHeight(5)
+        bottom2:SetTexCoord(0, 1, 0.0625, 0.375)
+        bottom2:SetPoint('BOTTOMLEFT', inset, 'BOTTOMLEFT', 0, 27)
+        bottom2:SetPoint('BOTTOMRIGHT', inset, 'BOTTOMRIGHT', 0, 27)
     end
 
     if DF.API.Version.IsWotlk then
