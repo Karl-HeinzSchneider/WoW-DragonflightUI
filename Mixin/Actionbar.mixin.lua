@@ -570,6 +570,23 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     -- self:AddDeco()
     self:AddDecoNew()
 
+    -- Retail wraps the main bar in the UI-HUD-ActionBar-Frame nineslice
+    -- (MainMenuBar.BorderArt); the Classic template never defines it, so
+    -- build it from the shipped texture. Everything else is already wired:
+    -- UpdateState toggles it via the bar's hideBorder option and Darkmode
+    -- tints it.
+    local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt', 'BACKGROUND', nil, -6)
+    borderArt:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x')
+    borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
+    borderArt:SetPoint('TOPLEFT', self, 'TOPLEFT', -5, 5)
+    borderArt:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 5, -5)
+    if borderArt.SetTextureSliceMargins then
+        borderArt:SetTextureSliceMode((Enum.UITextureSliceMode and Enum.UITextureSliceMode.Tiled) or 1)
+        borderArt:SetTextureSliceMargins(20, 20, 25, 25)
+    end
+    borderArt:Hide() -- UpdateState shows it per the hideBorder option
+    self.BorderArt = borderArt
+
     -- self.gryphonLeft:SetParent(self.MainBarFrame)
     -- self.gryphonLeft:SetScale(0.42)
     -- self.gryphonRight:SetParent(self.MainBarFrame)
