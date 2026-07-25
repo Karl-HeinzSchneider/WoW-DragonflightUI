@@ -2418,8 +2418,8 @@ function DragonflightUIPetbarMixin:StylePetButton()
             local overlay = btn.AutoCastOverlay
             overlay:ClearAllPoints()
             overlay:SetPoint('CENTER', btn, 'CENTER', 0, 0)
-            overlay:SetSize(38, 38)
-            if overlay.Corners then overlay.Corners:SetSize(84, 84) end
+            overlay:SetSize(34, 34)
+            if overlay.Corners then overlay.Corners:SetSize(75, 75) end
         end
 
         -- SmallActionButtonTemplate (modern pet buttons) hard-sizes the
