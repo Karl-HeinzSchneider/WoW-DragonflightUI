@@ -461,10 +461,6 @@ function Module:SlashCommand(input)
         DF.HoverDiag:Command(hoverArg)
         return
     end
-    if cmd == 'weapontune' and DragonflightUIMixin.ShowWeaponTune then
-        DragonflightUIMixin:ShowWeaponTune()
-        return
-    end
     Module:ToggleConfigFrame()
 end
 

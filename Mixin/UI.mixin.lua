@@ -4321,60 +4321,6 @@ function DragonflightUIMixin:ChangeWrathPVPFrame()
     frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
 end
 
--- TEMP tuning dial (/df weapontune): the weapon row X for characters whose
--- ammo slot is hidden (class can't use ammo), so the centered value can be
--- read off and baked in. Remove once signed off.
-function DragonflightUIMixin:ShowWeaponTune()
-    if self.WeaponTunePanel then
-        self.WeaponTunePanel:Show()
-        return
-    end
-
-    local panel = CreateFrame('Frame', 'DragonflightUIWeaponTunePanel', UIParent, 'BackdropTemplate')
-    self.WeaponTunePanel = panel
-    panel:SetSize(280, 78)
-    panel:SetPoint('CENTER', UIParent, 'CENTER', 0, 200)
-    panel:SetFrameStrata('DIALOG')
-    panel:SetBackdrop({
-        bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-        edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
-        edgeSize = 12,
-        insets = {left = 3, right = 3, top = 3, bottom = 3}
-    })
-    panel:SetMovable(true)
-    panel:EnableMouse(true)
-    panel:RegisterForDrag('LeftButton')
-    panel:SetScript('OnDragStart', panel.StartMoving)
-    panel:SetScript('OnDragStop', panel.StopMovingOrSizing)
-
-    local close = CreateFrame('Button', nil, panel, 'UIPanelCloseButton')
-    close:SetPoint('TOPRIGHT', 0, 0)
-
-    local label = panel:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
-    label:SetPoint('TOPLEFT', panel, 'TOPLEFT', 16, -12)
-
-    local s = CreateFrame('Slider', nil, panel, 'BackdropTemplate')
-    s:SetOrientation('HORIZONTAL')
-    s:SetSize(240, 16)
-    s:SetPoint('TOPLEFT', panel, 'TOPLEFT', 16, -30)
-    s:SetBackdrop({
-        bgFile = 'Interface\\Buttons\\UI-SliderBar-Background',
-        edgeFile = 'Interface\\Buttons\\UI-SliderBar-Border',
-        edgeSize = 8,
-        insets = {left = 3, right = 3, top = 6, bottom = 6}
-    })
-    s:SetThumbTexture('Interface\\Buttons\\UI-SliderBar-Button-Horizontal')
-    s:SetMinMaxValues(60, 160)
-    s:SetValueStep(0.5)
-    s:SetObeyStepOnDrag(true)
-    s:SetScript('OnValueChanged', function(_, v)
-        label:SetFormattedText('Weapon row X (no ammo slot): |cffffffff%.1f|r', v)
-        DragonflightUIMixin.WeaponRowNoAmmoX = v
-        if DragonflightUIMixin.PositionWeaponRow then DragonflightUIMixin.PositionWeaponRow() end
-    end)
-    s:SetValue(DragonflightUIMixin.WeaponRowNoAmmoX or 108.5)
-end
-
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 
