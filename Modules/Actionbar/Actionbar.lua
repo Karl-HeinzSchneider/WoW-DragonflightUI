@@ -2558,6 +2558,25 @@ function Module:GetSetupActionbarSteps()
                 blizzBar.ignoreFramePositionManager = true
                 blizzBar:SetParent(hider)
             end
+            -- The parked buttons drive the same slots (145-180) as DFUI's
+            -- extra bars, and even hidden they stay registered in the
+            -- central dispatchers (ActionBarButtonEventsFrame has no
+            -- unregister API), so every global action-bar event - and with
+            -- #showtooltip [@mouseover] macros that means every mouseover
+            -- change - runs a full Update/UpdateCooldown (several table
+            -- allocations each) on 36 invisible duplicates. Pointing them
+            -- at empty slot 0 makes HasAction() false: Update() takes the
+            -- cheap empty branch, ActionBarActionEventsFrame auto-drops
+            -- them, and C_ActionBar.RegisterActionUIButton(btn, 0) unhooks
+            -- the client-side cooldown pushes. Hidden buttons were never
+            -- range/usable-registered, so no tracking is torn down.
+            for i = 1, 12 do
+                local btn = _G[barName .. 'Button' .. i]
+                if btn then
+                    btn:SetID(0)
+                    btn:SetAttribute('action', 0)
+                end
+            end
         end
 
         if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil; end

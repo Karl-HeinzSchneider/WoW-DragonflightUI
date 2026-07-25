@@ -16,6 +16,15 @@ local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
 -- the unattributed remainder (allocations belonging to the Blizzard UI /
 -- client rather than any addon).
 --
+-- v7 adds the action-bar storm instrumentation: per-second counts of the
+-- events that #showtooltip [@mouseover] macros make the client fire on
+-- every mouseover change (SLOT_CHANGED / SPELL_UPDATE_ICON /
+-- UPDATE_COOLDOWN / RANGE_CHECK / USABLE_CHANGED), and a census of how
+-- many action buttons sit in Blizzard's central dispatchers (every one of
+-- them runs a full Update/UpdateCooldown - several table allocations per
+-- button - per global event). Together these prove or disprove the
+-- "duplicated button population x mouseover macro re-resolution" theory.
+--
 -- Everything is hooksecurefunc/method-wrap/OnUpdate based - no secure paths
 -- are touched, and the wraps are inert while the diagnostic is off.
 local Diag = {}
@@ -44,6 +53,88 @@ local sessAllocDfui, sessAllocOther = 0, 0
 local sec = {}
 local cur = {}
 local prev = {}
+
+-- action-bar event storm counters (v7) -----------------------------------
+local EV_WATCH = {
+    'UPDATE_MOUSEOVER_UNIT', 'ACTIONBAR_SLOT_CHANGED', 'SPELL_UPDATE_ICON', 'ACTIONBAR_UPDATE_COOLDOWN',
+    'ACTION_RANGE_CHECK_UPDATE', 'ACTION_USABLE_CHANGED', 'ACTIONBAR_UPDATE_STATE'
+}
+local secEv, sessEv = {}, {}
+local evFrame = CreateFrame('Frame')
+evFrame:SetScript('OnEvent', function(_, event)
+    secEv[event] = (secEv[event] or 0) + 1
+    sessEv[event] = (sessEv[event] or 0) + 1
+end)
+
+local function evLine(t)
+    return string.format('mo=%d slot=%d icon=%d cd=%d rng=%d usab=%d state=%d', t.UPDATE_MOUSEOVER_UNIT or 0,
+                         t.ACTIONBAR_SLOT_CHANGED or 0, t.SPELL_UPDATE_ICON or 0, t.ACTIONBAR_UPDATE_COOLDOWN or 0,
+                         t.ACTION_RANGE_CHECK_UPDATE or 0, t.ACTION_USABLE_CHANGED or 0, t.ACTIONBAR_UPDATE_STATE or 0)
+end
+
+local function countKeys(t)
+    local n = 0
+    for _ in pairs(t) do n = n + 1 end
+    return n
+end
+
+-- Census of Blizzard's central action-button dispatchers: every frame
+-- listed there receives every dispatched event; buttons with actions run
+-- the full Update/UpdateCooldown pipeline per event. Read-only.
+local function actionbarCensus()
+    local parts = {}
+    local bef = _G['ActionBarButtonEventsFrame']
+    if bef and bef.frames then
+        local total, visible, dfui = 0, 0, 0
+        for _, f in pairs(bef.frames) do
+            total = total + 1
+            if f.IsVisible and f:IsVisible() then visible = visible + 1 end
+            local name = f.GetName and f:GetName()
+            if name and name:find('DragonflightUI', 1, true) then dfui = dfui + 1 end
+        end
+        parts[#parts + 1] = string.format('buttonEvents=%d(%d visible,%d dfui)', total, visible, dfui)
+    end
+    local aef = _G['ActionBarActionEventsFrame']
+    if aef and aef.frames then parts[#parts + 1] = 'actionEvents=' .. countKeys(aef.frames) end
+    local rcf = _G['ActionBarButtonRangeCheckFrame']
+    if rcf and rcf.actions then
+        local acts, frames = 0, 0
+        for _, t in pairs(rcf.actions) do
+            acts = acts + 1
+            frames = frames + countKeys(t)
+        end
+        parts[#parts + 1] = string.format('rangeTracked=%da/%df', acts, frames)
+    end
+    local uwf = _G['ActionBarButtonUsableWatcherFrame']
+    if uwf and uwf.actions then
+        local acts, frames = 0, 0
+        for _, t in pairs(uwf.actions) do
+            acts = acts + 1
+            frames = frames + countKeys(t)
+        end
+        parts[#parts + 1] = string.format('usableWatched=%da/%df', acts, frames)
+    end
+    if GetNumMacros and GetMacroBody then
+        local nGlobal, nChar = GetNumMacros()
+        local mo, total = 0, 0
+        local function scan(i)
+            local b = GetMacroBody(i)
+            if b then
+                total = total + 1
+                if b:lower():find('mouseover', 1, true) then mo = mo + 1 end
+            end
+        end
+        for i = 1, (nGlobal or 0) do scan(i) end
+        for i = 121, 120 + (nChar or 0) do scan(i) end
+        parts[#parts + 1] = string.format('macros=%d(%d w/mouseover)', total, mo)
+    end
+    local mb5 = _G['MultiBar5Button1']
+    if mb5 then
+        parts[#parts + 1] = string.format('parkedMB5b1:id=%d,action=%s,vis=%s', mb5:GetID() or -1,
+                                          tostring(mb5.action), tostring(mb5:IsVisible() and 1 or 0))
+    end
+    return table.concat(parts, ' | ')
+end
 
 local function resetCounters(t)
     t.setUnit = false
@@ -157,10 +248,10 @@ local function header()
     end
     table.sort(loadedAddons)
     return string.format(
-               'DragonflightUI hover-lag log v6 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s\naddons loaded (%d): %s',
+               'DragonflightUI hover-lag log v7 | v%s | client build %s | %s | class %s | lvl %d | profile %s | started %s\nmodules ON: %s\nmodules OFF: %s\naddons loaded (%d): %s\nactionbars: %s',
                tostring(version), tostring(build), IsInRaid() and 'raid' or (IsInGroup() and 'party' or 'solo'),
                tostring(class), UnitLevel('player') or 0, tostring(profile), date('%Y-%m-%d %H:%M:%S'), enabled,
-               disabled == '' and '-' or disabled, #loadedAddons, table.concat(loadedAddons, ','))
+               disabled == '' and '-' or disabled, #loadedAddons, table.concat(loadedAddons, ','), actionbarCensus())
 end
 
 -- 5s addon-memory probe -------------------------------------------------
@@ -219,14 +310,15 @@ local function flushSecond()
     end
 
     local line = string.format(
-                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s units=P%d/N%d builds=%d lines=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) allocDfuiFrames=%dkb(%d) allocOtherFrames=%dkb(%d) allocByHover=P%d/N%d/-%dkb worstAlloc=%dkb@%s',
+                     '%s fps=%.0f avg=%.0fms worst=%.0fms over33ms=%d hover=%s units=P%d/N%d builds=%d lines=%d dfuiTT=%.1fms(%d) anchorHook=%.1fms(%d/%d) backdrop=%.1fms(%d) statusbar=%.1fms(%d) resize=%.1fms(%d) allocDfuiFrames=%dkb(%d) allocOtherFrames=%dkb(%d) allocByHover=P%d/N%d/-%dkb worstAlloc=%dkb@%s ev[%s]',
                      date('%H:%M:%S'), fps, avg, sec.worst * 1000, sec.over33, sec.hover and 'YES' or 'no',
                      sec.unitsPlayer, sec.unitsNpc, sec.builds, sec.maxLines, sec.ttMs, sec.ttN, sec.anMs, sec.anN,
                      sec.anchorN, sec.bdMs, sec.bdN, sec.sbMs, sec.sbN, sec.fsMs, sec.fsN, sec.allocDfui,
                      sec.allocDfuiN, sec.allocOther, sec.allocOtherN, sec.allocPlayer, sec.allocNpc, sec.allocNone,
-                     sec.worstAllocKb, sec.worstAllocUnit)
+                     sec.worstAllocKb, sec.worstAllocUnit, evLine(secEv))
     addLine(line)
     if avg > SLOW_FRAME * 1000 then chat(line) end
+    wipe(secEv)
     resetSecond()
 end
 
@@ -360,6 +452,9 @@ function Diag:Start()
     lastAddonMem = nil
     lastProbeAt = GetTime()
     skipStatsOnce = false
+    wipe(secEv)
+    wipe(sessEv)
+    for _, ev in ipairs(EV_WATCH) do pcall(evFrame.RegisterEvent, evFrame, ev) end
     resetSecond()
     resetCounters(cur)
     resetCounters(prev)
@@ -372,6 +467,7 @@ function Diag:Stop(auto)
     if not active then return end
     active = false
     flushSecond()
+    evFrame:UnregisterAllEvents()
     addonProbe() -- final delta snapshot
 
     local hoverAvg = hoverFrames > 0 and (hoverMs / hoverFrames) or 0
@@ -386,6 +482,15 @@ function Diag:Stop(auto)
                 sessUnitsNpc > 0 and (sessAllocNpc / sessUnitsNpc) or 0))
     addLine(string.format('SUMMARY worst single frame allocation: %dkb while over %s', sessWorstAllocKb,
                           sessWorstAllocUnit))
+    local unitsCrossed = sessUnitsPlayer + sessUnitsNpc
+    addLine(string.format('SUMMARY actionbar events: total [%s]%s', evLine(sessEv), unitsCrossed > 0 and
+                              string.format(' | per unit crossed: slot=%.1f icon=%.1f cd=%.1f rng=%.1f usab=%.1f',
+                                            (sessEv.ACTIONBAR_SLOT_CHANGED or 0) / unitsCrossed,
+                                            (sessEv.SPELL_UPDATE_ICON or 0) / unitsCrossed,
+                                            (sessEv.ACTIONBAR_UPDATE_COOLDOWN or 0) / unitsCrossed,
+                                            (sessEv.ACTION_RANGE_CHECK_UPDATE or 0) / unitsCrossed,
+                                            (sessEv.ACTION_USABLE_CHANGED or 0) / unitsCrossed) or ''))
+    addLine('SUMMARY actionbar census: ' .. actionbarCensus())
 
     local ranked = {}
     local addonSum = 0

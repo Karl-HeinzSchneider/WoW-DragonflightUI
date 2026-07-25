@@ -61,8 +61,25 @@ function DragonflightUIActionbarMixin:Init()
     self:RegisterEvent('ACTIONBAR_SHOWGRID')
     self:RegisterEvent('ACTIONBAR_HIDEGRID')
     self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+    -- ACTIONBAR_SLOT_CHANGED arrives in bursts: macro-conditional
+    -- re-resolution (#showtooltip [@mouseover]) fires one per macro slot on
+    -- every mouseover change, and every one of the ~10 DFUI bars receives
+    -- every burst. Grid state only depends on HasAction, so coalesce all
+    -- SLOT_CHANGED work into a single UpdateGridState on the next frame.
+    self.DFGridFlush = function()
+        self.DFGridDirty = nil
+        if InCombatLockdown() then return end
+        self:UpdateGridState()
+    end
     self:SetScript('OnEvent', function(_, event, arg1)
         -- print(self:GetName(), event, arg1)
+        if event == 'ACTIONBAR_SLOT_CHANGED' then
+            if not self.DFGridDirty then
+                self.DFGridDirty = true
+                C_Timer.After(0, self.DFGridFlush)
+            end
+            return
+        end
         if event == 'ACTIONBAR_SHOWGRID' then
             self.DragGridActive = true
         elseif event == 'ACTIONBAR_HIDEGRID' then
