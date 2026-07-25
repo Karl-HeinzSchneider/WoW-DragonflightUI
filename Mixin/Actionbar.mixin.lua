@@ -23,6 +23,20 @@ end
 
 DragonflightUIActionbarMixin = CreateFromMixins(DragonflightUIEditModeMixin)
 
+-- Generation counter for the per-button hotkey caches: computing the display
+-- text costs two concatenating binding lookups plus GetShortKey's gsub chain,
+-- and ActionButton_UpdateHotkeys fires per button on every macro
+-- re-evaluation - with @mouseover macros that means every mouseover change.
+-- Buttons only recompute when this generation moves (or their settings do).
+DragonflightUIActionbarMixin.BindingsGen = 0
+do
+    local f = CreateFrame('Frame')
+    f:RegisterEvent('UPDATE_BINDINGS')
+    f:SetScript('OnEvent', function()
+        DragonflightUIActionbarMixin.BindingsGen = DragonflightUIActionbarMixin.BindingsGen + 1
+    end)
+end
+
 function DragonflightUIActionbarMixin:Init()
     self:SetPoint('BOTTOMLEFT', UIParent, 'CENTER', 0, 380)
     self:SetSize(250, 142)
@@ -1833,16 +1847,42 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     end
 
     btn.BarRef = self;
+    -- Runs from the ActionButton_UpdateHotkeys hook, i.e. per button on
+    -- every macro re-evaluation (every mouseover change with @mouseover
+    -- macros - measured thousands of calls/sec sweeping a crowd). Cache
+    -- the computed text keyed on the bindings generation + shorten flag,
+    -- and only touch the font when the size actually changes: the binding
+    -- lookups/GetShortKey allocate, and an unconditional SetFont forces a
+    -- FontString re-layout every single call.
     function btn:DragonflightFixHotkey()
         self:FixHotkeyPosition()
 
         local state = self.BarRef.state;
         if not state then
-            self:SetKeybindFontSize(14 + 2)
+            if self.DFHotkeyFontSize ~= (14 + 2) then
+                self:SetKeybindFontSize(14 + 2)
+                self.DFHotkeyFontSize = 14 + 2
+            end
             return
         end
-        self:UpdateHotkeyDisplayText(state.shortenKeybind)
-        self:SetKeybindFontSize(state.keybindFontSize)
+        local shorten = state.shortenKeybind
+        local size = state.keybindFontSize
+
+        local gen = DragonflightUIActionbarMixin.BindingsGen
+        if self.DFHotkeyText and self.DFHotkeyGen == gen and self.DFHotkeyShorten == shorten then
+            self.HotKey:Show()
+            self.HotKey:SetText(self.DFHotkeyText)
+        else
+            self:UpdateHotkeyDisplayText(shorten)
+            self.DFHotkeyText = self.HotKey:GetText() or ''
+            self.DFHotkeyGen = gen
+            self.DFHotkeyShorten = shorten
+        end
+
+        if self.DFHotkeyFontSize ~= size then
+            self:SetKeybindFontSize(size)
+            self.DFHotkeyFontSize = size
+        end
     end
     btn:DragonflightFixHotkey()
 
