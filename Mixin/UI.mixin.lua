@@ -4308,6 +4308,96 @@ function DragonflightUIMixin:ChangeWrathPVPFrame()
     frame.PortraitFrame = frame:CreateTexture('PortraitFrame')
 end
 
+-- TEMP tuning panel (/df weapontune): live sliders for the weapon-row
+-- position, ammo gap and arrow offset so exact values can be read off and
+-- baked in. Remove once the layout is signed off.
+function DragonflightUIMixin:ShowWeaponTune()
+    if self.WeaponTunePanel then
+        self.WeaponTunePanel:Show()
+        return
+    end
+
+    local panel = CreateFrame('Frame', 'DragonflightUIWeaponTunePanel', UIParent, 'BackdropTemplate')
+    self.WeaponTunePanel = panel
+    panel:SetSize(280, 150)
+    panel:SetPoint('CENTER', UIParent, 'CENTER', 0, 200)
+    panel:SetFrameStrata('DIALOG')
+    panel:SetBackdrop({
+        bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+        edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+        edgeSize = 12,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
+    })
+    panel:SetMovable(true)
+    panel:EnableMouse(true)
+    panel:RegisterForDrag('LeftButton')
+    panel:SetScript('OnDragStart', panel.StartMoving)
+    panel:SetScript('OnDragStop', panel.StopMovingOrSizing)
+
+    local close = CreateFrame('Button', nil, panel, 'UIPanelCloseButton')
+    close:SetPoint('TOPRIGHT', 0, 0)
+
+    local title = panel:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    title:SetPoint('TOP', 0, -8)
+    title:SetText('Weapon row tuning')
+
+    local arrowRegion
+    if CharacterAmmoSlot then
+        for _, region in ipairs({CharacterAmmoSlot:GetRegions()}) do
+            if region:GetObjectType() == 'Texture' and region:GetDrawLayer() == 'OVERLAY' then
+                local w, h = region:GetSize()
+                if math.abs(w - 23) < 1 and math.abs(h - 41) < 1 then arrowRegion = region end
+            end
+        end
+    end
+
+    local function makeSlider(labelText, minV, maxV, step, default, offsetY, applyFn)
+        local label = panel:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmall')
+        label:SetPoint('TOPLEFT', panel, 'TOPLEFT', 16, offsetY)
+
+        local s = CreateFrame('Slider', nil, panel, 'BackdropTemplate')
+        s:SetOrientation('HORIZONTAL')
+        s:SetSize(180, 16)
+        s:SetPoint('TOPLEFT', panel, 'TOPLEFT', 16, offsetY - 14)
+        s:SetBackdrop({
+            bgFile = 'Interface\\Buttons\\UI-SliderBar-Background',
+            edgeFile = 'Interface\\Buttons\\UI-SliderBar-Border',
+            edgeSize = 8,
+            insets = {left = 3, right = 3, top = 6, bottom = 6}
+        })
+        s:SetThumbTexture('Interface\\Buttons\\UI-SliderBar-Button-Horizontal')
+        s:SetMinMaxValues(minV, maxV)
+        s:SetValueStep(step)
+        s:SetObeyStepOnDrag(true)
+        s:SetScript('OnValueChanged', function(_, v)
+            label:SetFormattedText('%s: |cffffffff%.1f|r', labelText, v)
+            applyFn(v)
+        end)
+        s:SetValue(default)
+        label:SetFormattedText('%s: |cffffffff%.1f|r', labelText, default)
+        return s
+    end
+
+    makeSlider('Weapon row X', 30, 160, 0.5, 74.5, -30, function(v)
+        CharacterMainHandSlot:ClearAllPoints()
+        CharacterMainHandSlot:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', v, 16)
+    end)
+
+    makeSlider('Ammo gap', 0, 90, 0.5, 42, -68, function(v)
+        if CharacterAmmoSlot then
+            CharacterAmmoSlot:ClearAllPoints()
+            CharacterAmmoSlot:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', v, 0)
+        end
+    end)
+
+    makeSlider('Arrow offset', -70, 10, 0.5, -34, -106, function(v)
+        if arrowRegion then
+            arrowRegion:ClearAllPoints()
+            arrowRegion:SetPoint('CENTER', CharacterAmmoSlot, 'CENTER', v, 0)
+        end
+    end)
+end
+
 function DragonflightUIMixin:AddNineSliceTextures(frame, portrait)
     if frame.NineSlice then return end
 
