@@ -263,15 +263,11 @@ function SubModuleMixin:Update()
     self.oomColor = CreateColorFromRGBHexString(state.oomColor)
 end
 
--- ActionButton_UpdateUsable fires for every button on every mouseover /
--- power / target change; with @mouseover macros on the bars each call used
--- to run GetMacroInfo (string returns) and C_Spell.GetSpellPowerCost (which
--- allocates a table-of-tables) - measured as a multi-MB/s allocation storm
--- while sweeping a crowd. Cache the two static lookups: whether a macro is
--- a #showtooltip macro (invalidated on UPDATE_MACROS) and each spell's
--- power costs (invalidated on player max-power changes - percent-based
--- costs scale with it). GetMacroSpell stays live: its result depends on
--- the macro's conditionals.
+-- Hot path: cache the two static lookups - whether a macro is a
+-- #showtooltip macro (invalidated on UPDATE_MACROS) and each spell's power
+-- costs (invalidated on player max-power changes; percent-based costs
+-- scale with it). GetMacroSpell stays live: its result depends on the
+-- macro's conditionals.
 local macroIsShowtooltip = {}
 local powerCostCache = {}
 do
@@ -335,9 +331,7 @@ end
 
 function SubModuleMixin:UpdateRangeAndUsable(btn, checksRange, inRange)
     if btn.ignoreRange then return end
-    -- hidden buttons (parked duplicate bars, inactive pages) refresh via
-    -- ActionButton_OnShow when they appear - roughly halves the per-event
-    -- work on setups with duplicated bars
+    -- hidden buttons refresh via ActionButton_OnShow when they appear
     if not btn:IsVisible() then return end
     local icon = btn.Icon
     if not icon then return end

@@ -18,14 +18,11 @@ function DragonflightUICharacterStatsPanelMixin:OnLoad()
     self:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
     self:RegisterEvent("COMBAT_RATING_UPDATE");
     self:RegisterEvent("VARIABLES_LOADED");
-    -- The panel only ever shows the PLAYER's stats, so every UNIT_* event
-    -- must be filtered to the player token. Unfiltered registration fires
-    -- for every unit in the world - and worse, an unfiltered UNIT_AURA
-    -- listener forces the 1.15.9 client to materialize the full Lua aura
-    -- payload for every aura-tracked unit: measured ~255kb of client-side
-    -- allocations per buff-stacked PLAYER hovered (NPCs: ~20kb), which is
-    -- the "hovering raid members causes frame drops" report - sweeping a
-    -- crowd allocated 8-10MB/s and kept the garbage collector thrashing.
+    -- The panel only shows the PLAYER's stats, so every UNIT_* event must
+    -- be filtered to the player token. Unfiltered registration fires for
+    -- every unit in the world; an unfiltered UNIT_AURA listener in
+    -- particular makes the client materialize the full aura payload for
+    -- every aura-tracked unit, which is expensive in crowds.
     for _, ev in ipairs({
         "UNIT_AURA", "UNIT_DAMAGE", "UNIT_ATTACK_SPEED", "UNIT_RANGEDDAMAGE", "UNIT_ATTACK", "UNIT_RESISTANCES",
         "UNIT_STATS", "UNIT_MAXHEALTH", "UNIT_ATTACK_POWER", "UNIT_RANGED_ATTACK_POWER"

@@ -23,11 +23,9 @@ end
 
 DragonflightUIActionbarMixin = CreateFromMixins(DragonflightUIEditModeMixin)
 
--- Generation counter for the per-button hotkey caches: computing the display
--- text costs two concatenating binding lookups plus GetShortKey's gsub chain,
--- and ActionButton_UpdateHotkeys fires per button on every macro
--- re-evaluation - with @mouseover macros that means every mouseover change.
--- Buttons only recompute when this generation moves (or their settings do).
+-- Generation counter for the per-button hotkey caches: buttons only
+-- recompute their hotkey text when this moves (or their settings change),
+-- instead of on every ActionButton_UpdateHotkeys call.
 DragonflightUIActionbarMixin.BindingsGen = 0
 do
     local f = CreateFrame('Frame')
@@ -61,11 +59,9 @@ function DragonflightUIActionbarMixin:Init()
     self:RegisterEvent('ACTIONBAR_SHOWGRID')
     self:RegisterEvent('ACTIONBAR_HIDEGRID')
     self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
-    -- ACTIONBAR_SLOT_CHANGED arrives in bursts: macro-conditional
-    -- re-resolution (#showtooltip [@mouseover]) fires one per macro slot on
-    -- every mouseover change, and every one of the ~10 DFUI bars receives
-    -- every burst. Grid state only depends on HasAction, so coalesce all
-    -- SLOT_CHANGED work into a single UpdateGridState on the next frame.
+    -- ACTIONBAR_SLOT_CHANGED arrives in bursts (one per macro slot per
+    -- mouseover change with @mouseover macros). Grid state only depends on
+    -- HasAction, so coalesce to a single UpdateGridState on the next frame.
     self.DFGridFlush = function()
         self.DFGridDirty = nil
         if InCombatLockdown() then return end
@@ -523,16 +519,11 @@ function DragonflightUIActionbarMixin:UpdateGridState()
     local btnCount = #buttonTable
     if btnCount < 1 then return end
 
-    -- era-1159: on the modern client a button's visibility is decided by
-    -- GetShowGrid() or HasAction() - but only when something re-evaluates
-    -- it (Blizzard's ActionBarMixin:UpdateShownButtons), which is why
-    -- alwaysShow=off left every button visible after a reload until the
-    -- first mouseover. Apply the same formula per-button ourselves. Do NOT
-    -- call bar:UpdateShownButtons() from here: running Blizzard's bar
-    -- update tainted trips ADDON_ACTION_FORBIDDEN. Direct SetShown, only
-    -- when the state actually differs, keeps handler churn minimal, and
-    -- Blizzard's own secure re-evaluations use the same formula off the
-    -- showgrid attribute we set, so the two never fight.
+    -- Apply Blizzard's visibility formula (showgrid attribute or
+    -- HasAction) per button ourselves. Do NOT call bar:UpdateShownButtons()
+    -- here - running it tainted trips ADDON_ACTION_FORBIDDEN. Blizzard's
+    -- secure re-evaluations use the same formula off the showgrid
+    -- attribute we set, so the two never fight.
     local canTouchProtected = not Helper:IsCombatLocked()
     local showAll = state.alwaysShow or self.DragGridActive
     local gridAttr = showAll and 1 or 0
@@ -541,9 +532,7 @@ function DragonflightUIActionbarMixin:UpdateGridState()
 
         -- print(btn:GetName(), state.alwaysShow)
         -- Only write when changed: every SetAttribute fires
-        -- OnAttributeChanged -> UpdateFlyout on all 96 buttons, and this
-        -- runs per ACTIONBAR_SLOT_CHANGED - unconditional writes churned
-        -- memory/CPU on busy event streams.
+        -- OnAttributeChanged -> UpdateAction on the button.
         if btn:GetAttribute("showgrid") ~= gridAttr then
             btn:SetAttribute("showgrid", gridAttr)
             if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
@@ -1864,13 +1853,9 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     end
 
     btn.BarRef = self;
-    -- Runs from the ActionButton_UpdateHotkeys hook, i.e. per button on
-    -- every macro re-evaluation (every mouseover change with @mouseover
-    -- macros - measured thousands of calls/sec sweeping a crowd). Cache
-    -- the computed text keyed on the bindings generation + shorten flag,
-    -- and only touch the font when the size actually changes: the binding
-    -- lookups/GetShortKey allocate, and an unconditional SetFont forces a
-    -- FontString re-layout every single call.
+    -- Hot path: cache the computed text keyed on bindings generation +
+    -- shorten flag, and only SetFont when the size actually changes
+    -- (unconditional SetFont forces a FontString re-layout per call).
     function btn:DragonflightFixHotkey()
         self:FixHotkeyPosition()
 

@@ -55,9 +55,8 @@ function Helper:Benchmark(label, func, level, moduleRef)
     return results, duration, startTime, endTime;
 end
 
--- era-1159: run {label, fn} steps one per frame. Each step gets a fresh
--- watchdog slice; a failing step is reported (so DFUIErrorGrab records it)
--- but never breaks the chain.
+-- Run {label, fn} steps one per frame. Each step gets a fresh watchdog
+-- slice; a failing step is reported but never breaks the chain.
 -- The one true combat check for load-time gates. InCombatLockdown() reads
 -- FALSE during the entire load sequence of a mid-combat login or /reload
 -- on 1.15.9 - lockdown only engages around PLAYER_ENTERING_WORLD - while

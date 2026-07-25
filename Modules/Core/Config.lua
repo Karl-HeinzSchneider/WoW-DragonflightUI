@@ -455,12 +455,6 @@ function Module:ToggleConfigFrame()
 end
 
 function Module:SlashCommand(input)
-    local cmd = input and input:gsub('^%s+', ''):lower() or ''
-    local hoverArg = cmd:match('^hoverlag%s*(.*)$')
-    if hoverArg and DF.HoverDiag then
-        DF.HoverDiag:Command(hoverArg)
-        return
-    end
     Module:ToggleConfigFrame()
 end
 

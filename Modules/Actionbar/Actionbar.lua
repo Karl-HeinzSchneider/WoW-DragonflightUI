@@ -2559,17 +2559,12 @@ function Module:GetSetupActionbarSteps()
                 blizzBar:SetParent(hider)
             end
             -- The parked buttons drive the same slots (145-180) as DFUI's
-            -- extra bars, and even hidden they stay registered in the
-            -- central dispatchers (ActionBarButtonEventsFrame has no
-            -- unregister API), so every global action-bar event - and with
-            -- #showtooltip [@mouseover] macros that means every mouseover
-            -- change - runs a full Update/UpdateCooldown (several table
-            -- allocations each) on 36 invisible duplicates. Pointing them
-            -- at empty slot 0 makes HasAction() false: Update() takes the
-            -- cheap empty branch, ActionBarActionEventsFrame auto-drops
-            -- them, and C_ActionBar.RegisterActionUIButton(btn, 0) unhooks
-            -- the client-side cooldown pushes. Hidden buttons were never
-            -- range/usable-registered, so no tracking is torn down.
+            -- extra bars and stay registered in the central dispatchers
+            -- even while hidden (ActionBarButtonEventsFrame has no
+            -- unregister API), paying a full Update/UpdateCooldown per
+            -- global action-bar event. Pointing them at empty slot 0 makes
+            -- HasAction() false, so they take the cheap empty branches and
+            -- ActionBarActionEventsFrame drops them.
             for i = 1, 12 do
                 local btn = _G[barName .. 'Button' .. i]
                 if btn then
@@ -2587,24 +2582,16 @@ function Module:GetSetupActionbarSteps()
     return steps
 end
 
--- #showtooltip [@mouseover] macros make the 1.15.9 client fire one
--- ACTIONBAR_SLOT_CHANGED per placed macro slot on EVERY mouseover change.
--- Blizzard's central dispatcher answers each with a forced full
--- UpdateAction() on the matching button (~5kb of Lua garbage each) even
--- though the slot's contents never changed - only the resolved icon did.
--- Field-measured: ~38 events and ~205kb of client-side allocation per
--- player the mouse crosses, identical on the stock UI. The GC pressure is
--- the "raid hover stutter".
---
--- Fix: take over that one event. Real slot changes (drag, learn, wipe -
--- the action signature actually differs) get Blizzard's full pipeline,
--- deferred to after combat if needed (they can't originate in combat
--- anyway). Re-resolutions (signature unchanged) get exactly what visibly
--- changed: icon texture, count, tooltip-if-hovered - on visible buttons
--- only. Hidden buttons self-heal via OnShow -> Update(). Cooldown swipes
--- are pushed C-side via RegisterActionUIButton and usable/range coloring
--- arrives through ACTION_USABLE_CHANGED / ACTION_RANGE_CHECK_UPDATE, so
--- neither needs the full update here.
+-- #showtooltip [@mouseover] macros make the client fire one
+-- ACTIONBAR_SLOT_CHANGED per placed macro slot on every mouseover change,
+-- and Blizzard answers each with a forced full UpdateAction() even though
+-- only the resolved icon changed - the GC pressure behind the raid hover
+-- stutter. Take over the event: real slot changes (action signature
+-- differs) keep Blizzard's full pipeline, deferred past combat if needed;
+-- re-resolutions get only what visibly changed (icon, count,
+-- tooltip-if-hovered) on visible buttons. Hidden buttons self-heal via
+-- OnShow -> Update(); cooldown swipes are pushed C-side and usable/range
+-- coloring has its own events, so neither needs the full update.
 function Module.InstallSlotChangedFilter()
     local bef = _G['ActionBarButtonEventsFrame']
     if not bef or not bef.frames or Module.SlotFilterInstalled then return end
@@ -2614,16 +2601,12 @@ function Module.InstallSlotChangedFilter()
 
     local lastSig = {} -- slot -> "type:id:subType" signature
     local pendingFull = {} -- slots (or 0 = all) awaiting full dispatch post-combat
-    local stats = {spurious = 0, full = 0}
-    Module.SlotFilterStats = stats
 
     local function fullDispatch(slot)
-        stats.full = stats.full + 1
         for _, btn in pairs(bef.frames) do if btn.OnEvent then btn:OnEvent('ACTIONBAR_SLOT_CHANGED', slot) end end
     end
 
     local function lightweightUpdate(slot)
-        stats.spurious = stats.spurious + 1
         for _, btn in pairs(bef.frames) do
             if btn.action == slot and btn:IsVisible() then
                 local tex = C_ActionBar.GetActionTexture(slot)

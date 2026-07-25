@@ -174,19 +174,6 @@ function SubModuleMixin:Setup()
     });
 end
 
--- TEMP diagnostics: readable from disk via DFUIErrorGrab's SavedVariables.
-local function lootlog(fmt, ...)
-    if not DFUIErrorGrabDB then return end
-    local log = DFUIErrorGrabDB.lootLog
-    if not log then
-        log = {}
-        DFUIErrorGrabDB.lootLog = log
-    end
-    if #log >= 120 then table.remove(log, 1) end
-    local ok, line = pcall(string.format, '%.1f ' .. fmt, GetTime(), ...)
-    log[#log + 1] = ok and line or ('logfail: ' .. fmt)
-end
-
 local ROLL_TYPE_ICON = {
     [1] = 'Interface\\Buttons\\UI-GroupLoot-Dice-Up', -- need
     [2] = 'Interface\\Buttons\\UI-GroupLoot-Coin-Up', -- greed
@@ -235,7 +222,6 @@ function SubModuleMixin:UpdateTopRoll(f)
             else
                 rollIcon:Hide()
             end
-            lootlog('toproll %s revealed best=%s roll=%s', tostring(f:GetName()), bestName, tostring(bestRoll))
             return
         end
     end
@@ -254,9 +240,6 @@ function SubModuleMixin:UpdateTopRoll(f)
         parts[#parts + 1] = ('|cff999999%d left|r'):format(#tableNone)
     end
     topRoll:SetText(table.concat(parts, '  '))
-    lootlog('toproll %s tally n=%s g=%s p=%s left=%s', tostring(f:GetName()),
-        tableNeed and #tableNeed or '-', tableGreed and #tableGreed or '-',
-        tablePass and #tablePass or '-', tableNone and #tableNone or '-')
 end
 
 -- Winner toast: numbers exist exactly when the toast frame disappears, so
@@ -291,7 +274,6 @@ function SubModuleMixin:ShowWinnerToast(itemIdx)
     toast.Text:SetFormattedText('%s%s%s  %s', coloredName, typeTag, rollTag, itemLink or '')
     toast:SetAlpha(1)
     toast:Show()
-    lootlog('toast winner=%s roll=%s item=%s', name, tostring(roll), tostring(itemLink))
 
     if self.WinnerToastTimer then self.WinnerToastTimer:Cancel() end
     self.WinnerToastTimer = C_Timer.NewTimer(4, function()
@@ -638,10 +620,6 @@ function SubModuleMixin.ApplyDFBackdrop(frame)
         local t = frame.Timer
         local mn, mx
         if t and t.GetMinMaxValues then mn, mx = t:GetMinMaxValues() end
-        lootlog('show %s rollID=%s quality=%s timerShown=%s w=%s val=%s minmax=%s-%s',
-            tostring(frame.GetName and frame:GetName()), tostring(frame.rollID),
-            tostring(quality), tostring(t and t:IsShown()), t and t:GetWidth() or -1,
-            t and t.GetValue and t:GetValue() or -1, tostring(mn), tostring(mx))
     end
 
     -- Blizzard's OnShow re-shows the gold dragon Decoration for BoP items
@@ -830,10 +808,6 @@ function SubModuleMixin:UpdateGroupLootFrameStyle(f)
 
     do
         local t = f.Timer
-        lootlog('styled %s timer=%s w=%s h=%s pts=%s bg=%s border=%s',
-            tostring(f:GetName()), tostring(t ~= nil), t and t:GetWidth() or -1,
-            t and t:GetHeight() or -1, t and t:GetNumPoints() or -1,
-            tostring(t and t.Background ~= nil), tostring(t and t.DFBorder ~= nil))
     end
 
     -- Refresh cycle for LIVE frames only: at setup time these are hidden,
