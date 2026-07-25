@@ -2408,10 +2408,23 @@ function DragonflightUIPetbarMixin:StylePetButton()
             auto:SetDrawLayer('OVERLAY', 2)
         end
 
-        --
+        -- SmallActionButtonTemplate (modern pet buttons) hard-sizes the
+        -- checked/highlight textures to 31.6x30.9 for retail's small pet
+        -- bar; DFUI keeps the 45px base and scales the button, so re-size
+        -- them to the full button or the active state renders inset.
         local checked = btn:GetCheckedTexture()
         checked:SetAlpha(1.0)
+        checked:ClearAllPoints()
+        checked:SetSize(46, 45)
+        checked:SetPoint('TOPLEFT')
         checked:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+
+        local highlight = btn:GetHighlightTexture()
+        if highlight then
+            highlight:ClearAllPoints()
+            highlight:SetSize(46, 45)
+            highlight:SetPoint('TOPLEFT')
+        end
 
         local color = DFCreateColorFromRGBHexString('FFE143')
         checked:SetVertexColor(color.r, color.g, color.b, color.a)
