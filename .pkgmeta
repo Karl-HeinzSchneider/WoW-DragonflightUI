@@ -3,3 +3,11 @@ package-as: DragonflightUI
 ignore:
   - Screenshots
   - "*.png"
+  # Node dev tooling (the addon is the repo root, so these would otherwise ship inside it)
+  - src
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  # Claude Code guidance
+  - CLAUDE.md
+  - "*/CLAUDE.md"

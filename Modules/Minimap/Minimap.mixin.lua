@@ -348,7 +348,7 @@ function SubModuleMixin:Setup()
 
     self:SetScript('OnEvent', self.OnEvent);
     self:RegisterEvent('MINIMAP_UPDATE_TRACKING')
-    self:RegisterEvent('MINIMAP_PING')
+    -- self:RegisterEvent('MINIMAP_PING')
 
     local f = self.BaseFrame
     -- state
