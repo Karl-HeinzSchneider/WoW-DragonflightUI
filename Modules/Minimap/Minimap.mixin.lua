@@ -348,10 +348,11 @@ function SubModuleMixin:Setup()
 
     self:SetScript('OnEvent', self.OnEvent);
     self:RegisterEvent('MINIMAP_UPDATE_TRACKING')
+
     if not (C_EventUtils and C_EventUtils.IsEventValid) or C_EventUtils.IsEventValid('MINIMAP_PING') then
         self:RegisterEvent('MINIMAP_PING')
     end
-
+  
     local f = self.BaseFrame
     -- state
     Mixin(f, DragonflightUIStateHandlerMixin)
