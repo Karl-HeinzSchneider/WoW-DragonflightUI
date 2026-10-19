@@ -4,6 +4,15 @@ World of Warcraft addon that restyles the default Blizzard UI on the **Classic**
 
 Sub-docs: [Modules/CLAUDE.md](Modules/CLAUDE.md) · [Mixin/CLAUDE.md](Mixin/CLAUDE.md) (also covers `XML/`) · [Compatibility/CLAUDE.md](Compatibility/CLAUDE.md) · [Localization/CLAUDE.md](Localization/CLAUDE.md) · [Libs/CLAUDE.md](Libs/CLAUDE.md)
 
+## Current goal
+
+The addon is out of date. The goal is to make it work again on **every supported client** (see the table below) while **changing as little as possible**.
+
+- **Fix individual lines, not whole functions or files.** Typical fixes are a missing existence or `nil` guard, a wrong version check, a renamed Blizzard API, frame or texture, or a wrong anchor. Don't rewrite functions, split or merge files, or restructure modules, even where the code is messy.
+- A larger change is the exception, used only when a line-level fix can't work. Keep it as small as possible and point it out explicitly, with the reason.
+- Fix the broken client without changing behaviour on the others. Put the change behind the narrowest version check (`DF.API.Version.Is*`), and mind the version-flag pitfalls described below.
+- Leave anything unrelated to the bug alone: style, commented-out code, the tech-debt list at the end of this file.
+
 ## Supported clients
 
 One TOC ([DragonflightUI.toc](DragonflightUI.toc)) serves every flavor:
@@ -86,7 +95,7 @@ On TBC only, `Editmode:TBC()` calls `InitEditmodeOverride()` in [Modules/Core/Ed
 - All user-facing text goes through `L["Key"]`; see [Localization/CLAUDE.md](Localization/CLAUDE.md).
 - **Combat lockdown and taint:** never touch secure frames in combat. That includes action buttons, unit frames, and the position or visibility of protected frames. Existing code defers the work to `PLAYER_REGEN_ENABLED`, uses secure handlers and state drivers, or checks `InCombatLockdown()`. Hook Blizzard code with `hooksecurefunc` or AceHook `SecureHook` rather than replacing it.
 - Client APIs differ by flavor. Use feature detection (`if ActionButton_ShowGrid then`, `C_AddOns` fallbacks) and the `DF:IsAddOnLoaded` and `DF:LoadAddOn` wrappers. `-- TODOTBC` comments mark spots that were patched with fallbacks for TBC.
-- This is a maintenance codebase. Keep fixes minimal and inside the existing structure and patterns, with no refactors unless asked.
+- Keep fixes minimal and inside the existing structure and patterns; see [Current goal](#current-goal).
 
 ## Repo map
 
