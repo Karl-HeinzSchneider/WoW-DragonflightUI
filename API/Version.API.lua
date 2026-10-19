@@ -53,4 +53,12 @@ Version.IsCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 ---@type boolean
 Version.IsMoP = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
+--- Client carries the Midnight-era ("modern") UI backport: Blizzard Edit
+--- Mode, retail-style action bars, TextStatusBarMixin, pooled party frames.
+--- True on TBC 2.5.6+, MoP 5.5.4+ and Classic Era 1.15.9+. Feature-detected
+--- (not version-mapped) so it stays correct as Blizzard rolls the backport
+--- to more flavors.
+---@type boolean
+Version.IsModern = (EditModeManagerFrame ~= nil) or (StatusTrackingBarManager ~= nil)
+
 -- DevTools_Dump(API.Version)

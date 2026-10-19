@@ -18,6 +18,7 @@ local defaults = {
             ['Darkmode'] = false,
             ['Flyout'] = true,
             ['Minimap'] = true,
+            ['Nameplates'] = true,
             ['Tooltip'] = true,
             ['UI'] = true,
             ['Unitframe'] = true,
@@ -69,6 +70,14 @@ local modulesOptions = {
             name = L["ModuleActionbar"],
             desc = L["ModuleTooltipActionbar"] .. getDefaultStr('Actionbar', 'modules'),
             order = 1,
+            group = 'headerModules'
+        },
+        Nameplates = {
+            type = 'toggle',
+            name = L["ModuleNameplates"],
+            desc = L["ModuleTooltipNameplates"] .. getDefaultStr('Nameplates', 'modules'),
+            order = 2.5,
+            new = true,
             group = 'headerModules'
         },
         Castbar = {
@@ -307,6 +316,28 @@ end
 end ]]
 
 function Module:AddMainMenuButton()
+    if GameMenuFrame.InitButtons then
+        local editBtn = CreateFrame('Button', 'DragonflightUIEditModeButton', GameMenuFrame)
+        editBtn:Hide()
+        Module.EditModeButton = editBtn
+
+        hooksecurefunc(GameMenuFrame, 'InitButtons', function(menu)
+            local configButton = menu:AddButton(L["MainMenuDragonflightUI"], function()
+                Module:ToggleConfigFrame()
+            end)
+            local editModeButton = menu:AddButton(L["MainMenuEditmode"] .. ' (|cffffff00DFUI|r)', function()
+                editBtn:Click()
+            end)
+
+            configButton.layoutIndex = -2
+            configButton.bottomPadding = nil
+            editModeButton.layoutIndex = -1
+            editModeButton.bottomPadding = 20
+            menu:MarkDirty()
+        end)
+        return
+    end
+
     if GameMenuFrame_UpdateVisibleButtons then
         hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
             -- print('GameMenuFrame_UpdateVisibleButtons')
@@ -344,64 +375,6 @@ function Module:AddMainMenuButton()
 
         -- TODOTBC
         if GameMenuButtonOptions then GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1) end
-    end
-    Module.UpdateMainMenuButtons()
-
-    btn:SetScript('OnClick', function()
-        Module:ToggleConfigFrame()
-        -- HideUIPanel(GameMenuFrame)
-    end)
-end
-
-function Module:AddMainMenuButtonTBC()
-    -- print('AddMainMenuButtonTBC')
-    -- if GameMenuFrame_UpdateVisibleButtons then
-    --     hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function(self)
-    --         -- print('GameMenuFrame_UpdateVisibleButtons')
-    --         local blizzHeight = self:GetHeight()
-
-    --         self:SetHeight(blizzHeight + 22 + 22)
-
-    --         Module.UpdateMainMenuButtons()
-    --     end)
-    -- end
-
-    -- GameMenuFrame:AddButton('Test', function()
-    --     print('click')
-    -- end)
-
-    -- GameMenuFrame:AddSection();
-    -- GameMenuFrame:AddSection();
-    -- GameMenuFrame:AddSection();
-
-    local btn = CreateFrame('Button', 'DragonflightUIMainMenuButton', GameMenuFrame, 'UIPanelButtonTemplate')
-    btn:SetSize(145, 21)
-    btn:SetText(L["MainMenuDragonflightUI"])
-    btn:SetPoint('BOTTOM', GameMenuFrame, 'TOP', 0, 36)
-    Module.MainMenuButton = btn
-
-    local editBtn = CreateFrame('Button', 'DragonflightUIEditModeButton', GameMenuFrame, 'UIPanelButtonTemplate')
-    editBtn:SetSize(145, 21)
-    editBtn:SetText(L["MainMenuEditmode"])
-    editBtn:SetPoint('TOP', btn, 'BOTTOM', 0, -1)
-    Module.EditModeButton = editBtn
-
-    Module.UpdateMainMenuButtons = function()
-        -- print('UpdateMainMenuButtons')
-        -- local btn = Module.MainMenuButton
-        -- local editBtn = Module.EditModeButton
-
-        -- -- TODO:
-        -- -- 'Interface action failed because of an AddOn' when infight and clicking DF Menu button    
-        -- local storeIsRestricted = IsTrialAccount();
-        -- if (C_StorePublic.IsEnabled() and C_StorePublic.HasPurchaseableProducts() and not storeIsRestricted) then
-        --     btn:SetPoint('TOP', GameMenuButtonStore, 'BOTTOM', 0, -16)
-        -- else
-        --     btn:SetPoint('TOP', GameMenuButtonHelp, 'BOTTOM', 0, -16)
-        -- end
-
-        -- -- TODOTBC
-        -- if GameMenuButtonOptions then GameMenuButtonOptions:SetPoint('TOP', editBtn, 'BOTTOM', 0, -1) end
     end
     Module.UpdateMainMenuButtons()
 
@@ -481,7 +454,7 @@ function Module:ToggleConfigFrame()
     end
 end
 
-function Module:SlashCommand()
+function Module:SlashCommand(input)
     Module:ToggleConfigFrame()
 end
 
@@ -540,7 +513,7 @@ end
 
 function Module:TBC()
     Module:AddConfigFrame()
-    Module:AddMainMenuButtonTBC()
+    Module:AddMainMenuButton()
 
     frame:RegisterEvent('PLAYER_ENTERING_WORLD')
 end

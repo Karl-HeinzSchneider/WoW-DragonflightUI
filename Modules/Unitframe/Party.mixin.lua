@@ -12,7 +12,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -302,8 +302,180 @@ function SubModuleMixin:SetupOptions()
     self.OptionsEditmode = optionsPartyEditmode;
 end
 
+-- era-1159: DF-restyle for the pooled modern party member frames. Mirrors
+-- the geometry of the classic reskin above (frame 120x53, DF border art,
+-- health 71x10 @ 44,-19, mana 74x7 @ 41,-30) using the parentKeys the
+-- pooled PartyMemberFrameTemplate exposes.
+function SubModuleMixin:SetupModern()
+    local ATLAS = 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\uipartyframe'
+    local BARS = 'Interface\\Addons\\DragonflightUI\\Textures\\Partyframe\\'
+    local UpdateRoleIcon
+
+    local function styleMember(pf)
+        if pf.DFStyled then return end
+        pf.DFStyled = true
+
+        pf:SetSize(120, 53)
+        pf:SetHitRectInsets(0, 0, 0, 12)
+
+        -- The classic ring art, vehicle art and the Name live on the
+        -- PartyMemberOverlay CHILD frame - hiding pf.Texture etc. no-ops,
+        -- and anything painted on pf renders UNDER the overlay.
+        local overlay = pf.PartyMemberOverlay
+        if pf.Background then pf.Background:Hide() end
+        if pf.Border then pf.Border:Hide() end
+        for _, holder in ipairs({pf, overlay}) do
+            if holder and holder.Texture then
+                holder.Texture:SetTexture(nil)
+                holder.Texture:Hide()
+            end
+            if holder and holder.VehicleTexture then
+                holder.VehicleTexture:SetTexture(nil)
+                holder.VehicleTexture:Hide()
+            end
+        end
+
+        -- DF border goes on the overlay: above the bar child-frames (its
+        -- purpose in Blizzard's layout), below the overlay's icons/name.
+        local borderHolder = overlay or pf
+        local border = borderHolder:CreateTexture(nil, 'BORDER')
+        border:SetSize(120, 49)
+        border:SetTexture(ATLAS)
+        border:SetTexCoord(0.480469, 0.949219, 0.222656, 0.414062)
+        border:SetPoint('TOPLEFT', pf, 'TOPLEFT', 1, -2)
+        pf.DFPartyFrameBorder = border
+
+        if pf.Flash then
+            pf.Flash:SetSize(114, 47)
+            pf.Flash:SetTexture(ATLAS)
+            pf.Flash:SetTexCoord(0.480469, 0.925781, 0.453125, 0.636719)
+            pf.Flash:ClearAllPoints()
+            pf.Flash:SetPoint('TOPLEFT', 2, -2)
+            pf.Flash:SetVertexColor(1, 0, 0, 1)
+            pf.Flash:SetDrawLayer('ARTWORK', 5)
+        end
+
+        if pf.Portrait then
+            pf.Portrait:SetSize(37, 37)
+            pf.Portrait:ClearAllPoints()
+            pf.Portrait:SetPoint('TOPLEFT', 7, -6)
+            -- SetPortraitTexture swaps in a SQUARE snapshot once the unit
+            -- gets in range; the DF ring art has transparent corners, so
+            -- without the circular mask (which every other restyled portrait
+            -- gets) the snapshot's corners poke out behind the border.
+            Helper:AddCircleMask(pf, pf.Portrait)
+        end
+
+        local name = (overlay and overlay.Name) or pf.Name
+        if name then
+            name:ClearAllPoints()
+            name:SetPoint('TOPLEFT', pf, 'TOPLEFT', 46, -6)
+            name:SetWidth(74)
+            name:SetJustifyH('LEFT')
+        end
+
+        local healthbar = pf.HealthBar
+        if healthbar then
+            healthbar:SetSize(71, 10)
+            healthbar:ClearAllPoints()
+            healthbar:SetPoint('TOPLEFT', 44, -19)
+            healthbar:SetStatusBarTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health')
+            healthbar:SetStatusBarColor(1, 1, 1, 1)
+
+            local hpMask = healthbar:CreateMaskTexture()
+            hpMask:SetPoint('CENTER', healthbar, 'CENTER', 0, 0)
+            hpMask:SetTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Mask',
+                              'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+            hpMask:SetSize(71, 10)
+            healthbar:GetStatusBarTexture():AddMaskTexture(hpMask)
+        end
+
+        local manabar = pf.ManaBar
+        if manabar then
+            manabar:SetSize(74, 7)
+            manabar:ClearAllPoints()
+            manabar:SetPoint('TOPLEFT', 41, -30)
+            manabar:SetStatusBarTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana')
+            manabar:SetStatusBarColor(1, 1, 1, 1)
+
+            local manaMask = manabar:CreateMaskTexture()
+            manaMask:SetPoint('CENTER', manabar, 'CENTER', 0, 0)
+            manaMask:SetTexture(BARS .. 'UI-HUD-UnitFrame-Party-PortraitOn-Bar-Mana-Mask',
+                                'CLAMPTOBLACKADDITIVE', 'CLAMPTOBLACKADDITIVE')
+            manaMask:SetSize(74, 7)
+            manabar:GetStatusBarTexture():AddMaskTexture(manaMask)
+        end
+
+        -- Role icon (Era 1.15.x has LFG roles), same treatment as the
+        -- classic reskin: top-right corner of the member frame.
+        if UnitGroupRolesAssigned then
+            local roleIcon = pf:CreateTexture(nil, 'OVERLAY')
+            roleIcon:SetSize(12, 12)
+            roleIcon:SetPoint('TOPRIGHT', pf, 'TOPRIGHT', -5, -5)
+            roleIcon:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\roleicons')
+            pf.DFRoleIcon = roleIcon
+            UpdateRoleIcon(pf)
+        end
+    end
+
+    function UpdateRoleIcon(pf)
+        local roleIcon = pf.DFRoleIcon
+        if not roleIcon then return end
+        local unit = pf.unitToken or ('party' .. (pf.layoutIndex or 1))
+        local role = UnitGroupRolesAssigned and UnitGroupRolesAssigned(unit)
+        roleIcon:Show()
+        if role == 'TANK' then
+            roleIcon:SetTexCoord(0.578125, 0.828125, 0.03125, 0.53125)
+        elseif role == 'HEALER' then
+            roleIcon:SetTexCoord(0.296875, 0.546875, 0.03125, 0.53125)
+        elseif role == 'DAMAGER' then
+            roleIcon:SetTexCoord(0.015625, 0.265625, 0.03125, 0.53125)
+        else
+            roleIcon:Hide()
+        end
+    end
+
+    local function styleAll()
+        if not (PartyFrame and PartyFrame.PartyMemberFramePool) then return end
+        local count = 0
+        for pf in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+            count = count + 1
+            local ok, err = pcall(styleMember, pf)
+            if not ok then geterrorhandler()('DFPartyModern: ' .. tostring(err)) end
+        end
+        if DragonflightUIPerfLog and #DragonflightUIPerfLog < 400 then
+            DragonflightUIPerfLog[#DragonflightUIPerfLog + 1] =
+                string.format('0.0ms DFPartyModern:styleAll(%d)', count)
+        end
+    end
+
+    if PartyFrame and PartyFrame.InitializePartyMemberFrames then
+        hooksecurefunc(PartyFrame, 'InitializePartyMemberFrames', styleAll)
+    end
+    styleAll()
+
+    local roleWatcher = CreateFrame('Frame')
+    roleWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
+    if C_EventUtils and C_EventUtils.IsEventValid and C_EventUtils.IsEventValid('PLAYER_ROLES_ASSIGNED') then
+        roleWatcher:RegisterEvent('PLAYER_ROLES_ASSIGNED')
+    end
+    roleWatcher:SetScript('OnEvent', function()
+        if not (PartyFrame and PartyFrame.PartyMemberFramePool) then return end
+        for pf in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+            if pf.DFStyled then UpdateRoleIcon(pf) end
+        end
+    end)
+end
+
 function SubModuleMixin:Setup()
-    if DF.API.Version.IsTBC then return end
+    -- Modern (Midnight-UI) clients pool anonymous PartyFrame member frames;
+    -- the classic PartyMemberFrame1-4 reskin cannot attach. Restyle the
+    -- pooled frames in place instead (era-1159).
+    if DF.API.Version.IsModern then
+        self:SetupModern()
+        return
+    end
+    if not _G['PartyMemberFrame1'] then return end
     local function setDefaultSubValues(sub)
         self.ModuleRef:SetDefaultSubValues(sub)
     end
@@ -380,7 +552,8 @@ function SubModuleMixin:UpdateState(state)
 end
 
 function SubModuleMixin:Update()
-    if DF.API.Version.IsTBC then return end -- TODOTBC
+    if DF.API.Version.IsModern then return end -- modern party frames are pooled
+    if not self.PartyMoveFrame then return end
     local state = self.state;
     if not state then return end
 

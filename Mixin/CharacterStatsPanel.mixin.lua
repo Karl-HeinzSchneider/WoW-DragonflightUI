@@ -13,21 +13,20 @@ function DragonflightUICharacterStatsPanelMixin:OnLoad()
 
     self:RegisterEvent("PLAYER_ENTERING_WORLD");
     self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
-    self:RegisterEvent("UNIT_AURA");
     self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS");
     self:RegisterEvent("SKILL_LINES_CHANGED");
     self:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
-    self:RegisterEvent("UNIT_DAMAGE");
-    self:RegisterEvent("UNIT_ATTACK_SPEED");
-    self:RegisterEvent("UNIT_RANGEDDAMAGE");
-    self:RegisterEvent("UNIT_ATTACK");
-    self:RegisterEvent("UNIT_RESISTANCES");
-    self:RegisterEvent("UNIT_STATS");
-    self:RegisterEvent("UNIT_MAXHEALTH");
-    self:RegisterEvent("UNIT_ATTACK_POWER");
-    self:RegisterEvent("UNIT_RANGED_ATTACK_POWER");
     self:RegisterEvent("COMBAT_RATING_UPDATE");
     self:RegisterEvent("VARIABLES_LOADED");
+    -- The panel only shows the PLAYER's stats, so every UNIT_* event must
+    -- be filtered to the player token. Unfiltered registration fires for
+    -- every unit in the world; an unfiltered UNIT_AURA listener in
+    -- particular makes the client materialize the full aura payload for
+    -- every aura-tracked unit, which is expensive in crowds.
+    for _, ev in ipairs({
+        "UNIT_AURA", "UNIT_DAMAGE", "UNIT_ATTACK_SPEED", "UNIT_RANGEDDAMAGE", "UNIT_ATTACK", "UNIT_RESISTANCES",
+        "UNIT_STATS", "UNIT_MAXHEALTH", "UNIT_ATTACK_POWER", "UNIT_RANGED_ATTACK_POWER"
+    }) do self:RegisterUnitEvent(ev, "player"); end
 
     -- @TODO HACK, maybe fix for ghost tooltips
     C_Timer.After(1, function()

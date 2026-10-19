@@ -476,7 +476,7 @@ function DragonflightUILFGButtonImprovedMixin:Init()
 end
 
 function DragonflightUILFGButtonImprovedMixin:ChangeDefault()
-    if DF.Wrath then
+    if DF.Wrath and _G['MiniMapLFGFrame'] then
         local def = _G['MiniMapLFGFrame'];
 
         local high = def:GetHighlightTexture()
@@ -487,6 +487,16 @@ function DragonflightUILFGButtonImprovedMixin:ChangeDefault()
 
         local icon = _G['MiniMapLFGFrameIconTexture']
         icon:SetTexture('')
+    elseif DF.Wrath and _G['LFGMinimapFrame'] then
+        local def = _G['LFGMinimapFrame'];
+
+        local high = def:GetHighlightTexture()
+        if high then high:SetTexture('') end
+
+        local border = _G['LFGMinimapFrameBorder']
+        if border then border:Hide() end
+
+        if def.eye and def.eye.Texture then def.eye.Texture:SetTexture('') end
     elseif DF.Era then
         local def = _G['LFGMinimapFrame'];
     end
@@ -496,12 +506,13 @@ function DragonflightUILFGButtonImprovedMixin:HookScripts()
     local def;
 
     if DF.Wrath then
-        def = _G['MiniMapLFGFrame']
+        def = _G['MiniMapLFGFrame'] or _G['LFGMinimapFrame']
     elseif DF.Era then
         def = _G['LFGMinimapFrame']
     else
         return;
     end
+    if not def then return end
 
     def:HookScript('OnShow', function()
         --       

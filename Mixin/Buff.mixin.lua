@@ -686,6 +686,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
     -- local auraData = C_UnitAuras.GetAuraDataByIndex('player', self:GetID(), 'HELPFUL');
     -- print('~', name, shouldConsolidate, #auraData.points > 0)
 
+    if name and addonTable.CorrectAuraExpiration then
+        expirationTime = addonTable.CorrectAuraExpiration(self.DFUnit, spellId, duration, expirationTime)
+    end
+
     if name then
         self.Icon:SetTexture(icon);
         self.Icon:Show();
@@ -706,7 +710,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
             self.Duration:SetText(duration)
 
             self:SetScript('OnUpdate', self.UpdateAuraDuration)
-            self:UpdateAuraDuration(0);
+            self:UpdateAuraDuration(1);
         else
             self.Cooldown:Hide();
             self.Cooldown:SetCooldown(0, -1);
@@ -724,23 +728,21 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateStyle()
             self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
             self.DFIconBorder:SetVertexColor(parent.BuffVertexColorR, parent.BuffVertexColorG, parent.BuffVertexColorB)
         elseif self.DFFilter == 'HARMFUL' then
-            local color;
-
-            if dispelType then
-                color = DebuffTypeColor[dispelType];
-                -- doesnt seem to work, but is in default code
-                if (ENABLE_COLORBLIND_MODE == "1") then
-                    -- buff.symbol:Show();
-                    -- buff.symbol:SetText(DebuffTypeSymbol[dispelType] or "");
-                else
-                    -- buff.symbol:Hide();
-                end
-            else
-                color = DebuffTypeColor['none']
-            end
-
             self.DFIconBorder:SetDesaturated(parent.BuffDesaturate)
-            self.DFIconBorder:SetVertexColor(color.r, color.g, color.b)
+
+            if AuraUtil and AuraUtil.SetAuraBorderColor then
+                AuraUtil.SetAuraBorderColor(self.DFIconBorder, dispelType)
+            else
+                local color;
+
+                if dispelType then
+                    color = DebuffTypeColor[dispelType] or DebuffTypeColor['none'];
+                else
+                    color = DebuffTypeColor['none']
+                end
+
+                self.DFIconBorder:SetVertexColor(color.r, color.g, color.b)
+            end
         else
             -- should not happen
             self.DFIconBorder:SetDesaturated(false)
@@ -803,7 +805,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
 
                 self.DFTempID = id;
                 self:SetScript('OnUpdate', self.UpdateTempAuraDuration)
-                self:UpdateTempAuraDuration(0);
+                self:UpdateTempAuraDuration(1);
             else
                 self.Duration:Hide()
                 self:SetScript('OnUpdate', nil)
@@ -837,7 +839,7 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateTempStyle(id)
 
                 self.DFTempID = id;
                 self:SetScript('OnUpdate', self.UpdateTempAuraDuration)
-                self:UpdateTempAuraDuration(0);
+                self:UpdateTempAuraDuration(1);
             else
                 self.Duration:Hide()
                 self:SetScript('OnUpdate', nil)
@@ -874,6 +876,13 @@ function DFSecondsToTimeAbbrev(seconds)
 end
 
 function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
+    -- 10 Hz throttle: this runs OnUpdate per visible aura button; at 60fps
+    -- the per-frame UnitAura + text formatting across 20-30 buttons churned
+    -- ~180 KB/s of garbage (the reported GC sawtooth). Direct calls pass
+    -- elapsed=1 to force an immediate refresh.
+    self.DFThrottle = (self.DFThrottle or 0) + (elapsed or 1)
+    if self.DFThrottle < 0.1 then return end
+    self.DFThrottle = 0
     -- print('updateAuraDuration', self:GetName(), elapsed, self.Duration:GetText())
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId,
           canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod =
@@ -881,6 +890,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
     -- print(timeMod) 
 
     local shouldHide = self:GetParent().hideDurationText
+
+    if name and addonTable.CorrectAuraExpiration then
+        expirationTime = addonTable.CorrectAuraExpiration(self.DFUnit, spellId, duration, expirationTime)
+    end
 
     if name and duration > 0 and not shouldHide then
 
@@ -916,6 +929,10 @@ function DragonflightUIAuraButtonTemplateMixin:UpdateAuraDuration(elapsed)
 end
 
 function DragonflightUIAuraButtonTemplateMixin:UpdateTempAuraDuration(elapsed)
+    -- same 10 Hz throttle as UpdateAuraDuration
+    self.DFThrottle = (self.DFThrottle or 0) + (elapsed or 1)
+    if self.DFThrottle < 0.1 then return end
+    self.DFThrottle = 0
     -- print('UpdateTempAuraDuration')
     local hasMainHandEnchant, mainHandExpiration, mainHandCharges, mainHandEnchantID, hasOffHandEnchant,
           offHandExpiration, offHandCharges, offHandEnchantID, hasRangedEnchant, rangedExpiration, rangedCharges,

@@ -181,9 +181,57 @@ function Module:OnInitialize()
     self:SetEnabledState(DF.ConfigModule:GetModuleEnabled(mName))
 end
 
+-- Adopt the standalone DFMinimap addon (era-1159 fork): it cannot run on
+-- Midnight-UI clients (its RawHook target Minimap_UpdateRotationSetting was
+-- removed in 1.15.9), so its look lives here now - the same Dragonflight
+-- ring art at DFMinimap's larger geometry (198px map ~= scale 1.4). One-time:
+-- bump the minimap scale preset and retire the old addon.
+function Module:AdoptDFMinimap()
+    local db = self.db.profile
+    if db.dfminimapAdopted then return end
+    if not (C_AddOns and C_AddOns.DoesAddOnExist and C_AddOns.DoesAddOnExist('DFMinimap')) then
+        return
+    end
+    db.dfminimapAdopted = true
+    db.dfminimapAdoptedV2 = true
+    if db.minimap then db.minimap.shape = 'ROUND' end
+    if C_AddOns.DisableAddOn then C_AddOns.DisableAddOn('DFMinimap') end
+    print('|cff69ccf0DragonflightUI:|r the standalone DFMinimap addon has been disabled and can be deleted. Minimap size: Options > Misc > Minimap > Scale.')
+end
+
+-- v2 repair: the original adoption preset (scale 1.4) reads comically large
+-- on the 1.15.9 cluster. Reset to 1.0 once, unless the user already picked
+-- their own value.
+function Module:FixAdoptionScale()
+    local db = self.db.profile
+    if db.dfminimapAdoptedV2 then return end
+    db.dfminimapAdoptedV2 = true
+    if db.minimap and db.minimap.scale == 1.4 then db.minimap.scale = 1 end
+end
+
+-- One-time: tuck the minimap into the top-right corner. The ring art is
+-- 156px wide centered in the 178px container (11px dead margin each side),
+-- so x = +7 leaves the visible ring 4px off the screen edge.
+function Module:FixCornerTuck()
+    local db = self.db.profile
+    if db.minimapTuckV1 then return end
+    db.minimapTuckV1 = true
+    if db.minimap then
+        db.minimap.anchor = 'TOPRIGHT'
+        db.minimap.anchorParent = 'TOPRIGHT'
+        db.minimap.anchorFrame = 'UIParent'
+        db.minimap.x = 7
+        db.minimap.y = -4
+    end
+end
+
 function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
+
+    self:AdoptDFMinimap()
+    self:FixAdoptionScale()
+    self:FixCornerTuck()
 
     self:EnableAddonSpecific()
 
@@ -499,17 +547,12 @@ function Module.UpdateTrackerState(state)
         WatchFrame:SetScale(state.scale)
         WatchFrame:ClearAllPoints()
         WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-
-        WatchFrame:SetHeight(800)
-        WatchFrame:SetWidth(204)
     elseif DF.Wrath then
         if not WatchFrame then return end
         WatchFrame:SetClampedToScreen(false)
         WatchFrame:SetScale(state.scale)
         WatchFrame:ClearAllPoints()
         WatchFrame:SetPoint(state.anchor, parent, state.anchorParent, state.x, state.y)
-        WatchFrame:SetHeight(800)
-        WatchFrame:SetWidth(204)
     end
 end
 
@@ -600,6 +643,10 @@ function Module.MoveTracker()
             end
         end)
     elseif DF.Cata then
+        if WatchFrame then
+            WatchFrame:SetHeight(800)
+            WatchFrame:SetWidth(204)
+        end
         hooksecurefunc(WatchFrame, 'SetPoint', function(self)
             if not setting then
                 setting = true
@@ -610,6 +657,10 @@ function Module.MoveTracker()
             end
         end)
     elseif DF.Wrath then
+        if WatchFrame then
+            WatchFrame:SetHeight(800)
+            WatchFrame:SetWidth(204)
+        end
         hooksecurefunc(WatchFrame, 'SetPoint', function(self)
             if not setting then
                 setting = true
@@ -662,9 +713,11 @@ function Module:ChangeLFG()
             end,
             hideFunction = function()
                 --
-                if DF.Wrath then
+                if DF.Wrath and MiniMapLFGFrame_OnEvent then
                     MiniMapLFGFrame_OnEvent(Module.LFG, 'LFG_UPDATE')
-                elseif DF.Era then
+                elseif DF.API.Version.IsModern and Module.LFG and Module.LFG.OnEvent then
+                    Module.LFG:OnEvent('LFG_UPDATE')
+                elseif Module.LFG then
                     Module.LFG:Show()
                 end
             end,
@@ -676,7 +729,8 @@ function Module:ChangeLFG()
     end
 
     if DF.Wrath then
-        Module.LFG = _G['MiniMapLFGFrame']
+        Module.LFG = _G['MiniMapLFGFrame'] or _G['LFGMinimapFrame']
+        if not Module.LFG then return end
 
         -- Module.LFG:SetFrameLevel(10)
         Module.LFG:Raise()

@@ -347,6 +347,7 @@ function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetMovable(true)
         f_orig:SetUserPlaced(true)
     end
 

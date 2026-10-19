@@ -52,7 +52,8 @@ local defaults = {
             hideArt = false,
             hideScrolling = false,
             gryphons = 'DEFAULT',
-            hideBorder = true,
+            hideBorder = false,
+            borderFill = 0.4,
             hideDivider = true,
             range = true,
             hideMacro = false,
@@ -440,7 +441,12 @@ local defaults = {
             orientation = 'horizontal',
             growthDirection = 'up',
             reverse = false,
-            buttonScale = 0.8,
+            -- era-1159: modern PetActionButtons share the 45px main-button
+            -- base size (classic-era's were natively 30px); scale preserves
+            -- the traditional smaller pet bar. SetScale shrinks the button
+            -- AND all attached overlay art uniformly - resizing the button
+            -- alone leaves 45px-absolute overlays misaligned.
+            buttonScale = DF.API.Version.IsModern and 0.65 or 0.8,
             rows = 1,
             buttons = 10,
             padding = 2,
@@ -622,7 +628,10 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = 0,
+            -- era-1159: the round backpack art carries ~6px transparent
+            -- padding inside its square button; nudge right so the VISIBLE
+            -- edge lines up with the micro menu's right edge below it.
+            x = 6,
             y = 50,
             expanded = true,
             hideArrow = false,
@@ -652,7 +661,10 @@ local defaults = {
             customAnchorFrame = '',
             anchor = 'BOTTOMRIGHT',
             anchorParent = 'BOTTOMRIGHT',
-            x = 0,
+            -- era-1159: micro button atlas art carries transparent padding
+            -- (scaled 0.7); +8 brings the VISIBLE right edge onto the same
+            -- line as the bag bar above it.
+            x = 8,
             y = 0,
             hidden = false,
             -- Visibility
@@ -1035,6 +1047,17 @@ local function GetBarOption(n)
                 desc = L["MoreOptionsHideBorderDesc"] .. getDefaultStr('hideBorder', barname),
                 group = 'headerButtons',
                 order = 51.4,
+                editmode = true
+            },
+            borderFill = {
+                type = 'range',
+                name = L["MoreOptionsBorderFill"],
+                desc = L["MoreOptionsBorderFillDesc"] .. getDefaultStr('borderFill', barname),
+                min = 0,
+                max = 1,
+                bigStep = 0.05,
+                group = 'headerButtons',
+                order = 51.45,
                 editmode = true
             },
             hideDivider = {
@@ -2065,34 +2088,113 @@ function Module:OnEnable()
     DF:Debug(self, 'Module ' .. mName .. ' OnEnable()')
     self:SetWasEnabled(true)
 
+    -- The whole chain below rearranges protected frames; under a combat
+    -- reload it must wait for lockdown to drop (see Helper:RunOutOfCombat).
+    Helper:RunOutOfCombat('action bars', function() Module:EnableOutOfCombat() end)
+end
+
+function Module:EnableOutOfCombat()
     -- not the best solution, override global CVAR and let DF UI handle everything
     C_CVar.SetCVar("alwaysShowActionBars", 1)
 
     Module.Temp = {}
 
-    Helper:Benchmark('EnableAddonSpecific', function()
-        self:EnableAddonSpecific()
-    end, 0, self)
-    Helper:Benchmark('SetupActionbarFrames', function()
-        self:SetupActionbarFrames()
-    end, 0, self)
-    Helper:Benchmark('AddStateUpdater', function()
-        Module.AddStateUpdater()
-    end, 0, self)
-    Helper:Benchmark('AddEditMode', function()
-        self:AddEditMode()
-    end, 0, self)
-    local _, dur = Helper:Benchmark('RegisterOptionScreens', function()
-        self:RegisterOptionScreens()
-    end, 0, self)
+    if DF.Era or DF.API.Version.IsTBC then
+        -- era-1159: the 1.15.9 watchdog budget is small AND variable
+        -- (observed kills between ~350ms and ~1s of cumulative work), and an
+        -- uncaught error used to sever the setup chain entirely. So: many
+        -- tiny steps, one per frame, each pcall-isolated. The Era/TBC flavor
+        -- body (EnableAddonSpecific) is inlined as individual steps.
+        local steps = {}
+        local add = function(label, fn) steps[#steps + 1] = {label, fn} end
 
-    Module:ApplySettings('ALL')
-
-    self:SecureHook(DF, 'RefreshConfig', function()
-        -- print('RefreshConfig', mName)
+        add('ChangeActionbar', Module.ChangeActionbar)
+        add('NewBars', function()
+            Module.CreateNewXPBar()
+            Module.CreateNewRepBar()
+            Module:RemoveActionbarAnimations()
+        end)
+        add('PetHookAndGryphon', function()
+            Module.HookPetBar()
+            -- Module.Frame, NOT the file-local 'frame': that local is
+            -- declared further down the file, so this closure (unlike the
+            -- original Era() defined below it) cannot capture it.
+            Module.Frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+            Module.Frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+            Module.ChangeGryphon()
+        end)
+        add('ChangeMicroMenu', Module.ChangeMicroMenu)
+        add('ChangeBackpack', Module.ChangeBackpack)
+        add('BagsAndFPS', function()
+            Module.ChangeFramerate()
+            Module.CreateBagExpandButton()
+            Module.RefreshBagBarToggle()
+            Module.HookBags()
+        end)
+        add('SubModules', function()
+            self.SubVehicleLeave:Setup()
+            self.SubActionbarRange:Setup()
+        end)
+        for _, step in ipairs(self:GetSetupActionbarSteps()) do
+            steps[#steps + 1] = step
+        end
+        add('AddStateUpdater', Module.AddStateUpdater)
+        add('AddEditMode', function() self:AddEditMode() end)
+        add('RegisterOptionScreens', function() self:RegisterOptionScreens() end)
+        add('ApplySettingsALL', function() Module:ApplySettings('ALL') end)
+        add('UnitframeReapply', function()
+            -- Layout applications during this chain (InitEditmodeOverride's
+            -- ApplyChanges, ForceMoveBlizzEditModeGhosts) re-apply the
+            -- Blizzard EditMode layout AFTER the Unitframe module already
+            -- placed player/target - and DFUI's positions are not stored in
+            -- that layout, so they land at the layout's spots. Re-place them
+            -- once the chain is done.
+            local uf = DF:GetModule('Unitframe', true)
+            if uf and uf.GetWasEnabled and uf:GetWasEnabled() then
+                uf:ApplySettings()
+            end
+        end)
+        add('DarkmodeReapply', function()
+            -- era-1159: Darkmode (enabled before this async chain) styles
+            -- the buttons, then the StyleBar/ApplySettings steps above
+            -- re-texture them with default art - upstream's After(0) hack
+            -- raced the same problem and loses badly against a chain that
+            -- finishes many frames after enable. Re-apply once, at the
+            -- actual end of the chain.
+            local dm = DF:GetModule('Darkmode', true)
+            if dm and dm.GetWasEnabled and dm:GetWasEnabled() then
+                dm:ApplySettings()
+            end
+        end)
+        add('RefreshConfigHook', function()
+            self:SecureHook(DF, 'RefreshConfig', function()
+                Module:ApplySettings('ALL')
+                Module:RefreshOptionScreens()
+            end)
+        end)
+        Helper:RunSteps(steps, self, 'Actionbar')
+    else
+        Helper:Benchmark('EnableAddonSpecific', function()
+            self:EnableAddonSpecific()
+        end, 0, self)
+        Helper:Benchmark('SetupActionbarFrames', function()
+            self:SetupActionbarFrames()
+        end, 0, self)
+        Helper:Benchmark('AddStateUpdater', function()
+            Module.AddStateUpdater()
+        end, 0, self)
+        Helper:Benchmark('AddEditMode', function()
+            self:AddEditMode()
+        end, 0, self)
+        Helper:Benchmark('RegisterOptionScreens', function()
+            self:RegisterOptionScreens()
+        end, 0, self)
         Module:ApplySettings('ALL')
-        Module:RefreshOptionScreens()
-    end)
+        self:SecureHook(DF, 'RefreshConfig', function()
+            Module:ApplySettings('ALL')
+            Module:RefreshOptionScreens()
+        end)
+    end
 end
 
 function Module:OnDisable()
@@ -2127,7 +2229,14 @@ function Module:RegisterSettings()
     end
 end
 
+-- Runs the builder synchronously - used by non-modern flavors.
 function Module:SetupActionbarFrames()
+    for _, step in ipairs(self:GetSetupActionbarSteps()) do step[2]() end
+end
+
+function Module:GetSetupActionbarSteps()
+    local steps = {}
+    local handler -- assigned in the SecureHandler step; used by createExtra
     local createStuff = function(n, base)
         local bar = CreateFrame('FRAME', 'DragonflightUIActionbarFrame' .. n, UIParent,
                                 'DragonflightUIActionbarFrameTemplate')
@@ -2149,31 +2258,38 @@ function Module:SetupActionbarFrames()
         Module['bar' .. n] = bar
     end
 
-    DragonflightUIActionbarMixin:HookGrid()
-    if DF.Cata then
-        -- DragonflightUIActionbarMixin:HookFlyout()
-        -- DragonflightUIActionbarMixin:StyleFlyout()
-    end
+    steps[#steps + 1] = {'HookGrid', function()
+        DragonflightUIActionbarMixin:HookGrid()
+        if DF.Cata then
+            -- DragonflightUIActionbarMixin:HookFlyout()
+            -- DragonflightUIActionbarMixin:StyleFlyout()
+        end
+    end}
 
-    createStuff(1, 'ActionButton')
-    Module.bar1:SetupMainBar()
-    Module.bar1:AddPagingStateDriver()
-    createStuff(2, 'MultiBarBottomLeftButton')
-    createStuff(3, 'MultiBarBottomRightButton')
-    createStuff(4, 'MultiBarLeftButton')
-    createStuff(5, 'MultiBarRightButton')
+    steps[#steps + 1] = {'MainBar', function()
+        createStuff(1, 'ActionButton')
+        Module.bar1:SetupMainBar()
+        Module.bar1:AddPagingStateDriver()
+    end}
+    steps[#steps + 1] = {'Bar2', function() createStuff(2, 'MultiBarBottomLeftButton') end}
+    steps[#steps + 1] = {'Bar3', function() createStuff(3, 'MultiBarBottomRightButton') end}
+    steps[#steps + 1] = {'Bar4', function() createStuff(4, 'MultiBarLeftButton') end}
+    steps[#steps + 1] = {'Bar5', function() createStuff(5, 'MultiBarRightButton') end}
 
     for i = 1, 5 do
-        local bar = Module['bar' .. i]
-        if bar then
-            bar:StyleButtons()
-            bar:HookQuickbindMode()
-            bar:ReplaceNormalTexture2()
-        end
+        steps[#steps + 1] = {'StyleBar' .. i, function()
+            local bar = Module['bar' .. i]
+            if bar then
+                bar:StyleButtons()
+                bar:HookQuickbindMode()
+                bar:ReplaceNormalTexture2()
+            end
+        end}
     end
 
+    steps[#steps + 1] = {'SecureHandler', function()
     -- secure handler
-    local handler = CreateFrame('Frame', 'DragonflightUIActionBarHandler', nil, 'SecureHandlerBaseTemplate');
+    handler = CreateFrame('Frame', 'DragonflightUIActionBarHandler', nil, 'SecureHandlerBaseTemplate');
     handler:SetAttribute("ActionButtonUseKeyDown", GetCVarBool('ActionButtonUseKeyDown'));
 
     handler:SetScript("OnEvent", function(f, event, ...)
@@ -2210,6 +2326,7 @@ function Module:SetupActionbarFrames()
             self:TrySetAttribute(cvar, GetCVarBool(cvar))
         end
     end
+    end} -- SecureHandler step
 
     -- -- ActionBarActionButtonMixin:OnClick(button, down)
     -- if ActionBarActionButtonMixin and ActionBarActionButtonMixin.OnClick then
@@ -2261,16 +2378,17 @@ function Module:SetupActionbarFrames()
                         flyoutHandler:Hide()
                     end                               
 
-                    if button == 'Keybind' then    
-                        -- print('keybind')
-                        local useKeyDown = control:GetAttribute("ActionButtonUseKeyDown")                         
-
-                        if down == useKeyDown then
-                            -- print('down == useKeyDown')
-                            return "LeftButton"
-                        end
-                        -- print('return false')
-                        return false
+                    if button == 'Keybind' then
+                        -- era-1159: upstream gates this on down == useKeyDown
+                        -- (fire on key press, cvar default). On this client
+                        -- that edge never fires the binding - "CLICK x:Keybind"
+                        -- was completely dead while "CLICK x:LeftButton"
+                        -- (which takes the release-edge path below) works.
+                        -- Mirror that proven path: swallow down, act on
+                        -- release. Single fire regardless of which edges the
+                        -- client actually delivers.
+                        if down then return false end
+                        return "LeftButton"
                     end
 
                     if IsModifiedClick("PICKUPACTION") then
@@ -2315,11 +2433,19 @@ function Module:SetupActionbarFrames()
         bar:ReplaceNormalTexture2()
     end
 
-    if DF.API.Version.IsTBC then
-        createStuff(6, 'MultiBar5Button')
-        createStuff(7, 'MultiBar6Button')
-        createStuff(8, 'MultiBar7Button')
+    local extraBases = {[6] = 'MultiBar5Button', [7] = 'MultiBar6Button', [8] = 'MultiBar7Button'}
+    for n = 6, 8 do
+        steps[#steps + 1] = {'ExtraBar' .. n, function()
+            if DF.API.Version.IsTBC then
+                createStuff(n, extraBases[n])
+            else
+                createExtra(n)
+            end
+        end}
+    end
 
+    steps[#steps + 1] = {'ExtraBarsFinish', function()
+    if DF.API.Version.IsTBC then
         for i = 6, 8 do
             local bar = Module['bar' .. i]
             if bar then
@@ -2349,13 +2475,11 @@ function Module:SetupActionbarFrames()
             end
         end
     else
-        createExtra(6)
-        createExtra(7)
-        createExtra(8)
-
         DragonFlightUIQuickKeybindMixin:HookExtraButtons()
     end
+    end} -- ExtraBarsFinish step
 
+    steps[#steps + 1] = {'MigrateKeybinds', function()
     -- DragonflightUIActionbarMixin:HookGlow()
     DragonflightUIActionbarMixin:MigrateOldKeybinds()
 
@@ -2369,15 +2493,19 @@ function Module:SetupActionbarFrames()
         end)
     end
 
+    end} -- MigrateKeybinds step
+
     for i = 1, 8 do
-        local bar = Module['bar' .. i]
-        if bar then
-            bar:AddDecoNew(i)
-            bar:AddTargetStateDriver()
-        end
+        steps[#steps + 1] = {'Deco' .. i, function()
+            local bar = Module['bar' .. i]
+            if bar then
+                bar:AddDecoNew(i)
+                bar:AddTargetStateDriver()
+            end
+        end}
     end
 
-    do
+    steps[#steps + 1] = {'PetBar', function()
         local bar = CreateFrame('FRAME', 'DragonflightUIPetbar', UIParent, 'DragonflightUIPetbarFrameTemplate')
         local buttons = {}
 
@@ -2392,9 +2520,9 @@ function Module:SetupActionbarFrames()
         bar:StylePetButton()
         -- bar:ReplaceNormalTexture2()
         Module['petbar'] = bar
-    end
+    end}
 
-    do
+    steps[#steps + 1] = {'StanceBar', function()
         local bar = CreateFrame('FRAME', 'DragonflightUIStancebar', UIParent, 'DragonflightUIStancebarFrameTemplate')
         local buttons = {}
 
@@ -2411,10 +2539,10 @@ function Module:SetupActionbarFrames()
         -- bar:ReplaceNormalTexture2()
         bar.stanceBar = true
         Module['stancebar'] = bar
-    end
+    end}
 
     -- @TODO
-    do
+    steps[#steps + 1] = {'ParkMultiBars', function()
         MultiBarBottomLeft.ignoreFramePositionManager = true
         MultiBarBottomLeft:ClearAllPoints()
         MultiBarBottomLeft:Hide()
@@ -2427,8 +2555,121 @@ function Module:SetupActionbarFrames()
         -- MultiBarBottomRight:SetPoint('BOTTOM', _G['DragonflightUIActionbarFrame3'], 'BOTTOM')
         MultiBarBottomRight:SetPoint('TOP', UIParent, 'BOTTOM', 0, 0)
 
+        -- era-1159: the Midnight backport added real Blizzard frames for
+        -- action bars 6-8 (MultiBar5/6/7) with their OWN buttons, driving
+        -- the same action slots 145-180 as DFUI's extra bars - enabling
+        -- them in Blizzard's settings showed every spell twice. A plain
+        -- Hide() does not stick (the settings callback re-Shows them), so
+        -- park them under a hidden holder.
+        local hider = _G['DragonflightUIMultiBarHider']
+            or CreateFrame('Frame', 'DragonflightUIMultiBarHider', UIParent)
+        hider:Hide()
+        for _, barName in ipairs({'MultiBar5', 'MultiBar6', 'MultiBar7'}) do
+            local blizzBar = _G[barName]
+            if blizzBar then
+                blizzBar.ignoreFramePositionManager = true
+                blizzBar:SetParent(hider)
+            end
+            -- The parked buttons drive the same slots (145-180) as DFUI's
+            -- extra bars and stay registered in the central dispatchers
+            -- even while hidden (ActionBarButtonEventsFrame has no
+            -- unregister API), paying a full Update/UpdateCooldown per
+            -- global action-bar event. Pointing them at empty slot 0 makes
+            -- HasAction() false, so they take the cheap empty branches and
+            -- ActionBarActionEventsFrame drops them.
+            for i = 1, 12 do
+                local btn = _G[barName .. 'Button' .. i]
+                if btn then
+                    btn:SetID(0)
+                    btn:SetAttribute('action', 0)
+                end
+            end
+        end
+
         if UIPARENT_MANAGED_FRAME_POSITIONS then UIPARENT_MANAGED_FRAME_POSITIONS.StanceBarFrame = nil; end
+    end}
+
+    steps[#steps + 1] = {'SlotChangedFilter', function() Module.InstallSlotChangedFilter() end}
+
+    return steps
+end
+
+-- #showtooltip [@mouseover] macros make the client fire one
+-- ACTIONBAR_SLOT_CHANGED per placed macro slot on every mouseover change,
+-- and Blizzard answers each with a forced full UpdateAction() even though
+-- only the resolved icon changed - the GC pressure behind the raid hover
+-- stutter. Take over the event: real slot changes (action signature
+-- differs) keep Blizzard's full pipeline, deferred past combat if needed;
+-- re-resolutions get only what visibly changed (icon, count,
+-- tooltip-if-hovered) on visible buttons. Hidden buttons self-heal via
+-- OnShow -> Update(); cooldown swipes are pushed C-side and usable/range
+-- coloring has its own events, so neither needs the full update.
+function Module.InstallSlotChangedFilter()
+    local bef = _G['ActionBarButtonEventsFrame']
+    if not bef or not bef.frames or Module.SlotFilterInstalled then return end
+    Module.SlotFilterInstalled = true
+
+    bef:UnregisterEvent('ACTIONBAR_SLOT_CHANGED')
+
+    local lastSig = {} -- slot -> "type:id:subType" signature
+    local pendingFull = {} -- slots (or 0 = all) awaiting full dispatch post-combat
+
+    local function fullDispatch(slot)
+        for _, btn in pairs(bef.frames) do if btn.OnEvent then btn:OnEvent('ACTIONBAR_SLOT_CHANGED', slot) end end
     end
+
+    local function lightweightUpdate(slot)
+        for _, btn in pairs(bef.frames) do
+            if btn.action == slot and btn:IsVisible() then
+                local tex = C_ActionBar.GetActionTexture(slot)
+                if btn.icon and tex then btn.icon:SetTexture(tex) end
+                if btn.UpdateCount then btn:UpdateCount() end
+                if GameTooltip:GetOwner() == btn and btn.SetTooltip then btn:SetTooltip() end
+            end
+        end
+    end
+
+    local filter = CreateFrame('Frame')
+    filter:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+    filter:RegisterEvent('PLAYER_REGEN_ENABLED')
+    filter:SetScript('OnEvent', function(_, event, slot)
+        if event == 'PLAYER_REGEN_ENABLED' then
+            if pendingFull[0] then
+                fullDispatch(0)
+            else
+                for s in pairs(pendingFull) do fullDispatch(s) end
+            end
+            wipe(pendingFull)
+            return
+        end
+
+        if slot == 0 then
+            -- full-bar refresh broadcast
+            if InCombatLockdown() then
+                pendingFull[0] = true
+            else
+                fullDispatch(0)
+            end
+            return
+        end
+
+        local actionType, id, subType = GetActionInfo(slot)
+        local sig = (actionType or '') .. ':' .. (id or 0) .. ':' .. (subType or '')
+        if lastSig[slot] == sig then
+            -- same action in the slot -> macro-conditional re-resolution
+            lightweightUpdate(slot)
+        else
+            lastSig[slot] = sig
+            if InCombatLockdown() then
+                -- keep the visuals current now, run the full (protected-
+                -- touching) pipeline once combat drops
+                lightweightUpdate(slot)
+                pendingFull[slot] = true
+            else
+                fullDispatch(slot)
+            end
+        end
+    end)
 end
 
 function Module.AddStateUpdater()
@@ -2601,7 +2842,7 @@ function Module:AddEditMode()
     });
 
     -- totem
-    if DF.Cata then
+    if DF.Cata and MultiCastActionBarFrame then
         EditModeModule:AddEditModeToFrame(MultiCastActionBarFrame)
 
         MultiCastActionBarFrame.DFEditModeSelection:SetGetLabelTextFunction(function()
@@ -2939,7 +3180,7 @@ function Module.ChangeActionbar()
     ActionBarDownButton:ClearAllPoints()
     ActionBarDownButton:SetPoint('LEFT', ActionButton1, 'BOTTOMLEFT', -40, 7) ]]
 
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsModern then
         _G['StatusTrackingBarManager']:Hide()
 
         local stancebar = _G['StanceBar'];
@@ -2956,34 +3197,50 @@ function Module.ChangeActionbar()
 
         mab:UnregisterAllEvents()
         mab:ClearAllPoints()
-        mab:Hide()
+        -- era-1159: keep the bar SHOWN. ActionButton1-12 stay parented to it
+        -- (SetButtons deliberately skips reparenting bar1), so hiding it
+        -- blanks the whole main bar; it is parked offscreen by
+        -- ForceMoveBlizzEditModeGhosts below and the buttons render at their
+        -- DFUI anchors. Upstream's Hide() only worked because Blizzard's
+        -- ActionBarController re-shows the bar after PLAYER_ENTERING_WORLD,
+        -- which on stock timing ran later than this code.
+        mab:Show()
 
         Module:ForceMoveBlizzEditModeGhosts()
     else
-        StanceBarLeft:Hide()
-        StanceBarMiddle:Hide()
-        StanceBarRight:Hide()
-
-        hooksecurefunc(StanceBarRight, 'Show', function()
+        if StanceBarLeft then
             StanceBarLeft:Hide()
             StanceBarMiddle:Hide()
             StanceBarRight:Hide()
-        end)
+
+            hooksecurefunc(StanceBarRight, 'Show', function()
+                StanceBarLeft:Hide()
+                StanceBarMiddle:Hide()
+                StanceBarRight:Hide()
+            end)
+        end
 
         MainMenuBar:SetSize(1, 1)
 
-        MainMenuExpBar:Hide()
-        hooksecurefunc(MainMenuExpBar, 'Show', function()
+        if MainMenuExpBar then
             MainMenuExpBar:Hide()
-        end)
-        ReputationWatchBar:Hide()
-        hooksecurefunc(ReputationWatchBar, 'Show', function()
+            hooksecurefunc(MainMenuExpBar, 'Show', function()
+                MainMenuExpBar:Hide()
+            end)
+        end
+        if StatusTrackingBarManager then StatusTrackingBarManager:Hide() end
+        if ReputationWatchBar then
             ReputationWatchBar:Hide()
-        end)
-        MainMenuBarMaxLevelBar:Hide()
-        hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+            hooksecurefunc(ReputationWatchBar, 'Show', function()
+                ReputationWatchBar:Hide()
+            end)
+        end
+        if MainMenuBarMaxLevelBar then
             MainMenuBarMaxLevelBar:Hide()
-        end)
+            hooksecurefunc(MainMenuBarMaxLevelBar, 'Show', function()
+                MainMenuBarMaxLevelBar:Hide()
+            end)
+        end
     end
 end
 
@@ -3098,16 +3355,36 @@ function Module.HookPetBar()
 end
 
 function Module:ForceMoveBlizzEditModeGhosts()
+    -- Requires the Editmode module's InitEditmodeOverride to have run; if it
+    -- hasn't, skip rather than take down the whole Actionbar enable chain.
+    if not addonTable.OverrideBlizzEditmode then return end
     local t = {_G['MainActionBar'], _G['StanceBar'], _G['PetActionBar'], _G['PossessActionBar']}
 
-    for k, v in ipairs(t) do
-        v:SetClampedToScreen(false)
-        addonTable:OverrideBlizzEditmode(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+    -- Batch: ReanchorFrame per frame, ONE ApplyChanges at the end -
+    -- ApplyChanges costs ~65ms each and four of them dominated the
+    -- ChangeActionbar phase (~260ms of watchdog budget).
+    local lib = addonTable.LibEditModeOverride
+    if lib then
+        for k, v in ipairs(t) do
+            v:SetClampedToScreen(false)
+            lib:ReanchorFrame(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+        end
+        if InCombatLockdown() then
+            lib:SaveOnly()
+        else
+            lib:ApplyChanges()
+        end
+    else
+        for k, v in ipairs(t) do
+            v:SetClampedToScreen(false)
+            addonTable:OverrideBlizzEditmode(v, 'BOTTOM', UIParent, 'TOP', 0, 0 + 500)
+        end
     end
 end
 
 -- TODO
 function Module.MoveTotem()
+    if not MultiCastActionBarFrame then return end
     MultiCastActionBarFrame.ignoreFramePositionManager = true
     Module.Temp.TotemFixing = nil
     hooksecurefunc(MultiCastActionBarFrame, 'SetPoint', function()
@@ -3284,7 +3561,7 @@ function Module.ChangeMicroMenu()
     -- microFrame:SetPoint('BOTTOMRIGHT', HelpMicroButton, 'BOTTOMRIGHT', 0, 0)
     Module.MicroFrame = microFrame
 
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsModern and MicroMenuContainer and addonTable.OverrideBlizzEditmode then
         -- addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
         addonTable:OverrideBlizzEditmode(MicroMenuContainer, 'TOPLEFT', microFrame, 'TOPLEFT', 0, 0)
     else
@@ -3292,6 +3569,7 @@ function Module.ChangeMicroMenu()
 end
 
 function Module.UpdateTotemState(state)
+    if not MultiCastActionBarFrame then return end
     -- print('UpdateTotemState')
     Module.Temp.TotemFixing = true
     -- MultiCastActionBarFrame:SetPoint('BOTTOM', MultiBarBottomRight, 'TOP', 0, 5)
@@ -3536,7 +3814,7 @@ function Module.ChangeBackpack()
     f:SetClampedToScreen(true)
     f:SetMovable(true)
 
-    if DF.API.Version.IsTBC then
+    if _G['BagsBar'] then
         --
         addonTable:OverrideBlizzEditmode(_G['BagsBar'], 'RIGHT', f, 'RIGHT', 0, 0)
     end
@@ -3667,7 +3945,7 @@ function Module.UpdateBagState(state)
     MainMenuBarBackpackButton:SetParent(f)
     MainMenuBarBackpackButton:SetScale(1.5)
 
-    if DF.API.Version.IsTBC then
+    if _G['BagsBar'] then
         local b = _G['BagsBar']
         -- b:SetScale(state.scale)
 
@@ -3809,31 +4087,32 @@ function Module.ChangeFramerate()
 end
 
 function Module:Era()
-    Module.ChangeActionbar()
-    Module.CreateNewXPBar()
-    Module.CreateNewRepBar()
-    Module:RemoveActionbarAnimations()
+    local B = function(label, fn) Helper:Benchmark('Era:' .. label, fn, 2, Module) end
+    B('ChangeActionbar', Module.ChangeActionbar)
+    B('CreateNewXPBar', Module.CreateNewXPBar)
+    B('CreateNewRepBar', Module.CreateNewRepBar)
+    B('RemoveActionbarAnimations', function() Module:RemoveActionbarAnimations() end)
 
-    Module.HookPetBar()
+    B('HookPetBar', Module.HookPetBar)
     -- Module.MoveTotem()
     -- Module.ChangePossessBar()
 
     frame:RegisterEvent('PLAYER_REGEN_ENABLED')
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    Module.ChangeGryphon()
+    B('ChangeGryphon', Module.ChangeGryphon)
     -- Module.DrawActionbarDeco()
 
-    Module.ChangeMicroMenu()
-    Module.ChangeBackpack()
+    B('ChangeMicroMenu', Module.ChangeMicroMenu)
+    B('ChangeBackpack', Module.ChangeBackpack)
     -- Module.MoveBars()
-    Module.ChangeFramerate()
-    Module.CreateBagExpandButton()
-    Module.RefreshBagBarToggle()
-    Module.HookBags()
+    B('ChangeFramerate', Module.ChangeFramerate)
+    B('CreateBagExpandButton', Module.CreateBagExpandButton)
+    B('RefreshBagBarToggle', Module.RefreshBagBarToggle)
+    B('HookBags', Module.HookBags)
 
-    self.SubVehicleLeave:Setup()
-    self.SubActionbarRange:Setup()
+    B('SubVehicleLeave', function() self.SubVehicleLeave:Setup() end)
+    B('SubActionbarRange', function() self.SubActionbarRange:Setup() end)
 end
 
 function Module:TBC()

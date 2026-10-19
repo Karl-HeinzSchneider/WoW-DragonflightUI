@@ -7,6 +7,7 @@
 	<Include file="Chat/Load.xml" />
 	<Include file="Flyout/Load.xml" />
 	<Include file="Minimap/Load.xml" />
+	<Include file="Nameplates/Load.xml" />
 	<Include file="Tooltip/Load.xml" />
 	<Include file="UI/Load.xml" />
 	<Include file="Unitframe/Load.xml" />

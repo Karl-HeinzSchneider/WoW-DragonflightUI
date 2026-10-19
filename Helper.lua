@@ -5,6 +5,25 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 local Helper = {};
 addonTable.Helper = Helper;
 
+-- era-1159 diagnostics: persist phase timings so slow spots can be read from
+-- disk after logout ("script ran too long" hides the real sink - the error
+-- surfaces wherever the shared load-time budget happens to expire, not where
+-- the time went). Wiped at the start of every session: the file always holds
+-- the LAST session.
+local perfLog = { boot = true }
+DragonflightUIPerfLog = perfLog
+-- SavedVariables load AFTER this file runs and would re-point the global at
+-- last session's table; re-assert ours so the file on disk is always the
+-- most recent session.
+local perfFrame = CreateFrame('Frame')
+perfFrame:RegisterEvent('ADDON_LOADED')
+perfFrame:SetScript('OnEvent', function(self, _, name)
+    if name == addonName then
+        DragonflightUIPerfLog = perfLog
+        self:UnregisterAllEvents()
+    end
+end)
+
 -- make globally available
 _G['DragonflightUI_Helper'] = Helper;
 
@@ -30,7 +49,97 @@ function Helper:Benchmark(label, func, level, moduleRef)
                               duration * 1000)
     -- print(str)
     DF:Debug(moduleRef or DF, str)
+    if #perfLog < 400 then
+        perfLog[#perfLog + 1] = string.format('%.1fms %s', duration * 1000, label)
+    end
     return results, duration, startTime, endTime;
+end
+
+-- Run {label, fn} steps one per frame. Each step gets a fresh watchdog
+-- slice; a failing step is reported but never breaks the chain.
+-- The one true combat check for load-time gates. InCombatLockdown() reads
+-- FALSE during the entire load sequence of a mid-combat login or /reload
+-- on 1.15.9 - lockdown only engages around PLAYER_ENTERING_WORLD - while
+-- protected operations are ALREADY being blocked (proven: secure frame
+-- creation failed with the API reporting no lockdown). UnitAffectingCombat
+-- is the server-side combat state and is truthful during load.
+function Helper:IsCombatLocked()
+    return InCombatLockdown() or UnitAffectingCombat('player')
+end
+
+-- Combat gate for module enable chains. Everything the enable chains do to
+-- protected frames (moving Blizzard's secure action bars, state drivers,
+-- SetAttribute on secure handlers) is silently BLOCKED during combat
+-- lockdown - no Lua error, the calls just don't happen. A /reload mid-fight
+-- therefore used to run the whole setup under lockdown and leave the UI
+-- half-built. Run immediately when safe, otherwise once combat drops.
+function Helper:RunOutOfCombat(label, fn)
+    if not Helper:IsCombatLocked() then
+        fn()
+        return
+    end
+    if #perfLog < 400 then
+        perfLog[#perfLog + 1] = 'deferred ' .. label .. ' to end of combat (combat reload)'
+    end
+    print('|cff0070ddDragonflightUI:|r reloaded during combat - ' .. label
+        .. ' will finish setting up when combat ends.')
+    local gate = CreateFrame('Frame')
+    gate:RegisterEvent('PLAYER_REGEN_ENABLED')
+    gate:SetScript('OnEvent', function(g)
+        g:UnregisterAllEvents()
+        fn()
+    end)
+end
+
+function Helper:RunSteps(steps, moduleRef, chainLabel)
+    local index = 0
+    -- Batch steps into ~100ms slices: one step per frame made the UI
+    -- visibly assemble itself for ~a second after loading (40 steps = 40
+    -- frames of latency for ~250ms of actual work). 100ms + one overshooting
+    -- step stays well under the lowest observed LimitedLuaResources kill
+    -- (~350ms), and the whole chain now finishes in 2-3 frames.
+    local SLICE_BUDGET_MS = 100
+    local resumeFrame
+    local function runNext()
+        -- Combat pause: these chains create secure-template frames and do
+        -- protected setup, which FAILS under combat lockdown (and cascades:
+        -- later steps index the bars earlier steps never produced). This
+        -- includes the mid-combat LOGIN case, where InCombatLockdown() reads
+        -- false during the load sequence and lockdown engages mid-chain -
+        -- so a single gate at chain start is not enough. Park the chain and
+        -- resume when combat drops.
+        if Helper:IsCombatLocked() then
+            if not resumeFrame then
+                resumeFrame = CreateFrame('Frame')
+                resumeFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+                resumeFrame:SetScript('OnEvent', function()
+                    C_Timer.After(0, runNext)
+                end)
+            end
+            if #perfLog < 400 then
+                perfLog[#perfLog + 1] = ('chain %s paused for combat before step %d'):format(
+                    tostring(chainLabel), index + 1)
+            end
+            return
+        end
+        local sliceStart = GetTimePreciseSec()
+        repeat
+            index = index + 1
+            local step = steps[index]
+            if not step then return end
+            local name = (chainLabel or 'Chain') .. ':' .. (step[1] or index)
+            local startTime = GetTimePreciseSec()
+            local ok, err = pcall(step[2])
+            local ms = (GetTimePreciseSec() - startTime) * 1000
+            if #perfLog < 400 then
+                perfLog[#perfLog + 1] = string.format('%.1fms %s%s', ms, name, ok and '' or ' [ERROR]')
+            end
+            if not ok then geterrorhandler()(name .. ': ' .. tostring(err)) end
+        until (GetTimePreciseSec() - sliceStart) * 1000 > SLICE_BUDGET_MS
+        C_Timer.After(0, runNext)
+    end
+    -- Fully async: even the first slice runs outside the caller's slice.
+    C_Timer.After(0, runNext)
 end
 
 -- local playerMaskTexture = 'Interface\\Addons\\DragonflightUI\\Textures\\uiunitframeplayerportraitmask'

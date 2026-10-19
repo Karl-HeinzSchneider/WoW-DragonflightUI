@@ -10,8 +10,17 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
+    end
+end
+
+local TextStatusBar_UpdateTextStringWithValues_orig = TextStatusBar_UpdateTextStringWithValues;
+local function TextStatusBar_UpdateTextStringWithValues(f, textString, value, valueMin, valueMax)
+    if TextStatusBar_UpdateTextStringWithValues_orig then
+        TextStatusBar_UpdateTextStringWithValues_orig(f, textString, value, valueMin, valueMax)
+    else
+        f:UpdateTextStringWithValues(textString, value, valueMin, valueMax)
     end
 end
 
@@ -233,6 +242,8 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         hp:SetStatusBarColor(1, 1, 1, 1)
         hp.breakUpLargeNumbers = true
 
+        if not TextStatusBar_UpdateTextString_orig and TextStatusBarMixin then Mixin(hp, TextStatusBarMixin) end
+
         self.HealthBar = hp
     end
 
@@ -245,6 +256,8 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
             'Interface\\Addons\\DragonflightUI\\Textures\\Unitframe\\UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana')
         mana:SetStatusBarColor(1, 1, 1, 1)
         mana.breakUpLargeNumbers = true
+
+        if not TextStatusBar_UpdateTextString_orig and TextStatusBarMixin then Mixin(mana, TextStatusBarMixin) end
 
         self.ManaBar = mana
 
@@ -321,6 +334,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         self.HealthBar.HealthBarText:SetText('100/100')
         self.HealthBar.HealthBarText:SetPoint('CENTER', self.HealthBar, 'CENTER', 0, 0)
         self.HealthBar.HealthBarText:Hide()
+        self.HealthBar.TextString = self.HealthBar.HealthBarText
 
         self.HealthBar.LeftText = self.HealthBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
         self.HealthBar.LeftText:SetText('100%')
@@ -335,6 +349,7 @@ function DragonflightUIBossframeMixin:SetupTargetFrameStyle()
         self.ManaBar.ManaBarText:SetText('100/100')
         self.ManaBar.ManaBarText:SetPoint('CENTER', self.ManaBar, 'CENTER', -deltaSize / 2, 0)
         self.ManaBar.ManaBarText:Hide()
+        self.ManaBar.TextString = self.ManaBar.ManaBarText
 
         self.ManaBar.LeftText = self.ManaBar:CreateFontString(nil, 'OVERLAY', 'TextStatusBarText')
         self.ManaBar.LeftText:SetText('100%')

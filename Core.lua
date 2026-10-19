@@ -27,6 +27,14 @@ function DF:OnEnable()
     -- Called when the addon is enabled
     -- self:Print('DragonflightUI enabled!')
     self:ShowStartMessage()
+
+    -- era-1159 note: module-level enable staggering was tried here and
+    -- REVERTED: modules enabled after PLAYER_ENTERING_WORLD miss the login
+    -- events their setup depends on (classic unitframes/minimap), and
+    -- reordering broke the Editmode-before-Actionbar dependency. The only
+    -- genuinely heavy module is Actionbar, which slices its own setup into
+    -- per-frame steps internally (Helper:RunSteps); everything else fits the
+    -- login watchdog slice comfortably (~300ms total).
 end
 
 function DF:OnDisable()

@@ -1507,6 +1507,181 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     hand:ClearAllPoints()
     hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -2)
 
+    -- Retail character pane background: the actual Dragonflight art
+    -- (atlas member 'character-panel-background', FileDataID 5882640,
+    -- 450x420 at px 1,451,1,421 on a 1024x512 sheet) with the gear-slot
+    -- pillars baked in. Retail stretches it across the pane inset; parent
+    -- it to the inset on a high BACKGROUND sublevel so it sits above the
+    -- inset's own Bg but below its border nine-slice.
+    do
+        local bg = inset:CreateTexture('DragonflightUICharacterPanelBackground', 'BACKGROUND', nil, 7)
+        bg:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uicharacterpanel2x')
+        bg:SetTexCoord(1 / 1024, 451 / 1024, 1 / 512, 421 / 512)
+        bg:SetAllPoints(inset)
+    end
+
+    -- Retail slot frames, 1:1: each paperdoll button carries a piece of
+    -- Interface\CharacterFrame\Char-Paperdoll-Parts exactly as retail's
+    -- PaperDollItemSlotButtonLeft/Right/BottomTemplate composes them
+    -- (BACKGROUND sublevel -1; sizes, texcoords and anchors copied verbatim
+    -- from retail CharacterFrame.xml). Shipped as an addon copy
+    -- (charpaperdollparts.blp, FileDataID 410248) so the look does not
+    -- depend on the backport's game data. Pushed/highlight match retail's
+    -- ItemButtonTemplate; retail paperdoll buttons draw no normal texture.
+    do
+        local PARTS = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollparts'
+        local PIECES = {
+            left = {49, 44, 0.20703125, 0.39843750, 0.59375000, 0.93750000, 'TOPLEFT', -4, 0},
+            right = {50, 44, 0.00390625, 0.19921875, 0.59375000, 0.93750000, 'TOPRIGHT', 4, 0},
+            bottom = {42, 53, 0.67187500, 0.83593750, 0.00781250, 0.42187500, 'TOPLEFT', -4, 8}
+        }
+        local SLOTS = {
+            Head = 'left', Neck = 'left', Shoulder = 'left', Back = 'left', Chest = 'left', Shirt = 'left',
+            Tabard = 'left', Wrist = 'left', Hands = 'right', Waist = 'right', Legs = 'right', Feet = 'right',
+            Finger0 = 'right', Finger1 = 'right', Trinket0 = 'right', Trinket1 = 'right', MainHand = 'bottom',
+            SecondaryHand = 'bottom', Ranged = 'bottom'
+        }
+        for slotName, side in pairs(SLOTS) do
+            local btn = _G['Character' .. slotName .. 'Slot']
+            if btn and not btn.DFSlotFrame then
+                local p = PIECES[side]
+                local t = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
+                t:SetTexture(PARTS)
+                t:SetSize(p[1], p[2])
+                t:SetTexCoord(p[3], p[4], p[5], p[6])
+                t:SetPoint(p[7], btn, p[7], p[8], p[9])
+                btn.DFSlotFrame = t
+
+                local normal = btn:GetNormalTexture()
+                if normal then normal:SetTexture(nil) end
+
+                local pushed = btn:GetPushedTexture()
+                if pushed then
+                    pushed:SetTexture('Interface\\Buttons\\UI-Quickslot-Depress')
+                    pushed:ClearAllPoints()
+                    pushed:SetAllPoints(btn)
+                end
+
+                local high = btn:GetHighlightTexture()
+                if high then
+                    high:SetTexture('Interface\\Buttons\\ButtonHilight-Square')
+                    high:SetBlendMode('ADD')
+                    high:ClearAllPoints()
+                    high:SetAllPoints(btn)
+                end
+
+                -- the weapon tray pieces reach below the button and were
+                -- getting covered by a sibling frame - lift the weapon
+                -- buttons above their siblings (retail draws them last)
+                if side == 'bottom' then btn:SetFrameLevel(7) end
+
+                -- retail caps the tray's outer edges with dedicated pieces:
+                -- Char-Slot-Bottom-Left on the first weapon slot and
+                -- Char-Slot-Bottom-Right on the last
+                if slotName == 'MainHand' then
+                    local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
+                    cap:SetTexture(PARTS)
+                    cap:SetSize(6, 54)
+                    cap:SetTexCoord(0.70703125, 0.73046875, 0.4375, 0.859375)
+                    cap:SetPoint('TOPRIGHT', t, 'TOPLEFT', 0, 0)
+                elseif slotName == 'Ranged' then
+                    local cap = btn:CreateTexture(nil, 'BACKGROUND', nil, -1)
+                    cap:SetTexture(PARTS)
+                    cap:SetSize(7, 54)
+                    cap:SetTexCoord(0.671875, 0.69921875, 0.4375, 0.859375)
+                    cap:SetPoint('TOPLEFT', t, 'TOPRIGHT', 0, 0)
+                end
+            end
+        end
+
+        -- Era-only ammo slot: classic art untouched. Gap and arrow position
+        -- compose with the weapon row anchor (see the MainHand SetPoint) so
+        -- the classic arrow sits cleanly between the tray's right cap and
+        -- the ammo art; the arrow natively hugs the ammo slot's left edge,
+        -- so its region (the unnamed 23x41 OVERLAY texture) is re-anchored.
+        -- Values hand-tuned in game via the tuning sliders.
+        local ammo = _G['CharacterAmmoSlot']
+        if ammo then
+            ammo:ClearAllPoints()
+            ammo:SetPoint('LEFT', CharacterRangedSlot, 'RIGHT', 29.5, 0)
+            for _, region in ipairs({ammo:GetRegions()}) do
+                if region:GetObjectType() == 'Texture' and region:GetDrawLayer() == 'OVERLAY' then
+                    local w, h = region:GetSize()
+                    if math.abs(w - 23) < 1 and math.abs(h - 41) < 1 then
+                        region:ClearAllPoints()
+                        region:SetPoint('CENTER', ammo, 'CENTER', -28.5, 0)
+                    end
+                end
+            end
+        end
+    end
+
+    -- Retail inner border framing the model area (PaperDollInnerBorder* in
+    -- retail PaperDollFrame.xml, geometry verbatim): Char-Corner pieces
+    -- from the parts sheet plus tiling edges from Char-Paperdoll-Horizontal
+    -- and Char-Paperdoll-Vertical (FileDataID 410247/410249, shipped as
+    -- addon copies). Lives on the pane inset's OVERLAY layer - above the
+    -- dark pane background, below the slot buttons - like retail.
+    do
+        local PARTS = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollparts'
+        local HORIZ = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollhorizontal'
+        local VERT = 'Interface\\Addons\\DragonflightUI\\Textures\\charpaperdollvertical'
+
+        local function corner(l, r, t, b, point, x, y)
+            local tex = inset:CreateTexture(nil, 'OVERLAY')
+            tex:SetTexture(PARTS)
+            tex:SetSize(7, 7)
+            tex:SetTexCoord(l, r, t, b)
+            tex:SetPoint(point, inset, point, x, y)
+            return tex
+        end
+        local tl = corner(0.40625, 0.43359375, 0.8046875, 0.859375, 'TOPLEFT', 46, -4)
+        local tr = corner(0.40625, 0.43359375, 0.734375, 0.7890625, 'TOPRIGHT', -47, -4)
+        local bl = corner(0.40625, 0.43359375, 0.6640625, 0.71875, 'BOTTOMLEFT', 46, 31)
+        local br = corner(0.40625, 0.43359375, 0.59375, 0.6484375, 'BOTTOMRIGHT', -47, 31)
+
+        local left = inset:CreateTexture(nil, 'OVERLAY')
+        left:SetTexture(VERT, 'CLAMP', 'REPEAT')
+        if left.SetVertTile then left:SetVertTile(true) end
+        left:SetWidth(5)
+        left:SetTexCoord(0.0625, 0.375, 0, 1)
+        left:SetPoint('TOPLEFT', tl, 'BOTTOMLEFT', -1, 0)
+        left:SetPoint('BOTTOMLEFT', bl, 'TOPLEFT', -1, 0)
+
+        local right = inset:CreateTexture(nil, 'OVERLAY')
+        right:SetTexture(VERT, 'CLAMP', 'REPEAT')
+        if right.SetVertTile then right:SetVertTile(true) end
+        right:SetWidth(5)
+        right:SetTexCoord(0.5, 0.8125, 0, 1)
+        right:SetPoint('TOPRIGHT', tr, 'BOTTOMRIGHT', 1, 0)
+        right:SetPoint('BOTTOMRIGHT', br, 'TOPRIGHT', 1, 0)
+
+        local top = inset:CreateTexture(nil, 'OVERLAY')
+        top:SetTexture(HORIZ, 'REPEAT', 'CLAMP')
+        if top.SetHorizTile then top:SetHorizTile(true) end
+        top:SetHeight(5)
+        top:SetTexCoord(0, 1, 0.5, 0.8125)
+        top:SetPoint('TOPLEFT', tl, 'TOPRIGHT', 0, 1)
+        top:SetPoint('TOPRIGHT', tr, 'TOPLEFT', 0, 1)
+
+        local bottom = inset:CreateTexture(nil, 'OVERLAY')
+        bottom:SetTexture(HORIZ, 'REPEAT', 'CLAMP')
+        if bottom.SetHorizTile then bottom:SetHorizTile(true) end
+        bottom:SetHeight(5)
+        bottom:SetTexCoord(0, 1, 0.0625, 0.375)
+        bottom:SetPoint('BOTTOMLEFT', bl, 'BOTTOMRIGHT', 0, -1)
+        bottom:SetPoint('BOTTOMRIGHT', br, 'BOTTOMLEFT', 0, -1)
+
+        -- retail's second full-width bottom line running behind the weapon tray
+        local bottom2 = inset:CreateTexture(nil, 'OVERLAY')
+        bottom2:SetTexture(HORIZ, 'REPEAT', 'CLAMP')
+        if bottom2.SetHorizTile then bottom2:SetHorizTile(true) end
+        bottom2:SetHeight(5)
+        bottom2:SetTexCoord(0, 1, 0.0625, 0.375)
+        bottom2:SetPoint('BOTTOMLEFT', inset, 'BOTTOMLEFT', 0, 27)
+        bottom2:SetPoint('BOTTOMRIGHT', inset, 'BOTTOMRIGHT', 0, 27)
+    end
+
     if DF.API.Version.IsWotlk then
         -- head:SetPoint('TOPLEFT', inset, 'TOPLEFT', 4, -10)
         -- hand:SetPoint('TOPRIGHT', inset, 'TOPRIGHT', -4, -10)
@@ -1558,7 +1733,26 @@ function DragonflightUIMixin:ChangeCharacterFrameEra()
     local main = CharacterMainHandSlot
     main:ClearAllPoints()
     -- main:SetPoint('TOPLEFT', PaperDollItemsFrame, 'TOPLEFT', 122, 127)
-    main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 107.5, 16)
+    -- With a VISIBLE ammo slot the whole ensemble (tray incl. caps, arrow,
+    -- ammo) shifts left so the classic arrow fits between the tray's right
+    -- cap and the ammo art; without one (class can't use ammo - the client
+    -- hides the slot) the plain tray centers on the pane. The slot's
+    -- visibility changes with class/weapon, so re-evaluate on show/hide.
+    -- Values hand-tuned in game via the tuning sliders.
+    DragonflightUIMixin.WeaponRowAmmoX = 80
+    DragonflightUIMixin.WeaponRowNoAmmoX = 108.5
+    local function positionWeaponRow()
+        local hasAmmo = _G['CharacterAmmoSlot'] and _G['CharacterAmmoSlot']:IsShown()
+        main:ClearAllPoints()
+        main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT',
+                      hasAmmo and DragonflightUIMixin.WeaponRowAmmoX or DragonflightUIMixin.WeaponRowNoAmmoX, 16)
+    end
+    DragonflightUIMixin.PositionWeaponRow = positionWeaponRow
+    if _G['CharacterAmmoSlot'] then
+        _G['CharacterAmmoSlot']:HookScript('OnShow', positionWeaponRow)
+        _G['CharacterAmmoSlot']:HookScript('OnHide', positionWeaponRow)
+    end
+    positionWeaponRow()
     -- if DF.API.Version.IsWotlk then main:SetPoint('BOTTOMLEFT', PaperDollItemsFrame, 'BOTTOMLEFT', 87, 13) end -- @TODO
     -- tabs
     do

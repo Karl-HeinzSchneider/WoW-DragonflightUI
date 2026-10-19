@@ -15,7 +15,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -708,6 +708,7 @@ function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetMovable(true)
         f_orig:SetUserPlaced(true)
     end
 
@@ -736,7 +737,13 @@ function SubModuleMixin:ChangeTargetFrameGeneral(self, frame)
     local healthBar = frame.HealthBar or _G[frame:GetName() .. 'HealthBar']
     local manaBar = frame.ManaBar or _G[frame:GetName() .. 'ManaBar']
     local name = frame.Name;
-    local nameBackground = frame.NameBackground;
+    -- 1.15.9 exposes this as parentKey 'nameBackground' (lower case); with a
+    -- nil lookup the reskin block below silently skips and the Blizzard
+    -- reaction-colored gradient stays at its DEFAULT anchor - rendering as a
+    -- colored bar hanging under the rearranged frame (blue on friendly
+    -- players). CheckClassification re-shows it on every target change.
+    local nameBackground = frame.NameBackground or frame.nameBackground or
+                               _G[frame:GetName() .. 'NameBackground'];
     local flash = frame.Flash;
     local levelText = frame.LevelText or _G[self:GetName() '..TextureFrameLevelText']
     local deadText = frame.DeadText;

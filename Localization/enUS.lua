@@ -30,6 +30,8 @@ do
     L["ModuleTooltipUtility"] = "This module adds general UI features and tweaks.\nWORK IN PROGRESS"
 
     L["ModuleFlyout"] = "Flyout"
+    L["ModuleNameplates"] = "Nameplates"
+    L["ModuleTooltipNameplates"] = "Dragonflight-styled enemy nameplates: DF health bar texture, outlined names, class-colored enemy players (1.15.9+)."
     L["ModuleActionbar"] = "Actionbar"
     L["ModuleCastbar"] = "Castbar"
     L["ModuleChat"] = "Chat"
@@ -54,7 +56,7 @@ do
     L["ConfigGeneralModules"] = "Modules"
     L["ConfigGeneralInfo"] = "Info"
     L["MainMenuDragonflightUI"] = "DragonflightUI"
-    L["MainMenuEditmode"] = "Editmode"
+    L["MainMenuEditmode"] = "Edit Mode"
 
     -- config.mixin.lua
     L["ConfigMixinQuickKeybindMode"] = "Quick Keybind Mode"
@@ -158,6 +160,9 @@ do
         "Adds compatibility for MerInspect when using the UI Module with 'Change CharacterFrame' enabled."
     L['CompatPawn'] = "Pawn"
     L['CompatPawnDesc'] = "Adds compatibility for Pawn when using the UI Module with 'Change CharacterFrame' enabled."
+    L['CompatQuestie'] = "Questie"
+    L['CompatQuestieDesc'] =
+        "Keeps Questie's group-size counter working when its initialization is cut short by the 1.15.9 client, restoring its raid safeguards (fixes frame drops in raids)."
     L['CompatRanker'] = "Ranker"
     L['CompatRankerDesc'] =
         "Adds compatibility for Ranker when using the UI Module with 'Change CharacterFrame' enabled."
@@ -329,7 +334,9 @@ do
     L["MoreOptionsHideBarScrolling"] = "Hide Bar Scrolling"
     L["MoreOptionsHideBarScrollingDesc"] = ""
     L["MoreOptionsHideBorder"] = "Hide Border Art"
-    L["MoreOptionsHideBorderDesc"] = "*Work in Progress*"
+    L["MoreOptionsHideBorderDesc"] = "Hide the retail-style frame around the bar"
+    L["MoreOptionsBorderFill"] = "Border Fill Opacity"
+    L["MoreOptionsBorderFillDesc"] = "Darkness of the fill behind the buttons inside the border frame. Retail uses a very subtle tint (~0.2); 0 disables the fill."
     L["MoreOptionsHideDivider"] = "Hide Bar Divider"
     L["MoreOptionsHideDividerDesc"] = ""
 

@@ -13,7 +13,7 @@ local TextStatusBar_UpdateTextString_orig = TextStatusBar_UpdateTextString;
 local function TextStatusBar_UpdateTextString(f)
     if TextStatusBar_UpdateTextString_orig then
         TextStatusBar_UpdateTextString_orig(f)
-    else
+    elseif f.UpdateTextString then
         f:UpdateTextString()
     end
 end
@@ -588,6 +588,7 @@ function SubModuleMixin:Update()
     if DF.API.Version.IsTBC then
     else
         f:SetUserPlaced(true)
+        f_orig:SetMovable(true)
         f_orig:SetUserPlaced(true)
     end
 
@@ -1127,10 +1128,11 @@ function SubModuleMixin:AddAlternatePowerBar()
         self.cvarLabel = "STATUS_TEXT_PLAYER";
         self.capNumericDisplay = true -- DF
         AlternatePowerBar_Initialize(self);
-        if DF.API.Version.IsTBC then
-            self:InitializeTextStatusBar()
-        else
+        if TextStatusBar_Initialize then
             TextStatusBar_Initialize(self);
+        else
+            if not self.InitializeTextStatusBar and TextStatusBarMixin then Mixin(self, TextStatusBarMixin) end
+            if self.InitializeTextStatusBar then self:InitializeTextStatusBar() end
         end
     end
 
@@ -1177,20 +1179,21 @@ function SubModuleMixin:AddAlternatePowerBar()
 
     -- 
     AlternatePowerBar_OnLoad(bar)
-    if DF.API.Version.IsTBC then
-        bar:InitializeTextStatusBar()
-    else
+    if TextStatusBar_Initialize then
         TextStatusBar_Initialize(bar);
+    else
+        if not bar.InitializeTextStatusBar and TextStatusBarMixin then Mixin(bar, TextStatusBarMixin) end
+        if bar.InitializeTextStatusBar then bar:InitializeTextStatusBar() end
     end
 
     bar:SetScript('OnEvent', function(self, event, ...)
         -- 
         AlternatePowerBar_OnEvent(self, event, ...);
 
-        if DF.API.Version.IsTBC then
-            self:TextStatusBarOnEvent(event, ...);
-        else
+        if TextStatusBar_OnEvent then
             TextStatusBar_OnEvent(self, event, ...);
+        elseif self.TextStatusBarOnEvent then
+            self:TextStatusBarOnEvent(event, ...);
         end
     end)
     bar:SetScript('OnUpdate', function(self, elapsed)

@@ -230,7 +230,7 @@ function SubModuleMixin:Setup()
     end)
 
     -- ActionButton_UpdateUsable
-    if DF.API.Version.IsTBC then
+    if DF.API.Version.IsTBC or not ActionButton_UpdateUsable then
     else
         hooksecurefunc('ActionButton_UpdateUsable', function(btn)
             -- print('ActionButton_UpdateUsable', btn:GetName() or '')
@@ -263,26 +263,60 @@ function SubModuleMixin:Update()
     self.oomColor = CreateColorFromRGBHexString(state.oomColor)
 end
 
+-- Hot path: cache the two static lookups - whether a macro is a
+-- #showtooltip macro (invalidated on UPDATE_MACROS) and each spell's power
+-- costs (invalidated on player max-power changes; percent-based costs
+-- scale with it). GetMacroSpell stays live: its result depends on the
+-- macro's conditionals.
+local macroIsShowtooltip = {}
+local powerCostCache = {}
+do
+    local inv = CreateFrame('Frame')
+    inv:RegisterEvent('UPDATE_MACROS')
+    inv:RegisterUnitEvent('UNIT_MAXPOWER', 'player')
+    inv:RegisterEvent('PLAYER_ENTERING_WORLD')
+    inv:SetScript('OnEvent', function(_, event)
+        if event == 'UPDATE_MACROS' then
+            wipe(macroIsShowtooltip)
+        else
+            wipe(powerCostCache)
+        end
+    end)
+end
+
 local function CustomIsUsableAction(action)
     local actionType, id = GetActionInfo(action)
 
     if actionType == 'macro' then
-        -- print('macro!')
-        -- local name, icon, body = GetMacroInfo(id)
-        local name, _, _ = GetMacroInfo(id)
+        local isShowtooltip = macroIsShowtooltip[id]
+        if isShowtooltip == nil then
+            local name = GetMacroInfo(id)
+            isShowtooltip = (name and name:sub(1, 1) == '#') or false
+            macroIsShowtooltip[id] = isShowtooltip
+        end
 
-        if name and name:sub(1, 1) == '#' then
+        if isShowtooltip then
             local spellID = GetMacroSpell(id);
 
             if spellID then
-                local costs = C_Spell.GetSpellPowerCost(spellID)
+                local costs = powerCostCache[spellID]
+                if costs == nil then
+                    local apiCosts = C_Spell.GetSpellPowerCost(spellID)
+                    if apiCosts then
+                        costs = {}
+                        for i = 1, #apiCosts do
+                            costs[i] = {type = apiCosts[i].type, minCost = apiCosts[i].minCost}
+                        end
+                    else
+                        costs = false
+                    end
+                    powerCostCache[spellID] = costs
+                end
 
                 if costs then
                     for i = 1, #costs do
-                        --
                         local cost = costs[i]
                         if UnitPower('player', cost.type) < cost.minCost then
-                            --
                             return false, true;
                         end
                     end
@@ -297,6 +331,8 @@ end
 
 function SubModuleMixin:UpdateRangeAndUsable(btn, checksRange, inRange)
     if btn.ignoreRange then return end
+    -- hidden buttons refresh via ActionButton_OnShow when they appear
+    if not btn:IsVisible() then return end
     local icon = btn.Icon
     if not icon then return end
     local state = self.state;

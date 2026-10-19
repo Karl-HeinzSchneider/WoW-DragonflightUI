@@ -881,9 +881,11 @@ function Module:GameTooltipSetDefaultAnchor(self, parent)
 
     -- default
     self.DFDefaultAnchor = true;
-    self:SetOwner(parent, 'ANCHOR_NONE');
-    -- self:ClearAllPoints();
-    -- self:SetPoint('BOTTOMRIGHT', Module.GametooltipPreview, 'BOTTOMRIGHT', 0, 0);
+    -- GameTooltip_SetDefaultAnchor already did SetOwner(parent,'ANCHOR_NONE')
+    -- as its first line - repeating it here forces a second full owner-reset
+    -- (ClearLines -> OnTooltipCleared -> backdrop rebuild) on every default
+    -- tooltip, which adds up fast when sweeping the mouse across crowds.
+    if self:GetOwner() ~= parent then self:SetOwner(parent, 'ANCHOR_NONE'); end
 
     Module:UpdateDefaultAnchor(self)
 end
@@ -998,7 +1000,16 @@ function Module:SetDefaultBackdrop(self)
     backdrop.insets.top = state.insetTop;
     backdrop.insets.bottom = state.insetBottom;
 
-    self:SetBackdrop(backdrop)
+    -- This runs on every OnTooltipCleared, i.e. several times per tooltip
+    -- shown. SetBackdrop tears down and rebuilds the NineSlice textures, so
+    -- skip it when the spec is unchanged - colors below stay cheap to apply.
+    local key = string.format('%s|%s|%d|%d|%d|%d|%d', tostring(backdrop.bgFile), tostring(backdrop.edgeFile),
+                              backdrop.edgeSize, backdrop.insets.left, backdrop.insets.right, backdrop.insets.top,
+                              backdrop.insets.bottom)
+    if self.DFAppliedBackdrop ~= key then
+        self.DFAppliedBackdrop = key
+        self:SetBackdrop(backdrop)
+    end
 
     do
         local backdropColor = CreateColorFromRGBHexString(state.backdropColor)

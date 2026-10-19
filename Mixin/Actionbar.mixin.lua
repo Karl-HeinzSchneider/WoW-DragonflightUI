@@ -23,6 +23,18 @@ end
 
 DragonflightUIActionbarMixin = CreateFromMixins(DragonflightUIEditModeMixin)
 
+-- Generation counter for the per-button hotkey caches: buttons only
+-- recompute their hotkey text when this moves (or their settings change),
+-- instead of on every ActionButton_UpdateHotkeys call.
+DragonflightUIActionbarMixin.BindingsGen = 0
+do
+    local f = CreateFrame('Frame')
+    f:RegisterEvent('UPDATE_BINDINGS')
+    f:SetScript('OnEvent', function()
+        DragonflightUIActionbarMixin.BindingsGen = DragonflightUIActionbarMixin.BindingsGen + 1
+    end)
+end
+
 function DragonflightUIActionbarMixin:Init()
     self:SetPoint('BOTTOMLEFT', UIParent, 'CENTER', 0, 380)
     self:SetSize(250, 142)
@@ -37,8 +49,38 @@ function DragonflightUIActionbarMixin:Init()
     self.stanceBar = false
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
+    -- Re-assert grid state once combat drops too: any grid work skipped
+    -- under lockdown (SetShown on protected buttons) self-heals here.
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
+    -- Drag-grid: while a spell/item is on the cursor every slot must be a
+    -- visible drop target (stock-bar behavior); and when a slot is vacated
+    -- by a move, the grid must re-evaluate or the empty slot keeps its
+    -- populated look.
+    self:RegisterEvent('ACTIONBAR_SHOWGRID')
+    self:RegisterEvent('ACTIONBAR_HIDEGRID')
+    self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+    -- ACTIONBAR_SLOT_CHANGED arrives in bursts (one per macro slot per
+    -- mouseover change with @mouseover macros). Grid state only depends on
+    -- HasAction, so coalesce to a single UpdateGridState on the next frame.
+    self.DFGridFlush = function()
+        self.DFGridDirty = nil
+        if InCombatLockdown() then return end
+        self:UpdateGridState()
+    end
     self:SetScript('OnEvent', function(_, event, arg1)
         -- print(self:GetName(), event, arg1)
+        if event == 'ACTIONBAR_SLOT_CHANGED' then
+            if not self.DFGridDirty then
+                self.DFGridDirty = true
+                C_Timer.After(0, self.DFGridFlush)
+            end
+            return
+        end
+        if event == 'ACTIONBAR_SHOWGRID' then
+            self.DragGridActive = true
+        elseif event == 'ACTIONBAR_HIDEGRID' then
+            self.DragGridActive = false
+        end
         if InCombatLockdown() then return end
         -- self:Update()
         self:UpdateGridState()
@@ -338,12 +380,13 @@ function DragonflightUIActionbarMixin:Update()
 
     if self.BlizzEditmodeFrame then self:UpdateBlizzEditmodeState(); end
 
-    -- print(self.buttonTable[1]:GetName(), 'update')
-    -- self:UpdateGrid(state.alwaysShow)
+    -- Apply the alwaysShow decision immediately (login and live toggles) -
+    -- the attribute writes above are invisible until something re-evaluates.
+    self:UpdateGridState()
 
     -- mainbar only
     if self.gryphonLeft and self.gryphonRight then self:UpdateGryphons(state.gryphons) end
-    if self.BorderArt then self.BorderArt:SetShown(not state.hideBorder) end
+    if self.BorderArt then self:UpdateBorderArt(state) end
 
     if self.numberFrame then self:UpdateNumberFrame() end
 
@@ -476,16 +519,31 @@ function DragonflightUIActionbarMixin:UpdateGridState()
     local btnCount = #buttonTable
     if btnCount < 1 then return end
 
+    -- Apply Blizzard's visibility formula (showgrid attribute or
+    -- HasAction) per button ourselves. Do NOT call bar:UpdateShownButtons()
+    -- here - running it tainted trips ADDON_ACTION_FORBIDDEN. Blizzard's
+    -- secure re-evaluations use the same formula off the showgrid
+    -- attribute we set, so the two never fight.
+    local canTouchProtected = not Helper:IsCombatLocked()
+    local showAll = state.alwaysShow or self.DragGridActive
+    local gridAttr = showAll and 1 or 0
     for i = 1, btnCount do
         local btn = buttonTable[i]
 
         -- print(btn:GetName(), state.alwaysShow)
-        if state.alwaysShow then
-            btn:SetAttribute("showgrid", 1)
-        else
-            btn:SetAttribute("showgrid", 0)
+        -- Only write when changed: every SetAttribute fires
+        -- OnAttributeChanged -> UpdateAction on the button.
+        if btn:GetAttribute("showgrid") ~= gridAttr then
+            btn:SetAttribute("showgrid", gridAttr)
+            if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
         end
-        if ActionButton_ShowGrid then ActionButton_ShowGrid(btn) end
+
+        if canTouchProtected then
+            local action = btn.action or btn:GetAttribute('action')
+            local show = not btn:GetAttribute('statehidden')
+                and (showAll or (action and HasAction(action))) and true or false
+            if btn:IsShown() ~= show then btn:SetShown(show) end
+        end
     end
 
     if DF.API.Version.IsTBC then self:UpdateBlizzEditmodeState(); end
@@ -512,14 +570,84 @@ function DragonflightUIActionbarMixin:SetupMainBar()
     -- self:AddDeco()
     self:AddDecoNew()
 
-    -- self.gryphonLeft:SetParent(self.MainBarFrame)
-    -- self.gryphonLeft:SetScale(0.42)
-    -- self.gryphonRight:SetParent(self.MainBarFrame)
-    -- self.gryphonRight:SetScale(0.42)
+    -- Retail wraps the main bar in the UI-HUD-ActionBar-Frame nineslice
+    -- (MainMenuBar.BorderArt); the Classic template never defines it, so
+    -- build it from the shipped texture. Everything else is already wired:
+    -- UpdateState toggles it via the bar's hideBorder option and Darkmode
+    -- tints it.
+    local borderArt = self:CreateTexture('DragonflightUIActionbarBorderArt', 'BACKGROUND', nil, -6)
+    borderArt:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbarframe2x')
+    borderArt:SetTexCoord(0.0078125, 0.867188, 0.0078125, 0.867188)
+    if borderArt.SetTextureSliceMargins then
+        borderArt:SetTextureSliceMode((Enum.UITextureSliceMode and Enum.UITextureSliceMode.Tiled) or 1)
+        borderArt:SetTextureSliceMargins(20, 20, 25, 25)
+    end
+    borderArt:Hide() -- UpdateBorderArt anchors and shows it per the hideBorder option
+    self.BorderArt = borderArt
+
+    -- Solid backing behind the buttons: retail's own fill art is only a
+    -- ~20% black tint (measured from the atlas), which reads as empty over
+    -- bright scenes - so expose the opacity as the borderFill option.
+    local fill = self:CreateTexture('DragonflightUIActionbarBorderFill', 'BACKGROUND', nil, -7)
+    fill:SetColorTexture(0, 0, 0, 1)
+    fill:Hide()
+    self.BorderFill = fill
 
     local handler = self.StateHandler
-    if not handler then return end
-    handler:SetFrameRef('mainbarFrame', self.MainBarFrame)
+    if handler then handler:SetFrameRef('mainbarFrame', self.MainBarFrame) end
+end
+
+-- The bar frame is sized for editmode, not the button footprint (button
+-- scale/padding/rows shrink the real grid), so the border must hug the
+-- buttons' bounding box: anchor to the top-left-most and bottom-right-most
+-- buttons after layout.
+function DragonflightUIActionbarMixin:UpdateBorderArt(state)
+    local border = self.BorderArt
+    if not border then return end
+    local fill = self.BorderFill
+    if state.hideBorder then
+        border:Hide()
+        if fill then fill:Hide() end
+        return
+    end
+
+    -- Retail (Mainline MainActionBar.xml): BorderArt anchors TOPLEFT(-4,4)
+    -- BOTTOMRIGHT(8,-7) to a bar sized exactly to the button grid - the
+    -- art's right/bottom edges are thicker, hence the asymmetry.
+    local function anchor()
+        local tlBtn, brBtn
+        for _, b in ipairs(self.buttonTable) do
+            local l, t = b:GetLeft(), b:GetTop()
+            if not l or not t then return false end
+            if not tlBtn or l < tlBtn:GetLeft() - 0.5 or (math.abs(l - tlBtn:GetLeft()) < 0.5 and t > tlBtn:GetTop()) then
+                tlBtn = b
+            end
+            if not brBtn or b:GetRight() > brBtn:GetRight() + 0.5 or
+                (math.abs(b:GetRight() - brBtn:GetRight()) < 0.5 and b:GetBottom() < brBtn:GetBottom()) then
+                brBtn = b
+            end
+        end
+        if not (tlBtn and brBtn) then return false end
+        border:ClearAllPoints()
+        border:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -4.5, 4.5)
+        border:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 7.5, -6.5)
+        border:Show()
+        if fill then
+            local opacity = state.borderFill or 0
+            if opacity > 0 then
+                fill:ClearAllPoints()
+                fill:SetPoint('TOPLEFT', tlBtn, 'TOPLEFT', -2, 2)
+                fill:SetPoint('BOTTOMRIGHT', brBtn, 'BOTTOMRIGHT', 2, -2)
+                fill:SetAlpha(opacity)
+                fill:Show()
+            else
+                fill:Hide()
+            end
+        end
+        return true
+    end
+    -- rects resolve a frame after layout; retry once if not ready yet
+    if not anchor() then C_Timer.After(0, anchor) end
 end
 
 function DragonflightUIActionbarMixin:AddPagingStateDriver()
@@ -1204,9 +1332,100 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
 
     local textureRef = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
-    local ActionBarUpButton = ActionBarUpButton or MainActionBar.ActionBarPageNumber.UpButton;
-    local ActionBarDownButton = ActionBarDownButton or MainActionBar.ActionBarPageNumber.DownButton;
-    local MainMenuBarPageNumber = MainMenuBarPageNumber or MainActionBar.ActionBarPageNumber.Text;
+    -- era-1159: the old ActionBarUpButton globals are gone, and adopting the
+    -- fallback arrows (MainActionBar.ActionBarPageNumber.*) failed two ways:
+    -- (1) an insecure OnClick must page via C_ActionBar.SetActionBarPage,
+    -- which combat lockdown blocks for addon code - switching died mid-fight;
+    -- (2) MainActionBar:OnShow -> UpdateEndCaps re-atlases those buttons
+    -- every time ActionBarController re-shows the bar (every loading screen),
+    -- erasing the custom skin - the arrows "vanished". So: our own SECURE
+    -- buttons. type='actionbar' pages through the protected path even in
+    -- combat, a [bar:N] state driver keeps each arrow's target page current
+    -- (state drivers stay live in combat), and the textures are ours alone.
+    -- Blizzard's secure increment/decrement is unusable here: it honors
+    -- VIEWABLE_ACTION_BAR_PAGES, which the always-shown multibars collapse
+    -- to a 1<->2 cycle.
+    local modernFallback = (not _G['ActionBarUpButton'] and C_ActionBar
+        and C_ActionBar.SetActionBarPage) and true or false
+
+    local numPages = NUM_ACTIONBAR_PAGES or 6
+    local function createSecurePageArrow(name, delta)
+        local btn = CreateFrame('Button', name, f,
+                                'SecureActionButtonTemplate,SecureHandlerStateTemplate')
+        btn:SetSize(19, 17)
+        -- Addon-created SecureActionButtonTemplate buttons are NOT passed the
+        -- isSecureAction OnClick argument (see SecureTemplates.xml), so the
+        -- handler obeys the ActionButtonUseKeyDown cvar (default 1) and only
+        -- acts on DOWN presses. Register both edges and let
+        -- SecureActionButton_OnClick's clickAction logic fire exactly one.
+        -- Explicit buttons, NOT 'AnyDown'/'AnyUp': on this client "Any"
+        -- includes MouseWheelUp/Down as click buttons, so shift-scrolling
+        -- over an arrow fired its action AND the SHIFT-MOUSEWHEEL page
+        -- binding - the binding cycles VIEWABLE pages ({1,2} with multibars
+        -- shown) and immediately wrapped the page back: the 1->2->1 flicker.
+        btn:RegisterForClicks('LeftButtonDown', 'LeftButtonUp')
+        btn:SetAttribute('type', 'actionbar')
+        btn:SetAttribute('_onstate-page', ([[
+            local page = (tonumber(newstate) or 1) + (%d)
+            if page > %d then page = 1 elseif page < 1 then page = %d end
+            self:SetAttribute('action', page)
+        ]]):format(delta, numPages, numPages))
+        local drive = {}
+        for i = 1, numPages do drive[#drive + 1] = '[bar:' .. i .. ']' .. i end
+        RegisterStateDriver(btn, 'page', table.concat(drive, ';') .. ';1')
+        btn:SetScript('PostClick', function(_, _, down)
+            -- Both click edges reach PostClick; only voice the one that acted.
+            local useDown = GetCVarBool and GetCVarBool('ActionButtonUseKeyDown')
+            if (down and useDown) or (not down and not useDown) then
+                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+            end
+        end)
+        -- create the texture regions the shared styling below expects
+        btn:SetNormalTexture(textureRef)
+        btn:SetHighlightTexture(textureRef)
+        btn:SetPushedTexture(textureRef)
+        return btn
+    end
+
+    local ActionBarUpButton, ActionBarDownButton, MainMenuBarPageNumber
+    if modernFallback then
+        ActionBarUpButton = createSecurePageArrow('DragonflightUIActionBarUpButton', 1)
+        ActionBarDownButton = createSecurePageArrow('DragonflightUIActionBarDownButton', -1)
+        MainMenuBarPageNumber = MainActionBar.ActionBarPageNumber.Text
+
+        -- Route the page-cycling BINDINGS through the secure arrows as well.
+        -- NEXTACTIONPAGE/PREVIOUSACTIONPAGE (shift-mousewheel by default)
+        -- call ActionBar_PageUp/Down, which cycle only
+        -- VIEWABLE_ACTION_BAR_PAGES - {1,2} with the multibars shown - and a
+        -- single scroll gesture delivers a burst of wheel ticks (measured
+        -- ~40 over 1.3s), so the page just strobed 1<->2 and could never
+        -- reach bars 3-6. Overriding every key bound to those commands with
+        -- a click on our arrows gives the same full 1..6 cycle as clicking,
+        -- combat-safe, one page step per tick.
+        local BINDING_TO_ARROW = {
+            NEXTACTIONPAGE = 'DragonflightUIActionBarUpButton',
+            PREVIOUSACTIONPAGE = 'DragonflightUIActionBarDownButton',
+        }
+        local function applyPagingBindingOverrides()
+            if InCombatLockdown() then return end -- re-applied on regen
+            ClearOverrideBindings(f)
+            for command, target in pairs(BINDING_TO_ARROW) do
+                local keys = { GetBindingKey(command) }
+                for _, key in ipairs(keys) do
+                    SetOverrideBindingClick(f, false, key, target, 'LeftButton')
+                end
+            end
+        end
+        local bindingWatcher = CreateFrame('Frame')
+        bindingWatcher:RegisterEvent('UPDATE_BINDINGS')
+        bindingWatcher:RegisterEvent('PLAYER_REGEN_ENABLED')
+        bindingWatcher:SetScript('OnEvent', applyPagingBindingOverrides)
+        applyPagingBindingOverrides()
+    else
+        ActionBarUpButton = _G['ActionBarUpButton']
+        ActionBarDownButton = _G['ActionBarDownButton']
+        MainMenuBarPageNumber = _G['MainMenuBarPageNumber']
+    end
 
     -- actionbar switch buttons
     ActionBarUpButton:GetNormalTexture():SetTexture(textureRef)
@@ -1263,6 +1482,18 @@ function DragonflightUIActionbarMixin:SetupPageNumberFrame()
         fixAnchor(text)
     end)
     fixAnchor(GetActionBarPage())
+
+    -- era-1159: the page number text was updated by MainActionBar's
+    -- ACTIONBAR_PAGE_CHANGED handler, which died with UnregisterAllEvents -
+    -- keep it fresh ourselves. Clicking is handled by the secure arrows above.
+    if modernFallback then
+        local pageWatcher = CreateFrame('Frame')
+        pageWatcher:RegisterEvent('ACTIONBAR_PAGE_CHANGED')
+        pageWatcher:SetScript('OnEvent', function()
+            MainMenuBarPageNumber:SetText(C_ActionBar.GetActionBarPage())
+        end)
+        MainMenuBarPageNumber:SetText(C_ActionBar.GetActionBarPage())
+    end
 
     -- f:SetScale((1 / 1.5) * 0.9)
     -- f:SetScale(0.9)
@@ -1324,6 +1555,16 @@ function DragonflightUIActionbarMixin:AddDecoNew(index)
     end
 
     for k, v in ipairs(self.buttonTable) do
+        -- retail ActionButtonTemplate: SlotBackground (dark fill,
+        -- ui-hud-actionbar-iconframe-background) under SlotArt
+        local bg = v:CreateTexture('DragonflightUISlotDecoBackground')
+        v.DFDecoBg = bg
+        bg:SetTexture('Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar')
+        bg:SetSize(45, 45 - 2)
+        bg:SetPoint('TOPLEFT')
+        bg:SetTexCoord(0.70703125, 0.88671875, 0.4013671875, 0.4453125)
+        bg:SetDrawLayer('BACKGROUND', -6)
+
         local tex = v:CreateTexture('DragonflightUISlotDeco')
         v.DFDeco = tex
         tex:SetTexture(textureRef)
@@ -1440,6 +1681,19 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     local textureRefTwo = 'Interface\\Addons\\DragonflightUI\\Textures\\uiactionbar2x'
 
     local btnName = btn:GetName()
+
+    -- era-1159: modern buttons ship their own SlotBackground (classic
+    -- UI-Quickslot art) at BACKGROUND,0 - it draws OVER the DF slot deco
+    -- painted at BACKGROUND,-5, which made every bar background "not load".
+    -- The old 11508 buttons had no such region, so upstream never hid it.
+    if btn.SlotBackground then
+        btn.SlotBackground:Hide()
+        btn.SlotBackground:SetAlpha(0)
+    end
+    if btn.SlotArt then
+        btn.SlotArt:Hide()
+        btn.SlotArt:SetAlpha(0)
+    end
 
     btn:SetSize(45, 45)
     -- print(btn:GetName())
@@ -1679,16 +1933,38 @@ function DragonflightUIActionbarMixin:StyleButton(btn, keepNormalHighlight)
     end
 
     btn.BarRef = self;
+    -- Hot path: cache the computed text keyed on bindings generation +
+    -- shorten flag, and only SetFont when the size actually changes
+    -- (unconditional SetFont forces a FontString re-layout per call).
     function btn:DragonflightFixHotkey()
         self:FixHotkeyPosition()
 
         local state = self.BarRef.state;
         if not state then
-            self:SetKeybindFontSize(14 + 2)
+            if self.DFHotkeyFontSize ~= (14 + 2) then
+                self:SetKeybindFontSize(14 + 2)
+                self.DFHotkeyFontSize = 14 + 2
+            end
             return
         end
-        self:UpdateHotkeyDisplayText(state.shortenKeybind)
-        self:SetKeybindFontSize(state.keybindFontSize)
+        local shorten = state.shortenKeybind
+        local size = state.keybindFontSize
+
+        local gen = DragonflightUIActionbarMixin.BindingsGen
+        if self.DFHotkeyText and self.DFHotkeyGen == gen and self.DFHotkeyShorten == shorten then
+            self.HotKey:Show()
+            self.HotKey:SetText(self.DFHotkeyText)
+        else
+            self:UpdateHotkeyDisplayText(shorten)
+            self.DFHotkeyText = self.HotKey:GetText() or ''
+            self.DFHotkeyGen = gen
+            self.DFHotkeyShorten = shorten
+        end
+
+        if self.DFHotkeyFontSize ~= size then
+            self:SetKeybindFontSize(size)
+            self.DFHotkeyFontSize = size
+        end
     end
     btn:DragonflightFixHotkey()
 
@@ -2064,13 +2340,20 @@ end
 
 function DragonflightUIPetbarMixin:StylePetButton()
 
-    if DF.API.Version.IsTBC then
-        --
-        _G['PetActionBar']:Hide()
-        _G['PetActionBar'].BackgroundArt1:SetTexture('')
-        _G['PetActionBar'].BackgroundArt1:Hide()
-        _G['PetActionBar'].BackgroundArt2:SetTexture('')
-        _G['PetActionBar'].BackgroundArt2:Hide()
+    if DF.API.Version.IsModern and _G['PetActionBar'] then
+        -- era-1159: was IsTBC-only; Era 1.15.9 has the same modern
+        -- PetActionBar whose background art otherwise bleeds through and
+        -- makes the pet bar read as a plain action bar.
+        local pab = _G['PetActionBar']
+        pab:Hide()
+        if pab.BackgroundArt1 then
+            pab.BackgroundArt1:SetTexture('')
+            pab.BackgroundArt1:Hide()
+        end
+        if pab.BackgroundArt2 then
+            pab.BackgroundArt2:SetTexture('')
+            pab.BackgroundArt2:Hide()
+        end
     end
 
     local count = #(self.buttonTable)
@@ -2083,6 +2366,14 @@ function DragonflightUIPetbarMixin:StylePetButton()
         local btnName = btn:GetName()
 
         btn.buttonType = 'BONUSACTIONBUTTON'
+
+        -- era-1159: modern pet buttons carry their own slot art the classic
+        -- styling never knew about; it doubles up under the DF border.
+        if btn.SlotBackground then
+            btn.SlotBackground:Hide()
+            btn.SlotBackground:SetAlpha(0)
+        end
+        if btn.NormalTexture then btn.NormalTexture:SetAlpha(0) end
 
         local normalTwo = _G[btnName .. 'NormalTexture2']
         if normalTwo then -- TODOTBC
@@ -2108,7 +2399,7 @@ function DragonflightUIPetbarMixin:StylePetButton()
         -- shine:SetSize(46, 46)      
 
         local child1, child2, child3 = btn:GetChildren()
-        child1:SetSize(41, 41)
+        if child1 and child1.SetSize then child1:SetSize(41, 41) end
 
         local auto = _G[btnName .. 'AutoCastable']
         local autoSize = 80
@@ -2117,10 +2408,37 @@ function DragonflightUIPetbarMixin:StylePetButton()
             auto:SetDrawLayer('OVERLAY', 2)
         end
 
-        --
+        -- The modern template replaces the classic AutoCastable globals
+        -- with an AutoCastOverlay child frame sized for retail's small pet
+        -- buttons: SmallActionButtonMixin:ApplyOverrides() sets the frame
+        -- to 26x26 and its separate Corners texture to 58x58 against a
+        -- 31.6px button edge. Rescale both by our 46px edge (x1.456) or
+        -- the autocast frame renders as an inset square.
+        if btn.AutoCastOverlay then
+            local overlay = btn.AutoCastOverlay
+            overlay:ClearAllPoints()
+            overlay:SetPoint('CENTER', btn, 'CENTER', 0, 0)
+            overlay:SetSize(34, 34)
+            if overlay.Corners then overlay.Corners:SetSize(75, 75) end
+        end
+
+        -- SmallActionButtonTemplate (modern pet buttons) hard-sizes the
+        -- checked/highlight textures to 31.6x30.9 for retail's small pet
+        -- bar; DFUI keeps the 45px base and scales the button, so re-size
+        -- them to the full button or the active state renders inset.
         local checked = btn:GetCheckedTexture()
         checked:SetAlpha(1.0)
+        checked:ClearAllPoints()
+        checked:SetSize(46, 45)
+        checked:SetPoint('TOPLEFT')
         checked:SetTexCoord(0.701171875, 0.880859375, 0.36181640625, 0.40576171875)
+
+        local highlight = btn:GetHighlightTexture()
+        if highlight then
+            highlight:ClearAllPoints()
+            highlight:SetSize(46, 45)
+            highlight:SetPoint('TOPLEFT')
+        end
 
         local color = DFCreateColorFromRGBHexString('FFE143')
         checked:SetVertexColor(color.r, color.g, color.b, color.a)
