@@ -65,7 +65,8 @@ On TBC only, `Editmode:TBC()` calls `InitEditmodeOverride()` in [Modules/Core/Ed
 
 ## Development workflow
 
-- To test, the repo must sit at `<WoW>/_<flavor>_/Interface/AddOns/DragonflightUI` (a symlink or junction works). Then `/reload` in game. Bugs are client-specific, so test on every affected flavor.
+- To test, link the repo into a client. Run `npm install` once (Node 20+), then `npm run dev:link -- "<WoW>/_<flavor>_/Interface/AddOns"` (or set `WOW_ADDONS_DIR`). This creates a junction (a symlink on non-Windows) named `DragonflightUI`, taken from `.pkgmeta` `package-as`, that points at the repo root. It refuses to replace an existing folder such as a CurseForge install, so remove that first. Run it once per client, then `/reload` in game. Bugs are client-specific, so test on every affected flavor.
+- Node tooling ([src/](src/), [package.json](package.json)) currently has only `dev:link`. It deliberately has no formatter or other tooling. The TypeScript typecheck is `npx tsc --noEmit`.
 - In an unpackaged checkout the version shows the literal text `@project-version@`. That is expected.
 - `DF:Debug(module, ...)`, `DF:Dump(v)` and the output of `Helper:Benchmark` only print when the character is named `Zimtdev` or `Zimtdevtwo`, a check hard-coded in [Core.lua](Core.lua). To see the output, change that locally and don't commit the change.
 - Useful in-game commands: `/df` or `/dragonflight` (config), `/editmode`, `/kb` (quick keybind), `/rl`, plus the Blizzard tools `/dump`, `/fstack`, `/etrace`. Use BugGrabber/BugSack for error stacks.
@@ -76,7 +77,7 @@ On TBC only, `Editmode:TBC()` calls `InitEditmodeOverride()` in [Modules/Core/Ed
 
 - Releases use the BigWigsMods packager on GitHub Actions. Pushing **any tag** (e.g. `v0.40.3`) publishes a release to CurseForge and GitHub ([release.yml](.github/workflows/release.yml)). Pushing a branch named `*-preview` publishes a preview build ([alpha.yml](.github/workflows/alpha.yml)).
 - **Never push tags or `*-preview` branches unless asked**, because that publishes to users.
-- [.pkgmeta](.pkgmeta) excludes `Screenshots` and `*.png` from the package.
+- [.pkgmeta](.pkgmeta) excludes `Screenshots`, `*.png`, the Node tooling (`src`, `package*.json`, `tsconfig.json`) and the `CLAUDE.md` files from the package. The repo root *is* the addon folder, so any new root-level tooling file must be added there too.
 
 ## Conventions
 
@@ -101,6 +102,7 @@ On TBC only, `Editmode:TBC()` calls `InitEditmodeOverride()` in [Modules/Core/Ed
 | `Textures/` | `.blp`/`.tga` art, referenced as `Interface\AddOns\DragonflightUI\Textures\...` |
 | `Libs/`, `Embed/AuraDurations/` | Vendored third-party libraries |
 | `TexCoordsRetail*.lua`, `Mixin/Castbar.mixinRetail.lua` | Git-ignored local reference dumps of retail atlas data. Not loaded. |
+| `src/`, `package.json`, `tsconfig.json` | Node dev tooling (`npm run dev:link`), not shipped |
 | `Blizzard/` | Empty and unused |
 
 ## Known tech debt (verified when this file was written)

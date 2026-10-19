@@ -1,0 +1,17 @@
+{
+  "name": "wow-dragonflightui",
+  "private": true,
+  "description": "Dev tooling for the DragonflightUI World of Warcraft addon",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:link": "tsx src/link-addons.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
