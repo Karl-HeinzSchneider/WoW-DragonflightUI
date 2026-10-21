@@ -170,6 +170,9 @@ do
     L['CompatWhatsTraining'] = "WhatsTraining"
     L['CompatWhatsTrainingDesc'] =
         "Добавляет совместимость с WhatsTraining при использовании модуля интерфейса с включенной опцией 'Изменить спеллбук'."
+    L['CompatMinimapAlert'] = "Minimap Alert"
+    L['CompatMinimapAlertDesc'] =
+        "Делает миникарту DragonflightUI совместимой с аддоном 'Minimap Alert' (корректно переустанавливает миникарту для её сканирования по подсказкам)."
 end
 
 -- __Settings

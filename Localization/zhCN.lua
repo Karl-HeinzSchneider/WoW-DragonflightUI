@@ -163,6 +163,9 @@ do
     L['CompatTDInspectDesc'] = "当启用'修改角色窗口'时，为TDInspect添加兼容支持"
     L['CompatWhatsTraining'] = "WhatsTraining"
     L['CompatWhatsTrainingDesc'] = "当启用'修改法术书'时，为WhatsTraining添加兼容支持"
+    L['CompatMinimapAlert'] = "Minimap Alert"
+    L['CompatMinimapAlertDesc'] =
+        "让 DragonflightUI 的小地图与“Minimap Alert”兼容（为其基于提示信息的扫描正确重新定位小地图）。"
 end
 
 -- __Settings
