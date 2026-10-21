@@ -87,7 +87,7 @@ function DragonflightUICharacterStatsWrathMixin:AddStatsGeneral()
 
     self:RegisterElement('movement', 'general', {
         order = 3,
-        name = STAT_MOVEMENT_SPEED,
+        name = L['CharacterStatsMovementSpeed'],
         descr = '..',
         func = function()
             local moveTable, currentSpeed = GetMovementTable()

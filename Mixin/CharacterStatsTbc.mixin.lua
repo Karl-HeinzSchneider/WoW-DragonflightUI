@@ -1,5 +1,6 @@
 ---@diagnostic disable: redundant-parameter
 local DF = LibStub('AceAddon-3.0'):GetAddon('DragonflightUI')
+local L = LibStub("AceLocale-3.0"):GetLocale("DragonflightUI")
 
 local ATTACK_SPEED_SECONDS = ATTACK_SPEED_SECONDS or 'Attack Speed (seconds)' -- Era
 
@@ -81,7 +82,7 @@ function DragonflightUICharacterStatsTbcMixin:AddStatsGeneral()
 
     self:RegisterElement('movement', 'general', {
         order = 3,
-        name = STAT_MOVEMENT_SPEED,
+        name = L['CharacterStatsMovementSpeed'],
         descr = '..',
         func = function()
             local moveTable, currentSpeed = GetMovementTable()
